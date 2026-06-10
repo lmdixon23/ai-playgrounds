@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visualizing a Tiny Neural Net</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E">
+<meta name="description" content="A tiny neural network learning to classify 2D points. Add hidden neurons, change the activation, watch the loss fall and the decision boundary curve.">
+<link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/neural-network/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/neural-network/">
+<meta property="og:title" content="Visualizing a Tiny Neural Net — AI Playgrounds">
+<meta property="og:description" content="A tiny neural network learning to classify 2D points. Add hidden neurons, change the activation, watch the loss fall and the decision boundary curve.">
+<meta property="og:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Visualizing a Tiny Neural Net — AI Playgrounds">
+<meta name="twitter:description" content="A tiny neural network learning to classify 2D points. Add hidden neurons, change the activation, watch the loss fall and the decision boundary curve.">
+<meta name="twitter:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Visualizing a Tiny Neural Net — AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/neural-network/","description":"A tiny neural network learning to classify 2D points. Add hidden neurons, change the activation, watch the loss fall and the decision boundary curve.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan Dixon"}}
+</script>
+<style>
+  :root {
+    --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #4338ca;
+    --card: #fff; --border: #e5e7eb; --soft: #f9fafb;
+    --classA: #2563eb; --classB: #f97316;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", Arial, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; }
+  .page-header { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 24px; }
+  .header-utility { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .header-prefs { display: flex; align-items: center; gap: 8px; }
+  .header-main { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .header-actions { display: flex; align-items: center; gap: 8px; font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem; }
+  .header-actions .header-reset { margin-left: 12px; }
+  .page-header h1 { margin: 0; font-size: 1.5rem; }
+  .page-header .back { color: var(--accent); text-decoration: none; font-size: 0.9rem; font-family: -apple-system, system-ui, sans-serif; }
+  .lang-switch { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .lang-switch button { padding: 4px 10px; background: white; color: var(--muted);
+                          border: none; cursor: pointer; font: inherit; font-size: 0.78rem; }
+  .lang-switch button.active { background: var(--accent); color: white; font-weight: 600; }
+  .header-reset { padding: 6px 12px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font: inherit; font-size: 0.82rem; }
+  .header-reset:hover { background: var(--soft); }
+  .tldr { max-width: 820px; margin: 16px auto 0;
+           background: var(--accent); color: white;
+           border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; font-weight: 500;
+           font-family: -apple-system, system-ui, sans-serif; line-height: 1.45; }
+  .tldr strong { color: rgba(255,255,255,0.85); font-size: 0.72rem; letter-spacing: 0.08em;
+                  text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px; }
+  .interactive { background: var(--card); padding: 24px; border-bottom: 1px solid var(--border); }
+  .interactive-inner { max-width: 1280px; margin: 0 auto;
+                         font-family: -apple-system, system-ui, sans-serif; }
+  .control-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+                  margin-bottom: 14px; font-size: 0.88rem; }
+  .control-row label { color: var(--muted); }
+  .control-row select { padding: 6px 10px; border: 1px solid var(--border);
+                          border-radius: 6px; font: inherit; background: white; }
+  .control-row .step-btn { padding: 7px 14px; background: white; color: var(--fg);
+                            border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                            font: inherit; font-size: 0.85rem; }
+  .control-row .step-btn.primary { background: var(--accent); color: white;
+                                      border-color: var(--accent); font-weight: 600; }
+  .slider-block { display: inline-flex; align-items: center; gap: 6px; }
+  .slider-block input[type=range] { width: 100px; }
+  .slider-block .val { color: var(--accent); font-weight: 700; font-family: monospace;
+                         font-size: 0.92rem; min-width: 30px; text-align: right; }
+  .canvas-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 0; }
+  .canvas-card { background: white; border: 1px solid var(--border);
+                   border-radius: 8px; padding: 10px; }
+  .canvas-card h3 { margin: 0 0 6px; font-size: 0.85rem; color: var(--accent);
+                      text-transform: uppercase; letter-spacing: 0.05em; }
+  canvas { display: block; width: 100%; height: auto; background: white; border-radius: 4px; }
+  #bv, #lc { aspect-ratio: 420 / 300; }
+  #ng { aspect-ratio: 840 / 300; }
+  .stats-strip { display: flex; gap: 24px; justify-content: center;
+                   font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem;
+                   margin-top: 12px; flex-wrap: wrap; }
+  .stat-item .label { color: var(--muted); font-size: 0.72rem;
+                       text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-item .val { font-weight: 600; font-family: monospace; font-size: 1.1rem; color: var(--fg); }
+  .jump-link { display: inline-block; margin-top: 14px;
+                padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px;
+                background: white; color: var(--accent); text-decoration: none;
+                font-family: -apple-system, system-ui, sans-serif; font-size: 0.82rem;
+                font-weight: 600; }
+  .jump-link:hover { background: var(--soft); }
+  .jump-anchor { text-align: center; }
+  .essay { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; font-size: 1.05rem; }
+  .essay h2 { font-size: 1.5rem; margin-top: 36px; margin-bottom: 12px; color: var(--accent); }
+  .essay h3 { font-size: 1.15rem; margin-top: 24px; margin-bottom: 8px; }
+  .essay .lede { font-size: 1.15rem; color: #374151; }
+  .essay .aha { background: #e0e7ff; border-left: 4px solid #4338ca;
+                 padding: 12px 18px; margin: 18px 0; border-radius: 0 6px 6px 0;
+                 font-style: italic; color: #312e81; }
+  .essay code { background: var(--soft); padding: 1px 6px; border-radius: 4px;
+                 font-family: 'SF Mono', Consolas, monospace; font-size: 0.92em; }
+  .essay ul li { margin-bottom: 6px; }
+  .essay .for-teachers { background: var(--soft); border: 1px solid var(--border);
+                          border-radius: 8px; padding: 20px 24px; margin-top: 36px;
+                          font-family: -apple-system, system-ui, sans-serif; font-size: 0.95rem; }
+  .essay .for-teachers h3 { font-family: -apple-system, system-ui, sans-serif;
+                              color: var(--accent); font-size: 0.9rem;
+                              text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0; }
+  /* ===== Unified transport bar (shared playback controls across stepped applets) ===== */
+  .transport { display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+               padding: 8px 10px; margin: 10px 0; border: 1px solid var(--border);
+               border-radius: 8px; background: var(--soft); }
+  .tp-btn { font: inherit; font-size: 0.9rem; cursor: pointer; border: 1px solid var(--border);
+            background: var(--card); color: var(--fg); border-radius: 6px; padding: 6px 12px; min-width: 40px; line-height: 1; }
+  .tp-btn:hover { background: var(--soft); }
+  .tp-speed { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--muted); }
+  .tp-speed input { accent-color: var(--accent); }
+  .tp-count { margin-left: auto; font-family: ui-monospace, monospace; font-size: 0.82rem;
+              color: var(--muted); font-variant-numeric: tabular-nums; min-width: 128px; text-align: right; }
+  .tp-btn:disabled { opacity: 0.45; cursor: default; }  /* reserve layout space; signal unavailable instead of vanishing */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+  /* === dark mode === */
+  body.dark-mode {
+    --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8;
+    --card: #1e293b; --border: #334155; --soft: #1e293b;
+  }
+  body.dark-mode .essay .lede { color: #cbd5e1; }
+  body.dark-mode .essay .for-teachers { background: #0f172a; }
+  /* True canvas dark mode — render fn picks bg directly. */
+  body.dark-mode .header-reset,
+  body.dark-mode .lang-switch button:not(.active),
+  body.dark-mode .header-theme,
+  body.dark-mode .control-row select,
+  body.dark-mode .control-row .step-btn:not(.primary),
+  body.dark-mode .canvas-card { background: var(--card); color: var(--fg); }
+  .header-theme { padding: 6px 10px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font-size: 1rem; line-height: 1; font-family: inherit; }
+  .header-theme:hover { background: var(--soft); }
+  .header-png { padding: 6px 10px; background: white; color: var(--fg);
+                  border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                  font-size: 0.85rem; font-family: inherit; }
+  .header-png:hover { background: var(--soft); }
+  body.dark-mode .header-png { background: var(--card); color: var(--fg); }
+  /* ===== Slider styling — ROUTE A TEST: native themed control via accent-color =====
+     Single variant by design: with accent-color the browser renders the track AND the
+     filled portion itself, so there is no authorable "no-fill" Route A. Chrome and
+     Firefox draw that fill in their own way — that difference is part of the comparison. */
+  input[type="range"] { accent-color: var(--accent); height: 28px; cursor: pointer; }
+  /* embed mode. Strip chrome so the applet fits cleanly in an LMS iframe. */
+  body.embed-mode .page-header,
+  body.embed-mode aside.tldr,
+  body.embed-mode article.essay,
+  body.embed-mode .jump-anchor { display: none !important; }
+  body.embed-mode .interactive { padding: 12px; border-bottom: none; }
+  /* ===== Bento grid ===== */
+  .bento { display: grid; grid-template-columns: minmax(300px, 360px) minmax(0, 1fr); gap: 16px; align-items: start; margin-bottom: 14px; }
+  .bento-side, .bento-main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .bento-cell { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+  .bento-cell > :first-child { margin-top: 0 !important; }
+  .tp-scrub { min-width: 0; }
+  @media (max-width: 860px) { .bento { grid-template-columns: 1fr; gap: 12px; } }
+  /* ===== Shared a11y + contrast tokens (review fixes: F4 keyboard focus, F6 banner contrast) ===== */
+  button:focus-visible, a:focus-visible, select:focus-visible,
+  input:focus-visible, textarea:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+  .tldr { background: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), var(--accent); }
+  .tldr strong { color: #fff; }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="header-utility">
+    <a class="back" href="../../" data-i18n="back-link">← Back to all playgrounds</a>
+    <div class="header-prefs">
+      <button class="header-theme" id="themeToggle" aria-label="Toggle dark or light theme"
+              title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
+      <div class="lang-switch" title="Switch interface language">
+        <button data-lang="en" class="active">EN</button>
+        <button data-lang="zh">中文</button>
+      </div>
+    </div>
+  </div>
+  <div class="header-main">
+    <h1 data-i18n="title">Visualizing a Tiny Neural Net</h1>
+    <div class="header-actions">
+      <button class="header-png" id="shareLink"
+              title="Copy a URL that re-opens this dataset / activation / architecture / learning-rate in another browser.">🔗 Share</button>
+      <button class="header-png" id="embedLink"
+              title="Copy an <iframe> snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
+      <button class="header-png" id="exportPng"
+              title="Download the decision-boundary canvas as a PNG.">📷 PNG</button>
+      <button class="header-reset" id="hardReset" data-i18n="reset-all"
+              title="Reset everything to default: two-moons dataset, [2-6-4-1] architecture, ReLU activation, LR=0.03.">↺ Reset all</button>
+    </div>
+  </div>
+</header>
+
+<aside class="tldr">
+  <strong data-i18n="tldr-strong">The big idea</strong>
+  <span data-i18n="tldr-body">Layers stacked with non-linear activations can carve any decision boundary. Remove the non-linearity and the whole network collapses into a single line.</span>
+</aside>
+
+<section class="interactive">
+<div class="interactive-inner">
+
+  <div class="bento">
+  <div class="bento-side">
+  <div class="bento-cell">
+  <div class="control-row">
+    <label data-i18n="dataset-label">Dataset:</label>
+    <select id="datasetSel" data-i18n-title="dataset-sel-title" title="Test problem. XOR forces non-linearity; blobs work with a single line.">
+      <option value="moons" data-i18n="opt-moons">Two moons (non-linear, curved)</option>
+      <option value="circles" data-i18n="opt-circles">Concentric circles (radial)</option>
+      <option value="xor" data-i18n="opt-xor">XOR (canonical non-linearity test)</option>
+      <option value="blobs" data-i18n="opt-blobs">Two blobs (linearly separable)</option>
+    </select>
+    <label data-i18n="act-label">Activation:</label>
+    <select id="act" data-i18n-title="act-sel-title" title="Non-linearity applied after each hidden layer. 'linear' collapses depth into a single line.">
+      <option value="tanh">tanh</option>
+      <option value="relu" selected>ReLU</option>
+      <option value="sigmoid">sigmoid</option>
+      <option value="linear" data-i18n="opt-linear">linear (no non-linearity)</option>
+    </select>
+  </div>
+
+  <div class="control-row">
+    <span class="slider-block">
+      <label data-i18n="h1-label" data-i18n-title="h1-title" title="Number of neurons in the first hidden layer. 0 = no hidden layer.">Hidden 1</label>
+      <input id="h1" type="range" min="0" max="12" value="6" aria-label="Hidden layer 1 size (neurons)">
+      <span class="val" id="h1V">6</span>
+    </span>
+    <span class="slider-block">
+      <label data-i18n="h2-label" data-i18n-title="h2-title" title="Number of neurons in the second hidden layer. 0 = no second hidden layer.">Hidden 2</label>
+      <input id="h2" type="range" min="0" max="12" value="4" aria-label="Hidden layer 2 size (neurons)">
+      <span class="val" id="h2V">4</span>
+    </span>
+    <span class="slider-block">
+      <label data-i18n="lr-label" data-i18n-title="lr-title" title="SGD step size. Too small = glacial; too large = unstable.">Learning rate</label>
+      <input id="lr" type="range" min="0.001" max="0.3" step="0.001" value="0.03" aria-label="Learning rate">
+      <span class="val" id="lrV">0.030</span>
+    </span>
+    <label data-i18n="opt-label" style="margin-left:6px;">Optimizer:</label>
+    <select id="optSel" data-i18n-title="opt-title"
+            title="SGD: plain gradient descent (w ← w − lr·g). Momentum: accumulates a velocity buffer (v ← βv − lr·g; w ← w + v) — smooths noisy gradients and accelerates through ravines. Adam: combines momentum (1st moment) with adaptive per-parameter learning rates (2nd moment).">
+      <option value="sgd" selected data-i18n="opt-sgd">SGD</option>
+      <option value="momentum" data-i18n="opt-momentum">Momentum (β=0.9)</option>
+      <option value="adam" data-i18n="opt-adam">Adam (β₁=0.9, β₂=0.999)</option>
+    </select>
+    <!-- Train / Reset relocated to the unified transport bar below. -->
+    <!-- train/test toggle. Test set = held-out 20% of generated data. -->
+    <label data-i18n-title="show-test-title" style="margin-left:10px;"
+           title="Show test-loss curve on the loss chart and mark test points on the decision-boundary chart. Test = held-out 20% never used for gradients.">
+      <input type="checkbox" id="showTestLoss"> <span data-i18n="show-test-label">Show test loss/points</span></label>
+  </div>
+
+  <!-- Unified transport bar (shared playback controls + inline history scrubber). -->
+  <div class="transport" id="transport" role="group" aria-label="Playback controls">
+    <button class="tp-btn" id="resetBtn" data-i18n-title="restart-title"
+            title="Re-initialize weights randomly; rebuild architecture from current settings.">↺</button>
+    <button class="tp-btn" id="backBtn" data-i18n-title="back-title"
+            title="Step one training frame backward (review).">◀❘</button>
+    <button class="tp-btn" id="trainBtn" data-i18n="train-btn" aria-pressed="false"
+            title="Run gradient descent over the full training set. Click again to pause.">▶ Train / pause</button>
+    <button class="tp-btn" id="stepBtn" data-i18n="step-btn"
+            title="Run one training epoch.">❘▶ Step</button>
+    <label class="tp-speed"><span data-i18n="speed-label">Speed</span>
+      <input id="speedSlider" type="range" min="0" max="100" value="70" aria-label="Training speed"
+             data-i18n-title="speed-title" title="Higher = faster training animation. Adjustable live."></label>
+    <span class="tp-scrub" id="nnScrubGroup" style="display:inline-flex; visibility:hidden; align-items:center; gap:8px; flex:1 1 220px; min-width:150px;">
+      <span style="color:var(--accent); font-weight:600; font-size:0.82rem;" title="History">⏪</span>
+      <input type="range" id="nnScrub" min="0" max="0" value="0" step="1" aria-label="Scrub through training frames" style="flex:1; min-width:110px;">
+      <label style="color:var(--muted); display:flex; align-items:center; gap:4px; font-size:0.8rem;"><span data-i18n="goto-label">epoch</span>
+        <input type="number" id="nnJump" min="0" aria-label="Jump to epoch" style="width:64px; padding:3px 6px; border:1px solid var(--border); border-radius:4px; font:inherit;"></label>
+      <button class="tp-btn" id="nnLive" style="padding:4px 10px; font-size:0.8rem;" disabled data-i18n="return-live">Jump to latest</button>
+    </span>
+    <span class="tp-count" id="tpCount" data-i18n="tp-idle">idle</span>
+  </div>
+
+  <!-- Engineered input features (TF-Playground style). x and y are always on;
+       toggling any of these re-initializes the network and resets training. -->
+  <div class="control-row">
+    <label data-i18n="feat-label" data-i18n-title="feat-label-title"
+           title="Extra engineered inputs fed alongside x and y. They let a small network bend or close its boundary without more hidden neurons. Toggling resets the network.">Input features:</label>
+    <span style="color:var(--muted); font-family:ui-monospace,monospace; font-size:0.85rem;" data-i18n-title="feat-xy-title"
+          title="The raw point coordinates. Always fed to the network.">x, y</span>
+    <label data-i18n-title="feat-x2-title"
+           title="Feed x² as an extra input. Lets the boundary curve along the x axis (parabola / circle).">
+      <input type="checkbox" id="fx2"> <span data-i18n="feat-x2-label">x²</span></label>
+    <label data-i18n-title="feat-y2-title"
+           title="Feed y² as an extra input. Lets the boundary curve along the y axis.">
+      <input type="checkbox" id="fy2"> <span data-i18n="feat-y2-label">y²</span></label>
+    <label data-i18n-title="feat-xy-prod-title"
+           title="Feed x·y as an extra input. A single neuron can then solve XOR (the product is positive in opposite quadrants).">
+      <input type="checkbox" id="fxy"> <span data-i18n="feat-xy-prod-label">x·y</span></label>
+    <label data-i18n-title="feat-sinx-title"
+           title="Feed sin(x) as an extra input. Adds periodic structure along the x axis.">
+      <input type="checkbox" id="fsinx"> <span data-i18n="feat-sinx-label">sin(x)</span></label>
+    <label data-i18n-title="feat-siny-title"
+           title="Feed sin(y) as an extra input. Adds periodic structure along the y axis.">
+      <input type="checkbox" id="fsiny"> <span data-i18n="feat-siny-label">sin(y)</span></label>
+  </div>
+  </div><!-- /.bento-cell controls -->
+
+  <div class="bento-cell">
+  <div class="stats-strip">
+    <div class="stat-item"><div class="label" data-i18n="stat-epoch">Epoch</div><div class="val" id="epochV">0</div></div>
+    <div class="stat-item"><div class="label" data-i18n="stat-loss">Loss (BCE)</div><div class="val" id="lossV">—</div></div>
+    <div class="stat-item"><div class="label" data-i18n="stat-acc">Train accuracy</div><div class="val" id="accV">—</div></div>
+    <div class="stat-item"><div class="label" data-i18n="stat-param">Parameters</div><div class="val" id="paramV">—</div></div>
+  </div>
+  </div><!-- /.bento-cell stats -->
+  </div><!-- /.bento-side -->
+
+  <div class="bento-main">
+  <div class="bento-cell">
+  <div class="canvas-pair">
+    <div class="canvas-card">
+      <h3 data-i18n="bv-h3">Decision boundary + training data</h3>
+      <canvas id="bv" width="420" height="300" role="img"
+              aria-label="Decision boundary and training data for the tiny neural network."></canvas>
+    </div>
+    <div class="canvas-card">
+      <h3 data-i18n="lc-h3">Loss (BCE) over training</h3>
+      <canvas id="lc" width="420" height="300" role="img"
+              aria-label="Binary cross-entropy loss over training epochs."></canvas>
+    </div>
+  </div>
+  </div><!-- /.bento-cell charts -->
+
+  <div class="bento-cell">
+  <!-- Network graph (TF-Playground style): neurons as nodes in columns,
+       weights as edges colored by sign and scaled by magnitude. Open by default. -->
+  <details open id="ngDetails" style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="graph-summary">🕸 Network graph — weights as connections</span>
+    </summary>
+    <div style="margin-top:10px; padding:12px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+      <div style="color:var(--muted); font-size:0.82rem; margin-bottom:6px;" data-i18n="graph-hint">
+        Each circle is a neuron; each line is one weight. Blue = positive, red = negative; thicker / brighter = larger magnitude. Updates live as the network trains.
+      </div>
+      <div id="nnInitHint" style="display:none; font-size:0.82rem; color:var(--muted); background:var(--soft); border:1px solid var(--border); border-radius:6px; padding:6px 10px; margin-bottom:8px;" data-i18n="init-hint">⚠ Random initialization — these weights are noise until you press Train.</div>
+      <!-- Weights | Gradients toggle -->
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
+        <div style="display:inline-flex; border:1px solid var(--border); border-radius:6px; overflow:hidden;">
+          <button id="ngViewW" style="padding:4px 12px; font:inherit; font-size:0.82rem; border:none; cursor:pointer; background:var(--accent); color:white; font-weight:600;" data-i18n="ng-view-w">Weights</button>
+          <button id="ngViewG" style="padding:4px 12px; font:inherit; font-size:0.82rem; border:none; cursor:pointer; background:var(--card); color:var(--muted);" data-i18n="ng-view-g">Gradients</button>
+        </div>
+        <span id="ngGradHint" style="display:none; font-size:0.8rem; color:var(--muted);" data-i18n="ng-grad-hint">Gradient view: blue = backprop pushes this weight up, red = down (width = how hard).</span>
+      </div>
+      <canvas id="ng" width="840" height="300" role="img"
+              aria-label="Network graph: neurons as nodes, weights as colored connections."></canvas>
+    </div>
+  </details>
+  </div><!-- /.bento-cell network-graph -->
+
+  <div class="bento-cell">
+  <!-- Inside-the-network views (weight matrices + per-neuron activation heatmaps). -->
+  <details id="insideDetails" style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="inside-summary">🧠 Inside the network (weights + per-neuron activation maps)</span>
+    </summary>
+    <div style="margin-top:10px; padding:12px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+      <div id="weightsView" style="margin-bottom:14px;">
+        <div style="color:var(--muted); font-size:0.82rem; margin-bottom:6px;" data-i18n="weights-hint">
+          Each row is a layer; each square is one weight. Blue = positive, red = negative; brightness = magnitude.
+        </div>
+        <div id="weightsRows"></div>
+      </div>
+      <div id="activationsView">
+        <div style="color:var(--muted); font-size:0.82rem; margin-bottom:6px;" data-i18n="acts-hint">
+          Each thumbnail shows one hidden neuron's activation over the 2D input plane — "what this neuron has learned to fire on."
+        </div>
+        <div id="activationsRows"></div>
+      </div>
+    </div>
+  </details>
+  </div><!-- /.bento-cell inside-network -->
+  </div><!-- /.bento-main -->
+  </div><!-- /.bento -->
+
+  <!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
+  <details class="lesson-tour" style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="tour-summary">📚 Lesson tour (5 steps)</span>
+    </summary>
+    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+        <strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
+        <strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">—</strong>
+      </div>
+      <p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">—</p>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="step-btn secondary" id="tourPrev" data-i18n="tour-prev">← Prev</button>
+        <button class="step-btn" id="tourApply" data-i18n="tour-apply">▶ Apply this scenario</button>
+        <button class="step-btn secondary" id="tourNext" data-i18n="tour-next">Next →</button>
+      </div>
+    </div>
+  </details>
+
+  <!-- Worksheet/lab mode. 3 questions per applet with instant check. -->
+  <details class="worksheet" style="margin-top:8px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="ws-summary">📝 Worksheet (3 questions)</span>
+    </summary>
+    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem; line-height:1.5;">
+      <div class="ws-q" id="ws1">
+        <p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">Moons dataset, h1=0, h2=0, linear activation. Train. Final loss is closest to:</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="0"> <span data-i18n="ws1o0">0 — a single linear layer is enough to separate the two moons.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="1"> <span data-i18n="ws1o1">About 0.3 — a straight line cannot split the moons, so loss plateaus above zero.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="2"> <span data-i18n="ws1o2">NaN — a linear model has no hidden layer, so training diverges.</span></label>
+        </div>
+        <button class="step-btn" id="ws1btn" data-i18n="ws-check">Check</button>
+        <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+      <div class="ws-q" id="ws2" style="margin-top:10px;">
+        <p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Same dataset, h1=6, activation=ReLU. After training, final loss is closest to:</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="0"> <span data-i18n="ws2o0">Near 0 — a ReLU hidden layer adds enough capacity to bend the boundary around the moons.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="1"> <span data-i18n="ws2o1">About 0.3 — adding ReLU does not change what a linear model can already do.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="2"> <span data-i18n="ws2o2">NaN — ReLU units always die and stop the network from learning.</span></label>
+        </div>
+        <button class="step-btn" id="ws2btn" data-i18n="ws-check">Check</button>
+        <span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+      <div class="ws-q" id="ws3" style="margin-top:10px;">
+        <p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Moons, h1=6 h2=4, activation=linear (no non-linearity). Compared to 1 linear layer (h1=0), the capacity is:</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="0"> <span data-i18n="ws3o0">More — two extra layers give the network strictly more expressive power.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="1"> <span data-i18n="ws3o1">Less — stacking layers shrinks the number of usable parameters.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="2"> <span data-i18n="ws3o2">The same — stacked linear layers collapse into a single linear map.</span></label>
+        </div>
+        <button class="step-btn" id="ws3btn" data-i18n="ws-check">Check</button>
+        <span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+    </div>
+  </details>
+
+  <div class="jump-anchor"><a href="#essay" class="jump-link" data-i18n="jump-link">↓ Read the explanation</a></div>
+</div>
+</section>
+
+<article class="essay" id="essay">
+
+  <p class="lede">
+    A neural network is just a stack of "carve a line, bend it, carve another line, bend it" —
+    repeated layer after layer until the function is flexible enough to do what you want.
+    This applet trains one on a 2D classification problem so you can watch the decision boundary
+    bend in real time as the model learns.
+  </p>
+
+  <h2>What "layer" means here</h2>
+
+  <p>
+    Each layer takes the previous layer's outputs and computes <code>activate(W·x + b)</code>:
+    a linear combination of its inputs (the matrix <code>W</code> and bias <code>b</code>), then
+    a non-linear "activation function" applied element-wise. The first hidden layer turns the 2D
+    input into some new feature space; the second hidden layer can carve that feature space
+    further; the final layer collapses everything to one number — the predicted probability of
+    class B.
+  </p>
+
+  <h2>Why non-linearity is non-negotiable</h2>
+
+  <p>
+    Pick the "linear" activation and try to fit two moons. The model stalls as a single straight
+    line no matter how many hidden layers you add. The reason is algebraic: a composition of
+    linear functions is still a linear function. To bend the decision boundary you need a
+    non-linear step somewhere, and that's exactly what ReLU, tanh, and sigmoid provide.
+  </p>
+
+  <div class="aha">
+    Take "linear" activation with any architecture and try XOR. The model fails forever. Take
+    ReLU with hidden sizes 0/0 and try moons — it also fails. Take ReLU with hidden sizes 6/4
+    and try moons — it works. <em>The non-linearity matters as much as the depth, and depth
+    matters only because non-linearity exists.</em>
+  </p>
+
+  <h2>What you're watching when you press train</h2>
+
+  <p>
+    The applet does full-batch stochastic gradient descent: for each of the 200 training points,
+    it computes the prediction, the cross-entropy loss, then propagates gradients back through
+    every layer to update every weight. Each "epoch" is one pass over all 200 points. The loss
+    curve on the right is the sum of all per-point losses, divided by 200.
+  </p>
+
+  <h2>Common failure modes you can produce here</h2>
+
+  <ul>
+    <li><strong>Too high learning rate</strong> — slide LR to 0.3. Loss oscillates or diverges.</li>
+    <li><strong>Too low learning rate</strong> — slide LR to 0.001. Loss falls so slowly you'll lose patience.</li>
+    <li><strong>Not enough capacity</strong> — hidden=0, dataset=moons. Loss plateaus.</li>
+    <li><strong>Wrong activation for the data</strong> — sigmoid on circles often gets stuck in a bad local minimum because gradients vanish far from zero.</li>
+  </ul>
+
+  <h2>What this simplifies</h2>
+
+  <p>
+    Real neural networks use mini-batch SGD (batches of 32 or 256, not the whole dataset),
+    sophisticated optimizers (Adam, AdamW) with momentum and adaptive per-parameter learning
+    rates, hundreds or thousands of layers, regularization (dropout, weight decay, batch norm),
+    and millions of parameters. But the core loop — forward pass, compute loss, backward pass,
+    update weights — is exactly what runs here.
+  </p>
+
+  <div class="for-teachers">
+    <h3>For teachers</h3>
+    <p><strong>Curriculum:</strong> Neural Network Fundamentals. Layers and activations;
+       gradient descent; capacity vs data size; the XOR-as-non-linearity-litmus-test.
+       Input-feature toggles (x², x·y, sin) let students see that feature engineering changes what the network can separate; the network-graph view renders the weights as connections.</p>
+    <p><strong>Pre-exploration prompts:</strong></p>
+    <ul>
+      <li>Can you draw a single straight line that separates the XOR points? Why or why not?</li>
+      <li>What might a "hidden layer" do that the inputs and outputs don't?</li>
+      <li>If a model has more parameters, is it always better?</li>
+    </ul>
+    <p><strong>Post-exploration prompts:</strong></p>
+    <ul>
+      <li>Activation = "linear", any architecture, dataset = moons. Train. Why does this stall as a straight line?</li>
+      <li>Hidden sizes 0/0, ReLU, XOR. Train. Why is the boundary still a line?</li>
+      <li>Hidden 8/8, ReLU, circles. Train. Watch the boundary unfold from straight → curved → closed. What's happening?</li>
+      <li>Crank LR to 0.3. What goes wrong, and why?</li>
+    </ul>
+    <p><strong>Common misconceptions defeated:</strong>
+       "deeper is always better" (training instability says no);
+       "the model sees the dataset name" (no — only the (x, y, label) tuples);
+       "a hidden layer alone is enough" (no — without non-linearity it collapses).</p>
+  </div>
+
+</article>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+
+  // ===== i18n strings =====
+  const STRINGS = {
+    en: {
+      'title': 'Visualizing a Tiny Neural Net', 'back-link': '← Back to all playgrounds',
+      'footer-top': '↑ Back to top', 'footer-builtby': 'Built by', 'footer-course': 'Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy', 'footer-source': 'View source', 'footer-issue': 'Report an issue',
+      'reset-all': '↺ Reset all', 'dataset-label': 'Dataset:', 'act-label': 'Activation:',
+      'tldr-strong': 'The big idea',
+      'tldr-body': 'Layers stacked with non-linear activations can carve any decision boundary. Remove the non-linearity and the whole network collapses into a single line.',
+      'opt-moons': 'Two moons (non-linear, curved)',
+      'opt-circles': 'Concentric circles (radial)',
+      'opt-xor': 'XOR (canonical non-linearity test)',
+      'opt-blobs': 'Two blobs (linearly separable)',
+      'opt-linear': 'linear (no non-linearity)',
+      'h1-label': 'Hidden 1', 'h2-label': 'Hidden 2', 'lr-label': 'Learning rate',
+      'opt-label': 'Optimizer:', 'opt-sgd': 'SGD',
+      'opt-momentum': 'Momentum (β=0.9)', 'opt-adam': 'Adam (β₁=0.9, β₂=0.999)',
+      'opt-title': 'SGD: plain gradient descent (w ← w − lr·g). Momentum: accumulates a velocity buffer (v ← βv − lr·g; w ← w + v) — smooths noisy gradients and accelerates through ravines. Adam: combines momentum (1st moment) with adaptive per-parameter learning rates (2nd moment).',
+      'train-btn': '▶ Train / pause', 'reset-btn': 'Reset weights',
+      'step-btn': '❘▶ Step', 'speed-label': 'Speed',
+      'restart-title': 'Re-initialize weights randomly; rebuild architecture from current settings.',
+      'back-title': 'Step one training frame backward (review).',
+      'tp-idle': 'idle',
+      'history-label': '⏪ History', 'goto-label': 'epoch', 'return-live': 'Jump to latest',
+      'show-test-label': 'Show test loss/points',
+      'show-test-title': 'Show test-loss curve on the loss chart and mark test points (open shapes) on the decision-boundary chart. Test = held-out 20% never used for gradients.',
+      'inside-summary': '🧠 Inside the network (weights + per-neuron activation maps)',
+      'weights-hint': 'Each row is a layer; each square is one weight. Blue = positive, red = negative; brightness = magnitude.',
+      'acts-hint': "Each thumbnail shows one hidden neuron's activation over the 2D input plane — \"what this neuron has learned to fire on.\"",
+      'bv-h3': 'Decision boundary + training data',
+      'lc-h3': 'Loss (BCE) over training',
+      'stat-epoch': 'Epoch', 'stat-loss': 'Loss (BCE)',
+      'stat-acc': 'Train accuracy', 'stat-param': 'Parameters',
+      'jump-link': '↓ Read the explanation',
+      'tour-summary': '📚 Lesson tour (5 steps)',
+      'tour-step': 'Step',
+      'tour-prev': '← Prev', 'tour-next': 'Next →', 'tour-apply': '▶ Apply this scenario',
+      'ws-summary': '📝 Worksheet (3 questions)',
+      'ws-check': 'Check',
+      'ws-pick': 'Pick an answer first.',
+      // --- F1: worksheet question prompts (data-i18n spans) ---
+      'ws1q': 'Moons dataset, h1=0, h2=0, linear activation. Train. Final loss is closest to:',
+      'ws2q': 'Same dataset, h1=6, activation=ReLU. After training, final loss is closest to:',
+      'ws3q': 'Moons, h1=6 h2=4, activation=linear (no non-linearity). Compared to 1 linear layer (h1=0), the capacity is:',
+      // --- MCQ: worksheet option labels (ws{n}o{i}) ---
+      'ws1o0': '0 — a single linear layer is enough to separate the two moons.',
+      'ws1o1': 'About 0.3 — a straight line cannot split the moons, so loss plateaus above zero.',
+      'ws1o2': 'NaN — a linear model has no hidden layer, so training diverges.',
+      'ws2o0': 'Near 0 — a ReLU hidden layer adds enough capacity to bend the boundary around the moons.',
+      'ws2o1': 'About 0.3 — adding ReLU does not change what a linear model can already do.',
+      'ws2o2': 'NaN — ReLU units always die and stop the network from learning.',
+      'ws3o0': 'More — two extra layers give the network strictly more expressive power.',
+      'ws3o1': 'Less — stacking layers shrinks the number of usable parameters.',
+      'ws3o2': 'The same — stacked linear layers collapse into a single linear map.',
+      // --- F1: lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
+      'tour0name': 'Linear can split linearly-separable data',
+      'tour0desc': "Blobs dataset (two clouds), no hidden layer (h1=0, h2=0), linear activation. The network is just logistic regression — and that's enough. Watch the loss drop fast.",
+      'tour1name': 'Moons: linear fails, network needs depth',
+      'tour1desc': 'Switch to moons. Same linear setup. Loss plateaus around 0.3+ — no straight line can separate them. The model lacks the capacity. This is the canonical pitch for hidden layers.',
+      'tour2name': 'Add ReLU + one hidden layer → moons solved',
+      'tour2desc': 'Moons, one hidden layer of 6 ReLU units. Network now bends. Loss drops to near zero. The non-linearity, not just depth, is what bought you the curve.',
+      'tour3name': 'Stack with linear activation collapses',
+      'tour3desc': 'Moons, h1=6 h2=4, but activation = linear. Two linear layers compose to ONE linear layer — math says so. Loss plateaus again. Depth without non-linearity is wasted parameters.',
+      'tour4name': 'XOR — the textbook non-linear task',
+      'tour4desc': 'XOR dataset: opposite corners are the same class. Provably unsolvable by any linear model since Minsky 1969. With ReLU + 2 hidden layers, train and watch the decision boundary become 4 wedges.',
+      // --- F1: worksheet answer-feedback (ws{n}ok / ws{n}no) ---
+      'ws1ok': 'Correct (~0.3+). A linear model is just logistic regression — it can only draw straight lines. The moons are nonlinearly separable, so the best a linear classifier can do is misclassify some — loss plateaus around 0.3.',
+      'ws1no': "Try 0.3. With h1=0 + linear activation, the model is logistic regression, which can't curve. Loss plateaus well above zero.",
+      'ws2ok': 'Right. h1=6 ReLU is just enough capacity to bend the boundary into the moon shape. Loss drops to near zero (or actual zero if data is fully separable). Non-linearity is the unlock — depth alone with linear activation would not help.',
+      'ws2no': 'Try 0 (near zero). ReLU + a hidden layer gives the network enough capacity to learn the curved boundary.',
+      'ws3ok': 'Correct. Two linear layers compose to ONE linear layer — math: A·(B·x) = (A·B)·x. Stacking depth without non-linearity is mathematically equivalent to a single layer, just with more parameters wastefully reparameterizing it.',
+      'ws3no': "Try 'same'. f(x) = W₂(W₁x) = (W₂W₁)x — composition of linear maps is linear. Depth alone gains nothing.",
+      // tooltip translations for main selectors + slider labels.
+      'dataset-sel-title': 'Test problem. XOR forces non-linearity; blobs work with a single line.',
+      'act-sel-title': "Non-linearity applied after each hidden layer. 'linear' collapses depth into a single line.",
+      'h1-title': 'Number of neurons in the first hidden layer. 0 = no hidden layer.',
+      'h2-title': 'Number of neurons in the second hidden layer. 0 = no second hidden layer.',
+      'lr-title': 'SGD step size. Too small = glacial; too large = unstable.',
+      // engineered input-feature toggles (TF-Playground style).
+      'feat-label': 'Input features:',
+      'feat-label-title': 'Extra engineered inputs fed alongside x and y. They let a small network bend or close its boundary without more hidden neurons. Toggling resets the network.',
+      'feat-xy-title': 'The raw point coordinates. Always fed to the network.',
+      'feat-x2-label': 'x²', 'feat-x2-title': 'Feed x² as an extra input. Lets the boundary curve along the x axis (parabola / circle).',
+      'feat-y2-label': 'y²', 'feat-y2-title': 'Feed y² as an extra input. Lets the boundary curve along the y axis.',
+      'feat-xy-prod-label': 'x·y', 'feat-xy-prod-title': 'Feed x·y as an extra input. A single neuron can then solve XOR (the product is positive in opposite quadrants).',
+      'feat-sinx-label': 'sin(x)', 'feat-sinx-title': 'Feed sin(x) as an extra input. Adds periodic structure along the x axis.',
+      'feat-siny-label': 'sin(y)', 'feat-siny-title': 'Feed sin(y) as an extra input. Adds periodic structure along the y axis.',
+      // network-graph view (neurons as nodes, weights as colored connections).
+      'graph-summary': '🕸 Network graph — weights as connections',
+      'graph-hint': 'Each circle is a neuron; each line is one weight. Blue = positive, red = negative; thicker / brighter = larger magnitude. Updates live as the network trains.',
+      'init-hint': '⚠ Random initialization — these weights are noise until you press Train.',
+      'graph-out-label': 'out',
+      'ng-view-w': 'Weights',
+      'ng-view-g': 'Gradients',
+      'ng-grad-hint': 'Gradient view: blue = backprop pushes this weight up, red = down (width = how hard).',
+      'ng-grad-none': 'Train (or Step) once to see gradients.',
+    },
+    zh: {
+      'title': '迷你神经网络可视化', 'back-link': '← 返回所有演示',
+      'footer-top': '↑ 返回顶部', 'footer-builtby': '作者', 'footer-course': '为海淀凯文学校 2025–2026《人工智能导论》课程制作', 'footer-source': '查看源代码', 'footer-issue': '反馈问题',
+      'reset-all': '↺ 全部重置', 'dataset-label': '数据集:', 'act-label': '激活函数:',
+      'tldr-strong': '核心思想',
+      'tldr-body': '带非线性激活函数的层堆叠起来可以刻出任意决策边界。去掉非线性,整个网络就会塌缩成一条直线。',
+      'opt-moons': '双月(非线性,弯曲)',
+      'opt-circles': '同心圆(径向)',
+      'opt-xor': '异或(经典非线性测试)',
+      'opt-blobs': '两团(线性可分)',
+      'opt-linear': '线性(无非线性)',
+      'h1-label': '隐层 1', 'h2-label': '隐层 2', 'lr-label': '学习率',
+      'opt-label': '优化器:', 'opt-sgd': 'SGD',
+      'opt-momentum': '动量 (β=0.9)', 'opt-adam': 'Adam (β₁=0.9, β₂=0.999)',
+      'opt-title': 'SGD:朴素梯度下降(w ← w − lr·g)。动量:累积速度缓冲(v ← βv − lr·g;w ← w + v)——平滑噪声梯度并在峡谷中加速。Adam:把动量(一阶矩)与每参数自适应学习率(二阶矩)结合。',
+      'train-btn': '▶ 训练 / 暂停', 'reset-btn': '重置权重',
+      'step-btn': '❘▶ 单步', 'speed-label': '速度',
+      'restart-title': '随机重新初始化权重;按当前设置重建网络结构。',
+      'back-title': '后退一个训练帧(回看)。',
+      'tp-idle': '空闲',
+      'history-label': '⏪ 历史', 'goto-label': '回合', 'return-live': '跳到最新',
+      'show-test-label': '显示测试损失/点',
+      'show-test-title': '在损失图上显示测试损失曲线,并在决策边界图上以空心形状标注测试点。测试集 = 留出的 20%,从不用于梯度更新。',
+      'inside-summary': '🧠 网络内部(权重 + 每个神经元的激活图)',
+      'weights-hint': '每行是一层,每个方块是一个权重。蓝 = 正,红 = 负;亮度 = 绝对值大小。',
+      'acts-hint': '每个缩略图显示一个隐藏神经元在 2D 输入平面上的激活——也就是这个神经元学会了"对什么开火"。',
+      'bv-h3': '决策边界 + 训练数据',
+      'lc-h3': '训练过程的损失 (BCE)',
+      'stat-epoch': '轮次', 'stat-loss': '损失 (BCE)',
+      'stat-acc': '训练准确率', 'stat-param': '参数数量',
+      'jump-link': '↓ 阅读说明',
+      'tour-summary': '📚 课程导览(5 步)',
+      'tour-step': '步骤',
+      'tour-prev': '← 上一步', 'tour-next': '下一步 →', 'tour-apply': '▶ 应用此场景',
+      'ws-summary': '📝 练习题(3 题)',
+      'ws-check': '核对',
+      'ws-pick': '请先选择一个答案。',
+      // --- F1: 练习题题干(data-i18n span)---
+      'ws1q': '双月数据集,h1=0、h2=0,线性激活。训练。最终损失最接近:',
+      'ws2q': '同一数据集,h1=6,激活函数=ReLU。训练后,最终损失最接近:',
+      'ws3q': '双月,h1=6、h2=4,激活函数=线性(无非线性)。与 1 个线性层(h1=0)相比,容量是:',
+      // --- MCQ: 练习题选项(ws{n}o{i})---
+      'ws1o0': '0——单个线性层就足以分开两个月牙。',
+      'ws1o1': '约 0.3——直线无法分开月牙,所以损失停在零以上。',
+      'ws1o2': 'NaN——线性模型没有隐藏层,所以训练发散。',
+      'ws2o0': '接近 0——一个 ReLU 隐藏层提供了足够的容量,把边界绕着月牙弯曲。',
+      'ws2o1': '约 0.3——加上 ReLU 并不会改变线性模型本就能做的事。',
+      'ws2o2': 'NaN——ReLU 单元总会"死亡",使网络无法学习。',
+      'ws3o0': '更多——两个额外的层让网络拥有严格更强的表达能力。',
+      'ws3o1': '更少——堆叠层会减少可用参数的数量。',
+      'ws3o2': '相同——堆叠的线性层会塌缩成一个线性映射。',
+      // --- F1: 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
+      'tour0name': '线性模型可以分开线性可分的数据',
+      'tour0desc': '两团数据集(两片点云),无隐藏层(h1=0、h2=0),线性激活。此时网络就是逻辑回归——而这已经够了。观察损失迅速下降。',
+      'tour1name': '双月:线性失败,网络需要深度',
+      'tour1desc': '切换到双月。相同的线性设置。损失在 0.3 上下停滞——没有直线能把它们分开。模型缺乏容量。这正是引入隐藏层的经典理由。',
+      'tour2name': '加入 ReLU + 一个隐藏层 → 双月被解决',
+      'tour2desc': '双月,一个含 6 个 ReLU 单元的隐藏层。网络现在会弯曲了。损失降到接近零。让你得到曲线的是非线性,而不只是深度。',
+      'tour3name': '用线性激活堆叠会塌缩',
+      'tour3desc': '双月,h1=6、h2=4,但激活函数=线性。两个线性层复合成一个线性层——数学如此。损失再次停滞。没有非线性的深度只是浪费参数。',
+      'tour4name': '异或——教科书式的非线性任务',
+      'tour4desc': '异或数据集:对角的两个角属于同一类。自 Minsky 1969 起就被证明任何线性模型都无法解决。用 ReLU + 2 个隐藏层,训练并观察决策边界变成 4 个楔形区域。',
+      // --- F1: 练习题答案反馈(ws{n}ok / ws{n}no)---
+      'ws1ok': '正确(约 0.3 以上)。线性模型就是逻辑回归——只能画直线。双月是非线性可分的,所以线性分类器最多只能错分一部分——损失停滞在 0.3 上下。',
+      'ws1no': '试试 0.3。当 h1=0 且激活为线性时,模型是逻辑回归,无法弯曲。损失会停滞在远高于零处。',
+      'ws2ok': '对。h1=6 的 ReLU 恰好提供了足够的容量,把边界弯成双月形状。损失降到接近零(若数据完全可分则为真正的零)。非线性才是关键——只有深度而激活为线性是没用的。',
+      'ws2no': '试试 0(接近零)。ReLU + 一个隐藏层给了网络足够的容量来学习弯曲的边界。',
+      'ws3ok': '正确。两个线性层复合成一个线性层——数学上:A·(B·x) = (A·B)·x。没有非线性的深度堆叠在数学上等价于单层,只是用更多参数做了多余的重新参数化。',
+      'ws3no': '试试"same"。f(x) = W₂(W₁x) = (W₂W₁)x——线性映射的复合仍是线性。仅有深度毫无收益。',
+      // 主要选择器与滑块的提示翻译。
+      'dataset-sel-title': '测试问题。异或要求非线性;双团数据用一条直线即可。',
+      'act-sel-title': '每个隐层之后施加的非线性。"线性"会让深度坍塌为一条直线。',
+      'h1-title': '第一个隐层的神经元数量。0 = 无隐层。',
+      'h2-title': '第二个隐层的神经元数量。0 = 无第二隐层。',
+      'lr-title': 'SGD 步长。太小 = 缓慢;太大 = 不稳定。',
+      // 工程化输入特征开关(TF-Playground 风格)。
+      'feat-label': '输入特征:',
+      'feat-label-title': '在 x、y 之外额外喂入的工程化特征。它们让小网络无需增加隐藏神经元也能弯曲或闭合决策边界。切换会重置网络。',
+      'feat-xy-title': '原始点坐标,始终喂入网络。',
+      'feat-x2-label': 'x²', 'feat-x2-title': '把 x² 作为额外输入。让边界沿 x 轴弯曲(抛物线 / 圆)。',
+      'feat-y2-label': 'y²', 'feat-y2-title': '把 y² 作为额外输入。让边界沿 y 轴弯曲。',
+      'feat-xy-prod-label': 'x·y', 'feat-xy-prod-title': '把 x·y 作为额外输入。单个神经元即可解决异或(乘积在对角象限为正)。',
+      'feat-sinx-label': 'sin(x)', 'feat-sinx-title': '把 sin(x) 作为额外输入。沿 x 轴添加周期性结构。',
+      'feat-siny-label': 'sin(y)', 'feat-siny-title': '把 sin(y) 作为额外输入。沿 y 轴添加周期性结构。',
+      // 网络图视图(神经元为节点,权重为彩色连线)。
+      'graph-summary': '🕸 网络图——权重即连线',
+      'graph-hint': '每个圆圈是一个神经元,每条线是一个权重。蓝 = 正,红 = 负;越粗 / 越亮 = 绝对值越大。训练时实时更新。',
+      'init-hint': '⚠ 随机初始化——训练之前,这些权重只是噪声。',
+      'graph-out-label': '输出',
+      'ng-view-w': '权重',
+      'ng-view-g': '梯度',
+      'ng-grad-hint': '梯度视图:蓝 = 反向传播把该权重往上推,红 = 往下推(粗细 = 力度)。',
+      'ng-grad-none': '先训练(或单步)一次以查看梯度。',
+    },
+  };
+  function setLang(lang) {
+    if (!STRINGS[lang]) lang = 'en';
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.dataset.i18n;
+      if (STRINGS[lang][k]) el.textContent = STRINGS[lang][k];
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const k = el.dataset.i18nTitle;
+      if (STRINGS[lang][k]) el.title = STRINGS[lang][k];
+    });
+    document.querySelectorAll('.lang-switch button').forEach(b =>
+      b.classList.toggle('active', b.dataset.lang === lang));
+    try { localStorage.setItem('lang', lang); } catch (_) {}
+  }
+  document.querySelectorAll('.lang-switch button').forEach(b =>
+    b.addEventListener('click', () => {
+      setLang(b.dataset.lang);
+      // F1: re-render the tour in the new language. Safe here — this click handler
+      // only runs post-init, after LESSON_TOUR (a late `const`) is initialized, so
+      // there is no temporal-dead-zone risk (unlike calling it from inside setLang).
+      try { if (typeof renderTour === 'function') renderTour(); } catch (_) {}
+    }));
+  let initialLang = 'en';
+  try { initialLang = localStorage.getItem('lang') || 'en'; } catch (_) {}
+  setLang(initialLang);
+
+  function setTheme(t) {
+    document.body.classList.toggle('dark-mode', t === 'dark');
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+    try { localStorage.setItem('theme', t); } catch (_) {}
+  }
+  let initialTheme = 'light';
+  try {
+    initialTheme = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  } catch (_) {}
+  setTheme(initialTheme);
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    setTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark');
+    if (typeof drawBoundary === 'function') drawBoundary();
+    if (typeof drawLoss === 'function') drawLoss();
+    if (typeof drawNetworkGraph === 'function') drawNetworkGraph();
+    if (typeof setNgView === 'function') setNgView(ngView);
+  });
+
+  // For-teachers is hidden by default (cognitive-load floor). User toggles persist.
+  // `?teacher=1` opens on load. `?teacher=0` hides completely (no toggle, for projection).
+  try {
+    const tp = new URLSearchParams(location.search).get('teacher');
+    if (tp === '0') {
+      document.querySelectorAll('.for-teachers').forEach(el => el.style.display = 'none');
+    } else {
+      const style = document.createElement('style');
+      style.textContent = '.for-teachers-expander{margin-top:36px}.for-teachers-expander>summary{cursor:pointer;padding:12px 16px;background:var(--soft);border:1px solid var(--border);border-radius:8px;font-family:-apple-system,system-ui,sans-serif;font-size:0.9rem;color:var(--accent);font-weight:600;list-style:none;user-select:none}.for-teachers-expander>summary::-webkit-details-marker{display:none}.for-teachers-expander[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius:0}.for-teachers-expander>.for-teachers{margin-top:0;border-top:0;border-top-left-radius:0;border-top-right-radius:0}';
+      document.head.appendChild(style);
+      document.querySelectorAll('.for-teachers').forEach(div => {
+        const details = document.createElement('details');
+        details.className = 'for-teachers-expander';
+        const summary = document.createElement('summary');
+        summary.textContent = '▸ Show teacher notes (discussion prompts + curriculum)';
+        div.parentNode.insertBefore(details, div);
+        details.appendChild(summary);
+        details.appendChild(div);
+      });
+      const saved = (() => { try { return localStorage.getItem('teacher-notes-open'); } catch (_) { return null; } })();
+      const shouldOpen = tp === '1' || saved === '1';
+      document.querySelectorAll('details.for-teachers-expander').forEach(d => {
+        d.open = shouldOpen;
+        d.addEventListener('toggle', () => {
+          try { localStorage.setItem('teacher-notes-open', d.open ? '1' : '0'); } catch (_) {}
+        });
+      });
+    }
+  } catch (_) {}
+  document.getElementById('exportPng').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'neural-net.png';
+    link.href = document.getElementById('bv').toDataURL('image/png');
+    link.click();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.code === 'Space' &&
+        e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' &&
+        e.target.tagName !== 'SELECT') {
+      e.preventDefault();
+      document.getElementById('trainBtn').click();
+    }
+  });
+
+  const bv = $('bv'); const bctx = bv.getContext('2d');
+  const lc = $('lc'); const lctx = lc.getContext('2d');
+  const ng = $('ng'); // network-graph canvas (DPR-resized alongside bv/lc)
+  function resizeCv(cv) {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = cv.getBoundingClientRect();
+    cv.width = rect.width * dpr; cv.height = rect.height * dpr;
+    cv.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  let train = [];
+  let testSet = []; // held-out 20% for test-loss tracking
+  function genData() {
+    train = []; testSet = [];
+    const N = 200;
+    const ds = $('datasetSel').value;
+    for (let i = 0; i < N; i++) {
+      let x, y, label;
+      if (ds === 'moons') {
+        const t = Math.PI * Math.random();
+        if (Math.random() < 0.5) {
+          x = Math.cos(t) + randn() * 0.12; y = Math.sin(t) + randn() * 0.12; label = 0;
+        } else {
+          x = 1 - Math.cos(t) + randn() * 0.12; y = 0.5 - Math.sin(t) + randn() * 0.12; label = 1;
+        }
+      } else if (ds === 'circles') {
+        const r = Math.random() < 0.5 ? 0.3 : 0.8;
+        const theta = 2 * Math.PI * Math.random();
+        x = r * Math.cos(theta) + randn() * 0.05;
+        y = r * Math.sin(theta) + randn() * 0.05;
+        label = r > 0.5 ? 1 : 0;
+      } else if (ds === 'xor') {
+        x = Math.random() * 2 - 1; y = Math.random() * 2 - 1;
+        label = (x * y > 0) ? 1 : 0;
+        x += randn() * 0.05; y += randn() * 0.05;
+      } else {
+        if (Math.random() < 0.5) {
+          x = -0.5 + randn() * 0.2; y = -0.5 + randn() * 0.2; label = 0;
+        } else {
+          x = 0.5 + randn() * 0.2; y = 0.5 + randn() * 0.2; label = 1;
+        }
+      }
+      train.push({x, y, label});
+    }
+    // deterministic 80/20 split — last 40 examples become the test set.
+    // Deterministic so students can compare runs reproducibly.
+    testSet = train.splice(Math.floor(train.length * 0.8));
+  }
+  function randn() {
+    let u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+
+  // ===== engineered input features (TensorFlow-Playground style) =====
+  // x and y are ALWAYS on. The five engineered features default OFF, so the
+  // default network input is exactly [x, y] — identical to the original applet.
+  // Fixed deterministic order: x, y, x², y², x·y, sin(x), sin(y). Every code
+  // path (training, forward, boundary render, neuron heatmaps) maps a raw point
+  // through featureVec() so the feature order is guaranteed consistent.
+  //
+  // Scale note: raw x,y live on ~[-1.6, 1.6]. To keep the engineered features on
+  // a comparable scale (so training stays stable and He/Xavier init still fits),
+  // squares and the product are divided by 1.6 (max |x²|, |x·y| ≈ 2.56 → ≈1.6),
+  // and sin() is left as-is (already in [-1, 1]).
+  const FEATURE_DEFS = [
+    { id: 'fx2',  fn: (x, y) => (x * x) / 1.6 },
+    { id: 'fy2',  fn: (x, y) => (y * y) / 1.6 },
+    { id: 'fxy',  fn: (x, y) => (x * y) / 1.6 },
+    { id: 'fsinx', fn: (x, y) => Math.sin(x) },
+    { id: 'fsiny', fn: (x, y) => Math.sin(y) },
+  ];
+  // active engineered features, in FEATURE_DEFS order (rebuilt from checkboxes).
+  let activeFeatures = [];
+  function refreshActiveFeatures() {
+    activeFeatures = FEATURE_DEFS.filter(f => { const el = $(f.id); return el && el.checked; });
+  }
+  // raw point (x, y) → input vector [x, y, ...active engineered features].
+  function featureVec(x, y) {
+    const v = [x, y];
+    for (const f of activeFeatures) v.push(f.fn(x, y));
+    return v;
+  }
+  // input-layer size = number of active features (2 + engineered).
+  function featureCount() { return 2 + activeFeatures.length; }
+
+  let layers = [];
+  let lastGradW = null; // captured gradient from the most recent trainStep (averaged over training set)
+  let ngView = 'weights'; // 'weights' | 'gradients'
+  // optimizer step counter (used by Adam bias correction). Reset on every
+  // network rebuild (changing arch, resetting weights, switching optimizer mid-run
+  // intentionally KEEPS the counter — that mirrors PyTorch behavior).
+  let optStep = 0;
+  function buildNet() {
+    layers = [];
+    refreshActiveFeatures();
+    const sizes = [featureCount()];
+    const h1 = +$('h1').value, h2 = +$('h2').value;
+    if (h1 > 0) sizes.push(h1);
+    if (h2 > 0) sizes.push(h2);
+    sizes.push(1);
+    const act = $('act').value;
+    for (let i = 0; i < sizes.length - 1; i++) {
+      const inp = sizes[i], out = sizes[i+1];
+      const W = [];
+      const scale = (act === 'relu') ? Math.sqrt(2 / inp) : Math.sqrt(1 / inp);
+      for (let r = 0; r < out; r++) {
+        const row = [];
+        for (let c = 0; c < inp; c++) row.push(randn() * scale);
+        W.push(row);
+      }
+      const b = new Array(out).fill(0);
+      // allocate optimizer state buffers (momentum velocity + Adam moments).
+      // Same shape as W and b. Zeroed at init; populated only by momentum / Adam updates.
+      const mW = W.map(row => row.map(() => 0));
+      const mB = b.map(() => 0);
+      const vW = W.map(row => row.map(() => 0));
+      const vB = b.map(() => 0);
+      layers.push({W, b, act: (i === sizes.length - 2) ? 'sigmoid' : act, mW, mB, vW, vB});
+    }
+    optStep = 0;
+    updateParamCount();
+  }
+  function updateParamCount() {
+    let p = 0;
+    for (const L of layers) p += L.W.length * L.W[0].length + L.b.length;
+    $('paramV').textContent = p;
+  }
+
+  function activate(z, kind) {
+    if (kind === 'relu') return z > 0 ? z : 0;
+    if (kind === 'tanh') return Math.tanh(z);
+    if (kind === 'sigmoid') return 1 / (1 + Math.exp(-z));
+    return z;
+  }
+  function dActivate(a, kind) {
+    if (kind === 'relu') return a > 0 ? 1 : 0;
+    if (kind === 'tanh') return 1 - a * a;
+    if (kind === 'sigmoid') return a * (1 - a);
+    return 1;
+  }
+  function forward(x0, x1) {
+    let a = featureVec(x0, x1);
+    const cache = [a];
+    for (const L of layers) {
+      const z = new Array(L.b.length);
+      for (let r = 0; r < L.W.length; r++) {
+        let s = L.b[r];
+        for (let c = 0; c < L.W[r].length; c++) s += L.W[r][c] * a[c];
+        z[r] = s;
+      }
+      a = z.map(v => activate(v, L.act));
+      cache.push(a);
+    }
+    return {out: a[0], cache};
+  }
+  function trainStep() {
+    const lr = +$('lr').value;
+    let totalLoss = 0;
+    const gW = layers.map(L => L.W.map(row => row.map(() => 0)));
+    const gB = layers.map(L => L.b.map(() => 0));
+    for (const ex of train) {
+      const {out, cache} = forward(ex.x, ex.y);
+      const yhat = Math.max(1e-7, Math.min(1 - 1e-7, out));
+      const y = ex.label;
+      totalLoss += -(y * Math.log(yhat) + (1 - y) * Math.log(1 - yhat));
+      let delta = [yhat - y];
+      for (let li = layers.length - 1; li >= 0; li--) {
+        const L = layers[li];
+        const aIn = cache[li];
+        for (let r = 0; r < L.W.length; r++) {
+          for (let c = 0; c < L.W[r].length; c++) gW[li][r][c] += delta[r] * aIn[c];
+          gB[li][r] += delta[r];
+        }
+        if (li > 0) {
+          const prevL = layers[li - 1];
+          const newDelta = new Array(prevL.b.length).fill(0);
+          for (let c = 0; c < L.W[0].length; c++) {
+            let s = 0;
+            for (let r = 0; r < L.W.length; r++) s += L.W[r][c] * delta[r];
+            newDelta[c] = s * dActivate(aIn[c], prevL.act);
+          }
+          delta = newDelta;
+        }
+      }
+    }
+    const n = train.length;
+    // dispatch on the selected optimizer. Hyperparameters are pinned to
+    // textbook defaults so students compare optimizers, not hand-tuned settings.
+    const optSel = document.getElementById('optSel');
+    const opt = optSel ? optSel.value : 'sgd';
+    const beta1 = 0.9, beta2 = 0.999, eps = 1e-8;
+    optStep++;
+    // Capture averaged gradient for the Gradients view (deep-clone before any weight update).
+    lastGradW = gW.map(layer => layer.map(row => row.map(v => v / n)));
+    for (let li = 0; li < layers.length; li++) {
+      const L = layers[li];
+      for (let r = 0; r < L.W.length; r++) {
+        for (let c = 0; c < L.W[r].length; c++) {
+          const g = gW[li][r][c] / n;
+          if (opt === 'sgd') {
+            L.W[r][c] -= lr * g;
+          } else if (opt === 'momentum') {
+            // v ← β·v − lr·g;  w ← w + v   (Polyak momentum)
+            L.mW[r][c] = beta1 * L.mW[r][c] - lr * g;
+            L.W[r][c] += L.mW[r][c];
+          } else { // adam
+            L.mW[r][c] = beta1 * L.mW[r][c] + (1 - beta1) * g;
+            L.vW[r][c] = beta2 * L.vW[r][c] + (1 - beta2) * g * g;
+            const mHat = L.mW[r][c] / (1 - Math.pow(beta1, optStep));
+            const vHat = L.vW[r][c] / (1 - Math.pow(beta2, optStep));
+            L.W[r][c] -= lr * mHat / (Math.sqrt(vHat) + eps);
+          }
+        }
+        const g = gB[li][r] / n;
+        if (opt === 'sgd') {
+          L.b[r] -= lr * g;
+        } else if (opt === 'momentum') {
+          L.mB[r] = beta1 * L.mB[r] - lr * g;
+          L.b[r] += L.mB[r];
+        } else { // adam
+          L.mB[r] = beta1 * L.mB[r] + (1 - beta1) * g;
+          L.vB[r] = beta2 * L.vB[r] + (1 - beta2) * g * g;
+          const mHat = L.mB[r] / (1 - Math.pow(beta1, optStep));
+          const vHat = L.vB[r] / (1 - Math.pow(beta2, optStep));
+          L.b[r] -= lr * mHat / (Math.sqrt(vHat) + eps);
+        }
+      }
+    }
+    return totalLoss / n;
+  }
+  function predict(x0, x1) {
+    let a = featureVec(x0, x1);
+    for (const L of layers) {
+      const z = new Array(L.b.length);
+      for (let r = 0; r < L.W.length; r++) {
+        let s = L.b[r];
+        for (let c = 0; c < L.W[r].length; c++) s += L.W[r][c] * a[c];
+        z[r] = s;
+      }
+      a = z.map(v => activate(v, L.act));
+    }
+    return a[0];
+  }
+  function accuracy() {
+    let c = 0;
+    for (const ex of train) {
+      const p = predict(ex.x, ex.y);
+      if ((p > 0.5 ? 1 : 0) === ex.label) c++;
+    }
+    return c / train.length;
+  }
+
+  function drawBoundary() {
+    const ctx = bctx;
+    const rect = bv.getBoundingClientRect();
+    const W = rect.width, H = rect.height;
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : 'white'; ctx.fillRect(0, 0, W, H);
+    const xmin = -1.6, xmax = 1.6, ymin = -1.6, ymax = 1.6;
+    const STEP = 8;
+    for (let px = 0; px < W; px += STEP) {
+      for (let py = 0; py < H; py += STEP) {
+        const x = xmin + (px / W) * (xmax - xmin);
+        const y = ymax - (py / H) * (ymax - ymin);
+        const p = predict(x, y);
+        const base = p > 0.5 ? [249, 115, 22] : [37, 99, 235];
+        const conf = Math.abs(p - 0.5) * 2;
+        ctx.fillStyle = `rgba(${base[0]},${base[1]},${base[2]},${0.10 + 0.25 * conf})`;
+        ctx.fillRect(px, py, STEP, STEP);
+      }
+    }
+    for (const ex of train) {
+      const px = (ex.x - xmin) / (xmax - xmin) * W;
+      const py = H - (ex.y - ymin) / (ymax - ymin) * H;
+      ctx.fillStyle = ex.label ? getCSS('--classB') : getCSS('--classA');
+      // Shape+color: circle = class A, triangle = class B.
+      ctx.beginPath();
+      if (ex.label === 0) {
+        ctx.arc(px, py, 4, 0, Math.PI * 2);
+      } else {
+        ctx.moveTo(px, py - 5); ctx.lineTo(px + 5, py + 4); ctx.lineTo(px - 5, py + 4); ctx.closePath();
+      }
+      ctx.fill();
+      ctx.strokeStyle = 'white'; ctx.lineWidth = 1.5; ctx.stroke();
+    }
+    // test points (open / hollow shapes) — only when the toggle is on.
+    if ($('showTestLoss') && $('showTestLoss').checked) {
+      for (const ex of testSet) {
+        const px = (ex.x - xmin) / (xmax - xmin) * W;
+        const py = H - (ex.y - ymin) / (ymax - ymin) * H;
+        ctx.strokeStyle = ex.label ? getCSS('--classB') : getCSS('--classA');
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        if (ex.label === 0) ctx.arc(px, py, 4, 0, Math.PI * 2);
+        else { ctx.moveTo(px, py - 5); ctx.lineTo(px + 5, py + 4); ctx.lineTo(px - 5, py + 4); ctx.closePath(); }
+        ctx.stroke();
+      }
+    }
+  }
+  const lossHistory = [];
+  const testLossHistory = []; // parallel test-loss series
+  // BCE loss on a held-out set (no gradient update — just forward pass).
+  function evalTestLoss() {
+    if (!testSet.length) return 0;
+    let total = 0;
+    for (const ex of testSet) {
+      const {out} = forward(ex.x, ex.y);
+      const yhat = Math.max(1e-7, Math.min(1 - 1e-7, out));
+      const y = ex.label;
+      total += -(y * Math.log(yhat) + (1 - y) * Math.log(1 - yhat));
+    }
+    return total / testSet.length;
+  }
+  // render the network internals (weights as colored squares, hidden-
+  // neuron activations as small heatmap thumbnails). Called from the train loop.
+  function colorForWeight(w) {
+    const m = Math.min(1, Math.abs(w) / 2); // clamp to 2.0 for color saturation
+    if (w >= 0) {
+      const c = Math.round(255 - 200 * m); // blue → white
+      return `rgb(${c}, ${c}, 255)`;
+    } else {
+      const c = Math.round(255 - 200 * m); // red → white
+      return `rgb(255, ${c}, ${c})`;
+    }
+  }
+  function renderWeightsView() {
+    const root = document.getElementById('weightsRows');
+    if (root) root.style.opacity = (epoch === 0) ? '0.5' : '1';
+    if (!root) return;
+    let html = '';
+    layers.forEach((L, idx) => {
+      const inN = L.W[0].length, outN = L.W.length;
+      html += `<div style="margin-bottom:6px; display:flex; align-items:center; gap:8px;">`;
+      html += `<span style="font-family:ui-monospace,monospace; color:var(--muted); font-size:0.78rem; min-width:80px;">layer ${idx + 1}: ${inN}→${outN}</span>`;
+      // Grid of squares: outN rows × inN cols.
+      html += `<div style="display:inline-grid; grid-template-columns:repeat(${inN}, 14px); gap:1px;">`;
+      for (let r = 0; r < outN; r++) {
+        for (let c = 0; c < inN; c++) {
+          const w = L.W[r][c];
+          html += `<span style="display:inline-block; width:14px; height:14px; background:${colorForWeight(w)}; border:1px solid rgba(0,0,0,0.05);" title="W[${r}][${c}] = ${w.toFixed(3)}"></span>`;
+        }
+      }
+      html += '</div>';
+      html += '</div>';
+    });
+    root.innerHTML = html;
+  }
+  // ===== network graph (TF-Playground style) =====
+  // Draws neurons as nodes in left→right columns and every weight as an edge.
+  // Reads the SAME live `layers` weights that renderWeightsView() reads — no
+  // recompute. Edge color encodes the weight's sign (blue +, red −, matching
+  // colorForWeight); edge width AND alpha encode |weight| normalized by the
+  // current max |weight| in the whole network, so edges stay legible at any scale.
+  // Node columns: [inputs] + one column per layer's output (last = single output).
+  // Handles 0, 1, or 2 hidden layers and the variable input count automatically,
+  // because the column structure is derived directly from `layers`.
+  // Human-readable labels for the input column. x,y are always first; the rest
+  // follow activeFeatures order (== FEATURE_DEFS order), matching featureVec().
+  const FEATURE_GRAPH_LABELS = { fx2: 'x²', fy2: 'y²', fxy: 'x·y', fsinx: 'sin x', fsiny: 'sin y' };
+  function inputLabels() {
+    const labels = ['x', 'y'];
+    for (const f of activeFeatures) labels.push(FEATURE_GRAPH_LABELS[f.id] || f.id);
+    return labels;
+  }
+  function drawNetworkGraph() {
+    const cv = $('ng'); if (!cv || !layers.length) return;
+    { const untrained = (epoch === 0); cv.style.opacity = untrained ? '0.5' : '1';
+      const ih = $('nnInitHint'); if (ih) ih.style.display = untrained ? '' : 'none'; }
+    const ctx = cv.getContext('2d');
+    const rect = cv.getBoundingClientRect();
+    const W = rect.width, H = rect.height;
+    const dark = document.body.classList.contains('dark-mode');
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = dark ? '#1e293b' : 'white';
+    ctx.fillRect(0, 0, W, H);
+
+    // Column sizes: input count, then each layer's output count.
+    const colSizes = [layers[0].W[0].length];
+    for (const L of layers) colSizes.push(L.W.length);
+    const nCols = colSizes.length;
+
+    // Node geometry. Reserve side padding for the input labels and output label.
+    const padX = 60, padTop = 24, padBot = 18;
+    const innerW = Math.max(1, W - 2 * padX);
+    const colX = i => nCols === 1 ? W / 2 : padX + (i / (nCols - 1)) * innerW;
+    const maxNodes = Math.max(...colSizes);
+    // node radius shrinks if a column is crowded so circles never overlap.
+    const r = Math.max(4, Math.min(11, (H - padTop - padBot) / (2 * maxNodes + 1) - 1));
+    const nodeY = (count, j) => {
+      if (count === 1) return (padTop + (H - padBot)) / 2;
+      const top = padTop + r, bot = H - padBot - r;
+      return top + (j / (count - 1)) * (bot - top);
+    };
+
+    // Determine gradient view vs weight view and set normalization reference.
+    // Gradient view: edge value = −lastGradW[k][rr][cc] (negated so blue = weight
+    // will increase, red = weight will decrease, matching the w ← w−lr·g update).
+    // Weight view: fixed maxAbs=2 scale (matches colorForWeight's clamp).
+    const useGrad = (ngView === 'gradients') && lastGradW;
+    const gradHint = document.getElementById('ngGradHint');
+    if (gradHint) {
+      if (ngView === 'gradients' && !lastGradW) {
+        // No gradients yet — show the "train once" hint instead.
+        const lang = document.documentElement.lang || 'en';
+        gradHint.textContent = (STRINGS[lang] && STRINGS[lang]['ng-grad-none']) || STRINGS['en']['ng-grad-none'];
+        gradHint.style.display = '';
+      } else if (ngView === 'gradients') {
+        const lang = document.documentElement.lang || 'en';
+        gradHint.textContent = (STRINGS[lang] && STRINGS[lang]['ng-grad-hint']) || STRINGS['en']['ng-grad-hint'];
+        gradHint.style.display = '';
+      } else {
+        gradHint.style.display = 'none';
+      }
+    }
+    // Compute normalization reference for gradient view (per-frame max |g|).
+    let maxAbs = 2; // default: fixed weight scale
+    if (useGrad) {
+      let maxG = 0;
+      for (const layer of lastGradW) for (const row of layer) for (const v of row) { const av = Math.abs(v); if (av > maxG) maxG = av; }
+      maxAbs = maxG > 0 ? maxG : 1;
+    }
+
+    // Edges first (so nodes draw on top). W[r][c] links input node c (col k)
+    // to output node r (col k+1) — exactly the weight-matrix orientation.
+    for (let k = 0; k < layers.length; k++) {
+      const L = layers[k];
+      const inCount = L.W[0].length, outCount = L.W.length;
+      const x0 = colX(k), x1 = colX(k + 1);
+      for (let rr = 0; rr < outCount; rr++) {
+        for (let cc = 0; cc < inCount; cc++) {
+          // Edge value: negated gradient (shows direction weight will move) or raw weight.
+          const w = useGrad ? -(lastGradW[k][rr][cc]) : L.W[rr][cc];
+          const t = Math.min(1, Math.abs(w) / maxAbs); // 0..1 magnitude
+          if (t < 0.02) continue; // skip ~zero weights to reduce clutter
+          ctx.strokeStyle = w >= 0
+            ? `rgba(37, 99, 235, ${0.12 + 0.78 * t})`   // blue = positive
+            : `rgba(220, 38, 38, ${0.12 + 0.78 * t})`;  // red  = negative
+          ctx.lineWidth = 0.5 + 4 * t;
+          ctx.beginPath();
+          ctx.moveTo(x0 + r, nodeY(inCount, cc));
+          ctx.lineTo(x1 - r, nodeY(outCount, rr));
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Nodes.
+    const nodeFill = dark ? '#0f172a' : '#fff';
+    const nodeStroke = getCSS('--muted') || (dark ? '#94a3b8' : '#6b7280');
+    const labelColor = getCSS('--fg') || (dark ? '#e2e8f0' : '#1f2937');
+    ctx.lineWidth = 1.5;
+    const inLabels = inputLabels();
+    const outLabel = STRINGS[document.documentElement.lang] && STRINGS[document.documentElement.lang]['graph-out-label']
+      ? STRINGS[document.documentElement.lang]['graph-out-label'] : 'out';
+    for (let i = 0; i < nCols; i++) {
+      const count = colSizes[i], x = colX(i);
+      for (let j = 0; j < count; j++) {
+        const y = nodeY(count, j);
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fillStyle = nodeFill; ctx.fill();
+        ctx.strokeStyle = nodeStroke; ctx.stroke();
+      }
+      // Labels: input feature names on the left; output label on the right.
+      ctx.fillStyle = labelColor;
+      ctx.font = '11px ui-monospace, monospace';
+      ctx.textBaseline = 'middle';
+      if (i === 0) {
+        ctx.textAlign = 'right';
+        for (let j = 0; j < count; j++)
+          ctx.fillText(inLabels[j] != null ? inLabels[j] : '', x - r - 6, nodeY(count, j));
+      } else if (i === nCols - 1) {
+        ctx.textAlign = 'left';
+        ctx.fillText(outLabel, x + r + 6, nodeY(count, 0));
+      }
+    }
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  }
+  // Sample a hidden neuron's activation over the 2D input domain.
+  // Returns a flat array of activations on a grid×grid mesh.
+  function sampleNeuron(layerIdx, neuronIdx, grid) {
+    const out = new Float32Array(grid * grid);
+    const xmin = -1.6, xmax = 1.6, ymin = -1.6, ymax = 1.6;
+    for (let py = 0; py < grid; py++) {
+      for (let px = 0; px < grid; px++) {
+        const x = xmin + (px / (grid - 1)) * (xmax - xmin);
+        const y = ymax - (py / (grid - 1)) * (ymax - ymin);
+        // Walk forward up to layerIdx (inclusive), return activation of neuronIdx.
+        let a = featureVec(x, y);
+        for (let li = 0; li <= layerIdx; li++) {
+          const L = layers[li];
+          const z = new Array(L.b.length);
+          for (let rr = 0; rr < L.W.length; rr++) {
+            let s = L.b[rr];
+            for (let cc = 0; cc < L.W[rr].length; cc++) s += L.W[rr][cc] * a[cc];
+            z[rr] = s;
+          }
+          a = z.map(v => activate(v, L.act));
+        }
+        out[py * grid + px] = a[neuronIdx];
+      }
+    }
+    return out;
+  }
+  function renderActivationsView() {
+    const root = document.getElementById('activationsRows');
+    if (root) root.style.opacity = (epoch === 0) ? '0.5' : '1';
+    if (!root) return;
+    // Only hidden layers (skip the output layer which has 1 neuron and isn't pedagogically novel).
+    const hiddenLayers = layers.slice(0, -1);
+    if (hiddenLayers.length === 0) { root.innerHTML = ''; return; }
+    const GRID = 24; // sample 24x24 thumbnail
+    let html = '';
+    hiddenLayers.forEach((L, li) => {
+      html += `<div style="margin-bottom:8px;">`;
+      html += `<div style="font-family:ui-monospace,monospace; color:var(--muted); font-size:0.78rem; margin-bottom:4px;">hidden layer ${li + 1} (${L.b.length} neurons)</div>`;
+      html += `<div style="display:flex; gap:6px; flex-wrap:wrap;">`;
+      for (let n = 0; n < L.b.length; n++) {
+        const samples = sampleNeuron(li, n, GRID);
+        let min = Infinity, max = -Infinity;
+        for (const v of samples) { if (v < min) min = v; if (v > max) max = v; }
+        const span = max - min || 1;
+        // Build canvas via inline SVG (small enough to be cheap).
+        let cells = '';
+        for (let i = 0; i < GRID * GRID; i++) {
+          const t = (samples[i] - min) / span; // 0..1
+          // Map: 0 → blue, 0.5 → white, 1 → red (signed-ish)
+          const r = Math.round(255 * t);
+          const g = Math.round(255 * Math.min(t, 1 - t) * 2 * 0.7 + 50);
+          const b = Math.round(255 * (1 - t));
+          const x = i % GRID, y = Math.floor(i / GRID);
+          cells += `<rect x="${x}" y="${y}" width="1" height="1" fill="rgb(${r},${g},${b})"/>`;
+        }
+        html += `<div style="display:flex; flex-direction:column; align-items:center; gap:2px;">`;
+        html += `<svg viewBox="0 0 ${GRID} ${GRID}" width="56" height="56" style="border:1px solid var(--border); image-rendering:pixelated;">${cells}</svg>`;
+        html += `<span style="font-family:ui-monospace,monospace; font-size:0.7rem; color:var(--muted);">n${n + 1}</span>`;
+        html += `</div>`;
+      }
+      html += '</div></div>';
+    });
+    root.innerHTML = html;
+  }
+  function drawLoss() {
+    const ctx = lctx;
+    const rect = lc.getBoundingClientRect();
+    const W = rect.width, H = rect.height, pad = 30;
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : 'white'; ctx.fillRect(0, 0, W, H);
+    if (lossHistory.length < 2) return;
+    const showTest = $('showTestLoss') && $('showTestLoss').checked;
+    const recent = lossHistory.slice(-300);
+    const testRecent = testLossHistory.slice(-300);
+    const all = showTest ? [...recent, ...testRecent] : recent;
+    const ymax = Math.max(...all, 0.1);
+    const ymin = 0;
+    ctx.strokeStyle = document.body.classList.contains('dark-mode') ? '#475569' : '#cbd5e1';
+    ctx.beginPath();
+    ctx.moveTo(pad, pad); ctx.lineTo(pad, H - pad); ctx.lineTo(W - pad, H - pad); ctx.stroke();
+    // Train loss (solid accent).
+    ctx.strokeStyle = getCSS('--accent'); ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i = 0; i < recent.length; i++) {
+      const x = pad + i / (recent.length - 1) * (W - 2 * pad);
+      const y = H - pad - (recent[i] - ymin) / (ymax - ymin) * (H - 2 * pad);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    // Test loss (dashed orange) —.
+    if (showTest && testRecent.length > 1) {
+      ctx.strokeStyle = '#ea580c'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 3]);
+      ctx.beginPath();
+      for (let i = 0; i < testRecent.length; i++) {
+        const x = pad + i / (testRecent.length - 1) * (W - 2 * pad);
+        const y = H - pad - (testRecent[i] - ymin) / (ymax - ymin) * (H - 2 * pad);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    ctx.fillStyle = getCSS('--muted'); ctx.font = '11px system-ui';
+    ctx.fillText('loss', 4, pad + 8);
+    ctx.fillText('epochs →', W - 70, H - 8);
+    ctx.fillText(`max=${ymax.toFixed(3)}`, W - 90, pad + 8);
+    if (showTest) {
+      ctx.fillStyle = getCSS('--accent'); ctx.fillText('— train', W - 90, pad + 22);
+      ctx.fillStyle = '#ea580c'; ctx.fillText('-- test', W - 90, pad + 36);
+    }
+  }
+  function getCSS(v) {
+    return getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  }
+
+  let running = false;
+  let epoch = 0;
+  let nnBaseTitle = null;
+  async function loop() {
+    if (nnBaseTitle === null) nnBaseTitle = document.title.replace(/^\(epoch \d+\) /, '');
+    while (running) {
+      const loss = trainStep();
+      epoch++;
+      lossHistory.push(loss);
+      // track test loss in parallel (no gradient).
+      if (epoch % 5 === 0) testLossHistory.push(evalTestLoss());
+      else testLossHistory.push(testLossHistory[testLossHistory.length - 1] || 0);
+      if (epoch % 3 === 0) {
+        $('epochV').textContent = epoch;
+        $('lossV').textContent = loss.toFixed(4);
+        $('accV').textContent = (accuracy() * 100).toFixed(1) + '%';
+        drawBoundary(); drawLoss(); renderWeightsView(); renderActivationsView(); drawNetworkGraph();
+        document.title = `(epoch ${epoch}) ${nnBaseTitle}`;
+        nnSnap();
+        { const tc = $('tpCount'); if (tc) tc.textContent = `epoch ${epoch}`; }
+        await new Promise(r => setTimeout(r, Math.max(0, 100 - (+$('speedSlider').value))));
+      }
+    }
+    document.title = nnBaseTitle;
+  }
+
+  // ===== Unified transport bar: weight-snapshot ring buffer (universal step-back) =====
+  const NN_CAP = 300;
+  let nnHistory = [];          // ring buffer of weight snapshots
+  let nnReviewing = false;     // true while scrubbed back (review-only)
+  let nnCursor = 0;
+  function cloneLayers(ls) {
+    return ls.map(L => ({
+      W: L.W.map(r => r.slice()), b: L.b.slice(), act: L.act,
+      mW: L.mW.map(r => r.slice()), mB: L.mB.slice(),
+      vW: L.vW.map(r => r.slice()), vB: L.vB.slice(),
+    }));
+  }
+  function nnSnap() {
+    nnHistory.push({ layers: cloneLayers(layers), optStep, epoch });
+    if (nnHistory.length > NN_CAP) nnHistory.shift();
+    nnSyncScrub();
+  }
+  function nnSetCount(t) { const tc = $('tpCount'); if (tc) tc.textContent = t; }
+  function nnDrawAll() {
+    $('epochV').textContent = epoch;
+    $('accV').textContent = (accuracy() * 100).toFixed(1) + '%';
+    drawBoundary(); drawLoss(); renderWeightsView(); renderActivationsView(); drawNetworkGraph();
+  }
+  function nnApply(s) {           // restore weights for review (loss curve left intact)
+    layers = cloneLayers(s.layers); optStep = s.optStep; epoch = s.epoch;
+    nnDrawAll();
+  }
+  function nnSyncScrub() {
+    const sc = $('nnScrub'); if (!sc) return;
+    sc.max = Math.max(0, nnHistory.length - 1);
+    if (!nnReviewing) sc.value = nnHistory.length - 1;
+    const grp = $('nnScrubGroup');
+    if (grp && nnHistory.length >= 2) grp.style.visibility = 'visible';
+  }
+  function nnReturnLive() {
+    if (nnHistory.length) nnApply(nnHistory[nnHistory.length - 1]);
+    nnReviewing = false; nnSetCount('live');
+    const sc = $('nnScrub'); if (sc) sc.value = Math.max(0, nnHistory.length - 1);
+    const live = $('nnLive'); if (live) live.disabled = true;
+  }
+  function nnGoto(idx) {            // jump to a past frame for review (handles the live edge)
+    if (running || nnHistory.length === 0) return;
+    idx = Math.max(0, Math.min(nnHistory.length - 1, idx | 0));
+    if (idx >= nnHistory.length - 1) { nnReturnLive(); return; }
+    nnReviewing = true; nnCursor = idx;
+    nnApply(nnHistory[idx]);
+    const ep = nnHistory[idx].epoch;
+    nnSetCount(`e${ep} · ${idx + 1}/${nnHistory.length}`);
+    const sc = $('nnScrub'); if (sc) sc.value = idx;
+    const live = $('nnLive'); if (live) live.disabled = false;
+  }
+  function nnEpochToFrame(targetEp) {   // nearest snapshot to a typed epoch number
+    let best = 0, bestd = Infinity;
+    for (let i = 0; i < nnHistory.length; i++) {
+      const d = Math.abs(nnHistory[i].epoch - targetEp);
+      if (d < bestd) { bestd = d; best = i; }
+    }
+    return best;
+  }
+  function nnBack() {
+    if (running || nnHistory.length === 0) return;
+    nnGoto((nnReviewing ? nnCursor : nnHistory.length - 1) - 1);
+  }
+  function nnStep() {              // ❘▶ : forward through review, else one live epoch
+    if (running) return;
+    if (nnReviewing) { nnGoto(nnCursor + 1); return; }
+    const loss = trainStep(); epoch++;
+    lossHistory.push(loss);
+    if (epoch % 5 === 0) testLossHistory.push(evalTestLoss());
+    else testLossHistory.push(testLossHistory[testLossHistory.length - 1] || 0);
+    nnSnap();
+    $('lossV').textContent = loss.toFixed(4);
+    nnDrawAll();
+    nnSetCount(`epoch ${epoch}`);
+  }
+  $('stepBtn').addEventListener('click', nnStep);
+  $('backBtn').addEventListener('click', nnBack);
+  { const sc = $('nnScrub'); if (sc) sc.addEventListener('input', () => nnGoto(+sc.value)); }
+  { const jb = $('nnJump'); if (jb) jb.addEventListener('change', () => {
+      const v = parseInt(jb.value, 10); if (!Number.isNaN(v)) nnGoto(nnEpochToFrame(v)); }); }
+  { const lv = $('nnLive'); if (lv) lv.addEventListener('click', nnReturnLive); }
+
+  // Weights | Gradients toggle for the network graph.
+  function setNgView(v) {
+    ngView = v;
+    const wBtn = $('ngViewW'), gBtn = $('ngViewG');
+    if (wBtn && gBtn) {
+      if (v === 'weights') {
+        wBtn.style.background = 'var(--accent)'; wBtn.style.color = 'white'; wBtn.style.fontWeight = '600';
+        gBtn.style.background = 'var(--card)'; gBtn.style.color = 'var(--muted)'; gBtn.style.fontWeight = '';
+      } else {
+        gBtn.style.background = 'var(--accent)'; gBtn.style.color = 'white'; gBtn.style.fontWeight = '600';
+        wBtn.style.background = 'var(--card)'; wBtn.style.color = 'var(--muted)'; wBtn.style.fontWeight = '';
+      }
+    }
+    drawNetworkGraph();
+  }
+  { const w = $('ngViewW'); if (w) w.addEventListener('click', () => setNgView('weights')); }
+  { const g = $('ngViewG'); if (g) g.addEventListener('click', () => setNgView('gradients')); }
+
+  // Render-on-expand: a collapsed <details> renders its canvases to a zero-size box,
+  // so force a fresh draw (and re-measure) whenever a panel is opened.
+  ['ngDetails', 'insideDetails'].forEach(id => {
+    const d = document.getElementById(id);
+    if (d) d.addEventListener('toggle', () => {
+      if (!d.open) return;
+      try { if (typeof resizeCv === 'function') resizeCv($('ng')); } catch (_) {}
+      drawNetworkGraph(); renderWeightsView(); renderActivationsView();
+    });
+  });
+  window.__nnAcceptanceTest = function () {
+    const sp = $('speedSlider');
+    const r = { transportBar: !!$('transport'), backBtn: !!$('backBtn'), stepBtn: !!$('stepBtn'),
+                resetBtn: !!$('resetBtn'), speedInBar: !!(sp && sp.closest('#transport')),
+                snapshots: nnHistory.length };
+    const pass = r.transportBar && r.backBtn && r.stepBtn && r.resetBtn && r.speedInBar;
+    console.log('[neural-network] CONTROLS ACCEPTANCE TEST ' + (pass ? 'passed' : 'FAILED'), r);
+    return Object.assign({ pass }, r);
+  };
+
+  $('trainBtn').addEventListener('click', () => {
+    if (nnReviewing) nnReturnLive();   // resuming training returns to the live head (no branching)
+    running = !running;
+    $('trainBtn').textContent = running ? '⏸ Pause' : '▶ Train / pause';
+    document.getElementById('trainBtn').setAttribute('aria-pressed', running ? 'true' : 'false');
+    if (running) loop();
+  });
+  $('resetBtn').addEventListener('click', () => {
+    running = false; $('trainBtn').textContent = '▶ Train / pause';
+    epoch = 0; lossHistory.length = 0; testLossHistory.length = 0;
+    nnHistory = []; nnReviewing = false; nnSetCount('idle');
+    { const st = $('nnScrubGroup'); if (st) st.style.visibility = 'hidden'; const sc = $('nnScrub'); if (sc) { sc.max = 0; sc.value = 0; } const lv = $('nnLive'); if (lv) lv.disabled = true; }
+    buildNet(); drawBoundary(); drawLoss(); renderWeightsView(); renderActivationsView(); drawNetworkGraph();
+    $('epochV').textContent = 0; $('lossV').textContent = '—'; $('accV').textContent = '—';
+  });
+  $('hardReset').addEventListener('click', () => {
+    running = false; $('trainBtn').textContent = '▶ Train / pause';
+    $('datasetSel').value = 'moons'; $('act').value = 'relu';
+    $('h1').value = 6; $('h2').value = 4; $('lr').value = 0.03;
+    $('h1V').textContent = 6; $('h2V').textContent = 4; $('lrV').textContent = '0.030';
+    // reset engineered-feature toggles to default (all off → only x, y).
+    FEATURE_DEFS.forEach(f => { const el = $(f.id); if (el) el.checked = false; });
+    epoch = 0; lossHistory.length = 0; testLossHistory.length = 0;
+    nnHistory = []; nnReviewing = false; nnSetCount('idle');
+    { const st = $('nnScrubGroup'); if (st) st.style.visibility = 'hidden'; const sc = $('nnScrub'); if (sc) { sc.max = 0; sc.value = 0; } const lv = $('nnLive'); if (lv) lv.disabled = true; }
+    genData(); buildNet(); drawBoundary(); drawLoss(); renderWeightsView(); renderActivationsView(); drawNetworkGraph();
+    $('epochV').textContent = 0; $('lossV').textContent = '—'; $('accV').textContent = '—';
+  });
+  $('h1').addEventListener('input', () => {
+    $('h1V').textContent = $('h1').value;
+    buildNet(); drawBoundary(); drawNetworkGraph(); lossHistory.length = 0; testLossHistory.length = 0; epoch = 0;
+  });
+  $('h2').addEventListener('input', () => {
+    $('h2V').textContent = $('h2').value;
+    buildNet(); drawBoundary(); drawNetworkGraph(); lossHistory.length = 0; testLossHistory.length = 0; epoch = 0;
+  });
+  $('act').addEventListener('change', () => {
+    buildNet(); drawBoundary(); drawNetworkGraph(); lossHistory.length = 0; testLossHistory.length = 0; epoch = 0;
+  });
+  $('lr').addEventListener('input', () => {
+    $('lrV').textContent = (+$('lr').value).toFixed(3);
+  });
+  $('showTestLoss').addEventListener('change', () => { drawBoundary(); drawLoss(); renderWeightsView(); renderActivationsView(); drawNetworkGraph(); });
+  $('datasetSel').addEventListener('change', () => {
+    genData(); buildNet(); drawBoundary(); drawNetworkGraph(); lossHistory.length = 0; testLossHistory.length = 0; epoch = 0;
+  });
+  // Engineered-feature toggles: changing the feature set changes the input-layer
+  // size, so re-initialize the network (fresh weights) and reset training (epoch 0)
+  // — the same reset path used by Reset weights / architecture changes.
+  FEATURE_DEFS.forEach(f => {
+    const el = $(f.id);
+    if (!el) return;
+    el.addEventListener('change', () => {
+      running = false; $('trainBtn').textContent = '▶ Train / pause';
+      epoch = 0; lossHistory.length = 0; testLossHistory.length = 0;
+      buildNet(); drawBoundary(); drawLoss(); renderWeightsView(); renderActivationsView(); drawNetworkGraph();
+      $('epochV').textContent = 0; $('lossV').textContent = '—'; $('accV').textContent = '—';
+    });
+  });
+  window.addEventListener('resize', () => {
+    resizeCv(bv); resizeCv(lc); resizeCv(ng); drawBoundary(); drawLoss(); renderWeightsView(); renderActivationsView(); drawNetworkGraph();
+  });
+
+  // URL-shareable config — dataset, activation, h1, h2, learning rate.
+  try {
+    const sp = new URLSearchParams(location.search);
+    const setSel = (key, id) => {
+      const v = sp.get(key); if (!v) return;
+      const opt = Array.from($(id).options).find(o => o.value === v);
+      if (opt) $(id).value = v;
+    };
+    setSel('ds', 'datasetSel');
+    setSel('act', 'act');
+    const setNum = (key, id, min, max) => {
+      const v = parseFloat(sp.get(key));
+      if (!Number.isNaN(v) && v >= min && v <= max) $(id).value = v;
+    };
+    setNum('h1', 'h1', 0, 12);
+    setNum('h2', 'h2', 0, 12);
+    setNum('lr', 'lr', 0.001, 0.3);
+    // engineered-feature toggles: ?feat=fx2,fxy (comma-separated active ids).
+    // Absent param leaves all toggles off (default = only x, y). Runs before the
+    // initial buildNet() below, so the input-layer size is correct on first paint.
+    const featParam = sp.get('feat');
+    if (featParam !== null) {
+      const wanted = new Set(featParam.split(',').filter(Boolean));
+      FEATURE_DEFS.forEach(f => { const el = $(f.id); if (el) el.checked = wanted.has(f.id); });
+    }
+  } catch (_) {}
+  document.getElementById('shareLink').addEventListener('click', async () => {
+    const params = new URLSearchParams();
+    params.set('ds', $('datasetSel').value);
+    params.set('act', $('act').value);
+    params.set('h1', $('h1').value);
+    params.set('h2', $('h2').value);
+    params.set('lr', $('lr').value);
+    // active engineered features as a comma-separated list (empty string when none).
+    const activeIds = FEATURE_DEFS.filter(f => { const el = $(f.id); return el && el.checked; }).map(f => f.id);
+    params.set('feat', activeIds.join(','));
+    const url = `${location.origin}${location.pathname}?${params.toString()}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      const btn = document.getElementById('shareLink');
+      const orig = btn.textContent; btn.textContent = '✓ Copied';
+      setTimeout(() => btn.textContent = orig, 1500);
+    } catch (_) { prompt('Copy this URL:', url); }
+  });
+
+  resizeCv(bv); resizeCv(lc); resizeCv(ng);
+  genData(); buildNet(); drawBoundary(); drawLoss(); renderWeightsView(); renderActivationsView(); drawNetworkGraph();
+
+  // Lesson tour. Five canonical scenarios spanning dataset, depth, and non-linearity.
+  function applyNN(dataset, activation, h1, h2, lr) {
+    $('datasetSel').value = dataset;
+    $('act').value = activation;
+    $('h1').value = h1; $('h1V').textContent = h1;
+    $('h2').value = h2; $('h2V').textContent = h2;
+    $('lr').value = lr; $('lrV').textContent = (+lr).toFixed(3);
+    $('datasetSel').dispatchEvent(new Event('change'));
+  }
+  const LESSON_TOUR = [
+    { name: 'Linear can split linearly-separable data',
+      description: "Blobs dataset (two clouds), no hidden layer (h1=0, h2=0), linear activation. The network is just logistic regression — and that's enough. Watch the loss drop fast.",
+      apply: () => applyNN('blobs', 'linear', 0, 0, 0.05) },
+    { name: 'Moons: linear FAILS, network needs depth',
+      description: "Switch to moons. Same linear setup. Loss plateaus around 0.3+ — no straight line can separate them. The model lacks the capacity. This is the canonical pitch for hidden layers.",
+      apply: () => applyNN('moons', 'linear', 0, 0, 0.05) },
+    { name: 'Add ReLU + one hidden layer → moons solved',
+      description: "Moons, one hidden layer of 6 ReLU units. Network now bends. Loss drops to near zero. The non-linearity, not just depth, is what bought you the curve.",
+      apply: () => applyNN('moons', 'relu', 6, 0, 0.03) },
+    { name: 'Stack with linear activation collapses',
+      description: "Moons, h1=6 h2=4, but activation = linear. Two linear layers compose to ONE linear layer — math says so. Loss plateaus again. Depth without non-linearity is wasted parameters.",
+      apply: () => applyNN('moons', 'linear', 6, 4, 0.03) },
+    { name: 'XOR — the textbook non-linear task',
+      description: "XOR dataset: opposite corners are the same class. Provably unsolvable by any linear model since Minsky 1969. With ReLU + 2 hidden layers, train and watch decision boundary become 4 wedges.",
+      apply: () => applyNN('xor', 'relu', 6, 4, 0.05) },
+  ];
+  let tourIdx = 0;
+  function renderTour() {
+    if (!$('tourName')) return;
+    const s = LESSON_TOUR[tourIdx];
+    // F1 bilingual: look up tour{i}name / tour{i}desc with English inline fallback.
+    const L = (document.documentElement.lang || 'en');
+    const S = STRINGS[L] || STRINGS.en;
+    $('tourName').textContent = S['tour' + tourIdx + 'name'] || s.name;
+    $('tourDesc').textContent = S['tour' + tourIdx + 'desc'] || s.description;
+    $('tourPos').textContent = `${tourIdx + 1}/${LESSON_TOUR.length}`;
+    $('tourPrev').disabled = (tourIdx === 0);
+    $('tourNext').disabled = (tourIdx === LESSON_TOUR.length - 1);
+  }
+  $('tourApply').addEventListener('click', () => LESSON_TOUR[tourIdx].apply());
+  $('tourPrev').addEventListener('click', () => { if (tourIdx > 0) { tourIdx--; renderTour(); } });
+  $('tourNext').addEventListener('click', () => { if (tourIdx < LESSON_TOUR.length - 1) { tourIdx++; renderTour(); } });
+  renderTour();
+
+  // Worksheet/lab mode — 3 questions with instant ✓/✗ feedback.
+  // F1 bilingual feedback helper: ws{n}ok / ws{n}no with English inline fallback.
+  function wsMsg(key, en) {
+    const L = (document.documentElement.lang || 'en');
+    return (STRINGS[L] && STRINGS[L][key]) || en;
+  }
+  // MCQ: each question is graded by the selected radio's index, not typed text.
+  // `correct` is the index of the right option (language-agnostic). ok/no are the
+  // existing bilingual feedback keys, with an English inline fallback via wsMsg.
+  const WORKSHEET = [
+    { correct: 1,
+      ok:  ['ws1ok', "Correct (~0.3+). A linear model is just logistic regression — it can only draw straight lines. The moons are nonlinearly separable, so the best a linear classifier can do is misclassify some — loss plateaus around 0.3."],
+      no:  ['ws1no', "Try 0.3. With h1=0 + linear activation, the model is logistic regression, which can't curve. Loss plateaus well above zero."] },
+    { correct: 0,
+      ok:  ['ws2ok', "Right. h1=6 ReLU is just enough capacity to bend the boundary into the moon shape. Loss drops to near zero (or actual zero if data is fully separable). Non-linearity is the unlock — depth alone with linear activation would not help."],
+      no:  ['ws2no', "Try 0 (near zero). ReLU + a hidden layer gives the network enough capacity to learn the curved boundary."] },
+    { correct: 2,
+      ok:  ['ws3ok', "Correct. Two linear layers compose to ONE linear layer — math: A·(B·x) = (A·B)·x. Stacking depth without non-linearity is mathematically equivalent to a single layer, just with more parameters wastefully reparameterizing it."],
+      no:  ['ws3no', "Try 'same'. f(x) = W₂(W₁x) = (W₂W₁)x — composition of linear maps is linear. Depth alone gains nothing."] },
+  ];
+  WORKSHEET.forEach((q, i) => {
+    const n = i + 1;
+    $(`ws${n}btn`).addEventListener('click', () => {
+      const fb = $(`ws${n}fb`);
+      const picked = document.querySelector(`input[name="ws${n}"]:checked`);
+      if (!picked) {
+        fb.textContent = wsMsg('ws-pick', 'Pick an answer first.');
+        fb.style.color = 'var(--muted)';
+        return;
+      }
+      const ok = Number(picked.value) === q.correct;
+      const [key, en] = ok ? q.ok : q.no;
+      fb.textContent = (ok ? '✓ ' : '✗ ') + wsMsg(key, en);
+      fb.style.color = ok ? '#16a34a' : '#dc2626';
+    });
+  });
+
+  window.__backpropTest = function() {
+    const r = { toggle: !!document.getElementById('ngViewG'), gradCaptured: !!lastGradW, view: ngView };
+    const pass = r.toggle;
+    console.log('[neural-network] BACKPROP-VIEW ' + (pass ? 'passed' : 'FAILED'), r);
+    return Object.assign({ pass }, r);
+  };
+  window.__bentoTest = function(){ const b=document.querySelector('.bento'); const cells=document.querySelectorAll('.bento-cell').length; const r={bento:!!b, cells, ngAspect: getComputedStyle(document.getElementById('ng')).aspectRatio}; const pass=!!b && cells>=4; console.log('[neural-network] BENTO '+(pass?'passed':'FAILED'), r); return Object.assign({pass}, r); };
+})();
+</script>
+<!-- Embed mode handler (shared pattern across all 12 applets). -->
+<script>
+(() => {
+  try {
+    if (new URLSearchParams(location.search).get('embed') === '1') {
+      document.body.classList.add('embed-mode');
+    }
+  } catch (_) {}
+  const btn = document.getElementById('embedLink');
+  if (!btn) return;
+  btn.addEventListener('click', async () => {
+    const url = new URL(location.href);
+    url.searchParams.set('embed', '1');
+    const snippet = `<iframe src="${url.toString()}" width="100%" height="720" frameborder="0" style="border:1px solid #e5e7eb; border-radius:8px;" loading="lazy"></iframe>`;
+    try {
+      await navigator.clipboard.writeText(snippet);
+      const orig = btn.textContent; btn.textContent = '✓ Copied iframe';
+      setTimeout(() => btn.textContent = orig, 1800);
+    } catch (_) { prompt('Copy this iframe snippet:', snippet); }
+  });
+})();
+</script>
+  <footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
+    <p style="margin:0 0 6px;"><a href="#top" data-i18n="footer-top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
+    <p style="margin:0;"><span data-i18n="footer-builtby">Built by</span> Logan Dixon · <span data-i18n="footer-course">Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy</span></p>
+    <p style="margin:6px 0 0;"><a href="https://github.com/lmdixon23/ai-playgrounds" data-i18n="footer-source" style="color:var(--accent,#0891b2);">View source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-i18n="footer-issue" style="color:var(--accent,#0891b2);">Report an issue</a> · © 2026 Logan Dixon</p>
+  </footer>
+  <!-- Privacy-friendly analytics — GoatCounter, cookieless. -->
+  <script data-goatcounter="https://lmdixon23.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

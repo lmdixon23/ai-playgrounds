@@ -1,0 +1,2047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visualizing K-Means Clustering</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E">
+<meta name="description" content="Interactive visualization of the k-means clustering algorithm. Click to add data points and centroids, watch the Voronoi cells redraw as the algorithm iterates, and see where k-means fails.">
+<link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/kmeans/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/kmeans/">
+<meta property="og:title" content="Visualizing K-Means Clustering — AI Playgrounds">
+<meta property="og:description" content="Interactive visualization of the k-means clustering algorithm. Click to add data points and centroids, watch the Voronoi cells redraw as the algorithm iterates, and see where k-means fails.">
+<meta property="og:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Visualizing K-Means Clustering — AI Playgrounds">
+<meta name="twitter:description" content="Interactive visualization of the k-means clustering algorithm. Click to add data points and centroids, watch the Voronoi cells redraw as the algorithm iterates, and see where k-means fails.">
+<meta name="twitter:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Visualizing K-Means Clustering — AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/kmeans/","description":"Interactive visualization of the k-means clustering algorithm. Click to add data points and centroids, watch the Voronoi cells redraw as the algorithm iterates, and see where k-means fails.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan Dixon"}}
+</script>
+<style>
+  :root {
+    --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #c2410c;
+    --card: #fff; --border: #e5e7eb; --soft: #f9fafb;
+  }
+  /* Cluster palette — 8 distinguishable hues. */
+  /* These are intentionally NOT in the body theme — they should pop. */
+
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", Arial, sans-serif;
+         background: var(--bg); color: var(--fg); line-height: 1.6; }
+
+  .page-header { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 24px; }
+  .header-utility { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .header-prefs { display: flex; align-items: center; gap: 8px; }
+  .header-main { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .header-actions { display: flex; align-items: center; gap: 8px; font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem; }
+  .header-actions .header-reset { margin-left: 12px; }
+  .page-header h1 { margin: 0; font-size: 1.5rem; font-family: inherit; }
+  .page-header .back { color: var(--accent); text-decoration: none; font-size: 0.9rem; font-family: -apple-system, system-ui, sans-serif; }
+
+  /* Pinned TL;DR badge — bold accent-colored block. */
+  .tldr {
+    max-width: 820px; margin: 16px auto 0;
+    background: var(--accent); color: white;
+    border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; font-weight: 500;
+    font-family: -apple-system, system-ui, sans-serif; line-height: 1.45;
+  }
+  .tldr strong { color: rgba(255, 255, 255, 0.85); font-size: 0.72rem;
+                  letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700;
+                  display: block; margin-bottom: 6px; }
+  /* Jump-to-explanation link. */
+  .jump-link {
+    display: inline-block; margin-top: 14px;
+    padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px;
+    background: white; color: var(--accent); text-decoration: none;
+    font-family: -apple-system, system-ui, sans-serif; font-size: 0.82rem;
+    font-weight: 600; transition: background 0.15s;
+  }
+  .jump-link:hover { background: var(--soft); }
+  .jump-anchor { text-align: center; }
+
+  /* The interactive at the top, centered. */
+  .interactive {
+    background: var(--card); padding: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .interactive-inner { max-width: 1280px; margin: 0 auto; }
+  .control-row {
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    margin-bottom: 14px; font-family: -apple-system, system-ui, sans-serif;
+    font-size: 0.88rem;
+  }
+  .control-row label { color: var(--muted); }
+  .control-row .group { display: flex; gap: 4px; border: 1px solid var(--border);
+                         border-radius: 6px; overflow: hidden; }
+  .control-row .group button {
+    padding: 7px 12px; background: var(--card); color: var(--fg);
+    border: none; border-right: 1px solid var(--border); cursor: pointer;
+    font: inherit; font-size: 0.85rem; transition: background 0.1s;
+  }
+  .control-row .group button:last-child { border-right: none; }
+  .control-row .group button.active { background: var(--accent); color: white;
+                                       font-weight: 600; }
+  .control-row .group button:hover:not(.active) { background: var(--soft); }
+  .control-row .step-btn {
+    padding: 9px 16px; background: var(--accent); color: white;
+    border: none; border-radius: 6px; cursor: pointer; font: inherit;
+    font-weight: 600; font-size: 0.9rem;
+  }
+  .control-row .step-btn.secondary { background: white; color: var(--fg);
+                                       border: 1px solid var(--border); font-weight: normal; }
+  .control-row .step-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .control-row input[type=number] {
+    padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px;
+    width: 60px; font: inherit; text-align: center;
+  }
+
+  canvas {
+    display: block; margin: 0 auto;
+    background: white; border: 1px solid var(--border); border-radius: 6px;
+    cursor: crosshair; max-width: 100%;
+  }
+  .hint {
+    text-align: center; color: var(--muted); font-size: 0.85rem;
+    font-family: -apple-system, system-ui, sans-serif;
+    margin: 10px 0 0; font-style: italic;
+  }
+  .phase-indicator {
+    display: inline-block; padding: 3px 10px; border-radius: 999px;
+    background: var(--soft); color: var(--muted); font-size: 0.78rem;
+    font-family: -apple-system, system-ui, sans-serif;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .phase-indicator.assign { background: #dbeafe; color: #1e40af; }
+  .phase-indicator.update { background: #fef3c7; color: #92400e; }
+  .phase-indicator.converged { background: #d1fae5; color: #065f46; }
+  .iter-counter { float: right; font-family: monospace; color: var(--muted);
+                   font-size: 0.85rem; }
+
+  /* Long-form prose section below. */
+  .essay {
+    max-width: 720px; margin: 0 auto; padding: 40px 24px 80px;
+    font-size: 1.05rem;
+  }
+  .essay h2 { font-size: 1.5rem; margin-top: 36px; margin-bottom: 12px;
+               font-family: inherit; color: var(--accent); }
+  .essay h3 { font-size: 1.15rem; margin-top: 24px; margin-bottom: 8px;
+               font-family: inherit; }
+  .essay p { margin: 0 0 14px; }
+  .essay .lede { font-size: 1.15rem; color: #374151; }
+  .essay .aha {
+    background: #fef9c3; border-left: 4px solid #facc15;
+    padding: 12px 18px; margin: 18px 0; border-radius: 0 6px 6px 0;
+    font-style: italic; color: #713f12;
+  }
+  .essay code {
+    background: var(--soft); padding: 1px 6px; border-radius: 4px;
+    font-family: 'SF Mono', Consolas, monospace; font-size: 0.92em;
+  }
+  .essay ul { padding-left: 22px; }
+  .essay ul li { margin-bottom: 6px; }
+  .essay .citation { color: var(--muted); font-size: 0.85rem;
+                      border-top: 1px solid var(--border); padding-top: 16px;
+                      margin-top: 24px; font-family: -apple-system, system-ui, sans-serif; }
+  .essay .for-teachers {
+    background: var(--soft); border: 1px solid var(--border); border-radius: 8px;
+    padding: 20px 24px; margin-top: 36px;
+    font-family: -apple-system, system-ui, sans-serif; font-size: 0.95rem;
+  }
+  .essay .for-teachers h3 { font-family: -apple-system, system-ui, sans-serif;
+                              color: var(--accent); font-size: 0.9rem;
+                              text-transform: uppercase; letter-spacing: 0.05em;
+                              margin-top: 0; }
+
+  /* Init choice overlay (Harris-style full-canvas picker) */
+  .choice-overlay {
+    position: absolute; inset: 0; background: rgba(255, 253, 248, 0.96);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 14px;
+    font-family: -apple-system, system-ui, sans-serif;
+    z-index: 50;
+  }
+  /* Q1 RED fix: while overlay is up, treat it as a true modal — block clicks on
+     dataset/init/k controls so users can't accidentally change state behind it. */
+  body.overlay-active .controls,
+  body.overlay-active .group { pointer-events: none; opacity: 0.55; }
+  body.overlay-active .choice-overlay { pointer-events: auto; opacity: 1; }
+  .choice-overlay h3 { margin: 0 0 10px; font-family: inherit;
+                         font-size: 1.5rem; color: var(--accent); text-align: center; }
+  .choice-overlay .choices { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .choice-overlay .choice-btn {
+    padding: 18px 26px; background: white; color: var(--fg);
+    border: 2px solid var(--border); border-radius: 10px; cursor: pointer;
+    font: inherit; font-size: 1rem; font-weight: 600; min-width: 140px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .choice-overlay .choice-btn:hover {
+    background: var(--soft); border-color: var(--accent);
+  }
+  .choice-overlay .choice-btn .sub {
+    display: block; font-size: 0.78rem; font-weight: normal;
+    color: var(--muted); margin-top: 6px;
+  }
+  .canvas-stage { position: relative; max-width: 100%; }
+
+  /* === additions === */
+  /* Language switcher in header */
+  .lang-switch { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .lang-switch button { padding: 4px 10px; background: white; color: var(--muted);
+                          border: none; cursor: pointer; font: inherit; font-size: 0.78rem; }
+  .lang-switch button.active { background: var(--accent); color: white; font-weight: 600; }
+  .header-reset { padding: 6px 12px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font: inherit; font-size: 0.82rem; }
+  .header-reset:hover { background: var(--soft); }
+
+  /* Reduced-motion preference */
+  /* ===== Unified transport bar (shared playback controls across stepped applets) ===== */
+  .transport { display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+               padding: 8px 10px; margin: 10px 0; border: 1px solid var(--border);
+               border-radius: 8px; background: var(--soft); }
+  .tp-btn { font: inherit; font-size: 0.9rem; cursor: pointer; border: 1px solid var(--border);
+            background: var(--card); color: var(--fg); border-radius: 6px; padding: 6px 12px; min-width: 40px; line-height: 1; }
+  .tp-btn:hover { background: var(--soft); }
+  .tp-speed { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--muted); }
+  .tp-speed input { accent-color: var(--accent); }
+  .tp-count { margin-left: auto; font-family: ui-monospace, monospace; font-size: 0.82rem;
+              color: var(--muted); font-variant-numeric: tabular-nums; min-width: 128px; text-align: right; }
+  .tp-btn:disabled { opacity: 0.45; cursor: default; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+  /* === dark mode === */
+  body.dark-mode {
+    --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8;
+    --card: #1e293b; --border: #334155; --soft: #1e293b;
+  }
+  body.dark-mode .essay .lede { color: #cbd5e1; }
+  body.dark-mode .essay .for-teachers { background: #0f172a; }
+  body.dark-mode .essay .citation { color: var(--muted); border-top-color: var(--border); }
+  /* True canvas dark mode — render fn picks bg directly. */
+  body.dark-mode .header-reset,
+  body.dark-mode .lang-switch button:not(.active),
+  body.dark-mode .header-theme,
+  body.dark-mode .control-row .group button:not(.active),
+  body.dark-mode .control-row .step-btn,
+  body.dark-mode input[type="number"] { background: var(--card); color: var(--fg); }
+  body.dark-mode .control-row .group { background: var(--card); }
+  body.dark-mode .choice-overlay .choice-btn { background: var(--card); color: var(--fg); }
+  .header-theme { padding: 6px 10px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font-size: 1rem; line-height: 1; font-family: inherit; }
+  .header-theme:hover { background: var(--soft); }
+  /* === PNG export + accessible slider thumbs === */
+  .header-png { padding: 6px 10px; background: white; color: var(--fg);
+                  border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                  font-size: 0.85rem; font-family: inherit; }
+  .header-png:hover { background: var(--soft); }
+  body.dark-mode .header-png { background: var(--card); color: var(--fg); }
+  /* ===== Slider styling — native themed control via accent-color (consistent across browsers) ===== */
+  input[type="range"] { accent-color: var(--accent); height: 28px; cursor: pointer; }
+  /* embed mode. Strip chrome so the applet fits cleanly in an LMS iframe. */
+  body.embed-mode .page-header,
+  body.embed-mode aside.tldr,
+  body.embed-mode article.essay,
+  body.embed-mode .jump-anchor { display: none !important; }
+  body.embed-mode .interactive { padding: 12px; border-bottom: none; }
+
+  /* === STEP 1: Canvas responsive fix === */
+  #cv { aspect-ratio: 800 / 500; height: auto; width: 100%; max-width: 100%; }
+  #inertiaSpark { flex: 0 0 auto; width: 200px; height: 30px; max-width: 100%; }
+
+  /* === STEP 2: Bento grid === */
+  .bento { display: grid; grid-template-columns: minmax(300px, 360px) minmax(0, 1fr); gap: 16px; align-items: start; margin-bottom: 14px; }
+  .bento-side, .bento-main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .bento-cell { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+  .bento-cell > :first-child { margin-top: 0 !important; }
+  .tp-scrub { min-width: 0; }
+  @media (max-width: 860px) { .bento { grid-template-columns: 1fr; gap: 12px; } }
+  /* ===== Shared a11y + contrast tokens (review fixes: F4 keyboard focus, F6 banner contrast) ===== */
+  button:focus-visible, a:focus-visible, select:focus-visible,
+  input:focus-visible, textarea:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+  .tldr { background: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), var(--accent); }
+  .tldr strong { color: #fff; }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="header-utility">
+    <a class="back" href="../../" data-i18n="back-link">← Back to all playgrounds</a>
+    <div class="header-prefs">
+      <button class="header-theme" id="themeToggle" aria-label="Toggle dark or light theme"
+              title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
+      <div class="lang-switch" title="Switch interface language">
+        <button data-lang="en" class="active">EN</button>
+        <button data-lang="zh">中文</button>
+      </div>
+    </div>
+  </div>
+  <div class="header-main">
+    <h1 data-i18n="title">Visualizing K-Means Clustering</h1>
+    <div class="header-actions">
+      <button class="header-png" id="shareLink"
+              title="Copy a URL that re-opens this exact configuration in another browser.">🔗 Share</button>
+      <button class="header-png" id="embedLink"
+              title="Copy an <iframe> snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
+      <button class="header-png" id="csvExport"
+              title="Download points + cluster assignments + centroid positions as CSV (two sections in one file).">📊 CSV</button>
+      <button class="header-png" id="exportPng"
+              title="Download the current visualization as a PNG image (for slides).">📷 PNG</button>
+      <button class="header-reset" id="hardReset" data-i18n="reset-all"
+              title="Reset everything to the default: Gaussian mixture dataset, k=3, random init.">↺ Reset all</button>
+    </div>
+  </div>
+</header>
+
+<aside class="tldr">
+  <strong data-i18n="tldr-strong">The big idea</strong>
+  <span data-i18n="tldr-body">K-means clusters points by repeatedly moving each centroid to the mean of the points assigned to it. It works on round blobs and fails on weird shapes.</span>
+</aside>
+
+<section class="interactive">
+<div class="interactive-inner">
+
+  <div class="bento">
+  <div class="bento-side">
+  <div class="bento-cell">
+  <div class="control-row">
+    <label data-i18n="dataset-label">Dataset:</label>
+    <div class="group" id="datasetGroup">
+      <button data-d="gaussian" class="active" data-i18n="d-gaussian" data-i18n-title="d-gaussian-title" title="Three roughly round blobs. K-means works perfectly here when k=3.">Gaussian mixture</button>
+      <button data-d="uniform" data-i18n="d-uniform" data-i18n-title="d-uniform-title" title="Uniform random points. Tests how k-means behaves with no real cluster structure.">Uniform points</button>
+      <button data-d="packed" data-i18n="d-packed" data-i18n-title="d-packed-title" title="Six tightly packed circles. Try the farthest point init with k=6.">Packed circles</button>
+      <button data-d="smiley" data-i18n="d-smiley" data-i18n-title="d-smiley-title" title="A smiley face. The mouth is a curved arc — k-means cannot find it as a single cluster.">Smiley face</button>
+      <button data-d="pimpled" data-i18n="d-pimpled" data-i18n-title="d-pimpled-title" title="Smiley face plus noise dots. Tests robustness to outliers.">Pimpled smiley</button>
+      <button data-d="custom" data-i18n="d-custom" data-i18n-title="d-custom-title" title="Empty canvas — click to add your own data points.">Clear (draw your own)</button>
+    </div>
+  </div>
+
+  <div class="control-row">
+    <label data-i18n="init-label">Initialize centroids:</label>
+    <div class="group" id="initGroup">
+      <button data-i="choose" data-i18n="i-choose" data-i18n-title="i-choose-title" title="Click anywhere on the canvas to place centroids yourself. Best for spotting bad-init failures.">I'll choose</button>
+      <button data-i="random" class="active" data-i18n="i-random" data-i18n-title="i-random-title" title="Pick k random data points as initial centroids. Simple but often poor.">Randomly</button>
+      <button data-i="farthest" data-i18n="i-farthest" data-i18n-title="i-farthest-title" title="Pick centroids spread far apart from each other. Usually much better than random.">Farthest point</button>
+      <button data-i="kpp" data-i18n="i-kpp" data-i18n-title="i-kpp-title" title="k-means++: probabilistic farthest point. Pick first uniformly, then each subsequent centroid with probability ∝ D(x)² where D(x) is distance to nearest existing centroid. This is what scikit-learn does by default.">k-means++</button>
+    </div>
+    <label data-i18n="k-label">k =</label>
+    <input id="kInput" type="number" min="1" max="8" value="3" data-i18n-title="k-input-title"
+           title="Number of clusters to find. K-means needs this in advance — there's no rule for choosing it.">
+    <button class="step-btn secondary" id="placeBtn" data-i18n="place-btn" data-i18n-title="place-title"
+            title="Place k centroids using the chosen initialization strategy.">Place centroids</button>
+  </div>
+
+  <div class="control-row">
+    <button class="step-btn" id="reassignBtn" data-i18n="reassign-btn" data-i18n-title="reassign-title"
+            title="Assign every point to the cluster of its nearest centroid.">① Reassign only</button>
+    <button class="step-btn" id="updateBtn" data-i18n="update-btn" data-i18n-title="update-title"
+            title="Move each centroid to the mean of the points currently assigned to it.">② Move centroids only</button>
+    <!-- Run / Reset relocated to the unified transport bar below. -->
+    <span class="phase-indicator" id="phaseInd">Ready</span>
+    <span class="iter-counter"><span data-i18n="step-label">Step</span> <span id="iterV">0</span></span>
+  </div>
+
+  <!-- Unified transport bar (shared playback controls; Run/Reset relocated, Step/Speed/Back added). -->
+  <div class="transport" id="transport" role="group" aria-label="Playback controls">
+    <button class="tp-btn" id="resetBtn" data-i18n-title="reset-title"
+            title="Clear centroids and cluster assignments. Keeps the current dataset.">↺</button>
+    <button class="tp-btn" id="backBtn" data-i18n-title="back-title"
+            title="Step one half-step backward through the run.">◀❘</button>
+    <button class="tp-btn" id="runBtn" data-i18n="run-btn" data-i18n-title="run-title"
+            aria-pressed="false"
+            title="Repeat Reassign + Update until the centroids stop moving.">▶ Run to convergence</button>
+    <button class="tp-btn" id="stepBtn" data-i18n="step-btn" data-i18n-title="step-title"
+            title="Advance one half-step (reassign, then update).">❘▶ Step</button>
+    <label class="tp-speed"><span data-i18n="speed-label">Speed</span>
+      <input id="speedSlider" type="range" min="0" max="100" value="50" aria-label="Animation speed"
+             data-i18n-title="speed-title" title="Higher = faster. Adjustable live."></label>
+    <span class="tp-scrub" id="kmScrubGroup" style="display:inline-flex; visibility:hidden; align-items:center; gap:8px; flex:1 1 220px; min-width:150px;">
+      <span style="color:var(--accent); font-weight:600; font-size:0.82rem;" title="History">⏪</span>
+      <input type="range" id="kmScrub" min="0" max="0" value="0" step="1" aria-label="Scrub through steps" style="flex:1; min-width:110px;">
+      <label style="color:var(--muted); display:flex; align-items:center; gap:4px; font-size:0.8rem;"><span>frame</span>
+        <input type="number" id="kmJump" min="0" aria-label="Jump to frame" style="width:64px; padding:3px 6px; border:1px solid var(--border); border-radius:4px; font:inherit;"></label>
+      <button class="tp-btn" id="kmLive" data-i18n="return-live" style="padding:4px 10px; font-size:0.8rem;" disabled>Jump to latest</button>
+    </span>
+    <span class="tp-count" id="tpCount" data-i18n="tp-idle">idle</span>
+  </div>
+  <!-- inertia trace (folded into the controls rail so the left column is never an empty card). SVG sparkline + numeric readout of within-cluster SSE. -->
+  <div id="inertiaBox" style="margin-top:12px; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:8px; display:none;">
+    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+      <strong style="color:var(--accent); font-size:0.88rem;" data-i18n="inertia-label">📉 Inertia (within-cluster SSE):</strong>
+      <span id="inertiaV" style="font-family:ui-monospace,monospace; font-size:0.88rem;">—</span>
+      <span id="inertiaDelta" style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted);"></span>
+      <svg id="inertiaSpark" viewBox="0 0 200 40" style="flex:0 0 200px; height:30px; background:var(--card); border:1px solid var(--border); border-radius:4px;">
+        <polyline id="inertiaSparkLine" fill="none" stroke="var(--accent)" stroke-width="1.5" points=""/>
+      </svg>
+    </div>
+    <p style="margin:6px 0 0; color:var(--muted); font-size:0.78rem; font-style:italic;" data-i18n="inertia-hint">
+      Inertia is the total squared distance from each point to its assigned centroid. K-means is guaranteed to never increase it. When it flattens, you've converged.
+    </p>
+  </div>
+
+  <!-- Silhouette score. The "how good is this k?" diagnostic. -->
+  <div id="silhouetteBox" style="margin-top:8px; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:8px; display:none;">
+    <div style="display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;">
+      <strong style="color:var(--accent); font-size:0.88rem;" data-i18n="silh-label">📊 Silhouette score:</strong>
+      <span id="silhOverall" style="font-family:ui-monospace,monospace; font-size:0.88rem; font-weight:700;">—</span>
+      <span style="color:var(--muted); font-size:0.78rem;" data-i18n="silh-range">(range: −1 bad … 0 overlapping … 1 well-separated)</span>
+    </div>
+    <div id="silhPerCluster" style="margin-top:6px; display:flex; gap:14px; flex-wrap:wrap; font-family:ui-monospace,monospace; font-size:0.82rem;"></div>
+    <p style="margin:6px 0 0; color:var(--muted); font-size:0.78rem; font-style:italic;" data-i18n="silh-hint">
+      Silhouette compares each point's distance to its own cluster vs. the nearest other cluster. To choose k, run with several k values and pick the one with the highest mean silhouette.
+    </p>
+  </div>
+  </div><!-- /.bento-cell (controls + diagnostics) -->
+  </div><!-- /.bento-side -->
+
+  <div class="bento-main">
+  <div class="bento-cell">
+  <div class="canvas-stage">
+    <canvas id="cv" width="800" height="500" role="img"
+            aria-label="K-means clustering visualization. Click to add data points or place centroids."></canvas>
+    <!-- D3/SVG hybrid: a11y overlay; canvas keeps the Voronoi background. -->
+    <svg id="cvOverlay" viewBox="0 0 800 500" preserveAspectRatio="none"
+         style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none;"></svg>
+    <div class="choice-overlay" id="initOverlay" style="display:none">
+      <h3>How to pick the initial centroids?</h3>
+      <div class="choices">
+        <button class="choice-btn" data-pick="choose">I'll choose
+          <span class="sub">Click the canvas yourself</span></button>
+        <button class="choice-btn" data-pick="random">Randomly
+          <span class="sub">Pick k random points</span></button>
+        <button class="choice-btn" data-pick="farthest">Farthest point
+          <span class="sub">Spread centroids apart</span></button>
+        <button class="choice-btn" data-pick="kpp">k-means++
+          <span class="sub">Probabilistic farthest</span></button>
+      </div>
+    </div>
+  </div>
+  <p class="hint" id="hint">Click on the canvas to add data points. Then click "Place centroids" → "Reassign Points" → "Update Centroids" — repeat.</p>
+  </div><!-- /.bento-cell (canvas) -->
+
+  <div class="bento-cell">
+  <!-- Gaussian Mixture Model (soft EM). Shows that k-means is the
+       hard-EM special case of GMM with isotropic σ → 0 limit. Uses current
+       centroids as init means. Renders 1σ/2σ ellipses on the main canvas. -->
+  <details class="gmm-panel" style="margin-top:8px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="gmm-summary">🎲 GMM (soft EM — see k-means as a special case)</span>
+    </summary>
+    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem;">
+      <p style="margin:0 0 8px; color:var(--muted); font-size:0.82rem;" data-i18n="gmm-hint">
+        K-means is hard-EM with σ → 0: each point belongs entirely to one cluster. GMM relaxes this — each point has a soft "responsibility" γᵢₖ for each cluster, and clusters have variances (size). Run GMM EM starting from the current k-means centroids and see how the soft fit differs.
+      </p>
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
+        <button class="step-btn" id="gmmStepBtn" data-i18n="gmm-step">One EM step</button>
+        <button class="step-btn" id="gmmRunBtn" data-i18n="gmm-run">▶ Run 20 EM steps</button>
+        <button class="step-btn secondary" id="gmmClearBtn" data-i18n="gmm-clear">Clear GMM</button>
+        <label style="margin-left:10px;"><input type="checkbox" id="gmmShow" checked> <span data-i18n="gmm-show">Show ellipses (1σ, 2σ)</span></label>
+      </div>
+      <div id="gmmStats" style="font-family:ui-monospace,monospace; font-size:0.82rem; color:var(--muted); min-height:1.4em;">
+        <span style="font-style:italic;" data-i18n="gmm-empty">(place centroids first, then click "One EM step")</span>
+      </div>
+    </div>
+  </details>
+  </div><!-- /.bento-cell (gmm) -->
+  </div><!-- /.bento-main -->
+  </div><!-- /.bento -->
+
+  <!-- Lesson tour. Ordered scenarios stepping through K-means' key behaviors. -->
+  <details class="lesson-tour" style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="tour-summary">📚 Lesson tour (5 steps)</span>
+    </summary>
+    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+        <strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
+        <strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">—</strong>
+      </div>
+      <p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">—</p>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="step-btn secondary" id="tourPrev" data-i18n="tour-prev">← Prev</button>
+        <button class="step-btn" id="tourApply" data-i18n="tour-apply">▶ Apply this scenario</button>
+        <button class="step-btn secondary" id="tourNext" data-i18n="tour-next">Next →</button>
+      </div>
+    </div>
+  </details>
+
+  <!-- Worksheet/lab mode. 3 questions per applet with instant check. -->
+  <details class="worksheet" style="margin-top:8px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="ws-summary">📝 Worksheet (3 questions)</span>
+    </summary>
+    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem; line-height:1.5;">
+      <div class="ws-q" id="ws1">
+        <p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">Load the <em>smiley face</em> dataset with k=3. Run to convergence. Does k-means recover the two eyes and the curved smile as three clusters?</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="0"> <span data-i18n="ws1o0">Yes — it finds the two eyes, and the curved smile becomes one banana-shaped cluster.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="1"> <span data-i18n="ws1o1">No — the smile is a curved arc, and k-means can only carve out round, straight-edged regions.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="2"> <span data-i18n="ws1o2">Yes — k-means always recovers the true shapes once it converges.</span></label>
+        </div>
+        <button class="step-btn" id="ws1btn" data-i18n="ws-check">Check</button>
+        <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+      <div class="ws-q" id="ws2" style="margin-top:10px;">
+        <p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Gaussians dataset (3 true clusters). Compared to k=3, setting k=6 makes the inertia go:</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="0"> <span data-i18n="ws2o0">Up — extra centroids split real clusters and add distance.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="1"> <span data-i18n="ws2o1">Down — more centroids means every point is closer to its nearest one.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="2"> <span data-i18n="ws2o2">Stays the same — there are only 3 real clusters, so the extra centroids do nothing.</span></label>
+        </div>
+        <button class="step-btn" id="ws2btn" data-i18n="ws-check">Check</button>
+        <span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+      <div class="ws-q" id="ws3" style="margin-top:10px;">
+        <p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Use the silhouette score on the Gaussians dataset. Try k=2, k=3, k=4. Which k has the HIGHEST silhouette?</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="0"> <span data-i18n="ws3o0">k=2 — fewer clusters always means a higher silhouette.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="1"> <span data-i18n="ws3o1">k=3 — the silhouette peaks at the true number of clusters.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="2"> <span data-i18n="ws3o2">k=4 — more clusters always means a higher silhouette.</span></label>
+        </div>
+        <button class="step-btn" id="ws3btn" data-i18n="ws-check">Check</button>
+        <span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+    </div>
+  </details>
+
+  <div class="jump-anchor"><a href="#essay" class="jump-link">↓ Read the explanation</a></div>
+
+</div>
+</section>
+
+<article class="essay" id="essay">
+
+  <p class="lede">
+    Suppose you plotted the screen width and height of every device that visits a website.
+    You'd probably see three clumps: smartphones (small), tablets (medium), and laptops (large).
+    Getting an algorithm to <em>find</em> those clumps without being told where they are is called
+    <strong>clustering</strong>. K-means is the simplest and most-used clustering algorithm.
+  </p>
+
+  <h2>How K-Means Works</h2>
+
+  <p>
+    K-means starts with a question you have to answer for it: <strong>how many clusters?</strong>
+    Call that number <code>k</code>. Then place <code>k</code> centroids somewhere in the plane —
+    randomly, by the "Farthest Point" rule, or by clicking the canvas yourself.
+  </p>
+
+  <p>The algorithm then alternates two steps until nothing changes:</p>
+
+  <ul>
+    <li><strong>Reassign Points.</strong> For every data point, find which centroid is closest, and assign the point to that centroid's cluster.</li>
+    <li><strong>Update Centroids.</strong> For each centroid, move it to the mean (average position) of all the points currently assigned to it.</li>
+  </ul>
+
+  <div class="aha">
+    The shaded regions on the canvas are called a <strong>Voronoi diagram</strong>: each region
+    is the set of all locations that are closer to that centroid than to any other. In the
+    Reassign Points step, every data point gets the color of whatever Voronoi region it's sitting in.
+  </div>
+
+  <p>
+    After Update Centroids, the Voronoi cells redraw because the centroids moved. Some points are
+    now in a different-colored region than their own color — those are the points that will switch
+    clusters at the next Reassign step. When no point switches, the algorithm has converged.
+  </p>
+
+  <h3>Why does it always converge?</h3>
+
+  <p>
+    The total sum of squared distances from each point to its assigned centroid is what k-means
+    is minimizing. Both steps reduce that sum: the Reassign step lowers it by sending points to
+    their closest centroid, and the Update step lowers it by moving the centroid to the optimum
+    position for its current points. The sum can't go on decreasing forever because there are
+    only finitely many ways to assign <code>n</code> points to <code>k</code> clusters. So
+    k-means is guaranteed to halt.
+  </p>
+
+  <h2>When K-Means Goes Wrong</h2>
+
+  <p>
+    Convergence is guaranteed, but a <em>good</em> answer is not. Try the
+    <strong>Gaussian Mixture</strong> dataset with k = 4 instead of the correct k = 3, and run it a
+    few times. You'll usually see two centroids splitting a single blob between them while a third
+    centroid covers two blobs. Which blob gets split depends on where the centroids start —
+    that's why people typically run k-means many times with different random starts and keep the
+    lowest-cost result.
+  </p>
+
+  <p>
+    Try <strong>Smiley Face</strong> or <strong>Pimpled Smiley</strong> with k = 4. K-means cannot
+    find the eyes, nose, and mouth as separate clusters because the mouth is a long curved arc,
+    not a round blob. K-means' core assumption is that clusters are roughly spherical and roughly
+    the same size — and the Smiley deliberately violates both.
+  </p>
+
+  <div class="aha">
+    K-means doesn't see your data the way you do. It sees a sum of squared distances, and any
+    cluster shape that doesn't look like a round blob will get butchered.
+  </div>
+
+  <h2>How to Initialize the Centroids</h2>
+
+  <p>
+    Initialization matters more than people expect. The three strategies on the canvas demonstrate
+    a real progression:
+  </p>
+
+  <ul>
+    <li><strong>Random:</strong> pick <code>k</code> data points uniformly at random and use those
+      as initial centroids. Simple and bad — if k = 5 and your data has 5 true clusters, the
+      probability that your 5 random picks all land in different clusters is roughly
+      <code>k!/k<sup>k</sup></code>, which is about 4% for k = 5 and 0.04% for k = 10.</li>
+    <li><strong>Farthest Point:</strong> pick the first centroid at random, then pick each next
+      centroid to be the data point whose distance to the nearest existing centroid is largest.
+      This spreads centroids across the dataset. Try it on the Packed Circles dataset with k = 6
+      and watch how often it lands one centroid in each circle.</li>
+    <li><strong>I'll Choose:</strong> click anywhere on the canvas to place the centroids
+      yourself. This is the most pedagogical option — put one centroid in a stupid place and
+      watch it die.</li>
+  </ul>
+
+  <p>
+    The most common modern strategy, <strong>k-means++</strong>, isn't in this visualization but
+    is worth knowing about: it works like Farthest Point but picks the next centroid randomly,
+    with probability proportional to the squared distance from the nearest existing centroid.
+    That gives you the spread-out behavior of Farthest Point without the tendency to land on
+    outliers (which are, by definition, far from everything).
+  </p>
+
+  <h2>How Many Clusters?</h2>
+
+  <p>
+    <code>k</code> is a parameter you have to supply, and there's no automatic way to know the
+    right answer. When you can visualize the data — like here — you can often see how many
+    clusters there should be. In real applications the data lives in hundreds of dimensions and
+    you can't see it, so people use heuristics like the "elbow method" (plot total cost vs k,
+    look for the kink) or domain knowledge ("we want exactly 5 customer segments because that's
+    what the marketing team can act on").
+  </p>
+
+  <h2>What This Simplifies</h2>
+
+  <p>
+    This applet uses Euclidean distance, equal-weight points, no noise points, and the standard
+    Lloyd's algorithm. Real implementations vary on every dimension: <strong>k-medoids</strong>
+    replaces the mean with an actual data point (more robust to outliers);
+    <strong>fuzzy c-means</strong> assigns each point partially to multiple clusters;
+    <strong>Gaussian mixture models</strong> treat each cluster as a probability distribution
+    rather than a hard region; <strong>DBSCAN</strong> abandons the centroid idea entirely and
+    grows clusters from dense regions of points (which handles the Smiley face that k-means
+    fails on).
+  </p>
+
+  <p class="citation">
+    Inspired by Naftali Harris, <em>Visualizing K-Means Clustering</em> (January 2014).
+    The "I'll Choose / Randomly / Farthest Point" framing, the failure-mode datasets, and the
+    Voronoi-overlay visualization all follow his original. Long-form text rewritten for the
+    Intro to AI curriculum at Haidian Kaiwen Academy (Unsupervised Learning).
+  </p>
+
+  <div class="for-teachers">
+    <h3>For teachers</h3>
+    <p><strong>Curriculum:</strong> Unsupervised Learning &amp; Representation.
+       Learning objectives: clustering as structure-finding; the two-step k-means iteration;
+       sensitivity to initialization; failure modes for non-spherical or unequal clusters.</p>
+    <p><strong>Pre-exploration prompts:</strong></p>
+    <ul>
+      <li>"Unsupervised" means no labels. How might a computer group things without being told the groups?</li>
+      <li>If you wanted to split a crowd into "k" friend groups, what would you measure?</li>
+      <li>What does it mean for an algorithm to "converge"?</li>
+    </ul>
+    <p><strong>Post-exploration prompts:</strong></p>
+    <ul>
+      <li>Pick "I'll Choose" and put all k centroids in one corner. Run k-means. Does it ever recover the true clusters? Why or why not?</li>
+      <li>Run k-means with k = 2 on Smiley Face. Now k = 4. Now k = 6. Which value gives the most "Smiley-like" answer? Does ANY value find the actual face features?</li>
+      <li>On Packed Circles with k = 6, compare Random vs Farthest Point initialization. Which one more reliably finds the six clusters?</li>
+      <li>Add a few outlier points far from the main data. What happens to the centroids? What does this say about k-means and outliers?</li>
+    </ul>
+    <p><strong>Common misconceptions defeated:</strong>
+       "k-means finds the 'right' number of clusters" (no — you supply k);
+       "k-means works for any cluster shape" (no — it assumes round-ish, equal-sized clusters);
+       "lower cost = better model" (only comparing same k; smaller k always has higher cost).</p>
+    <p><strong>What's under the hood here vs. industry tools:</strong>
+       This applet implements <em>Lloyd's algorithm</em>, the canonical assign-then-update loop
+       students should know. Production libraries like scikit-learn's <code>KMeans</code> default
+       to <em>Elkan's variant</em> (skips redundant distance calculations using the triangle
+       inequality) and <em>k-means++ initialization</em> (probabilistically biased toward spreading
+       initial centroids apart, like our "Farthest Point" but with randomness). Same algorithm
+       family, same convergence guarantees — those defaults are speed/quality refinements, not
+       a different method.</p>
+  </div>
+
+</article>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const cv = $('cv'); const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+
+  // ===== bilingual string table =====
+  // ZH strings are placeholders — replace with translations.
+  const STRINGS = {
+    en: {
+      'title': 'Visualizing K-Means Clustering',
+      'back-link': '← Back to all playgrounds',
+      'footer-top': '↑ Back to top', 'footer-builtby': 'Built by', 'footer-course': 'Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy', 'footer-source': 'View source', 'footer-issue': 'Report an issue',
+      'reset-all': '↺ Reset all',
+      'dataset-label': 'Dataset:',
+      'init-label': 'Initialize centroids:',
+      'k-label': 'k =',
+      'place-btn': 'Place centroids',
+      'reassign-btn': '① Reassign only',
+      'update-btn': '② Move centroids only',
+      'run-btn': '▶ Run to convergence',
+      'step-btn': '❘▶ Step', 'step-title': 'Advance one half-step (reassign, then update).',
+      'speed-label': 'Speed', 'back-title': 'Step one half-step backward through the run.',
+      'tp-idle': 'idle',
+      'return-live': 'Jump to latest',
+      'reset-btn': 'Reset',
+      'step-label': 'Step',
+      'tldr-strong': 'The big idea',
+      'tldr-body': 'K-means clusters points by repeatedly moving each centroid to the mean of the points assigned to it. It works on round blobs and fails on weird shapes.',
+      'd-gaussian': 'Gaussian mixture', 'd-uniform': 'Uniform points',
+      'd-packed': 'Packed circles', 'd-smiley': 'Smiley face',
+      'd-pimpled': 'Pimpled smiley', 'd-custom': 'Clear (draw your own)',
+      'i-choose': "I'll choose", 'i-random': 'Randomly', 'i-farthest': 'Farthest point', 'i-kpp': 'k-means++',
+      'inertia-label': '📉 Inertia (within-cluster SSE):',
+      'inertia-hint': "Inertia is the total squared distance from each point to its assigned centroid. K-means is guaranteed to never increase it. When it flattens, you've converged.",
+      'silh-label': '📊 Silhouette score:',
+      'silh-range': '(range: −1 bad … 0 overlapping … 1 well-separated)',
+      'silh-hint': "Silhouette compares each point's distance to its own cluster vs. the nearest other cluster. To choose k, run with several k values and pick the one with the highest mean silhouette.",
+      'tour-summary': '📚 Lesson tour (5 steps)',
+      'tour-step': 'Step',
+      'tour-prev': '← Prev', 'tour-next': 'Next →', 'tour-apply': '▶ Apply this scenario',
+      'ws-summary': '📝 Worksheet (3 questions)',
+      'ws-check': 'Check',
+      'ws-pick': 'Pick an answer first.',
+      // --- F1: worksheet question prompts (data-i18n spans) ---
+      'ws1q': 'Load the smiley face dataset with k=3. Run to convergence. Does k-means recover the two eyes and the curved smile as three clusters?',
+      'ws2q': 'Gaussians dataset (3 true clusters). Compared to k=3, setting k=6 makes the inertia go:',
+      'ws3q': 'Use the silhouette score on the Gaussians dataset. Try k=2, k=3, k=4. Which k has the HIGHEST silhouette?',
+      // --- MCQ: worksheet option labels (ws{n}o{i}) ---
+      'ws1o0': 'Yes — it finds the two eyes, and the curved smile becomes one banana-shaped cluster.',
+      'ws1o1': 'No — the smile is a curved arc, and k-means can only carve out round, straight-edged regions.',
+      'ws1o2': 'Yes — k-means always recovers the true shapes once it converges.',
+      'ws2o0': 'Up — extra centroids split real clusters and add distance.',
+      'ws2o1': 'Down — more centroids means every point is closer to its nearest one.',
+      'ws2o2': 'Stays the same — there are only 3 real clusters, so the extra centroids do nothing.',
+      'ws3o0': 'k=2 — fewer clusters always means a higher silhouette.',
+      'ws3o1': 'k=3 — the silhouette peaks at the true number of clusters.',
+      'ws3o2': 'k=4 — more clusters always means a higher silhouette.',
+      // --- F1: lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
+      'tour0name': 'Easy: 3 Gaussians, k=3',
+      'tour0desc': 'Three well-separated Gaussian blobs. With k=3 and any reasonable init, K-means converges to the true clusters in a few iterations.',
+      'tour1name': 'Bad init: all centroids in one corner',
+      'tour1desc': '"I\'ll Choose" init — click the corner four times to place centroids there. K-means now has to escape the bad start. Often it doesn\'t — multiple runs from different inits is standard practice.',
+      'tour2name': 'Wrong k: smiley face',
+      'tour2desc': 'Smiley face dataset with k=3. K-means tries to fit three round clusters, but the mouth is a curved arc — no single "Gaussian" can capture it. This is the algorithm hitting its inductive bias.',
+      'tour3name': 'k-means++ vs Random init',
+      'tour3desc': 'Packed circles with k=6. Random init often misses some clusters; k-means++ spreads initial centroids apart probabilistically and usually finds all six. Re-run a few times to see the variance.',
+      'tour4name': 'Use silhouette to pick k',
+      'tour4desc': 'Same Gaussians dataset. Try k=2, k=3, k=4 and check the silhouette score after each. The highest score wins. (Around 0.5+ = clear separation; below 0.25 = overlapping or wrong k.)',
+      // --- F1: worksheet answer-feedback (ws{n}ok / ws{n}no) ---
+      'ws1ok': 'Correct. K-means assumes round (convex) clusters. The smile is a curved arc — no Gaussian-shaped centroid can capture it. This is the inductive bias of k-means.',
+      'ws1no': 'Hint: the smile is a long curved arc. K-means can only carve the plane with straight Voronoi boundaries around point centroids.',
+      'ws2ok': "Correct. Inertia (within-cluster SSE) is monotonically non-increasing in k — more centroids means points are always closer to their nearest one. That's why you can't pick k by minimizing inertia alone.",
+      'ws2no': "Hint: more centroids = points are always closer to the nearest one. Try 'down'.",
+      'ws3ok': 'Correct. With 3 well-separated Gaussian clusters, silhouette peaks at the true k. Unlike inertia, silhouette CAN identify the right k because it balances cohesion (within-cluster distance) vs. separation (between-cluster distance).',
+      'ws3no': "Try k=3. Silhouette peaks at the true number of clusters because over-clustering forces points into 'wrong' neighbors.",
+      // tooltip translations for main controls.
+      'd-gaussian-title': 'Three roughly round blobs. K-means works perfectly here when k=3.',
+      'd-uniform-title': 'Uniform random points. Tests how k-means behaves with no real cluster structure.',
+      'd-packed-title': 'Six tightly packed circles. Try the farthest point init with k=6.',
+      'd-smiley-title': 'A smiley face. The mouth is a curved arc — k-means cannot find it as a single cluster.',
+      'd-pimpled-title': 'Smiley face plus noise dots. Tests robustness to outliers.',
+      'd-custom-title': 'Empty canvas — click to add your own data points.',
+      'i-choose-title': "Click anywhere on the canvas to place centroids yourself. Best for spotting bad-init failures.",
+      'i-random-title': 'Pick k random data points as initial centroids. Simple but often poor.',
+      'i-farthest-title': 'Pick centroids spread far apart from each other. Usually much better than random.',
+      'i-kpp-title': 'k-means++: probabilistic farthest point. Pick first uniformly, then each subsequent centroid with probability ∝ D(x)² where D(x) is distance to nearest existing centroid. This is what scikit-learn does by default.',
+      'k-input-title': "Number of clusters to find. K-means needs this in advance — there's no rule for choosing it.",
+      'place-title': 'Place k centroids using the chosen initialization strategy.',
+      'reassign-title': 'Assign every point to the cluster of its nearest centroid.',
+      'update-title': 'Move each centroid to the mean of the points currently assigned to it.',
+      'run-title': 'Repeat Reassign + Update until the centroids stop moving.',
+      'reset-title': 'Clear centroids and cluster assignments. Keeps the current dataset.',
+      'gmm-summary': '🎲 GMM (soft EM — see k-means as a special case)',
+      'gmm-hint': 'K-means is hard-EM with σ → 0: each point belongs entirely to one cluster. GMM relaxes this — each point has a soft "responsibility" γᵢₖ for each cluster, and clusters have variances (size). Run GMM EM starting from the current k-means centroids and see how the soft fit differs.',
+      'gmm-step': 'One EM step', 'gmm-run': '▶ Run 20 EM steps',
+      'gmm-clear': 'Clear GMM', 'gmm-show': 'Show ellipses (1σ, 2σ)',
+      'gmm-empty': '(place centroids first, then click "One EM step")',
+    },
+    zh: {
+      'title': 'K-均值聚类可视化',
+      'back-link': '← 返回所有演示',
+      'footer-top': '↑ 返回顶部', 'footer-builtby': '作者', 'footer-course': '为海淀凯文学校 2025–2026《人工智能导论》课程制作', 'footer-source': '查看源代码', 'footer-issue': '反馈问题',
+      'reset-all': '↺ 全部重置',
+      'dataset-label': '数据集:',
+      'init-label': '初始化质心:',
+      'k-label': 'k =',
+      'place-btn': '放置质心',
+      'reassign-btn': '① 仅重新分配',
+      'update-btn': '② 仅移动质心',
+      'run-btn': '▶ 运行至收敛',
+      'step-btn': '❘▶ 单步', 'step-title': '前进一个半步(先重新分配,再更新)。',
+      'speed-label': '速度', 'back-title': '在运行中后退一个半步。',
+      'tp-idle': '空闲',
+      'return-live': '跳到最新',
+      'reset-btn': '重置',
+      'step-label': '步骤',
+      'tldr-strong': '核心思想',
+      'tldr-body': 'K-均值通过反复把每个质心移到分配给它的点的均值来聚类。对圆形数据团很有效,对奇怪形状则失败。',
+      'd-gaussian': '高斯混合', 'd-uniform': '均匀分布',
+      'd-packed': '紧密圆圈', 'd-smiley': '笑脸',
+      'd-pimpled': '带噪笑脸', 'd-custom': '清空(自己绘制)',
+      'i-choose': '自己选', 'i-random': '随机', 'i-farthest': '最远点', 'i-kpp': 'k-means++',
+      'inertia-label': '📉 惯性(类内平方和):',
+      'inertia-hint': '惯性是每个点到其所属质心的距离平方之和。K-means 保证它永不增加。当曲线趋平时,算法已收敛。',
+      'silh-label': '📊 轮廓系数:',
+      'silh-range': '(取值范围:−1 差 … 0 重叠 … 1 分离良好)',
+      'silh-hint': '轮廓系数比较每个点到自身簇与最近其他簇的距离。要选 k,跑几组不同的 k 并选平均轮廓系数最高的那个。',
+      'tour-summary': '📚 课程导览(5 步)',
+      'tour-step': '步骤',
+      'tour-prev': '← 上一步', 'tour-next': '下一步 →', 'tour-apply': '▶ 应用此场景',
+      'ws-summary': '📝 练习题(3 题)',
+      'ws-check': '核对',
+      'ws-pick': '请先选择一个答案。',
+      // --- F1: 练习题题干(data-i18n span)---
+      'ws1q': '加载笑脸数据集,设 k=3,运行至收敛。k-means 能把两只眼睛和弯曲的笑嘴恢复成三个簇吗?',
+      'ws2q': '高斯数据集(3 个真实簇)。与 k=3 相比,把 k 设为 6 会让惯性:',
+      'ws3q': '在高斯数据集上使用轮廓系数。试 k=2、k=3、k=4。哪个 k 的轮廓系数最高?',
+      // --- MCQ: 练习题选项标签(ws{n}o{i})---
+      'ws1o0': '能——它找到两只眼睛,而弯曲的笑嘴会变成一个香蕉形的簇。',
+      'ws1o1': '不能——笑嘴是一条曲线弧,而 k-means 只能切分出圆形、直边的区域。',
+      'ws1o2': '能——k-means 一旦收敛,总能恢复出真实的形状。',
+      'ws2o0': '上升——多出的质心会把真实的簇拆开,增加距离。',
+      'ws2o1': '下降——质心越多,每个点离最近的质心总是更近。',
+      'ws2o2': '不变——只有 3 个真实簇,所以多出的质心不起作用。',
+      'ws3o0': 'k=2——簇越少,轮廓系数总是越高。',
+      'ws3o1': 'k=3——轮廓系数在真实簇数处达到峰值。',
+      'ws3o2': 'k=4——簇越多,轮廓系数总是越高。',
+      // --- F1: 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
+      'tour0name': '简单:3 个高斯,k=3',
+      'tour0desc': '三团彼此分得很开的高斯数据。当 k=3 且初始化合理时,k-means 几次迭代就收敛到真实的簇。',
+      'tour1name': '糟糕初始化:所有质心挤在一角',
+      'tour1desc': '使用"自己选"初始化——在角落点击四次把质心都放在那里。现在 k-means 必须摆脱糟糕的起点。它常常做不到——用不同初始化多跑几次是标准做法。',
+      'tour2name': '错误的 k:笑脸',
+      'tour2desc': '笑脸数据集,k=3。k-means 试图拟合三个圆形簇,但嘴是一条曲线弧——没有单个"高斯"能捕捉它。这是算法碰到了它的归纳偏置。',
+      'tour3name': 'k-means++ 对比随机初始化',
+      'tour3desc': '紧密圆圈,k=6。随机初始化常会漏掉一些簇;k-means++ 以概率方式把初始质心分散开,通常能找到全部六个。多跑几次看看波动。',
+      'tour4name': '用轮廓系数选 k',
+      'tour4desc': '同一个高斯数据集。试 k=2、k=3、k=4,每次之后查看轮廓系数。分数最高的获胜。(约 0.5 以上 = 分离清晰;低于 0.25 = 重叠或 k 选错。)',
+      // --- F1: 练习题答案反馈(ws{n}ok / ws{n}no)---
+      'ws1ok': '正确。k-means 假设簇是圆形(凸)的。笑嘴是一条曲线弧——没有任何高斯形状的质心能捕捉它。这正是 k-means 的归纳偏置。',
+      'ws1no': '提示:笑嘴是一条长长的曲线弧。k-means 只能用围绕点质心的直线 Voronoi 边界来切分平面。',
+      'ws2ok': '正确。惯性(类内平方和)随 k 单调不增——质心越多,点离最近的质心总是更近。所以你不能仅靠最小化惯性来选 k。',
+      'ws2no': '提示:质心越多 = 点离最近的质心总是更近。试试"down"。',
+      'ws3ok': '正确。对 3 个分得很开的高斯簇,轮廓系数在真实 k 处达到峰值。与惯性不同,轮廓系数能识别正确的 k,因为它兼顾了内聚度(类内距离)与分离度(类间距离)。',
+      'ws3no': '再试试 k=3。轮廓系数在真实簇数处达到峰值,因为过度聚类会把点硬塞进"错误"的邻居里。',
+      // 主要控件的提示翻译。
+      'd-gaussian-title': '三团大致圆形的高斯分布。当 k=3 时,k-means 完美适用。',
+      'd-uniform-title': '均匀随机点。测试 k-means 在无真实簇结构下的表现。',
+      'd-packed-title': '六个紧密排列的圆。试试 k=6 配合"最远点"初始化。',
+      'd-smiley-title': '笑脸。嘴是曲线弧——k-means 无法将其识别为一个簇。',
+      'd-pimpled-title': '笑脸加噪点。测试对离群点的鲁棒性。',
+      'd-custom-title': '空白画布——点击添加你自己的数据点。',
+      'i-choose-title': '在画布上任意点击放置质心。适合演示糟糕初始化的失败。',
+      'i-random-title': '随机选 k 个数据点作为初始质心。简单但常常效果差。',
+      'i-farthest-title': '挑选彼此相距最远的质心。通常远好于随机初始化。',
+      'i-kpp-title': 'k-means++:概率版"最远点"。先均匀选第一个,之后每个质心按距最近已选质心的距离平方比例选择。这是 scikit-learn 的默认值。',
+      'k-input-title': '要找的簇数。K-means 需要事先指定 k——并没有公式可以选。',
+      'place-title': '按所选的初始化策略放置 k 个质心。',
+      'reassign-title': '把每个点分配给最近质心所在的簇。',
+      'update-title': '把每个质心移到当前分配给它的点的均值。',
+      'run-title': '反复执行"重新分配 + 更新质心",直到质心不再移动。',
+      'reset-title': '清除质心与簇分配。保留当前数据集。',
+      'gmm-summary': '🎲 GMM(软 EM —— 把 k-means 看作特殊情形)',
+      'gmm-hint': 'k-means 是 σ → 0 时的硬 EM:每个点完全属于一个簇。GMM 放宽这一点——每个点对每个簇有软"责任度" γᵢₖ,簇有方差(大小)。从当前 k-means 质心开始运行 GMM EM,看看软拟合的差异。',
+      'gmm-step': '一步 EM', 'gmm-run': '▶ 运行 20 步 EM',
+      'gmm-clear': '清除 GMM', 'gmm-show': '显示椭圆 (1σ, 2σ)',
+      'gmm-empty': '(先放置质心,再点击"一步 EM")',
+    },
+  };
+  function setLang(lang) {
+    if (!STRINGS[lang]) lang = 'en';
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.dataset.i18n;
+      if (STRINGS[lang][k]) el.textContent = STRINGS[lang][k];
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const k = el.dataset.i18nTitle;
+      if (STRINGS[lang][k]) el.title = STRINGS[lang][k];
+    });
+    document.querySelectorAll('.lang-switch button').forEach(b =>
+      b.classList.toggle('active', b.dataset.lang === lang));
+    try { localStorage.setItem('lang', lang); } catch (_) {}
+    // Re-render so dynamic hint + phase indicator strings pick up the new language.
+    // try/catch: render() reads `let points`, `let centroids`, etc. declared further
+    // down — on initial setLang call those are in TDZ. The catch swallows the initial
+    // call; later language-switch clicks happen after declarations and run fine.
+    try { if (typeof render === 'function') render(); } catch (_) {}
+  }
+  // Bug fix: previously hardcoded English in hint/phase indicator text setters.
+  function tr(key, en, zh) {
+    return (document.documentElement.lang === 'zh') ? zh : en;
+  }
+  document.querySelectorAll('.lang-switch button').forEach(b =>
+    b.addEventListener('click', () => {
+      setLang(b.dataset.lang);
+      // F1: re-render the tour in the new language. Safe here — this click handler
+      // only runs post-init, after LESSON_TOUR (a late `const`) is initialized, so
+      // there is no temporal-dead-zone risk (unlike calling it from inside setLang).
+      try { if (typeof renderTour === 'function') renderTour(); } catch (_) {}
+    }));
+  let initialLang = 'en';
+  try { initialLang = localStorage.getItem('lang') || 'en'; } catch (_) {}
+  setLang(initialLang);
+
+  // dark / light theme toggle (shared across all playgrounds via 'theme' key)
+  function setTheme(t) {
+    document.body.classList.toggle('dark-mode', t === 'dark');
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+    try { localStorage.setItem('theme', t); } catch (_) {}
+  }
+  let initialTheme = 'light';
+  try {
+    initialTheme = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  } catch (_) {}
+  setTheme(initialTheme);
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    setTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark');
+    if (typeof render === 'function') render();
+  });
+
+  // For-teachers is hidden by default (cognitive-load floor). User toggles persist.
+  // `?teacher=1` opens on load. `?teacher=0` hides completely (no toggle, for projection).
+  try {
+    const tp = new URLSearchParams(location.search).get('teacher');
+    if (tp === '0') {
+      document.querySelectorAll('.for-teachers').forEach(el => el.style.display = 'none');
+    } else {
+      const style = document.createElement('style');
+      style.textContent = '.for-teachers-expander{margin-top:36px}.for-teachers-expander>summary{cursor:pointer;padding:12px 16px;background:var(--soft);border:1px solid var(--border);border-radius:8px;font-family:-apple-system,system-ui,sans-serif;font-size:0.9rem;color:var(--accent);font-weight:600;list-style:none;user-select:none}.for-teachers-expander>summary::-webkit-details-marker{display:none}.for-teachers-expander[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius:0}.for-teachers-expander>.for-teachers{margin-top:0;border-top:0;border-top-left-radius:0;border-top-right-radius:0}';
+      document.head.appendChild(style);
+      document.querySelectorAll('.for-teachers').forEach(div => {
+        const details = document.createElement('details');
+        details.className = 'for-teachers-expander';
+        const summary = document.createElement('summary');
+        summary.textContent = '▸ Show teacher notes (discussion prompts + curriculum)';
+        div.parentNode.insertBefore(details, div);
+        details.appendChild(summary);
+        details.appendChild(div);
+      });
+      const saved = (() => { try { return localStorage.getItem('teacher-notes-open'); } catch (_) { return null; } })();
+      const shouldOpen = tp === '1' || saved === '1';
+      document.querySelectorAll('details.for-teachers-expander').forEach(d => {
+        d.open = shouldOpen;
+        d.addEventListener('toggle', () => {
+          try { localStorage.setItem('teacher-notes-open', d.open ? '1' : '0'); } catch (_) {}
+        });
+      });
+    }
+  } catch (_) {}
+
+  // URL-shareable config. Encodes dataset / init / k into ?s=base64json.
+  function shareableState() {
+    return {
+      d: dataset, i: initStrategy, k: +$('kInput').value,
+    };
+  }
+  function applyShareableState(s) {
+    try {
+      if (s.d) {
+        document.querySelectorAll('#datasetGroup button').forEach(x =>
+          x.classList.toggle('active', x.dataset.d === s.d));
+        dataset = s.d;
+      }
+      if (s.i) {
+        document.querySelectorAll('#initGroup button').forEach(x =>
+          x.classList.toggle('active', x.dataset.i === s.i));
+        initStrategy = s.i;
+      }
+      if (s.k) $('kInput').value = s.k;
+      if (s.d) loadDataset(s.d);
+      updateConditionalControls();
+    } catch (e) { console.warn('Bad share state:', e); }
+  }
+  try {
+    const sp = new URLSearchParams(location.search).get('s');
+    if (sp) applyShareableState(JSON.parse(atob(sp)));
+  } catch (_) {}
+  document.getElementById('shareLink').addEventListener('click', async () => {
+    const encoded = btoa(JSON.stringify(shareableState()));
+    const url = `${location.origin}${location.pathname}?s=${encoded}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      const btn = document.getElementById('shareLink');
+      const orig = btn.textContent; btn.textContent = '✓ Copied';
+      setTimeout(() => btn.textContent = orig, 1500);
+    } catch (_) {
+      prompt('Copy this URL:', url);
+    }
+  });
+
+  // Export the visualization as PNG.
+  document.getElementById('exportPng').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'kmeans.png';
+    link.href = document.getElementById('cv').toDataURL('image/png');
+    link.click();
+  });
+
+  // Spacebar = "Run to convergence" (the primary action).
+  document.addEventListener('keydown', e => {
+    if (e.code === 'Space' &&
+        e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' &&
+        e.target.tagName !== 'SELECT') {
+      e.preventDefault();
+      document.getElementById('runBtn').click();
+    }
+  });
+
+  // Reduced-motion preference
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ===== Cluster palette: color + shape for WCAG-compliant identity =====
+  const PAL = ['#2563eb', '#dc2626', '#16a34a', '#d97706',
+               '#9333ea', '#0891b2', '#db2777', '#ca8a04'];
+  const PAL_LIGHT = ['#dbeafe', '#fee2e2', '#dcfce7', '#fef3c7',
+                      '#f3e8ff', '#cffafe', '#fce7f3', '#fef9c3'];
+  // Shape per cluster — students with color blindness can still tell clusters apart.
+  const SHAPES = ['circle', 'triangle', 'square', 'diamond',
+                   'cross', 'star', 'pentagon', 'hexagon'];
+  function drawShape(ctx, cx, cy, r, shape, fill, stroke) {
+    ctx.fillStyle = fill;
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1; }
+    ctx.beginPath();
+    if (shape === 'circle') ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    else if (shape === 'square') ctx.rect(cx - r, cy - r, r * 2, r * 2);
+    else if (shape === 'triangle') {
+      ctx.moveTo(cx, cy - r); ctx.lineTo(cx + r, cy + r * 0.8); ctx.lineTo(cx - r, cy + r * 0.8); ctx.closePath();
+    } else if (shape === 'diamond') {
+      ctx.moveTo(cx, cy - r); ctx.lineTo(cx + r, cy); ctx.lineTo(cx, cy + r); ctx.lineTo(cx - r, cy); ctx.closePath();
+    } else if (shape === 'cross') {
+      const t = r * 0.35;
+      ctx.rect(cx - t, cy - r, t * 2, r * 2);
+      ctx.rect(cx - r, cy - t, r * 2, t * 2);
+    } else if (shape === 'star') {
+      for (let i = 0; i < 10; i++) {
+        const a = (i * Math.PI) / 5 - Math.PI / 2;
+        const rr = (i % 2 === 0) ? r : r * 0.42;
+        const x = cx + rr * Math.cos(a), y = cy + rr * Math.sin(a);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+    } else if (shape === 'pentagon' || shape === 'hexagon') {
+      const sides = shape === 'pentagon' ? 5 : 6;
+      for (let i = 0; i < sides; i++) {
+        const a = (i * 2 * Math.PI) / sides - Math.PI / 2;
+        const x = cx + r * Math.cos(a), y = cy + r * Math.sin(a);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+    }
+    ctx.fill();
+    if (stroke) ctx.stroke();
+  }
+
+  let points = [];     // {x, y, cluster}
+  let centroids = [];  // {x, y, prevX, prevY, animStart}
+  let iter = 0;
+  let phase = 'ready';  // 'ready' | 'reassigned' | 'updated' | 'converged'
+  // transport-bar state (snapshot ring buffer + pausable run)
+  let kmHistory = [], kmReviewing = false, kmCursor = 0, running = false;
+  let initStrategy = 'random';
+  let dataset = 'gaussian';
+
+  // conditional control reveal — hide "Place centroids" button when in 'choose' mode
+  // (it auto-engages when you click the canvas instead).
+  function updateConditionalControls() {
+    const placeBtn = $('placeBtn');
+    if (initStrategy === 'choose') {
+      placeBtn.textContent = tr('p-click-place', '✏ Click canvas to place', '✏ 点击画布以放置');
+      placeBtn.disabled = true;
+      placeBtn.style.opacity = '0.5';
+    } else {
+      placeBtn.textContent = STRINGS[document.documentElement.lang || 'en']['place-btn'];
+      placeBtn.disabled = false;
+      placeBtn.style.opacity = '';
+    }
+  }
+
+  // ===== Click handling: placing data points OR centroids =====
+  let placingCentroids = false;
+  cv.addEventListener('click', e => {
+    const rect = cv.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (cv.width / rect.width);
+    const y = (e.clientY - rect.top) * (cv.height / rect.height);
+    if (placingCentroids) {
+      const k = +$('kInput').value;
+      if (centroids.length < k) {
+        centroids.push({x, y});
+        if (centroids.length === k) {
+          placingCentroids = false;
+          $('hint').textContent = tr('h-placed', 'Centroids placed. Now click "Reassign Points".', '质心已放置。现在点击"重新分配点"。');
+          // Reset cluster assignments since we're starting fresh.
+          points.forEach(p => p.cluster = -1);
+          iter = 0; phase = 'ready'; if (typeof clearInertia === 'function') clearInertia();
+        } else {
+          const left = k - centroids.length;
+          $('hint').textContent = tr('h-more', `Click ${left} more time(s) to place centroids.`, `再点击 ${left} 次以放置质心。`);
+        }
+        render();
+      }
+    } else {
+      points.push({x, y, cluster: -1});
+      render();
+    }
+  });
+
+  function distSq(a, b) { return (a.x - b.x) ** 2 + (a.y - b.y) ** 2; }
+
+  // ===== Init strategies =====
+  function initCentroids() {
+    const k = Math.max(1, Math.min(8, +$('kInput').value || 3));
+    centroids = [];
+    points.forEach(p => p.cluster = -1);
+    iter = 0; phase = 'ready'; if (typeof clearInertia === 'function') clearInertia();
+    if (!points.length) {
+      $('hint').textContent = tr('h-need-pts', 'Add some data points first (click the canvas or pick a dataset).', '请先添加数据点(点击画布或选择数据集)。');
+      return;
+    }
+    if (initStrategy === 'choose') {
+      placingCentroids = true;
+      $('hint').textContent = tr('h-click-k', `Click the canvas ${k} times to place ${k} centroid(s).`, `点击画布 ${k} 次以放置 ${k} 个质心。`);
+      render();
+      return;
+    }
+    if (initStrategy === 'random') {
+      const used = new Set();
+      while (centroids.length < k && centroids.length < points.length) {
+        const i = Math.floor(Math.random() * points.length);
+        if (used.has(i)) continue;
+        used.add(i);
+        centroids.push({x: points[i].x, y: points[i].y});
+      }
+    } else if (initStrategy === 'farthest') {
+      const first = Math.floor(Math.random() * points.length);
+      centroids.push({x: points[first].x, y: points[first].y});
+      while (centroids.length < k) {
+        let bestI = 0, bestD = -1;
+        for (let i = 0; i < points.length; i++) {
+          const d = Math.min(...centroids.map(c => distSq(points[i], c)));
+          if (d > bestD) { bestD = d; bestI = i; }
+        }
+        centroids.push({x: points[bestI].x, y: points[bestI].y});
+      }
+    } else if (initStrategy === 'kpp') {
+      // k-means++. Pick first uniformly; for each subsequent centroid, sample
+      // a point with probability ∝ D(x)² where D(x) = min distance to existing centroids.
+      // This is what scikit-learn ships as default.
+      const first = Math.floor(Math.random() * points.length);
+      centroids.push({x: points[first].x, y: points[first].y});
+      while (centroids.length < k) {
+        const dsq = points.map(p => Math.min(...centroids.map(c => distSq(p, c))));
+        const total = dsq.reduce((a, b) => a + b, 0);
+        if (total <= 0) {
+          // Degenerate case: all points coincide with existing centroids. Fall back to random.
+          const i = Math.floor(Math.random() * points.length);
+          centroids.push({x: points[i].x, y: points[i].y});
+          continue;
+        }
+        let target = Math.random() * total;
+        let pickI = 0;
+        for (let i = 0; i < points.length; i++) {
+          target -= dsq[i];
+          if (target <= 0) { pickI = i; break; }
+        }
+        centroids.push({x: points[pickI].x, y: points[pickI].y});
+      }
+    }
+    $('hint').textContent = tr('h-placed', 'Centroids placed. Now click "Reassign Points".', '质心已放置。现在点击"重新分配点"。');
+    render();
+  }
+
+  function reassignStep() {
+    if (!centroids.length) return false;
+    let anyChange = false;
+    for (const p of points) {
+      let best = 0, bd = distSq(p, centroids[0]);
+      for (let i = 1; i < centroids.length; i++) {
+        const d = distSq(p, centroids[i]);
+        if (d < bd) { bd = d; best = i; }
+      }
+      if (p.cluster !== best) { p.cluster = best; anyChange = true; }
+    }
+    phase = 'reassigned';
+    return anyChange;
+  }
+  function updateStep() {
+    if (!centroids.length) return 0;
+    let moved = 0;
+    const sums = centroids.map(() => ({x: 0, y: 0, n: 0}));
+    for (const p of points) {
+      if (p.cluster < 0) continue;
+      sums[p.cluster].x += p.x; sums[p.cluster].y += p.y; sums[p.cluster].n++;
+    }
+    const now = performance.now();
+    for (let i = 0; i < centroids.length; i++) {
+      if (sums[i].n > 0) {
+        const nx = sums[i].x / sums[i].n, ny = sums[i].y / sums[i].n;
+        moved += Math.hypot(nx - centroids[i].x, ny - centroids[i].y);
+        // smooth centroid tween (respect reduced motion)
+        centroids[i].prevX = centroids[i].x;
+        centroids[i].prevY = centroids[i].y;
+        centroids[i].x = nx; centroids[i].y = ny;
+        centroids[i].animStart = reducedMotion ? null : now;
+      }
+    }
+    iter++;
+    phase = (moved < 0.5) ? 'converged' : 'updated';
+    // record inertia (total within-cluster SSE) so students see convergence.
+    recordInertia();
+    // Animate the centroid move
+    if (!reducedMotion && moved > 0.5) animateMove();
+    return moved;
+  }
+  // inertia trace. Computes Σ_i Σ_{x ∈ C_i} ||x − μ_i||² and appends to history.
+  let inertiaHistory = [];
+  function computeInertia() {
+    if (!centroids.length || !points.length) return 0;
+    let s = 0;
+    for (const p of points) {
+      if (p.cluster < 0) continue;
+      const c = centroids[p.cluster];
+      const dx = p.x - c.x, dy = p.y - c.y;
+      s += dx * dx + dy * dy;
+    }
+    return s;
+  }
+  function recordInertia() {
+    inertiaHistory.push(computeInertia());
+    if (inertiaHistory.length > 50) inertiaHistory.shift();
+  }
+  function clearInertia() { inertiaHistory = []; }
+
+  // smooth centroid animation loop
+  let animating = false;
+  function animateMove() {
+    if (animating) return;
+    animating = true;
+    const DUR = 350;
+    function step() {
+      const now = performance.now();
+      let stillAnimating = false;
+      for (const c of centroids) {
+        if (c.animStart != null) {
+          const t = (now - c.animStart) / DUR;
+          if (t < 1) stillAnimating = true;
+        }
+      }
+      render();
+      if (stillAnimating) requestAnimationFrame(step);
+      else {
+        for (const c of centroids) c.animStart = null;
+        animating = false;
+        render();
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  // ===== Rendering =====
+  // Get the visual position of a centroid — interpolates during animation.
+  function centroidVisualPos(i) {
+    const c = centroids[i];
+    if (c.animStart == null) return {x: c.x, y: c.y};
+    const t = Math.min(1, (performance.now() - c.animStart) / 350);
+    // Ease-out cubic
+    const e = 1 - Math.pow(1 - t, 3);
+    return {
+      x: c.prevX + (c.x - c.prevX) * e,
+      y: c.prevY + (c.y - c.prevY) * e,
+    };
+  }
+  function closestIdxAt(x, y, posList) {
+    let best = 0, bd = (x - posList[0].x) ** 2 + (y - posList[0].y) ** 2;
+    for (let i = 1; i < posList.length; i++) {
+      const d = (x - posList[i].x) ** 2 + (y - posList[i].y) ** 2;
+      if (d < bd) { bd = d; best = i; }
+    }
+    return best;
+  }
+  function render() {
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : 'white';
+    ctx.fillRect(0, 0, W, H);
+
+    // Compute current visual positions of all centroids (handles tween).
+    const visPos = centroids.map((_, i) => centroidVisualPos(i));
+
+    // Voronoi shading — crisper 3px step (improved visual upgrade).
+    if (visPos.length > 0) {
+      const STEP = 3;
+      for (let x = 0; x < W; x += STEP) {
+        for (let y = 0; y < H; y += STEP) {
+          const best = closestIdxAt(x, y, visPos);
+          ctx.fillStyle = PAL_LIGHT[best];
+          ctx.fillRect(x, y, STEP, STEP);
+        }
+      }
+      // Voronoi cell borders — only draw boundaries.
+      ctx.strokeStyle = '#9ca3af';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < W - STEP; x += STEP) {
+        for (let y = 0; y < H; y += STEP) {
+          if (closestIdxAt(x, y, visPos) !== closestIdxAt(x + STEP, y, visPos)) {
+            ctx.beginPath();
+            ctx.moveTo(x + STEP, y);
+            ctx.lineTo(x + STEP, y + STEP);
+            ctx.stroke();
+          }
+        }
+      }
+      for (let x = 0; x < W; x += STEP) {
+        for (let y = 0; y < H - STEP; y += STEP) {
+          if (closestIdxAt(x, y, visPos) !== closestIdxAt(x, y + STEP, visPos)) {
+            ctx.beginPath();
+            ctx.moveTo(x, y + STEP);
+            ctx.lineTo(x + STEP, y + STEP);
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    // Data points with shape based on cluster (color+shape redundancy for accessibility).
+    for (const p of points) {
+      if (p.cluster < 0) {
+        ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#cbd5e1' : '#374151';
+        ctx.beginPath(); ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2); ctx.fill();
+      } else {
+        drawShape(ctx, p.x, p.y, 4, SHAPES[p.cluster % SHAPES.length], PAL[p.cluster]);
+      }
+    }
+
+    // Centroids — interpolated position + shape outline matching their cluster.
+    for (let i = 0; i < visPos.length; i++) {
+      const c = visPos[i];
+      // Outer white ring
+      ctx.beginPath(); ctx.arc(c.x, c.y, 13, 0, Math.PI * 2);
+      ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : 'white'; ctx.fill();
+      ctx.strokeStyle = PAL[i]; ctx.lineWidth = 3; ctx.stroke();
+      // Inner shape matching the cluster's data-point shape
+      drawShape(ctx, c.x, c.y, 6, SHAPES[i % SHAPES.length], PAL[i]);
+    }
+
+    // UI
+    $('iterV').textContent = iter;
+    if (!kmReviewing) { const tc = $('tpCount'); if (tc) tc.textContent = iter > 0 ? `step ${iter}` : 'idle'; }
+    const pInd = $('phaseInd');
+    pInd.className = 'phase-indicator ' + (
+      phase === 'reassigned' ? 'assign'
+      : phase === 'updated' ? 'update'
+      : phase === 'converged' ? 'converged' : '');
+    pInd.textContent = (
+      phase === 'reassigned' ? tr('p-reassigned', 'Points reassigned', '已重新分配点')
+      : phase === 'updated' ? tr('p-updated', 'Centroids updated', '已更新质心')
+      : phase === 'converged' ? tr('p-converged', 'Converged ✓', '已收敛 ✓')
+      : tr('p-ready', 'Ready', '就绪'));
+
+    // Enable/disable buttons
+    $('reassignBtn').disabled = centroids.length === 0;
+    $('updateBtn').disabled = centroids.length === 0 || phase === 'ready';
+
+    // D3/SVG hybrid: rebuild a11y overlay.
+    updateOverlay();
+    // render the inertia trace + silhouette score.
+    renderInertia();
+    renderSilhouette();
+    // overlay GMM ellipses if a GMM has been fit.
+    drawGmmEllipses(ctx);
+  }
+  // Isotropic-Gaussian Mixture Model. Each component has (μ, σ², π).
+  // EM: E-step computes responsibilities γᵢₖ = πₖN(xᵢ|μₖ,σₖ²I) / Σⱼ πⱼN(xᵢ|μⱼ,σⱼ²I);
+  // M-step updates μₖ, σₖ², πₖ from γ-weighted statistics. Initialized from the
+  // current k-means centroids. Pedagogy: when σ → 0 the GMM collapses to k-means
+  // (winner-take-all responsibilities) — k-means is just hard EM in disguise.
+  let gmm = null; // { means: [{x,y}], vars: [number], weights: [number], logLik: number, iters: number }
+  function initGmmFromCentroids() {
+    if (!centroids.length || !points.length) return null;
+    const K = centroids.length;
+    // Initial σ²: variance of all points / K (rough prior).
+    let totalVar = 0;
+    let mx = 0, my = 0;
+    for (const p of points) { mx += p.x; my += p.y; }
+    mx /= points.length; my /= points.length;
+    for (const p of points) totalVar += (p.x - mx) ** 2 + (p.y - my) ** 2;
+    totalVar /= points.length;
+    const initVar = Math.max(100, totalVar / K);  // floor at 100 to avoid singularity
+    return {
+      means: centroids.map(c => ({x: c.x, y: c.y})),
+      vars: new Array(K).fill(initVar),
+      weights: new Array(K).fill(1 / K),
+      logLik: -Infinity, iters: 0,
+    };
+  }
+  function gmmStep() {
+    if (!gmm) gmm = initGmmFromCentroids();
+    if (!gmm) return;
+    const K = gmm.means.length;
+    const N = points.length;
+    // E-step: γᵢₖ proportional to πₖ * (1/(2πσₖ²)) * exp(-||xᵢ-μₖ||²/(2σₖ²)).
+    // Work in log-space for numerical safety, then normalize.
+    const resp = []; // [N][K]
+    let logLik = 0;
+    for (const p of points) {
+      const logs = new Array(K);
+      for (let k = 0; k < K; k++) {
+        const v = gmm.vars[k];
+        const d2 = (p.x - gmm.means[k].x) ** 2 + (p.y - gmm.means[k].y) ** 2;
+        logs[k] = Math.log(gmm.weights[k] + 1e-12) - Math.log(2 * Math.PI * v) - d2 / (2 * v);
+      }
+      const lmax = Math.max(...logs);
+      let s = 0;
+      for (let k = 0; k < K; k++) s += Math.exp(logs[k] - lmax);
+      const lse = lmax + Math.log(s);  // log-sum-exp
+      logLik += lse;
+      const r = new Array(K);
+      for (let k = 0; k < K; k++) r[k] = Math.exp(logs[k] - lse);
+      resp.push(r);
+    }
+    // M-step.
+    const Nk = new Array(K).fill(0);
+    for (let k = 0; k < K; k++) for (let i = 0; i < N; i++) Nk[k] += resp[i][k];
+    for (let k = 0; k < K; k++) {
+      if (Nk[k] < 1e-6) continue;
+      let mx = 0, my = 0;
+      for (let i = 0; i < N; i++) { mx += resp[i][k] * points[i].x; my += resp[i][k] * points[i].y; }
+      gmm.means[k].x = mx / Nk[k]; gmm.means[k].y = my / Nk[k];
+      let vSum = 0;
+      for (let i = 0; i < N; i++) {
+        const d2 = (points[i].x - gmm.means[k].x) ** 2 + (points[i].y - gmm.means[k].y) ** 2;
+        vSum += resp[i][k] * d2;
+      }
+      // Isotropic 2D Gaussian: σ² estimate is (Σγ·d²) / (2·Σγ).
+      gmm.vars[k] = Math.max(50, vSum / (2 * Nk[k]));
+      gmm.weights[k] = Nk[k] / N;
+    }
+    gmm.logLik = logLik;
+    gmm.iters++;
+    updateGmmStats();
+    render();
+  }
+  function updateGmmStats() {
+    if (!gmm) {
+      $('gmmStats').innerHTML = '<span style="font-style:italic;">(no GMM fit yet)</span>';
+      return;
+    }
+    const wStr = gmm.weights.map(w => w.toFixed(3)).join(', ');
+    const sStr = gmm.vars.map(v => Math.sqrt(v).toFixed(1)).join(', ');
+    $('gmmStats').innerHTML =
+      `<span>iter <strong>${gmm.iters}</strong> · ` +
+      `log-likelihood <strong>${gmm.logLik.toFixed(1)}</strong> · ` +
+      `weights π = [${wStr}] · ` +
+      `1σ = [${sStr}] px</span>`;
+  }
+  function drawGmmEllipses(ctx) {
+    if (!gmm || !$('gmmShow') || !$('gmmShow').checked) return;
+    for (let k = 0; k < gmm.means.length; k++) {
+      const sigma = Math.sqrt(gmm.vars[k]);
+      const cx = gmm.means[k].x, cy = gmm.means[k].y;
+      // 1σ and 2σ circles (isotropic, so circles not ellipses).
+      ctx.strokeStyle = (PAL && PAL[k]) ? PAL[k] : '#7c3aed';
+      for (const mult of [1, 2]) {
+        ctx.lineWidth = (mult === 1) ? 2 : 1;
+        ctx.setLineDash(mult === 1 ? [] : [4, 4]);
+        ctx.beginPath();
+        ctx.arc(cx, cy, sigma * mult, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+    }
+  }
+  // silhouette score per AIMA-ish reference (Rousseeuw 1987).
+  // s(i) = (b(i) - a(i)) / max(a(i), b(i))
+  //   a(i) = mean dist from point i to other points in its own cluster
+  //   b(i) = min over OTHER clusters C of (mean dist from i to points in C)
+  // Singleton clusters get s(i) = 0 by convention.
+  function computeSilhouette() {
+    if (!centroids.length || !points.length) return null;
+    // Group points by cluster.
+    const byCluster = {};
+    for (const p of points) {
+      if (p.cluster < 0) return null; // unassigned points → silhouette undefined
+      if (!byCluster[p.cluster]) byCluster[p.cluster] = [];
+      byCluster[p.cluster].push(p);
+    }
+    const clusterIds = Object.keys(byCluster).map(Number).sort((a, b) => a - b);
+    if (clusterIds.length < 2) return null; // need ≥ 2 clusters
+    const dist = (p, q) => Math.hypot(p.x - q.x, p.y - q.y);
+    const perCluster = {};
+    let overall = 0, overallN = 0;
+    for (const cid of clusterIds) {
+      const own = byCluster[cid];
+      let clusterSum = 0, clusterN = 0;
+      for (const p of own) {
+        let a = 0;
+        if (own.length > 1) {
+          for (const q of own) if (q !== p) a += dist(p, q);
+          a /= (own.length - 1);
+        } else {
+          // singleton — silhouette undefined, conventionally 0
+          clusterSum += 0; clusterN += 1;
+          overall += 0; overallN += 1;
+          continue;
+        }
+        let b = Infinity;
+        for (const ocid of clusterIds) {
+          if (ocid === cid) continue;
+          const other = byCluster[ocid];
+          let mean = 0;
+          for (const q of other) mean += dist(p, q);
+          mean /= other.length;
+          if (mean < b) b = mean;
+        }
+        const s = (b - a) / Math.max(a, b);
+        clusterSum += s; clusterN += 1;
+        overall += s; overallN += 1;
+      }
+      perCluster[cid] = clusterN > 0 ? clusterSum / clusterN : 0;
+    }
+    return {
+      overall: overallN > 0 ? overall / overallN : 0,
+      perCluster,
+    };
+  }
+  function renderSilhouette() {
+    const box = $('silhouetteBox');
+    if (!box) return;
+    const s = computeSilhouette();
+    if (!s) { box.style.display = 'none'; return; }
+    box.style.display = '';
+    $('silhOverall').textContent = s.overall.toFixed(3);
+    // Color-code overall score.
+    const o = s.overall;
+    const ovEl = $('silhOverall');
+    ovEl.style.color = o >= 0.5 ? '#16a34a' : o >= 0.25 ? '#0284c7' : o >= 0 ? '#eab308' : '#dc2626';
+    // Per-cluster.
+    const colors = ['#dc2626', '#0284c7', '#16a34a', '#9333ea', '#ea580c', '#0891b2', '#be185d', '#65a30d'];
+    let html = '';
+    for (const [cid, score] of Object.entries(s.perCluster)) {
+      const c = colors[cid % colors.length];
+      html += `<span><span style="display:inline-block; width:10px; height:10px; background:${c}; border-radius:50%; vertical-align:middle; margin-right:4px;"></span>cluster ${+cid + 1}: <b>${score.toFixed(3)}</b></span>`;
+    }
+    $('silhPerCluster').innerHTML = html;
+  }
+  function renderInertia() {
+    const box = $('inertiaBox');
+    if (!box) return;
+    if (inertiaHistory.length === 0) { box.style.display = 'none'; return; }
+    box.style.display = '';
+    const cur = inertiaHistory[inertiaHistory.length - 1];
+    $('inertiaV').textContent = cur.toFixed(0);
+    // Delta vs previous step.
+    if (inertiaHistory.length >= 2) {
+      const prev = inertiaHistory[inertiaHistory.length - 2];
+      const d = cur - prev;
+      const lang = document.documentElement.lang === 'zh' ? 'zh' : 'en';
+      const arrow = d < -0.5 ? '↓' : d > 0.5 ? '↑' : '≈';
+      const dropTxt = lang === 'zh' ? '本次下降' : 'this step';
+      $('inertiaDelta').textContent = `${arrow} ${Math.abs(d).toFixed(0)} (${dropTxt})`;
+    } else {
+      $('inertiaDelta').textContent = '';
+    }
+    // Sparkline: 50 most recent values, scaled to viewBox.
+    const W = 200, H = 40, pad = 2;
+    const min = Math.min(...inertiaHistory);
+    const max = Math.max(...inertiaHistory);
+    const span = max - min || 1;
+    const n = inertiaHistory.length;
+    const pts = inertiaHistory.map((v, i) => {
+      const x = n === 1 ? W / 2 : pad + (W - 2 * pad) * (i / (n - 1));
+      const y = H - pad - ((v - min) / span) * (H - 2 * pad);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(' ');
+    document.getElementById('inertiaSparkLine').setAttribute('points', pts);
+  }
+  // D3-style enter/update/exit overlay. Preserves SVG element identity
+  // across renders (was: tear down + rebuild every frame), which means:
+  //   • focused centroids don't lose focus when render() fires
+  //   • CSS transitions on cx/cy/x/y are honored (smooth tweens, not jumps)
+  //   • screen readers don't re-announce every centroid on every reassign step
+  // Keying: centroids by index (stable in this applet since reassign doesn't
+  // reorder them), points by (x, y) snapshot at first sight (rounded to keep
+  // identity through small tweens).
+  const ns = 'http://www.w3.org/2000/svg';
+  function updateOverlay() {
+    const svg = document.getElementById('cvOverlay');
+    if (!svg) return;
+    // ===== Centroids: enter / update / exit by index =====
+    const existingCentroids = Array.from(svg.querySelectorAll('rect[data-role="centroid"]'));
+    centroids.forEach((c, idx) => {
+      let el = existingCentroids[idx];
+      if (!el) {
+        el = document.createElementNS(ns, 'rect');
+        el.setAttribute('data-role', 'centroid');
+        el.setAttribute('width', 24); el.setAttribute('height', 24);
+        el.setAttribute('fill', 'transparent');
+        el.setAttribute('tabindex', 0);
+        el.setAttribute('role', 'graphics-symbol');
+        el.style.pointerEvents = 'auto';
+        el.style.cursor = 'help';
+        el.style.transition = 'x 200ms ease, y 200ms ease';
+        const t = document.createElementNS(ns, 'title');
+        el.appendChild(t);
+        svg.appendChild(el);
+      }
+      el.setAttribute('x', c.x - 12); el.setAttribute('y', c.y - 12);
+      el.setAttribute('aria-label', `Centroid ${idx + 1} at ${Math.round(c.x)}, ${Math.round(c.y)}.`);
+      el.firstChild.textContent = `Centroid ${idx + 1}`;
+    });
+    // Exit: remove any extra centroid elements (k decreased).
+    for (let i = centroids.length; i < existingCentroids.length; i++) {
+      existingCentroids[i].remove();
+    }
+
+    // ===== Points: enter / update / exit by index =====
+    // Points get tooltips but no tab stops (would flood keyboard nav).
+    const existingPoints = Array.from(svg.querySelectorAll('circle[data-role="point"]'));
+    points.forEach((p, idx) => {
+      let el = existingPoints[idx];
+      if (!el) {
+        el = document.createElementNS(ns, 'circle');
+        el.setAttribute('data-role', 'point');
+        el.setAttribute('r', 8);
+        el.setAttribute('fill', 'transparent');
+        el.style.pointerEvents = 'auto';
+        el.style.cursor = 'help';
+        el.style.transition = 'cx 200ms ease, cy 200ms ease';
+        const t = document.createElementNS(ns, 'title');
+        el.appendChild(t);
+        svg.appendChild(el);
+      }
+      el.setAttribute('cx', p.x); el.setAttribute('cy', p.y);
+      el.firstChild.textContent = p.cluster >= 0
+        ? `Point ${idx + 1} — cluster ${p.cluster + 1}`
+        : `Point ${idx + 1} — unassigned`;
+    });
+    for (let i = points.length; i < existingPoints.length; i++) {
+      existingPoints[i].remove();
+    }
+  }
+
+  // ===== Datasets =====
+  function randn() {
+    let u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+  function loadDataset(name) {
+    points = []; centroids = []; iter = 0; phase = 'ready'; if (typeof clearInertia === 'function') clearInertia();
+    placingCentroids = false;
+    if (name === 'gaussian') {
+      const centers = [{x: 200, y: 150}, {x: 580, y: 180}, {x: 400, y: 380}];
+      for (const c of centers) {
+        for (let i = 0; i < 50; i++) {
+          points.push({x: c.x + randn() * 40, y: c.y + randn() * 40, cluster: -1});
+        }
+      }
+    } else if (name === 'uniform') {
+      for (let i = 0; i < 150; i++) {
+        points.push({x: 40 + Math.random() * (W - 80),
+                     y: 40 + Math.random() * (H - 80), cluster: -1});
+      }
+    } else if (name === 'packed') {
+      const centers = [
+        {x: 140, y: 130}, {x: 360, y: 130}, {x: 580, y: 130},
+        {x: 140, y: 370}, {x: 360, y: 370}, {x: 580, y: 370},
+      ];
+      for (const c of centers) {
+        for (let i = 0; i < 30; i++) {
+          const r = 30 * Math.sqrt(Math.random());
+          const a = 2 * Math.PI * Math.random();
+          points.push({x: c.x + r * Math.cos(a), y: c.y + r * Math.sin(a), cluster: -1});
+        }
+      }
+    } else if (name === 'smiley' || name === 'pimpled') {
+      // Face outline
+      for (let t = 0; t < 100; t++) {
+        const a = 2 * Math.PI * t / 100;
+        points.push({x: 400 + 220 * Math.cos(a), y: 260 + 200 * Math.sin(a), cluster: -1});
+      }
+      // Eyes
+      for (let i = 0; i < 25; i++) {
+        const a = 2 * Math.PI * Math.random();
+        const r = 22 * Math.sqrt(Math.random());
+        points.push({x: 320 + r * Math.cos(a), y: 200 + r * Math.sin(a), cluster: -1});
+      }
+      for (let i = 0; i < 25; i++) {
+        const a = 2 * Math.PI * Math.random();
+        const r = 22 * Math.sqrt(Math.random());
+        points.push({x: 480 + r * Math.cos(a), y: 200 + r * Math.sin(a), cluster: -1});
+      }
+      // Mouth (curved arc)
+      for (let t = 0; t < 50; t++) {
+        const a = Math.PI + Math.PI * t / 49;   // bottom half of a circle
+        points.push({x: 400 + 100 * Math.cos(a), y: 320 + 60 * Math.sin(a), cluster: -1});
+      }
+      // Pimples (extra random scatter)
+      if (name === 'pimpled') {
+        for (let i = 0; i < 50; i++) {
+          // Scatter inside the face
+          let x, y;
+          do {
+            x = 200 + Math.random() * 400;
+            y = 100 + Math.random() * 320;
+          } while ((x - 400) ** 2 / (220 * 220) + (y - 260) ** 2 / (200 * 200) > 0.9);
+          points.push({x, y, cluster: -1});
+        }
+      }
+    }
+    // 'custom' leaves points empty
+    $('hint').textContent = points.length
+      ? tr('h-init', 'Now choose an initialization strategy and click "Place centroids".', '现在选择初始化策略,然后点击"放置质心"。')
+      : tr('h-empty', 'Click anywhere on the canvas to add data points.', '在画布上点击任意位置添加数据点。');
+    render();
+  }
+
+  // ===== Wiring =====
+  document.querySelectorAll('#datasetGroup button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#datasetGroup button').forEach(x =>
+        x.classList.toggle('active', x === b));
+      dataset = b.dataset.d;
+      loadDataset(dataset);
+    });
+  });
+  document.querySelectorAll('#initGroup button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#initGroup button').forEach(x =>
+        x.classList.toggle('active', x === b));
+      initStrategy = b.dataset.i;
+      updateConditionalControls();
+    });
+  });
+  // Hard reset (header button): full reset to defaults.
+  $('hardReset').addEventListener('click', () => {
+    document.querySelectorAll('#datasetGroup button').forEach(x =>
+      x.classList.toggle('active', x.dataset.d === 'gaussian'));
+    document.querySelectorAll('#initGroup button').forEach(x =>
+      x.classList.toggle('active', x.dataset.i === 'random'));
+    dataset = 'gaussian'; initStrategy = 'random'; $('kInput').value = 3;
+    updateConditionalControls();
+    loadDataset('gaussian');
+  });
+  // ===== Unified transport bar: snapshot ring buffer (universal step-back) =====
+  const KM_CAP = 300;
+  function kmSetCount(t) { const tc = $('tpCount'); if (tc) tc.textContent = t; }
+  function kmSyncScrub() {
+    const sc = document.getElementById('kmScrub'); if (!sc) return;
+    sc.max = Math.max(0, kmHistory.length - 1);
+    if (!kmReviewing) sc.value = kmHistory.length - 1;
+    const grp = document.getElementById('kmScrubGroup');
+    if (grp && kmHistory.length >= 2) grp.style.visibility = 'visible';
+  }
+  function kmSnap() {
+    kmHistory.push({ assign: points.map(p => p.cluster), cents: centroids.map(c => ({x: c.x, y: c.y})),
+                     iter, phase, inertiaLen: inertiaHistory.length });
+    if (kmHistory.length > KM_CAP) kmHistory.shift();
+    kmSyncScrub();
+  }
+  function kmApply(s) {            // restore points + centroids for review (no tween)
+    animating = false;
+    points.forEach((p, i) => { p.cluster = s.assign[i]; });
+    centroids = s.cents.map(c => ({x: c.x, y: c.y, prevX: c.x, prevY: c.y, animStart: null}));
+    iter = s.iter; phase = s.phase;
+    if (inertiaHistory.length > s.inertiaLen) inertiaHistory.length = s.inertiaLen;
+    render();
+  }
+  function kmReturnLive() {
+    if (kmHistory.length) kmApply(kmHistory[kmHistory.length - 1]);
+    kmReviewing = false; kmSetCount(`step ${iter}`);
+    const _sc=document.getElementById('kmScrub'); if(_sc) _sc.value=Math.max(0,kmHistory.length-1); const _lv=document.getElementById('kmLive'); if(_lv) _lv.disabled = true;
+  }
+  function kmGoto(idx) {
+    if (running || kmHistory.length === 0) return;
+    idx = Math.max(0, Math.min(kmHistory.length - 1, idx | 0));
+    if (idx >= kmHistory.length - 1) { kmReturnLive(); return; }
+    kmReviewing = true; kmCursor = idx;
+    kmApply(kmHistory[idx]);
+    kmSetCount(`frame ${idx + 1}/${kmHistory.length}`);
+    const _sc=document.getElementById('kmScrub'); if(_sc) _sc.value=idx; const _lv=document.getElementById('kmLive'); if(_lv) _lv.disabled = false;
+  }
+  function kmBack() {
+    if (running || kmHistory.length === 0) return;
+    kmGoto((kmReviewing ? kmCursor : kmHistory.length - 1) - 1);
+  }
+  function kmStep() {             // ❘▶ : forward through review, else next half-step
+    if (running) return;
+    if (kmReviewing) { kmGoto(kmCursor + 1); return; }
+    if (!centroids.length) return;
+    if (phase === 'reassigned') updateStep(); else reassignStep();
+    kmSnap(); render(); kmSetCount(`step ${iter}`);
+  }
+  function kmDelay() { return Math.max(0, 500 - (+$('speedSlider').value) * 4.7); }  // ~500ms..30ms
+  $('stepBtn').addEventListener('click', kmStep);
+  $('backBtn').addEventListener('click', kmBack);
+  { const sc = document.getElementById('kmScrub'); if (sc) sc.addEventListener('input', () => kmGoto(+sc.value)); }
+  { const jb = document.getElementById('kmJump'); if (jb) jb.addEventListener('change', () => { let v = parseInt(jb.value, 10); if (Number.isNaN(v)) return; v = Math.max(0, Math.min(kmHistory.length - 1, v)); kmGoto(v); }); }
+  { const lv = document.getElementById('kmLive'); if (lv) lv.addEventListener('click', kmReturnLive); }
+  window.__kmeansAcceptanceTest = function () {
+    const sp = $('speedSlider');
+    const r = { transportBar: !!$('transport'), backBtn: !!$('backBtn'), stepBtn: !!$('stepBtn'),
+                resetBtn: !!$('resetBtn'), speedInBar: !!(sp && sp.closest('#transport')),
+                snapshots: kmHistory.length };
+    const pass = r.transportBar && r.backBtn && r.stepBtn && r.resetBtn && r.speedInBar;
+    console.log('[k-means] CONTROLS ACCEPTANCE TEST ' + (pass ? 'passed' : 'FAILED'), r);
+    return Object.assign({ pass }, r);
+  };
+  $('placeBtn').addEventListener('click', initCentroids);
+  $('reassignBtn').addEventListener('click', () => { reassignStep(); kmSnap(); render(); kmSetCount(`step ${iter}`); });
+  $('updateBtn').addEventListener('click', () => { updateStep(); kmSnap(); render(); kmSetCount(`step ${iter}`); });
+  $('runBtn').addEventListener('click', async () => {
+    if (kmReviewing) kmReturnLive();
+    if (running) { running = false; document.getElementById('runBtn').setAttribute('aria-pressed', 'false'); return; }       // toggle → pause
+    if (!centroids.length) return;
+    running = true; $('runBtn').textContent = '⏸ Pause'; document.getElementById('runBtn').setAttribute('aria-pressed', 'true');
+    const baseTitle = document.title.replace(/^\(iter \d+\) /, '');
+    let safety = 0;
+    while (running && safety < 200) {
+      const changed = reassignStep(); kmSnap(); render();
+      document.title = `(iter ${iter}) ${baseTitle}`;
+      await new Promise(r => setTimeout(r, kmDelay()));
+      if (!running) break;
+      const moved = updateStep(); kmSnap(); render(); kmSetCount(`step ${iter}`);
+      document.title = `(iter ${iter}) ${baseTitle}`;
+      await new Promise(r => setTimeout(r, kmDelay()));
+      if (!changed || moved < 0.5) break;
+      safety++;
+    }
+    running = false; $('runBtn').textContent = '▶ Run to convergence'; document.getElementById('runBtn').setAttribute('aria-pressed', 'false');
+    document.title = baseTitle;
+  });
+  $('resetBtn').addEventListener('click', () => {
+    running = false; $('runBtn').textContent = '▶ Run to convergence';
+    kmHistory = []; kmReviewing = false; kmSetCount('idle');
+    { const g=document.getElementById('kmScrubGroup'); if(g) g.style.visibility='hidden'; const sc=document.getElementById('kmScrub'); if(sc){ sc.max=0; sc.value=0; } const lv=document.getElementById('kmLive'); if(lv) lv.disabled = true; }
+    centroids = []; iter = 0; phase = 'ready'; if (typeof clearInertia === 'function') clearInertia();
+    points.forEach(p => p.cluster = -1);
+    placingCentroids = false;
+    $('hint').textContent = tr('h-cleared', 'Cleared. Pick a dataset and place centroids again.', '已清空。选择数据集并重新放置质心。');
+    render();
+  });
+  $('kInput').addEventListener('change', () => {
+    centroids = []; placingCentroids = false;
+    kmHistory = []; kmReviewing = false; kmSetCount('idle');
+    { const g=document.getElementById('kmScrubGroup'); if(g) g.style.visibility='hidden'; const sc=document.getElementById('kmScrub'); if(sc){ sc.max=0; sc.value=0; } const lv=document.getElementById('kmLive'); if(lv) lv.disabled = true; }
+    points.forEach(p => p.cluster = -1);
+    iter = 0; phase = 'ready'; if (typeof clearInertia === 'function') clearInertia();
+    render();
+  });
+
+  // touch support — synthesize mouse events from touch events for tablet use.
+  (() => {
+    const target = cv;
+    let lastTouch = null;
+    target.addEventListener('touchstart', e => {
+      if (e.touches.length > 0) {
+        e.preventDefault();
+        lastTouch = {clientX: e.touches[0].clientX, clientY: e.touches[0].clientY};
+        target.dispatchEvent(new MouseEvent('mousedown', lastTouch));
+      }
+    }, {passive: false});
+    target.addEventListener('touchmove', e => {
+      if (e.touches.length > 0) {
+        e.preventDefault();
+        lastTouch = {clientX: e.touches[0].clientX, clientY: e.touches[0].clientY};
+        target.dispatchEvent(new MouseEvent('mousemove', lastTouch));
+      }
+    }, {passive: false});
+    target.addEventListener('touchend', e => {
+      e.preventDefault();
+      if (lastTouch) {
+        target.dispatchEvent(new MouseEvent('mouseup', lastTouch));
+        target.dispatchEvent(new MouseEvent('click', lastTouch));
+      }
+      lastTouch = null;
+    }, {passive: false});
+  })();
+
+  // Harris-style init choice overlay.
+  // Shows on hardReset OR when explicitly invoked. Picking a strategy applies it
+  // and (for non-"choose") immediately places centroids.
+  function showInitOverlay() {
+    document.getElementById('initOverlay').style.display = '';
+    document.body.classList.add('overlay-active');
+  }
+  function hideInitOverlay() {
+    document.getElementById('initOverlay').style.display = 'none';
+    document.body.classList.remove('overlay-active');
+  }
+  document.querySelectorAll('#initOverlay .choice-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pick = btn.dataset.pick;
+      document.querySelectorAll('#initGroup button').forEach(x =>
+        x.classList.toggle('active', x.dataset.i === pick));
+      initStrategy = pick;
+      updateConditionalControls();
+      hideInitOverlay();
+      if (pick !== 'choose') initCentroids();
+    });
+  });
+  // Re-route the hard-reset button to also show the choice overlay (Harris's pattern).
+  const origHardReset = document.getElementById('hardReset').onclick;
+  document.getElementById('hardReset').addEventListener('click', () => {
+    // Existing logic loads default dataset already; just surface the overlay too.
+    showInitOverlay();
+  });
+
+  // CSV export.
+  document.getElementById('csvExport').addEventListener('click', () => {
+    const lines = ['# K-means data export', '# Section 1: points', 'x,y,cluster'];
+    for (const p of points) lines.push(`${p.x.toFixed(2)},${p.y.toFixed(2)},${p.cluster}`);
+    lines.push('', '# Section 2: centroids', 'x,y');
+    for (const c of centroids) lines.push(`${c.x.toFixed(2)},${c.y.toFixed(2)}`);
+    const blob = new Blob([lines.join('\n')], {type: 'text/csv'});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `kmeans-k${centroids.length}-n${points.length}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  });
+
+  // Lesson tour — ordered K-means scenarios.
+  const LESSON_TOUR = [
+    { name: 'Easy: 3 Gaussians, k=3',
+      description: 'Three well-separated Gaussian blobs. With k=3 and any reasonable init, K-means converges to the true clusters in a few iterations.',
+      apply: () => { initStrategy = 'random'; $('kInput').value = 3; loadDataset('gaussian'); render(); } },
+    { name: 'Bad init: all centroids in one corner',
+      description: '"I\'ll Choose" init — click the corner four times to place centroids there. K-means now has to escape the bad start. Often it doesn\'t — multiple runs from different inits is standard practice.',
+      apply: () => { initStrategy = 'choose'; $('kInput').value = 3; loadDataset('gaussian'); $('hint').textContent = tr('h-init-corner', 'Now click the corner of the canvas 3 times to place centroids in a bad starting position.', '现在在画布角落点击 3 次,把质心放在糟糕的起始位置。'); render(); } },
+    { name: 'Wrong k: smiley face',
+      description: 'Smiley face dataset with k=3. K-means tries to fit three round clusters, but the mouth is a curved arc — no single "Gaussian" can capture it. This is the algorithm hitting its inductive bias.',
+      apply: () => { initStrategy = 'random'; $('kInput').value = 3; loadDataset('smiley'); render(); } },
+    { name: 'k-means++ vs Random init',
+      description: 'Packed circles with k=6. Random init often misses some clusters; k-means++ spreads initial centroids apart probabilistically and usually finds all six. Re-run a few times to see the variance.',
+      apply: () => { initStrategy = 'kpp'; $('kInput').value = 6; loadDataset('packed'); render(); } },
+    { name: 'Use silhouette to pick k',
+      description: 'Same Gaussians dataset. Try k=2, k=3, k=4 and check the silhouette score after each. The highest score wins. (Around 0.5+ = clear separation; below 0.25 = overlapping or wrong k.)',
+      apply: () => { initStrategy = 'random'; $('kInput').value = 3; loadDataset('gaussian'); render(); $('hint').textContent = tr('h-silh', 'Now press "Place centroids" + "Reassign Points" + "Update Centroids" twice. Watch the silhouette score box. Try k=2 and k=4 too.', '现在依次点击"放置质心"、"重新分配点"、"更新质心"两次。观察轮廓系数。也试试 k=2 和 k=4。'); } },
+  ];
+  let tourIdx = 0;
+  function renderTour() {
+    if (!$('tourName')) return;
+    const s = LESSON_TOUR[tourIdx];
+    // F1 bilingual: look up tour{i}name / tour{i}desc with English inline fallback.
+    const L = (document.documentElement.lang || 'en');
+    const S = STRINGS[L] || STRINGS.en;
+    $('tourName').textContent = S['tour' + tourIdx + 'name'] || s.name;
+    $('tourDesc').textContent = S['tour' + tourIdx + 'desc'] || s.description;
+    $('tourPos').textContent = `${tourIdx + 1}/${LESSON_TOUR.length}`;
+    $('tourPrev').disabled = (tourIdx === 0);
+    $('tourNext').disabled = (tourIdx === LESSON_TOUR.length - 1);
+  }
+  $('tourApply').addEventListener('click', () => LESSON_TOUR[tourIdx].apply());
+  $('tourPrev').addEventListener('click', () => { if (tourIdx > 0) { tourIdx--; renderTour(); } });
+  $('tourNext').addEventListener('click', () => { if (tourIdx < LESSON_TOUR.length - 1) { tourIdx++; renderTour(); } });
+  renderTour();
+
+  // GMM EM controls.
+  $('gmmStepBtn').addEventListener('click', gmmStep);
+  $('gmmRunBtn').addEventListener('click', () => {
+    for (let i = 0; i < 20; i++) gmmStep();
+  });
+  $('gmmClearBtn').addEventListener('click', () => {
+    gmm = null;
+    updateGmmStats();
+    render();
+  });
+  $('gmmShow').addEventListener('change', render);
+
+  // Worksheet/lab mode — 3 questions with instant ✓/✗ feedback.
+  // F1 bilingual feedback helper: ws{n}ok / ws{n}no with English inline fallback.
+  function wsMsg(key, en) {
+    const L = (document.documentElement.lang || 'en');
+    return (STRINGS[L] && STRINGS[L][key]) || en;
+  }
+  // MCQ: each question is graded by the selected radio's index, not typed text.
+  // `correct` is the index of the right option (language-agnostic). ok/no are the
+  // existing bilingual feedback keys, with an English inline fallback via wsMsg.
+  const WORKSHEET = [
+    { correct: 1,
+      ok:  ['ws1ok', "Correct. K-means assumes round (convex) clusters. The smile is a curved arc — no Gaussian-shaped centroid can capture it. This is the inductive bias of k-means."],
+      no:  ['ws1no', "Hint: the smile is a long curved arc. K-means can only carve the plane with straight Voronoi boundaries around point centroids."] },
+    { correct: 1,
+      ok:  ['ws2ok', "Correct. Inertia (within-cluster SSE) is monotonically non-increasing in k — more centroids means points are always closer to their nearest one. That's why you can't pick k by minimizing inertia alone."],
+      no:  ['ws2no', "Hint: more centroids = points are always closer to the nearest one. Try 'down'."] },
+    { correct: 1,
+      ok:  ['ws3ok', "Correct. With 3 well-separated Gaussian clusters, silhouette peaks at the true k. Unlike inertia, silhouette CAN identify the right k because it balances cohesion (within-cluster distance) vs. separation (between-cluster distance)."],
+      no:  ['ws3no', "Try k=3. Silhouette peaks at the true number of clusters because over-clustering forces points into 'wrong' neighbors."] },
+  ];
+  WORKSHEET.forEach((q, i) => {
+    const n = i + 1;
+    $(`ws${n}btn`).addEventListener('click', () => {
+      const fb = $(`ws${n}fb`);
+      const picked = document.querySelector(`input[name="ws${n}"]:checked`);
+      if (!picked) {
+        fb.textContent = wsMsg('ws-pick', 'Pick an answer first.');
+        fb.style.color = 'var(--muted)';
+        return;
+      }
+      const ok = Number(picked.value) === q.correct;
+      const [key, en] = ok ? q.ok : q.no;
+      fb.textContent = (ok ? '✓ ' : '✗ ') + wsMsg(key, en);
+      fb.style.color = ok ? '#16a34a' : '#dc2626';
+    });
+  });
+
+  loadDataset('gaussian');
+  window.__kmScrubTest = function(){ const g=document.getElementById('kmScrubGroup'); const inBar=!!(g&&g.closest('#transport')); const r={scrubInBar:inBar, jump:!!document.getElementById('kmJump'), slider:!!document.getElementById('kmScrub')}; const pass=r.scrubInBar&&r.jump&&r.slider; console.log('[k-means] SCRUB-IN-BAR '+(pass?'passed':'FAILED'), r); return Object.assign({pass},r); };
+  window.__bentoTest = function(){ const b=document.querySelector('.bento'); const cells=document.querySelectorAll('.bento-cell').length; const r={bento:!!b, cells, cvAspect:getComputedStyle(document.getElementById('cv')).aspectRatio}; const pass=!!b && cells>=3; console.log('[k-means] BENTO '+(pass?'passed':'FAILED'), r); return Object.assign({pass}, r); };
+})();
+</script>
+
+<!-- Embed mode handler (shared pattern across all 12 applets). -->
+<script>
+(() => {
+  try {
+    if (new URLSearchParams(location.search).get('embed') === '1') {
+      document.body.classList.add('embed-mode');
+    }
+  } catch (_) {}
+  const btn = document.getElementById('embedLink');
+  if (!btn) return;
+  btn.addEventListener('click', async () => {
+    const url = new URL(location.href);
+    url.searchParams.set('embed', '1');
+    const snippet = `<iframe src="${url.toString()}" width="100%" height="720" frameborder="0" style="border:1px solid #e5e7eb; border-radius:8px;" loading="lazy"></iframe>`;
+    try {
+      await navigator.clipboard.writeText(snippet);
+      const orig = btn.textContent; btn.textContent = '✓ Copied iframe';
+      setTimeout(() => btn.textContent = orig, 1800);
+    } catch (_) { prompt('Copy this iframe snippet:', snippet); }
+  });
+})();
+</script>
+  <footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
+    <p style="margin:0 0 6px;"><a href="#top" data-i18n="footer-top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
+    <p style="margin:0;"><span data-i18n="footer-builtby">Built by</span> Logan Dixon · <span data-i18n="footer-course">Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy</span></p>
+    <p style="margin:6px 0 0;"><a href="https://github.com/lmdixon23/ai-playgrounds" data-i18n="footer-source" style="color:var(--accent,#0891b2);">View source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-i18n="footer-issue" style="color:var(--accent,#0891b2);">Report an issue</a> · © 2026 Logan Dixon</p>
+  </footer>
+  <!-- Privacy-friendly analytics — GoatCounter, cookieless. -->
+  <script data-goatcounter="https://lmdixon23.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

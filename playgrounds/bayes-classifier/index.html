@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visualizing Bayes' Rule</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E">
+<meta name="description" content="Interactive visualization of Bayes' rule. Slide the prior and the test accuracy to see how a '99% accurate' test for a rare disease can still be wrong most of the time.">
+<link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-classifier/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-classifier/">
+<meta property="og:title" content="Visualizing Bayes' Rule — AI Playgrounds">
+<meta property="og:description" content="Interactive visualization of Bayes' rule. Slide the prior and the test accuracy to see how a '99% accurate' test for a rare disease can still be wrong most of the time.">
+<meta property="og:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Visualizing Bayes' Rule — AI Playgrounds">
+<meta name="twitter:description" content="Interactive visualization of Bayes' rule. Slide the prior and the test accuracy to see how a '99% accurate' test for a rare disease can still be wrong most of the time.">
+<meta name="twitter:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Visualizing Bayes' Rule — AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-classifier/","description":"Interactive visualization of Bayes' rule. Slide the prior and the test accuracy to see how a '99% accurate' test for a rare disease can still be wrong most of the time.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan Dixon"}}
+</script>
+<style>
+  :root {
+    --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #7c3aed;
+    --card: #fff; --border: #e5e7eb; --soft: #f9fafb;
+    --sick: #dc2626; --healthy: #16a34a; --pos: #f59e0b; --neg: #2563eb;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", Arial, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; }
+  .page-header { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 24px; }
+  .header-utility { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .header-prefs { display: flex; align-items: center; gap: 8px; }
+  .header-main { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .header-actions { display: flex; align-items: center; gap: 8px; font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem; }
+  .header-actions .header-reset { margin-left: 12px; }
+  .page-header h1 { margin: 0; font-size: 1.5rem; }
+  .page-header .back { color: var(--accent); text-decoration: none; font-size: 0.9rem; font-family: -apple-system, system-ui, sans-serif; }
+  .lang-switch { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .lang-switch button { padding: 4px 10px; background: white; color: var(--muted);
+                          border: none; cursor: pointer; font: inherit; font-size: 0.78rem; }
+  .lang-switch button.active { background: var(--accent); color: white; font-weight: 600; }
+  .header-reset { padding: 6px 12px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font: inherit; font-size: 0.82rem; }
+  .header-reset:hover { background: var(--soft); }
+  .tldr { max-width: 820px; margin: 16px auto 0;
+           background: var(--accent); color: white;
+           border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; font-weight: 500;
+           font-family: -apple-system, system-ui, sans-serif; line-height: 1.45; }
+  .tldr strong { color: rgba(255,255,255,0.85); font-size: 0.72rem; letter-spacing: 0.08em;
+                  text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px; }
+  .interactive { background: var(--card); padding: 24px; border-bottom: 1px solid var(--border); }
+  .interactive-inner { max-width: 1280px; margin: 0 auto; }
+  .bento { display: grid; grid-template-columns: minmax(300px, 360px) minmax(0, 1fr); gap: 16px; align-items: start; margin-bottom: 14px; }
+  .bento-side, .bento-main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .bento-cell { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+  .bento-cell > :first-child { margin-top: 0 !important; }
+  @media (max-width: 860px) { .bento { grid-template-columns: 1fr; gap: 12px; } }
+  .control-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+                  margin-bottom: 14px; font-family: -apple-system, system-ui, sans-serif;
+                  font-size: 0.88rem; }
+  .control-row label { color: var(--muted); }
+  .control-row .group { display: flex; gap: 0; border: 1px solid var(--border);
+                         border-radius: 6px; overflow: hidden; }
+  .control-row .group button {
+    padding: 7px 12px; background: white; color: var(--fg);
+    border: none; border-right: 1px solid var(--border); cursor: pointer;
+    font: inherit; font-size: 0.85rem;
+  }
+  .control-row .group button:last-child { border-right: none; }
+  .control-row .group button.active { background: var(--accent); color: white; font-weight: 600; }
+  .sliders-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px;
+                    margin-bottom: 18px; font-family: -apple-system, system-ui, sans-serif; }
+  .slider-field { display: flex; flex-direction: column; gap: 4px; }
+  .slider-field .row { display: flex; justify-content: space-between; font-size: 0.85rem; }
+  .slider-field .lbl { color: var(--muted); }
+  .slider-field .val { color: var(--accent); font-weight: 700; font-family: monospace; }
+  .slider-field input[type=range] { width: 100%; }
+  .slider-field .help { color: var(--muted); font-size: 0.78rem; font-style: italic; }
+
+  .formula-box { background: var(--soft); border: 1px solid var(--border);
+                   border-radius: 8px; padding: 14px 18px; margin-bottom: 18px;
+                   font-family: 'SF Mono', Consolas, monospace; font-size: 0.95rem;
+                   line-height: 1.6; }
+  .formula-box b { color: var(--accent); }
+
+  .posterior-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+                     margin-bottom: 18px; font-family: -apple-system, system-ui, sans-serif; }
+  .post-card { background: white; border: 2px solid var(--border); border-radius: 8px;
+                padding: 16px; text-align: center; }
+  .post-card.primary { border-color: var(--accent); }
+  .post-card .lbl { color: var(--muted); font-size: 0.78rem;
+                      text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .post-card .num { font-size: 2.2rem; font-weight: 700; font-family: monospace; color: var(--accent); }
+
+  canvas { display: block; margin: 0 auto; background: white;
+            border: 1px solid var(--border); border-radius: 6px; max-width: 100%; }
+  #dots { width: 100%; max-width: 1000px; height: auto; aspect-ratio: 1000 / 280; }
+  .legend-strip { display: flex; gap: 14px; justify-content: center; margin-top: 10px;
+                    font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem; flex-wrap: wrap; }
+  .legend-strip .dot { display: inline-block; width: 12px; height: 12px;
+                        border-radius: 50%; vertical-align: middle; margin-right: 4px; }
+  .counts-box { background: var(--soft); border: 1px solid var(--border);
+                  border-radius: 6px; padding: 12px 16px; margin-top: 12px;
+                  font-family: 'SF Mono', Consolas, monospace; font-size: 0.85rem;
+                  line-height: 1.6; }
+  .counts-box b { color: var(--accent); }
+  .jump-link { display: inline-block; margin-top: 14px;
+                padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px;
+                background: white; color: var(--accent); text-decoration: none;
+                font-family: -apple-system, system-ui, sans-serif; font-size: 0.82rem;
+                font-weight: 600; transition: background 0.15s; }
+  .jump-link:hover { background: var(--soft); }
+  .jump-anchor { text-align: center; }
+  .essay { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; font-size: 1.05rem; }
+  .essay h2 { font-size: 1.5rem; margin-top: 36px; margin-bottom: 12px; color: var(--accent); }
+  .essay h3 { font-size: 1.15rem; margin-top: 24px; margin-bottom: 8px; }
+  .essay .lede { font-size: 1.15rem; color: #374151; }
+  .essay .aha { background: #ede9fe; border-left: 4px solid #7c3aed;
+                 padding: 12px 18px; margin: 18px 0; border-radius: 0 6px 6px 0;
+                 font-style: italic; color: #4c1d95; }
+  .essay code { background: var(--soft); padding: 1px 6px; border-radius: 4px;
+                 font-family: 'SF Mono', Consolas, monospace; font-size: 0.92em; }
+  .essay ul li { margin-bottom: 6px; }
+  .essay .for-teachers { background: var(--soft); border: 1px solid var(--border);
+                          border-radius: 8px; padding: 20px 24px; margin-top: 36px;
+                          font-family: -apple-system, system-ui, sans-serif; font-size: 0.95rem; }
+  .essay .for-teachers h3 { font-family: -apple-system, system-ui, sans-serif;
+                              color: var(--accent); font-size: 0.9rem;
+                              text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+  /* === dark mode === */
+  body.dark-mode {
+    --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8;
+    --card: #1e293b; --border: #334155; --soft: #1e293b;
+  }
+  body.dark-mode .essay .lede { color: #cbd5e1; }
+  body.dark-mode .essay .for-teachers { background: #0f172a; }
+  /* True canvas dark mode — render fn picks bg directly. */
+  body.dark-mode .header-reset,
+  body.dark-mode .lang-switch button:not(.active),
+  body.dark-mode .header-theme,
+  body.dark-mode .control-row .group button:not(.active) { background: var(--card); color: var(--fg); }
+  body.dark-mode .post-card, body.dark-mode .formula-box,
+  body.dark-mode .counts-box { background: var(--card); }
+  .header-theme { padding: 6px 10px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font-size: 1rem; line-height: 1; font-family: inherit; }
+  .header-theme:hover { background: var(--soft); }
+  .header-png { padding: 6px 10px; background: white; color: var(--fg);
+                  border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                  font-size: 0.85rem; font-family: inherit; }
+  .header-png:hover { background: var(--soft); }
+  body.dark-mode .header-png { background: var(--card); color: var(--fg); }
+  /* ===== Slider styling — native themed control via accent-color (consistent across browsers) ===== */
+  input[type="range"] { accent-color: var(--accent); height: 28px; cursor: pointer; }
+  /* embed mode. Strip chrome so the applet fits cleanly in an LMS iframe. */
+  body.embed-mode .page-header,
+  body.embed-mode aside.tldr,
+  body.embed-mode article.essay,
+  body.embed-mode .jump-anchor { display: none !important; }
+  body.embed-mode .interactive { padding: 12px; border-bottom: none; }
+  /* ===== Shared a11y + contrast tokens (review fixes: F4 keyboard focus, F6 banner contrast) ===== */
+  button:focus-visible, a:focus-visible, select:focus-visible,
+  input:focus-visible, textarea:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+  .tldr { background: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), var(--accent); }
+  .tldr strong { color: #fff; }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="header-utility">
+    <a class="back" href="../../" data-i18n="back-link">← Back to all playgrounds</a>
+    <div class="header-prefs">
+      <button class="header-theme" id="themeToggle" aria-label="Toggle dark or light theme"
+              title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
+      <div class="lang-switch" title="Switch interface language">
+        <button data-lang="en" class="active">EN</button>
+        <button data-lang="zh">中文</button>
+      </div>
+    </div>
+  </div>
+  <div class="header-main">
+    <h1 data-i18n="title">Visualizing Bayes' Rule</h1>
+    <div class="header-actions">
+      <button class="header-png" id="shareLink"
+              title="Copy a URL that re-opens this prior / sensitivity / specificity / population in another browser.">🔗 Share</button>
+      <button class="header-png" id="embedLink"
+              title="Copy an <iframe> snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
+      <button class="header-png" id="csvExport"
+              title="Download the current Bayes scenario (prior, sens, spec, population) and the resulting contingency table + posteriors as CSV.">📊 CSV</button>
+      <button class="header-png" id="exportPng"
+              title="Download the population dot-grid as a PNG.">📷 PNG</button>
+      <button class="header-reset" id="hardReset" data-i18n="reset-all"
+              title="Reset to default disease scenario: prior=1%, sensitivity=99%, specificity=95%, population=10000.">↺ Reset all</button>
+    </div>
+  </div>
+</header>
+
+<aside class="tldr">
+  <strong data-i18n="tldr-strong">The big idea</strong>
+  <span data-i18n="tldr-body">A "99% accurate" test for a 1%-rare disease is wrong most of the time when it says positive. Bayes' rule is just counting groups of people.</span>
+</aside>
+
+<section class="interactive">
+<div class="interactive-inner">
+
+<div class="bento">
+  <div class="bento-side">
+    <div class="bento-cell">
+      <div class="control-row">
+        <label data-i18n="scenario-label">Scenario:</label>
+        <div class="group scenario-tabs">
+          <button data-scen="disease" class="active" data-i18n="scen-disease" data-i18n-title="scen-disease-title" title="Medical screening: detect a rare disease in the population.">Disease test</button>
+          <button data-scen="spam" data-i18n="scen-spam" data-i18n-title="scen-spam-title" title="Email filter: flag spam messages. Same math, different stakes.">Spam filter</button>
+        </div>
+      </div>
+
+      <div class="sliders-grid">
+        <div class="slider-field">
+          <div class="row">
+            <span class="lbl" id="priorLabel">P(disease)</span>
+            <span class="val" id="priorV">1.0%</span>
+          </div>
+          <input id="prior" type="range" min="0.1" max="50" step="0.1" value="1" aria-label="Prior probability percent"
+                 data-i18n-title="prior-slider-title"
+                 title="How common is the condition? Slide far left for a rare disease and watch the posterior collapse.">
+          <div class="help" data-i18n="prior-help">How common is the condition in the population?</div>
+        </div>
+        <div class="slider-field">
+          <div class="row">
+            <span class="lbl" id="sensLabel">P(test+ | disease)</span>
+            <span class="val" id="sensV">99.0%</span>
+          </div>
+          <input id="sens" type="range" min="50" max="100" step="0.1" value="99" aria-label="Sensitivity (true positive rate) percent"
+                 data-i18n-title="sens-slider-title"
+                 title="When the person IS sick, what % of the time does the test say so? (True positive rate.)">
+          <div class="help" data-i18n="sens-help">Sensitivity: when sick, % the test correctly says so.</div>
+        </div>
+        <div class="slider-field">
+          <div class="row">
+            <span class="lbl" id="specLabel">P(test− | healthy)</span>
+            <span class="val" id="specV">95.0%</span>
+          </div>
+          <input id="spec" type="range" min="50" max="100" step="0.1" value="95" aria-label="Specificity (true negative rate) percent"
+                 data-i18n-title="spec-slider-title"
+                 title="When the person is healthy, what % of the time does the test correctly say so? (True negative rate.)">
+          <div class="help" data-i18n="spec-help">Specificity: when healthy, % the test correctly says so.</div>
+        </div>
+        <div class="slider-field">
+          <div class="row">
+            <span class="lbl" data-i18n="pop-label">Population shown</span>
+            <span class="val" id="popV">10,000</span>
+          </div>
+          <input id="pop" type="range" min="100" max="100000" step="100" value="10000" aria-label="Population size"
+                 data-i18n-title="pop-slider-title"
+                 title="Larger population = smoother visualization. Same math regardless.">
+          <div class="help" data-i18n="pop-help">Larger = smoother visualization; same math regardless.</div>
+        </div>
+      </div>
+
+      <div class="formula-box">
+        P(<b>disease</b> | <b>test+</b>) = [P(<b>test+</b> | <b>disease</b>) × P(<b>disease</b>)] ÷ P(<b>test+</b>)
+        <div id="formulaPlugged" style="margin-top:8px"></div>
+      </div>
+
+      <!-- Likelihood ratio readout. LR+ and LR- expose the clinical-practice quantities. -->
+      <div class="lr-box" style="margin-top:8px; padding:10px 14px; background:var(--soft); border:1px solid var(--border); border-radius:8px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem;">
+        <strong style="color:var(--accent);" data-i18n="lr-strong">Likelihood ratios:</strong>
+        <span style="margin-left:10px;">
+          <b>LR⁺</b> = <span data-i18n="lr-plus-def">sensitivity ÷ (1 − specificity)</span> =
+          <span id="lrPos" style="font-family:ui-monospace,monospace; color:var(--accent); font-weight:700;">—</span>
+        </span>
+        <span style="margin-left:18px;">
+          <b>LR⁻</b> = <span data-i18n="lr-minus-def">(1 − sensitivity) ÷ specificity</span> =
+          <span id="lrNeg" style="font-family:ui-monospace,monospace; color:var(--accent); font-weight:700;">—</span>
+        </span>
+        <div style="color:var(--muted); font-size:0.78rem; margin-top:4px;" data-i18n="lr-hint">
+          LR⁺ &gt; 10 = strong positive evidence. LR⁻ &lt; 0.1 = strong negative evidence.
+          Multiply the prior odds by the LR to get posterior odds (the way doctors actually compute Bayes).
+        </div>
+      </div>
+
+      <!-- Sequential updating. The first posterior becomes the second prior — the
+           clinical-practice point that this applet was missing. -->
+      <div class="sequential-box" style="margin-top:12px; padding:12px 16px; background:var(--soft); border:1px solid var(--border); border-radius:8px;">
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+          <strong style="color:var(--accent);" data-i18n="seq-strong">Run a second test:</strong>
+          <span style="color:var(--muted); font-size:0.9rem;" data-i18n="seq-explain">The posterior from the first test becomes the prior for the second. Watch P(sick) update twice.</span>
+          <button class="step-btn" id="seqPosBtn" data-i18n="seq-pos-btn"
+                  data-i18n-title="seq-pos-title"
+                  title="Set the prior to P(sick | positive), then re-test. A second positive should push the posterior even higher.">
+            ✓ Test came back POSITIVE
+          </button>
+          <button class="step-btn secondary" id="seqNegBtn" data-i18n="seq-neg-btn"
+                  data-i18n-title="seq-neg-title"
+                  title="Set the prior to P(sick | negative). A second negative should drop the posterior even lower.">
+            ✗ Test came back NEGATIVE
+          </button>
+          <button class="step-btn secondary" id="seqResetBtn" data-i18n="seq-reset-btn"
+                  data-i18n-title="seq-reset-title"
+                  title="Discard the chained prior and reset to the scenario default.">↺ Reset chain</button>
+        </div>
+        <div id="seqHistory" style="margin-top:8px; font-family:ui-monospace,monospace; font-size:0.85rem; color:var(--muted); min-height:1.4em;"></div>
+      </div>
+    </div><!-- /.bento-cell controls -->
+  </div><!-- /.bento-side -->
+
+  <div class="bento-main">
+    <div class="bento-cell">
+      <canvas id="dots" width="1000" height="280" role="img"
+              aria-label="Population dot grid showing true/false positives and true/false negatives for the current Bayes scenario."></canvas>
+      <div class="legend-strip">
+        <span><span class="dot" style="background:var(--sick)"></span>Has disease (red)</span>
+        <span><span class="dot" style="background:var(--healthy)"></span>Healthy (green)</span>
+        <span>Yellow ring = test +</span>
+        <span>Blue ring = test −</span>
+      </div>
+    </div><!-- /.bento-cell canvas -->
+
+    <div class="bento-cell">
+      <div class="posterior-row">
+        <div class="post-card primary">
+          <div class="lbl" data-i18n="post-pos">If your test is POSITIVE, prob. you're actually sick:</div>
+          <div class="num" id="posteriorPos">—</div>
+        </div>
+        <div class="post-card">
+          <div class="lbl" data-i18n="post-neg">If your test is NEGATIVE, prob. you're actually sick:</div>
+          <div class="num" id="posteriorNeg">—</div>
+        </div>
+      </div>
+
+      <div class="counts-box" id="counts"></div>
+    </div><!-- /.bento-cell readouts -->
+
+    <!-- Tree diagram view (alternative representation to the dot grid) — moved to the wide main column so the 520px SVG has room. -->
+    <div class="bento-cell">
+      <details class="tree-details" style="margin-top:0;">
+        <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+          <span data-i18n="tree-summary">🌳 Show probability tree (alternative representation)</span>
+        </summary>
+        <div style="padding:10px 14px; border:1px solid var(--border); border-top:0; border-radius:0 0 6px 6px;">
+          <svg id="treeSvg" width="100%" viewBox="0 0 520 220" style="display:block; max-width:520px; margin:0 auto;"
+               role="img" aria-label="Probability tree showing prior → conditional → joint at each leaf."></svg>
+        </div>
+      </details>
+    </div><!-- /.bento-cell tree -->
+  </div><!-- /.bento-main -->
+</div><!-- /.bento -->
+
+  <!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
+  <details class="lesson-tour" style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="tour-summary">📚 Lesson tour (5 steps)</span>
+    </summary>
+    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+        <strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
+        <strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">—</strong>
+      </div>
+      <p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">—</p>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="step-btn secondary" id="tourPrev" data-i18n="tour-prev">← Prev</button>
+        <button class="step-btn" id="tourApply" data-i18n="tour-apply">▶ Apply this scenario</button>
+        <button class="step-btn secondary" id="tourNext" data-i18n="tour-next">Next →</button>
+      </div>
+    </div>
+  </details>
+
+  <!-- Worksheet/lab mode. 3 questions per applet with instant check. -->
+  <details class="worksheet" style="margin-top:8px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="ws-summary">📝 Worksheet (3 questions)</span>
+    </summary>
+    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem; line-height:1.5;">
+      <div class="ws-q" id="ws1">
+        <p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">Disease test. Set prior=1%, sensitivity=99%, specificity=99%. P(disease | positive) is closest to:</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="0"> <span data-i18n="ws1o0">~99% — the test is 99% accurate, so a positive is almost certainly real.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="1"> <span data-i18n="ws1o1">~50% — false positives from the huge healthy majority roughly equal the true positives.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="2"> <span data-i18n="ws1o2">~1% — one test barely moves the 1% prior at all.</span></label>
+        </div>
+        <button class="step-btn" id="ws1btn" data-i18n="ws-check">Check</button>
+        <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+      <div class="ws-q" id="ws2" style="margin-top:10px;">
+        <p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Hold sens=99%, spec=99%. Raise prior from 1% to 20%. P(disease | positive) goes:</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="0"> <span data-i18n="ws2o0">Down — a higher prior leaves less room for the posterior to rise.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="1"> <span data-i18n="ws2o1">Same — the test's accuracy is unchanged, so the result is unchanged.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="2"> <span data-i18n="ws2o2">Up — a higher prior means more true positives relative to false positives.</span></label>
+        </div>
+        <button class="step-btn" id="ws2btn" data-i18n="ws-check">Check</button>
+        <span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+      <div class="ws-q" id="ws3" style="margin-top:10px;">
+        <p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Back to prior=1%, sens=99%, spec=99%. After ONE positive (posterior ≈ 50%), click "Test came back POSITIVE" to retest. After the SECOND positive, P(disease) is closest to:</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="0"> <span data-i18n="ws3o0">~99% — the second positive updates from the new ~50% prior and multiplies the odds.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="1"> <span data-i18n="ws3o1">~50% — a repeat of the same test just gives the same result again.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="2"> <span data-i18n="ws3o2">~90% — two positives add up but never get near certainty.</span></label>
+        </div>
+        <button class="step-btn" id="ws3btn" data-i18n="ws-check">Check</button>
+        <span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+    </div>
+  </details>
+
+  <div class="jump-anchor"><a href="#essay" class="jump-link">↓ Read the explanation</a></div>
+</div>
+</section>
+
+<article class="essay" id="essay">
+
+  <p class="lede">
+    Imagine a disease that affects 1 person in 100. There's a test for it that is "99% accurate"
+    in both directions — when you're sick it says positive 99% of the time, and when you're healthy
+    it says negative 99% of the time. You take the test. It comes back positive. What's the
+    probability that you actually have the disease? Most people guess somewhere between 95% and 99%.
+    The real answer is <strong>about 50%</strong>. That gap is what Bayes' rule is for.
+  </p>
+
+  <h2>Why intuition fails</h2>
+
+  <p>
+    Test accuracy and personal probability are not the same number. "99% accurate" describes how the
+    test behaves when you condition on the truth. What you care about is how the test behaves
+    when you condition on its own output. Bayes' rule converts between the two by adding one piece
+    of information: how common the condition is to begin with — the <em>prior</em>.
+  </p>
+
+  <p>
+    The applet above is doing nothing fancy. It's just counting people. Of 10,000 people, 100 are
+    sick (1% prior). Of those 100 sick people, 99 test positive (sensitivity). Of the 9,900
+    healthy people, 5% — that's 495 — test positive anyway (false positives). So of the 99 + 495 = 594
+    people who test positive, only 99 are actually sick. 99 / 594 ≈ 16.7%.
+  </p>
+
+  <div class="aha">
+    Bayes' rule isn't a math trick. It's literally counting groups. The "trick" is remembering
+    that the false positives from the much larger healthy group can outnumber the true positives
+    from the small sick group.
+  </div>
+
+  <h2>The two levers</h2>
+
+  <p>
+    Two factors push the posterior probability around:
+  </p>
+
+  <ul>
+    <li><strong>The prior.</strong> Slide the disease prior from 1% down to 0.1% (one in a thousand
+      — about right for a rare cancer screening). Watch the posterior collapse. Diseases that are
+      genuinely rare make positive tests genuinely uninformative.</li>
+    <li><strong>The specificity.</strong> Hold the prior at 1%. Now slide specificity from 95% to
+      99.9%. The posterior shoots up. Reducing false positives matters far more than reducing
+      false negatives when the prior is low.</li>
+  </ul>
+
+  <h2>The spam scenario is the same math</h2>
+
+  <p>
+    Click "Spam filter" up top. The math is identical. The numbers are different because spam is
+    common (30%-ish prior) and false positives are catastrophic (a real email goes to junk).
+    A spam filter with 95% sensitivity and 99% specificity has a much better posterior than the
+    same numbers applied to a rare disease — because the prior is so much higher.
+  </p>
+
+  <h2>What this simplifies</h2>
+
+  <p>
+    Real Bayesian reasoning chains many pieces of evidence (each test result updates the prior
+    for the next). Real diagnostic tests have a continuous range of outcomes, not just
+    positive/negative — and the cutoff for "positive" itself is a knob with its own bias.
+    Real spam filters use thousands of features rather than one binary indicator. But every one
+    of those systems is doing what this applet is doing: counting groups, then renormalizing.
+  </p>
+
+  <div class="for-teachers">
+    <h3>For teachers</h3>
+    <p><strong>Curriculum:</strong> Probability &amp; Naïve Bayes. Apply Bayes' rule;
+       distinguish P(A|B) from P(B|A); understand why test accuracy alone isn't enough to
+       interpret a result.</p>
+    <p><strong>Pre-exploration prompts:</strong></p>
+    <ul>
+      <li>If a test is 99% accurate and yours comes back positive, what's the chance you actually have the condition? (Most students guess ~99%.)</li>
+      <li>What's the difference between "P(test positive given sick)" and "P(sick given test positive)"?</li>
+      <li>How could a "great test" still produce mostly wrong-positive results?</li>
+    </ul>
+    <p><strong>Post-exploration prompts:</strong></p>
+    <ul>
+      <li>Set prior = 0.1% and sensitivity = specificity = 99%. Did the posterior surprise you? Why?</li>
+      <li>Hold prior at 1%. Crank specificity from 95% → 99.9%. Why does the posterior change so much?</li>
+      <li>Switch to spam filter. The math is identical — what changes is the consequence of a false positive vs a false negative. Discuss.</li>
+    </ul>
+    <p><strong>Common misconceptions defeated:</strong>
+       "test accuracy = my chance of being correct" (conflates P(test|truth) with P(truth|test));
+       "if the test is positive, I'm probably sick" (only true when prior is high or specificity is near-perfect);
+       "Bayes is a math trick" (it's just counting groups of people).</p>
+  </div>
+
+</article>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+
+  // ===== bilingual + reduced motion + hard reset =====
+  const STRINGS = {
+    en: {
+      'title': "Visualizing Bayes' Rule", 'back-link': '← Back to all playgrounds',
+      'footer-top': '↑ Back to top', 'footer-builtby': 'Built by', 'footer-course': 'Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy', 'footer-source': 'View source', 'footer-issue': 'Report an issue',
+      'reset-all': '↺ Reset all', 'scenario-label': 'Scenario:',
+      'tldr-strong': 'The big idea',
+      'tldr-body': 'A "99% accurate" test for a 1%-rare disease is wrong most of the time when it says positive. Bayes\' rule is just counting groups of people.',
+      'scen-disease': 'Disease test', 'scen-spam': 'Spam filter',
+      'prior-help': 'How common is the condition in the population?',
+      'sens-help': 'Sensitivity: when sick, % the test correctly says so.',
+      'spec-help': 'Specificity: when healthy, % the test correctly says so.',
+      'pop-label': 'Population shown',
+      'pop-help': 'Larger = smoother visualization; same math regardless.',
+      'post-pos': "If your test is POSITIVE, prob. you're actually sick:",
+      'post-neg': "If your test is NEGATIVE, prob. you're actually sick:",
+      'lr-strong': 'Likelihood ratios:',
+      'lr-plus-def': 'sensitivity ÷ (1 − specificity)',
+      'lr-minus-def': '(1 − sensitivity) ÷ specificity',
+      'lr-hint': 'LR⁺ > 10 = strong positive evidence. LR⁻ < 0.1 = strong negative evidence. Multiply the prior odds by the LR to get posterior odds (the way doctors actually compute Bayes).',
+      'tree-summary': '🌳 Show probability tree (alternative representation)',
+      'seq-strong': 'Run a second test:',
+      'seq-explain': 'The posterior from the first test becomes the prior for the second. Watch P(sick) update twice.',
+      'seq-pos-btn': '✓ Test came back POSITIVE',
+      'seq-neg-btn': '✗ Test came back NEGATIVE',
+      'seq-reset-btn': '↺ Reset chain',
+      'seq-pos-title': 'Set the prior to P(sick | positive), then re-test. A second positive should push the posterior even higher.',
+      'seq-neg-title': 'Set the prior to P(sick | negative). A second negative should drop the posterior even lower.',
+      'seq-reset-title': 'Discard the chained prior and reset to the scenario default.',
+      'tour-summary': '📚 Lesson tour (5 steps)',
+      'tour-step': 'Step',
+      'tour-prev': '← Prev', 'tour-next': 'Next →', 'tour-apply': '▶ Apply this scenario',
+      'ws-summary': '📝 Worksheet (3 questions)',
+      'ws-check': 'Check',
+      'ws-pick': 'Pick an answer first.',
+      // --- F1: worksheet question prompts (data-i18n spans) ---
+      'ws1q': 'Disease test. Set prior=1%, sensitivity=99%, specificity=99%. P(disease | positive) is closest to:',
+      'ws1o0': '~99% — the test is 99% accurate, so a positive is almost certainly real.',
+      'ws1o1': '~50% — false positives from the huge healthy majority roughly equal the true positives.',
+      'ws1o2': '~1% — one test barely moves the 1% prior at all.',
+      'ws2q': 'Hold sens=99%, spec=99%. Raise prior from 1% to 20%. P(disease | positive) goes:',
+      'ws2o0': 'Down — a higher prior leaves less room for the posterior to rise.',
+      'ws2o1': "Same — the test's accuracy is unchanged, so the result is unchanged.",
+      'ws2o2': 'Up — a higher prior means more true positives relative to false positives.',
+      'ws3q': 'Back to prior=1%, sens=99%, spec=99%. After ONE positive (posterior ≈ 50%), click "Test came back POSITIVE" to retest. After the SECOND positive, P(disease) is closest to:',
+      'ws3o0': '~99% — the second positive updates from the new ~50% prior and multiplies the odds.',
+      'ws3o1': '~50% — a repeat of the same test just gives the same result again.',
+      'ws3o2': '~90% — two positives add up but never get near certainty.',
+      // --- F1: lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
+      'tour0name': 'Base rate fallacy (1% prior, 99% accurate)',
+      'tour0desc': "The classic. Disease affects 1 in 100. Test is 99% sensitive and 99% specific. Posterior given positive ≈ 50% — most people guess >95%. The prior dominates.",
+      'tour1name': 'Rare event, imperfect specificity',
+      'tour1desc': "Same 1% prior, sensitivity 99%, but specificity drops to 95%. Posterior crashes to ~17%. Specificity, not sensitivity, controls posterior on rare conditions.",
+      'tour2name': 'Higher prior flips the conclusion',
+      'tour2desc': "Prior raised to 20% (high-risk population). Same 99/95 test. Posterior given positive jumps to ~83%. Same test, completely different clinical meaning.",
+      'tour3name': 'Sequential testing: retest after positive',
+      'tour3desc': "1% prior, 99/99 test. Run one positive test (posterior ~50%), then click 'Test came back POSITIVE' to chain. The second positive pushes posterior >99%. This is why doctors retest.",
+      'tour4name': 'Spam filter: same math, different stakes',
+      'tour4desc': "Switch to spam scenario. The math is identical to disease testing — but the cost of a false positive (real email in spam folder) vs. false negative (spam in inbox) is very different. Discuss.",
+      // --- F1: worksheet answer-feedback (ws{n}ok / ws{n}no) ---
+      'ws1ok': "Correct (~50%). Of 100 actual sick people, 99 test positive. Of 9,900 healthy people, 99 test positive. So 99/198 ≈ 50% of positives are real. The 'base rate fallacy' is intuitively expecting ~99%.",
+      'ws1no': "Try 50%. Most people guess 99% because the test is '99% accurate' — but the prior dominates. Of 10,000 people, only 100 are sick and ~99 false positives come from healthy.",
+      'ws2ok': "Correct. With prior=20%, posterior given positive jumps from ~50% to ~96%. Same test, completely different clinical meaning — context matters.",
+      'ws2no': "Try 'up'. Higher prior means more true positives relative to false positives, so the posterior rises.",
+      'ws3ok': "Correct. After one positive, posterior ≈ 50% (now your prior). Re-testing with 99/99 test and a 50% prior gives posterior ≈ 99%. This is why doctors retest — independent evidence multiplies.",
+      'ws3no': "Try 99%. The first positive raised P(sick) to ~50%, which becomes the prior for test #2. The second positive then multiplies LR ≈ 99 on those odds.",
+      // tooltip translations for main scenario + sliders.
+      'scen-disease-title': 'Medical screening: detect a rare disease in the population.',
+      'scen-spam-title': 'Email filter: flag spam messages. Same math, different stakes.',
+      'prior-slider-title': 'How common is the condition? Slide far left for a rare disease and watch the posterior collapse.',
+      'sens-slider-title': 'When the person IS sick, what % of the time does the test say so? (True positive rate.)',
+      'spec-slider-title': 'When the person is healthy, what % of the time does the test correctly say so? (True negative rate.)',
+      'pop-slider-title': 'Larger population = smoother visualization. Same math regardless.',
+    },
+    zh: {
+      'title': '贝叶斯规则可视化', 'back-link': '← 返回所有演示',
+      'footer-top': '↑ 返回顶部', 'footer-builtby': '作者', 'footer-course': '为海淀凯文学校 2025–2026《人工智能导论》课程制作', 'footer-source': '查看源代码', 'footer-issue': '反馈问题',
+      'reset-all': '↺ 全部重置', 'scenario-label': '场景:',
+      'tldr-strong': '核心思想',
+      'tldr-body': '对一种发病率为 1% 的疾病做"准确率 99%"的检测,阳性结果大部分时候反而是错的。贝叶斯规则不过是在数人群。',
+      'scen-disease': '疾病检测', 'scen-spam': '垃圾邮件过滤',
+      'prior-help': '该情况在人群中有多普遍?',
+      'sens-help': '灵敏度:患病时,检测正确报告的比例。',
+      'spec-help': '特异度:健康时,检测正确报告的比例。',
+      'pop-label': '显示人群规模',
+      'pop-help': '人群越大可视化越平滑;数学计算不变。',
+      'post-pos': '若检测呈阳性,你真正患病的概率:',
+      'post-neg': '若检测呈阴性,你真正患病的概率:',
+      'lr-strong': '似然比:',
+      'lr-plus-def': '灵敏度 ÷ (1 − 特异度)',
+      'lr-minus-def': '(1 − 灵敏度) ÷ 特异度',
+      'lr-hint': 'LR⁺ > 10 = 强阳性证据。LR⁻ < 0.1 = 强阴性证据。先验几率乘以 LR 得到后验几率(医生实际计算贝叶斯的方式)。',
+      'tree-summary': '🌳 显示概率树(替代表示)',
+      'seq-strong': '再做一次检测:',
+      'seq-explain': '第一次检测的后验成为第二次的先验。观察 P(患病) 更新两次。',
+      'seq-pos-btn': '✓ 检测结果为阳性',
+      'seq-neg-btn': '✗ 检测结果为阴性',
+      'seq-reset-btn': '↺ 重置序列',
+      'seq-pos-title': '把先验设为 P(患病 | 阳性),再做一次检测。第二次阳性应该把后验推得更高。',
+      'seq-neg-title': '把先验设为 P(患病 | 阴性)。第二次阴性应该把后验降得更低。',
+      'seq-reset-title': '丢弃序列先验,恢复到场景默认值。',
+      'tour-summary': '📚 课程导览(5 步)',
+      'tour-step': '步骤',
+      'tour-prev': '← 上一步', 'tour-next': '下一步 →', 'tour-apply': '▶ 应用此场景',
+      'ws-summary': '📝 练习题(3 题)',
+      'ws-check': '核对',
+      'ws-pick': '请先选择一个答案。',
+      // --- F1: 练习题题干(data-i18n span)---
+      'ws1q': '疾病检测。设先验=1%、灵敏度=99%、特异度=99%。P(患病 | 阳性) 最接近:',
+      'ws1o0': '约 99%——检测准确率是 99%,所以阳性几乎肯定是真的。',
+      'ws1o1': '约 50%——庞大健康人群产生的假阳性,与真阳性数量大致相当。',
+      'ws1o2': '约 1%——一次检测几乎不会改变 1% 的先验。',
+      'ws2q': '保持灵敏度=99%、特异度=99%。把先验从 1% 提高到 20%。P(患病 | 阳性) 会:',
+      'ws2o0': '下降——先验更高,后验上升的空间反而更小。',
+      'ws2o1': '不变——检测的准确率没变,所以结果也不变。',
+      'ws2o2': '上升——先验更高意味着真阳性相对于假阳性更多。',
+      'ws3q': '回到先验=1%、灵敏度=99%、特异度=99%。在第一次阳性(后验 ≈ 50%)之后,点击"检测结果为阳性"再测一次。第二次阳性之后,P(患病) 最接近:',
+      'ws3o0': '约 99%——第二次阳性以新的约 50% 先验为起点,再次相乘提高几率。',
+      'ws3o1': '约 50%——重复同一种检测只会得到同样的结果。',
+      'ws3o2': '约 90%——两次阳性会累加,但永远到不了接近确定。',
+      // --- F1: 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
+      'tour0name': '基率谬误(先验 1%,准确率 99%)',
+      'tour0desc': '最经典的例子。疾病发病率为百分之一。检测的灵敏度 99%、特异度 99%。阳性下的后验 ≈ 50%——大多数人会猜超过 95%。先验起主导作用。',
+      'tour1name': '罕见事件,不完美的特异度',
+      'tour1desc': '同样 1% 先验、灵敏度 99%,但特异度降到 95%。后验骤降到约 17%。在罕见疾病上,主导后验的是特异度而非灵敏度。',
+      'tour2name': '更高的先验改变结论',
+      'tour2desc': '先验提高到 20%(高危人群)。同样的 99/95 检测。阳性下的后验跃升到约 83%。同一个检测,临床意义完全不同。',
+      'tour3name': '序列检测:阳性后再测',
+      'tour3desc': '1% 先验,99/99 检测。先做一次阳性检测(后验 ~50%),再点击"检测结果为阳性"进行链式更新。第二次阳性把后验推到 99% 以上。这正是医生复检的原因。',
+      'tour4name': '垃圾邮件过滤:数学相同,代价不同',
+      'tour4desc': '切换到垃圾邮件场景。其数学与疾病检测完全相同——但假阳性(正常邮件进入垃圾箱)与假阴性(垃圾邮件进入收件箱)的代价非常不同。讨论一下。',
+      // --- F1: 练习题答案反馈(ws{n}ok / ws{n}no)---
+      'ws1ok': '正确(约 50%)。在 100 个真正患病的人中,99 个检测呈阳性。在 9,900 个健康的人中,也有 99 个检测呈阳性。所以阳性者中只有 99/198 ≈ 50% 是真患病。"基率谬误"就是直觉地以为是约 99%。',
+      'ws1no': "试试 50%。大多数人会猜 99%,因为检测"准确率 99%"——但先验起主导作用。在 10,000 人中只有 100 人患病,而健康人群会产生约 99 个假阳性。",
+      'ws2ok': '正确。当先验=20% 时,阳性下的后验从约 50% 跃升到约 96%。同一个检测,临床意义完全不同——背景很重要。',
+      'ws2no': "试试 'up'。先验越高,真阳性相对假阳性就越多,因此后验上升。",
+      'ws3ok': '正确。一次阳性之后,后验 ≈ 50%(成为新的先验)。用 99/99 检测和 50% 的先验再测一次,后验 ≈ 99%。这正是医生复检的原因——独立证据会相乘。',
+      'ws3no': '试试 99%。第一次阳性把 P(患病) 提高到约 50%,这成为第二次检测的先验。第二次阳性再在该几率上乘以 LR ≈ 99。',
+      // 主要场景与滑块的提示翻译。
+      'scen-disease-title': '医学筛查:在人群中检测一种罕见疾病。',
+      'scen-spam-title': '邮件过滤:标记垃圾邮件。数学相同,但代价不同。',
+      'prior-slider-title': '该情况有多普遍?向左拉到底来模拟罕见疾病,观察后验概率的崩塌。',
+      'sens-slider-title': '当人确实患病时,检测正确报告的比例?(真阳性率。)',
+      'spec-slider-title': '当人健康时,检测正确报告的比例?(真阴性率。)',
+      'pop-slider-title': '人群越大,可视化越平滑。数学不变。',
+    },
+  };
+  function setLang(lang) {
+    if (!STRINGS[lang]) lang = 'en';
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.dataset.i18n;
+      if (STRINGS[lang][k]) el.textContent = STRINGS[lang][k];
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const k = el.dataset.i18nTitle;
+      if (STRINGS[lang][k]) el.title = STRINGS[lang][k];
+    });
+    document.querySelectorAll('.lang-switch button').forEach(b =>
+      b.classList.toggle('active', b.dataset.lang === lang));
+    try { localStorage.setItem('lang', lang); } catch (_) {}
+    // Re-translate dynamic slider labels (their text isn't in data-i18n).
+    // try/catch: on the initial setLang call these helpers read `scen` / `seqHistory`,
+    // which are `let` bindings declared further down — TDZ. The catch swallows the
+    // initial call; later language-switch clicks happen after declarations and run fine.
+    try { if (typeof updateLabels === 'function') updateLabels(); } catch (_) {}
+    try { if (typeof renderSeqHistory === 'function') renderSeqHistory(); } catch (_) {}
+  }
+  document.querySelectorAll('.lang-switch button').forEach(b =>
+    b.addEventListener('click', () => {
+      setLang(b.dataset.lang);
+      // F1: re-render the tour in the new language. Safe here — this click handler
+      // only runs post-init, after LESSON_TOUR (a late `const`) is initialized, so
+      // there is no temporal-dead-zone risk (unlike calling it from inside setLang).
+      try { if (typeof renderTour === 'function') renderTour(); } catch (_) {}
+    }));
+  let initialLang = 'en';
+  try { initialLang = localStorage.getItem('lang') || 'en'; } catch (_) {}
+  setLang(initialLang);
+
+  function setTheme(t) {
+    document.body.classList.toggle('dark-mode', t === 'dark');
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+    try { localStorage.setItem('theme', t); } catch (_) {}
+  }
+  let initialTheme = 'light';
+  try {
+    initialTheme = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  } catch (_) {}
+  setTheme(initialTheme);
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    setTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark');
+    if (typeof render === 'function') render();
+  });
+
+  // For-teachers is hidden by default (cognitive-load floor). User toggles persist.
+  // `?teacher=1` opens on load. `?teacher=0` hides completely (no toggle, for projection).
+  try {
+    const tp = new URLSearchParams(location.search).get('teacher');
+    if (tp === '0') {
+      document.querySelectorAll('.for-teachers').forEach(el => el.style.display = 'none');
+    } else {
+      const style = document.createElement('style');
+      style.textContent = '.for-teachers-expander{margin-top:36px}.for-teachers-expander>summary{cursor:pointer;padding:12px 16px;background:var(--soft);border:1px solid var(--border);border-radius:8px;font-family:-apple-system,system-ui,sans-serif;font-size:0.9rem;color:var(--accent);font-weight:600;list-style:none;user-select:none}.for-teachers-expander>summary::-webkit-details-marker{display:none}.for-teachers-expander[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius:0}.for-teachers-expander>.for-teachers{margin-top:0;border-top:0;border-top-left-radius:0;border-top-right-radius:0}';
+      document.head.appendChild(style);
+      document.querySelectorAll('.for-teachers').forEach(div => {
+        const details = document.createElement('details');
+        details.className = 'for-teachers-expander';
+        const summary = document.createElement('summary');
+        summary.textContent = '▸ Show teacher notes (discussion prompts + curriculum)';
+        div.parentNode.insertBefore(details, div);
+        details.appendChild(summary);
+        details.appendChild(div);
+      });
+      const saved = (() => { try { return localStorage.getItem('teacher-notes-open'); } catch (_) { return null; } })();
+      const shouldOpen = tp === '1' || saved === '1';
+      document.querySelectorAll('details.for-teachers-expander').forEach(d => {
+        d.open = shouldOpen;
+        d.addEventListener('toggle', () => {
+          try { localStorage.setItem('teacher-notes-open', d.open ? '1' : '0'); } catch (_) {}
+        });
+      });
+    }
+  } catch (_) {}
+  document.getElementById('exportPng').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'bayes-classifier.png';
+    link.href = document.getElementById('dots').toDataURL('image/png');
+    link.click();
+  });
+
+  let scen = 'disease';
+  // Bug fix: labels are now bilingual. Previous version hardcoded English and they
+  // stayed English even when the rest of the UI flipped to Chinese.
+  const LABELS = {
+    en: {
+      disease: { prior: 'P(disease)', sens: 'P(test+ | disease)',
+                 spec: 'P(test− | healthy)', posA: 'disease', posB: 'healthy' },
+      spam: { prior: 'P(spam)', sens: 'P(flag | spam)',
+              spec: 'P(no flag | not spam)', posA: 'spam', posB: 'not spam' },
+    },
+    zh: {
+      disease: { prior: 'P(疾病)', sens: 'P(检测呈阳性 | 患病)',
+                 spec: 'P(检测呈阴性 | 健康)', posA: '患病', posB: '健康' },
+      spam: { prior: 'P(垃圾邮件)', sens: 'P(标记 | 垃圾)',
+              spec: 'P(不标记 | 非垃圾)', posA: '垃圾邮件', posB: '正常邮件' },
+    },
+  };
+  function curLang() { return (LABELS[document.documentElement.lang] ? document.documentElement.lang : 'en'); }
+  function updateLabels() {
+    const L = LABELS[curLang()][scen];
+    $('priorLabel').textContent = L.prior;
+    $('sensLabel').textContent = L.sens;
+    $('specLabel').textContent = L.spec;
+  }
+
+  document.querySelectorAll('.scenario-tabs button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.scenario-tabs button').forEach(x =>
+        x.classList.toggle('active', x === b));
+      scen = b.dataset.scen;
+      if (scen === 'spam') {
+        $('prior').value = 30; $('sens').value = 95; $('spec').value = 99;
+      } else {
+        $('prior').value = 1; $('sens').value = 99; $('spec').value = 95;
+      }
+      updateLabels(); render();
+    });
+  });
+
+  function render() {
+    const prior = +$('prior').value / 100;
+    const sens = +$('sens').value / 100;
+    const spec = +$('spec').value / 100;
+    const pop = +$('pop').value;
+
+    $('priorV').textContent = (prior * 100).toFixed(1) + '%';
+    $('sensV').textContent = (sens * 100).toFixed(1) + '%';
+    $('specV').textContent = (spec * 100).toFixed(1) + '%';
+    $('popV').textContent = pop.toLocaleString();
+
+    const sick = pop * prior;
+    const healthy = pop - sick;
+    const tp = sick * sens;
+    const fn = sick * (1 - sens);
+    const tn = healthy * spec;
+    const fp = healthy * (1 - spec);
+    const posteriorPos = tp / (tp + fp);
+    const posteriorNeg = fn / (fn + tn);
+    // Likelihood ratios. LR+ = TPR / FPR; LR− = FNR / TNR.
+    const lrPos = (1 - spec) > 0 ? sens / (1 - spec) : Infinity;
+    const lrNeg = spec > 0 ? (1 - sens) / spec : 0;
+    $('lrPos').textContent = isFinite(lrPos) ? lrPos.toFixed(2) : '∞';
+    $('lrNeg').textContent = lrNeg.toFixed(3);
+    const fmtPct = x => (isNaN(x) ? '—' : (x * 100).toFixed(2) + '%');
+    $('posteriorPos').textContent = fmtPct(posteriorPos);
+    $('posteriorNeg').textContent = fmtPct(posteriorNeg);
+
+    const L = LABELS[curLang()][scen]; // bilingual lookup (was a residual bug)
+    $('formulaPlugged').innerHTML =
+      `= [${(sens*100).toFixed(1)}% × ${(prior*100).toFixed(2)}%] ÷ ` +
+      `[${(sens*100).toFixed(1)}% × ${(prior*100).toFixed(2)}% + ` +
+      `${((1-spec)*100).toFixed(1)}% × ${((1-prior)*100).toFixed(2)}%] ` +
+      `<br>= <b>${fmtPct(posteriorPos)}</b>`;
+
+    $('counts').innerHTML =
+      `<b>Of ${Math.round(pop).toLocaleString()} people:</b><br>` +
+      `&nbsp;&nbsp;${Math.round(sick).toLocaleString()} have ${L.posA}, ` +
+      `${Math.round(healthy).toLocaleString()} are ${L.posB}.<br>` +
+      `&nbsp;&nbsp;True positives: ${Math.round(tp).toLocaleString()} &nbsp; ` +
+      `False positives: ${Math.round(fp).toLocaleString()}<br>` +
+      `&nbsp;&nbsp;True negatives: ${Math.round(tn).toLocaleString()} &nbsp; ` +
+      `False negatives: ${Math.round(fn).toLocaleString()}`;
+
+    drawDots({sick, healthy, tp, fp, tn, fn});
+    // tree diagram (alternate representation).
+    drawTree({prior, sens, spec, posteriorPos, posteriorNeg, lrPos, lrNeg});
+  }
+
+  // probability tree showing prior → conditional → joint at each leaf.
+  // Branch labels are clamped to readable percentages; joint probabilities print at leaves.
+  function drawTree({prior, sens, spec, posteriorPos, posteriorNeg, lrPos, lrNeg}) {
+    const svg = document.getElementById('treeSvg');
+    if (!svg) return;
+    const L = LABELS[curLang()][scen];
+    const fmtPct = x => (x * 100).toFixed(1) + '%';
+    // Layout: root at (40, 110). First split goes up/down for posA/posB. Second split per branch.
+    const root = {x: 40, y: 110};
+    const lv1 = [
+      {x: 180, y: 50,  prob: prior,      label: L.posA, color: '#dc2626'},
+      {x: 180, y: 170, prob: 1 - prior,  label: L.posB, color: '#16a34a'},
+    ];
+    const leaves = [
+      // From posA (sick / spam) branch
+      {x: 380, y: 30,  parent: 0, prob: sens,         joint: prior * sens,          label: 'test+', isPos: true,  group: L.posA},
+      {x: 380, y: 70,  parent: 0, prob: 1 - sens,     joint: prior * (1 - sens),    label: 'test−', isPos: false, group: L.posA},
+      // From posB (healthy / not-spam) branch
+      {x: 380, y: 150, parent: 1, prob: 1 - spec,     joint: (1 - prior) * (1 - spec), label: 'test+', isPos: true,  group: L.posB},
+      {x: 380, y: 190, parent: 1, prob: spec,         joint: (1 - prior) * spec,     label: 'test−', isPos: false, group: L.posB},
+    ];
+    const dark = document.body.classList.contains('dark-mode');
+    const txtCol = dark ? '#e2e8f0' : '#1f2937';
+    const mutedCol = dark ? '#94a3b8' : '#6b7280';
+    let html = '';
+    // Edges root → lv1
+    for (const n of lv1) {
+      html += `<line x1="${root.x}" y1="${root.y}" x2="${n.x}" y2="${n.y}" stroke="${n.color}" stroke-width="2"/>`;
+      const mx = (root.x + n.x) / 2, my = (root.y + n.y) / 2 - 6;
+      html += `<text x="${mx}" y="${my}" font-size="11" fill="${mutedCol}" text-anchor="middle">${fmtPct(n.prob)}</text>`;
+    }
+    // Edges lv1 → leaves
+    for (const lf of leaves) {
+      const p = lv1[lf.parent];
+      const stroke = lf.isPos ? '#0284c7' : '#94a3b8';
+      html += `<line x1="${p.x}" y1="${p.y}" x2="${lf.x}" y2="${lf.y}" stroke="${stroke}" stroke-width="1.5"/>`;
+      const mx = (p.x + lf.x) / 2, my = (p.y + lf.y) / 2 - 4;
+      html += `<text x="${mx}" y="${my}" font-size="10" fill="${mutedCol}" text-anchor="middle">${fmtPct(lf.prob)}</text>`;
+    }
+    // Root node
+    html += `<circle cx="${root.x}" cy="${root.y}" r="8" fill="${dark ? '#334155' : '#e5e7eb'}" stroke="${txtCol}" stroke-width="1.5"/>`;
+    // Lv1 nodes
+    for (const n of lv1) {
+      html += `<circle cx="${n.x}" cy="${n.y}" r="10" fill="${n.color}" stroke="white" stroke-width="2"/>`;
+      html += `<text x="${n.x + 14}" y="${n.y + 4}" font-size="11" fill="${txtCol}" font-weight="600">${n.label}</text>`;
+    }
+    // Leaves with joint probabilities
+    for (const lf of leaves) {
+      const fill = lf.isPos ? '#0284c7' : '#9ca3af';
+      html += `<circle cx="${lf.x}" cy="${lf.y}" r="6" fill="${fill}"/>`;
+      html += `<text x="${lf.x + 12}" y="${lf.y + 4}" font-size="10" fill="${txtCol}">${lf.label} <tspan fill="${mutedCol}">(joint ${fmtPct(lf.joint)})</tspan></text>`;
+    }
+    svg.innerHTML = html;
+  }
+
+  function drawDots({sick, healthy, tp, fp, tn, fn}) {
+    const canvas = $('dots');
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const N_DOTS = 1000;
+    const total = sick + healthy;
+    const sickDots = Math.round(N_DOTS * (sick / total));
+    const healthyDots = N_DOTS - sickDots;
+    const tpDots = Math.round(sickDots * (tp / Math.max(1e-9, sick)));
+    const fnDots = sickDots - tpDots;
+    const fpDots = Math.round(healthyDots * (fp / Math.max(1e-9, healthy)));
+    const tnDots = healthyDots - fpDots;
+
+    const dots = [];
+    for (let i = 0; i < tpDots; i++) dots.push({sick: true, pos: true});
+    for (let i = 0; i < fnDots; i++) dots.push({sick: true, pos: false});
+    for (let i = 0; i < fpDots; i++) dots.push({sick: false, pos: true});
+    for (let i = 0; i < tnDots; i++) dots.push({sick: false, pos: false});
+    for (let i = dots.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [dots[i], dots[j]] = [dots[j], dots[i]];
+    }
+
+    const cols = 50, rows = 20;
+    const cellW = canvas.width / cols, cellH = canvas.height / rows;
+    const radius = Math.min(cellW, cellH) / 2 - 2;
+    for (let i = 0; i < dots.length && i < cols * rows; i++) {
+      const r = Math.floor(i / cols), c = i % cols;
+      const x = c * cellW + cellW / 2;
+      const y = r * cellH + cellH / 2;
+      const d = dots[i];
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fillStyle = d.sick ? getCSS('--sick') : getCSS('--healthy');
+      ctx.fill();
+      ctx.strokeStyle = d.pos ? getCSS('--pos') : getCSS('--neg');
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  }
+  function getCSS(v) {
+    return getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  }
+
+  ['prior', 'sens', 'spec', 'pop'].forEach(id =>
+    $(id).addEventListener('input', render));
+
+  $('hardReset').addEventListener('click', () => {
+    document.querySelectorAll('.scenario-tabs button').forEach(x =>
+      x.classList.toggle('active', x.dataset.scen === 'disease'));
+    scen = 'disease';
+    $('prior').value = 1; $('sens').value = 99; $('spec').value = 95;
+    $('pop').value = 10000;
+    seqResetChain();
+    updateLabels(); render();
+  });
+
+  // ===== Sequential Bayes updating =====
+  // After each "test result", we set prior = P(sick | result) computed by Bayes'.
+  // History array tracks the chain so students can see how belief evolves.
+  let seqHistory = [];
+  function fmtPctSimple(x) { return (x * 100).toFixed(2) + '%'; }
+  function bayesPos(prior, sens, spec) {
+    const num = sens * prior;
+    const den = sens * prior + (1 - spec) * (1 - prior);
+    return den > 0 ? num / den : prior;
+  }
+  function bayesNeg(prior, sens, spec) {
+    const num = (1 - sens) * prior;
+    const den = (1 - sens) * prior + spec * (1 - prior);
+    return den > 0 ? num / den : prior;
+  }
+  function renderSeqHistory() {
+    const el = $('seqHistory');
+    if (!seqHistory.length) { el.innerHTML = ''; return; }
+    const lang = curLang();
+    const startLabel = lang === 'zh' ? '初始 P(患病) = ' : 'Start P(sick) = ';
+    const arrow = lang === 'zh' ? '  →  ' : '  →  ';
+    const posLabel = lang === 'zh' ? '阳性' : 'POS';
+    const negLabel = lang === 'zh' ? '阴性' : 'NEG';
+    const parts = [`${startLabel}${fmtPctSimple(seqHistory[0].prior)}`];
+    for (let i = 1; i < seqHistory.length; i++) {
+      const h = seqHistory[i];
+      parts.push(`${arrow}[${h.result === 'pos' ? posLabel : negLabel}]  ${fmtPctSimple(h.prior)}`);
+    }
+    el.textContent = parts.join('');
+  }
+  // Guard: when seqAppendResult writes to the prior slider, the 'input' listener
+  // would otherwise fire and clear the chain we just appended to.
+  let seqProgrammaticPriorWrite = false;
+  function seqAppendResult(result) {
+    const prior = +$('prior').value / 100;
+    const sens = +$('sens').value / 100;
+    const spec = +$('spec').value / 100;
+    if (seqHistory.length === 0) seqHistory.push({ prior, result: null });
+    const newPrior = result === 'pos'
+      ? bayesPos(prior, sens, spec)
+      : bayesNeg(prior, sens, spec);
+    seqHistory.push({ prior: newPrior, result });
+    seqProgrammaticPriorWrite = true;
+    $('prior').value = Math.min(50, Math.max(0.1, newPrior * 100));
+    seqProgrammaticPriorWrite = false;
+    render();
+    renderSeqHistory();
+  }
+  function seqResetChain() {
+    seqHistory = [];
+    renderSeqHistory();
+  }
+  $('seqPosBtn').addEventListener('click', () => seqAppendResult('pos'));
+  $('seqNegBtn').addEventListener('click', () => seqAppendResult('neg'));
+  $('seqResetBtn').addEventListener('click', seqResetChain);
+  // If user manually moves the prior slider, the chain is broken — clear it.
+  $('prior').addEventListener('input', () => {
+    if (seqProgrammaticPriorWrite) return;
+    if (seqHistory.length) seqResetChain();
+  });
+  // Scenario switch: also break the chain (different LR characteristics).
+  document.querySelectorAll('.scenario-tabs button').forEach(b => {
+    b.addEventListener('click', seqResetChain);
+  });
+
+  // URL-shareable config — prior, sens, spec, pop.
+  try {
+    const sp = new URLSearchParams(location.search);
+    const setNum = (key, id, min, max) => {
+      const v = parseFloat(sp.get(key));
+      if (!Number.isNaN(v) && v >= min && v <= max) $(id).value = v;
+    };
+    setNum('prior', 'prior', 0.1, 50);
+    setNum('sens', 'sens', 50, 100);
+    setNum('spec', 'spec', 50, 100);
+    setNum('pop', 'pop', 100, 100000);
+  } catch (_) {}
+  document.getElementById('shareLink').addEventListener('click', async () => {
+    const params = new URLSearchParams();
+    params.set('prior', $('prior').value);
+    params.set('sens', $('sens').value);
+    params.set('spec', $('spec').value);
+    params.set('pop', $('pop').value);
+    const url = `${location.origin}${location.pathname}?${params.toString()}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      const btn = document.getElementById('shareLink');
+      const orig = btn.textContent; btn.textContent = '✓ Copied';
+      setTimeout(() => btn.textContent = orig, 1500);
+    } catch (_) { prompt('Copy this URL:', url); }
+  });
+
+  // CSV export.
+  document.getElementById('csvExport').addEventListener('click', () => {
+    const prior = +$('prior').value / 100;
+    const sens = +$('sens').value / 100;
+    const spec = +$('spec').value / 100;
+    const pop = +$('pop').value;
+    const sick = pop * prior, healthy = pop - sick;
+    const tp = sick * sens, fn = sick * (1 - sens);
+    const tn = healthy * spec, fp = healthy * (1 - spec);
+    const postPos = tp / (tp + fp), postNeg = fn / (fn + tn);
+    const lrPos = (1 - spec) > 0 ? sens / (1 - spec) : Infinity;
+    const lrNeg = spec > 0 ? (1 - sens) / spec : 0;
+    const lines = [
+      '# Bayes classifier export',
+      `scenario,${scen}`,
+      `prior,${(prior*100).toFixed(2)}%`,
+      `sensitivity,${(sens*100).toFixed(2)}%`,
+      `specificity,${(spec*100).toFixed(2)}%`,
+      `population,${pop}`,
+      '',
+      'group,count',
+      `true_positive,${Math.round(tp)}`,
+      `false_negative,${Math.round(fn)}`,
+      `true_negative,${Math.round(tn)}`,
+      `false_positive,${Math.round(fp)}`,
+      '',
+      'metric,value',
+      `posterior_given_positive,${(postPos*100).toFixed(3)}%`,
+      `posterior_given_negative,${(postNeg*100).toFixed(3)}%`,
+      `lr_positive,${isFinite(lrPos) ? lrPos.toFixed(3) : 'inf'}`,
+      `lr_negative,${lrNeg.toFixed(4)}`,
+    ];
+    const blob = new Blob([lines.join('\n')], {type: 'text/csv'});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `bayes-${scen}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  });
+
+  updateLabels(); render();
+
+  // Lesson tour. Five canonical scenarios for an in-class walkthrough.
+  const LESSON_TOUR = [
+    { name: 'Base rate fallacy (1% prior, 99% accurate)',
+      description: "The classic. Disease affects 1 in 100. Test is 99% sensitive and 99% specific. Posterior given positive ≈ 50% — most people guess >95%. The prior dominates.",
+      apply: () => { $('scenSel').value = 'disease'; $('prior').value = 1; $('sens').value = 99; $('spec').value = 99; updateLabels(); render(); } },
+    { name: 'Rare event, imperfect specificity',
+      description: "Same 1% prior, sensitivity 99%, but specificity drops to 95%. Posterior crashes to ~17%. Specificity, not sensitivity, controls posterior on rare conditions.",
+      apply: () => { $('scenSel').value = 'disease'; $('prior').value = 1; $('sens').value = 99; $('spec').value = 95; updateLabels(); render(); } },
+    { name: 'Higher prior flips the conclusion',
+      description: "Prior raised to 20% (high-risk population). Same 99/95 test. Posterior given positive jumps to ~83%. Same test, completely different clinical meaning.",
+      apply: () => { $('scenSel').value = 'disease'; $('prior').value = 20; $('sens').value = 99; $('spec').value = 95; updateLabels(); render(); } },
+    { name: 'Sequential testing: retest after positive',
+      description: "1% prior, 99/99 test. Run one positive test (posterior ~50%), then click 'Test came back POSITIVE' to chain. The second positive pushes posterior >99%. This is why doctors retest.",
+      apply: () => { $('scenSel').value = 'disease'; $('prior').value = 1; $('sens').value = 99; $('spec').value = 99; updateLabels(); render(); $('seqPosBtn').click(); } },
+    { name: 'Spam filter: same math, different stakes',
+      description: "Switch to spam scenario. The math is identical to disease testing — but the cost of a false positive (real email in spam folder) vs. false negative (spam in inbox) is very different. Discuss.",
+      apply: () => { $('scenSel').value = 'spam'; $('scenSel').dispatchEvent(new Event('change')); } },
+  ];
+  let tourIdx = 0;
+  function renderTour() {
+    if (!$('tourName')) return;
+    const s = LESSON_TOUR[tourIdx];
+    // F1 bilingual: look up tour{i}name / tour{i}desc with English inline fallback.
+    const L = (document.documentElement.lang || 'en');
+    const S = STRINGS[L] || STRINGS.en;
+    $('tourName').textContent = S['tour' + tourIdx + 'name'] || s.name;
+    $('tourDesc').textContent = S['tour' + tourIdx + 'desc'] || s.description;
+    $('tourPos').textContent = `${tourIdx + 1}/${LESSON_TOUR.length}`;
+    $('tourPrev').disabled = (tourIdx === 0);
+    $('tourNext').disabled = (tourIdx === LESSON_TOUR.length - 1);
+  }
+  $('tourApply').addEventListener('click', () => LESSON_TOUR[tourIdx].apply());
+  $('tourPrev').addEventListener('click', () => { if (tourIdx > 0) { tourIdx--; renderTour(); } });
+  $('tourNext').addEventListener('click', () => { if (tourIdx < LESSON_TOUR.length - 1) { tourIdx++; renderTour(); } });
+  renderTour();
+
+  // F1: worksheet feedback strings are bilingual; fall back to inline English.
+  function wsMsg(key, en) {
+    const L = (document.documentElement.lang || 'en');
+    return (STRINGS[L] && STRINGS[L][key]) || en;
+  }
+  // Worksheet/lab mode — 3 questions with instant ✓/✗ feedback.
+  // MCQ: each question is graded by the selected radio's index, not typed text.
+  // `correct` is the index of the right option (language-agnostic). ok/no are the
+  // existing bilingual feedback keys, with an English inline fallback via wsMsg.
+  const WORKSHEET = [
+    { correct: 1,
+      ok:  ['ws1ok', "Correct (~50%). Of 100 actual sick people, 99 test positive. Of 9,900 healthy people, 99 test positive. So 99/198 ≈ 50% of positives are real. The 'base rate fallacy' is intuitively expecting ~99%."],
+      no:  ['ws1no', "Try 50%. Most people guess 99% because the test is '99% accurate' — but the prior dominates. Of 10,000 people, only 100 are sick and ~99 false positives come from healthy."] },
+    { correct: 2,
+      ok:  ['ws2ok', "Correct. With prior=20%, posterior given positive jumps from ~50% to ~96%. Same test, completely different clinical meaning — context matters."],
+      no:  ['ws2no', "Try 'up'. Higher prior means more true positives relative to false positives, so the posterior rises."] },
+    { correct: 0,
+      ok:  ['ws3ok', "Correct. After one positive, posterior ≈ 50% (now your prior). Re-testing with 99/99 test and a 50% prior gives posterior ≈ 99%. This is why doctors retest — independent evidence multiplies."],
+      no:  ['ws3no', "Try 99%. The first positive raised P(sick) to ~50%, which becomes the prior for test #2. The second positive then multiplies LR ≈ 99 on those odds."] },
+  ];
+  WORKSHEET.forEach((q, i) => {
+    const n = i + 1;
+    $(`ws${n}btn`).addEventListener('click', () => {
+      const fb = $(`ws${n}fb`);
+      const picked = document.querySelector(`input[name="ws${n}"]:checked`);
+      if (!picked) {
+        fb.textContent = wsMsg('ws-pick', 'Pick an answer first.');
+        fb.style.color = 'var(--muted)';
+        return;
+      }
+      const ok = Number(picked.value) === q.correct;
+      const [key, en] = ok ? q.ok : q.no;
+      fb.textContent = (ok ? '✓ ' : '✗ ') + wsMsg(key, en);
+      fb.style.color = ok ? '#16a34a' : '#dc2626';
+    });
+  });
+})();
+</script>
+<!-- Embed mode handler (shared pattern across all 12 applets). -->
+<script>
+(() => {
+  try {
+    if (new URLSearchParams(location.search).get('embed') === '1') {
+      document.body.classList.add('embed-mode');
+    }
+  } catch (_) {}
+  const btn = document.getElementById('embedLink');
+  if (!btn) return;
+  btn.addEventListener('click', async () => {
+    const url = new URL(location.href);
+    url.searchParams.set('embed', '1');
+    const snippet = `<iframe src="${url.toString()}" width="100%" height="720" frameborder="0" style="border:1px solid #e5e7eb; border-radius:8px;" loading="lazy"></iframe>`;
+    try {
+      await navigator.clipboard.writeText(snippet);
+      const orig = btn.textContent; btn.textContent = '✓ Copied iframe';
+      setTimeout(() => btn.textContent = orig, 1800);
+    } catch (_) { prompt('Copy this iframe snippet:', snippet); }
+  });
+})();
+</script>
+  <footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
+    <p style="margin:0 0 6px;"><a href="#top" data-i18n="footer-top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
+    <p style="margin:0;"><span data-i18n="footer-builtby">Built by</span> Logan Dixon · <span data-i18n="footer-course">Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy</span></p>
+    <p style="margin:6px 0 0;"><a href="https://github.com/lmdixon23/ai-playgrounds" data-i18n="footer-source" style="color:var(--accent,#0891b2);">View source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-i18n="footer-issue" style="color:var(--accent,#0891b2);">Report an issue</a> · © 2026 Logan Dixon</p>
+  </footer>
+  <!-- Privacy-friendly analytics — GoatCounter, cookieless. -->
+  <script data-goatcounter="https://lmdixon23.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

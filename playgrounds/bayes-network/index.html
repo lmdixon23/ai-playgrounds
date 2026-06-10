@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visualizing a Bayesian Network</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E">
+<meta name="description" content="The classic Russell & Norvig burglar-earthquake-alarm Bayesian network. Edit CPTs, clamp variables as evidence, compare exact inference to Gibbs sampling, watch 'explaining away' live.">
+<link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-network/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-network/">
+<meta property="og:title" content="Visualizing a Bayesian Network — AI Playgrounds">
+<meta property="og:description" content="The classic Russell & Norvig burglar-earthquake-alarm Bayesian network. Edit CPTs, clamp variables as evidence, compare exact inference to Gibbs sampling, watch 'explaining away' live.">
+<meta property="og:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Visualizing a Bayesian Network — AI Playgrounds">
+<meta name="twitter:description" content="The classic Russell & Norvig burglar-earthquake-alarm Bayesian network. Edit CPTs, clamp variables as evidence, compare exact inference to Gibbs sampling, watch 'explaining away' live.">
+<meta name="twitter:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Visualizing a Bayesian Network — AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-network/","description":"The classic Russell & Norvig burglar-earthquake-alarm Bayesian network. Edit CPTs, clamp variables as evidence, compare exact inference to Gibbs sampling, watch 'explaining away' live.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan Dixon"}}
+</script>
+<style>
+  :root {
+    --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #0d9488;
+    --card: #fff; --border: #e5e7eb; --soft: #f9fafb;
+    --true: #16a34a; --false: #dc2626; --unset: #94a3b8;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", Arial, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; }
+  .page-header { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 24px; }
+  .header-utility { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .header-prefs { display: flex; align-items: center; gap: 8px; }
+  .header-main { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .header-actions { display: flex; align-items: center; gap: 8px; font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem; }
+  .header-actions .header-reset { margin-left: 12px; }
+  .page-header h1 { margin: 0; font-size: 1.5rem; }
+  .page-header .back { color: var(--accent); text-decoration: none; font-size: 0.9rem; font-family: -apple-system, system-ui, sans-serif; }
+  .lang-switch { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .lang-switch button { padding: 4px 10px; background: white; color: var(--muted);
+                          border: none; cursor: pointer; font: inherit; font-size: 0.78rem; }
+  .lang-switch button.active { background: var(--accent); color: white; font-weight: 600; }
+  .header-reset { padding: 6px 12px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font: inherit; font-size: 0.82rem; }
+  .header-reset:hover { background: var(--soft); }
+  .tldr { max-width: 820px; margin: 16px auto 0;
+           background: var(--accent); color: white;
+           border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; font-weight: 500;
+           font-family: -apple-system, system-ui, sans-serif; line-height: 1.45; }
+  .tldr strong { color: rgba(255,255,255,0.85); font-size: 0.72rem; letter-spacing: 0.08em;
+                  text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px; }
+  .interactive { background: var(--card); padding: 24px; border-bottom: 1px solid var(--border); }
+  .interactive-inner { max-width: 880px; margin: 0 auto;
+                         font-family: -apple-system, system-ui, sans-serif; }
+  .control-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+                  margin-bottom: 14px; font-size: 0.88rem; }
+  .control-row label { color: var(--muted); }
+  .control-row .group { display: flex; gap: 0; border: 1px solid var(--border);
+                         border-radius: 6px; overflow: hidden; }
+  .control-row .group button {
+    padding: 7px 12px; background: white; color: var(--fg);
+    border: none; border-right: 1px solid var(--border); cursor: pointer;
+    font: inherit; font-size: 0.85rem;
+  }
+  .control-row .group button:last-child { border-right: none; }
+  .control-row .group button.active { background: var(--accent); color: white; font-weight: 600; }
+  .control-row .step-btn { padding: 7px 14px; background: white; color: var(--fg);
+                            border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                            font: inherit; font-size: 0.85rem; }
+
+  .net-cpts { display: grid; grid-template-columns: 320px 1fr; gap: 18px; align-items: start;
+                margin-bottom: 18px; }
+  /* D3/SVG upgrade: the network is now SVG instead of canvas. */
+  svg#netSvg { background: white; border: 1px solid var(--border); border-radius: 6px;
+               width: 100%; height: auto; display: block; }
+  body.dark-mode svg#netSvg { background: #1e293b; border-color: var(--border); }
+  svg#netSvg .node-circle { stroke: #475569; stroke-width: 1.5; cursor: grab; transition: r 0.15s, fill 0.15s; }
+  svg#netSvg .node-circle:hover { stroke-width: 2.5; }
+  svg#netSvg .node-circle.dragging { cursor: grabbing; }
+  svg#netSvg .node-label { font: bold 14px system-ui, -apple-system, sans-serif;
+                            text-anchor: middle; dominant-baseline: middle;
+                            pointer-events: none; user-select: none; }
+  svg#netSvg .edge { stroke: #94a3b8; stroke-width: 1.5; fill: none; }
+  body.dark-mode svg#netSvg .edge { stroke: #64748b; }
+  svg#netSvg .node:focus { outline: none; }
+  svg#netSvg .node:focus .node-circle { stroke: var(--accent); stroke-width: 3; }
+  .cpt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .cpt { background: var(--soft); border: 1px solid var(--border);
+           border-radius: 6px; padding: 8px 10px; font-size: 0.82rem; font-family: 'SF Mono', monospace; }
+  .cpt h4 { margin: 0 0 6px; font-family: -apple-system, system-ui, sans-serif;
+              color: var(--accent); font-size: 0.85rem; }
+  .cpt table { width: 100%; border-collapse: collapse; }
+  .cpt td { padding: 3px 4px; }
+  .cpt input { width: 70px; padding: 2px 4px; background: var(--card); color: var(--fg);
+                 border: 1px solid var(--border); border-radius: 3px; font: inherit; font-family: monospace; }
+
+  .evidence-section { background: var(--soft); border: 1px solid var(--border);
+                        border-radius: 8px; padding: 14px; margin-bottom: 16px; }
+  .evidence-section h3 { margin: 0 0 10px; font-size: 0.85rem; color: var(--accent);
+                           text-transform: uppercase; letter-spacing: 0.05em; }
+  .evidence-grid { display: grid; grid-template-columns: 1fr auto auto auto;
+                     gap: 6px 10px; align-items: center; font-size: 0.88rem; }
+  .ev-name { font-weight: 600; }
+  .ev-btn { padding: 5px 12px; font-size: 0.82rem; border-radius: 4px;
+             cursor: pointer; background: white; color: var(--muted);
+             border: 1px solid var(--border); font: inherit; }
+  .ev-btn.active.t { background: var(--true); color: white; border-color: var(--true); font-weight: 700; }
+  .ev-btn.active.f { background: var(--false); color: white; border-color: var(--false); font-weight: 700; }
+  .ev-btn.active.u { background: var(--unset); color: white; border-color: var(--unset); }
+
+  .scenarios { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .scenarios button { padding: 7px 12px; background: white; color: var(--fg);
+                        border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                        font: inherit; font-size: 0.82rem; }
+  .scenarios button:hover { background: var(--soft); }
+
+  .infer-section { background: white; border: 1px solid var(--border);
+                     border-radius: 8px; padding: 14px; margin-bottom: 16px; }
+  .infer-section h3 { margin: 0 0 10px; font-size: 0.85rem; color: var(--accent);
+                        text-transform: uppercase; letter-spacing: 0.05em; }
+  .infer-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .infer-cell { background: var(--soft); border: 1px solid var(--border);
+                  border-radius: 6px; padding: 10px; text-align: center; }
+  .infer-cell .name { font-size: 0.85rem; color: var(--muted); margin-bottom: 4px; }
+  .infer-cell .prob { font-size: 1.4rem; font-weight: 700; font-family: monospace; color: var(--true); }
+  .infer-cell.evidence .prob { color: var(--accent); }
+  .infer-cell .bar { height: 6px; background: var(--border); border-radius: 3px;
+                      margin-top: 6px; overflow: hidden; }
+  .infer-cell .bar .fill { height: 100%; background: var(--true); transition: width 0.25s; }
+  #inferMeta { color: var(--muted); font-size: 0.78rem; font-style: italic; margin-top: 10px; }
+  .jump-link { display: inline-block; margin-top: 14px;
+                padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px;
+                background: white; color: var(--accent); text-decoration: none;
+                font-family: -apple-system, system-ui, sans-serif; font-size: 0.82rem;
+                font-weight: 600; }
+  .jump-link:hover { background: var(--soft); }
+  .jump-anchor { text-align: center; }
+  .essay { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; font-size: 1.05rem; }
+  .essay h2 { font-size: 1.5rem; margin-top: 36px; margin-bottom: 12px; color: var(--accent); }
+  .essay h3 { font-size: 1.15rem; margin-top: 24px; margin-bottom: 8px; }
+  .essay .lede { font-size: 1.15rem; color: #374151; }
+  .essay .aha { background: #ccfbf1; border-left: 4px solid #0d9488;
+                 padding: 12px 18px; margin: 18px 0; border-radius: 0 6px 6px 0;
+                 font-style: italic; color: #134e4a; }
+  .essay code { background: var(--soft); padding: 1px 6px; border-radius: 4px;
+                 font-family: 'SF Mono', Consolas, monospace; font-size: 0.92em; }
+  .essay ul li { margin-bottom: 6px; }
+  .essay .for-teachers { background: var(--soft); border: 1px solid var(--border);
+                          border-radius: 8px; padding: 20px 24px; margin-top: 36px;
+                          font-family: -apple-system, system-ui, sans-serif; font-size: 0.95rem; }
+  .essay .for-teachers h3 { font-family: -apple-system, system-ui, sans-serif;
+                              color: var(--accent); font-size: 0.9rem;
+                              text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+  /* === dark mode === */
+  body.dark-mode {
+    --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8;
+    --card: #1e293b; --border: #334155; --soft: #1e293b;
+  }
+  body.dark-mode .essay .lede { color: #cbd5e1; }
+  body.dark-mode .essay .for-teachers { background: #0f172a; }
+  /* True canvas dark mode — render fn picks bg directly. */
+  body.dark-mode .header-reset,
+  body.dark-mode .lang-switch button:not(.active),
+  body.dark-mode .header-theme,
+  body.dark-mode .control-row .group button:not(.active),
+  body.dark-mode .control-row .step-btn,
+  body.dark-mode .scenarios button,
+  body.dark-mode .cpt input,
+  body.dark-mode .ev-btn:not(.active) { background: var(--card); color: var(--fg); }
+  body.dark-mode .evidence-section, body.dark-mode .infer-section,
+  body.dark-mode .cpt, body.dark-mode .infer-cell { background: var(--card); }
+  .header-theme { padding: 6px 10px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font-size: 1rem; line-height: 1; font-family: inherit; }
+  .header-theme:hover { background: var(--soft); }
+  .header-png { padding: 6px 10px; background: white; color: var(--fg);
+                  border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                  font-size: 0.85rem; font-family: inherit; }
+  .header-png:hover { background: var(--soft); }
+  body.dark-mode .header-png { background: var(--card); color: var(--fg); }
+  /* ===== Slider styling — native themed control via accent-color (consistent across browsers) ===== */
+  input[type="range"] { accent-color: var(--accent); height: 28px; cursor: pointer; }
+  /* embed mode. Strip chrome so the applet fits cleanly in an LMS iframe. */
+  body.embed-mode .page-header,
+  body.embed-mode aside.tldr,
+  body.embed-mode article.essay,
+  body.embed-mode .jump-anchor { display: none !important; }
+  body.embed-mode .interactive { padding: 12px; border-bottom: none; }
+  /* ===== Shared a11y + contrast tokens (review fixes: F4 keyboard focus, F6 banner contrast) ===== */
+  button:focus-visible, a:focus-visible, select:focus-visible,
+  input:focus-visible, textarea:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+  .tldr { background: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), var(--accent); }
+  .tldr strong { color: #fff; }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="header-utility">
+    <a class="back" href="../../" data-i18n="back-link">← Back to all playgrounds</a>
+    <div class="header-prefs">
+      <button class="header-theme" id="themeToggle" aria-label="Toggle dark or light theme"
+              title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
+      <div class="lang-switch" title="Switch interface language">
+        <button data-lang="en" class="active">EN</button>
+        <button data-lang="zh">中文</button>
+      </div>
+    </div>
+  </div>
+  <div class="header-main">
+    <h1 data-i18n="title">Visualizing a Bayesian Network</h1>
+    <div class="header-actions">
+      <button class="header-png" id="shareLink"
+              title="Copy a URL that re-opens this evidence assignment + inference method in another browser.">🔗 Share</button>
+      <button class="header-png" id="embedLink"
+              title="Copy an <iframe> snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
+      <button class="header-png" id="exportPng"
+              title="Download the network diagram as a PNG.">📷 PNG</button>
+      <button class="header-reset" id="hardReset" data-i18n="reset-all"
+              title="Reset CPTs to AIMA defaults and clear all evidence.">↺ Reset all</button>
+    </div>
+  </div>
+</header>
+
+<aside class="tldr">
+  <strong data-i18n="tldr-strong">The big idea</strong>
+  <span data-i18n="tldr-body">Learning of an earthquake LOWERS your belief in a burglary — even though the two are independent without evidence. That's "explaining away," and it's visible here in one slider.</span>
+</aside>
+
+<section class="interactive">
+<div class="interactive-inner">
+
+  <!-- preset selector. Three classic networks. -->
+  <div class="control-row">
+    <label data-i18n="net-label">Network:</label>
+    <select id="netSel" data-i18n-title="net-title"
+            title="Switch between classic Bayesian networks. Each has its own variables, parents, and conditional probability tables.">
+      <option value="burglary" selected data-i18n="net-burglary">Burglary (AIMA, 5 vars)</option>
+      <option value="sprinkler" data-i18n="net-sprinkler">Sprinkler (Pearl, 4 vars)</option>
+      <option value="cancer" data-i18n="net-cancer">Cancer screening (3 vars)</option>
+    </select>
+  </div>
+
+  <div class="control-row">
+    <label data-i18n="method-label">Inference:</label>
+    <div class="group method-tabs">
+      <button data-m="exact" class="active" data-i18n="m-exact" data-i18n-title="m-exact-title"
+              title="Compute P(query | evidence) exactly by enumeration. Correct, but exponential in the number of unobserved variables.">Exact (enumeration)</button>
+      <button data-m="ve" data-i18n="m-ve" data-i18n-title="m-ve-title"
+              title="Variable elimination — algebraic reformulation of exact inference that reuses intermediate sums. Polynomial in tree-width, much faster than enumeration on networks with structure.">Variable elimination</button>
+      <button data-m="gibbs" data-i18n="m-gibbs" data-i18n-title="m-gibbs-title"
+              title="Approximate P(query | evidence) with Gibbs sampling. Scales to large networks but is noisy with few samples.">Gibbs sampling</button>
+      <button data-m="lw" data-i18n="m-lw" data-i18n-title="m-lw-title"
+              title="Likelihood weighting — sample non-evidence variables in topological order; weight each sample by Π P(evidence_i | parents_i). Unlike Gibbs, samples never get rejected and there's no burn-in. Often more sample-efficient than Gibbs on rare evidence.">Likelihood weighting</button>
+    </div>
+    <span id="gibbsControls" style="display:none; gap:8px; align-items:center;" class="control-row">
+      <label data-i18n="samples-label" data-i18n-title="samples-title" title="More samples = less noisy estimate but slower.">Samples</label>
+      <input id="nSamples" type="range" min="100" max="100000" step="100" value="5000" aria-label="Number of Gibbs sampling iterations"
+             style="min-width: 160px">
+      <span id="nSamplesV" style="font-family:monospace;color:var(--accent);font-weight:700">5,000</span>
+      <button class="step-btn" id="resampleBtn" data-i18n="resample-btn" data-i18n-title="resample-btn-title" title="Re-run Gibbs with a different random seed.">↻ Re-sample</button>
+    </span>
+  </div>
+
+  <div class="net-cpts">
+    <div>
+      <svg id="netSvg" width="320" height="280" viewBox="0 0 320 280" role="img"
+           aria-labelledby="netSvgTitle netSvgDesc">
+        <title id="netSvgTitle">Bayesian network diagram</title>
+        <desc id="netSvgDesc">Five variables — Burglary, Earthquake, Alarm, JohnCalls, MaryCalls — connected by directed edges. Drag nodes to rearrange. Tab through to access each variable.</desc>
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5"
+                  markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/>
+          </marker>
+        </defs>
+      </svg>
+      <p style="text-align:center; color:var(--muted); font-size:0.78rem; margin-top:6px; font-style:italic;" data-i18n="net-hint">
+        Drag nodes to rearrange. Edges flow parent → child. Green = clamped TRUE, red = clamped FALSE.
+      </p>
+    </div>
+    <div>
+      <div class="cpt-grid" id="cptArea"></div>
+    </div>
+  </div>
+
+  <div class="evidence-section">
+    <h3 data-i18n="evidence-label">Evidence — click T / F / ? per variable</h3>
+    <div class="evidence-grid" id="evGrid"></div>
+  </div>
+
+  <div class="scenarios">
+    <span style="color:var(--muted); font-size:0.82rem; margin-right:6px;" data-i18n="scen-label">Quick scenarios:</span>
+    <button id="s1" data-i18n="scen-nothing" data-i18n-title="scen-nothing-title" title="Clear all evidence.">Nothing observed</button>
+    <button id="s2" data-i18n="scen-john" data-i18n-title="scen-john-title" title="John calls. Modest evidence of an alarm somewhere upstream.">John calls</button>
+    <button id="s3" data-i18n="scen-both" data-i18n-title="scen-both-title" title="Both John and Mary call. Strong evidence of an alarm.">John &amp; Mary both call</button>
+    <button id="s4" data-i18n="scen-alarm" data-i18n-title="scen-alarm-title" title="The alarm is actually sounding (rare in practice).">Alarm is on</button>
+    <button id="s5" data-i18n="scen-eq" data-i18n-title="scen-eq-title" title="The 'explaining away' scenario: John, Mary, AND we learn there was an earthquake.">Both call + earthquake</button>
+  </div>
+
+  <div class="infer-section">
+    <h3 data-i18n="posterior-label">Posterior — P(variable = TRUE | evidence)</h3>
+    <div class="infer-row" id="postRow"></div>
+    <div id="inferMeta"></div>
+  </div>
+
+  <!-- d-separation / independence checker. Pick two variables and ask
+       whether they are conditionally independent given the current evidence.
+       Uses the Bayes-Ball algorithm (Shachter 1998) on the moralized DAG. -->
+  <details class="dsep-panel" style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="dsep-summary">🔗 d-separation checker (are X and Y independent given evidence?)</span>
+    </summary>
+    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem;">
+      <p style="margin:0 0 6px; color:var(--muted); font-size:0.82rem;" data-i18n="dsep-hint">
+        Pick two variables and click "Check". The algorithm runs Bayes-Ball on the DAG using the current evidence as the conditioning set. Two variables are independent (d-separated) when no active path connects them.
+      </p>
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <label data-i18n="dsep-x-label">X:</label>
+        <select id="dsepX" style="padding:3px 6px; border:1px solid var(--border); border-radius:4px; font:inherit;"></select>
+        <label data-i18n="dsep-y-label">Y:</label>
+        <select id="dsepY" style="padding:3px 6px; border:1px solid var(--border); border-radius:4px; font:inherit;"></select>
+        <button class="step-btn" id="dsepBtn" data-i18n="dsep-btn">Check d-separation</button>
+      </div>
+      <div id="dsepResult" style="margin-top:8px; font-family:ui-monospace,monospace; font-size:0.85rem; line-height:1.6;">
+        <span style="color:var(--muted); font-style:italic;" data-i18n="dsep-empty">(select X and Y, then click Check)</span>
+      </div>
+    </div>
+  </details>
+
+  <!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
+  <details class="lesson-tour" style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="tour-summary">📚 Lesson tour (5 steps)</span>
+    </summary>
+    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+        <strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
+        <strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">—</strong>
+      </div>
+      <p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">—</p>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="step-btn secondary" id="tourPrev" data-i18n="tour-prev">← Prev</button>
+        <button class="step-btn" id="tourApply" data-i18n="tour-apply">▶ Apply this scenario</button>
+        <button class="step-btn secondary" id="tourNext" data-i18n="tour-next">Next →</button>
+      </div>
+    </div>
+  </details>
+
+  <!-- Worksheet/lab mode. 3 questions per applet with instant check. -->
+  <details class="worksheet" style="margin-top:8px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="ws-summary">📝 Worksheet (3 questions)</span>
+    </summary>
+    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem; line-height:1.5;">
+      <div class="ws-q" id="ws1">
+        <p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">Burglary network. Click "John &amp; Mary both call". Note P(Burglary). Now click "Both call + earthquake". P(Burglary) goes:</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="0"> <span data-i18n="ws1o0">Up — a second alarm cause makes a burglary even more likely.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="1"> <span data-i18n="ws1o1">Down — the earthquake explains away the alarm, so burglary is less needed.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="2"> <span data-i18n="ws1o2">Stays the same — burglary and earthquake are independent, so extra evidence can't change it.</span></label>
+        </div>
+        <button class="step-btn" id="ws1btn" data-i18n="ws-check">Check</button>
+        <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+      <div class="ws-q" id="ws2" style="margin-top:10px;">
+        <p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Switch to Sprinkler network. Set Wet=T. Now ALSO set Rain=T. P(Sprinkler=T) is:</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="0"> <span data-i18n="ws2o0">Higher than with wet grass alone — two confirmed causes stack up.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="1"> <span data-i18n="ws2o1">Lower than with just wet grass — rain explains the wet grass, so the sprinkler is less needed.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="2"> <span data-i18n="ws2o2">Unchanged — once the grass is wet, learning about rain tells you nothing about the sprinkler.</span></label>
+        </div>
+        <button class="step-btn" id="ws2btn" data-i18n="ws-check">Check</button>
+        <span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+      <div class="ws-q" id="ws3" style="margin-top:10px;">
+        <p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Burglary network, "Both call" evidence. Switch inference method from Exact to Gibbs sampling with 5000 samples. The posterior for P(Burglary) compared to Exact is:</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="0"> <span data-i18n="ws3o0">An exact match — Gibbs sampling computes the same posterior as enumeration.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="1"> <span data-i18n="ws3o1">Close but noisy — Gibbs approximates the posterior, and the estimate wobbles a bit each re-sample.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="2"> <span data-i18n="ws3o2">Wildly different — sampling methods can't recover this posterior at all.</span></label>
+        </div>
+        <button class="step-btn" id="ws3btn" data-i18n="ws-check">Check</button>
+        <span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+    </div>
+  </details>
+
+  <div class="jump-anchor"><a href="#essay" class="jump-link" data-i18n="jump-link">↓ Read the explanation</a></div>
+</div>
+</section>
+
+<article class="essay" id="essay">
+
+  <p class="lede">
+    Bayesian networks let you reason about many variables at once. The classic textbook example
+    from Russell &amp; Norvig has five: a burglary (B), an earthquake (E), an alarm that responds
+    to both (A), and two neighbors (John and Mary) who call when they hear it. Five variables,
+    a few conditional probability tables, and you can ask any question — like "given that John
+    called, what's the probability of a burglary?"
+  </p>
+
+  <h2>What the arrows mean</h2>
+
+  <p>
+    Each arrow goes from a parent to a child, and the child's probability table conditions on
+    the values of the parents. In this network, the alarm depends on both burglary and earthquake,
+    and each neighbor's call depends on the alarm. The arrows don't strictly mean "causes" —
+    they encode the dependency structure of the joint probability distribution. Two variables
+    with no arrow between them are conditionally independent given their parents.
+  </p>
+
+  <h2>The "explaining away" effect</h2>
+
+  <p>
+    Click <strong>"John &amp; Mary both call"</strong> and watch P(B) jump from 0.1% to about 28%.
+    Two calls is much stronger evidence than one. Now click <strong>"Both call + earthquake"</strong>
+    — P(B) collapses back down to about 0.4%. Why? The earthquake "explains away" the alarm.
+    Once you know there's an earthquake, the alarm is no longer surprising, and the burglary
+    is no longer needed as an explanation.
+  </p>
+
+  <div class="aha">
+    Explaining away is genuinely counterintuitive. Two causes that are statistically independent
+    in the absence of evidence become <em>anti</em>-correlated once you observe their common
+    effect. Burglary and earthquake are independent — until you hear the alarm.
+  </div>
+
+  <h2>Exact inference vs Gibbs sampling</h2>
+
+  <p>
+    The "exact" mode computes the posterior by summing over every possible value of every
+    unobserved variable. With 5 variables and one observed, that's 2⁴ = 16 sums. Fine. With 100
+    variables it's 2⁹⁹ — not fine. Gibbs sampling instead generates a sequence of states by
+    repeatedly resampling one variable at a time conditional on the others. Crank the samples
+    slider from 1,000 to 50,000 and watch the noise narrow. The estimates converge to the exact
+    answer in the limit — but only in the limit.
+  </p>
+
+  <h2>What this simplifies</h2>
+
+  <p>
+    Real Bayesian networks have hundreds or thousands of variables and learned CPTs (you don't
+    write them by hand — you fit them from data). Real inference uses much smarter methods than
+    naïve enumeration or vanilla Gibbs: variable elimination, junction trees, loopy belief
+    propagation, variational inference. The heart, though, is what you see here — the rules
+    of conditional probability applied to a graph.
+  </p>
+
+  <div class="for-teachers">
+    <h3>For teachers</h3>
+    <p><strong>Curriculum:</strong> Probability beyond Bayes' rule. Russell &amp; Norvig
+       Chapter 14. Directed graphical models; conditional probability tables; "explaining away" as
+       a structural phenomenon; exact vs. sampling inference.</p>
+    <p><strong>Pre-exploration prompts:</strong></p>
+    <ul>
+      <li>If your alarm goes off, what's the probability there's actually a burglar?</li>
+      <li>If you learn an earthquake happened, does that make you LESS worried about a burglary? Why?</li>
+      <li>What's the difference between an event being "more likely" and "more probable"?</li>
+    </ul>
+    <p><strong>Post-exploration prompts:</strong></p>
+    <ul>
+      <li>Click "John calls." P(Burglary) rises a lot — but not to 100%. Why or why not?</li>
+      <li>Click "John &amp; Mary both call." Why does TWO calls move the needle so much more?</li>
+      <li>Click "Both call + earthquake." Watch P(Burglary) collapse. This is "explaining away" live.</li>
+      <li>Switch to Gibbs at 1,000 samples and re-sample a few times. Watch the wobble. Then crank to 50,000 and re-sample. What does this say about sampling-based AI?</li>
+      <li>Edit P(B) from 0.001 to 0.1 in the CPT. Does it change your conclusions in the John-calls case?</li>
+    </ul>
+    <p><strong>Common misconceptions defeated:</strong>
+       "Bayes nets just encode causal arrows" (no — arrows encode conditional independence; causation is an interpretation);
+       "evidence can only make a hypothesis MORE likely" (no — explaining away is a real anti-correlation);
+       "Gibbs is just exact inference but slower" (no — it's an approximation, never exact).</p>
+  </div>
+
+</article>
+
+<!-- D3/SVG upgrade: D3 v7 for selection + drag behavior. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+
+  // ===== bilingual + reduced motion + hard reset =====
+  const STRINGS = {
+    en: {
+      'title': 'Visualizing a Bayesian Network', 'back-link': '← Back to all playgrounds',
+      'footer-top': '↑ Back to top', 'footer-builtby': 'Built by', 'footer-course': 'Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy', 'footer-source': 'View source', 'footer-issue': 'Report an issue',
+      'reset-all': '↺ Reset all', 'method-label': 'Inference:',
+      'evidence-label': 'Evidence — click T / F / ? per variable',
+      'posterior-label': 'Posterior — P(variable = TRUE | evidence)',
+      'tldr-strong': 'The big idea',
+      'tldr-body': "Learning of an earthquake LOWERS your belief in a burglary — even though the two are independent without evidence. That's \"explaining away,\" and it's visible here in one slider.",
+      'net-label': 'Network:',
+      'net-burglary': 'Burglary (AIMA, 5 vars)',
+      'net-sprinkler': 'Sprinkler (Pearl, 4 vars)',
+      'net-cancer': 'Cancer screening (3 vars)',
+      'net-title': 'Switch between classic Bayesian networks. Each has its own variables, parents, and conditional probability tables.',
+      'm-exact': 'Exact (enumeration)', 'm-ve': 'Variable elimination', 'm-gibbs': 'Gibbs sampling',
+      'm-lw': 'Likelihood weighting',
+      'm-exact-title': 'Compute P(query | evidence) exactly by enumeration. Correct, but exponential in the number of unobserved variables.',
+      'm-ve-title': 'Variable elimination — algebraic reformulation of exact inference that reuses intermediate sums. Polynomial in tree-width, much faster than enumeration on networks with structure.',
+      'm-gibbs-title': 'Approximate P(query | evidence) with Gibbs sampling. Scales to large networks but is noisy with few samples.',
+      'm-lw-title': "Likelihood weighting — sample non-evidence variables in topological order; weight each sample by Π P(evidence_i | parents_i). Unlike Gibbs, samples never get rejected and there's no burn-in. Often more sample-efficient than Gibbs on rare evidence.",
+      'samples-label': 'Samples', 'resample-btn': '↻ Re-sample',
+      'net-hint': 'Drag nodes to rearrange. Edges flow parent → child. Green = clamped TRUE, red = clamped FALSE.',
+      'scen-label': 'Quick scenarios:',
+      'scen-nothing': 'Nothing observed', 'scen-john': 'John calls',
+      'scen-both': 'John & Mary both call', 'scen-alarm': 'Alarm is on',
+      'scen-eq': 'Both call + earthquake',
+      'jump-link': '↓ Read the explanation',
+      'tour-summary': '📚 Lesson tour (5 steps)',
+      'tour-step': 'Step',
+      'tour-prev': '← Prev', 'tour-next': 'Next →', 'tour-apply': '▶ Apply this scenario',
+      'ws-summary': '📝 Worksheet (3 questions)',
+      'ws-check': 'Check',
+      'ws-pick': 'Pick an answer first.',
+      'ws1q': 'Burglary network. Click "John & Mary both call". Note P(Burglary). Now click "Both call + earthquake". P(Burglary) goes:',
+      'ws2q': 'Switch to Sprinkler network. Set Wet=T. Now ALSO set Rain=T. P(Sprinkler=T) is:',
+      'ws3q': 'Burglary network, "Both call" evidence. Switch inference method from Exact to Gibbs sampling with 5000 samples. The posterior for P(Burglary) compared to Exact is:',
+      // --- MCQ: worksheet option labels (ws{n}o{i}) ---
+      'ws1o0': 'Up — a second alarm cause makes a burglary even more likely.',
+      'ws1o1': 'Down — the earthquake explains away the alarm, so burglary is less needed.',
+      'ws1o2': 'Stays the same — burglary and earthquake are independent, so extra evidence can\'t change it.',
+      'ws2o0': 'Higher than with wet grass alone — two confirmed causes stack up.',
+      'ws2o1': 'Lower than with just wet grass — rain explains the wet grass, so the sprinkler is less needed.',
+      'ws2o2': 'Unchanged — once the grass is wet, learning about rain tells you nothing about the sprinkler.',
+      'ws3o0': 'An exact match — Gibbs sampling computes the same posterior as enumeration.',
+      'ws3o1': 'Close but noisy — Gibbs approximates the posterior, and the estimate wobbles a bit each re-sample.',
+      'ws3o2': 'Wildly different — sampling methods can\'t recover this posterior at all.',
+      // --- F1: lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
+      'tour0name': 'Burglary network: nothing observed',
+      'tour0desc': 'Prior beliefs only. P(Burglary) ≈ 0.001, P(Earthquake) ≈ 0.002, P(Alarm) ≈ 0.003. Everything is rare and roughly independent — this is the calm baseline.',
+      'tour1name': 'John calls → burglary belief jumps',
+      'tour1desc': "Single neighbor reports. P(Burglary | J=T) jumps ~50× from prior. Evidence flows upward against the arrows — that's diagnostic reasoning.",
+      'tour2name': 'Both call → burglary belief soars',
+      'tour2desc': 'P(Burglary | J=T, M=T) ≈ 0.28. Two independent corroborating reports of an alarm push the posterior much higher than either alone.',
+      'tour3name': 'Explaining away: earthquake observed',
+      'tour3desc': "Add E=T to the both-call evidence. P(Burglary) DROPS because the earthquake already explains the alarm. Two causes 'compete' to explain a common effect. This is the signature pattern that flat probabilistic reasoning can't capture.",
+      'tour4name': 'Sprinkler: wet grass, two possible causes',
+      'tour4desc': "Switch to Pearl's sprinkler network. Set W=T (wet grass). Both Rain and Sprinkler are plausible. Now also clamp Rain=T — Sprinkler's probability drops. Same explaining-away pattern in a different domain.",
+      // --- F1: worksheet answer-feedback (ws{n}ok / ws{n}no) ---
+      'ws1ok': "Correct. This is 'explaining away' (Pearl) — the earthquake provides an alternative cause for the alarm, so P(Burglary) drops. Two causes compete to explain a common effect, even though they were independent before evidence.",
+      'ws1no': "Try 'down'. The earthquake already explains why the alarm sounded — burglary becomes less needed as an explanation.",
+      'ws2ok': 'Right. Same explaining-away pattern. Wet=T raises P(Sprinkler) above prior. Then learning Rain=T explains the wet grass, so P(Sprinkler) drops back toward (but stays slightly above) prior.',
+      'ws2no': "Try 'lower than just wet'. Rain explains the wetness, so sprinkler is less needed.",
+      'ws3ok': 'Correct. With 5000 samples, Gibbs converges to within ~0.01-0.05 of the exact answer. Re-sample a few times to see the variance — Monte Carlo error scales as 1/√N.',
+      'ws3no': "Try 'close but noisy'. Gibbs sampling approximates the posterior; more samples = less noise. 5000 is usually within ~0.05.",
+      'dsep-summary': '🔗 d-separation checker (are X and Y independent given evidence?)',
+      'dsep-hint': 'Pick two variables and click "Check". The algorithm runs Bayes-Ball on the DAG using the current evidence as the conditioning set. Two variables are independent (d-separated) when no active path connects them.',
+      'dsep-x-label': 'X:', 'dsep-y-label': 'Y:',
+      'dsep-btn': 'Check d-separation',
+      'dsep-empty': '(select X and Y, then click Check)',
+      // tooltip translations for main controls + scenario buttons.
+      'samples-title': 'More samples = less noisy estimate but slower.',
+      'resample-btn-title': 'Re-run Gibbs with a different random seed.',
+      'scen-nothing-title': 'Clear all evidence.',
+      'scen-john-title': 'John calls. Modest evidence of an alarm somewhere upstream.',
+      'scen-both-title': 'Both John and Mary call. Strong evidence of an alarm.',
+      'scen-alarm-title': 'The alarm is actually sounding (rare in practice).',
+      'scen-eq-title': "The 'explaining away' scenario: John, Mary, AND we learn there was an earthquake.",
+    },
+    zh: {
+      'title': '贝叶斯网络可视化', 'back-link': '← 返回所有演示',
+      'footer-top': '↑ 返回顶部', 'footer-builtby': '作者', 'footer-course': '为海淀凯文学校 2025–2026《人工智能导论》课程制作', 'footer-source': '查看源代码', 'footer-issue': '反馈问题',
+      'reset-all': '↺ 全部重置', 'method-label': '推理:',
+      'evidence-label': '证据 — 每个变量点击 T / F / ?',
+      'posterior-label': '后验概率 — P(变量 = TRUE | 证据)',
+      'tldr-strong': '核心思想',
+      'tldr-body': '得知地震反而会降低你对入室盗窃的信念——尽管这两件事在没有证据时是相互独立的。这就是"解释消除",在这里你能用一个滑块看清楚。',
+      'net-label': '网络:',
+      'net-burglary': '入室盗窃(AIMA,5 变量)',
+      'net-sprinkler': '洒水器(Pearl,4 变量)',
+      'net-cancer': '癌症筛查(3 变量)',
+      'net-title': '在经典贝叶斯网络之间切换。每个网络都有自己的变量、父节点和条件概率表。',
+      'm-exact': '精确(枚举)', 'm-ve': '变量消除', 'm-gibbs': 'Gibbs 采样',
+      'm-lw': '似然加权',
+      'm-exact-title': '通过枚举精确计算 P(查询 | 证据)。结果正确,但在未观测变量数量上呈指数级。',
+      'm-ve-title': '变量消除——精确推理的代数重排,通过缓存中间求和来复用计算。在树宽上多项式,有结构的网络比枚举快得多。',
+      'm-gibbs-title': '用 Gibbs 采样近似计算 P(查询 | 证据)。可扩展到大网络,但样本少时噪声大。',
+      'm-lw-title': '似然加权——按拓扑顺序对非证据变量采样,每个样本的权重为 Π P(证据_i | 父节点_i)。与 Gibbs 不同,样本永不被拒绝,也无需 burn-in。证据稀有时通常比 Gibbs 更高效。',
+      'samples-label': '样本数', 'resample-btn': '↻ 重新采样',
+      'net-hint': '拖动节点可重新排列。边从父节点指向子节点。绿色 = 钳制为 TRUE,红色 = 钳制为 FALSE。',
+      'scen-label': '快速场景:',
+      'scen-nothing': '无观测', 'scen-john': 'John 来电',
+      'scen-both': 'John 与 Mary 都来电', 'scen-alarm': '警报在响',
+      'scen-eq': '两人来电 + 地震',
+      'jump-link': '↓ 阅读说明',
+      'tour-summary': '📚 课程导览(5 步)',
+      'tour-step': '步骤',
+      'tour-prev': '← 上一步', 'tour-next': '下一步 →', 'tour-apply': '▶ 应用此场景',
+      'ws-summary': '📝 练习题(3 题)',
+      'ws-check': '核对',
+      'ws-pick': '请先选择一个答案。',
+      'ws1q': '入室盗窃(Burglary)网络。点击 "John & Mary both call"。记下 P(Burglary)。再点击 "Both call + earthquake"。此时 P(Burglary) 会:',
+      'ws2q': '切换到洒水器(Sprinkler)网络。设 Wet=T。现在再设 Rain=T。P(Sprinkler=T) 会是:',
+      'ws3q': '入室盗窃网络,"Both call" 证据。把推理方法从 Exact 切换为 5000 样本的 Gibbs 采样。P(Burglary) 的后验与 Exact 相比:',
+      // --- MCQ:练习题选项(ws{n}o{i})---
+      'ws1o0': '上升——多了一个引发警报的原因,会让入室盗窃更有可能。',
+      'ws1o1': '下降——地震解释消除了警报,因此不再那么需要入室盗窃来解释。',
+      'ws1o2': '保持不变——入室盗窃与地震相互独立,额外的证据无法改变它。',
+      'ws2o0': '比只有草地湿时更高——两个被确认的原因叠加起来。',
+      'ws2o1': '比只有草地湿时更低——下雨解释了草地为何湿,因此不再那么需要洒水器。',
+      'ws2o2': '保持不变——草地一旦湿了,得知是否下雨就再也无法告诉你洒水器的情况。',
+      'ws3o0': '完全一致——Gibbs 采样算出的后验与枚举相同。',
+      'ws3o1': '接近但有噪声——Gibbs 近似后验,每次重新采样估计都会略有波动。',
+      'ws3o2': '相差极大——采样方法根本无法恢复这个后验。',
+      // --- F1: 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
+      'tour0name': '入室盗窃网络:无观测',
+      'tour0desc': '只有先验信念。P(Burglary) ≈ 0.001,P(Earthquake) ≈ 0.002,P(Alarm) ≈ 0.003。一切都很罕见且大致独立——这是平静的基线。',
+      'tour1name': 'John 来电 → 入室盗窃信念上升',
+      'tour1desc': '单个邻居报告。P(Burglary | J=T) 比先验跳升约 50 倍。证据逆着箭头向上传播——这就是诊断式推理。',
+      'tour2name': '两人都来电 → 入室盗窃信念飙升',
+      'tour2desc': 'P(Burglary | J=T, M=T) ≈ 0.28。两个相互独立、彼此印证的警报报告,把后验推得比任何单独一个都高得多。',
+      'tour3name': '解释消除:观测到地震',
+      'tour3desc': '在两人来电的证据上再加 E=T。P(Burglary) 会下降,因为地震已经解释了警报。两个原因"竞争"去解释同一个共同结果。这正是扁平的概率推理无法捕捉的标志性模式。',
+      'tour4name': '洒水器:草地湿了,两个可能原因',
+      'tour4desc': '切换到 Pearl 的洒水器网络。设 W=T(草地湿了)。下雨和洒水器都说得通。现在再钳制 Rain=T——洒水器的概率下降。同样的解释消除模式,只是换了个领域。',
+      // --- F1: 练习题答案反馈(ws{n}ok / ws{n}no)---
+      'ws1ok': '正确。这就是"解释消除"(Pearl)——地震为警报提供了另一个原因,所以 P(Burglary) 下降。两个原因竞争去解释同一个共同结果,尽管它们在有证据之前是相互独立的。',
+      'ws1no': '试试"down"。地震已经解释了警报为何响起——入室盗窃作为解释就不那么必要了。',
+      'ws2ok': '对。同样的解释消除模式。Wet=T 把 P(Sprinkler) 抬到先验之上。随后得知 Rain=T 解释了草地为何湿,于是 P(Sprinkler) 回落到接近(但仍略高于)先验。',
+      'ws2no': '试试"lower than just wet"。下雨解释了潮湿,所以洒水器就不那么必要了。',
+      'ws3ok': '正确。在 5000 个样本下,Gibbs 收敛到与精确答案相差约 0.01–0.05。多重新采样几次看看波动——蒙特卡洛误差按 1/√N 缩小。',
+      'ws3no': '试试"close but noisy"。Gibbs 采样近似后验;样本越多噪声越小。5000 通常在 ~0.05 以内。',
+      'dsep-summary': '🔗 d-分离检查器(给定证据后 X 与 Y 独立吗?)',
+      'dsep-hint': '选择两个变量并点击"检查"。算法在当前证据集上对 DAG 运行 Bayes-Ball。两个变量在没有活跃路径相连时是独立的(d-分离)。',
+      'dsep-x-label': 'X:', 'dsep-y-label': 'Y:',
+      'dsep-btn': '检查 d-分离',
+      'dsep-empty': '(选择 X 和 Y,然后点击"检查")',
+      // 主要控件与场景按钮的提示翻译。
+      'samples-title': '样本越多估计噪声越小,但运行越慢。',
+      'resample-btn-title': '用不同随机种子重新运行 Gibbs 采样。',
+      'scen-nothing-title': '清除所有证据。',
+      'scen-john-title': 'John 来电。上游某处有警报的中等证据。',
+      'scen-both-title': 'John 与 Mary 都来电。警报的强证据。',
+      'scen-alarm-title': '警报实际正在响(实践中罕见)。',
+      'scen-eq-title': '"解释消除"场景:John、Mary 都来电,且我们还知道发生了地震。',
+    },
+  };
+  function setLang(lang) {
+    if (!STRINGS[lang]) lang = 'en';
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.dataset.i18n;
+      if (STRINGS[lang][k]) el.textContent = STRINGS[lang][k];
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const k = el.dataset.i18nTitle;
+      if (STRINGS[lang][k]) el.title = STRINGS[lang][k];
+    });
+    document.querySelectorAll('.lang-switch button').forEach(b =>
+      b.classList.toggle('active', b.dataset.lang === lang));
+    try { localStorage.setItem('lang', lang); } catch (_) {}
+  }
+  document.querySelectorAll('.lang-switch button').forEach(b =>
+    b.addEventListener('click', () => {
+      setLang(b.dataset.lang);
+      // F1: re-render the tour in the new language. Safe here — this click handler
+      // only runs post-init, after LESSON_TOUR (a late `const`) is initialized, so
+      // there is no temporal-dead-zone risk (unlike calling it from inside setLang).
+      try { if (typeof renderTour === 'function') renderTour(); } catch (_) {}
+    }));
+  let initialLang = 'en';
+  try { initialLang = localStorage.getItem('lang') || 'en'; } catch (_) {}
+  setLang(initialLang);
+
+  function setTheme(t) {
+    document.body.classList.toggle('dark-mode', t === 'dark');
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+    try { localStorage.setItem('theme', t); } catch (_) {}
+  }
+  let initialTheme = 'light';
+  try {
+    initialTheme = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  } catch (_) {}
+  setTheme(initialTheme);
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    setTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark');
+    if (typeof drawNet === 'function') drawNet();
+    if (typeof recompute === 'function') recompute();
+  });
+
+  // For-teachers is hidden by default (cognitive-load floor). User toggles persist.
+  // `?teacher=1` opens on load. `?teacher=0` hides completely (no toggle, for projection).
+  try {
+    const tp = new URLSearchParams(location.search).get('teacher');
+    if (tp === '0') {
+      document.querySelectorAll('.for-teachers').forEach(el => el.style.display = 'none');
+    } else {
+      const style = document.createElement('style');
+      style.textContent = '.for-teachers-expander{margin-top:36px}.for-teachers-expander>summary{cursor:pointer;padding:12px 16px;background:var(--soft);border:1px solid var(--border);border-radius:8px;font-family:-apple-system,system-ui,sans-serif;font-size:0.9rem;color:var(--accent);font-weight:600;list-style:none;user-select:none}.for-teachers-expander>summary::-webkit-details-marker{display:none}.for-teachers-expander[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius:0}.for-teachers-expander>.for-teachers{margin-top:0;border-top:0;border-top-left-radius:0;border-top-right-radius:0}';
+      document.head.appendChild(style);
+      document.querySelectorAll('.for-teachers').forEach(div => {
+        const details = document.createElement('details');
+        details.className = 'for-teachers-expander';
+        const summary = document.createElement('summary');
+        summary.textContent = '▸ Show teacher notes (discussion prompts + curriculum)';
+        div.parentNode.insertBefore(details, div);
+        details.appendChild(summary);
+        details.appendChild(div);
+      });
+      const saved = (() => { try { return localStorage.getItem('teacher-notes-open'); } catch (_) { return null; } })();
+      const shouldOpen = tp === '1' || saved === '1';
+      document.querySelectorAll('details.for-teachers-expander').forEach(d => {
+        d.open = shouldOpen;
+        d.addEventListener('toggle', () => {
+          try { localStorage.setItem('teacher-notes-open', d.open ? '1' : '0'); } catch (_) {}
+        });
+      });
+    }
+  } catch (_) {}
+  // D3/SVG upgrade: serialize the SVG element to PNG via an off-screen canvas.
+  // The SVG is inlined into a data URI, loaded into an Image, then drawn at 2× scale.
+  document.getElementById('exportPng').addEventListener('click', () => {
+    const svgEl = document.getElementById('netSvg');
+    const clone = svgEl.cloneNode(true);
+    // Force inline bg so the PNG isn't transparent.
+    const dark = document.body.classList.contains('dark-mode');
+    clone.setAttribute('style', `background:${dark ? '#1e293b' : 'white'};`);
+    // Inline the minimal CSS the SVG needs so the rasterized output matches the live view.
+    const styleNode = document.createElement('style');
+    styleNode.textContent = `
+      .node-circle { stroke: #475569; stroke-width: 1.5; }
+      .node-label { font: bold 14px system-ui, -apple-system, sans-serif;
+                     text-anchor: middle; dominant-baseline: middle; }
+      .edge { stroke: ${dark ? '#64748b' : '#94a3b8'}; stroke-width: 1.5; fill: none; }
+    `;
+    clone.insertBefore(styleNode, clone.firstChild);
+    const xml = new XMLSerializer().serializeToString(clone);
+    const dataUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
+    const img = new Image();
+    img.onload = () => {
+      const scale = 2;
+      const cv = document.createElement('canvas');
+      cv.width = svgEl.viewBox.baseVal.width * scale;
+      cv.height = svgEl.viewBox.baseVal.height * scale;
+      const ctx = cv.getContext('2d');
+      ctx.fillStyle = dark ? '#1e293b' : 'white';
+      ctx.fillRect(0, 0, cv.width, cv.height);
+      ctx.drawImage(img, 0, 0, cv.width, cv.height);
+      const link = document.createElement('a');
+      link.download = 'bayes-network.png';
+      link.href = cv.toDataURL('image/png');
+      link.click();
+    };
+    img.onerror = () => { alert('PNG export failed — try refreshing the page.'); };
+    img.src = dataUri;
+  });
+
+  // ===== Network definitions (AIMA 14.2) =====
+  // three preset networks. The Burglary network is the AIMA canonical example.
+  // The Sprinkler network is the classic Pearl illustration (3 vars). The Cancer-test
+  // network (Pearl, 4 vars) demonstrates rare-disease screening — pairs well with the
+  // bayes-classifier applet's sequential-update lesson.
+  let net = null;
+  function netBurglary() {
+    return {
+      vars: ['B', 'E', 'A', 'J', 'M'],
+      labels: {B: 'Burglary', E: 'Earthquake', A: 'Alarm', J: 'JohnCalls', M: 'MaryCalls'},
+      parents: {B: [], E: [], A: ['B', 'E'], J: ['A'], M: ['A']},
+      cpt: {
+        B: {'': 0.001}, E: {'': 0.002},
+        A: {'TT': 0.95, 'TF': 0.94, 'FT': 0.29, 'FF': 0.001},
+        J: {'T': 0.90, 'F': 0.05}, M: {'T': 0.70, 'F': 0.01},
+      },
+    };
+  }
+  // Sprinkler / Cloudy / Rain / WetGrass — Pearl's classic 4-node DAG.
+  // C → S, C → R, S & R → W.
+  function netSprinkler() {
+    return {
+      vars: ['C', 'S', 'R', 'W'],
+      labels: {C: 'Cloudy', S: 'Sprinkler', R: 'Rain', W: 'WetGrass'},
+      parents: {C: [], S: ['C'], R: ['C'], W: ['S', 'R']},
+      cpt: {
+        C: {'': 0.5},
+        S: {'T': 0.1, 'F': 0.5},      // P(S=T | Cloudy)
+        R: {'T': 0.8, 'F': 0.2},      // P(R=T | Cloudy)
+        W: {'TT': 0.99, 'TF': 0.90, 'FT': 0.90, 'FF': 0.00}, // P(W=T | S, R)
+      },
+    };
+  }
+  // Cancer screening — Pearl's medical example.
+  // C → T1, C → T2 (two independent tests of an underlying condition).
+  function netCancer() {
+    return {
+      vars: ['C', 'T1', 'T2'],
+      labels: {C: 'Cancer', T1: 'Test₁ positive', T2: 'Test₂ positive'},
+      parents: {C: [], T1: ['C'], T2: ['C']},
+      cpt: {
+        C: {'': 0.01},                  // 1% prior — rare disease
+        T1: {'T': 0.9, 'F': 0.05},      // 90% sens, 95% spec
+        T2: {'T': 0.9, 'F': 0.05},      // identical second test (independent given C)
+      },
+    };
+  }
+  const NET_PRESETS = {
+    burglary: { name: 'Burglary (AIMA)', fn: netBurglary,
+      layout: { B: {x: 80, y: 50}, E: {x: 240, y: 50}, A: {x: 160, y: 140},
+                J: {x: 80, y: 230}, M: {x: 240, y: 230} } },
+    sprinkler: { name: 'Sprinkler (Pearl)', fn: netSprinkler,
+      layout: { C: {x: 160, y: 50}, S: {x: 80, y: 140}, R: {x: 240, y: 140},
+                W: {x: 160, y: 230} } },
+    cancer: { name: 'Cancer screening', fn: netCancer,
+      layout: { C: {x: 160, y: 70}, T1: {x: 80, y: 200}, T2: {x: 240, y: 200} } },
+  };
+  function defaultNet() { return netBurglary(); }
+  net = defaultNet();
+  // Evidence object is rebuilt per-network in switchNet — must hold all current vars.
+  let evidence = {};
+  for (const v of net.vars) evidence[v] = null;
+
+  function topo() { return ['B', 'E', 'A', 'J', 'M']; }
+  function pNode(v, assign) {
+    const par = net.parents[v];
+    const key = par.map(p => assign[p] ? 'T' : 'F').join('');
+    const p = net.cpt[v][key];
+    return assign[v] ? p : (1 - p);
+  }
+  function enumAll(vars, assign) {
+    if (vars.length === 0) return 1.0;
+    const [v, ...rest] = vars;
+    if (evidence[v] !== null) {
+      const a = {...assign, [v]: evidence[v]};
+      return pNode(v, a) * enumAll(rest, a);
+    }
+    let s = 0;
+    for (const val of [true, false]) {
+      const a = {...assign, [v]: val};
+      s += pNode(v, a) * enumAll(rest, a);
+    }
+    return s;
+  }
+  function inferExact() {
+    const result = {};
+    for (const v of net.vars) {
+      if (evidence[v] !== null) { result[v] = evidence[v] ? 1.0 : 0.0; continue; }
+      const ev0 = evidence[v];
+      evidence[v] = true;
+      const pT = enumAll(topo(), {});
+      evidence[v] = false;
+      const pF = enumAll(topo(), {});
+      evidence[v] = ev0;
+      const denom = pT + pF;
+      result[v] = denom > 0 ? pT / denom : 0;
+    }
+    return result;
+  }
+
+  // ===== Variable Elimination (VE) =====
+  // A factor is {vars: [name,...], table: Map<assignmentString, prob>}.
+  // Assignment string is one char per var in factor.vars order: 'T'/'F'.
+  function assignKey(vars, assignment) {
+    return vars.map(v => assignment[v] ? 'T' : 'F').join('');
+  }
+  function cptToFactor(v) {
+    // Factor: P(v | parents(v)) — variables are [parents..., v].
+    const parents = net.parents[v];
+    const vars = [...parents, v];
+    const table = new Map();
+    // Enumerate all 2^|vars| assignments.
+    const n = vars.length;
+    for (let m = 0; m < (1 << n); m++) {
+      const assign = {};
+      for (let i = 0; i < n; i++) assign[vars[i]] = !!(m & (1 << (n - 1 - i)));
+      const k = assignKey(vars, assign);
+      const pkey = parents.map(p => assign[p] ? 'T' : 'F').join('');
+      const ptrue = net.cpt[v][pkey];
+      table.set(k, assign[v] ? ptrue : (1 - ptrue));
+    }
+    return { vars, table };
+  }
+  function restrictFactor(factor, evidenceMap) {
+    // Drop variables whose value is fixed in evidence, keep rows matching.
+    const evVars = factor.vars.filter(v => evidenceMap[v] !== undefined);
+    if (evVars.length === 0) return factor;
+    const remaining = factor.vars.filter(v => evidenceMap[v] === undefined);
+    const newTable = new Map();
+    for (const [k, p] of factor.table) {
+      // Decode the key back to an assignment.
+      const assign = {};
+      for (let i = 0; i < factor.vars.length; i++) assign[factor.vars[i]] = (k[i] === 'T');
+      let matchesEvidence = true;
+      for (const v of evVars) {
+        if (assign[v] !== evidenceMap[v]) { matchesEvidence = false; break; }
+      }
+      if (!matchesEvidence) continue;
+      const newK = assignKey(remaining, assign);
+      newTable.set(newK, p);
+    }
+    return { vars: remaining, table: newTable };
+  }
+  function multiplyFactors(f1, f2) {
+    // Union of variables; product of probabilities for compatible rows.
+    const unionVars = [...f1.vars];
+    for (const v of f2.vars) if (!unionVars.includes(v)) unionVars.push(v);
+    const table = new Map();
+    const n = unionVars.length;
+    for (let m = 0; m < (1 << n); m++) {
+      const assign = {};
+      for (let i = 0; i < n; i++) assign[unionVars[i]] = !!(m & (1 << (n - 1 - i)));
+      const k1 = assignKey(f1.vars, assign);
+      const k2 = assignKey(f2.vars, assign);
+      const p1 = f1.table.get(k1); const p2 = f2.table.get(k2);
+      if (p1 === undefined || p2 === undefined) continue;
+      table.set(assignKey(unionVars, assign), p1 * p2);
+    }
+    return { vars: unionVars, table };
+  }
+  function sumOut(factor, v) {
+    // Marginalize out v: for each combo of remaining vars, sum over v ∈ {T, F}.
+    if (!factor.vars.includes(v)) return factor;
+    const remaining = factor.vars.filter(x => x !== v);
+    const table = new Map();
+    for (const [k, p] of factor.table) {
+      // Decode → strip v from assignment → re-encode.
+      const assign = {};
+      for (let i = 0; i < factor.vars.length; i++) assign[factor.vars[i]] = (k[i] === 'T');
+      const newK = assignKey(remaining, assign);
+      table.set(newK, (table.get(newK) || 0) + p);
+    }
+    return { vars: remaining, table };
+  }
+  function inferVE() {
+    // Variable elimination per AIMA Ch 14.4.
+    const result = {};
+    const allVars = net.vars;
+    // Pre-build per-CPT factors, restricted to current evidence.
+    const evMap = {};
+    for (const v of allVars) if (evidence[v] !== null) evMap[v] = evidence[v];
+    for (const queryVar of allVars) {
+      if (evidence[queryVar] !== null) {
+        result[queryVar] = evidence[queryVar] ? 1.0 : 0.0;
+        continue;
+      }
+      // Build factors restricted to evidence.
+      let factors = allVars.map(v => restrictFactor(cptToFactor(v), evMap));
+      // Eliminate every variable except queryVar (in reverse topological order = leaves first).
+      const elimOrder = allVars.filter(v => v !== queryVar && evidence[v] === null).reverse();
+      for (const v of elimOrder) {
+        const involved = factors.filter(f => f.vars.includes(v));
+        const others = factors.filter(f => !f.vars.includes(v));
+        if (involved.length === 0) { factors = others; continue; }
+        let product = involved[0];
+        for (let i = 1; i < involved.length; i++) product = multiplyFactors(product, involved[i]);
+        const summed = sumOut(product, v);
+        factors = [...others, summed];
+      }
+      // Multiply remaining factors → unnormalized P(queryVar | evidence).
+      let result_factor = factors[0];
+      for (let i = 1; i < factors.length; i++) result_factor = multiplyFactors(result_factor, factors[i]);
+      // Normalize.
+      const pT = result_factor.table.get('T') || 0;
+      const pF = result_factor.table.get('F') || 0;
+      const denom = pT + pF;
+      result[queryVar] = denom > 0 ? pT / denom : 0;
+    }
+    return result;
+  }
+  function gibbs(nSamples) {
+    const state = {};
+    for (const v of net.vars) {
+      state[v] = evidence[v] !== null ? evidence[v] : (Math.random() < 0.5);
+    }
+    const counts = {}; for (const v of net.vars) counts[v] = 0;
+    const burn = Math.floor(nSamples * 0.1);
+    for (let i = 0; i < nSamples + burn; i++) {
+      for (const v of net.vars) {
+        if (evidence[v] !== null) continue;
+        const stateT = {...state, [v]: true};
+        const stateF = {...state, [v]: false};
+        const pT = jointProb(stateT);
+        const pF = jointProb(stateF);
+        const total = pT + pF;
+        state[v] = (Math.random() * total) < pT;
+      }
+      if (i >= burn) for (const v of net.vars) if (state[v]) counts[v]++;
+    }
+    const result = {};
+    for (const v of net.vars) {
+      if (evidence[v] !== null) { result[v] = evidence[v] ? 1.0 : 0.0; continue; }
+      result[v] = counts[v] / nSamples;
+    }
+    return result;
+  }
+  function jointProb(assign) {
+    let p = 1.0;
+    for (const v of net.vars) p *= pNode(v, assign);
+    return p;
+  }
+  // Likelihood weighting (AIMA Ch 14.5). Sample non-evidence variables
+  // in topological order from their CPTs; weight each sample by Π P(e_i | parents_i)
+  // over evidence variables. Unlike Gibbs there's no burn-in and no rejected samples.
+  // Often more sample-efficient than Gibbs when evidence is rare.
+  function likelihoodWeighting(nSamples) {
+    // weightedCounts[v] accumulates Σ w * 1[sample[v] = true].
+    // totalWeight accumulates Σ w. Final estimate: weightedCounts[v] / totalWeight.
+    const weightedCounts = {}; for (const v of net.vars) weightedCounts[v] = 0;
+    let totalWeight = 0;
+    // Topological order: net.vars is already specified parent-before-child by construction.
+    for (let i = 0; i < nSamples; i++) {
+      const sample = {};
+      let w = 1.0;
+      for (const v of net.vars) {
+        if (evidence[v] !== null) {
+          // Clamped: include factor P(e_v | parents_v) into the weight.
+          sample[v] = evidence[v];
+          w *= pNode(v, sample);
+        } else {
+          // Free: sample from P(v | parents_v).
+          const pT = pNode(v, {...sample, [v]: true});
+          sample[v] = (Math.random() < pT);
+        }
+      }
+      totalWeight += w;
+      for (const v of net.vars) if (sample[v]) weightedCounts[v] += w;
+    }
+    const result = {};
+    for (const v of net.vars) {
+      if (evidence[v] !== null) { result[v] = evidence[v] ? 1.0 : 0.0; continue; }
+      result[v] = totalWeight > 0 ? weightedCounts[v] / totalWeight : 0;
+    }
+    return result;
+  }
+
+  function setupEvidenceUI() {
+    const grid = $('evGrid');
+    grid.innerHTML = '';
+    for (const v of net.vars) {
+      const name = document.createElement('div');
+      name.className = 'ev-name'; name.textContent = net.labels[v];
+      grid.appendChild(name);
+      const choices = [['t', true, 'T'], ['f', false, 'F'], ['u', null, '?']];
+      for (const [cls, val, label] of choices) {
+        const b = document.createElement('button');
+        b.className = `ev-btn ${cls}` + (evidence[v] === val ? ' active' : '');
+        b.textContent = label;
+        b.title = val === true ? `Clamp ${net.labels[v]} = TRUE`
+               : val === false ? `Clamp ${net.labels[v]} = FALSE`
+               : `Unobserved — let inference compute ${net.labels[v]}`;
+        b.addEventListener('click', () => {
+          evidence[v] = val;
+          setupEvidenceUI();
+          recompute();
+        });
+        grid.appendChild(b);
+      }
+    }
+  }
+  function setupCPTs() {
+    const area = $('cptArea');
+    area.innerHTML = '';
+    for (const v of net.vars) {
+      const div = document.createElement('div');
+      div.className = 'cpt';
+      let html = `<h4>P(${v}=T | parents)</h4><table>`;
+      const par = net.parents[v];
+      const keys = Object.keys(net.cpt[v]);
+      keys.sort();
+      for (const k of keys) {
+        const parLabel = par.length ? par.map((p, i) => `${p}=${k[i]}`).join(', ') : 'unconditional';
+        html += `<tr><td>${parLabel}</td><td><input data-var="${v}" data-key="${k}" type="number"
+                  min="0" max="1" step="0.001" value="${net.cpt[v][k]}"
+                  title="Edit this probability — the network updates instantly."></td></tr>`;
+      }
+      html += '</table>';
+      div.innerHTML = html;
+      area.appendChild(div);
+    }
+    area.querySelectorAll('input').forEach(inp => inp.addEventListener('change', e => {
+      const v = e.target.dataset.var, k = e.target.dataset.key;
+      net.cpt[v][k] = Math.max(0, Math.min(1, +e.target.value || 0));
+      recompute();
+    }));
+  }
+
+  // === D3/SVG upgrade ===
+  // nodePos is now preset-aware and rebuilt by switchNet — see below.
+  let currentPreset = 'burglary';
+  let nodePos = {};
+  function applyPresetLayout(name) {
+    const preset = NET_PRESETS[name];
+    nodePos = {};
+    for (const v of net.vars) {
+      const def = preset.layout[v] || {x: 160, y: 140};
+      nodePos[v] = {x: def.x, y: def.y};
+    }
+  }
+  function NODE_LABEL(v) { return net.labels[v] || v; }
+  function edgePath(a, b, rA, rB) {
+    // Compute endpoints on circle boundaries (not centers) so the arrow doesn't hide inside the child.
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const ux = dx / len, uy = dy / len;
+    const x1 = a.x + ux * rA, y1 = a.y + uy * rA;
+    const x2 = b.x - ux * rB, y2 = b.y - uy * rB;
+    return `M${x1},${y1} L${x2},${y2}`;
+  }
+  function drawNet() {
+    // D3-CDN guard: if D3 failed to load (e.g. CDN blocked / offline), skip ONLY the
+    // graph drawing and show a fallback message. CPT editing, exact inference, and the
+    // probability numbers below do not depend on D3 and keep working.
+    if (typeof d3 === 'undefined') {
+      const el = document.getElementById('netSvg');
+      if (el) {
+        el.innerHTML = '<text x="160" y="130" text-anchor="middle" fill="#475569" font-size="13" font-family="system-ui, sans-serif"><tspan x="160" dy="0">Network graph needs D3 (blocked here).</tspan><tspan x="160" dy="20">The inference and probabilities below still work.</tspan><tspan x="160" dy="34">网络图需要 D3(此处被拦截)。</tspan><tspan x="160" dy="20">下方的推理与概率仍可正常使用。</tspan></text>';
+      }
+      return;
+    }
+    const svg = d3.select('#netSvg');
+    const R = 26;
+
+    // === Edges (joined data: parent→child pairs) ===
+    const edgeData = [];
+    for (const v of net.vars) {
+      for (const p of net.parents[v]) {
+        edgeData.push({ from: p, to: v, id: `${p}->${v}` });
+      }
+    }
+    const edges = svg.selectAll('path.edge')
+      .data(edgeData, d => d.id);
+    edges.enter().append('path')
+      .attr('class', 'edge')
+      .attr('marker-end', 'url(#arrow)')
+      .merge(edges)
+      .attr('d', d => edgePath(nodePos[d.from], nodePos[d.to], R, R));
+    edges.exit().remove();
+
+    // === Nodes (joined data: variable names) ===
+    const nodes = svg.selectAll('g.node')
+      .data(net.vars, d => d);
+    const nodesEnter = nodes.enter().append('g')
+      .attr('class', 'node')
+      .attr('tabindex', 0)
+      .attr('role', 'button')
+      .attr('aria-label', d => `${NODE_LABEL(d)} variable. Press Enter to cycle evidence: unset, true, false.`);
+    nodesEnter.append('circle')
+      .attr('class', 'node-circle')
+      .attr('r', R);
+    nodesEnter.append('text')
+      .attr('class', 'node-label')
+      .text(d => d);
+
+    // Click + keyboard cycle T → F → null. Mirrors the existing T/F/? buttons.
+    const cycleEvidence = (d) => {
+      const cur = evidence[d];
+      evidence[d] = (cur === null) ? true : (cur === true) ? false : null;
+      setupEvidenceUI(); recompute();
+    };
+    nodesEnter.on('click', (event, d) => { if (!event.defaultPrevented) cycleEvidence(d); });
+    nodesEnter.on('keydown', (event, d) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        cycleEvidence(d);
+      }
+    });
+
+    // Drag. Mark defaultPrevented on the drag end so the click handler doesn't fire spuriously.
+    const drag = d3.drag()
+      .on('start', function() { d3.select(this).select('circle').classed('dragging', true); })
+      .on('drag', function(event, d) {
+        // Clamp inside viewBox so nodes don't escape.
+        nodePos[d].x = Math.max(R, Math.min(320 - R, event.x));
+        nodePos[d].y = Math.max(R, Math.min(280 - R, event.y));
+        d3.select(this).attr('transform', `translate(${nodePos[d].x},${nodePos[d].y})`);
+        // Redraw edges incident to this node.
+        svg.selectAll('path.edge')
+          .filter(e => e.from === d || e.to === d)
+          .attr('d', e => edgePath(nodePos[e.from], nodePos[e.to], R, R));
+      })
+      .on('end', function(event) {
+        d3.select(this).select('circle').classed('dragging', false);
+        // Suppress the click that fires after drag-end.
+        if (Math.hypot(event.dx, event.dy) > 0) event.sourceEvent.preventDefault();
+      });
+    nodesEnter.call(drag);
+
+    // === Update phase: position + fill based on current evidence ===
+    const all = nodesEnter.merge(nodes);
+    all.attr('transform', d => `translate(${nodePos[d].x},${nodePos[d].y})`);
+    all.select('.node-circle')
+      .attr('fill', d => evidence[d] === true ? getCSS('--true')
+                       : evidence[d] === false ? getCSS('--false')
+                       : (document.body.classList.contains('dark-mode') ? '#334155' : '#f1f5f9'));
+    all.select('.node-label')
+      .attr('fill', d => evidence[d] === null
+                       ? (document.body.classList.contains('dark-mode') ? '#e2e8f0' : '#1f2937')
+                       : '#fff');
+
+    nodes.exit().remove();
+  }
+  function getCSS(v) {
+    return getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  }
+  function renderPosteriors(post, meta) {
+    const row = $('postRow');
+    row.innerHTML = '';
+    for (const v of net.vars) {
+      const cell = document.createElement('div');
+      cell.className = 'infer-cell' + (evidence[v] !== null ? ' evidence' : '');
+      const isEv = evidence[v] !== null;
+      cell.innerHTML = `
+        <div class="name">${net.labels[v]}${isEv ? ' (evidence)' : ''}</div>
+        <div class="prob">${(post[v] * 100).toFixed(2)}%</div>
+        <div class="bar"><div class="fill" style="width:${post[v] * 100}%"></div></div>
+      `;
+      row.appendChild(cell);
+    }
+    $('inferMeta').textContent = meta;
+  }
+
+  let method = 'exact';
+  function recompute() {
+    drawNet();
+    let post, meta;
+    if (method === 'exact') {
+      const t0 = performance.now();
+      post = inferExact();
+      meta = `Exact inference by enumeration — computed in ${(performance.now() - t0).toFixed(1)} ms.`;
+    } else if (method === 've') {
+      const t0 = performance.now();
+      post = inferVE();
+      meta = `Variable elimination — computed in ${(performance.now() - t0).toFixed(1)} ms. Same answer as enumeration; saves redundant work by caching intermediate factors.`;
+    } else if (method === 'lw') {
+      const n = +$('nSamples').value;
+      const t0 = performance.now();
+      post = likelihoodWeighting(n);
+      meta = `Likelihood weighting, ${n.toLocaleString()} samples — ${(performance.now() - t0).toFixed(0)} ms. Each sample is weighted by P(evidence | parents); unlike Gibbs there's no burn-in and no rejected samples. Re-sample for a new RNG seed.`;
+    } else {
+      const n = +$('nSamples').value;
+      const t0 = performance.now();
+      post = gibbs(n);
+      meta = `Gibbs sampling, ${n.toLocaleString()} samples — ${(performance.now() - t0).toFixed(0)} ms. Results are approximate.`;
+    }
+    renderPosteriors(post, meta);
+  }
+
+  document.querySelectorAll('.method-tabs button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.method-tabs button').forEach(x =>
+        x.classList.toggle('active', x === b));
+      method = b.dataset.m;
+      // Both 'gibbs' and 'lw' use the sample-count slider.
+      $('gibbsControls').style.display = (method === 'gibbs' || method === 'lw') ? 'inline-flex' : 'none';
+      recompute();
+    });
+  });
+  $('nSamples').addEventListener('input', () => {
+    $('nSamplesV').textContent = (+$('nSamples').value).toLocaleString();
+  });
+  $('resampleBtn').addEventListener('click', recompute);
+  $('hardReset').addEventListener('click', () => {
+    switchNet('burglary');
+    document.querySelectorAll('.method-tabs button').forEach(x =>
+      x.classList.toggle('active', x.dataset.m === 'exact'));
+    method = 'exact';
+    $('gibbsControls').style.display = 'none';
+  });
+
+  // switch to a different preset network. Rebuilds the entire UI.
+  function switchNet(name) {
+    if (!NET_PRESETS[name]) name = 'burglary';
+    currentPreset = name;
+    net = NET_PRESETS[name].fn();
+    // Rebuild evidence map for new variable set.
+    evidence = {};
+    for (const v of net.vars) evidence[v] = null;
+    applyPresetLayout(name);
+    // Refresh dependent UI. The quick-scenarios buttons only make sense for burglary;
+    // hide them otherwise.
+    const sc = document.querySelector('.scenarios');
+    if (sc) sc.style.display = (name === 'burglary') ? '' : 'none';
+    setupEvidenceUI(); setupCPTs(); rebuildDsepDropdowns(); recompute();
+  }
+
+  // d-separation checker.
+  // Algorithm: Bayes-Ball (Shachter 1998). At each node, an arriving "ball" decides
+  // whether to pass through based on the node's status (observed in the evidence set or not)
+  // and the direction it arrived from. Returns true iff there's an active path X — Y.
+  // The textbook recursive enumeration of trails is simpler to explain but Bayes-Ball
+  // scales linearly in graph size.
+  //
+  // Active-trail rules (AIMA Ch 14.2 / Koller & Friedman):
+  //   Chain X → Z → Y or X ← Z ← Y : active iff Z NOT observed.
+  //   Fork  X ← Z → Y               : active iff Z NOT observed.
+  //   Collider X → Z ← Y            : active iff Z OR a descendant of Z IS observed.
+  function dseparated(x, y, evidenceSet) {
+    if (x === y) return { sep: false, reason: 'X and Y are the same variable — trivially not independent.' };
+    if (evidenceSet.has(x) || evidenceSet.has(y)) {
+      return { sep: true, reason: `${x === '' ? '' : x} (or Y) is itself in the evidence set — conditioning on a variable makes it independent of everything else (it's deterministic).` };
+    }
+    // Precompute: which nodes are descendants of an evidence-observed node? (for collider rule)
+    const observedAndAncestors = new Set();
+    for (const z of evidenceSet) {
+      const stack = [z];
+      while (stack.length) {
+        const cur = stack.pop();
+        if (observedAndAncestors.has(cur)) continue;
+        observedAndAncestors.add(cur);
+        for (const par of net.parents[cur] || []) stack.push(par);
+      }
+    }
+    // Bayes-Ball traversal: BFS over (node, arrived-from-direction) pairs.
+    // direction = 'child' (ball came from a child, going up) or 'parent' (came from a parent, going down).
+    const children = {};
+    for (const v of net.vars) children[v] = [];
+    for (const v of net.vars) for (const p of net.parents[v]) children[p].push(v);
+    const visited = new Set();
+    // Start: push X going both directions (we haven't arrived from anywhere).
+    const queue = [[x, 'parent'], [x, 'child']];
+    const trace = []; // for explanation
+    while (queue.length) {
+      const [node, dir] = queue.shift();
+      const tag = `${node}:${dir}`;
+      if (visited.has(tag)) continue;
+      visited.add(tag);
+      if (node === y) {
+        return { sep: false, reason: `Active path found: ball reached ${y}. Trace: ${trace.slice(-6).join(' → ')} → ${y}.` };
+      }
+      const isObserved = evidenceSet.has(node);
+      const isInObsClosure = observedAndAncestors.has(node);
+      if (dir === 'child') {
+        // Ball arrived from a child (going up). If node is NOT observed, it can:
+        //   - keep going up (to parents) — pass-through
+        //   - bounce back down (to other children) — divergent fork
+        if (!isObserved) {
+          for (const p of net.parents[node]) { queue.push([p, 'child']); trace.push(`${node}↑${p}`); }
+          for (const ch of children[node]) { queue.push([ch, 'parent']); trace.push(`${node}↓${ch}`); }
+        }
+        // If observed: ball stops (chain/fork rule blocks).
+      } else {
+        // Ball arrived from a parent (going down).
+        // Three Bayes-Ball cases:
+        //   Z observed:                pass UP to other parents (collider activated by Z);
+        //                              BLOCK going down (chain Z→child blocked).
+        //   Z unobserved, observed descendant: pass DOWN to children (chain),
+        //                              AND pass UP to other parents (collider via descendant).
+        //   Z unobserved, no observed descendant: pass DOWN to children only.
+        // Note that isInObsClosure ⇒ (isObserved OR observed descendant); these conditions
+        // are not mutually exclusive, so check both independently rather than else-if.
+        if (!isObserved) {
+          for (const ch of children[node]) { queue.push([ch, 'parent']); trace.push(`${node}↓${ch}`); }
+        }
+        if (isInObsClosure) {
+          for (const p of net.parents[node]) { queue.push([p, 'child']); trace.push(`${node}↑${p}(via collider)`); }
+        }
+      }
+    }
+    return { sep: true, reason: `No active path from ${x} to ${y} given evidence {${[...evidenceSet].join(', ') || '∅'}}. They are d-separated → conditionally independent.` };
+  }
+  function rebuildDsepDropdowns() {
+    const xSel = $('dsepX'), ySel = $('dsepY');
+    if (!xSel || !ySel) return;
+    const prevX = xSel.value, prevY = ySel.value;
+    xSel.innerHTML = ''; ySel.innerHTML = '';
+    for (const v of net.vars) {
+      xSel.add(new Option(net.labels[v] || v, v));
+      ySel.add(new Option(net.labels[v] || v, v));
+    }
+    // Try to preserve previous selections; otherwise default to first two distinct vars.
+    if (Array.from(xSel.options).some(o => o.value === prevX)) xSel.value = prevX;
+    if (Array.from(ySel.options).some(o => o.value === prevY)) ySel.value = prevY;
+    if (xSel.value === ySel.value && net.vars.length > 1) {
+      ySel.value = net.vars[1];
+    }
+    // Clear result.
+    const r = $('dsepResult');
+    if (r) r.innerHTML = '<span style="color:var(--muted); font-style:italic;">(select X and Y, then click Check)</span>';
+  }
+  // Wire button. Computed lazily — won't fire before rebuildDsepDropdowns runs.
+  if ($('dsepBtn')) {
+    $('dsepBtn').addEventListener('click', () => {
+      const x = $('dsepX').value, y = $('dsepY').value;
+      const evSet = new Set();
+      for (const v of net.vars) if (evidence[v] !== null) evSet.add(v);
+      const { sep, reason } = dseparated(x, y, evSet);
+      const color = sep ? '#16a34a' : '#dc2626';
+      const verdict = sep
+        ? `✓ ${x} ⊥ ${y} | evidence  (d-separated → conditionally independent)`
+        : `✗ ${x} ⊥̸ ${y} | evidence  (NOT d-separated — there is an active path)`;
+      $('dsepResult').innerHTML =
+        `<div style="color:${color}; font-weight:600;">${verdict}</div>` +
+        `<div style="color:var(--muted); margin-top:4px;">${reason}</div>`;
+    });
+  }
+
+  function setEv(obj) {
+    for (const v of net.vars) evidence[v] = (v in obj) ? obj[v] : null;
+    setupEvidenceUI(); recompute();
+  }
+  $('s1').addEventListener('click', () => setEv({}));
+  $('s2').addEventListener('click', () => setEv({J: true}));
+  $('s3').addEventListener('click', () => setEv({J: true, M: true}));
+  $('s4').addEventListener('click', () => setEv({A: true}));
+  $('s5').addEventListener('click', () => setEv({J: true, M: true, E: true}));
+
+  // URL-shareable config — evidence + method + () preset network.
+  try {
+    const sp = new URLSearchParams(location.search);
+    const netParam = sp.get('net');
+    if (netParam && NET_PRESETS[netParam]) {
+      $('netSel').value = netParam;
+      switchNet(netParam);
+    }
+    const ev = sp.get('ev'); // T/F/? per variable, in net.vars order
+    if (ev && ev.length === net.vars.length) {
+      const obj = {};
+      net.vars.forEach((v, i) => {
+        const c = ev[i];
+        if (c === 'T') obj[v] = true;
+        else if (c === 'F') obj[v] = false;
+      });
+      setEv(obj);
+    }
+    const m = sp.get('m');
+    if (m === 'gibbs' || m === 'exact' || m === 've' || m === 'lw') {
+      document.querySelectorAll('[data-m]').forEach(b =>
+        b.classList.toggle('active', b.dataset.m === m));
+      method = m;
+      $('gibbsControls').style.display = (method === 'gibbs' || method === 'lw') ? 'inline-flex' : 'none';
+      recompute();
+    }
+  } catch (_) {}
+  document.getElementById('shareLink').addEventListener('click', async () => {
+    const params = new URLSearchParams();
+    const enc = v => evidence[v] === true ? 'T' : evidence[v] === false ? 'F' : '?';
+    // use current network's variable order so share works for any preset.
+    params.set('net', currentPreset);
+    params.set('ev', net.vars.map(enc).join(''));
+    params.set('m', method);
+    const url = `${location.origin}${location.pathname}?${params.toString()}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      const btn = document.getElementById('shareLink');
+      const orig = btn.textContent; btn.textContent = '✓ Copied';
+      setTimeout(() => btn.textContent = orig, 1500);
+    } catch (_) { prompt('Copy this URL:', url); }
+  });
+
+  // Wire the preset selector.
+  $('netSel').addEventListener('change', () => switchNet($('netSel').value));
+
+  applyPresetLayout('burglary');
+  setupEvidenceUI();
+  setupCPTs();
+  rebuildDsepDropdowns();
+  recompute();
+
+  // Lesson tour. Five canonical scenarios spanning the three preset networks.
+  const LESSON_TOUR = [
+    { name: 'Burglary network: nothing observed',
+      description: "Prior beliefs only. P(Burglary) ≈ 0.001, P(Earthquake) ≈ 0.002, P(Alarm) ≈ 0.003. Everything is rare and roughly independent — this is the calm baseline.",
+      apply: () => { switchNet('burglary'); $('netSel').value = 'burglary'; setEv({}); } },
+    { name: 'John calls → burglary belief jumps',
+      description: "Single neighbor reports. P(Burglary | J=T) jumps ~50× from prior. Evidence flows upward against the arrows — that's diagnostic reasoning.",
+      apply: () => { switchNet('burglary'); $('netSel').value = 'burglary'; setEv({J: true}); } },
+    { name: 'Both call → burglary belief soars',
+      description: "P(Burglary | J=T, M=T) ≈ 0.28. Two independent corroborating reports of an alarm push the posterior much higher than either alone.",
+      apply: () => { switchNet('burglary'); $('netSel').value = 'burglary'; setEv({J: true, M: true}); } },
+    { name: 'Explaining away: earthquake observed',
+      description: "Add E=T to the both-call evidence. P(Burglary) DROPS because the earthquake already explains the alarm. Two causes 'compete' to explain a common effect. This is the signature pattern that flat probabilistic reasoning can't capture.",
+      apply: () => { switchNet('burglary'); $('netSel').value = 'burglary'; setEv({J: true, M: true, E: true}); } },
+    { name: 'Sprinkler: wet grass, two possible causes',
+      description: "Switch to Pearl's sprinkler network. Set W=T (wet grass). Both Rain and Sprinkler are plausible. Now also clamp Rain=T — Sprinkler's probability drops. Same explaining-away pattern in a different domain.",
+      apply: () => { switchNet('sprinkler'); $('netSel').value = 'sprinkler'; setEv({W: true, R: true}); } },
+  ];
+  let tourIdx = 0;
+  function renderTour() {
+    if (!$('tourName')) return;
+    const s = LESSON_TOUR[tourIdx];
+    // F1 bilingual: look up tour{i}name / tour{i}desc with English inline fallback.
+    const L = (document.documentElement.lang || 'en');
+    const S = STRINGS[L] || STRINGS.en;
+    $('tourName').textContent = S['tour' + tourIdx + 'name'] || s.name;
+    $('tourDesc').textContent = S['tour' + tourIdx + 'desc'] || s.description;
+    $('tourPos').textContent = `${tourIdx + 1}/${LESSON_TOUR.length}`;
+    $('tourPrev').disabled = (tourIdx === 0);
+    $('tourNext').disabled = (tourIdx === LESSON_TOUR.length - 1);
+  }
+  $('tourApply').addEventListener('click', () => LESSON_TOUR[tourIdx].apply());
+  $('tourPrev').addEventListener('click', () => { if (tourIdx > 0) { tourIdx--; renderTour(); } });
+  $('tourNext').addEventListener('click', () => { if (tourIdx < LESSON_TOUR.length - 1) { tourIdx++; renderTour(); } });
+  renderTour();
+
+  // Worksheet/lab mode — 3 questions with instant ✓/✗ feedback.
+  // F1 bilingual feedback helper: ws{n}ok / ws{n}no with English inline fallback.
+  function wsMsg(key, en) {
+    const L = (document.documentElement.lang || 'en');
+    return (STRINGS[L] && STRINGS[L][key]) || en;
+  }
+  // MCQ: each question is graded by the selected radio's index, not typed text.
+  // `correct` is the index of the right option (language-agnostic). ok/no are the
+  // existing bilingual feedback keys, with an English inline fallback via wsMsg.
+  const WORKSHEET = [
+    { correct: 1,
+      ok:  ['ws1ok', "Correct. This is 'explaining away' (Pearl) — the earthquake provides an alternative cause for the alarm, so P(Burglary) drops. Two causes compete to explain a common effect, even though they were independent before evidence."],
+      no:  ['ws1no', "Try 'down'. The earthquake already explains why the alarm sounded — burglary becomes less needed as an explanation."] },
+    { correct: 1,
+      ok:  ['ws2ok', "Right. Same explaining-away pattern. Wet=T raises P(Sprinkler) above prior. Then learning Rain=T explains the wet grass, so P(Sprinkler) drops back toward (but stays slightly above) prior."],
+      no:  ['ws2no', "Try 'lower than just wet'. Rain explains the wetness, so sprinkler is less needed."] },
+    { correct: 1,
+      ok:  ['ws3ok', "Correct. With 5000 samples, Gibbs converges to within ~0.01-0.05 of the exact answer. Re-sample a few times to see the variance — Monte Carlo error scales as 1/√N."],
+      no:  ['ws3no', "Try 'close but noisy'. Gibbs sampling approximates the posterior; more samples = less noise. 5000 is usually within ~0.05."] },
+  ];
+  WORKSHEET.forEach((q, i) => {
+    const n = i + 1;
+    $(`ws${n}btn`).addEventListener('click', () => {
+      const fb = $(`ws${n}fb`);
+      const picked = document.querySelector(`input[name="ws${n}"]:checked`);
+      if (!picked) {
+        fb.textContent = wsMsg('ws-pick', 'Pick an answer first.');
+        fb.style.color = 'var(--muted)';
+        return;
+      }
+      const ok = Number(picked.value) === q.correct;
+      const [key, en] = ok ? q.ok : q.no;
+      fb.textContent = (ok ? '✓ ' : '✗ ') + wsMsg(key, en);
+      fb.style.color = ok ? '#16a34a' : '#dc2626';
+    });
+  });
+})();
+</script>
+<!-- Embed mode handler (shared pattern across all 12 applets). -->
+<script>
+(() => {
+  try {
+    if (new URLSearchParams(location.search).get('embed') === '1') {
+      document.body.classList.add('embed-mode');
+    }
+  } catch (_) {}
+  const btn = document.getElementById('embedLink');
+  if (!btn) return;
+  btn.addEventListener('click', async () => {
+    const url = new URL(location.href);
+    url.searchParams.set('embed', '1');
+    const snippet = `<iframe src="${url.toString()}" width="100%" height="720" frameborder="0" style="border:1px solid #e5e7eb; border-radius:8px;" loading="lazy"></iframe>`;
+    try {
+      await navigator.clipboard.writeText(snippet);
+      const orig = btn.textContent; btn.textContent = '✓ Copied iframe';
+      setTimeout(() => btn.textContent = orig, 1800);
+    } catch (_) { prompt('Copy this iframe snippet:', snippet); }
+  });
+})();
+</script>
+  <footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
+    <p style="margin:0 0 6px;"><a href="#top" data-i18n="footer-top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
+    <p style="margin:0;"><span data-i18n="footer-builtby">Built by</span> Logan Dixon · <span data-i18n="footer-course">Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy</span></p>
+    <p style="margin:6px 0 0;"><a href="https://github.com/lmdixon23/ai-playgrounds" data-i18n="footer-source" style="color:var(--accent,#0891b2);">View source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-i18n="footer-issue" style="color:var(--accent,#0891b2);">Report an issue</a> · © 2026 Logan Dixon</p>
+  </footer>
+  <!-- Privacy-friendly analytics — GoatCounter, cookieless. -->
+  <script data-goatcounter="https://lmdixon23.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

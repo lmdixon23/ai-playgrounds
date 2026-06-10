@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visualizing CNF & SAT</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E">
+<meta name="description" content="Type propositional logic. Watch it get rewritten into CNF step-by-step. Brute-force SAT enumerates every assignment and shows all satisfying models.">
+<link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/cnf-sat/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/cnf-sat/">
+<meta property="og:title" content="Visualizing CNF & SAT — AI Playgrounds">
+<meta property="og:description" content="Type propositional logic. Watch it get rewritten into CNF step-by-step. Brute-force SAT enumerates every assignment and shows all satisfying models.">
+<meta property="og:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Visualizing CNF & SAT — AI Playgrounds">
+<meta name="twitter:description" content="Type propositional logic. Watch it get rewritten into CNF step-by-step. Brute-force SAT enumerates every assignment and shows all satisfying models.">
+<meta name="twitter:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Visualizing CNF & SAT — AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/cnf-sat/","description":"Type propositional logic. Watch it get rewritten into CNF step-by-step. Brute-force SAT enumerates every assignment and shows all satisfying models.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan Dixon"}}
+</script>
+<style>
+  :root {
+    --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #9333ea;
+    --card: #fff; --border: #e5e7eb; --soft: #f9fafb;
+    --true: #16a34a; --false: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", Arial, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; }
+  .page-header { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 24px; }
+  .header-utility { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .header-prefs { display: flex; align-items: center; gap: 8px; }
+  .header-main { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .header-actions { display: flex; align-items: center; gap: 8px; font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem; }
+  .header-actions .header-reset { margin-left: 12px; }
+  .page-header h1 { margin: 0; font-size: 1.5rem; }
+  .page-header .back { color: var(--accent); text-decoration: none; font-size: 0.9rem; font-family: -apple-system, system-ui, sans-serif; }
+  .lang-switch { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .lang-switch button { padding: 4px 10px; background: white; color: var(--muted);
+                          border: none; cursor: pointer; font: inherit; font-size: 0.78rem; }
+  .lang-switch button.active { background: var(--accent); color: white; font-weight: 600; }
+  .header-reset { padding: 6px 12px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font: inherit; font-size: 0.82rem; }
+  .header-reset:hover { background: var(--soft); }
+  .tldr { max-width: 820px; margin: 16px auto 0;
+           background: var(--accent); color: white;
+           border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; font-weight: 500;
+           font-family: -apple-system, system-ui, sans-serif; line-height: 1.45; }
+  .tldr strong { color: rgba(255,255,255,0.85); font-size: 0.72rem; letter-spacing: 0.08em;
+                  text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px; }
+  .interactive { background: var(--card); padding: 24px; border-bottom: 1px solid var(--border); }
+  .interactive-inner { max-width: 900px; margin: 0 auto;
+                         font-family: -apple-system, system-ui, sans-serif; }
+  .input-row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 14px; }
+  .input-card { background: white; border: 1px solid var(--border); border-radius: 8px;
+                  padding: 12px; }
+  .input-card h3 { margin: 0 0 8px; font-size: 0.85rem; color: var(--accent);
+                     text-transform: uppercase; letter-spacing: 0.05em; }
+  textarea {
+    width: 100%; min-height: 150px; padding: 10px; background: white; color: var(--fg);
+    border: 1px solid var(--border); border-radius: 6px;
+    font-family: 'SF Mono', Consolas, monospace; font-size: 0.92rem;
+    resize: vertical;
+  }
+  .syntax-card { background: var(--soft); border: 1px solid var(--border); border-radius: 8px;
+                   padding: 12px; font-family: monospace; font-size: 0.82rem;
+                   color: var(--muted); line-height: 1.7; }
+  .syntax-card b { color: var(--accent); }
+  .syntax-card h3 { font-family: -apple-system, system-ui, sans-serif; margin: 0 0 8px;
+                      font-size: 0.85rem; color: var(--accent);
+                      text-transform: uppercase; letter-spacing: 0.05em; }
+  .control-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+                  margin-bottom: 14px; font-size: 0.85rem; }
+  .step-btn { padding: 7px 14px; background: white; color: var(--fg);
+                border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                font: inherit; font-size: 0.85rem; }
+  .step-btn.primary { background: var(--accent); color: white;
+                       border-color: var(--accent); font-weight: 600; }
+  .panel { background: white; border: 1px solid var(--border); border-radius: 8px;
+             padding: 14px; margin-bottom: 14px; }
+  .panel h3 { margin: 0 0 8px; font-size: 0.95rem; color: var(--accent); }
+  .panel .sub { color: var(--muted); font-size: 0.8rem; margin-bottom: 10px; }
+  .formula-line { font-family: 'SF Mono', monospace; font-size: 0.92rem;
+                    padding: 6px 10px; background: var(--soft); border-radius: 4px;
+                    margin: 4px 0; border-left: 3px solid var(--border);
+                    overflow-x: auto; word-break: break-all; }
+  .formula-line.original { border-left-color: var(--accent); }
+  .formula-line .step-name { color: var(--accent); font-size: 0.78rem;
+                                text-transform: uppercase; margin-right: 8px;
+                                font-family: -apple-system, system-ui, sans-serif; }
+  .summary { font-size: 1.4rem; font-weight: 700; margin-bottom: 10px;
+              font-family: -apple-system, system-ui, sans-serif; }
+  .summary.sat { color: var(--true); }
+  .summary.unsat { color: var(--false); }
+  .table { border-collapse: collapse; font-family: monospace; font-size: 0.85rem; margin-top: 10px; }
+  .table th, .table td { padding: 5px 9px; border: 1px solid var(--border); text-align: center; }
+  .table th { background: var(--soft); color: var(--accent); }
+  .table td.T { background: #dcfce7; color: var(--true); font-weight: 600; }
+  .table td.F { background: #fee2e2; color: var(--false); font-weight: 600; }
+  .error { color: var(--false); font-family: monospace; font-size: 0.88rem;
+             padding: 8px 12px; background: #fee2e2;
+             border-left: 3px solid var(--false); border-radius: 4px; margin: 4px 0; }
+  .jump-link { display: inline-block; margin-top: 14px;
+                padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px;
+                background: white; color: var(--accent); text-decoration: none;
+                font-family: -apple-system, system-ui, sans-serif; font-size: 0.82rem;
+                font-weight: 600; }
+  .jump-link:hover { background: var(--soft); }
+  .jump-anchor { text-align: center; }
+  .essay { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; font-size: 1.05rem; }
+  .essay h2 { font-size: 1.5rem; margin-top: 36px; margin-bottom: 12px; color: var(--accent); }
+  .essay h3 { font-size: 1.15rem; margin-top: 24px; margin-bottom: 8px; }
+  .essay .lede { font-size: 1.15rem; color: #374151; }
+  .essay .aha { background: #f3e8ff; border-left: 4px solid #9333ea;
+                 padding: 12px 18px; margin: 18px 0; border-radius: 0 6px 6px 0;
+                 font-style: italic; color: #581c87; }
+  .essay code { background: var(--soft); padding: 1px 6px; border-radius: 4px;
+                 font-family: 'SF Mono', Consolas, monospace; font-size: 0.92em; }
+  .essay ul li { margin-bottom: 6px; }
+  .essay .for-teachers { background: var(--soft); border: 1px solid var(--border);
+                          border-radius: 8px; padding: 20px 24px; margin-top: 36px;
+                          font-family: -apple-system, system-ui, sans-serif; font-size: 0.95rem; }
+  .essay .for-teachers h3 { font-family: -apple-system, system-ui, sans-serif;
+                              color: var(--accent); font-size: 0.9rem;
+                              text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0; }
+  /* ===== Step-through players: shared transport bar + formula coloring ===== */
+  .player { margin-top: 10px; }
+  .transport { display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+               padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--soft); }
+  .tp-btn { font: inherit; font-size: 0.9rem; cursor: pointer; border: 1px solid var(--border);
+            background: var(--card); color: var(--fg); border-radius: 6px; padding: 6px 12px; min-width: 40px; line-height: 1; }
+  .tp-btn:hover { background: var(--soft); }
+  .tp-btn:disabled { opacity: 0.45; cursor: default; }
+  /* Scrollable list/table region — show everything in a fixed height instead of truncating with "N more". */
+  .list-scroll { overflow: auto; }
+  .list-scroll table { margin-top: 0; }
+  .list-scroll thead th { position: sticky; top: 0; background: var(--soft); z-index: 1; }
+  .tp-play[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .tp-speed { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--muted); }
+  .tp-speed input { accent-color: var(--accent); }
+  .tp-count { margin-left: auto; font-family: ui-monospace, monospace; font-size: 0.82rem;
+              color: var(--muted); font-variant-numeric: tabular-nums; min-width: 90px; text-align: right; }
+  .stage-caption { margin: 12px 2px 4px; font-size: 0.92rem; font-weight: 600; }
+  .stage-caption .rule { font-weight: 400; color: var(--muted); font-family: ui-monospace, monospace; font-size: 0.82rem; }
+  .stage-metric { margin: 0 2px 10px; font-size: 0.82rem; color: var(--muted); }
+  .stage-metric .jump { color: var(--accent); font-weight: 700; font-size: 0.95rem; }
+  .stage-line-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 8px 2px 2px; }
+  .stage-before, .stage-after { font-family: 'SF Mono', ui-monospace, monospace; font-size: 0.95rem;
+                                padding: 8px 10px; border-radius: 6px; background: var(--soft);
+                                border-left: 3px solid var(--border); overflow-x: auto; line-height: 1.95; }
+  .stage-before { opacity: 0.62; }
+  .stage-after { border-left-color: var(--accent); }
+  .tok { border-radius: 3px; padding: 0 1px; }
+  .hl-iff .op-iff, .hl-imp .op-imp, .hl-not .op-not, .hl-and .op-and, .hl-or .op-or {
+    background: color-mix(in oklab, var(--accent) 26%, transparent); outline: 1px solid var(--accent); font-weight: 700; }
+  .stage-before.hl-iff .op-iff, .stage-before.hl-imp .op-imp {
+    background: color-mix(in oklab, var(--false) 22%, transparent); outline-color: var(--false); }
+  .clause-chips, .assign-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .assign-chips { margin: 4px 0 10px; }
+  .clause-chip, .assign-chip { font-family: ui-monospace, monospace; font-size: 0.85rem;
+                               padding: 3px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--card); }
+  .clause-chip.unit { outline: 2px solid var(--accent); border-color: var(--accent); }
+  .clause-chip.conflict { background: color-mix(in oklab, var(--false) 22%, transparent); border-color: var(--false); color: var(--false); font-weight: 700; }
+  .assign-chip.t { background: #dcfce7; color: var(--true); border-color: #86efac; }
+  .assign-chip.f { background: #fee2e2; color: var(--false); border-color: #fca5a5; }
+  .assign-chip.u { color: var(--muted); }
+  .dpll-action { display: inline-block; font-weight: 700; padding: 2px 8px; border-radius: 5px; font-size: 0.82rem; margin: 2px 0; }
+  .dpll-detail { font-size: 0.88rem; margin: 6px 0; }
+  body.dark-mode .assign-chip.t { background: rgba(22,163,74,0.25); }
+  body.dark-mode .assign-chip.f { background: rgba(220,38,38,0.25); }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+  /* === dark mode === */
+  body.dark-mode {
+    --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8;
+    --card: #1e293b; --border: #334155; --soft: #1e293b;
+  }
+  body.dark-mode .essay .lede { color: #cbd5e1; }
+  body.dark-mode .essay .for-teachers { background: #0f172a; }
+  body.dark-mode .header-reset,
+  body.dark-mode .lang-switch button:not(.active),
+  body.dark-mode .header-theme,
+  body.dark-mode .step-btn:not(.primary),
+  body.dark-mode .input-card,
+  body.dark-mode .syntax-card,
+  body.dark-mode .panel,
+  body.dark-mode textarea,
+  body.dark-mode .formula-line { background: var(--card); color: var(--fg); }
+  body.dark-mode .table th { background: var(--card); }
+  body.dark-mode .table td.T { background: rgba(22, 163, 74, 0.25); }
+  body.dark-mode .table td.F { background: rgba(220, 38, 38, 0.25); }
+  .header-theme { padding: 6px 10px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font-size: 1rem; line-height: 1; font-family: inherit; }
+  .header-theme:hover { background: var(--soft); }
+  /* embed mode. Strip chrome so the applet fits cleanly in an LMS iframe. */
+  body.embed-mode .page-header,
+  body.embed-mode aside.tldr,
+  body.embed-mode article.essay,
+  body.embed-mode .jump-anchor { display: none !important; }
+  body.embed-mode .interactive { padding: 12px; border-bottom: none; }
+  /* ===== Shared a11y + contrast tokens (review fixes: F4 keyboard focus, F6 banner contrast) ===== */
+  button:focus-visible, a:focus-visible, select:focus-visible,
+  input:focus-visible, textarea:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+  .tldr { background: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), var(--accent); }
+  .tldr strong { color: #fff; }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="header-utility">
+    <a class="back" href="../../" data-i18n="back-link">← Back to all playgrounds</a>
+    <div class="header-prefs">
+      <button class="header-theme" id="themeToggle" aria-label="Toggle dark or light theme"
+              title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
+      <div class="lang-switch" title="Switch interface language">
+        <button data-lang="en" class="active">EN</button>
+        <button data-lang="zh">中文</button>
+      </div>
+    </div>
+  </div>
+  <div class="header-main">
+    <h1 data-i18n="title">Visualizing CNF &amp; SAT</h1>
+    <div class="header-actions">
+      <button class="header-theme" id="shareLink" style="font-size:0.9rem;"
+              title="Copy a URL that re-opens this exact formula in another browser.">🔗 Share</button>
+      <button class="header-theme" id="embedLink" style="font-size:0.9rem;"
+              title="Copy an <iframe> snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
+      <button class="header-reset" id="hardReset" data-i18n="reset-all"
+              title="Reset input to default 'modus ponens' example.">↺ Reset all</button>
+    </div>
+  </div>
+</header>
+
+<aside class="tldr">
+  <strong data-i18n="tldr-strong">The big idea</strong>
+  <span data-i18n="tldr-body">Every SAT solver in the world wants Conjunctive Normal Form. Watch ↔ → ¬ get distributed away in five mechanical steps, then brute-force-enumerate every satisfying assignment.</span>
+</aside>
+
+<section class="interactive">
+<div class="interactive-inner">
+
+  <div class="input-row">
+    <div class="input-card">
+      <h3 data-i18n="input-h3">Propositional sentences (one per line)</h3>
+      <textarea id="input">P -> Q
+Q -> R
+P</textarea>
+    </div>
+    <div class="syntax-card">
+      <h3 data-i18n="syntax-h3">Syntax</h3>
+      <b>~</b> <span data-i18n="syn-not">not</span><br>
+      <b>&amp;</b> <span data-i18n="syn-and">and</span><br>
+      <b>|</b> <span data-i18n="syn-or">or</span><br>
+      <b>-&gt;</b> <span data-i18n="syn-imp">implies</span><br>
+      <b>&lt;-&gt;</b> <span data-i18n="syn-iff">iff</span><br>
+      <b>( )</b> <span data-i18n="syn-paren">grouping</span><br>
+      <span data-i18n="syn-vars">Variables: letters/words</span><br>
+      <code>#</code> <span data-i18n="syn-comment">at line start = comment</span>
+    </div>
+  </div>
+
+  <div class="control-row">
+    <button class="step-btn primary" id="convertBtn" data-i18n="convert-btn"
+            data-i18n-title="convert-btn-title" title="Parse, convert to CNF, brute-force every assignment.">▶ Convert + check SAT</button>
+    <span style="color:var(--muted); font-size:0.82rem; margin-left:8px;" data-i18n="examples-label">Examples:</span>
+    <button class="step-btn" id="ex1" data-i18n="ex-mp" data-i18n-title="ex-mp-title" title="Modus ponens: P→Q, P, conclude Q.">Modus ponens</button>
+    <button class="step-btn" id="ex2" data-i18n="ex-wumpus" data-i18n-title="ex-wumpus-title" title="The Wumpus pit rule from AIMA 7.4.">Wumpus pit rule</button>
+    <button class="step-btn" id="ex3" data-i18n="ex-color" data-i18n-title="ex-color-title" title="3-coloring a triangle. SAT problem from graph theory.">3-coloring</button>
+    <button class="step-btn" id="ex4" data-i18n="ex-xor" data-i18n-title="ex-xor-title" title="A trio that pairwise differs but you try to assert all three true. UNSAT.">XOR UNSAT</button>
+    <button class="step-btn" id="ex5" data-i18n="ex-demorgan" data-i18n-title="ex-demorgan-title" title="De Morgan's law as a tautology — every row is a model.">De Morgan</button>
+  </div>
+
+  <div class="panel">
+    <h3 data-i18n="step1-h3">1. Parsed input</h3>
+    <div class="sub" data-i18n="step1-sub">Your sentences as parsed by the engine. Errors flagged here.</div>
+    <div id="parseOut"></div>
+  </div>
+
+  <div class="panel">
+    <h3 data-i18n="step2-h3">2. Conjunctive Normal Form (step by step)</h3>
+    <div class="sub" data-i18n="step2-sub">Standard rewrite pipeline: eliminate ↔, eliminate →, push ¬ in (De Morgan), distribute ∨ over ∧.</div>
+    <div id="cnfPlayer" class="player">
+      <div class="transport" id="cnfTransport" role="group" aria-label="CNF conversion playback">
+        <button class="tp-btn" id="cnfReset" title="Back to the original formula">↺</button>
+        <button class="tp-btn" id="cnfBack" title="Previous stage">◀❘</button>
+        <button class="tp-btn tp-play" id="cnfPlay" aria-pressed="false" title="Play / pause the rewrite">▶</button>
+        <button class="tp-btn" id="cnfStep" title="Next stage">❘▶</button>
+        <label class="tp-speed">Speed <input type="range" id="cnfSpeed" min="0" max="100" value="55" aria-label="Playback speed"></label>
+        <span class="tp-count" id="cnfCount">Stage 0</span>
+      </div>
+      <div class="stage-caption" id="cnfCaption">—</div>
+      <div class="stage-metric" id="cnfMetric"></div>
+      <div class="stage-line-label" id="cnfBeforeLabel" style="display:none;">before</div>
+      <div class="stage-before" id="cnfBefore" style="display:none;"></div>
+      <div class="stage-line-label" id="cnfAfterLabel">result</div>
+      <div class="stage-after" id="cnfAfter"></div>
+    </div>
+    <details id="cnfAllWrap" style="margin-top:10px;">
+      <summary style="cursor:pointer; color:var(--accent); font-weight:600; font-size:0.85rem;" data-i18n="cnf-showall">Show all five stages at once</summary>
+      <div id="cnfOut"></div>
+    </details>
+  </div>
+
+  <div class="panel">
+    <h3 data-i18n="step3-h3">3. Satisfiability</h3>
+    <div class="sub"><span data-i18n="step3-sub">Brute-force enumeration of all 2</span><sup>n</sup><span data-i18n="step3-sub2"> assignments (cap n = 12).</span></div>
+    <div id="satOut"></div>
+    <div id="dpllPlayer" class="player">
+      <div class="transport" id="dpllTransport" role="group" aria-label="DPLL search playback">
+        <button class="tp-btn" id="dpllReset" title="Back to first step">↺</button>
+        <button class="tp-btn" id="dpllBack" title="Previous step">◀❘</button>
+        <button class="tp-btn tp-play" id="dpllPlay" aria-pressed="false" title="Play / pause the search">▶</button>
+        <button class="tp-btn" id="dpllStep" title="Next step">❘▶</button>
+        <label class="tp-speed">Speed <input type="range" id="dpllSpeed" min="0" max="100" value="55" aria-label="Playback speed"></label>
+        <span class="tp-count" id="dpllCount">Step 0</span>
+      </div>
+      <div class="stage-caption" id="dpllTitle" style="font-size:0.8rem; color:var(--muted); font-weight:400;"></div>
+      <div class="assign-chips" id="dpllAssign"></div>
+      <div id="dpllAction"></div>
+      <div class="dpll-detail" id="dpllDetail"></div>
+      <div class="stage-line-label" id="dpllClausesLabel">working clause set</div>
+      <div class="clause-chips" id="dpllClauses"></div>
+    </div>
+  </div>
+
+  <!-- Entailment by resolution refutation (AIMA Ch 7.5). -->
+  <div class="panel">
+    <h3 data-i18n="step4-h3">4. Entailment by resolution</h3>
+    <div class="sub" data-i18n="step4-sub">
+      To prove KB ⊨ α, add ¬α to the knowledge base and apply the resolution rule until you derive the empty clause (contradiction) or stop. AIMA Ch 7.5.
+    </div>
+    <div style="margin-top:8px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+      <label data-i18n="query-label" style="font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem;">Query α:</label>
+      <input id="queryInput" type="text" value="R" placeholder="e.g. R or (P & Q)"
+             style="padding:6px 10px; border:1px solid var(--border); border-radius:6px; font: inherit; font-family:ui-monospace,monospace; min-width:200px;">
+      <button class="step-btn" id="proveBtn" data-i18n="prove-btn"
+              data-i18n-title="prove-title"
+              title="Negate the query, add to the KB, run resolution refutation. Empty clause = KB entails the query.">▶ Prove by resolution</button>
+    </div>
+    <div id="resolveOut" style="margin-top:8px;"></div>
+  </div>
+
+  <!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
+  <details class="lesson-tour" style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="tour-summary">📚 Lesson tour (5 steps)</span>
+    </summary>
+    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+        <strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
+        <strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">—</strong>
+      </div>
+      <p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">—</p>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="step-btn secondary" id="tourPrev" data-i18n="tour-prev">← Prev</button>
+        <button class="step-btn" id="tourApply" data-i18n="tour-apply">▶ Apply this scenario</button>
+        <button class="step-btn secondary" id="tourNext" data-i18n="tour-next">Next →</button>
+      </div>
+    </div>
+  </details>
+
+  <!-- Worksheet/lab mode. 3 questions per applet with instant check. -->
+  <details class="worksheet" style="margin-top:8px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="ws-summary">📝 Worksheet (3 questions)</span>
+    </summary>
+    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem; line-height:1.5;">
+      <div class="ws-q" id="ws1">
+        <p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">Load the Modus ponens example and click Convert. How many satisfying assignments does the SAT enumeration find?</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="0"> <span data-i18n="ws1o0">0 — the clauses contradict each other, so nothing satisfies them.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="1"> <span data-i18n="ws1o1">1 — forcing P=T and Q=T leaves exactly one satisfying row.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="2"> <span data-i18n="ws1o2">4 — all four truth-table rows for two variables satisfy it.</span></label>
+        </div>
+        <button class="step-btn" id="ws1btn" data-i18n="ws-check">Check</button>
+        <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+      <div class="ws-q" id="ws2" style="margin-top:10px;">
+        <p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Load the XOR UNSAT example. How many satisfying assignments?</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="0"> <span data-i18n="ws2o0">1 — there is always at least one satisfying assignment.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="1"> <span data-i18n="ws2o1">3 — the satisfying rows are the ones with an odd number of trues.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="2"> <span data-i18n="ws2o2">0 — UNSAT means no assignment satisfies every clause.</span></label>
+        </div>
+        <button class="step-btn" id="ws2btn" data-i18n="ws-check">Check</button>
+        <span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+      <div class="ws-q" id="ws3" style="margin-top:10px;">
+        <p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Modus ponens KB. In the query box, type <code>Q</code> and click "Prove by resolution". Does it succeed (empty clause derived)?</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="0"> <span data-i18n="ws3o0">Yes — negating Q and resolving derives the empty clause.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="1"> <span data-i18n="ws3o1">No — resolution can only check satisfiability, not prove entailment.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="2"> <span data-i18n="ws3o2">No — Q does not follow from the knowledge base.</span></label>
+        </div>
+        <button class="step-btn" id="ws3btn" data-i18n="ws-check">Check</button>
+        <span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+    </div>
+  </details>
+
+  <div class="jump-anchor"><a href="#essay" class="jump-link" data-i18n="jump-link">↓ Read the explanation</a></div>
+</div>
+</section>
+
+<article class="essay" id="essay">
+
+  <p class="lede">
+    Propositional logic is the simplest form of logic that does anything interesting. You have
+    variables (each either true or false), the four classical connectives (not, and, or,
+    implies, iff), and a question: given a bag of sentences, is there any assignment of true/false
+    to the variables that makes all of them simultaneously true? That question is called SAT.
+    This applet walks you through how a computer answers it.
+  </p>
+
+  <h2>Why CNF first</h2>
+
+  <p>
+    A formula in <strong>Conjunctive Normal Form</strong> is an AND of ORs of literals
+    (variables or their negations). Every propositional formula can be rewritten into CNF, and
+    every SAT solver in production expects CNF as input. The reason: CNF has just enough
+    structure that powerful algorithms (DPLL, CDCL, watched literals) can exploit it efficiently.
+    The conversion is mechanical — five rewriting rules applied in order.
+  </p>
+
+  <h2>The five-step rewrite</h2>
+
+  <ol>
+    <li><strong>Eliminate ↔:</strong> <code>A ↔ B</code> becomes <code>(A → B) ∧ (B → A)</code>.</li>
+    <li><strong>Eliminate →:</strong> <code>A → B</code> becomes <code>¬A ∨ B</code>.</li>
+    <li><strong>Push ¬ inward (De Morgan):</strong> <code>¬(A ∧ B)</code> becomes
+      <code>¬A ∨ ¬B</code>; <code>¬(A ∨ B)</code> becomes <code>¬A ∧ ¬B</code>;
+      <code>¬¬A</code> becomes <code>A</code>.</li>
+    <li><strong>Distribute ∨ over ∧:</strong> <code>A ∨ (B ∧ C)</code> becomes
+      <code>(A ∨ B) ∧ (A ∨ C)</code>.</li>
+    <li><strong>Flatten</strong> into a list of clauses (each clause is a disjunction of literals).</li>
+  </ol>
+
+  <div class="aha">
+    Step 4 (distribute ∨ over ∧) is where formula size can explode. <code>(A ∧ B) ∨ (C ∧ D)</code>
+    becomes four clauses; a chain of n such conjunctions can produce 2<sup>n</sup> clauses.
+    That's why iff-heavy formulas — like the Wumpus pit rule <code>B11 ↔ (P12 ∨ P21)</code> —
+    look so big after conversion.
+  </div>
+
+  <h2>Why brute force is enough here, but never enough in general</h2>
+
+  <p>
+    With n variables there are 2<sup>n</sup> possible truth assignments. The applet enumerates
+    all of them (capped at n = 12, so 4,096 rows). With 30 variables that becomes a billion
+    rows — still doable but slow. With 100, it's 10<sup>30</sup>, which is more rows than there
+    are atoms in your laptop. SAT is the canonical NP-complete problem; real solvers use clever
+    search (DPLL with unit propagation and conflict-driven clause learning) to prune the search
+    space dramatically. Modern SAT solvers routinely handle problems with millions of variables
+    that brute force can't touch.
+  </p>
+
+  <h2>The Wumpus example is the bridge to Chapter 7</h2>
+
+  <p>
+    Click "Wumpus pit rule" up top. It encodes <code>B11 ↔ (P12 ∨ P21)</code>: "breeze at (1,1)
+    iff there's a pit at (1,2) or (2,1)." This is exactly the kind of sentence a Wumpus-world
+    agent builds in its knowledge base. The whole point of the agent (see the Wumpus World
+    applet) is to answer SAT queries against many such sentences to decide where it's safe
+    to move.
+  </p>
+
+  <h2>What this simplifies</h2>
+
+  <p>
+    Real SAT solvers use DPLL with watched literals, conflict-driven clause learning, restarts,
+    and variable activity heuristics. Real-world SAT problems often have 10⁶+ variables and 10⁷+
+    clauses. Real propositional reasoning extends to first-order logic (variables that range over
+    objects, not just true/false), where SAT becomes the undecidable problem of theorem-proving.
+    The five rewrite rules and brute-force enumeration here are the educational entry point, not
+    the production tool.
+  </p>
+
+  <div class="for-teachers">
+    <h3>For teachers</h3>
+    <p><strong>Curriculum:</strong> Problem Representation (logical knowledge base).
+       Propositional syntax; CNF as a normal form; SAT as the canonical NP-complete decision
+       problem; model counting; reading a truth assignment.</p>
+    <p><strong>Pre-exploration prompts:</strong></p>
+    <ul>
+      <li>If two sentences are equivalent, are they identical? What's the difference?</li>
+      <li>What's the difference between "P → Q" and "Q → P"? Can you convince a computer of the difference?</li>
+      <li>If three friends each refuse to be at the party with one specific other person, is there any assignment that satisfies all of them?</li>
+    </ul>
+    <p><strong>Post-exploration prompts:</strong></p>
+    <ul>
+      <li>Load "Modus ponens." Why is Q forced?</li>
+      <li>Load "XOR UNSAT." Why is the formula unsatisfiable? Trace through every assignment.</li>
+      <li>Load "Wumpus pit rule." Look at the CNF expansion of <code>B11 ↔ (P12 ∨ P21)</code>. Why does ↔ explode into so many clauses?</li>
+      <li>Add a sentence to a SAT formula that's a contradiction. Does the model count drop to zero?</li>
+      <li>Why do we convert to CNF at all? (Hint: every SAT solver in the world expects CNF as input.)</li>
+    </ul>
+    <p><strong>Common misconceptions defeated:</strong>
+       "SAT is easy" (it's NP-complete; brute force is 2<sup>n</sup>);
+       "all formulas have a unique CNF" (no — they have many equivalent CNF forms; rewrite order matters);
+       "logic and probability are unrelated" (no — probability is what you do when logic alone leaves too many satisfying models).</p>
+  </div>
+
+</article>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+
+  // Step-through player state (CNF conversion + DPLL search). Populated by run().
+  let cnfStages = [], dpllSteps = [], dpllVarList = [], dpllRows = 0;
+  let cnfStepper = null, dpllStepper = null;
+
+  // ===== i18n strings =====
+  const STRINGS = {
+    en: {
+      'title': "Visualizing CNF & SAT", 'back-link': '← Back to all playgrounds',
+      'footer-top': '↑ Back to top', 'footer-builtby': 'Built by', 'footer-course': 'Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy', 'footer-source': 'View source', 'footer-issue': 'Report an issue',
+      'reset-all': '↺ Reset all', 'convert-btn': '▶ Convert + check SAT',
+      'tldr-strong': 'The big idea',
+      'tldr-body': 'Every SAT solver in the world wants Conjunctive Normal Form. Watch ↔ → ¬ get distributed away in five mechanical steps, then brute-force-enumerate every satisfying assignment.',
+      'input-h3': 'Propositional sentences (one per line)',
+      'syntax-h3': 'Syntax',
+      'syn-not': 'not', 'syn-and': 'and', 'syn-or': 'or',
+      'syn-imp': 'implies', 'syn-iff': 'iff', 'syn-paren': 'grouping',
+      'syn-vars': 'Variables: letters/words',
+      'syn-comment': 'at line start = comment',
+      'examples-label': 'Examples:',
+      'ex-mp': 'Modus ponens', 'ex-wumpus': 'Wumpus pit rule',
+      'ex-color': '3-coloring', 'ex-xor': 'XOR UNSAT', 'ex-demorgan': 'De Morgan',
+      'step1-h3': '1. Parsed input',
+      'step1-sub': 'Your sentences as parsed by the engine. Errors flagged here.',
+      'step2-h3': '2. Conjunctive Normal Form (step by step)',
+      'step2-sub': 'Standard rewrite pipeline: eliminate ↔, eliminate →, push ¬ in (De Morgan), distribute ∨ over ∧.',
+      'cnf-showall': 'Show all five stages at once',
+      'step3-h3': '3. Satisfiability',
+      'step3-sub': 'Brute-force enumeration of all 2',
+      'step3-sub2': ' assignments (cap n = 12).',
+      'step4-h3': '4. Entailment by resolution',
+      'step4-sub': 'To prove KB ⊨ α, add ¬α to the knowledge base and apply the resolution rule until you derive the empty clause (contradiction) or stop. AIMA Ch 7.5.',
+      'query-label': 'Query α:',
+      'prove-btn': '▶ Prove by resolution',
+      'prove-title': 'Negate the query, add to the KB, run resolution refutation. Empty clause = KB entails the query.',
+      'jump-link': '↓ Read the explanation',
+      'tour-summary': '📚 Lesson tour (5 steps)',
+      'tour-step': 'Step',
+      'tour-prev': '← Prev', 'tour-next': 'Next →', 'tour-apply': '▶ Apply this scenario',
+      'ws-summary': '📝 Worksheet (3 questions)',
+      'ws-check': 'Check',
+      'ws-pick': 'Pick an answer first.',
+      // --- F1: worksheet question prompts (data-i18n spans) ---
+      'ws1q': 'Load the Modus ponens example and click Convert. How many satisfying assignments does the SAT enumeration find?',
+      'ws1o0': '0 — the clauses contradict each other, so nothing satisfies them.',
+      'ws1o1': '1 — forcing P=T and Q=T leaves exactly one satisfying row.',
+      'ws1o2': '4 — all four truth-table rows for two variables satisfy it.',
+      'ws2q': 'Load the XOR UNSAT example. How many satisfying assignments?',
+      'ws2o0': '1 — there is always at least one satisfying assignment.',
+      'ws2o1': '3 — the satisfying rows are the ones with an odd number of trues.',
+      'ws2o2': '0 — UNSAT means no assignment satisfies every clause.',
+      'ws3q': 'Modus ponens KB. In the query box, type <code>Q</code> and click "Prove by resolution". Does it succeed (empty clause derived)?',
+      'ws3o0': 'Yes — negating Q and resolving derives the empty clause.',
+      'ws3o1': 'No — resolution can only check satisfiability, not prove entailment.',
+      'ws3o2': 'No — Q does not follow from the knowledge base.',
+      // --- F1: lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
+      'tour0name': 'Modus ponens (SAT, simple)',
+      'tour0desc': "P → Q and P. CNF is already two clauses. SAT enumeration finds 1 model: {P=T, Q=T}. Then prove Q by resolution — the empty clause appears in one step.",
+      'tour1name': 'Biconditional → CNF rewrite (Wumpus rule)',
+      'tour1desc': "B11 ↔ (P12 ∨ P21). Watch the rewrite pipeline: ↔ becomes two implications, → becomes ∨, ¬ distributes, then ∨ distributes over ∧. The single sentence expands into multiple clauses.",
+      'tour2name': '3-coloring a triangle (SAT)',
+      'tour2desc': "Three nodes, three colors, edges form a triangle. SAT enumeration finds the 6 valid colorings (3! permutations). This is graph coloring as propositional logic.",
+      'tour3name': 'XOR triangle (UNSAT)',
+      'tour3desc': "Each pair must differ AND all three must be true. No assignment satisfies all clauses. SAT returns UNSAT — every row of the truth table fails.",
+      'tour4name': 'Prove by resolution refutation',
+      'tour4desc': "Use the modus-ponens KB, query Q. The prover negates Q (adds ¬Q), resolves with P→Q and P, derives the empty clause. KB ⊨ Q is proved. Try changing the query to R (should fail).",
+      // --- F1: worksheet answer-feedback (ws{n}ok / ws{n}no) ---
+      'ws1ok': "Correct. P→Q, P → forces P=T, Q=T. Exactly one of the 4 truth-table rows satisfies the KB.",
+      'ws1no': "Try 1. The KB {P→Q, P} forces both P=T and Q=T — only one row in the truth table works.",
+      'ws2ok': "Correct. UNSAT means no assignment satisfies all clauses. SAT enumeration tries all 2³ = 8 rows and rejects every one.",
+      'ws2no': "Try 0. UNSAT means literally no satisfying assignment exists — that's what makes it unsatisfiable.",
+      'ws3ok': "Right. Negate Q (¬Q), add to KB, resolve with P→Q to get ¬P, then resolve ¬P with the fact P to get the empty clause. KB ⊨ Q is proved.",
+      'ws3no': "Try 'yes'. Q follows from {P→Q, P} by modus ponens, which resolution can derive: ¬Q + (¬P∨Q) → ¬P, then ¬P + P → empty clause.",
+      // tooltip translations for main button + example buttons.
+      'convert-btn-title': 'Parse, convert to CNF, brute-force every assignment.',
+      'ex-mp-title': 'Modus ponens: P→Q, P, conclude Q.',
+      'ex-wumpus-title': 'The Wumpus pit rule from AIMA 7.4.',
+      'ex-color-title': '3-coloring a triangle. SAT problem from graph theory.',
+      'ex-xor-title': 'A trio that pairwise differs but you try to assert all three true. UNSAT.',
+      'ex-demorgan-title': "De Morgan's law as a tautology — every row is a model.",
+    },
+    zh: {
+      'title': '合取范式与可满足性可视化', 'back-link': '← 返回所有演示',
+      'footer-top': '↑ 返回顶部', 'footer-builtby': '作者', 'footer-course': '为海淀凯文学校 2025–2026《人工智能导论》课程制作', 'footer-source': '查看源代码', 'footer-issue': '反馈问题',
+      'reset-all': '↺ 全部重置', 'convert-btn': '▶ 转换 + 检查可满足性',
+      'tldr-strong': '核心思想',
+      'tldr-body': '世界上每一个 SAT 求解器都需要合取范式作为输入。看 ↔ → ¬ 如何在五个机械的步骤里被消除,然后暴力枚举所有满足赋值。',
+      'input-h3': '命题语句(每行一条)',
+      'syntax-h3': '语法',
+      'syn-not': '非', 'syn-and': '与', 'syn-or': '或',
+      'syn-imp': '蕴含', 'syn-iff': '当且仅当', 'syn-paren': '分组',
+      'syn-vars': '变量:字母或单词',
+      'syn-comment': '行首即为注释',
+      'examples-label': '示例:',
+      'ex-mp': '肯定前件', 'ex-wumpus': '吴普士陷阱规则',
+      'ex-color': '三染色', 'ex-xor': '异或不可满足', 'ex-demorgan': '德摩根',
+      'step1-h3': '1. 解析后的输入',
+      'step1-sub': '引擎解析后的语句。错误会在此标注。',
+      'step2-h3': '2. 合取范式(逐步)',
+      'step2-sub': '标准重写流程:消除 ↔,消除 →,把 ¬ 推进去(德摩根),∨ 对 ∧ 分配。',
+      'cnf-showall': '一次性显示全部五个阶段',
+      'step3-h3': '3. 可满足性',
+      'step3-sub': '暴力枚举全部 2',
+      'step3-sub2': ' 种赋值(上限 n = 12)。',
+      'step4-h3': '4. 由归结判定蕴含',
+      'step4-sub': '要证明 KB ⊨ α,把 ¬α 加入知识库,反复应用归结规则,直到推出空子句(矛盾)或饱和为止。AIMA 第 7.5 节。',
+      'query-label': '查询 α:',
+      'prove-btn': '▶ 用归结证明',
+      'prove-title': '把查询取反加入 KB,运行归结反驳。出现空子句 = KB 蕴含查询。',
+      'jump-link': '↓ 阅读说明',
+      'tour-summary': '📚 课程导览(5 步)',
+      'tour-step': '步骤',
+      'tour-prev': '← 上一步', 'tour-next': '下一步 →', 'tour-apply': '▶ 应用此场景',
+      'ws-summary': '📝 练习题(3 题)',
+      'ws-check': '核对',
+      'ws-pick': '请先选择一个答案。',
+      // --- F1: 练习题题干(data-i18n span)---
+      'ws1q': '加载"肯定前件"示例并点击"转换"。SAT 枚举找到多少个满足赋值?',
+      'ws1o0': '0——这些子句相互矛盾,没有任何赋值能满足它们。',
+      'ws1o1': '1——强制 P=T 且 Q=T,恰好只剩一行满足赋值。',
+      'ws1o2': '4——两个变量的真值表四行全都满足。',
+      'ws2q': '加载"异或不可满足"示例。有多少个满足赋值?',
+      'ws2o0': '1——总是至少存在一个满足赋值。',
+      'ws2o1': '3——满足的行就是真值个数为奇数的那些行。',
+      'ws2o2': '0——不可满足意味着没有任何赋值能满足全部子句。',
+      'ws3q': '肯定前件知识库。在查询框中输入 <code>Q</code> 并点击"用归结证明"。它能成功吗(推出空子句)?',
+      'ws3o0': '能——否定 Q 后进行归结,可推出空子句。',
+      'ws3o1': '不能——归结只能判定可满足性,无法证明蕴含。',
+      'ws3o2': '不能——Q 并不能从知识库中推出。',
+      // --- F1: 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
+      'tour0name': '肯定前件(可满足,简单)',
+      'tour0desc': 'P → Q 与 P。合取范式已经是两个子句。SAT 枚举找到 1 个模型:{P=T, Q=T}。然后用归结证明 Q——一步就得到空子句。',
+      'tour1name': '双条件 → 合取范式重写(吴普士规则)',
+      'tour1desc': 'B11 ↔ (P12 ∨ P21)。观察重写流程:↔ 变为两个蕴含,→ 变为 ∨,¬ 推进去,然后 ∨ 对 ∧ 分配。这一条语句展开成多个子句。',
+      'tour2name': '三角形三染色(可满足)',
+      'tour2desc': '三个节点,三种颜色,边构成一个三角形。SAT 枚举找到 6 种合法染色(3! 种排列)。这是用命题逻辑表达的图染色。',
+      'tour3name': '异或三角形(不可满足)',
+      'tour3desc': '每一对都必须不同,而且三者都必须为真。没有任何赋值能满足所有子句。SAT 返回 UNSAT——真值表的每一行都失败。',
+      'tour4name': '用归结反驳证明',
+      'tour4desc': '使用肯定前件知识库,查询 Q。证明器对 Q 取反(加入 ¬Q),与 P→Q 和 P 归结,推出空子句。KB ⊨ Q 得证。试把查询改成 R(应当失败)。',
+      // --- F1: 练习题答案反馈(ws{n}ok / ws{n}no)---
+      'ws1ok': '正确。P→Q、P → 强制 P=T、Q=T。4 行真值表中恰好有一行满足该知识库。',
+      'ws1no': '试试 1。知识库 {P→Q, P} 同时强制 P=T 与 Q=T——真值表中只有一行成立。',
+      'ws2ok': '正确。UNSAT 表示没有任何赋值满足所有子句。SAT 枚举尝试全部 2³ = 8 行,每一行都被拒绝。',
+      'ws2no': '试试 0。UNSAT 意味着确实不存在任何满足赋值——这正是它不可满足的原因。',
+      'ws3ok': '对。对 Q 取反(¬Q)加入知识库,与 P→Q 归结得到 ¬P,再把 ¬P 与事实 P 归结得到空子句。KB ⊨ Q 得证。',
+      'ws3no': "试试 'yes'。Q 由 {P→Q, P} 经肯定前件得出,归结也能推导:¬Q + (¬P∨Q) → ¬P,再 ¬P + P → 空子句。",
+      // 主按钮与示例按钮的提示翻译。
+      'convert-btn-title': '解析,转换为合取范式,对每个赋值进行暴力检查。',
+      'ex-mp-title': '肯定前件:P→Q,P,得 Q。',
+      'ex-wumpus-title': '吴普士陷阱规则,来自 AIMA 第 7.4 节。',
+      'ex-color-title': '三角形三染色。来自图论的 SAT 问题。',
+      'ex-xor-title': '三者两两不同,却试图断言全为真。UNSAT。',
+      'ex-demorgan-title': '德摩根律的重言式——每一行都是模型。',
+    },
+  };
+  function setLang(lang) {
+    if (!STRINGS[lang]) lang = 'en';
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.dataset.i18n;
+      if (STRINGS[lang][k]) el.textContent = STRINGS[lang][k];
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const k = el.dataset.i18nTitle;
+      if (STRINGS[lang][k]) el.title = STRINGS[lang][k];
+    });
+    document.querySelectorAll('.lang-switch button').forEach(b =>
+      b.classList.toggle('active', b.dataset.lang === lang));
+    try { localStorage.setItem('lang', lang); } catch (_) {}
+  }
+  document.querySelectorAll('.lang-switch button').forEach(b =>
+    b.addEventListener('click', () => {
+      setLang(b.dataset.lang);
+      // F1: re-render the tour in the new language. Safe here — this click handler
+      // only runs post-init, after LESSON_TOUR (a late `const`) is initialized, so
+      // there is no temporal-dead-zone risk (unlike calling it from inside setLang).
+      try { if (typeof renderTour === 'function') renderTour(); } catch (_) {}
+    }));
+  let initialLang = 'en';
+  try { initialLang = localStorage.getItem('lang') || 'en'; } catch (_) {}
+  setLang(initialLang);
+
+  function setTheme(t) {
+    document.body.classList.toggle('dark-mode', t === 'dark');
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+    try { localStorage.setItem('theme', t); } catch (_) {}
+  }
+  let initialTheme = 'light';
+  try {
+    initialTheme = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  } catch (_) {}
+  setTheme(initialTheme);
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    setTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark');
+  });
+
+  // For-teachers is hidden by default (cognitive-load floor). User toggles persist.
+  // `?teacher=1` opens on load. `?teacher=0` hides completely (no toggle, for projection).
+  try {
+    const tp = new URLSearchParams(location.search).get('teacher');
+    if (tp === '0') {
+      document.querySelectorAll('.for-teachers').forEach(el => el.style.display = 'none');
+    } else {
+      const style = document.createElement('style');
+      style.textContent = '.for-teachers-expander{margin-top:36px}.for-teachers-expander>summary{cursor:pointer;padding:12px 16px;background:var(--soft);border:1px solid var(--border);border-radius:8px;font-family:-apple-system,system-ui,sans-serif;font-size:0.9rem;color:var(--accent);font-weight:600;list-style:none;user-select:none}.for-teachers-expander>summary::-webkit-details-marker{display:none}.for-teachers-expander[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius:0}.for-teachers-expander>.for-teachers{margin-top:0;border-top:0;border-top-left-radius:0;border-top-right-radius:0}';
+      document.head.appendChild(style);
+      document.querySelectorAll('.for-teachers').forEach(div => {
+        const details = document.createElement('details');
+        details.className = 'for-teachers-expander';
+        const summary = document.createElement('summary');
+        summary.textContent = '▸ Show teacher notes (discussion prompts + curriculum)';
+        div.parentNode.insertBefore(details, div);
+        details.appendChild(summary);
+        details.appendChild(div);
+      });
+      const saved = (() => { try { return localStorage.getItem('teacher-notes-open'); } catch (_) { return null; } })();
+      const shouldOpen = tp === '1' || saved === '1';
+      document.querySelectorAll('details.for-teachers-expander').forEach(d => {
+        d.open = shouldOpen;
+        d.addEventListener('toggle', () => {
+          try { localStorage.setItem('teacher-notes-open', d.open ? '1' : '0'); } catch (_) {}
+        });
+      });
+    }
+  } catch (_) {}
+  // Ctrl+Enter inside the textarea = Convert + check SAT.
+  // (Plain spacebar would interrupt typing in the textarea.)
+  document.getElementById('input').addEventListener('keydown', e => {
+    if (e.code === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      document.getElementById('convertBtn').click();
+    }
+  });
+
+  function tokenize(s) {
+    const tokens = []; let i = 0;
+    while (i < s.length) {
+      const c = s[i];
+      if (/\s/.test(c)) { i++; continue; }
+      if (c === '(' || c === ')') { tokens.push({type: c}); i++; continue; }
+      if (c === '~') { tokens.push({type: 'not'}); i++; continue; }
+      if (c === '&') { tokens.push({type: 'and'}); i++; continue; }
+      if (c === '|') { tokens.push({type: 'or'}); i++; continue; }
+      if (s.substr(i, 3) === '<->') { tokens.push({type: 'iff'}); i += 3; continue; }
+      if (s.substr(i, 2) === '->') { tokens.push({type: 'imp'}); i += 2; continue; }
+      if (/[A-Za-z_]/.test(c)) {
+        let j = i;
+        while (j < s.length && /[A-Za-z0-9_]/.test(s[j])) j++;
+        tokens.push({type: 'var', name: s.substring(i, j)});
+        i = j; continue;
+      }
+      throw new Error(`Unexpected character '${c}' at position ${i}`);
+    }
+    return tokens;
+  }
+  function parse(s) {
+    const tokens = tokenize(s);
+    let pos = 0;
+    function peek() { return tokens[pos]; }
+    function eat(t) { if (tokens[pos] && tokens[pos].type === t) { pos++; return true; } return false; }
+    function parseAtom() {
+      if (eat('(')) {
+        const e = parseIff();
+        if (!eat(')')) throw new Error("Expected ')'");
+        return e;
+      }
+      if (eat('not')) return {op: 'not', a: parseAtom()};
+      const t = tokens[pos];
+      if (t && t.type === 'var') { pos++; return {op: 'var', name: t.name}; }
+      throw new Error(`Unexpected token at position ${pos}`);
+    }
+    function parseAnd() {
+      let left = parseAtom();
+      while (peek() && peek().type === 'and') { eat('and'); left = {op: 'and', a: left, b: parseAtom()}; }
+      return left;
+    }
+    function parseOr() {
+      let left = parseAnd();
+      while (peek() && peek().type === 'or') { eat('or'); left = {op: 'or', a: left, b: parseAnd()}; }
+      return left;
+    }
+    function parseImp() {
+      const left = parseOr();
+      if (peek() && peek().type === 'imp') { eat('imp'); return {op: 'imp', a: left, b: parseImp()}; }
+      return left;
+    }
+    function parseIff() {
+      let left = parseImp();
+      while (peek() && peek().type === 'iff') { eat('iff'); left = {op: 'iff', a: left, b: parseImp()}; }
+      return left;
+    }
+    const e = parseIff();
+    if (pos < tokens.length) throw new Error(`Unexpected token after parse end (position ${pos})`);
+    return e;
+  }
+  function fmt(e, parent) {
+    const prec = {var: 99, not: 7, and: 6, or: 5, imp: 4, iff: 3};
+    const p = prec[e.op];
+    let s;
+    if (e.op === 'var') s = e.name;
+    else if (e.op === 'not') s = '¬' + fmt(e.a, e.op);
+    else if (e.op === 'and') s = fmt(e.a, e.op) + ' ∧ ' + fmt(e.b, e.op);
+    else if (e.op === 'or') s = fmt(e.a, e.op) + ' ∨ ' + fmt(e.b, e.op);
+    else if (e.op === 'imp') s = fmt(e.a, e.op) + ' → ' + fmt(e.b, e.op);
+    else if (e.op === 'iff') s = fmt(e.a, e.op) + ' ↔ ' + fmt(e.b, e.op);
+    if (parent && prec[parent] > p) s = '(' + s + ')';
+    return s;
+  }
+  const escHtml = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  // Span-emitting version of fmt(): identical precedence/paren logic, but every
+  // token is a <span> (operators carry an op-<type> class) so a stage can recolor them.
+  function fmtSpanned(e, parent) {
+    const prec = {var: 99, not: 7, and: 6, or: 5, imp: 4, iff: 3};
+    const p = prec[e.op];
+    let s;
+    if (e.op === 'var') s = `<span class="tok tok-var">${escHtml(e.name)}</span>`;
+    else if (e.op === 'not') s = '<span class="tok op op-not">¬</span>' + fmtSpanned(e.a, e.op);
+    else if (e.op === 'and') s = fmtSpanned(e.a, e.op) + '<span class="tok op op-and"> ∧ </span>' + fmtSpanned(e.b, e.op);
+    else if (e.op === 'or') s = fmtSpanned(e.a, e.op) + '<span class="tok op op-or"> ∨ </span>' + fmtSpanned(e.b, e.op);
+    else if (e.op === 'imp') s = fmtSpanned(e.a, e.op) + '<span class="tok op op-imp"> → </span>' + fmtSpanned(e.b, e.op);
+    else if (e.op === 'iff') s = fmtSpanned(e.a, e.op) + '<span class="tok op op-iff"> ↔ </span>' + fmtSpanned(e.b, e.op);
+    if (parent && prec[parent] > p) s = '<span class="paren">(</span>' + s + '<span class="paren">)</span>';
+    return s;
+  }
+  // Count operators of a given type in an AST (for the per-stage "↔: 3 → 0" metric).
+  function countOp(e, op) {
+    if (!e || e.op === 'var') return 0;
+    return (e.op === op ? 1 : 0) + countOp(e.a, op) + (e.b ? countOp(e.b, op) : 0);
+  }
+  // Number of top-level conjuncts (≈ clauses before distribution blows them up).
+  function topConjuncts(e) {
+    return e && e.op === 'and' ? topConjuncts(e.a) + topConjuncts(e.b) : 1;
+  }
+  function elimIff(e) {
+    if (e.op === 'var') return e;
+    if (e.op === 'not') return {op: 'not', a: elimIff(e.a)};
+    if (e.op === 'iff') {
+      const a = elimIff(e.a), b = elimIff(e.b);
+      return {op: 'and',
+              a: {op: 'imp', a: a, b: b},
+              b: {op: 'imp', a: b, b: a}};
+    }
+    return {op: e.op, a: elimIff(e.a), b: elimIff(e.b)};
+  }
+  function elimImp(e) {
+    if (e.op === 'var') return e;
+    if (e.op === 'not') return {op: 'not', a: elimImp(e.a)};
+    if (e.op === 'imp') return {op: 'or', a: {op: 'not', a: elimImp(e.a)}, b: elimImp(e.b)};
+    return {op: e.op, a: elimImp(e.a), b: elimImp(e.b)};
+  }
+  function pushNeg(e) {
+    if (e.op === 'var') return e;
+    if (e.op === 'not') {
+      const inner = e.a;
+      if (inner.op === 'var') return e;
+      if (inner.op === 'not') return pushNeg(inner.a);
+      if (inner.op === 'and')
+        return {op: 'or', a: pushNeg({op: 'not', a: inner.a}), b: pushNeg({op: 'not', a: inner.b})};
+      if (inner.op === 'or')
+        return {op: 'and', a: pushNeg({op: 'not', a: inner.a}), b: pushNeg({op: 'not', a: inner.b})};
+    }
+    return {op: e.op, a: pushNeg(e.a), b: pushNeg(e.b)};
+  }
+  function distribute(e) {
+    if (e.op === 'var' || e.op === 'not') return e;
+    const a = distribute(e.a), b = distribute(e.b);
+    if (e.op === 'and') return {op: 'and', a, b};
+    if (e.op === 'or') {
+      if (a.op === 'and')
+        return distribute({op: 'and',
+                           a: {op: 'or', a: a.a, b: b},
+                           b: {op: 'or', a: a.b, b: b}});
+      if (b.op === 'and')
+        return distribute({op: 'and',
+                           a: {op: 'or', a: a, b: b.a},
+                           b: {op: 'or', a: a, b: b.b}});
+      return {op: 'or', a, b};
+    }
+    return {op: e.op, a, b};
+  }
+  function clausify(e) {
+    const clauses = [];
+    function gatherAnds(n) {
+      if (n.op === 'and') { gatherAnds(n.a); gatherAnds(n.b); }
+      else clauses.push(gatherOrs(n));
+    }
+    function gatherOrs(n) {
+      if (n.op === 'or') return gatherOrs(n.a).concat(gatherOrs(n.b));
+      if (n.op === 'var') return [{name: n.name, neg: false}];
+      if (n.op === 'not' && n.a.op === 'var') return [{name: n.a.name, neg: true}];
+      return [{name: '?', neg: false}];
+    }
+    gatherAnds(e);
+    return clauses;
+  }
+  function fmtClauses(clauses) {
+    return clauses.map(cl => '(' + cl.map(l => (l.neg ? '¬' : '') + l.name).join(' ∨ ') + ')').join(' ∧ ');
+  }
+  function collectVars(e, set) {
+    if (e.op === 'var') set.add(e.name);
+    else { if (e.a) collectVars(e.a, set); if (e.b) collectVars(e.b, set); }
+  }
+  function evalE(e, env) {
+    if (e.op === 'var') return env[e.name];
+    if (e.op === 'not') return !evalE(e.a, env);
+    if (e.op === 'and') return evalE(e.a, env) && evalE(e.b, env);
+    if (e.op === 'or') return evalE(e.a, env) || evalE(e.b, env);
+    if (e.op === 'imp') return !evalE(e.a, env) || evalE(e.b, env);
+    if (e.op === 'iff') return evalE(e.a, env) === evalE(e.b, env);
+  }
+
+  function run() {
+    // Clear the step-through players first; the success path repopulates them below.
+    cnfStages = []; dpllSteps = []; dpllVarList = [];
+    if (cnfStepper) cnfStepper.go(0);
+    if (dpllStepper) dpllStepper.go(0);
+    const input = $('input').value;
+    const lines = input.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+    if (!lines.length) { $('parseOut').innerHTML = '<div class="error">Enter at least one sentence.</div>'; return; }
+    let asts = []; let parseHtml = ''; let parseError = null;
+    for (let i = 0; i < lines.length; i++) {
+      try {
+        const ast = parse(lines[i]);
+        asts.push(ast);
+        parseHtml += `<div class="formula-line original"><span class="step-name">${i+1}.</span>${fmt(ast)}</div>`;
+      } catch (err) {
+        parseHtml += `<div class="formula-line original"><span class="step-name">${i+1}.</span>${lines[i]}</div>`;
+        parseHtml += `<div class="error">Parse error on line ${i+1}: ${err.message}</div>`;
+        parseError = err;
+      }
+    }
+    $('parseOut').innerHTML = parseHtml;
+    if (parseError) { $('cnfOut').innerHTML = ''; $('satOut').innerHTML = ''; return; }
+    let combined = asts[0];
+    for (let i = 1; i < asts.length; i++) combined = {op: 'and', a: combined, b: asts[i]};
+    const step1 = elimIff(combined);
+    const step2 = elimImp(step1);
+    const step3 = pushNeg(step2);
+    const step4 = distribute(step3);
+    const clauses = clausify(step4);
+    let cnfHtml = '';
+    cnfHtml += `<div class="formula-line"><span class="step-name">Combined (∧):</span>${fmt(combined)}</div>`;
+    cnfHtml += `<div class="formula-line"><span class="step-name">1. ↔ eliminated:</span>${fmt(step1)}</div>`;
+    cnfHtml += `<div class="formula-line"><span class="step-name">2. → eliminated:</span>${fmt(step2)}</div>`;
+    cnfHtml += `<div class="formula-line"><span class="step-name">3. ¬ pushed in (De Morgan):</span>${fmt(step3)}</div>`;
+    cnfHtml += `<div class="formula-line"><span class="step-name">4. ∨ distributed over ∧:</span>${fmt(step4)}</div>`;
+    cnfHtml += `<div class="formula-line"><span class="step-name">CNF clauses (${clauses.length}):</span>${fmtClauses(clauses)}</div>`;
+    $('cnfOut').innerHTML = cnfHtml;
+    const vars = new Set(); collectVars(combined, vars);
+    const varList = [...vars].sort();
+
+    // ===== Build the stepped CNF-conversion stages (the player reads these) =====
+    {
+      const nV = varList.length;
+      const rows = nV <= 30 ? Math.pow(2, nV) : Infinity;
+      const distBefore = topConjuncts(step3);
+      const nC = clauses.length;
+      const grew = nC > distBefore;
+      const ratio = nC / distBefore;
+      const ratioTxt = ratio % 1 === 0 ? ratio + '×' : '~' + ratio.toFixed(1) + '×';
+      cnfStages = [
+        { key:'orig', label:'Stage 0 · Original', rule: CNF_RULES.orig, ast: combined, prevAst: null, hl: null,
+          metric: `${nV} variable${nV===1?'':'s'} → ${rows===Infinity ? '2^'+nV : rows.toLocaleString()} truth-table row${rows===1?'':'s'} to brute-force` },
+        { key:'iff', label:'Stage 1 · Eliminate ↔', rule: CNF_RULES.iff, ast: step1, prevAst: combined, hl:'iff',
+          metric: `↔ operators: ${countOp(combined,'iff')} → 0` },
+        { key:'imp', label:'Stage 2 · Eliminate →', rule: CNF_RULES.imp, ast: step2, prevAst: step1, hl:'imp',
+          metric: `→ operators: ${countOp(step1,'imp')} → 0` },
+        { key:'not', label:'Stage 3 · Push ¬ inward (De Morgan)', rule: CNF_RULES.not, ast: step3, prevAst: step2, hl:'not',
+          metric: 'negations now rest only on variables' },
+        { key:'dist', label:'Stage 4 · Distribute ∨ over ∧', rule: CNF_RULES.dist, ast: step4, prevAst: step3, hl:'or',
+          clauseCount: nC,
+          metric: `clauses: ${distBefore} → <span class="jump">${nC}</span>` + (grew ? ` &nbsp;↑ distribution grew the formula ${ratioTxt}` : ' (no blow-up for this formula)') },
+        { key:'cnf', label:'Stage 5 · CNF clauses', rule: CNF_RULES.cnf, ast: step4, prevAst: step3, hl:'or',
+          isClauses: true, clauses: clauses, clauseCount: nC,
+          metric: `${nC} clause${nC===1?'':'s'} · ${nV} variable${nV===1?'':'s'}` },
+      ];
+      if (cnfStepper) cnfStepper.go(0);
+    }
+    if (varList.length > 12) {
+      $('satOut').innerHTML = `<div class="error">Too many variables (${varList.length}). Cap is 12 for this brute-force demo.</div>`;
+      return;
+    }
+    const models = [];
+    const total = 1 << varList.length;
+    for (let m = 0; m < total; m++) {
+      const env = {};
+      for (let i = 0; i < varList.length; i++) env[varList[i]] = !!(m & (1 << i));
+      if (evalE(combined, env)) models.push(env);
+    }
+    let satHtml = '';
+    const isSat = models.length > 0;
+    satHtml += `<div class="summary ${isSat ? 'sat' : 'unsat'}">`
+              + (isSat ? `✓ SAT (${models.length} model${models.length===1?'':'s'} out of ${total})`
+                       : '✗ UNSAT (no satisfying assignment)') + '</div>';
+    if (models.length > 0) {
+      satHtml += '<div class="list-scroll" style="max-height:240px; margin-top:10px;"><table class="table">';
+      satHtml += '<thead><tr>' + varList.map(v => `<th>${v}</th>`).join('') + '</tr></thead><tbody>';
+      for (const env of models) {
+        satHtml += '<tr>';
+        for (const v of varList) satHtml += `<td class="${env[v] ? 'T' : 'F'}">${env[v] ? 'T' : 'F'}</td>`;
+        satHtml += '</tr>';
+      }
+      satHtml += '</tbody></table></div>';
+    }
+    $('satOut').innerHTML = satHtml;
+
+    // DPLL trace. Shows the step-by-step decision/propagation tree.
+    renderDpllTrace(clauses, varList);
+  }
+
+  // ===== DPLL with trace =====
+  // Each step pushed onto the trace: {depth, action, detail, clauses}
+  // action ∈ 'unit' | 'pure' | 'branch+' | 'branch-' | 'sat' | 'unsat'
+  function dpllTrace(initialClauses, vars) {
+    const trace = [];
+    const assignment = {};
+    function simplify(clauses, lit) {
+      // Remove satisfied clauses; drop falsified literal from remaining.
+      const out = [];
+      for (const cl of clauses) {
+        let satisfied = false;
+        const remaining = [];
+        for (const l of cl) {
+          if (l.name === lit.name && l.neg === lit.neg) { satisfied = true; break; }
+          if (l.name === lit.name && l.neg !== lit.neg) continue; // dropped
+          remaining.push(l);
+        }
+        if (!satisfied) out.push(remaining);
+      }
+      return out;
+    }
+    function pureLiteral(clauses) {
+      const polarity = {}; // name → 'T' | 'F' | 'both'
+      for (const cl of clauses) for (const l of cl) {
+        const p = l.neg ? 'F' : 'T';
+        if (!polarity[l.name]) polarity[l.name] = p;
+        else if (polarity[l.name] !== p) polarity[l.name] = 'both';
+      }
+      for (const name in polarity) {
+        if (polarity[name] !== 'both') return {name, neg: polarity[name] === 'F'};
+      }
+      return null;
+    }
+    function snap(cl) {
+      return cl.map(c => '(' + c.map(l => (l.neg ? '¬' : '') + l.name).join('∨') + ')').join(' ∧ ') || '⊤';
+    }
+    function solve(clauses, depth) {
+      if (clauses.length === 0) {
+        trace.push({depth, action: 'sat', detail: `All clauses satisfied. Assignment: ${JSON.stringify({...assignment})}`, clauses: snap(clauses), assign: {...assignment}, struct: clauses.map(c => c.map(l => ({...l})))});
+        return {sat: true, model: {...assignment}};
+      }
+      if (clauses.some(c => c.length === 0)) {
+        trace.push({depth, action: 'unsat', detail: 'Empty clause → contradiction. Backtrack.', clauses: snap(clauses), assign: {...assignment}, struct: clauses.map(c => c.map(l => ({...l})))});
+        return {sat: false};
+      }
+      // Unit propagation.
+      const unit = clauses.find(c => c.length === 1);
+      if (unit) {
+        const lit = unit[0];
+        assignment[lit.name] = !lit.neg;
+        trace.push({depth, action: 'unit', detail: `Unit clause forces ${lit.name} = ${!lit.neg ? 'T' : 'F'}.`, clauses: snap(clauses), assign: {...assignment}, struct: clauses.map(c => c.map(l => ({...l})))});
+        const result = solve(simplify(clauses, lit), depth + 1);
+        if (!result.sat) delete assignment[lit.name];
+        return result;
+      }
+      // Pure literal elimination.
+      const pure = pureLiteral(clauses);
+      if (pure) {
+        assignment[pure.name] = !pure.neg;
+        trace.push({depth, action: 'pure', detail: `Pure literal: ${pure.name} appears only ${pure.neg ? 'negated' : 'positive'} → assign ${!pure.neg ? 'T' : 'F'}.`, clauses: snap(clauses), assign: {...assignment}, struct: clauses.map(c => c.map(l => ({...l})))});
+        const result = solve(simplify(clauses, pure), depth + 1);
+        if (!result.sat) delete assignment[pure.name];
+        return result;
+      }
+      // Branch on first unassigned variable.
+      const branchVar = vars.find(v => assignment[v] === undefined);
+      if (!branchVar) {
+        // All assigned but clauses remain → check
+        return {sat: false};
+      }
+      // Try TRUE first.
+      assignment[branchVar] = true;
+      trace.push({depth, action: 'branch+', detail: `Branch: try ${branchVar} = T.`, clauses: snap(clauses), assign: {...assignment}, struct: clauses.map(c => c.map(l => ({...l})))});
+      let result = solve(simplify(clauses, {name: branchVar, neg: false}), depth + 1);
+      if (result.sat) return result;
+      delete assignment[branchVar];
+      // Backtrack, try FALSE.
+      assignment[branchVar] = false;
+      trace.push({depth, action: 'branch-', detail: `Branch: backtrack, try ${branchVar} = F.`, clauses: snap(clauses), assign: {...assignment}, struct: clauses.map(c => c.map(l => ({...l})))});
+      result = solve(simplify(clauses, {name: branchVar, neg: true}), depth + 1);
+      if (!result.sat) delete assignment[branchVar];
+      return result;
+    }
+    const final = solve(initialClauses, 0);
+    return {trace, final};
+  }
+  // Persist the DPLL trace and hand it to the step-player (rendered by renderDpllStep).
+  function renderDpllTrace(clauses, vars) {
+    const deep = clauses.map(c => c.map(l => ({...l})));
+    const { trace } = dpllTrace(deep, vars);
+    dpllSteps = trace;
+    dpllVarList = vars.slice();
+    dpllRows = vars.length <= 30 ? Math.pow(2, vars.length) : Infinity;
+    if (dpllStepper) dpllStepper.go(0);
+  }
+
+  // ===== Shared step-through controller (one transport bar, reused by both players) =====
+  function makeStepper(ids, getLen, renderIdx) {
+    let idx = 0, playing = false, timer = null;
+    const el = k => $(ids[k]);
+    const speed = () => { const s = el('speed'); return s ? +s.value : 55; };
+    const delay = () => Math.max(180, 1500 - speed() * 13);   // 0→1500ms … 100→~200ms
+    function refresh() {
+      renderIdx(idx);
+      const c = el('count'); if (c) c.textContent = ids.countLabel(idx, getLen());
+      const b = el('back'); if (b) b.disabled = idx <= 0;
+      const st = el('step'); if (st) st.disabled = idx >= getLen() - 1;
+    }
+    function go(i) { const n = getLen(); idx = n ? Math.max(0, Math.min(n - 1, i)) : 0; refresh(); }
+    function pause() { playing = false; if (timer) { clearTimeout(timer); timer = null; }
+      const b = el('play'); if (b) { b.textContent = '▶'; b.setAttribute('aria-pressed', 'false'); } }
+    function tick() { if (!playing) return;
+      if (idx >= getLen() - 1) { pause(); return; }
+      go(idx + 1); timer = setTimeout(tick, delay()); }
+    function play() { if (getLen() <= 1) return;
+      if (idx >= getLen() - 1) idx = 0;
+      playing = true; const b = el('play');
+      if (b) { b.textContent = '⏸'; b.setAttribute('aria-pressed', 'true'); }
+      refresh(); timer = setTimeout(tick, delay()); }
+    const bp = el('play'); if (bp) bp.addEventListener('click', () => playing ? pause() : play());
+    const bs = el('step'); if (bs) bs.addEventListener('click', () => { pause(); go(idx + 1); });
+    const bb = el('back'); if (bb) bb.addEventListener('click', () => { pause(); go(idx - 1); });
+    const br = el('reset'); if (br) br.addEventListener('click', () => { pause(); go(0); });
+    return { go, pause, refresh, get index() { return idx; } };
+  }
+
+  // ----- CNF conversion player -----
+  const CNF_RULES = {
+    orig: 'the conjunction of all your sentences, before any rewriting',
+    iff: 'A ↔ B  ⇒  (A → B) ∧ (B → A)',
+    imp: 'A → B  ⇒  ¬A ∨ B',
+    not: '¬(A ∧ B) ⇒ ¬A ∨ ¬B  ·  ¬(A ∨ B) ⇒ ¬A ∧ ¬B  ·  ¬¬A ⇒ A',
+    dist: 'A ∨ (B ∧ C)  ⇒  (A ∨ B) ∧ (A ∨ C)',
+    cnf: 'flatten the ∧-tree into a list of clauses (each an ∨ of literals)',
+  };
+  function renderCnfStage(i) {
+    const cap = $('cnfCaption'); if (!cap) return;
+    const met = $('cnfMetric'), before = $('cnfBefore'), after = $('cnfAfter'),
+          bLab = $('cnfBeforeLabel'), aLab = $('cnfAfterLabel');
+    if (!cnfStages.length || i < 0 || i >= cnfStages.length) {
+      cap.textContent = '—'; if (met) met.innerHTML = '';
+      if (before) before.style.display = 'none'; if (bLab) bLab.style.display = 'none';
+      if (after) after.innerHTML = ''; return;
+    }
+    const st = cnfStages[i];
+    cap.innerHTML = escHtml(st.label) + (st.rule ? ` <span class="rule">${escHtml(st.rule)}</span>` : '');
+    if (met) met.innerHTML = st.metric || '';
+    if (st.prevAst) {
+      before.style.display = ''; bLab.style.display = '';
+      before.className = 'stage-before' + (st.hl ? ' hl-' + st.hl : '');
+      before.innerHTML = fmtSpanned(st.prevAst);
+    } else {
+      before.style.display = 'none'; bLab.style.display = 'none';
+    }
+    if (st.isClauses) {
+      aLab.textContent = 'CNF clauses';
+      after.className = 'stage-after';
+      after.innerHTML = '<div class="clause-chips">' +
+        st.clauses.map(cl => `<span class="clause-chip">(${cl.map(l => (l.neg ? '¬' : '') + escHtml(l.name)).join(' ∨ ')})</span>`).join('') + '</div>';
+    } else {
+      aLab.textContent = 'result';
+      after.className = 'stage-after' + (st.hl ? ' hl-' + st.hl : '');
+      after.innerHTML = fmtSpanned(st.ast);
+    }
+  }
+
+  // ----- DPLL search player -----
+  const DPLL_COLORS = { unit: '#0284c7', pure: '#9333ea', 'branch+': 'var(--fg)',
+                        'branch-': '#b45309', sat: '#16a34a', unsat: '#dc2626' };
+  function renderDpllStep(i) {
+    const actEl = $('dpllAction'); if (!actEl) return;
+    const titleEl = $('dpllTitle'), assignEl = $('dpllAssign'), detEl = $('dpllDetail'), clsEl = $('dpllClauses');
+    const lang = document.documentElement.lang === 'zh' ? 'zh' : 'en';
+    const labels = lang === 'zh'
+      ? {unit:'单元传播', pure:'纯文字消去', 'branch+':'分支:试 T', 'branch-':'回溯:试 F', sat:'✓ SAT', unsat:'✗ 冲突'}
+      : {unit:'unit-propagation', pure:'pure-literal', 'branch+':'branch: try T', 'branch-':'backtrack: try F', sat:'✓ SAT', unsat:'✗ conflict'};
+    if (!dpllSteps.length) {
+      actEl.innerHTML = ''; if (detEl) detEl.textContent = '';
+      if (assignEl) assignEl.innerHTML = ''; if (clsEl) clsEl.innerHTML = '';
+      if (titleEl) titleEl.textContent = ''; return;
+    }
+    const s = dpllSteps[Math.max(0, Math.min(dpllSteps.length - 1, i))];
+    const rowsTxt = dpllRows === Infinity ? '2^' + dpllVarList.length : dpllRows;
+    if (titleEl) titleEl.textContent = lang === 'zh'
+      ? `DPLL 在剪枝:这条搜索路径只触及少数赋值,而暴力枚举要查 ${rowsTxt} 行。`
+      : `DPLL prunes: this path touches a few assignments vs. ${rowsTxt} brute-force rows.`;
+    if (assignEl) assignEl.innerHTML = dpllVarList.map(v => {
+      const a = s.assign && (v in s.assign) ? s.assign[v] : undefined;
+      const cls = a === true ? 't' : a === false ? 'f' : 'u';
+      const val = a === true ? 'T' : a === false ? 'F' : '?';
+      return `<span class="assign-chip ${cls}">${escHtml(v)} = ${val}</span>`;
+    }).join('');
+    const color = DPLL_COLORS[s.action] || 'var(--fg)';
+    actEl.innerHTML = `<span class="dpll-action" style="background:color-mix(in oklab, ${color} 16%, transparent); color:${color};">[${labels[s.action] || s.action}] · depth ${s.depth}</span>`;
+    if (detEl) detEl.textContent = s.detail || '';
+    const struct = s.struct || [];
+    if (clsEl) {
+      if (!struct.length) {
+        clsEl.innerHTML = `<span class="clause-chip" style="color:var(--true); border-color:var(--true);">⊤ ${lang === 'zh' ? '所有子句已满足' : 'all clauses satisfied'}</span>`;
+      } else {
+        clsEl.innerHTML = struct.map(cl => {
+          const isEmpty = cl.length === 0, isUnit = cl.length === 1;
+          const cn = 'clause-chip' + (isEmpty ? ' conflict' : isUnit ? ' unit' : '');
+          const body = isEmpty ? '□' : '(' + cl.map(l => (l.neg ? '¬' : '') + escHtml(l.name)).join(' ∨ ') + ')';
+          return `<span class="${cn}">${body}</span>`;
+        }).join('');
+      }
+    }
+  }
+
+  cnfStepper = makeStepper(
+    { play:'cnfPlay', step:'cnfStep', back:'cnfBack', reset:'cnfReset', count:'cnfCount', speed:'cnfSpeed',
+      countLabel: (i, n) => `Stage ${i} / ${Math.max(0, n - 1)}` },
+    () => cnfStages.length, renderCnfStage);
+  dpllStepper = makeStepper(
+    { play:'dpllPlay', step:'dpllStep', back:'dpllBack', reset:'dpllReset', count:'dpllCount', speed:'dpllSpeed',
+      countLabel: (i, n) => `Step ${n ? i + 1 : 0} / ${n}` },
+    () => dpllSteps.length, renderDpllStep);
+
+  // Console acceptance test (mirrors the convolution applet's __convAcceptanceTest pattern).
+  window.__cnfAcceptanceTest = function () {
+    const dist = cnfStages.find(s => s.key === 'dist');
+    const r = { cnfStages: cnfStages.length, dpllSteps: dpllSteps.length,
+                dpllRows: dpllRows, clausesAtDistribute: dist ? dist.clauseCount : null };
+    const pass = cnfStages.length === 6 && dpllSteps.length > 0 && dpllRows > 0;
+    console.log('[cnf-sat] STEP-THROUGH ACCEPTANCE TEST ' + (pass ? 'passed' : 'FAILED'), r);
+    return Object.assign({ pass }, r);
+  };
+
+  $('convertBtn').addEventListener('click', run);
+
+  // ===== Resolution refutation =====
+  // To prove KB ⊨ α: convert (KB ∧ ¬α) to CNF, apply resolution until empty clause or saturation.
+  // Resolution rule: from (A ∨ ℓ) and (B ∨ ¬ℓ) derive (A ∨ B).
+  function clauseKey(cl) {
+    // Canonical signature of a clause for dedup. Sort literals by name+neg.
+    return cl.map(l => (l.neg ? '¬' : '') + l.name).sort().join('|');
+  }
+  function isTautology(cl) {
+    // (P ∨ ¬P ∨ …) is always true; resolution skips these.
+    const seen = new Map();
+    for (const l of cl) {
+      const prev = seen.get(l.name);
+      if (prev !== undefined && prev !== l.neg) return true;
+      seen.set(l.name, l.neg);
+    }
+    return false;
+  }
+  function resolveClauses(c1, c2) {
+    // Returns array of resolvents (one per complementary pair). Skips tautologies.
+    const out = [];
+    for (let i = 0; i < c1.length; i++) {
+      for (let j = 0; j < c2.length; j++) {
+        if (c1[i].name === c2[j].name && c1[i].neg !== c2[j].neg) {
+          // Combine, dropping the complementary pair.
+          const merged = [];
+          const seen = new Set();
+          for (let k = 0; k < c1.length; k++) if (k !== i) {
+            const sig = (c1[k].neg ? '¬' : '') + c1[k].name;
+            if (!seen.has(sig)) { seen.add(sig); merged.push(c1[k]); }
+          }
+          for (let k = 0; k < c2.length; k++) if (k !== j) {
+            const sig = (c2[k].neg ? '¬' : '') + c2[k].name;
+            if (!seen.has(sig)) { seen.add(sig); merged.push(c2[k]); }
+          }
+          if (!isTautology(merged)) out.push(merged);
+        }
+      }
+    }
+    return out;
+  }
+  function fmtClauseLine(cl) {
+    if (cl.length === 0) return '<span style="color:#dc2626; font-weight:700;">□ (empty)</span>';
+    return '{' + cl.map(l => (l.neg ? '¬' : '') + l.name).join(', ') + '}';
+  }
+  function resolutionRefutation(kbClauses, negQueryClauses) {
+    // Returns {proved: bool, clauses: [{id, lits, source}], stepCount}
+    // source = null for base, [i, j] for derived from clauses i and j.
+    const records = [];
+    const seen = new Set();
+    function add(lits, source) {
+      const k = clauseKey(lits);
+      if (seen.has(k)) return null;
+      if (isTautology(lits)) return null;
+      seen.add(k);
+      const id = records.length + 1;
+      records.push({id, lits, source});
+      return id;
+    }
+    for (const cl of kbClauses) add(cl, ['KB']);
+    for (const cl of negQueryClauses) add(cl, ['¬α']);
+    let foundEmpty = false;
+    let proofEmptyId = null;
+    const CAP_CLAUSES = 200;
+    const CAP_STEPS = 1000;
+    let steps = 0;
+    let changed = true;
+    while (changed && !foundEmpty && records.length < CAP_CLAUSES && steps < CAP_STEPS) {
+      changed = false;
+      const n = records.length;
+      for (let i = 0; i < n && !foundEmpty; i++) {
+        for (let j = i + 1; j < n && !foundEmpty; j++) {
+          steps++;
+          const resolvents = resolveClauses(records[i].lits, records[j].lits);
+          for (const r of resolvents) {
+            const newId = add(r, [records[i].id, records[j].id]);
+            if (newId !== null) {
+              changed = true;
+              if (r.length === 0) { foundEmpty = true; proofEmptyId = newId; break; }
+            }
+          }
+        }
+      }
+    }
+    return {proved: foundEmpty, records, proofEmptyId, steps, capped: records.length >= CAP_CLAUSES || steps >= CAP_STEPS};
+  }
+  function extractProofChain(records, emptyId) {
+    // Walk backward from the empty clause, collecting only ancestor records.
+    const needed = new Set([emptyId]);
+    let added = true;
+    while (added) {
+      added = false;
+      for (const r of records) {
+        if (needed.has(r.id) && Array.isArray(r.source) && typeof r.source[0] === 'number') {
+          for (const parentId of r.source) {
+            if (!needed.has(parentId)) { needed.add(parentId); added = true; }
+          }
+        }
+      }
+    }
+    return records.filter(r => needed.has(r.id));
+  }
+  function proveByResolution() {
+    const out = document.getElementById('resolveOut');
+    out.innerHTML = '';
+    const queryText = $('queryInput').value.trim();
+    const inputText = $('input').value;
+    const lang = document.documentElement.lang === 'zh' ? 'zh' : 'en';
+    if (!queryText) {
+      out.innerHTML = `<div class="error">${lang === 'zh' ? '请输入查询 α。' : 'Enter a query α.'}</div>`;
+      return;
+    }
+    let queryAst;
+    try { queryAst = parse(queryText); }
+    catch (err) {
+      out.innerHTML = `<div class="error">${lang === 'zh' ? '查询解析错误:' : 'Query parse error:'} ${err.message}</div>`;
+      return;
+    }
+    // Parse KB lines.
+    const lines = inputText.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+    if (!lines.length) {
+      out.innerHTML = `<div class="error">${lang === 'zh' ? 'KB 为空。' : 'Knowledge base is empty.'}</div>`;
+      return;
+    }
+    let kbAsts = [];
+    try { kbAsts = lines.map(parse); }
+    catch (err) {
+      out.innerHTML = `<div class="error">${lang === 'zh' ? 'KB 解析错误:' : 'KB parse error:'} ${err.message}</div>`;
+      return;
+    }
+    // Convert KB to CNF clauses.
+    let kbCombined = kbAsts[0];
+    for (let i = 1; i < kbAsts.length; i++) kbCombined = {op: 'and', a: kbCombined, b: kbAsts[i]};
+    const kbClauses = clausify(distribute(pushNeg(elimImp(elimIff(kbCombined)))));
+    // Negate the query and convert to CNF.
+    const negQuery = {op: 'not', a: queryAst};
+    const negQueryClauses = clausify(distribute(pushNeg(elimImp(elimIff(negQuery)))));
+    const {proved, records, proofEmptyId, steps, capped} = resolutionRefutation(kbClauses, negQueryClauses);
+    // Render.
+    let html = '';
+    const headerColor = proved ? '#16a34a' : '#dc2626';
+    const headerText = proved
+      ? (lang === 'zh' ? `✓ KB ⊨ α 证明完成(${steps} 次配对尝试,${records.length} 个子句)。` : `✓ Proved KB ⊨ α (${steps} pair attempts, ${records.length} clauses).`)
+      : (capped
+          ? (lang === 'zh' ? '⚠ 在搜索上限内未能证明(可能不蕴含,或问题太大)。' : '⚠ Could not prove within search cap (may not be entailed, or problem too large).')
+          : (lang === 'zh' ? '✗ KB ⊭ α(达到饱和,未找到空子句)。' : '✗ KB ⊭ α (saturated without finding the empty clause).'));
+    html += `<div style="padding:8px 12px; background:${proved ? '#dcfce7' : '#fee2e2'}; border-radius:6px; font-weight:600; color:${headerColor}; margin-bottom:8px;">${headerText}</div>`;
+    // Show full clause list, then highlight the proof chain (if proved).
+    const proofIds = proved ? new Set(extractProofChain(records, proofEmptyId).map(r => r.id)) : new Set();
+    html += '<details style="margin-bottom:6px;"><summary style="cursor:pointer; color:var(--accent); font-weight:600;">' +
+            (lang === 'zh' ? `📋 所有派生子句 (${records.length})` : `📋 All derived clauses (${records.length})`) +
+            '</summary>';
+    html += '<table style="border-collapse:collapse; font-family:ui-monospace,monospace; font-size:0.82rem; margin-top:6px;">';
+    html += '<thead><tr style="background:var(--soft);">';
+    html += `<th style="text-align:left; padding:3px 8px; border-bottom:1px solid var(--border);">#</th>`;
+    html += `<th style="text-align:left; padding:3px 8px; border-bottom:1px solid var(--border);">${lang === 'zh' ? '子句' : 'Clause'}</th>`;
+    html += `<th style="text-align:left; padding:3px 8px; border-bottom:1px solid var(--border);">${lang === 'zh' ? '来源' : 'From'}</th>`;
+    html += '</tr></thead><tbody>';
+    for (const r of records) {
+      const inProof = proofIds.has(r.id);
+      const bg = inProof ? 'background:rgba(250, 204, 21, 0.18);' : '';
+      let srcTxt = '—';
+      if (Array.isArray(r.source)) {
+        if (typeof r.source[0] === 'number') srcTxt = `resolve(${r.source[0]}, ${r.source[1]})`;
+        else srcTxt = r.source[0];
+      }
+      html += `<tr style="${bg}"><td style="padding:3px 8px; border-bottom:1px solid var(--border);">${r.id}${inProof ? ' ⭐' : ''}</td>`;
+      html += `<td style="padding:3px 8px; border-bottom:1px solid var(--border);">${fmtClauseLine(r.lits)}</td>`;
+      html += `<td style="padding:3px 8px; border-bottom:1px solid var(--border); color:var(--muted);">${srcTxt}</td></tr>`;
+    }
+    html += '</tbody></table></details>';
+    if (proved) {
+      const chain = extractProofChain(records, proofEmptyId);
+      html += `<div style="margin-top:8px;"><strong style="color:var(--accent);">${lang === 'zh' ? '⭐ 证明链(' : '⭐ Proof chain ('}${chain.length}${lang === 'zh' ? ' 步)' : ' steps)'}:</strong>`;
+      html += '<ol style="margin-top:6px; padding-left:22px; font-family:ui-monospace,monospace; font-size:0.85rem;">';
+      for (const r of chain) {
+        let srcTxt = '';
+        if (Array.isArray(r.source) && typeof r.source[0] === 'number') {
+          srcTxt = ` <span style="color:var(--muted);">[resolve #${r.source[0]} with #${r.source[1]}]</span>`;
+        } else if (Array.isArray(r.source)) {
+          srcTxt = ` <span style="color:var(--muted);">[${r.source[0]}]</span>`;
+        }
+        html += `<li>${fmtClauseLine(r.lits)}${srcTxt}</li>`;
+      }
+      html += '</ol></div>';
+    }
+    out.innerHTML = html;
+  }
+  $('proveBtn').addEventListener('click', proveByResolution);
+
+  const EX = {
+    ex1: 'P -> Q\nP',
+    ex2: '# Wumpus pit rule (AIMA 7.4):\n# Breeze at (1,1) iff there is a pit in (1,2) or (2,1).\nB11 <-> (P12 | P21)\nB11',
+    ex3: '# Color 3 nodes (a, b, c) red, green, or blue.\n# Edges: a-b, b-c, a-c (triangle).\n# Each node must be exactly one color.\n(Ra | Ga | Ba) & (Rb | Gb | Bb) & (Rc | Gc | Bc)\n~(Ra & Ga) & ~(Ra & Ba) & ~(Ga & Ba)\n~(Ra & Rb) & ~(Ga & Gb) & ~(Ba & Bb)',
+    ex4: '# Each pair must differ; assert all three true → UNSAT.\nA -> ~B\nB -> ~C\nC -> ~A\nA & B & C',
+    ex5: '# De Morgan: ~(A & B) <-> (~A | ~B). Tautology.\n~(A & B) <-> (~A | ~B)',
+  };
+  Object.keys(EX).forEach(k => $(k).addEventListener('click', () => {
+    $('input').value = EX[k]; run();
+  }));
+  $('hardReset').addEventListener('click', () => {
+    $('input').value = EX.ex1; run();
+  });
+
+  // URL-shareable config — formula (base64-encoded since it has special chars).
+  try {
+    const f = new URLSearchParams(location.search).get('f');
+    if (f) {
+      const decoded = decodeURIComponent(escape(atob(f.replace(/-/g, '+').replace(/_/g, '/'))));
+      $('input').value = decoded;
+    }
+  } catch (_) {}
+  document.getElementById('shareLink').addEventListener('click', async () => {
+    const formula = $('input').value;
+    // URL-safe base64.
+    const b64 = btoa(unescape(encodeURIComponent(formula)))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    const params = new URLSearchParams();
+    params.set('f', b64);
+    const url = `${location.origin}${location.pathname}?${params.toString()}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      const btn = document.getElementById('shareLink');
+      const orig = btn.textContent; btn.textContent = '✓ Copied';
+      setTimeout(() => btn.textContent = orig, 1500);
+    } catch (_) { prompt('Copy this URL:', url); }
+  });
+
+  run();
+
+  // Lesson tour. Five canonical scenarios that step through CNF conversion + SAT + resolution.
+  const LESSON_TOUR = [
+    { name: 'Modus ponens (SAT, simple)',
+      description: "P → Q and P. CNF is already two clauses. SAT enumeration finds 1 model: {P=T, Q=T}. Then prove Q by resolution — the empty clause appears in one step.",
+      apply: () => { $('input').value = EX.ex1; run(); $('queryInput').value = 'Q'; } },
+    { name: 'Biconditional → CNF rewrite (Wumpus rule)',
+      description: "B11 ↔ (P12 ∨ P21). Watch the rewrite pipeline: ↔ becomes two implications, → becomes ∨, ¬ distributes, then ∨ distributes over ∧. The single sentence expands into multiple clauses.",
+      apply: () => { $('input').value = EX.ex2; run(); $('queryInput').value = 'P12'; } },
+    { name: '3-coloring a triangle (SAT)',
+      description: "Three nodes, three colors, edges form a triangle. SAT enumeration finds the 6 valid colorings (3! permutations). This is graph coloring as propositional logic.",
+      apply: () => { $('input').value = EX.ex3; run(); } },
+    { name: 'XOR triangle (UNSAT)',
+      description: "Each pair must differ AND all three must be true. No assignment satisfies all clauses. SAT returns UNSAT — every row of the truth table fails.",
+      apply: () => { $('input').value = EX.ex4; run(); } },
+    { name: 'Prove by resolution refutation',
+      description: "Use the modus-ponens KB, query Q. The prover negates Q (adds ¬Q), resolves with P→Q and P, derives the empty clause. KB ⊨ Q is proved. Try changing the query to R (should fail).",
+      apply: () => { $('input').value = EX.ex1; run(); $('queryInput').value = 'Q'; $('proveBtn').click(); } },
+  ];
+  let tourIdx = 0;
+  function renderTour() {
+    if (!$('tourName')) return;
+    const s = LESSON_TOUR[tourIdx];
+    // F1 bilingual: look up tour{i}name / tour{i}desc with English inline fallback.
+    const L = (document.documentElement.lang || 'en');
+    const S = STRINGS[L] || STRINGS.en;
+    $('tourName').textContent = S['tour' + tourIdx + 'name'] || s.name;
+    $('tourDesc').textContent = S['tour' + tourIdx + 'desc'] || s.description;
+    $('tourPos').textContent = `${tourIdx + 1}/${LESSON_TOUR.length}`;
+    $('tourPrev').disabled = (tourIdx === 0);
+    $('tourNext').disabled = (tourIdx === LESSON_TOUR.length - 1);
+  }
+  $('tourApply').addEventListener('click', () => LESSON_TOUR[tourIdx].apply());
+  $('tourPrev').addEventListener('click', () => { if (tourIdx > 0) { tourIdx--; renderTour(); } });
+  $('tourNext').addEventListener('click', () => { if (tourIdx < LESSON_TOUR.length - 1) { tourIdx++; renderTour(); } });
+  renderTour();
+
+  // F1: worksheet feedback strings are bilingual; fall back to inline English.
+  function wsMsg(key, en) {
+    const L = (document.documentElement.lang || 'en');
+    return (STRINGS[L] && STRINGS[L][key]) || en;
+  }
+  // Worksheet/lab mode — 3 questions with instant ✓/✗ feedback.
+  // MCQ: each question is graded by the selected radio's index, not typed text.
+  // `correct` is the index of the right option (language-agnostic). ok/no are the
+  // existing bilingual feedback keys, with an English inline fallback via wsMsg.
+  const WORKSHEET = [
+    { correct: 1,
+      ok:  ['ws1ok', "Correct. P→Q, P → forces P=T, Q=T. Exactly one of the 4 truth-table rows satisfies the KB."],
+      no:  ['ws1no', "Try 1. The KB {P→Q, P} forces both P=T and Q=T — only one row in the truth table works."] },
+    { correct: 2,
+      ok:  ['ws2ok', "Correct. UNSAT means no assignment satisfies all clauses. SAT enumeration tries all 2³ = 8 rows and rejects every one."],
+      no:  ['ws2no', "Try 0. UNSAT means literally no satisfying assignment exists — that's what makes it unsatisfiable."] },
+    { correct: 0,
+      ok:  ['ws3ok', "Right. Negate Q (¬Q), add to KB, resolve with P→Q to get ¬P, then resolve ¬P with the fact P to get the empty clause. KB ⊨ Q is proved."],
+      no:  ['ws3no', "Try 'yes'. Q follows from {P→Q, P} by modus ponens, which resolution can derive: ¬Q + (¬P∨Q) → ¬P, then ¬P + P → empty clause."] },
+  ];
+  WORKSHEET.forEach((q, i) => {
+    const n = i + 1;
+    $(`ws${n}btn`).addEventListener('click', () => {
+      const fb = $(`ws${n}fb`);
+      const picked = document.querySelector(`input[name="ws${n}"]:checked`);
+      if (!picked) {
+        fb.textContent = wsMsg('ws-pick', 'Pick an answer first.');
+        fb.style.color = 'var(--muted)';
+        return;
+      }
+      const ok = Number(picked.value) === q.correct;
+      const [key, en] = ok ? q.ok : q.no;
+      fb.textContent = (ok ? '✓ ' : '✗ ') + wsMsg(key, en);
+      fb.style.color = ok ? '#16a34a' : '#dc2626';
+    });
+  });
+})();
+</script>
+<!-- Embed mode handler (shared pattern across all 12 applets). -->
+<script>
+(() => {
+  try {
+    if (new URLSearchParams(location.search).get('embed') === '1') {
+      document.body.classList.add('embed-mode');
+    }
+  } catch (_) {}
+  const btn = document.getElementById('embedLink');
+  if (!btn) return;
+  btn.addEventListener('click', async () => {
+    const url = new URL(location.href);
+    url.searchParams.set('embed', '1');
+    const snippet = `<iframe src="${url.toString()}" width="100%" height="720" frameborder="0" style="border:1px solid #e5e7eb; border-radius:8px;" loading="lazy"></iframe>`;
+    try {
+      await navigator.clipboard.writeText(snippet);
+      const orig = btn.textContent; btn.textContent = '✓ Copied iframe';
+      setTimeout(() => btn.textContent = orig, 1800);
+    } catch (_) { prompt('Copy this iframe snippet:', snippet); }
+  });
+})();
+</script>
+  <footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
+    <p style="margin:0 0 6px;"><a href="#top" data-i18n="footer-top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
+    <p style="margin:0;"><span data-i18n="footer-builtby">Built by</span> Logan Dixon · <span data-i18n="footer-course">Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy</span></p>
+    <p style="margin:6px 0 0;"><a href="https://github.com/lmdixon23/ai-playgrounds" data-i18n="footer-source" style="color:var(--accent,#0891b2);">View source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-i18n="footer-issue" style="color:var(--accent,#0891b2);">Report an issue</a> · © 2026 Logan Dixon</p>
+  </footer>
+  <!-- Privacy-friendly analytics — GoatCounter, cookieless. -->
+  <script data-goatcounter="https://lmdixon23.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

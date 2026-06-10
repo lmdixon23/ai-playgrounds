@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visualizing Overfitting</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E">
+<meta name="description" content="Interactive visualization of polynomial fitting. Watch train error drop to zero while test error explodes — the canonical overfitting demonstration.">
+<link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/overfitting/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/overfitting/">
+<meta property="og:title" content="Visualizing Overfitting — AI Playgrounds">
+<meta property="og:description" content="Interactive visualization of polynomial fitting. Watch train error drop to zero while test error explodes — the canonical overfitting demonstration.">
+<meta property="og:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Visualizing Overfitting — AI Playgrounds">
+<meta name="twitter:description" content="Interactive visualization of polynomial fitting. Watch train error drop to zero while test error explodes — the canonical overfitting demonstration.">
+<meta name="twitter:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Visualizing Overfitting — AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/overfitting/","description":"Interactive visualization of polynomial fitting. Watch train error drop to zero while test error explodes — the canonical overfitting demonstration.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan Dixon"}}
+</script>
+<style>
+  :root {
+    --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #059669;
+    --card: #fff; --border: #e5e7eb; --soft: #f9fafb;
+    --truth: #94a3b8; --fit: #ec4899; --train: #2563eb; --test: #f97316;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", Arial, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; }
+  .page-header { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 24px; }
+  .header-utility { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .header-prefs { display: flex; align-items: center; gap: 8px; }
+  .header-main { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .header-actions { display: flex; align-items: center; gap: 8px; font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem; }
+  .header-actions .header-reset { margin-left: 12px; }
+  .page-header h1 { margin: 0; font-size: 1.5rem; }
+  .page-header .back { color: var(--accent); text-decoration: none; font-size: 0.9rem; font-family: -apple-system, system-ui, sans-serif; }
+  .lang-switch { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .lang-switch button { padding: 4px 10px; background: white; color: var(--muted);
+                          border: none; cursor: pointer; font: inherit; font-size: 0.78rem; }
+  .lang-switch button.active { background: var(--accent); color: white; font-weight: 600; }
+  .header-reset { padding: 6px 12px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font: inherit; font-size: 0.82rem; }
+  .header-reset:hover { background: var(--soft); }
+  .tldr { max-width: 820px; margin: 16px auto 0;
+           background: var(--accent); color: white;
+           border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; font-weight: 500;
+           font-family: -apple-system, system-ui, sans-serif; line-height: 1.45; }
+  .tldr strong { color: rgba(255,255,255,0.85); font-size: 0.72rem; letter-spacing: 0.08em;
+                  text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px; }
+  .interactive { background: var(--card); padding: 24px; border-bottom: 1px solid var(--border); }
+  .interactive-inner { max-width: 1280px; margin: 0 auto;
+                         font-family: -apple-system, system-ui, sans-serif; }
+  .bento { display: grid; grid-template-columns: minmax(300px, 360px) minmax(0, 1fr); gap: 16px; align-items: start; margin-bottom: 14px; }
+  .bento-side, .bento-main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .bento-cell { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+  .bento-cell > :first-child { margin-top: 0 !important; }
+  @media (max-width: 860px) { .bento { grid-template-columns: 1fr; gap: 12px; } }
+  .sliders-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px;
+                    margin-bottom: 16px; font-size: 0.88rem; }
+  .slider-field { display: flex; flex-direction: column; gap: 4px; }
+  .slider-field .row { display: flex; justify-content: space-between; }
+  .slider-field .lbl { color: var(--muted); }
+  .slider-field .val { color: var(--accent); font-weight: 700; font-family: monospace; }
+  .slider-field input[type=range] { width: 100%; }
+  .slider-field .help { color: var(--muted); font-size: 0.78rem; font-style: italic; }
+  .control-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+                  margin-bottom: 14px; font-size: 0.88rem; }
+  .control-row label { color: var(--muted); }
+  .control-row select { padding: 6px 10px; border: 1px solid var(--border);
+                          border-radius: 6px; font: inherit; background: white; }
+  .control-row .step-btn { padding: 7px 14px; background: white; color: var(--fg);
+                            border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                            font: inherit; font-size: 0.85rem; }
+  .canvas-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 14px; }
+  .canvas-card { background: white; border: 1px solid var(--border);
+                   border-radius: 8px; padding: 10px; }
+  .canvas-card h3 { margin: 0 0 6px; font-size: 0.85rem; color: var(--accent);
+                      text-transform: uppercase; letter-spacing: 0.05em; }
+  canvas { display: block; width: 100%; height: 280px; background: white; border-radius: 4px; }
+  .err-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .err-card { background: var(--soft); border: 1px solid var(--border);
+                border-radius: 8px; padding: 14px; }
+  .err-card .lbl { color: var(--muted); font-size: 0.75rem;
+                     text-transform: uppercase; letter-spacing: 0.05em; }
+  .err-card .num { font-family: monospace; font-size: 1.8rem; font-weight: 700; }
+  .err-card.train .num { color: var(--train); }
+  .err-card.test .num { color: var(--test); }
+  .jump-link { display: inline-block; margin-top: 14px;
+                padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px;
+                background: white; color: var(--accent); text-decoration: none;
+                font-family: -apple-system, system-ui, sans-serif; font-size: 0.82rem;
+                font-weight: 600; }
+  .jump-link:hover { background: var(--soft); }
+  .jump-anchor { text-align: center; }
+  .essay { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; font-size: 1.05rem; }
+  .essay h2 { font-size: 1.5rem; margin-top: 36px; margin-bottom: 12px; color: var(--accent); }
+  .essay h3 { font-size: 1.15rem; margin-top: 24px; margin-bottom: 8px; }
+  .essay .lede { font-size: 1.15rem; color: #374151; }
+  .essay .aha { background: #d1fae5; border-left: 4px solid #059669;
+                 padding: 12px 18px; margin: 18px 0; border-radius: 0 6px 6px 0;
+                 font-style: italic; color: #064e3b; }
+  .essay code { background: var(--soft); padding: 1px 6px; border-radius: 4px;
+                 font-family: 'SF Mono', Consolas, monospace; font-size: 0.92em; }
+  .essay ul li { margin-bottom: 6px; }
+  .essay .for-teachers { background: var(--soft); border: 1px solid var(--border);
+                          border-radius: 8px; padding: 20px 24px; margin-top: 36px;
+                          font-family: -apple-system, system-ui, sans-serif; font-size: 0.95rem; }
+  .essay .for-teachers h3 { font-family: -apple-system, system-ui, sans-serif;
+                              color: var(--accent); font-size: 0.9rem;
+                              text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+  /* === dark mode === */
+  body.dark-mode {
+    --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8;
+    --card: #1e293b; --border: #334155; --soft: #1e293b;
+  }
+  body.dark-mode .essay .lede { color: #cbd5e1; }
+  body.dark-mode .essay .for-teachers { background: #0f172a; }
+  /* True canvas dark mode — render fn picks bg directly. */
+  body.dark-mode .header-reset,
+  body.dark-mode .lang-switch button:not(.active),
+  body.dark-mode .header-theme,
+  body.dark-mode .control-row select,
+  body.dark-mode .control-row .step-btn,
+  body.dark-mode .canvas-card,
+  body.dark-mode .err-card { background: var(--card); color: var(--fg); }
+  .header-theme { padding: 6px 10px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font-size: 1rem; line-height: 1; font-family: inherit; }
+  .header-theme:hover { background: var(--soft); }
+  .header-png { padding: 6px 10px; background: white; color: var(--fg);
+                  border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                  font-size: 0.85rem; font-family: inherit; }
+  .header-png:hover { background: var(--soft); }
+  body.dark-mode .header-png { background: var(--card); color: var(--fg); }
+  /* ===== Slider styling — native themed control via accent-color (consistent across browsers) ===== */
+  input[type="range"] { accent-color: var(--accent); height: 28px; cursor: pointer; }
+  /* embed mode. Strip chrome so the applet fits cleanly in an LMS iframe. */
+  body.embed-mode .page-header,
+  body.embed-mode aside.tldr,
+  body.embed-mode article.essay,
+  body.embed-mode .jump-anchor { display: none !important; }
+  body.embed-mode .interactive { padding: 12px; border-bottom: none; }
+  /* ===== Shared a11y + contrast tokens (review fixes: F4 keyboard focus, F6 banner contrast) ===== */
+  button:focus-visible, a:focus-visible, select:focus-visible,
+  input:focus-visible, textarea:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+  .tldr { background: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), var(--accent); }
+  .tldr strong { color: #fff; }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="header-utility">
+    <a class="back" href="../../" data-i18n="back-link">← Back to all playgrounds</a>
+    <div class="header-prefs">
+      <button class="header-theme" id="themeToggle" aria-label="Toggle dark or light theme"
+              title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
+      <div class="lang-switch" title="Switch interface language">
+        <button data-lang="en" class="active">EN</button>
+        <button data-lang="zh">中文</button>
+      </div>
+    </div>
+  </div>
+  <div class="header-main">
+    <h1 data-i18n="title">Visualizing Overfitting</h1>
+    <div class="header-actions">
+      <button class="header-png" id="shareLink"
+              title="Copy a URL that re-opens this truth / degree / n / noise / λ in another browser.">🔗 Share</button>
+      <button class="header-png" id="embedLink"
+              title="Copy an <iframe> snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
+      <button class="header-png" id="csvExport"
+              title="Download train + test datasets and the per-degree MSE table as CSV.">📊 CSV</button>
+      <button class="header-png" id="exportPng"
+              title="Download the fit canvas as a PNG.">📷 PNG</button>
+      <button class="header-reset" id="hardReset" data-i18n="reset-all"
+              title="Reset everything: sin truth, n=20 points, σ=0.2 noise, degree 3, λ=0.">↺ Reset all</button>
+    </div>
+  </div>
+</header>
+
+<aside class="tldr">
+  <strong data-i18n="tldr-strong">The big idea</strong>
+  <span data-i18n="tldr-body">Slide degree from 1 → 20. Train error drops to zero. Test error explodes. That gap is overfitting, and the U-shape is the bias-variance trade-off.</span>
+</aside>
+
+<section class="interactive">
+<div class="interactive-inner">
+
+<div class="bento">
+  <div class="bento-side"><!-- bento-side -->
+    <div class="bento-cell">
+
+      <div class="sliders-grid">
+        <div class="slider-field">
+          <div class="row">
+            <span class="lbl" data-i18n="deg-label">Polynomial degree</span>
+            <span class="val" id="degV">3</span>
+          </div>
+          <input id="deg" type="range" min="1" max="20" value="3" aria-label="Polynomial degree"
+                 data-i18n-title="deg-slider-title"
+                 title="Model capacity. Higher degree = more wiggle room = easier to overfit.">
+          <div class="help" data-i18n="deg-help">More wiggle room. Watch test error rise after the sweet spot.</div>
+        </div>
+        <div class="slider-field">
+          <div class="row">
+            <span class="lbl" data-i18n="lam-label">Reg. λ</span>
+            <span class="val" id="lamV">0.000</span>
+          </div>
+          <input id="lam" type="range" min="0" max="5" step="0.001" value="0" aria-label="Regularization strength (lambda)"
+                 data-i18n-title="lam-slider-title"
+                 title="Regularization strength. With Ridge, adds λ‖w‖² to the loss; with Lasso, adds λ‖w‖₁. Set λ=0 to disable.">
+          <div class="help">
+            <select id="regSel" data-i18n-title="reg-title"
+                    title="Ridge (L2): shrinks all weights smoothly. Lasso (L1): drives some weights exactly to zero — automatic feature selection. Toggle to compare."
+                    style="padding:2px 4px; font:inherit; border:1px solid var(--border); border-radius:4px;">
+              <option value="ridge" selected data-i18n="reg-ridge">Ridge (L2)</option>
+              <option value="lasso" data-i18n="reg-lasso">Lasso (L1)</option>
+            </select>
+            <span data-i18n="lam-help">Penalty on large weights. Tames high-degree wiggle.</span>
+          </div>
+        </div>
+        <div class="slider-field">
+          <div class="row">
+            <span class="lbl" data-i18n="n-label">Train points (n)</span>
+            <span class="val" id="nV">20</span>
+          </div>
+          <input id="n" type="range" min="5" max="100" value="20" aria-label="Number of training samples"
+                 data-i18n-title="n-slider-title"
+                 title="Size of the training set. More data = harder to overfit.">
+          <div class="help" data-i18n="n-help">More data tames overfitting at the same degree.</div>
+        </div>
+        <div class="slider-field">
+          <div class="row">
+            <span class="lbl" data-i18n="sig-label">Noise σ</span>
+            <span class="val" id="sigV">0.20</span>
+          </div>
+          <input id="sig" type="range" min="0" max="1" step="0.01" value="0.2" aria-label="Noise standard deviation (sigma)"
+                 data-i18n-title="sig-slider-title"
+                 title="Std-dev of Gaussian noise added to each train point. σ=0 makes overfitting impossible.">
+          <div class="help" data-i18n="sig-help">Set σ=0 and overfitting can't happen. Why?</div>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <label data-i18n="truth-label">True function:</label>
+        <select id="truthSel" data-i18n-title="truth-sel-title" title="The 'real' function the model is trying to recover from noisy samples.">
+          <option value="sin" data-i18n="opt-sin">sin(2πx) — smooth periodic</option>
+          <option value="cubic" data-i18n="opt-cubic">3x³ − x — smooth polynomial</option>
+          <option value="step" data-i18n="opt-step">step at x=0.5 — discontinuous</option>
+          <option value="linear" data-i18n="opt-linear">1.5x — degree 1 is enough</option>
+        </select>
+        <button class="step-btn" id="resampleBtn" data-i18n="resample-btn"
+                data-i18n-title="resample-title" title="Re-draw new random noise around the true function.">↻ Resample noise</button>
+        <!-- train/test/CV visibility toggles. -->
+        <label style="margin-left:12px;" data-i18n-title="show-test-title"
+               title="Show the held-out test points as open circles on the fit chart. Watch them stay near the truth while train points are perfectly fit on the high-degree polynomial.">
+          <input type="checkbox" id="showTest"> <span data-i18n="show-test">Show test points</span></label>
+        <label data-i18n-title="show-cv-title"
+               title="Add a k-fold cross-validation curve to the error chart. This is what's used in practice to pick the regularization sweet spot.">
+          <input type="checkbox" id="showCv"> <span data-i18n="show-cv">Add 5-fold CV curve</span></label>
+      </div>
+
+      <div class="err-row">
+        <div class="err-card train">
+          <div class="lbl" data-i18n="train-mse">Train MSE</div>
+          <div class="num" id="trainMse">—</div>
+        </div>
+        <div class="err-card test">
+          <div class="lbl" data-i18n="test-mse">Test MSE (held out)</div>
+          <div class="num" id="testMse">—</div>
+        </div>
+      </div>
+
+    </div><!-- /.bento-cell controls -->
+  </div><!-- /.bento-side -->
+
+  <div class="bento-main"><!-- bento-main -->
+    <div class="bento-cell">
+
+      <div class="canvas-pair">
+        <div class="canvas-card">
+          <h3 data-i18n="fit-h3">Fit on training data</h3>
+          <div style="position:relative;">
+            <canvas id="fitCv" width="420" height="280" role="img"
+                    style="width: 100%; max-width: 420px; height: auto; aspect-ratio: 420 / 280;"
+                    aria-label="Polynomial fit canvas showing training points, true function, and fitted curve."></canvas>
+            <!-- D3/SVG hybrid: a11y overlay with one focusable element per training point.
+                 Same visual stays in canvas; SVG adds keyboard nav + tooltips. -->
+            <svg id="fitOverlay" viewBox="0 0 420 280" preserveAspectRatio="none"
+                 style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none;"></svg>
+          </div>
+        </div>
+        <div class="canvas-card">
+          <h3 data-i18n="err-h3">MSE vs degree (this λ, this dataset)</h3>
+          <canvas id="errCv" width="420" height="280" role="img"
+                  style="width: 100%; max-width: 420px; height: auto; aspect-ratio: 420 / 280;"
+                  aria-label="Train versus test MSE plotted against polynomial degree."></canvas>
+        </div>
+      </div>
+
+    </div><!-- /.bento-cell charts -->
+
+    <div class="bento-cell">
+      <!-- Learning curves. Fix degree+λ, vary n; chart train/test MSE vs n.
+           Diagnoses bias vs variance vs need-more-data. -->
+      <details class="lc-panel" style="margin-top:0;">
+        <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+          <span data-i18n="lc-summary">📈 Learning curves (vary n at fixed degree)</span>
+        </summary>
+        <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem;">
+          <p style="margin:0 0 8px; color:var(--muted); font-size:0.82rem;" data-i18n="lc-hint">
+            Fixes the current degree, λ, regularizer, and noise; varies n from 5 → n_max. For each n, draws a fresh sample of n training points and computes train and test MSE. Plots both curves. Diagnostic: if train ≈ test and both high → underfitting (more capacity); if train low + test high (gap) → overfitting (more data or regularization); if both converging low → good.
+          </p>
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
+            <label data-i18n="lc-nmax-label">n_max:</label>
+            <input id="lcNmax" type="range" min="20" max="300" step="10" value="150" style="width:160px;">
+            <span id="lcNmaxV" style="font-family:ui-monospace,monospace; color:var(--accent); font-weight:700;">150</span>
+            <label data-i18n="lc-trials-label" style="margin-left:10px;">Avg over runs:</label>
+            <input id="lcTrials" type="range" min="1" max="10" value="3" style="width:120px;">
+            <span id="lcTrialsV" style="font-family:ui-monospace,monospace; color:var(--accent); font-weight:700;">3</span>
+            <button class="step-btn" id="lcRunBtn" data-i18n="lc-run">▶ Run learning curves</button>
+          </div>
+          <canvas id="lcCv" width="560" height="220" style="border:1px solid var(--border); width:100%; height:auto; background:var(--card);"></canvas>
+          <div id="lcStats" style="font-family:ui-monospace,monospace; font-size:0.82rem; color:var(--muted); margin-top:6px; min-height:1.4em;">
+            <span style="font-style:italic;" data-i18n="lc-empty">(click "Run learning curves")</span>
+          </div>
+        </div>
+      </details>
+    </div><!-- /.bento-cell lc-panel -->
+
+  </div><!-- /.bento-main -->
+</div><!-- /.bento -->
+
+  <!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
+  <details class="lesson-tour" style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="tour-summary">📚 Lesson tour (5 steps)</span>
+    </summary>
+    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+        <strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
+        <strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">—</strong>
+      </div>
+      <p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">—</p>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="step-btn secondary" id="tourPrev" data-i18n="tour-prev">← Prev</button>
+        <button class="step-btn" id="tourApply" data-i18n="tour-apply">▶ Apply this scenario</button>
+        <button class="step-btn secondary" id="tourNext" data-i18n="tour-next">Next →</button>
+      </div>
+    </div>
+  </details>
+
+  <!-- Worksheet/lab mode. 3 questions per applet with instant check. -->
+  <details class="worksheet" style="margin-top:8px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="ws-summary">📝 Worksheet (3 questions)</span>
+    </summary>
+    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem; line-height:1.5;">
+      <div class="ws-q" id="ws1">
+        <p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">Set degree=20, n=20, λ=0, sine truth. The train MSE is approximately:</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="0"> <span data-i18n="ws1o0">Near zero — 21 free coefficients can pass through all 20 training points.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="1"> <span data-i18n="ws1o1">High — a degree-20 curve is too wiggly to fit the training points.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="2"> <span data-i18n="ws1o2">About the same as the test MSE — train and test error always match.</span></label>
+        </div>
+        <button class="step-btn" id="ws1btn" data-i18n="ws-check">Check</button>
+        <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+      <div class="ws-q" id="ws2" style="margin-top:10px;">
+        <p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Same settings as Q1. The test MSE (vs train MSE) is:</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="0"> <span data-i18n="ws2o0">Lower — fitting the training points perfectly also fits unseen points.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="1"> <span data-i18n="ws2o1">About the same — train MSE is a reliable estimate of test MSE.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="2"> <span data-i18n="ws2o2">Much higher — the wild wiggles that hit every train point miss the test points.</span></label>
+        </div>
+        <button class="step-btn" id="ws2btn" data-i18n="ws-check">Check</button>
+        <span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+      <div class="ws-q" id="ws3" style="margin-top:10px;">
+        <p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Keep degree=20. Now raise λ from 0 to 0.5. Test MSE goes:</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="0"> <span data-i18n="ws3o0">Up — any penalty on the weights can only hurt accuracy.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="1"> <span data-i18n="ws3o1">Down — shrinking the coefficients smooths the curve and improves generalization.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="2"> <span data-i18n="ws3o2">Stays the same — λ changes the weights but not the test error.</span></label>
+        </div>
+        <button class="step-btn" id="ws3btn" data-i18n="ws-check">Check</button>
+        <span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+    </div>
+  </details>
+
+  <div class="jump-anchor"><a href="#essay" class="jump-link" data-i18n="jump-link">↓ Read the explanation</a></div>
+</div>
+</section>
+
+<article class="essay" id="essay">
+
+  <p class="lede">
+    The single most important idea in machine learning is also the simplest: a model that does well
+    on the data you trained it on isn't necessarily a good model. The data that matters is the
+    data you <em>haven't</em> seen. This applet makes that distinction visible in two charts.
+  </p>
+
+  <h2>Polynomial fitting as the laboratory</h2>
+
+  <p>
+    The applet samples points from a true function (sin, cubic, step, or linear), adds Gaussian
+    noise, then fits a polynomial of the degree you choose to those noisy points. Degree 1 is a
+    straight line. Degree 20 has 20 parameters — enough to weave a curve through nearly any 20
+    points. The left chart shows the noisy training points (blue), the true function (dashed grey),
+    and the fitted polynomial (pink). The right chart shows MSE vs degree, with both train and test
+    error.
+  </p>
+
+  <h2>Why train error keeps falling forever</h2>
+
+  <p>
+    Any time you give a model more parameters, it can drive its training error down (or at worst
+    keep it the same). At degree n−1 with n training points, the polynomial passes exactly through
+    every point — train error literally zero. This is great news if your only goal is to memorize
+    the training set, and useless news if you want to predict anything new.
+  </p>
+
+  <h2>Why test error has a sweet spot</h2>
+
+  <p>
+    The test error tells a different story. At low degrees the model is too rigid to capture the
+    true shape — that's <strong>bias</strong>. At high degrees the model fits the noise as well as
+    the signal — that's <strong>variance</strong>. Somewhere in the middle is the sweet spot,
+    visible as the minimum of the orange test-error curve.
+  </p>
+
+  <div class="aha">
+    The U-shape of the test-error curve is the canonical picture of the bias-variance trade-off.
+    Train error monotonically decreases; test error first decreases (bias falling) then increases
+    (variance rising). The minimum is where you actually want to be.
+  </div>
+
+  <h2>What regularization does</h2>
+
+  <p>
+    Ridge regression adds <code>λ‖w‖²</code> to the loss, penalizing large coefficients. Set
+    degree to 20 and watch the wild oscillating fit. Now slide λ up. The coefficients shrink, the
+    fit smooths out, and test error drops — even though the model still has 20 parameters. This is
+    why "more parameters" isn't always the right framing. What matters is the <em>effective</em>
+    capacity, which regularization controls.
+  </p>
+
+  <h2>Why noise = 0 makes overfitting impossible</h2>
+
+  <p>
+    Slide σ to 0. Both train and test error become identical at every degree — the test error
+    monotonically falls along with train error. With no noise, there's nothing to overfit.
+    Overfitting is the model treating noise as signal; remove the noise and the problem evaporates.
+    Real data always has noise, which is why this matters in practice.
+  </p>
+
+  <h2>What this simplifies</h2>
+
+  <p>
+    Real ML uses cross-validation (not a single held-out test set) to estimate test error reliably.
+    Real models have many regularization knobs (L1, L2, dropout, early stopping, weight decay,
+    data augmentation), not just one λ. Real overfitting in deep learning is more subtle — modern
+    networks have millions of parameters but don't always overfit, a phenomenon called "double
+    descent" that the polynomial picture doesn't capture. But the basic intuition — train error
+    is a liar, test error is what you want — is universal.
+  </p>
+
+  <div class="for-teachers">
+    <h3>For teachers</h3>
+    <p><strong>Curriculum:</strong> Evaluation, Leakage, and Regularization.
+       Distinguish train vs test error; identify under- and over-fitting; understand how model
+       complexity, dataset size, and regularization interact.</p>
+    <p><strong>Pre-exploration prompts:</strong></p>
+    <ul>
+      <li>If a model gets 100% on the data it studied, does that mean it's a good model?</li>
+      <li>Why is it cheating to use the same data to train AND evaluate a model?</li>
+      <li>What does "the model memorized the noise" mean?</li>
+    </ul>
+    <p><strong>Post-exploration prompts:</strong></p>
+    <ul>
+      <li>At degree 1, both train and test error are high. Why is that called "underfitting"?</li>
+      <li>Slide degree from 1 to 20. Train error always goes down. Test error has a minimum, then climbs. Why?</li>
+      <li>Set degree=15 and watch test error. Now slide λ from 0 to 5. What does regularization "do" to a flexible model?</li>
+      <li>Set noise to 0. Now overfitting can't happen — why?</li>
+    </ul>
+    <p><strong>Common misconceptions defeated:</strong>
+       "lower training error = better model" (it's the test error that matters);
+       "regularization makes a model worse" (it can make a flexible model BETTER on new data);
+       "more parameters always overfit" (only if the data is small/noisy — try n=80).</p>
+  </div>
+
+</article>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+
+  // ===== i18n strings =====
+  const STRINGS = {
+    en: {
+      'title': 'Visualizing Overfitting', 'back-link': '← Back to all playgrounds',
+      'footer-top': '↑ Back to top', 'footer-builtby': 'Built by', 'footer-course': 'Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy', 'footer-source': 'View source', 'footer-issue': 'Report an issue',
+      'reset-all': '↺ Reset all', 'truth-label': 'True function:',
+      'tldr-strong': 'The big idea',
+      'tldr-body': 'Slide degree from 1 → 20. Train error drops to zero. Test error explodes. That gap is overfitting, and the U-shape is the bias-variance trade-off.',
+      'deg-label': 'Polynomial degree',
+      'deg-help': 'More wiggle room. Watch test error rise after the sweet spot.',
+      'lam-label': 'Reg. λ',
+      'lam-help': 'Penalty on large weights. Tames high-degree wiggle.',
+      'reg-ridge': 'Ridge (L2)', 'reg-lasso': 'Lasso (L1)',
+      'reg-title': 'Ridge (L2): shrinks all weights smoothly. Lasso (L1): drives some weights exactly to zero — automatic feature selection. Toggle to compare.',
+      'n-label': 'Train points (n)',
+      'n-help': 'More data tames overfitting at the same degree.',
+      'sig-label': 'Noise σ',
+      'sig-help': "Set σ=0 and overfitting can't happen. Why?",
+      'opt-sin': 'sin(2πx) — smooth periodic',
+      'opt-cubic': '3x³ − x — smooth polynomial',
+      'opt-step': 'step at x=0.5 — discontinuous',
+      'opt-linear': '1.5x — degree 1 is enough',
+      'resample-btn': '↻ Resample noise',
+      'show-test': 'Show test points',
+      'show-test-title': 'Show the held-out test points as open circles on the fit chart. Watch them stay near the truth while train points are perfectly fit on the high-degree polynomial.',
+      'show-cv': 'Add 5-fold CV curve',
+      'show-cv-title': "Add a k-fold cross-validation curve to the error chart. This is what's used in practice to pick the regularization sweet spot.",
+      'fit-h3': 'Fit on training data',
+      'err-h3': 'MSE vs degree (this λ, this dataset)',
+      'train-mse': 'Train MSE', 'test-mse': 'Test MSE (held out)',
+      'jump-link': '↓ Read the explanation',
+      'tour-summary': '📚 Lesson tour (5 steps)',
+      'tour-step': 'Step',
+      'tour-prev': '← Prev', 'tour-next': 'Next →', 'tour-apply': '▶ Apply this scenario',
+      'ws-summary': '📝 Worksheet (3 questions)',
+      'ws-check': 'Check',
+      'ws-pick': 'Pick an answer first.',
+      'ws1q': 'Set degree=20, n=20, λ=0, sine truth. The train MSE is approximately:',
+      'ws2q': 'Same settings as Q1. The test MSE (vs train MSE) is:',
+      'ws3q': 'Keep degree=20. Now raise λ from 0 to 0.5. Test MSE goes:',
+      // --- MCQ: worksheet option labels (ws{n}o{i}) ---
+      'ws1o0': 'Near zero — 21 free coefficients can pass through all 20 training points.',
+      'ws1o1': 'High — a degree-20 curve is too wiggly to fit the training points.',
+      'ws1o2': 'About the same as the test MSE — train and test error always match.',
+      'ws2o0': 'Lower — fitting the training points perfectly also fits unseen points.',
+      'ws2o1': 'About the same — train MSE is a reliable estimate of test MSE.',
+      'ws2o2': 'Much higher — the wild wiggles that hit every train point miss the test points.',
+      'ws3o0': 'Up — any penalty on the weights can only hurt accuracy.',
+      'ws3o1': 'Down — shrinking the coefficients smooths the curve and improves generalization.',
+      'ws3o2': 'Stays the same — λ changes the weights but not the test error.',
+      // --- F1: lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
+      'tour0name': 'Underfit (degree 1, sine truth)',
+      'tour0desc': "Polynomial of degree 1 trying to fit a sine. Train AND test error are both high — this is high bias. The model literally can't bend enough.",
+      'tour1name': 'Sweet spot (degree 5)',
+      'tour1desc': 'Same truth, degree 5. Train and test are both low and close together. This is the bias-variance balance point we always want.',
+      'tour2name': 'Severe overfit (degree 20, n=20)',
+      'tour2desc': 'Degree 20 with only 20 training points. Train error → 0 (the curve passes through every dot). Test error explodes. Classic overfitting.',
+      'tour3name': 'Ridge fixes the overfit',
+      'tour3desc': 'Still degree 20, but now λ=0.5. The penalty shrinks the wild high-order coefficients. Test error drops dramatically without changing the model class.',
+      'tour4name': 'More data also fixes it',
+      'tour4desc': 'Degree 20, λ=0, but n=100 instead of 20. With more data, even a high-capacity model can\'t memorize — it has to generalize. Use the CV curve toggle.',
+      // --- F1: worksheet answer-feedback (ws{n}ok / ws{n}no) ---
+      'ws1ok': 'Correct. A degree-20 polynomial has 21 free parameters; with only 20 training points, it has enough freedom to literally pass through every dot. Train MSE ≈ 0.',
+      'ws1no': "Try 'zero' or 'near zero'. 21 free coefficients can fit 20 arbitrary points exactly — degrees of freedom math.",
+      'ws2ok': 'Yes. Train ≈ 0, test explodes — that gap IS overfitting. The wild oscillations needed to pass through every train point miss the test points completely.',
+      'ws2no': "Hint: zero train error + held-out test error are very different. Try 'much higher'.",
+      'ws3ok': 'Correct. Ridge (L2) penalty λ‖w‖² shrinks large coefficients. The degree-20 polynomial still has 21 params, but they are now small — the curve is forced to be smooth and generalizes much better.',
+      'ws3no': "Try 'down'. λ penalizes large weights, killing the high-frequency wiggles that overfit.",
+      // tooltip translations for main sliders + selectors.
+      'deg-slider-title': 'Model capacity. Higher degree = more wiggle room = easier to overfit.',
+      'lam-slider-title': 'Regularization strength. With Ridge, adds λ‖w‖² to the loss; with Lasso, adds λ‖w‖₁. Set λ=0 to disable.',
+      'n-slider-title': 'Size of the training set. More data = harder to overfit.',
+      'sig-slider-title': 'Std-dev of Gaussian noise added to each train point. σ=0 makes overfitting impossible.',
+      'truth-sel-title': "The 'real' function the model is trying to recover from noisy samples.",
+      'resample-title': 'Re-draw new random noise around the true function.',
+      'lc-summary': '📈 Learning curves (vary n at fixed degree)',
+      'lc-hint': 'Fixes the current degree, λ, regularizer, and noise; varies n from 5 → n_max. For each n, draws a fresh sample of n training points and computes train and test MSE. Plots both curves. Diagnostic: if train ≈ test and both high → underfitting (more capacity); if train low + test high (gap) → overfitting (more data or regularization); if both converging low → good.',
+      'lc-nmax-label': 'n_max:', 'lc-trials-label': 'Avg over runs:',
+      'lc-run': '▶ Run learning curves',
+      'lc-empty': '(click "Run learning curves")',
+    },
+    zh: {
+      'title': '过拟合可视化', 'back-link': '← 返回所有演示',
+      'footer-top': '↑ 返回顶部', 'footer-builtby': '作者', 'footer-course': '为海淀凯文学校 2025–2026《人工智能导论》课程制作', 'footer-source': '查看源代码', 'footer-issue': '反馈问题',
+      'reset-all': '↺ 全部重置', 'truth-label': '真实函数:',
+      'tldr-strong': '核心思想',
+      'tldr-body': '将多项式次数从 1 拉到 20。训练误差降到零,测试误差却暴涨。这个差距就是过拟合,U 形曲线就是偏差-方差权衡。',
+      'deg-label': '多项式次数',
+      'deg-help': '次数越高越能拟合。注意:过了"甜点"之后测试误差会上升。',
+      'lam-label': '正则化 λ',
+      'lam-help': '对大权重的惩罚。能驯服高次项的剧烈摆动。',
+      'reg-ridge': '岭回归 (L2)', 'reg-lasso': '套索 (L1)',
+      'reg-title': '岭回归(L2):平滑地缩小所有权重。套索(L1):把部分权重精确推到零——自动特征选择。切换比较。',
+      'n-label': '训练点数 (n)',
+      'n-help': '相同次数下,数据越多越难过拟合。',
+      'sig-label': '噪声 σ',
+      'sig-help': '把 σ 设为 0,过拟合就不会发生。为什么?',
+      'opt-sin': 'sin(2πx) — 平滑周期函数',
+      'opt-cubic': '3x³ − x — 平滑多项式',
+      'opt-step': 'x=0.5 处阶跃 — 不连续',
+      'opt-linear': '1.5x — 一次就够',
+      'resample-btn': '↻ 重新采样噪声',
+      'show-test': '显示测试点',
+      'show-test-title': '在拟合图上以空心圆显示留出的测试点。观察高次多项式上训练点被完美拟合时,测试点仍偏离真实曲线。',
+      'show-cv': '加入 5 折 CV 曲线',
+      'show-cv-title': '在误差图中加入 k 折交叉验证曲线。这是实际中选择正则化强度的标准方法。',
+      'fit-h3': '训练数据上的拟合',
+      'err-h3': '均方误差 vs 多项式次数(当前 λ 与数据集)',
+      'train-mse': '训练 MSE', 'test-mse': '测试 MSE(留出集)',
+      'jump-link': '↓ 阅读说明',
+      'tour-summary': '📚 课程导览(5 步)',
+      'tour-step': '步骤',
+      'tour-prev': '← 上一步', 'tour-next': '下一步 →', 'tour-apply': '▶ 应用此场景',
+      'ws-summary': '📝 练习题(3 题)',
+      'ws-check': '核对',
+      'ws-pick': '请先选择一个答案。',
+      'ws1q': '设 degree=20、n=20、λ=0、正弦真值。训练 MSE 大约是:',
+      'ws2q': '与 Q1 相同的设置。测试 MSE(相对训练 MSE)是:',
+      'ws3q': '保持 degree=20。现在把 λ 从 0 提高到 0.5。测试 MSE 会:',
+      // --- MCQ: 练习题选项(ws{n}o{i})---
+      'ws1o0': '接近零——21 个自由系数可以穿过全部 20 个训练点。',
+      'ws1o1': '很高——20 次曲线太过摆动,无法拟合训练点。',
+      'ws1o2': '与测试 MSE 大致相同——训练误差和测试误差总是一致。',
+      'ws2o0': '更低——完美拟合训练点也会拟合未见过的点。',
+      'ws2o1': '大致相同——训练 MSE 是测试 MSE 的可靠估计。',
+      'ws2o2': '高得多——为击中每个训练点而产生的剧烈摆动完全错过了测试点。',
+      'ws3o0': '上升——对权重的任何惩罚只会损害准确率。',
+      'ws3o1': '下降——缩小系数会平滑曲线,改善泛化。',
+      'ws3o2': '保持不变——λ 改变权重,但不改变测试误差。',
+      // --- F1: 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
+      'tour0name': '欠拟合(1 次,正弦真值)',
+      'tour0desc': '用 1 次多项式去拟合正弦。训练误差和测试误差都很高——这是高偏差。模型根本弯不够。',
+      'tour1name': '甜点区(5 次)',
+      'tour1desc': '同样的真值,5 次。训练和测试都很低且彼此接近。这正是我们一直想要的偏差-方差平衡点。',
+      'tour2name': '严重过拟合(20 次,n=20)',
+      'tour2desc': '20 次多项式而只有 20 个训练点。训练误差 → 0(曲线穿过每一个点)。测试误差暴涨。典型的过拟合。',
+      'tour3name': '岭回归修复过拟合',
+      'tour3desc': '仍是 20 次,但现在 λ=0.5。惩罚项把剧烈的高次系数缩小。测试误差大幅下降,而模型类别没有改变。',
+      'tour4name': '更多数据同样能修复',
+      'tour4desc': '20 次,λ=0,但 n=100 而非 20。数据更多时,即使高容量模型也无法死记硬背——它必须泛化。可打开 CV 曲线开关。',
+      // --- F1: 练习题答案反馈(ws{n}ok / ws{n}no)---
+      'ws1ok': '正确。20 次多项式有 21 个自由参数;只有 20 个训练点时,它有足够的自由度精确穿过每一个点。训练 MSE ≈ 0。',
+      'ws1no': '试试"zero"或"near zero"。21 个自由系数可以精确拟合 20 个任意点——自由度的数学。',
+      'ws2ok': '对。训练 ≈ 0,测试暴涨——这个差距就是过拟合。为穿过每个训练点所需的剧烈振荡完全错过了测试点。',
+      'ws2no': '提示:零训练误差和留出测试误差差别很大。试试"much higher"。',
+      'ws3ok': '正确。岭回归(L2)惩罚 λ‖w‖² 缩小大系数。20 次多项式仍有 21 个参数,但现在它们都很小——曲线被迫平滑,泛化得好得多。',
+      'ws3no': '试试"down"。λ 惩罚大权重,扼杀那些造成过拟合的高频摆动。',
+      // 主要滑块和选择器的提示翻译。
+      'deg-slider-title': '模型容量。次数越高,摆动空间越大,越容易过拟合。',
+      'lam-slider-title': '正则化强度。岭回归在损失中加入 λ‖w‖²;套索加入 λ‖w‖₁。设 λ=0 关闭正则化。',
+      'n-slider-title': '训练集规模。数据越多,越难过拟合。',
+      'sig-slider-title': '每个训练点的高斯噪声标准差。σ=0 时无法过拟合。',
+      'truth-sel-title': '模型试图从带噪样本中恢复的"真实"函数。',
+      'resample-title': '在真实函数周围重新采样新的随机噪声。',
+      'lc-summary': '📈 学习曲线(固定阶数,改变 n)',
+      'lc-hint': '固定当前的阶数、λ、正则化和噪声;让 n 从 5 变到 n_最大值。对每个 n,重新采样 n 个训练点并计算训练和测试 MSE。绘制两条曲线。诊断:训练≈测试且都很高 → 欠拟合(需要更高容量);训练低 + 测试高(有缺口)→ 过拟合(更多数据或正则化);两者都收敛到低值 → 良好。',
+      'lc-nmax-label': 'n_最大值:', 'lc-trials-label': '平均次数:',
+      'lc-run': '▶ 运行学习曲线',
+      'lc-empty': '(点击"运行学习曲线")',
+    },
+  };
+  function setLang(lang) {
+    if (!STRINGS[lang]) lang = 'en';
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.dataset.i18n;
+      if (STRINGS[lang][k]) el.textContent = STRINGS[lang][k];
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const k = el.dataset.i18nTitle;
+      if (STRINGS[lang][k]) el.title = STRINGS[lang][k];
+    });
+    document.querySelectorAll('.lang-switch button').forEach(b =>
+      b.classList.toggle('active', b.dataset.lang === lang));
+    try { localStorage.setItem('lang', lang); } catch (_) {}
+  }
+  document.querySelectorAll('.lang-switch button').forEach(b =>
+    b.addEventListener('click', () => {
+      setLang(b.dataset.lang);
+      // F1: re-render the tour in the new language. Safe here — this click handler
+      // only runs post-init, after LESSON_TOUR (a late `const`) is initialized, so
+      // there is no temporal-dead-zone risk (unlike calling it from inside setLang).
+      try { if (typeof renderTour === 'function') renderTour(); } catch (_) {}
+    }));
+  let initialLang = 'en';
+  try { initialLang = localStorage.getItem('lang') || 'en'; } catch (_) {}
+  setLang(initialLang);
+
+  function setTheme(t) {
+    document.body.classList.toggle('dark-mode', t === 'dark');
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+    try { localStorage.setItem('theme', t); } catch (_) {}
+  }
+  let initialTheme = 'light';
+  try {
+    initialTheme = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  } catch (_) {}
+  setTheme(initialTheme);
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    setTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark');
+    if (typeof render === 'function') render();
+  });
+
+  // For-teachers is hidden by default (cognitive-load floor). User toggles persist.
+  // `?teacher=1` opens on load. `?teacher=0` hides completely (no toggle, for projection).
+  try {
+    const tp = new URLSearchParams(location.search).get('teacher');
+    if (tp === '0') {
+      document.querySelectorAll('.for-teachers').forEach(el => el.style.display = 'none');
+    } else {
+      const style = document.createElement('style');
+      style.textContent = '.for-teachers-expander{margin-top:36px}.for-teachers-expander>summary{cursor:pointer;padding:12px 16px;background:var(--soft);border:1px solid var(--border);border-radius:8px;font-family:-apple-system,system-ui,sans-serif;font-size:0.9rem;color:var(--accent);font-weight:600;list-style:none;user-select:none}.for-teachers-expander>summary::-webkit-details-marker{display:none}.for-teachers-expander[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius:0}.for-teachers-expander>.for-teachers{margin-top:0;border-top:0;border-top-left-radius:0;border-top-right-radius:0}';
+      document.head.appendChild(style);
+      document.querySelectorAll('.for-teachers').forEach(div => {
+        const details = document.createElement('details');
+        details.className = 'for-teachers-expander';
+        const summary = document.createElement('summary');
+        summary.textContent = '▸ Show teacher notes (discussion prompts + curriculum)';
+        div.parentNode.insertBefore(details, div);
+        details.appendChild(summary);
+        details.appendChild(div);
+      });
+      const saved = (() => { try { return localStorage.getItem('teacher-notes-open'); } catch (_) { return null; } })();
+      const shouldOpen = tp === '1' || saved === '1';
+      document.querySelectorAll('details.for-teachers-expander').forEach(d => {
+        d.open = shouldOpen;
+        d.addEventListener('toggle', () => {
+          try { localStorage.setItem('teacher-notes-open', d.open ? '1' : '0'); } catch (_) {}
+        });
+      });
+    }
+  } catch (_) {}
+  document.getElementById('exportPng').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'overfitting.png';
+    link.href = document.getElementById('fitCv').toDataURL('image/png');
+    link.click();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.code === 'Space' &&
+        e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' &&
+        e.target.tagName !== 'SELECT') {
+      e.preventDefault();
+      document.getElementById('resampleBtn').click();
+    }
+  });
+
+  const fitCv = $('fitCv'); const fitCtx = fitCv.getContext('2d');
+  const errCv = $('errCv'); const errCtx = errCv.getContext('2d');
+
+  // Resize canvases for crisp drawing
+  function resizeCv(cv) {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = cv.getBoundingClientRect();
+    cv.width = rect.width * dpr; cv.height = rect.height * dpr;
+    cv.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  let trainData = [], testData = [];
+  const truthFns = {
+    sin: x => Math.sin(2 * Math.PI * x),
+    cubic: x => 3 * x * x * x - x,
+    step: x => x > 0.5 ? 1 : -1,
+    linear: x => 1.5 * x,
+  };
+  function randn() {
+    let u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+  function regenData() {
+    const n = +$('n').value;
+    const sigma = +$('sig').value;
+    const fn = truthFns[$('truthSel').value];
+    trainData = []; testData = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random();
+      trainData.push({x, y: fn(x) + randn() * sigma});
+    }
+    for (let i = 0; i < 200; i++) {
+      const x = i / 199;
+      testData.push({x, y: fn(x) + randn() * sigma});
+    }
+  }
+
+  function fitPoly(data, degree, lambda) {
+    // dispatch on regularizer choice. Ridge keeps the closed-form path;
+    // Lasso uses coordinate descent (no closed form for L1).
+    const regSel = document.getElementById('regSel');
+    const reg = regSel ? regSel.value : 'ridge';
+    if (reg === 'lasso' && lambda > 0) return fitPolyLasso(data, degree, lambda);
+    return fitPolyRidge(data, degree, lambda);
+  }
+  function fitPolyRidge(data, degree, lambda) {
+    const n = data.length;
+    const k = degree + 1;
+    const X = data.map(d => {
+      const row = new Array(k); let p = 1;
+      for (let i = 0; i < k; i++) { row[i] = p; p *= d.x; }
+      return row;
+    });
+    const y = data.map(d => d.y);
+    const XtX = mat(k, k, 0);
+    for (let i = 0; i < k; i++)
+      for (let j = 0; j < k; j++)
+        for (let r = 0; r < n; r++) XtX[i][j] += X[r][i] * X[r][j];
+    for (let i = 1; i < k; i++) XtX[i][i] += lambda;
+    const Xty = new Array(k).fill(0);
+    for (let i = 0; i < k; i++)
+      for (let r = 0; r < n; r++) Xty[i] += X[r][i] * y[r];
+    return solve(XtX, Xty);
+  }
+  // Lasso (L1) via coordinate descent. Minimizes (1/2n)‖Xw − y‖² + λ‖w‖₁.
+  // Standard soft-thresholding update for one coordinate at a time. Excludes the
+  // intercept (j=0) from the penalty, matching scikit-learn convention.
+  function fitPolyLasso(data, degree, lambda) {
+    const n = data.length;
+    const k = degree + 1;
+    // Build Vandermonde matrix X (n × k).
+    const X = data.map(d => {
+      const row = new Array(k); let p = 1;
+      for (let i = 0; i < k; i++) { row[i] = p; p *= d.x; }
+      return row;
+    });
+    const y = data.map(d => d.y);
+    // Precompute column-wise X²·X (i.e. ΣX_rj² per column j).
+    const colSq = new Array(k).fill(0);
+    for (let j = 0; j < k; j++) for (let r = 0; r < n; r++) colSq[j] += X[r][j] * X[r][j];
+    // Warm-start from Ridge with the same λ (helps convergence).
+    let w = fitPolyRidge(data, degree, lambda);
+    // Residual r = y − Xw, maintained incrementally.
+    const resid = new Array(n).fill(0);
+    for (let r = 0; r < n; r++) {
+      let pred = 0;
+      for (let j = 0; j < k; j++) pred += X[r][j] * w[j];
+      resid[r] = y[r] - pred;
+    }
+    const soft = (z, t) => z > t ? z - t : (z < -t ? z + t : 0);
+    const MAX_ITERS = 200;
+    const TOL = 1e-6;
+    for (let iter = 0; iter < MAX_ITERS; iter++) {
+      let maxDelta = 0;
+      for (let j = 0; j < k; j++) {
+        if (colSq[j] === 0) continue;
+        // ρ_j = X_j · (resid + X_j · w_j) = X_j·resid + colSq[j]·w_j
+        let rho = 0;
+        for (let r = 0; r < n; r++) rho += X[r][j] * resid[r];
+        rho += colSq[j] * w[j];
+        const wNew = (j === 0)
+          ? rho / colSq[j]                       // intercept: unpenalized
+          : soft(rho, lambda * n) / colSq[j];    // λ scaled by n to match Ridge λ semantics
+        const delta = wNew - w[j];
+        if (delta !== 0) {
+          for (let r = 0; r < n; r++) resid[r] -= X[r][j] * delta;
+          w[j] = wNew;
+          maxDelta = Math.max(maxDelta, Math.abs(delta));
+        }
+      }
+      if (maxDelta < TOL) break;
+    }
+    return w;
+  }
+  function mat(r, c, v) { return Array.from({length: r}, () => new Array(c).fill(v)); }
+  function solve(A, b) {
+    const n = A.length;
+    const M = A.map((row, i) => [...row, b[i]]);
+    for (let i = 0; i < n; i++) {
+      let piv = i;
+      for (let r = i + 1; r < n; r++) if (Math.abs(M[r][i]) > Math.abs(M[piv][i])) piv = r;
+      [M[i], M[piv]] = [M[piv], M[i]];
+      if (Math.abs(M[i][i]) < 1e-12) M[i][i] = 1e-12;
+      for (let r = i + 1; r < n; r++) {
+        const f = M[r][i] / M[i][i];
+        for (let c = i; c <= n; c++) M[r][c] -= f * M[i][c];
+      }
+    }
+    const x = new Array(n).fill(0);
+    for (let i = n - 1; i >= 0; i--) {
+      let s = M[i][n];
+      for (let c = i + 1; c < n; c++) s -= M[i][c] * x[c];
+      x[i] = s / M[i][i];
+    }
+    return x;
+  }
+  function evalPoly(w, x) {
+    let s = 0, p = 1;
+    for (let i = 0; i < w.length; i++) { s += w[i] * p; p *= x; }
+    return s;
+  }
+  function mse(data, w) {
+    let s = 0;
+    for (const d of data) { const e = evalPoly(w, d.x) - d.y; s += e * e; }
+    return s / data.length;
+  }
+
+  function fitToView(x, y, xmin, xmax, ymin, ymax, W, H, pad) {
+    return {
+      x: pad + (x - xmin) / (xmax - xmin) * (W - 2 * pad),
+      y: H - pad - (y - ymin) / (ymax - ymin) * (H - 2 * pad),
+    };
+  }
+  function drawFit(w) {
+    const ctx = fitCtx;
+    const rect = fitCv.getBoundingClientRect();
+    const W = rect.width, H = rect.height, pad = 30;
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : 'white'; ctx.fillRect(0, 0, W, H);
+    const ymin = -2.5, ymax = 2.5, xmin = 0, xmax = 1;
+    ctx.strokeStyle = document.body.classList.contains('dark-mode') ? '#475569' : '#cbd5e1'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad, H - pad); ctx.lineTo(W - pad, H - pad);
+    ctx.moveTo(pad, pad); ctx.lineTo(pad, H - pad);
+    ctx.stroke();
+    const fn = truthFns[$('truthSel').value];
+    ctx.strokeStyle = getCSS('--truth'); ctx.lineWidth = 1.5; ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    for (let i = 0; i <= 200; i++) {
+      const x = xmin + (xmax - xmin) * i / 200;
+      const y = fn(x);
+      const p = fitToView(x, y, xmin, xmax, ymin, ymax, W, H, pad);
+      if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle = getCSS('--fit'); ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let i = 0; i <= 400; i++) {
+      const x = xmin + (xmax - xmin) * i / 400;
+      const y = evalPoly(w, x);
+      const yc = Math.max(ymin, Math.min(ymax, y));
+      const p = fitToView(x, yc, xmin, xmax, ymin, ymax, W, H, pad);
+      if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+    }
+    ctx.stroke();
+    ctx.fillStyle = getCSS('--train');
+    for (const d of trainData) {
+      const p = fitToView(d.x, d.y, xmin, xmax, ymin, ymax, W, H, pad);
+      ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fill();
+    }
+    // test points as open circles. Shows what the model is being evaluated AGAINST.
+    if ($('showTest') && $('showTest').checked) {
+      ctx.strokeStyle = getCSS('--test'); ctx.lineWidth = 1.5;
+      for (const d of testData) {
+        const p = fitToView(d.x, d.y, xmin, xmax, ymin, ymax, W, H, pad);
+        ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.stroke();
+      }
+    }
+    ctx.font = '11px system-ui';
+    ctx.fillStyle = getCSS('--truth'); ctx.fillText('— truth', W - 110, pad + 12);
+    ctx.fillStyle = getCSS('--fit'); ctx.fillText('— fitted model', W - 110, pad + 26);
+    ctx.fillStyle = getCSS('--train'); ctx.fillText('• train points', W - 110, pad + 40);
+    if ($('showTest') && $('showTest').checked) {
+      ctx.fillStyle = getCSS('--test'); ctx.fillText('○ test points', W - 110, pad + 54);
+    }
+
+    // D3/SVG hybrid: rebuild a11y overlay (one tabbable circle per train point).
+    updateFitOverlay(w, W, H, pad, xmin, xmax, ymin, ymax);
+  }
+
+  // D3-style enter/update/exit overlay. Preserves SVG element identity
+  // across renders so focused points don't lose focus when sliders change.
+  const NS_OVL = 'http://www.w3.org/2000/svg';
+  function updateFitOverlay(w, W, H, pad, xmin, xmax, ymin, ymax) {
+    const svg = document.getElementById('fitOverlay');
+    if (!svg) return;
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    const existing = Array.from(svg.querySelectorAll('circle[data-role="trainpt"]'));
+    trainData.forEach((d, idx) => {
+      const p = fitToView(d.x, d.y, xmin, xmax, ymin, ymax, W, H, pad);
+      const fit = evalPoly(w, d.x);
+      const residual = (d.y - fit).toFixed(3);
+      let el = existing[idx];
+      if (!el) {
+        el = document.createElementNS(NS_OVL, 'circle');
+        el.setAttribute('data-role', 'trainpt');
+        el.setAttribute('r', 10);
+        el.setAttribute('fill', 'transparent');
+        el.setAttribute('tabindex', 0);
+        el.setAttribute('role', 'graphics-symbol');
+        el.style.pointerEvents = 'auto';
+        el.style.cursor = 'help';
+        el.style.transition = 'cx 150ms ease, cy 150ms ease';
+        const t = document.createElementNS(NS_OVL, 'title');
+        el.appendChild(t);
+        svg.appendChild(el);
+      }
+      el.setAttribute('cx', p.x); el.setAttribute('cy', p.y);
+      el.setAttribute('aria-label',
+        `Training point ${idx + 1} at x=${d.x.toFixed(3)}, y=${d.y.toFixed(3)}. Residual ${residual}.`);
+      el.firstChild.textContent = `(${d.x.toFixed(2)}, ${d.y.toFixed(2)})  residual=${residual}`;
+    });
+    for (let i = trainData.length; i < existing.length; i++) existing[i].remove();
+  }
+
+  // K-fold cross-validation MSE. Splits trainData into K folds, fits on K-1,
+  // evaluates on the held-out fold, averages. Returns mean CV MSE for the given degree.
+  function cvMse(degree, lambda, K) {
+    if (trainData.length < K) return NaN;
+    const folds = Array.from({length: K}, () => []);
+    // Deterministic split — interleave so each fold gets a representative sample.
+    trainData.forEach((d, i) => folds[i % K].push(d));
+    let total = 0, count = 0;
+    for (let k = 0; k < K; k++) {
+      const train = folds.filter((_, i) => i !== k).flat();
+      const test = folds[k];
+      if (!train.length || !test.length) continue;
+      const w = fitPoly(train, degree, lambda);
+      total += mse(test, w);
+      count++;
+    }
+    return count > 0 ? total / count : NaN;
+  }
+  function drawErrCurve(curDegree) {
+    const ctx = errCtx;
+    const rect = errCv.getBoundingClientRect();
+    const W = rect.width, H = rect.height, pad = 36;
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : 'white'; ctx.fillRect(0, 0, W, H);
+    const lambda = +$('lam').value;
+    const maxDeg = 20;
+    const trainErrs = [], testErrs = [], cvErrs = [];
+    const showCv = $('showCv') && $('showCv').checked;
+    for (let d = 1; d <= maxDeg; d++) {
+      const w = fitPoly(trainData, d, lambda);
+      trainErrs.push(Math.min(2, mse(trainData, w)));
+      testErrs.push(Math.min(2, mse(testData, w)));
+      if (showCv) cvErrs.push(Math.min(2, cvMse(d, lambda, 5)));
+    }
+    const all = [...trainErrs, ...testErrs, ...(showCv ? cvErrs : [])].filter(v => !isNaN(v));
+    const ymax = Math.max(0.5, Math.max(...all));
+    const ymin = 0;
+    ctx.strokeStyle = document.body.classList.contains('dark-mode') ? '#475569' : '#cbd5e1';
+    ctx.beginPath(); ctx.moveTo(pad, pad); ctx.lineTo(pad, H - pad);
+    ctx.lineTo(W - pad, H - pad); ctx.stroke();
+    ctx.fillStyle = getCSS('--muted'); ctx.font = '11px system-ui';
+    ctx.fillText('MSE', 4, pad + 10);
+    ctx.fillText('polynomial degree →', W - 130, H - 8);
+    function plot(arr, color) {
+      ctx.strokeStyle = color; ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let d = 1; d <= maxDeg; d++) {
+        const x = pad + (d - 1) / (maxDeg - 1) * (W - 2 * pad);
+        const y = H - pad - (arr[d-1] - ymin) / (ymax - ymin) * (H - 2 * pad);
+        if (d === 1) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    plot(trainErrs, getCSS('--train'));
+    plot(testErrs, getCSS('--test'));
+    if (showCv) {
+      ctx.setLineDash([5, 3]);
+      plot(cvErrs, '#9333ea'); // purple dashed for CV
+      ctx.setLineDash([]);
+    }
+    const x = pad + (curDegree - 1) / (maxDeg - 1) * (W - 2 * pad);
+    ctx.strokeStyle = '#111'; ctx.setLineDash([3, 3]);
+    ctx.beginPath(); ctx.moveTo(x, pad); ctx.lineTo(x, H - pad); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = getCSS('--muted');
+    for (let d = 1; d <= maxDeg; d += 2) {
+      const tx = pad + (d - 1) / (maxDeg - 1) * (W - 2 * pad);
+      ctx.fillText(d, tx - 4, H - pad + 14);
+    }
+    ctx.fillStyle = getCSS('--train'); ctx.fillText('— train MSE', W - 100, pad + 12);
+    ctx.fillStyle = getCSS('--test'); ctx.fillText('— test MSE', W - 100, pad + 26);
+  }
+
+  function getCSS(v) {
+    return getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  }
+  function render() {
+    $('degV').textContent = $('deg').value;
+    $('lamV').textContent = (+$('lam').value).toFixed(3);
+    $('nV').textContent = $('n').value;
+    $('sigV').textContent = (+$('sig').value).toFixed(2);
+    const deg = +$('deg').value;
+    const lam = +$('lam').value;
+    const w = fitPoly(trainData, deg, lam);
+    drawFit(w);
+    drawErrCurve(deg);
+    $('trainMse').textContent = mse(trainData, w).toFixed(4);
+    $('testMse').textContent = mse(testData, w).toFixed(4);
+  }
+
+  ['deg','lam','n','sig'].forEach(id => $(id).addEventListener('input', () => {
+    if (id === 'n' || id === 'sig') regenData();
+    render();
+  }));
+  $('truthSel').addEventListener('change', () => { regenData(); render(); });
+  $('regSel').addEventListener('change', render); // switch Ridge ↔ Lasso live.
+  $('resampleBtn').addEventListener('click', () => { regenData(); render(); });
+  $('showTest').addEventListener('change', render);
+  $('showCv').addEventListener('change', render);
+  $('hardReset').addEventListener('click', () => {
+    $('deg').value = 3; $('lam').value = 0; $('n').value = 20; $('sig').value = 0.2;
+    $('truthSel').value = 'sin';
+    regenData(); render();
+  });
+  window.addEventListener('resize', () => {
+    resizeCv(fitCv); resizeCv(errCv); render();
+  });
+
+  // Lesson tour. Five canonical scenarios for an in-class walkthrough.
+  const LESSON_TOUR = [
+    { name: 'Underfit (degree 1, sine truth)',
+      description: "Polynomial of degree 1 trying to fit a sine. Train AND test error are both high — this is high bias. The model literally can't bend enough.",
+      apply: () => { $('truthSel').value = 'sin'; $('deg').value = 1; $('lam').value = 0; $('n').value = 20; $('sig').value = 0.2; regenData(); render(); } },
+    { name: 'Sweet spot (degree 5)',
+      description: "Same truth, degree 5. Train and test are both low and close together. This is the bias-variance balance point we always want.",
+      apply: () => { $('truthSel').value = 'sin'; $('deg').value = 5; $('lam').value = 0; $('n').value = 20; $('sig').value = 0.2; regenData(); render(); } },
+    { name: 'Severe overfit (degree 20, n=20)',
+      description: "Degree 20 with only 20 training points. Train error → 0 (the curve passes through every dot). Test error explodes. Classic overfitting.",
+      apply: () => { $('truthSel').value = 'sin'; $('deg').value = 20; $('lam').value = 0; $('n').value = 20; $('sig').value = 0.2; regenData(); render(); } },
+    { name: 'Ridge fixes the overfit',
+      description: "Still degree 20, but now λ=0.5. The penalty shrinks the wild high-order coefficients. Test error drops dramatically without changing the model class.",
+      apply: () => { $('truthSel').value = 'sin'; $('deg').value = 20; $('lam').value = 0.5; $('n').value = 20; $('sig').value = 0.2; regenData(); render(); } },
+    { name: 'More data also fixes it',
+      description: "Degree 20, λ=0, but n=100 instead of 20. With more data, even a high-capacity model can't memorize — it has to generalize. Use CV curve toggle.",
+      apply: () => { $('truthSel').value = 'sin'; $('deg').value = 20; $('lam').value = 0; $('n').value = 100; $('sig').value = 0.2; $('showCv').checked = true; regenData(); render(); } },
+  ];
+  let tourIdx = 0;
+  function renderTour() {
+    if (!$('tourName')) return;
+    const s = LESSON_TOUR[tourIdx];
+    // F1 bilingual: look up tour{i}name / tour{i}desc with English inline fallback.
+    const L = (document.documentElement.lang || 'en');
+    const S = STRINGS[L] || STRINGS.en;
+    $('tourName').textContent = S['tour' + tourIdx + 'name'] || s.name;
+    $('tourDesc').textContent = S['tour' + tourIdx + 'desc'] || s.description;
+    $('tourPos').textContent = `${tourIdx + 1}/${LESSON_TOUR.length}`;
+    $('tourPrev').disabled = (tourIdx === 0);
+    $('tourNext').disabled = (tourIdx === LESSON_TOUR.length - 1);
+  }
+  $('tourApply').addEventListener('click', () => LESSON_TOUR[tourIdx].apply());
+  $('tourPrev').addEventListener('click', () => { if (tourIdx > 0) { tourIdx--; renderTour(); } });
+  $('tourNext').addEventListener('click', () => { if (tourIdx < LESSON_TOUR.length - 1) { tourIdx++; renderTour(); } });
+  renderTour();
+
+  // Worksheet/lab mode — 3 questions with instant ✓/✗ feedback.
+  // F1 bilingual feedback helper: ws{n}ok / ws{n}no with English inline fallback.
+  function wsMsg(key, en) {
+    const L = (document.documentElement.lang || 'en');
+    return (STRINGS[L] && STRINGS[L][key]) || en;
+  }
+  // MCQ: each question is graded by the selected radio's index, not typed text.
+  // `correct` is the index of the right option (language-agnostic). ok/no are the
+  // existing bilingual feedback keys, with an English inline fallback via wsMsg.
+  const WORKSHEET = [
+    { correct: 0,
+      ok:  ['ws1ok', "Correct. A degree-20 polynomial has 21 free parameters; with only 20 training points, it has enough freedom to literally pass through every dot. Train MSE ≈ 0."],
+      no:  ['ws1no', "Try 'zero' or 'near zero'. 21 free coefficients can fit 20 arbitrary points exactly — degrees of freedom math."] },
+    { correct: 2,
+      ok:  ['ws2ok', "Yes. Train ≈ 0, test explodes — that gap IS overfitting. The wild oscillations needed to pass through every train point miss the test points completely."],
+      no:  ['ws2no', "Hint: zero train error + held-out test error are very different. Try 'much higher'."] },
+    { correct: 1,
+      ok:  ['ws3ok', "Correct. Ridge (L2) penalty λ‖w‖² shrinks large coefficients. The degree-20 polynomial still has 21 params, but they are now small — the curve is forced to be smooth and generalizes much better."],
+      no:  ['ws3no', "Try 'down'. λ penalizes large weights, killing the high-frequency wiggles that overfit."] },
+  ];
+  WORKSHEET.forEach((q, i) => {
+    const n = i + 1;
+    $(`ws${n}btn`).addEventListener('click', () => {
+      const fb = $(`ws${n}fb`);
+      const picked = document.querySelector(`input[name="ws${n}"]:checked`);
+      if (!picked) {
+        fb.textContent = wsMsg('ws-pick', 'Pick an answer first.');
+        fb.style.color = 'var(--muted)';
+        return;
+      }
+      const ok = Number(picked.value) === q.correct;
+      const [key, en] = ok ? q.ok : q.no;
+      fb.textContent = (ok ? '✓ ' : '✗ ') + wsMsg(key, en);
+      fb.style.color = ok ? '#16a34a' : '#dc2626';
+    });
+  });
+
+  // Learning curves. Holds degree, λ, regularizer, truth, sigma constant;
+  // sweeps n from 5 to n_max. For each n, runs `trials` independent samples and
+  // averages the train + test MSE. The shape of the two curves diagnoses the model:
+  //   • Both high, train ≈ test  → underfitting; raise capacity (degree) or features.
+  //   • Train low + test high (large gap)  → overfitting; more data, more reg, or less capacity.
+  //   • Both converging to a low plateau  → well-fit.
+  $('lcNmax').addEventListener('input', () => { $('lcNmaxV').textContent = $('lcNmax').value; });
+  $('lcTrials').addEventListener('input', () => { $('lcTrialsV').textContent = $('lcTrials').value; });
+  function runLearningCurves() {
+    const nMax = +$('lcNmax').value;
+    const trials = +$('lcTrials').value;
+    const degree = +$('deg').value;
+    const lambda = +$('lam').value;
+    const sigma = +$('sig').value;
+    const fn = truthFns[$('truthSel').value];
+    // Sample n values log-ish for nice spacing on small n.
+    const ns = [];
+    for (let n = 5; n <= nMax; n += Math.max(2, Math.floor(n * 0.15))) ns.push(n);
+    if (ns[ns.length - 1] !== nMax) ns.push(nMax);
+    // Pre-build a single fixed test set so test MSE comparisons across n are apples-to-apples.
+    const fixedTest = [];
+    for (let i = 0; i < 200; i++) {
+      const x = i / 199;
+      fixedTest.push({ x, y: fn(x) + randn() * sigma });
+    }
+    const trainMse = [], testMse = [];
+    for (const n of ns) {
+      let tr = 0, te = 0;
+      for (let t = 0; t < trials; t++) {
+        const sample = [];
+        for (let i = 0; i < n; i++) {
+          const x = Math.random();
+          sample.push({ x, y: fn(x) + randn() * sigma });
+        }
+        const w = fitPoly(sample, degree, lambda);
+        tr += mse(sample, w);
+        te += mse(fixedTest, w);
+      }
+      trainMse.push(tr / trials);
+      testMse.push(te / trials);
+    }
+    drawLearningCurves(ns, trainMse, testMse);
+    // Diagnosis text.
+    const finalTrain = trainMse[trainMse.length - 1];
+    const finalTest = testMse[testMse.length - 1];
+    const gap = finalTest - finalTrain;
+    let diagnosis;
+    if (finalTest > 0.5 && finalTrain > 0.5 && gap < 0.3) {
+      diagnosis = "Both train and test stay high — underfitting. Raise degree or add features.";
+    } else if (gap > 0.5) {
+      diagnosis = "Big train/test gap — overfitting. Try more data, raise λ, or lower degree.";
+    } else {
+      diagnosis = "Train and test converge to a low plateau — looks healthy.";
+    }
+    $('lcStats').innerHTML =
+      `<span>Final n=${nMax}: train MSE=<strong>${finalTrain.toFixed(3)}</strong>, ` +
+      `test MSE=<strong>${finalTest.toFixed(3)}</strong>, gap=<strong>${gap.toFixed(3)}</strong>. ` +
+      `<em style="color:var(--accent);">${diagnosis}</em></span>`;
+  }
+  function drawLearningCurves(ns, trainMse, testMse) {
+    const cv = $('lcCv');
+    const W = cv.width, H = cv.height;
+    const ctx = cv.getContext('2d');
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : 'white';
+    ctx.fillRect(0, 0, W, H);
+    const pad = { l: 44, r: 90, t: 12, b: 28 };
+    const innerW = W - pad.l - pad.r, innerH = H - pad.t - pad.b;
+    const all = trainMse.concat(testMse);
+    const yMax = Math.max(0.01, Math.max(...all) * 1.1);
+    const yMin = 0;
+    const xMax = ns[ns.length - 1];
+    // Frame.
+    const muted = document.body.classList.contains('dark-mode') ? '#475569' : '#cbd5e1';
+    ctx.strokeStyle = muted; ctx.lineWidth = 1;
+    ctx.strokeRect(pad.l, pad.t, innerW, innerH);
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#94a3b8' : '#475569';
+    ctx.font = '10px ui-monospace, monospace';
+    // Y ticks.
+    for (let i = 0; i <= 4; i++) {
+      const yv = yMin + (yMax - yMin) * (1 - i / 4);
+      const py = pad.t + (i / 4) * innerH;
+      ctx.fillText(yv.toFixed(2), 4, py + 3);
+      if (i > 0 && i < 4) {
+        ctx.beginPath(); ctx.moveTo(pad.l, py); ctx.lineTo(pad.l + innerW, py);
+        ctx.strokeStyle = muted + '55'; ctx.stroke();
+      }
+    }
+    // X ticks at sampled n values (sparsely).
+    const tickEvery = Math.ceil(ns.length / 6);
+    for (let i = 0; i < ns.length; i += tickEvery) {
+      const px = pad.l + (ns[i] / xMax) * innerW;
+      ctx.fillText(ns[i], px - 6, H - 10);
+    }
+    // Plot helper.
+    function plot(arr, color) {
+      ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.beginPath();
+      for (let i = 0; i < ns.length; i++) {
+        const px = pad.l + (ns[i] / xMax) * innerW;
+        const py = pad.t + (1 - (arr[i] - yMin) / (yMax - yMin)) * innerH;
+        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+      ctx.fillStyle = color;
+      for (let i = 0; i < ns.length; i++) {
+        const px = pad.l + (ns[i] / xMax) * innerW;
+        const py = pad.t + (1 - (arr[i] - yMin) / (yMax - yMin)) * innerH;
+        ctx.beginPath(); ctx.arc(px, py, 2.5, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+    plot(trainMse, '#0284c7');  // blue
+    plot(testMse,  '#dc2626');   // red
+    // Legend in right margin.
+    ctx.font = '11px -apple-system, system-ui, sans-serif';
+    ctx.fillStyle = '#0284c7'; ctx.fillRect(pad.l + innerW + 8, pad.t + 6, 12, 2);
+    ctx.fillText('train MSE', pad.l + innerW + 24, pad.t + 10);
+    ctx.fillStyle = '#dc2626'; ctx.fillRect(pad.l + innerW + 8, pad.t + 22, 12, 2);
+    ctx.fillText('test MSE',  pad.l + innerW + 24, pad.t + 26);
+    // Axis labels.
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#cbd5e1' : '#334155';
+    ctx.fillText('n (training set size)', W / 2 - 50, H - 1);
+    ctx.save();
+    ctx.translate(12, H / 2); ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center'; ctx.fillText('MSE', 0, 0);
+    ctx.restore();
+  }
+  $('lcRunBtn').addEventListener('click', runLearningCurves);
+
+  // URL-shareable config — truth function, degree, n, sigma, lambda.
+  try {
+    const sp = new URLSearchParams(location.search);
+    const t = sp.get('truth');
+    if (t) {
+      const opt = Array.from($('truthSel').options).find(o => o.value === t);
+      if (opt) $('truthSel').value = t;
+    }
+    const setNum = (key, id, min, max) => {
+      const v = parseFloat(sp.get(key));
+      if (!Number.isNaN(v) && v >= min && v <= max) $(id).value = v;
+    };
+    setNum('deg', 'deg', 1, 20);
+    setNum('lam', 'lam', 0, 5);
+    setNum('n', 'n', 5, 100);
+    setNum('sig', 'sig', 0, 1);
+  } catch (_) {}
+  document.getElementById('shareLink').addEventListener('click', async () => {
+    const params = new URLSearchParams();
+    params.set('truth', $('truthSel').value);
+    params.set('deg', $('deg').value);
+    params.set('lam', $('lam').value);
+    params.set('n', $('n').value);
+    params.set('sig', $('sig').value);
+    const url = `${location.origin}${location.pathname}?${params.toString()}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      const btn = document.getElementById('shareLink');
+      const orig = btn.textContent; btn.textContent = '✓ Copied';
+      setTimeout(() => btn.textContent = orig, 1500);
+    } catch (_) { prompt('Copy this URL:', url); }
+  });
+
+  // CSV export — train + test datasets and per-degree MSE table.
+  document.getElementById('csvExport').addEventListener('click', () => {
+    const lam = +$('lam').value;
+    const lines = ['# Overfitting export', '# Section 1: train data', 'x,y'];
+    for (const d of trainData) lines.push(`${d.x.toFixed(4)},${d.y.toFixed(4)}`);
+    lines.push('', '# Section 2: test data (held out)', 'x,y');
+    for (const d of testData) lines.push(`${d.x.toFixed(4)},${d.y.toFixed(4)}`);
+    lines.push('', `# Section 3: MSE table (lambda = ${lam})`, 'degree,train_mse,test_mse');
+    for (let d = 1; d <= 20; d++) {
+      const w = fitPoly(trainData, d, lam);
+      lines.push(`${d},${mse(trainData, w).toFixed(4)},${mse(testData, w).toFixed(4)}`);
+    }
+    const blob = new Blob([lines.join('\n')], {type: 'text/csv'});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `overfitting-${$('truthSel').value}-n${trainData.length}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  });
+
+  resizeCv(fitCv); resizeCv(errCv);
+  regenData(); render();
+})();
+</script>
+<!-- Embed mode handler (shared pattern across all 12 applets). -->
+<script>
+(() => {
+  try {
+    if (new URLSearchParams(location.search).get('embed') === '1') {
+      document.body.classList.add('embed-mode');
+    }
+  } catch (_) {}
+  const btn = document.getElementById('embedLink');
+  if (!btn) return;
+  btn.addEventListener('click', async () => {
+    const url = new URL(location.href);
+    url.searchParams.set('embed', '1');
+    const snippet = `<iframe src="${url.toString()}" width="100%" height="720" frameborder="0" style="border:1px solid #e5e7eb; border-radius:8px;" loading="lazy"></iframe>`;
+    try {
+      await navigator.clipboard.writeText(snippet);
+      const orig = btn.textContent; btn.textContent = '✓ Copied iframe';
+      setTimeout(() => btn.textContent = orig, 1800);
+    } catch (_) { prompt('Copy this iframe snippet:', snippet); }
+  });
+})();
+</script>
+  <footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
+    <p style="margin:0 0 6px;"><a href="#top" data-i18n="footer-top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
+    <p style="margin:0;"><span data-i18n="footer-builtby">Built by</span> Logan Dixon · <span data-i18n="footer-course">Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy</span></p>
+    <p style="margin:6px 0 0;"><a href="https://github.com/lmdixon23/ai-playgrounds" data-i18n="footer-source" style="color:var(--accent,#0891b2);">View source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-i18n="footer-issue" style="color:var(--accent,#0891b2);">Report an issue</a> · © 2026 Logan Dixon</p>
+  </footer>
+  <!-- Privacy-friendly analytics — GoatCounter, cookieless. -->
+  <script data-goatcounter="https://lmdixon23.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

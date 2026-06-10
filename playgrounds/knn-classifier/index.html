@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visualizing K-Nearest Neighbors</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E">
+<meta name="description" content="Interactive visualization of the k-nearest-neighbors classifier. Click to add training points, watch the decision boundary redraw as you change k.">
+<link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/">
+<meta property="og:title" content="Visualizing K-Nearest Neighbors — AI Playgrounds">
+<meta property="og:description" content="Interactive visualization of the k-nearest-neighbors classifier. Click to add training points, watch the decision boundary redraw as you change k.">
+<meta property="og:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Visualizing K-Nearest Neighbors — AI Playgrounds">
+<meta name="twitter:description" content="Interactive visualization of the k-nearest-neighbors classifier. Click to add training points, watch the decision boundary redraw as you change k.">
+<meta name="twitter:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Visualizing K-Nearest Neighbors — AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/","description":"Interactive visualization of the k-nearest-neighbors classifier. Click to add training points, watch the decision boundary redraw as you change k.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan Dixon"}}
+</script>
+<style>
+  :root {
+    --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #be185d;
+    --card: #fff; --border: #e5e7eb; --soft: #f9fafb;
+    --classA: #2563eb; --classB: #d97706;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", Arial, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; }
+  .page-header { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 24px; }
+  .header-utility { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .header-prefs { display: flex; align-items: center; gap: 8px; }
+  .header-main { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .header-actions { display: flex; align-items: center; gap: 8px; font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem; }
+  .header-actions .header-reset { margin-left: 12px; }
+  .page-header h1 { margin: 0; font-size: 1.5rem; }
+  .page-header .back { color: var(--accent); text-decoration: none; font-size: 0.9rem; font-family: -apple-system, system-ui, sans-serif; }
+  .tldr { max-width: 820px; margin: 16px auto 0;
+           background: var(--accent); color: white;
+           border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; font-weight: 500;
+           font-family: -apple-system, system-ui, sans-serif; line-height: 1.45; }
+  .tldr strong { color: rgba(255,255,255,0.85); font-size: 0.72rem; letter-spacing: 0.08em;
+                  text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px; }
+  .jump-link { display: inline-block; margin-top: 14px;
+                padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px;
+                background: white; color: var(--accent); text-decoration: none;
+                font-family: -apple-system, system-ui, sans-serif; font-size: 0.82rem;
+                font-weight: 600; transition: background 0.15s; }
+  .jump-link:hover { background: var(--soft); }
+  .jump-anchor { text-align: center; }
+  .interactive { background: var(--card); padding: 24px; border-bottom: 1px solid var(--border); }
+  .interactive-inner { max-width: 1280px; margin: 0 auto; }
+  .bento { display: grid; grid-template-columns: minmax(300px, 360px) minmax(0, 1fr); gap: 16px; align-items: start; margin-bottom: 14px; }
+  .bento-side, .bento-main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .bento-cell { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+  .bento-cell > :first-child { margin-top: 0 !important; }
+  @media (max-width: 860px) { .bento { grid-template-columns: 1fr; gap: 12px; } }
+  .control-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+                  margin-bottom: 14px; font-family: -apple-system, system-ui, sans-serif;
+                  font-size: 0.88rem; }
+  .control-row label { color: var(--muted); }
+  .control-row .group { display: flex; gap: 0; border: 1px solid var(--border);
+                         border-radius: 6px; overflow: hidden; }
+  .control-row .group button {
+    padding: 7px 12px; background: white; color: var(--fg);
+    border: none; border-right: 1px solid var(--border); cursor: pointer;
+    font: inherit; font-size: 0.85rem;
+  }
+  .control-row .group button:last-child { border-right: none; }
+  .control-row .group button.active { background: var(--accent); color: white; font-weight: 600; }
+  .control-row input[type=range] { padding: 0; min-width: 120px; }
+  .control-row .step-btn { padding: 7px 14px; background: white; color: var(--fg);
+                            border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                            font: inherit; font-size: 0.85rem; }
+  .control-row .kval { color: var(--accent); font-weight: 700; font-family: monospace;
+                        font-size: 0.95rem; min-width: 28px; }
+  canvas { display: block; margin: 0 auto; background: white;
+            border: 1px solid var(--border); border-radius: 6px;
+            cursor: crosshair; max-width: 100%; }
+  .hint { text-align: center; color: var(--muted); font-size: 0.85rem;
+           font-family: -apple-system, system-ui, sans-serif; margin: 10px 0 0;
+           font-style: italic; }
+  .legend-strip { display: flex; gap: 14px; justify-content: center; margin-top: 10px;
+                    font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem; }
+  .legend-strip .sw { display: inline-block; width: 12px; height: 12px;
+                       border-radius: 50%; vertical-align: middle; margin-right: 4px; }
+  .essay { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; font-size: 1.05rem; }
+  .essay h2 { font-size: 1.5rem; margin-top: 36px; margin-bottom: 12px; color: var(--accent); }
+  .essay h3 { font-size: 1.15rem; margin-top: 24px; margin-bottom: 8px; }
+  .essay .lede { font-size: 1.15rem; color: #374151; }
+  .essay .aha { background: #fce7f3; border-left: 4px solid #db2777;
+                 padding: 12px 18px; margin: 18px 0; border-radius: 0 6px 6px 0;
+                 font-style: italic; color: #831843; }
+  .essay code { background: var(--soft); padding: 1px 6px; border-radius: 4px;
+                 font-family: 'SF Mono', Consolas, monospace; font-size: 0.92em; }
+  .essay ul li { margin-bottom: 6px; }
+  .essay .for-teachers { background: var(--soft); border: 1px solid var(--border);
+                          border-radius: 8px; padding: 20px 24px; margin-top: 36px;
+                          font-family: -apple-system, system-ui, sans-serif; font-size: 0.95rem; }
+  .essay .for-teachers h3 { font-family: -apple-system, system-ui, sans-serif;
+                              color: var(--accent); font-size: 0.9rem;
+                              text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0; }
+  /* === header tools + reduced motion === */
+  .lang-switch { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .lang-switch button { padding: 4px 10px; background: white; color: var(--muted);
+                          border: none; cursor: pointer; font: inherit; font-size: 0.78rem; }
+  .lang-switch button.active { background: var(--accent); color: white; font-weight: 600; }
+  .header-reset { padding: 6px 12px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font: inherit; font-size: 0.82rem; }
+  .header-reset:hover { background: var(--soft); }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+  /* === dark mode === */
+  body.dark-mode {
+    --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8;
+    --card: #1e293b; --border: #334155; --soft: #1e293b;
+  }
+  body.dark-mode .essay .lede { color: #cbd5e1; }
+  body.dark-mode .essay .for-teachers { background: #0f172a; }
+  /* True canvas dark mode — render fn now picks bg directly, no filter needed. */
+  body.dark-mode .header-reset,
+  body.dark-mode .lang-switch button:not(.active),
+  body.dark-mode .header-theme,
+  body.dark-mode .control-row .group button:not(.active),
+  body.dark-mode .control-row .step-btn { background: var(--card); color: var(--fg); }
+  body.dark-mode .control-row .group { background: var(--card); }
+  /* embed mode. Strip chrome so the applet fits cleanly in an LMS iframe. */
+  body.embed-mode .page-header,
+  body.embed-mode aside.tldr,
+  body.embed-mode article.essay,
+  body.embed-mode .jump-anchor { display: none !important; }
+  body.embed-mode .interactive { padding: 12px; border-bottom: none; }
+  .header-theme { padding: 6px 10px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font-size: 1rem; line-height: 1; font-family: inherit; }
+  .header-theme:hover { background: var(--soft); }
+  .header-png { padding: 6px 10px; background: white; color: var(--fg);
+                  border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                  font-size: 0.85rem; font-family: inherit; }
+  .header-png:hover { background: var(--soft); }
+  body.dark-mode .header-png { background: var(--card); color: var(--fg); }
+  /* ===== Slider styling — native themed control via accent-color (consistent across browsers) ===== */
+  input[type="range"] { accent-color: var(--accent); height: 28px; cursor: pointer; }
+  /* ===== Shared a11y + contrast tokens (review fixes: F4 keyboard focus, F6 banner contrast) ===== */
+  button:focus-visible, a:focus-visible, select:focus-visible,
+  input:focus-visible, textarea:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+  .tldr { background: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), var(--accent); }
+  .tldr strong { color: #fff; }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="header-utility">
+    <a class="back" href="../../" data-i18n="back-link">← Back to all playgrounds</a>
+    <div class="header-prefs">
+      <button class="header-theme" id="themeToggle" aria-label="Toggle dark or light theme"
+              title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
+      <div class="lang-switch" title="Switch interface language">
+        <button data-lang="en" class="active">EN</button>
+        <button data-lang="zh">中文</button>
+      </div>
+    </div>
+  </div>
+  <div class="header-main">
+    <h1 data-i18n="title">Visualizing K-Nearest Neighbors</h1>
+    <div class="header-actions">
+      <button class="header-png" id="shareLink"
+              title="Copy a URL that re-opens this k value and dataset in another browser.">🔗 Share</button>
+      <button class="header-png" id="embedLink" data-i18n-title="embed-title"
+              title="Copy an <iframe> snippet you can paste into an LMS (Canvas, Moodle, Schoology) or any HTML page. The embed strips the header and essay so only the interactive area shows.">📎 Embed</button>
+      <button class="header-png" id="csvExport" data-i18n-title="csv-title"
+              title="Download the training points as a CSV file (x, y, class). Open in Excel/Sheets for follow-up homework.">📊 CSV</button>
+      <button class="header-png" id="exportPng"
+              title="Download the current points + decision boundary as a PNG.">📷 PNG</button>
+      <button class="header-reset" id="hardReset" data-i18n="reset-all"
+              title="Reset everything to defaults: two-moons dataset, k=5, both visualizations on.">↺ Reset all</button>
+    </div>
+  </div>
+</header>
+
+<aside class="tldr">
+  <strong data-i18n="tldr-strong">The big idea</strong>
+  <span data-i18n="tldr-body">KNN classifies a new point by majority vote of its k closest training points. The hyperparameter k controls how wiggly the decision boundary is — and how much it overfits.</span>
+</aside>
+
+<section class="interactive">
+<div class="interactive-inner">
+
+<div class="bento">
+  <div class="bento-side"><!-- bento-side -->
+    <div class="bento-cell">
+
+      <div class="control-row">
+        <label data-i18n="click-adds">Click adds:</label>
+        <div class="group mode-tabs">
+          <button data-class="A" class="active" data-i18n="class-a" data-i18n-title="class-a-title" title="Future clicks on the canvas add Class A points (blue circles).">Class A (○ blue)</button>
+          <button data-class="B" data-i18n="class-b" data-i18n-title="class-b-title" title="Future clicks on the canvas add Class B points (orange triangles).">Class B (△ orange)</button>
+        </div>
+        <label data-i18n="k-label">k:</label>
+        <input id="k" type="range" min="1" max="25" value="5" aria-label="Number of neighbors (k)" aria-valuetext="k equals 5"
+               data-i18n-title="k-slider-title"
+               title="Number of neighbors to consult. k=1 hugs every point; large k smooths everything into one prediction.">
+        <span class="kval" id="kV">5</span>
+        <label data-i18n="metric-label" style="margin-left:12px;">Distance:</label>
+        <select id="metricSel" data-i18n-title="metric-title"
+                title="Euclidean (L²) = straight-line distance. Manhattan (L¹) = sum of |dx|+|dy| — sharp diamond boundaries. Chebyshev (L∞) = max(|dx|,|dy|) — square neighborhoods.">
+          <option value="euclidean" selected data-i18n="m-euclidean">Euclidean (L²)</option>
+          <option value="manhattan" data-i18n="m-manhattan">Manhattan (L¹)</option>
+          <option value="chebyshev" data-i18n="m-chebyshev">Chebyshev (L∞)</option>
+        </select>
+        <!-- weighting toggle. -->
+        <label data-i18n="weight-label" style="margin-left:12px;">Weighting:</label>
+        <select id="weightSel" data-i18n-title="weight-title"
+                title="Uniform: each of the k neighbors gets 1 vote. Distance: each vote is scaled by 1/(distance+ε), so closer points matter more — ties evaporate.">
+          <option value="uniform" selected data-i18n="w-uniform">Uniform (1 vote each)</option>
+          <option value="distance" data-i18n="w-distance">By distance (1/d)</option>
+        </select>
+      </div>
+      <!-- per-axis scaling. Pedagogically demonstrates why standardization matters. -->
+      <div class="control-row">
+        <label data-i18n="scale-label" data-i18n-title="scale-title" title="Multiply the X coordinate of every point before computing distance. When scale ≠ 1, the X axis is over- or under-weighted in the distance calculation. Shows why standardization (z-score / min-max) matters.">X-axis scale:</label>
+        <input id="xScale" type="range" min="0.2" max="5" step="0.1" value="1" aria-label="X-axis scale factor for distance" style="min-width:160px;">
+        <span class="kval" id="xScaleV">1.0×</span>
+        <span style="color:var(--muted); font-size:0.8rem;" data-i18n="scale-hint">
+          &lt; 1 shrinks X (Y dominates). &gt; 1 stretches X (X dominates). Watch the boundary tilt.
+        </span>
+      </div>
+      <div class="control-row">
+        <label data-i18n="dataset-label">Dataset:</label>
+        <button class="step-btn" id="loadBlobs" data-i18n="ds-blobs" data-i18n-title="ds-blobs-title" title="Two well-separated Gaussian blobs. The easy case.">Two blobs</button>
+        <button class="step-btn" id="loadMoons" data-i18n="ds-moons" data-i18n-title="ds-moons-title" title="Curved interlocking moons. The classic non-linear classifier test.">Two moons</button>
+        <button class="step-btn" id="loadSpiral" data-i18n="ds-spiral" data-i18n-title="ds-spiral-title" title="Interlocking spirals. Tests the decision-boundary's ability to bend.">Spiral</button>
+        <button class="step-btn" id="loadNoise" data-i18n="ds-noise" data-i18n-title="ds-noise-title" title="Two heavily overlapping clusters. There is no good boundary — what does k do?">Noisy overlap</button>
+        <button class="step-btn" id="clearBtn" data-i18n="clear-btn" data-i18n-title="clear-title" title="Remove all training points. Click the canvas to add new ones.">Clear</button>
+      </div>
+      <div class="control-row">
+        <label title="Color the entire canvas by the prediction at each cell. Shows the model's decision boundary.">
+          <input type="checkbox" id="showBoundary" checked> <span data-i18n="show-boundary">Decision boundary</span></label>
+        <label title="When you hover, draw lines to the k nearest training points the model would consult.">
+          <input type="checkbox" id="showNeighbors" checked> <span data-i18n="show-neighbors">Highlight k neighbors on hover</span></label>
+      </div>
+
+    </div><!-- /.bento-cell controls -->
+  </div><!-- /.bento-side -->
+
+  <div class="bento-main"><!-- bento-main -->
+    <div class="bento-cell">
+
+      <div style="position:relative;">
+        <canvas id="cv" width="640" height="480" role="img"
+                style="width: 100%; max-width: 640px; height: auto; aspect-ratio: 640 / 480;"
+                aria-label="K-nearest-neighbors classifier visualization. Click to add training points."></canvas>
+        <!-- D3/SVG hybrid: a11y overlay; canvas keeps the boundary heatmap. -->
+        <svg id="cvOverlay" viewBox="0 0 640 480" preserveAspectRatio="none"
+             style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none;"></svg>
+      </div>
+
+      <div class="legend-strip">
+        <span><span class="sw" style="background:var(--classA)"></span><span data-i18n="legend-a">Class A</span></span>
+        <span><span class="sw" style="background:var(--classB)"></span><span data-i18n="legend-b">Class B</span></span>
+        <span style="color:var(--muted)" data-i18n="legend-hint">Hover anywhere to see how k neighbors vote.</span>
+      </div>
+
+    </div><!-- /.bento-cell canvas -->
+
+    <div class="bento-cell">
+      <!-- k-fold cross-validation. Run f-fold CV across a range of k values
+           and chart accuracy vs k. This is THE standard way to pick k in practice. -->
+      <details class="cv-panel" style="margin-top:0;">
+        <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+          <span data-i18n="cv-summary">🔢 k-fold cross-validation (find the best k)</span>
+        </summary>
+        <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem;">
+          <p style="margin:0 0 8px; color:var(--muted); font-size:0.82rem;" data-i18n="cv-hint">
+            Splits the training points into f equal folds. For each k in 1..30, trains on f−1 folds and validates on the held-out fold; averages accuracy across all f rotations. The k with highest CV accuracy is the right pick — NOT the k that fits the training data best (that's always k=1).
+          </p>
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
+            <label data-i18n="cv-folds-label">Folds (f):</label>
+            <input id="cvFolds" type="range" min="2" max="10" value="5" style="width:140px;">
+            <span id="cvFoldsV" style="font-family:ui-monospace,monospace; color:var(--accent); font-weight:700;">5</span>
+            <label data-i18n="cv-kmax-label" style="margin-left:10px;">k_max:</label>
+            <input id="cvKmax" type="range" min="5" max="30" value="20" style="width:120px;">
+            <span id="cvKmaxV" style="font-family:ui-monospace,monospace; color:var(--accent); font-weight:700;">20</span>
+            <button class="step-btn" id="cvRunBtn" data-i18n="cv-run">▶ Run CV</button>
+          </div>
+          <canvas id="cvCv" width="560" height="200" style="border:1px solid var(--border); width:100%; height:auto; background:white; image-rendering:auto;"></canvas>
+          <div id="cvStats" style="font-family:ui-monospace,monospace; font-size:0.82rem; color:var(--muted); margin-top:6px; min-height:1.4em;">
+            <span style="font-style:italic;" data-i18n="cv-empty">(click "Run CV" — needs at least 10 training points)</span>
+          </div>
+        </div>
+      </details>
+    </div><!-- /.bento-cell cv-panel -->
+
+  </div><!-- /.bento-main -->
+</div><!-- /.bento -->
+
+  <!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
+  <details class="lesson-tour" style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="tour-summary">📚 Lesson tour (4 steps)</span>
+    </summary>
+    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+        <strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/4</span>:</strong>
+        <strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">—</strong>
+      </div>
+      <p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">—</p>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="step-btn secondary" id="tourPrev" data-i18n="tour-prev">← Prev</button>
+        <button class="step-btn" id="tourApply" data-i18n="tour-apply">▶ Apply this scenario</button>
+        <button class="step-btn secondary" id="tourNext" data-i18n="tour-next">Next →</button>
+      </div>
+    </div>
+  </details>
+
+  <!-- Worksheet/lab mode. 3 questions per applet with instant check. -->
+  <details class="worksheet" style="margin-top:8px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="ws-summary">📝 Worksheet (3 questions)</span>
+    </summary>
+    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem; line-height:1.5;">
+      <div class="ws-q" id="ws1">
+        <p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">Load <em>two blobs</em>, k=1. Add a test point right in the middle, between the blobs. Which class does k=1 assign?</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="0"> <span data-i18n="ws1o0">Always blue — ties are always broken toward the first class.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="1"> <span data-i18n="ws1o1">Whichever class most nearby points are — k=1 averages the neighborhood.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="2"> <span data-i18n="ws1o2">Whichever class the single nearest training point is — k=1 just copies that one label.</span></label>
+        </div>
+        <button class="step-btn" id="ws1btn" data-i18n="ws-check">Check</button>
+        <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+      <div class="ws-q" id="ws2" style="margin-top:10px;">
+        <p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Same dataset, switch to k=25. Compared to k=1, the decision boundary becomes:</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="0"> <span data-i18n="ws2o0">Smoother — averaging 25 neighbors washes out individual noise.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="1"> <span data-i18n="ws2o1">Wigglier — more neighbors create a more complex boundary.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="2"> <span data-i18n="ws2o2">Unchanged — k does not affect the shape of the boundary.</span></label>
+        </div>
+        <button class="step-btn" id="ws2btn" data-i18n="ws-check">Check</button>
+        <span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+      <div class="ws-q" id="ws3" style="margin-top:10px;">
+        <p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Switch distance metric to Manhattan. The boundaries between classes are now made of:</span></p>
+        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="0"> <span data-i18n="ws3o0">Smooth curves — Manhattan distance rounds the corners off.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="1"> <span data-i18n="ws3o1">Straight, axis-aligned segments — Manhattan's diamond contours meet at 45°.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="2"> <span data-i18n="ws3o2">Perfect circles — every distance metric gives circular boundaries.</span></label>
+        </div>
+        <button class="step-btn" id="ws3btn" data-i18n="ws-check">Check</button>
+        <span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+      </div>
+    </div>
+  </details>
+
+  <div class="jump-anchor"><a href="#essay" class="jump-link" data-i18n="jump-link">↓ Read the explanation</a></div>
+</div>
+</section>
+
+<article class="essay" id="essay">
+
+  <p class="lede">
+    K-nearest-neighbors is so simple it doesn't really seem like "machine learning."
+    To classify a new point, you find the <code>k</code> closest training points and
+    take a majority vote. That's the whole algorithm. There is no model. There are
+    no parameters. There is no "training" in any meaningful sense — KNN just stores
+    every training point and queries them on demand.
+  </p>
+
+  <h2>What k Actually Does</h2>
+
+  <p>
+    At <code>k = 1</code>, every training point gets its own little neighborhood: the
+    region of the plane closer to it than to any other point. The decision boundary
+    hugs every quirk of the data, and any mislabeled training point creates a tiny
+    bubble of wrong predictions around itself.
+  </p>
+
+  <p>
+    At <code>k = 25</code> on a small dataset, the model votes among nearly all the
+    points every time. The boundary smooths out toward a single majority decision
+    for the entire plane.
+  </p>
+
+  <div class="aha">
+    Small <code>k</code> = jagged boundary, low bias, high variance (overfits noise).
+    Large <code>k</code> = smooth boundary, higher bias, lower variance (under-fits structure).
+    This is the bias-variance trade-off, in one slider.
+  </div>
+
+  <h2>Where KNN Wins and Where It Breaks</h2>
+
+  <p>
+    Try the <strong>Two moons</strong> dataset. KNN handles it gracefully — the curved
+    boundary just appears, with no model to design. Then try <strong>Spiral</strong>:
+    KNN still works, but you need careful k to keep the boundary clean. Now try
+    <strong>Noisy overlap</strong>: there's no "correct" boundary because the classes
+    actually mix. With <code>k = 1</code> the boundary looks confidently wrong; with
+    <code>k = 25</code> it admits defeat by predicting the majority class for the
+    overlapped region. That's KNN telling you the truth: <em>the data is ambiguous here</em>.
+  </p>
+
+  <h2>What This Simplifies</h2>
+
+  <p>
+    Real KNN implementations use space-partitioning structures (k-d trees, ball trees)
+    so that finding the k nearest neighbors takes <code>O(log n)</code> time instead of
+    the naive <code>O(n)</code> this applet uses. Real KNN also typically standardizes
+    features (so "age in years" doesn't dominate "height in meters" just because it has
+    bigger numbers), uses distance metrics other than Euclidean (cosine for text,
+    Mahalanobis for correlated features), and may weight neighbors by inverse distance
+    rather than treating them as equal votes.
+  </p>
+
+  <div class="for-teachers">
+    <h3>For teachers</h3>
+    <p><strong>Curriculum:</strong> Supervised Learning: KNN. Classification by
+       similarity; the role of the hyperparameter k; reading a decision boundary;
+       intuition for the bias-variance trade-off.</p>
+    <p><strong>Pre-exploration prompts:</strong></p>
+    <ul>
+      <li>How might a computer classify a point it has never seen?</li>
+      <li>If you had to guess someone's music taste from their friends', would you ask 1 friend or 20? Why?</li>
+      <li>What does it mean for two points to be "similar"?</li>
+    </ul>
+    <p><strong>Post-exploration prompts:</strong></p>
+    <ul>
+      <li>Set k = 1, add a misplaced blue dot in the middle of orange. What happens? Why?</li>
+      <li>Drag k from 1 to 25 on Two Moons. At what k does the model stop seeing the moon shape?</li>
+      <li>On Noisy overlap, what happens to the boundary as k grows? Where's the trade-off?</li>
+    </ul>
+    <p><strong>Common misconceptions defeated:</strong>
+       "bigger k is always better" (no — high k smooths away real structure);
+       "the model learns something" (KNN has no parameters);
+       "decision boundaries are straight lines" (they're piecewise-Voronoi).</p>
+  </div>
+
+</article>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const cv = $('cv'); const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+
+  // ===== bilingual + reduced motion + hard reset =====
+  const STRINGS = {
+    en: {
+      'title': 'Visualizing K-Nearest Neighbors', 'back-link': '← Back to all playgrounds',
+      'footer-top': '↑ Back to top', 'footer-builtby': 'Built by', 'footer-course': 'Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy', 'footer-source': 'View source', 'footer-issue': 'Report an issue',
+      'reset-all': '↺ Reset all',
+      'click-adds': 'Click adds:', 'k-label': 'k:', 'dataset-label': 'Dataset:',
+      'embed-title': 'Copy an <iframe> snippet you can paste into an LMS (Canvas, Moodle, Schoology) or any HTML page. The embed strips the header and essay so only the interactive area shows.',
+      'csv-title': 'Download the training points as a CSV file (x, y, class). Open in Excel/Sheets for follow-up homework.',
+      'ws-summary': '📝 Worksheet (3 questions)',
+      'ws-check': 'Check',
+      'ws-pick': 'Pick an answer first.',
+      'tour-step': 'Step',
+      // --- F1: worksheet question prompts (data-i18n spans) ---
+      'ws1q': 'Load two blobs, k=1. Add a test point right in the middle, between the blobs. Which class does k=1 assign?',
+      'ws1o0': 'Always blue — ties are always broken toward the first class.',
+      'ws1o1': 'Whichever class most nearby points are — k=1 averages the neighborhood.',
+      'ws1o2': 'Whichever class the single nearest training point is — k=1 just copies that one label.',
+      'ws2q': 'Same dataset, switch to k=25. Compared to k=1, the decision boundary becomes:',
+      'ws2o0': 'Smoother — averaging 25 neighbors washes out individual noise.',
+      'ws2o1': 'Wigglier — more neighbors create a more complex boundary.',
+      'ws2o2': 'Unchanged — k does not affect the shape of the boundary.',
+      'ws3q': 'Switch distance metric to Manhattan. The boundaries between classes are now made of:',
+      'ws3o0': 'Smooth curves — Manhattan distance rounds the corners off.',
+      'ws3o1': "Straight, axis-aligned segments — Manhattan's diamond contours meet at 45°.",
+      'ws3o2': 'Perfect circles — every distance metric gives circular boundaries.',
+      // --- F1: lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
+      'tour0name': 'Two blobs, k=5',
+      'tour0desc': 'The easy case. Two well-separated Gaussian blobs. With k=5 and Euclidean distance, the boundary is a near-straight line between the clusters.',
+      'tour1name': 'k=1 vs k=25 (bias-variance)',
+      'tour1desc': 'Two-moons dataset. k=1 perfectly fits training points but the boundary is jagged. k=25 over-smooths and misclassifies the moon tips. The middle of the k-range is the bias-variance sweet spot.',
+      'tour2name': 'Distance metric matters',
+      'tour2desc': 'Same moons dataset. Switch the metric from Euclidean (round) to Manhattan (diamond) to Chebyshev (square). Each produces a visibly distinct boundary shape — the "neighborhood" definition changes everything.',
+      'tour3name': 'Why standardize? (axis scale)',
+      'tour3desc': 'Spiral dataset. Drag the X-axis scale slider up to 3× — watch the boundary tilt. KNN is sensitive to which feature has the larger magnitude. Real ML pipelines normalize features first (z-score or min-max).',
+      // --- F1: worksheet answer-feedback (ws{n}ok / ws{n}no) ---
+      'ws1ok': "Correct concept. k=1 picks the single closest training point — whichever class it is wins, even if all the other neighbors disagree. That's the high-variance failure mode.",
+      'ws1no': "Hint: k=1 just copies the label of the single nearest training point — it doesn't average over the neighborhood.",
+      'ws2ok': 'Right. Higher k = more votes averaged = smoother boundary. This is bias-variance: lower variance, but higher bias if k is too large.',
+      'ws2no': "Try 'smoother'. Averaging 25 neighbors washes out individual noise; k=1's wiggle disappears.",
+      'ws3ok': "Yes. Manhattan distance contours are diamonds (rotated squares), so equidistant lines run at 45° — boundaries look 'stepped' / axis-aligned compared to Euclidean's circles.",
+      'ws3no': "Hint: Manhattan = |Δx| + |Δy|. The unit ball is a diamond, so boundaries are straight, axis-aligned segments — not curves or circles.",
+      // tooltip translations for the main controls.
+      'class-a-title': 'Future clicks on the canvas add Class A points (blue circles).',
+      'class-b-title': 'Future clicks on the canvas add Class B points (orange triangles).',
+      'k-slider-title': 'Number of neighbors to consult. k=1 hugs every point; large k smooths everything into one prediction.',
+      'scale-title': 'Multiply the X coordinate of every point before computing distance. When scale ≠ 1, the X axis is over- or under-weighted in the distance calculation. Shows why standardization (z-score / min-max) matters.',
+      'ds-blobs-title': 'Two well-separated Gaussian blobs. The easy case.',
+      'ds-moons-title': 'Curved interlocking moons. The classic non-linear classifier test.',
+      'ds-spiral-title': "Interlocking spirals. Tests the decision-boundary's ability to bend.",
+      'ds-noise-title': 'Two heavily overlapping clusters. There is no good boundary — what does k do?',
+      'clear-title': 'Remove all training points. Click the canvas to add new ones.',
+      'cv-summary': '🔢 k-fold cross-validation (find the best k)',
+      'cv-hint': 'Splits the training points into f equal folds. For each k in 1..30, trains on f−1 folds and validates on the held-out fold; averages accuracy across all f rotations. The k with highest CV accuracy is the right pick — NOT the k that fits the training data best (that\'s always k=1).',
+      'cv-folds-label': 'Folds (f):', 'cv-kmax-label': 'k_max:',
+      'cv-run': '▶ Run CV',
+      'cv-empty': '(click "Run CV" — needs at least 10 training points)',
+      'tour-summary': '📚 Lesson tour (4 steps)',
+      'tour-prev': '← Prev', 'tour-next': 'Next →', 'tour-apply': '▶ Apply this scenario',
+      'metric-label': 'Distance:',
+      'm-euclidean': 'Euclidean (L²)', 'm-manhattan': 'Manhattan (L¹)', 'm-chebyshev': 'Chebyshev (L∞)',
+      'metric-title': 'Euclidean = straight-line. Manhattan = sum of |dx|+|dy| — sharp diamond boundaries. Chebyshev = max(|dx|,|dy|) — square neighborhoods.',
+      'weight-label': 'Weighting:',
+      'w-uniform': 'Uniform (1 vote each)',
+      'w-distance': 'By distance (1/d)',
+      'weight-title': 'Uniform: each of the k neighbors gets 1 vote. Distance: each vote is scaled by 1/(distance+ε), so closer points matter more — ties evaporate.',
+      'scale-label': 'X-axis scale:',
+      'scale-hint': '< 1 shrinks X (Y dominates). > 1 stretches X (X dominates). Watch the boundary tilt.',
+      'tldr-strong': 'The big idea',
+      'tldr-body': 'KNN classifies a new point by majority vote of its k closest training points. The hyperparameter k controls how wiggly the decision boundary is — and how much it overfits.',
+      'class-a': 'Class A (○ blue)', 'class-b': 'Class B (△ orange)',
+      'ds-blobs': 'Two blobs', 'ds-moons': 'Two moons', 'ds-spiral': 'Spiral',
+      'ds-noise': 'Noisy overlap', 'clear-btn': 'Clear',
+      'show-boundary': 'Decision boundary',
+      'show-neighbors': 'Highlight k neighbors on hover',
+      'weighted-label': 'Distance-weighted voting',
+      'weighted-title': "Uniform vote: every neighbor counts equally. Distance-weighted: each neighbor's vote is multiplied by 1/(d+ε). Closer neighbors have more say; ties disappear.",
+      'legend-a': 'Class A', 'legend-b': 'Class B',
+      'legend-hint': 'Hover anywhere to see how k neighbors vote.',
+      'jump-link': '↓ Read the explanation',
+    },
+    zh: {
+      'title': 'K-近邻可视化', 'back-link': '← 返回所有演示',
+      'footer-top': '↑ 返回顶部', 'footer-builtby': '作者', 'footer-course': '为海淀凯文学校 2025–2026《人工智能导论》课程制作', 'footer-source': '查看源代码', 'footer-issue': '反馈问题',
+      'reset-all': '↺ 全部重置',
+      'click-adds': '点击添加:', 'k-label': 'k:', 'dataset-label': '数据集:',
+      'embed-title': '复制可粘贴到 LMS(Canvas、Moodle、Schoology)或任意网页的 <iframe> 代码。嵌入模式会去掉页头和说明,只显示交互区。',
+      'csv-title': '把训练点导出为 CSV 文件(x, y, 类别)。可在 Excel/Sheets 中打开做后续作业。',
+      'ws-summary': '📝 练习题(3 题)',
+      'ws-check': '核对',
+      'ws-pick': '请先选择一个答案。',
+      'tour-step': '步骤',
+      // --- F1: 练习题题干(data-i18n span)---
+      'ws1q': '加载"两团数据",k=1。在两团之间正中央添加一个测试点。k=1 会把它判为哪一类?',
+      'ws1o0': '总是蓝色——平局时总是偏向第一类。',
+      'ws1o1': '哪类邻近点最多就判哪类——k=1 会对邻域取平均。',
+      'ws1o2': '唯一最近训练点是哪一类就判哪一类——k=1 只是照搬那一个标签。',
+      'ws2q': '同一数据集,切换到 k=25。与 k=1 相比,决策边界会变得:',
+      'ws2o0': '更平滑——对 25 个邻居取平均会抹平个别噪声。',
+      'ws2o1': '更曲折——邻居越多,边界越复杂。',
+      'ws2o2': '不变——k 不影响边界的形状。',
+      'ws3q': '把距离度量切换为曼哈顿。此时各类之间的边界是由什么构成的:',
+      'ws3o0': '光滑曲线——曼哈顿距离会把拐角磨圆。',
+      'ws3o1': '笔直、轴对齐的线段——曼哈顿的菱形等距线在 45° 处相交。',
+      'ws3o2': '正圆——任何距离度量都会给出圆形边界。',
+      // --- F1: 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
+      'tour0name': '两团数据,k=5',
+      'tour0desc': '最简单的情况。两团分离良好的高斯数据。当 k=5 且使用欧几里得距离时,边界是两簇之间近乎笔直的一条线。',
+      'tour1name': 'k=1 对比 k=25(偏差-方差)',
+      'tour1desc': '双月数据集。k=1 完美拟合训练点,但边界参差不齐。k=25 过度平滑,把月牙的尖端判错。k 取值居中处才是偏差-方差的最佳平衡点。',
+      'tour2name': '距离度量很重要',
+      'tour2desc': '同一双月数据集。把度量从欧几里得(圆形)切换到曼哈顿(菱形)再到切比雪夫(方形)。每种都会产生明显不同的边界形状——"邻域"的定义改变了一切。',
+      'tour3name': '为何要标准化?(坐标轴尺度)',
+      'tour3desc': '螺旋数据集。把 X 轴尺度滑块拉到 3×——观察边界倾斜。KNN 对哪个特征数值更大很敏感。真实的机器学习流程会先对特征做归一化(z-score 或 min-max)。',
+      // --- F1: 练习题答案反馈(ws{n}ok / ws{n}no)---
+      'ws1ok': '概念正确。k=1 选取唯一最近的训练点——无论它是哪一类都获胜,即使其他所有邻居都不同意。这正是高方差的失败模式。',
+      'ws1no': '提示:k=1 只是照搬唯一最近训练点的标签——它不会对邻域取平均。',
+      'ws2ok': '对。k 越大 = 平均的票数越多 = 边界越平滑。这就是偏差-方差:方差更低,但 k 过大时偏差更高。',
+      'ws2no': '试试"smoother"。对 25 个邻居取平均会抹平个别噪声;k=1 的抖动随之消失。',
+      'ws3ok': '没错。曼哈顿距离的等距线是菱形(旋转的正方形),因此等距线沿 45° 方向——与欧几里得的圆形相比,边界看起来呈"阶梯状"/轴对齐。',
+      'ws3no': '提示:曼哈顿 = |Δx| + |Δy|。其单位球是菱形,所以边界是笔直、轴对齐的线段——既不是曲线也不是圆。',
+      // 主要控件的提示翻译。
+      'class-a-title': '后续点击画布将添加 A 类点(蓝色圆圈)。',
+      'class-b-title': '后续点击画布将添加 B 类点(橙色三角形)。',
+      'k-slider-title': '参考的邻居数量。k=1 紧贴每个点;k 越大,预测越平滑。',
+      'scale-title': '在计算距离前给每个点的 X 坐标乘以缩放因子。当缩放 ≠ 1 时,X 轴在距离计算中被加权过多或过少。说明为何需要标准化(z-score / min-max)。',
+      'ds-blobs-title': '两团分离良好的高斯分布。简单情况。',
+      'ds-moons-title': '弯曲交错的双月形。非线性分类器的经典测试。',
+      'ds-spiral-title': '交错的双螺旋。测试决策边界的弯曲能力。',
+      'ds-noise-title': '两个严重重叠的簇。没有好的边界——看看 k 的影响。',
+      'clear-title': '移除所有训练点。点击画布添加新点。',
+      'cv-summary': '🔢 k 折交叉验证(找最佳 k)',
+      'cv-hint': '把训练点等分为 f 折。对每个 k(1..30),在 f−1 折上训练、在剩下的一折上验证;对全部 f 次轮换求平均准确率。CV 准确率最高的 k 才是正确选择——而不是训练拟合最好的 k(那永远是 k=1)。',
+      'cv-folds-label': '折数 (f):', 'cv-kmax-label': 'k_最大值:',
+      'cv-run': '▶ 运行 CV',
+      'cv-empty': '(点击"运行 CV"——需要至少 10 个训练点)',
+      'tour-summary': '📚 课程导览(4 步)',
+      'tour-prev': '← 上一步', 'tour-next': '下一步 →', 'tour-apply': '▶ 应用此场景',
+      'metric-label': '距离:',
+      'm-euclidean': '欧几里得 (L²)', 'm-manhattan': '曼哈顿 (L¹)', 'm-chebyshev': '切比雪夫 (L∞)',
+      'metric-title': '欧几里得 = 直线距离。曼哈顿 = |dx|+|dy| 之和——产生菱形边界。切比雪夫 = max(|dx|,|dy|)——产生方形邻域。',
+      'weight-label': '加权:',
+      'w-uniform': '均匀(每点 1 票)',
+      'w-distance': '按距离 (1/d)',
+      'weight-title': '均匀:k 个邻居各 1 票。距离:每票按 1/(距离+ε) 加权,近邻贡献更大——平票消失。',
+      'scale-label': 'X 轴尺度:',
+      'scale-hint': '< 1 缩小 X(Y 主导)。> 1 拉伸 X(X 主导)。观察边界倾斜。',
+      'tldr-strong': '核心思想',
+      'tldr-body': 'K-近邻通过查找新数据点最近的 k 个训练点并进行多数投票来分类。超参数 k 控制决策边界的波动程度——以及过拟合的程度。',
+      'class-a': 'A 类 (○ 蓝色)', 'class-b': 'B 类 (△ 橙色)',
+      'ds-blobs': '两团数据', 'ds-moons': '双月数据', 'ds-spiral': '螺旋数据',
+      'ds-noise': '噪声重叠', 'clear-btn': '清空',
+      'show-boundary': '决策边界',
+      'show-neighbors': '悬停时高亮 k 个邻居',
+      'weighted-label': '距离加权投票',
+      'weighted-title': '均匀投票:每个邻居权重相同。距离加权:每个邻居的票数乘以 1/(d+ε)。越近的邻居权重越大;不再出现平票。',
+      'legend-a': 'A 类', 'legend-b': 'B 类',
+      'legend-hint': '悬停画布查看 k 个邻居如何投票。',
+      'jump-link': '↓ 阅读说明',
+    },
+  };
+  function setLang(lang) {
+    if (!STRINGS[lang]) lang = 'en';
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.dataset.i18n;
+      if (STRINGS[lang][k]) el.textContent = STRINGS[lang][k];
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const k = el.dataset.i18nTitle;
+      if (STRINGS[lang][k]) el.title = STRINGS[lang][k];
+    });
+    document.querySelectorAll('.lang-switch button').forEach(b =>
+      b.classList.toggle('active', b.dataset.lang === lang));
+    try { localStorage.setItem('lang', lang); } catch (_) {}
+  }
+  document.querySelectorAll('.lang-switch button').forEach(b =>
+    b.addEventListener('click', () => {
+      setLang(b.dataset.lang);
+      // F1: re-render the tour in the new language. Safe here — this click handler
+      // only runs post-init, after LESSON_TOUR (a late `const`) is initialized, so
+      // there is no temporal-dead-zone risk (unlike calling it from inside setLang).
+      try { if (typeof renderTour === 'function') renderTour(); } catch (_) {}
+    }));
+  let initialLang = 'en';
+  try { initialLang = localStorage.getItem('lang') || 'en'; } catch (_) {}
+  setLang(initialLang);
+  // F1: worksheet/feedback i18n helper — returns the localized string for `key`,
+  // falling back to the supplied English `en` when the key is missing in a language.
+  function wsMsg(key, en) {
+    const lang = document.documentElement.lang || 'en';
+    return (STRINGS[lang] && STRINGS[lang][key]) || en;
+  }
+
+  function setTheme(t) {
+    document.body.classList.toggle('dark-mode', t === 'dark');
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+    try { localStorage.setItem('theme', t); } catch (_) {}
+  }
+  let initialTheme = 'light';
+  try {
+    initialTheme = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  } catch (_) {}
+  setTheme(initialTheme);
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    setTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark');
+    if (typeof render === 'function') render(); // Re-render canvas with new theme bg.
+  });
+
+  // For-teachers is hidden by default (cognitive-load floor). User toggles persist.
+  // `?teacher=1` opens on load. `?teacher=0` hides completely (no toggle, for projection).
+  try {
+    const tp = new URLSearchParams(location.search).get('teacher');
+    if (tp === '0') {
+      document.querySelectorAll('.for-teachers').forEach(el => el.style.display = 'none');
+    } else {
+      const style = document.createElement('style');
+      style.textContent = '.for-teachers-expander{margin-top:36px}.for-teachers-expander>summary{cursor:pointer;padding:12px 16px;background:var(--soft);border:1px solid var(--border);border-radius:8px;font-family:-apple-system,system-ui,sans-serif;font-size:0.9rem;color:var(--accent);font-weight:600;list-style:none;user-select:none}.for-teachers-expander>summary::-webkit-details-marker{display:none}.for-teachers-expander[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius:0}.for-teachers-expander>.for-teachers{margin-top:0;border-top:0;border-top-left-radius:0;border-top-right-radius:0}';
+      document.head.appendChild(style);
+      document.querySelectorAll('.for-teachers').forEach(div => {
+        const details = document.createElement('details');
+        details.className = 'for-teachers-expander';
+        const summary = document.createElement('summary');
+        summary.textContent = '▸ Show teacher notes (discussion prompts + curriculum)';
+        div.parentNode.insertBefore(details, div);
+        details.appendChild(summary);
+        details.appendChild(div);
+      });
+      const saved = (() => { try { return localStorage.getItem('teacher-notes-open'); } catch (_) { return null; } })();
+      const shouldOpen = tp === '1' || saved === '1';
+      document.querySelectorAll('details.for-teachers-expander').forEach(d => {
+        d.open = shouldOpen;
+        d.addEventListener('toggle', () => {
+          try { localStorage.setItem('teacher-notes-open', d.open ? '1' : '0'); } catch (_) {}
+        });
+      });
+    }
+  } catch (_) {}
+  document.getElementById('exportPng').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'knn.png';
+    link.href = document.getElementById('cv').toDataURL('image/png');
+    link.click();
+  });
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Shape per class — colorblind-safe redundancy.
+  function drawClassPoint(ctx, x, y, cls, fillColor, ring) {
+    ctx.fillStyle = fillColor;
+    ctx.beginPath();
+    if (cls === 'A') {  // Circle
+      ctx.arc(x, y, 6, 0, Math.PI * 2);
+    } else {  // Triangle
+      ctx.moveTo(x, y - 7);
+      ctx.lineTo(x + 7, y + 5);
+      ctx.lineTo(x - 7, y + 5);
+      ctx.closePath();
+    }
+    ctx.fill();
+    if (ring) {
+      ctx.strokeStyle = ring; ctx.lineWidth = 2; ctx.stroke();
+    }
+  }
+
+  let points = [];
+  let addClass = 'A';
+  let hover = null;
+
+  document.querySelectorAll('.mode-tabs button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.mode-tabs button').forEach(x =>
+        x.classList.toggle('active', x === b));
+      addClass = b.dataset.class;
+    });
+  });
+  cv.addEventListener('click', e => {
+    const {x, y} = canvasCoords(e);
+    points.push({x, y, c: addClass});
+    render();
+  });
+  cv.addEventListener('mousemove', e => { hover = canvasCoords(e); render(); });
+  cv.addEventListener('mouseleave', () => { hover = null; render(); });
+
+  function canvasCoords(e) {
+    const rect = cv.getBoundingClientRect();
+    return { x: (e.clientX - rect.left) * (cv.width / rect.width),
+             y: (e.clientY - rect.top) * (cv.height / rect.height) };
+  }
+  // distance metric selector with axis scaling. dx is multiplied
+  // by the x-scale factor so students can see how unequal feature scales bend the
+  // boundary — the classic "scale before KNN" lesson.
+  function distMetric(a, b) {
+    const xSel = document.getElementById('xScale');
+    const xScale = xSel ? +xSel.value : 1;
+    const dx = (a.x - b.x) * xScale;
+    const dy = a.y - b.y;
+    const sel = document.getElementById('metricSel');
+    const m = sel ? sel.value : 'euclidean';
+    if (m === 'manhattan') return Math.abs(dx) + Math.abs(dy);
+    if (m === 'chebyshev') return Math.max(Math.abs(dx), Math.abs(dy));
+    return dx * dx + dy * dy; // squared euclidean — same sort order as euclidean
+  }
+  // actual Euclidean distance (not squared) for 1/d weighting.
+  function distActual(a, b) {
+    const xSel = document.getElementById('xScale');
+    const xScale = xSel ? +xSel.value : 1;
+    const dx = (a.x - b.x) * xScale;
+    const dy = a.y - b.y;
+    const sel = document.getElementById('metricSel');
+    const m = sel ? sel.value : 'euclidean';
+    if (m === 'manhattan') return Math.abs(dx) + Math.abs(dy);
+    if (m === 'chebyshev') return Math.max(Math.abs(dx), Math.abs(dy));
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+  // Kept as an alias for any caller still referencing distSq; routes through the metric.
+  function distSq(a, b) { return distMetric(a, b); }
+  function knnPredict(p, k) {
+    if (!points.length) return null;
+    const sorted = points.map(q => ({...q, d: distSq(p, q)}))
+                          .sort((a, b) => a.d - b.d)
+                          .slice(0, Math.min(k, points.length));
+    // distance-weighted voting. Uses distActual() (proper metric, not squared)
+    // so the 1/d scaling is in true pixel units across all metric choices.
+    const wSel = $('weightSel');
+    const weighted = wSel && wSel.value === 'distance';
+    const votes = {A: 0, B: 0};
+    let totalWeight = 0;
+    for (const q of sorted) {
+      const w = weighted ? 1 / (distActual(p, q) + 1e-6) : 1;
+      votes[q.c] += w;
+      totalWeight += w;
+    }
+    const winner = votes.A >= votes.B ? 'A' : 'B';
+    return { label: winner,
+             confidence: totalWeight > 0 ? Math.max(votes.A, votes.B) / totalWeight : 0,
+             neighbors: sorted };
+  }
+  function render() {
+    const k = +$('k').value;
+    $('kV').textContent = k;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : 'white'; ctx.fillRect(0, 0, W, H);
+
+    if ($('showBoundary').checked && points.length > 0) {
+      const STEP = 8;
+      for (let x = 0; x < W; x += STEP) {
+        for (let y = 0; y < H; y += STEP) {
+          const pred = knnPredict({x: x + STEP/2, y: y + STEP/2}, k);
+          if (!pred) continue;
+          const base = pred.label === 'A' ? [37, 99, 235] : [217, 119, 6];
+          const alpha = 0.10 + 0.20 * pred.confidence;
+          ctx.fillStyle = `rgba(${base[0]},${base[1]},${base[2]},${alpha})`;
+          ctx.fillRect(x, y, STEP, STEP);
+        }
+      }
+    }
+    if (hover && points.length > 0 && $('showNeighbors').checked) {
+      const pred = knnPredict(hover, k);
+      ctx.strokeStyle = pred.label === 'A' ? getCSS('--classA') : getCSS('--classB');
+      ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+      for (const n of pred.neighbors) {
+        ctx.beginPath(); ctx.moveTo(hover.x, hover.y); ctx.lineTo(n.x, n.y); ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      ctx.beginPath(); ctx.arc(hover.x, hover.y, 8, 0, Math.PI * 2);
+      ctx.strokeStyle = '#333'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#e2e8f0' : '#333'; ctx.font = 'bold 13px system-ui';
+      ctx.fillText(`Predicted: ${pred.label} (${Math.round(pred.confidence * 100)}%)`,
+                    hover.x + 14, hover.y - 10);
+    }
+    // Shape+color for accessibility: A = circle, B = triangle.
+    for (const p of points) {
+      const color = p.c === 'A' ? getCSS('--classA') : getCSS('--classB');
+      drawClassPoint(ctx, p.x, p.y, p.c, color, 'white');
+    }
+    // D3/SVG hybrid: rebuild a11y overlay (one tabbable hit-target per training point).
+    updateOverlay();
+  }
+  // D3-style enter/update/exit overlay. Preserves SVG element identity
+  // across renders so focused points don't lose focus, CSS transitions are
+  // honored, and screen readers don't re-announce on every redraw.
+  const NS = 'http://www.w3.org/2000/svg';
+  function updateOverlay() {
+    const svg = document.getElementById('cvOverlay');
+    if (!svg) return;
+    const existing = Array.from(svg.querySelectorAll('circle[data-role="point"]'));
+    points.forEach((p, idx) => {
+      let el = existing[idx];
+      if (!el) {
+        el = document.createElementNS(NS, 'circle');
+        el.setAttribute('data-role', 'point');
+        el.setAttribute('r', 12);
+        el.setAttribute('fill', 'transparent');
+        el.setAttribute('tabindex', 0);
+        el.setAttribute('role', 'graphics-symbol');
+        el.style.pointerEvents = 'auto';
+        el.style.cursor = 'help';
+        el.style.transition = 'cx 150ms ease, cy 150ms ease';
+        const t = document.createElementNS(NS, 'title');
+        el.appendChild(t);
+        svg.appendChild(el);
+      }
+      el.setAttribute('cx', p.x); el.setAttribute('cy', p.y);
+      el.setAttribute('aria-label',
+        `Training point ${idx + 1}: class ${p.c} at coordinates ${Math.round(p.x)}, ${Math.round(p.y)}.`);
+      el.firstChild.textContent = `Class ${p.c} at (${Math.round(p.x)}, ${Math.round(p.y)})`;
+    });
+    // Exit phase: remove circles for indices no longer in `points`.
+    for (let i = points.length; i < existing.length; i++) existing[i].remove();
+  }
+  function getCSS(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+
+  function genBlobs() {
+    points = [];
+    for (let i = 0; i < 35; i++) {
+      points.push({x: 200 + randn() * 50, y: 200 + randn() * 50, c: 'A'});
+      points.push({x: 440 + randn() * 50, y: 280 + randn() * 50, c: 'B'});
+    }
+  }
+  function genMoons() {
+    points = [];
+    for (let i = 0; i < 60; i++) {
+      const t = Math.PI * i / 60;
+      points.push({x: 200 + 160 * Math.cos(t) + randn() * 12,
+                   y: 280 - 100 * Math.sin(t) + randn() * 12, c: 'A'});
+      points.push({x: 360 + 160 * Math.cos(t + Math.PI) + randn() * 12,
+                   y: 200 + 100 * Math.sin(t + Math.PI) + randn() * 12, c: 'B'});
+    }
+  }
+  function genSpiral() {
+    points = [];
+    for (let i = 0; i < 80; i++) {
+      const t = 0.05 * i; const r = 10 + 5 * i;
+      points.push({x: W/2 + r * Math.cos(t) + randn() * 5,
+                   y: H/2 + r * Math.sin(t) + randn() * 5, c: 'A'});
+      points.push({x: W/2 + r * Math.cos(t + Math.PI) + randn() * 5,
+                   y: H/2 + r * Math.sin(t + Math.PI) + randn() * 5, c: 'B'});
+    }
+  }
+  function genNoise() {
+    points = [];
+    for (let i = 0; i < 70; i++) {
+      points.push({x: 220 + randn() * 90, y: 240 + randn() * 90, c: 'A'});
+      points.push({x: 420 + randn() * 90, y: 240 + randn() * 90, c: 'B'});
+    }
+  }
+  function randn() {
+    let u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+  $('loadBlobs').addEventListener('click', () => { genBlobs(); render(); });
+  $('loadMoons').addEventListener('click', () => { genMoons(); render(); });
+  $('loadSpiral').addEventListener('click', () => { genSpiral(); render(); });
+  $('loadNoise').addEventListener('click', () => { genNoise(); render(); });
+  $('clearBtn').addEventListener('click', () => { points = []; render(); });
+  $('k').addEventListener('input', render);
+  $('metricSel').addEventListener('change', render);
+  $('weightSel').addEventListener('change', render);
+  $('xScale').addEventListener('input', () => {
+    $('xScaleV').textContent = (+$('xScale').value).toFixed(1) + '×';
+    render();
+  });
+  $('showBoundary').addEventListener('change', render);
+  $('showNeighbors').addEventListener('change', render);
+
+  // hard reset to defaults.
+  $('hardReset').addEventListener('click', () => {
+    document.querySelectorAll('.mode-tabs button').forEach(x =>
+      x.classList.toggle('active', x.dataset.class === 'A'));
+    addClass = 'A'; $('k').value = 5; $('kV').textContent = 5;
+    $('metricSel').value = 'euclidean';
+    $('weightSel').value = 'uniform';
+    $('xScale').value = 1; $('xScaleV').textContent = '1.0×';
+    $('showBoundary').checked = true; $('showNeighbors').checked = true;
+    genMoons(); render();
+  });
+
+  // touch support — synthesize mouse events from touch events for tablet use.
+  (() => {
+    const target = cv;
+    let lastTouch = null;
+    target.addEventListener('touchstart', e => {
+      if (e.touches.length > 0) {
+        e.preventDefault();
+        lastTouch = {clientX: e.touches[0].clientX, clientY: e.touches[0].clientY};
+        target.dispatchEvent(new MouseEvent('mousemove', lastTouch));
+      }
+    }, {passive: false});
+    target.addEventListener('touchmove', e => {
+      if (e.touches.length > 0) {
+        e.preventDefault();
+        lastTouch = {clientX: e.touches[0].clientX, clientY: e.touches[0].clientY};
+        target.dispatchEvent(new MouseEvent('mousemove', lastTouch));
+      }
+    }, {passive: false});
+    target.addEventListener('touchend', e => {
+      e.preventDefault();
+      if (lastTouch) target.dispatchEvent(new MouseEvent('click', lastTouch));
+      lastTouch = null;
+    }, {passive: false});
+  })();
+
+  // track currentDataset so the Share URL can restore it.
+  let currentDataset = 'moons';
+  $('loadBlobs').addEventListener('click', () => { currentDataset = 'blobs'; });
+  $('loadMoons').addEventListener('click', () => { currentDataset = 'moons'; });
+  $('loadSpiral').addEventListener('click', () => { currentDataset = 'spiral'; });
+  $('loadNoise').addEventListener('click', () => { currentDataset = 'noise'; });
+
+  // URL-shareable config — k value + dataset choice.
+  try {
+    const sp = new URLSearchParams(location.search);
+    const urlK = parseInt(sp.get('k'), 10);
+    if (!Number.isNaN(urlK) && urlK >= 1 && urlK <= 25) {
+      $('k').value = urlK; $('kV').textContent = urlK;
+    }
+    const urlDs = sp.get('ds');
+    const dsMap = { blobs: 'loadBlobs', moons: 'loadMoons', spiral: 'loadSpiral', noise: 'loadNoise' };
+    if (urlDs && dsMap[urlDs]) {
+      currentDataset = urlDs;
+      // Defer to after genMoons default so it overrides.
+      queueMicrotask(() => $(dsMap[urlDs]).click());
+    }
+  } catch (_) {}
+  document.getElementById('shareLink').addEventListener('click', async () => {
+    const params = new URLSearchParams();
+    params.set('k', $('k').value);
+    params.set('ds', currentDataset);
+    const url = `${location.origin}${location.pathname}?${params.toString()}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      const btn = document.getElementById('shareLink');
+      const orig = btn.textContent; btn.textContent = '✓ Copied';
+      setTimeout(() => btn.textContent = orig, 1500);
+    } catch (_) { prompt('Copy this URL:', url); }
+  });
+
+  // Embed mode. Strip chrome when ?embed=1; "📎 Embed" button copies an iframe snippet.
+  try {
+    if (new URLSearchParams(location.search).get('embed') === '1') {
+      document.body.classList.add('embed-mode');
+    }
+  } catch (_) {}
+  document.getElementById('embedLink').addEventListener('click', async () => {
+    const url = new URL(location.href);
+    url.searchParams.set('embed', '1');
+    const snippet = `<iframe src="${url.toString()}" width="100%" height="720" frameborder="0" style="border:1px solid #e5e7eb; border-radius:8px;" loading="lazy"></iframe>`;
+    try {
+      await navigator.clipboard.writeText(snippet);
+      const btn = document.getElementById('embedLink');
+      const orig = btn.textContent; btn.textContent = '✓ Copied iframe';
+      setTimeout(() => btn.textContent = orig, 1800);
+    } catch (_) { prompt('Copy this iframe snippet:', snippet); }
+  });
+
+  // Lesson tour — ordered KNN scenarios that highlight the core concepts.
+  const LESSON_TOUR = [
+    { name: 'Two blobs, k=5',
+      description: 'The easy case. Two well-separated Gaussian blobs. With k=5 and Euclidean distance, the boundary is a near-straight line between the clusters.',
+      apply: () => { $('k').value = 5; $('kV').textContent = 5; $('metricSel').value = 'euclidean'; $('weightSel').value = 'uniform'; $('xScale').value = 1; $('xScaleV').textContent = '1.0×'; currentDataset = 'blobs'; genBlobs(); render(); } },
+    { name: 'k=1 vs k=25 (bias-variance)',
+      description: 'Two-moons dataset. k=1 perfectly fits training points but the boundary is jagged. k=25 over-smooths and misclassifies the moon tips. The middle of the k-range is the bias-variance sweet spot.',
+      apply: () => { $('k').value = 1; $('kV').textContent = 1; $('metricSel').value = 'euclidean'; currentDataset = 'moons'; genMoons(); render(); } },
+    { name: 'Distance metric matters',
+      description: 'Same moons dataset. Switch the metric from Euclidean (round) to Manhattan (diamond) to Chebyshev (square). Each produces a visibly distinct boundary shape — the "neighborhood" definition changes everything.',
+      apply: () => { $('k').value = 5; $('kV').textContent = 5; $('metricSel').value = 'manhattan'; currentDataset = 'moons'; genMoons(); render(); } },
+    { name: 'Why standardize? (axis scale)',
+      description: 'Spiral dataset. Drag the X-axis scale slider up to 3× — watch the boundary tilt. KNN is sensitive to which feature has the larger magnitude. Real ML pipelines normalize features first (z-score or min-max).',
+      apply: () => { $('k').value = 5; $('kV').textContent = 5; $('metricSel').value = 'euclidean'; $('xScale').value = 3; $('xScaleV').textContent = '3.0×'; currentDataset = 'spiral'; genSpiral(); render(); } },
+  ];
+  let tourIdx = 0;
+  function renderTour() {
+    if (!$('tourName')) return;
+    const s = LESSON_TOUR[tourIdx];
+    // F1: localized scenario name/description with graceful English fallback to the
+    // inline LESSON_TOUR strings (which remain the source-of-truth fallback).
+    const lang = document.documentElement.lang || 'en';
+    const L = STRINGS[lang] || {};
+    $('tourName').textContent = L['tour' + tourIdx + 'name'] || s.name;
+    $('tourDesc').textContent = L['tour' + tourIdx + 'desc'] || s.description;
+    $('tourPos').textContent = `${tourIdx + 1}/${LESSON_TOUR.length}`;
+    $('tourPrev').disabled = (tourIdx === 0);
+    $('tourNext').disabled = (tourIdx === LESSON_TOUR.length - 1);
+  }
+  $('tourApply').addEventListener('click', () => LESSON_TOUR[tourIdx].apply());
+  $('tourPrev').addEventListener('click', () => { if (tourIdx > 0) { tourIdx--; renderTour(); } });
+  $('tourNext').addEventListener('click', () => { if (tourIdx < LESSON_TOUR.length - 1) { tourIdx++; renderTour(); } });
+  renderTour();
+
+  // Worksheet mode. 3 instant-check questions. Each check() receives
+  // the user's lowercased trimmed answer and returns {ok, msg}. Pedagogy: pick
+  // questions whose answers force the student to interact with the applet.
+  // MCQ: each question is graded by the selected radio's index, not typed text.
+  // `correct` is the index of the right option (language-agnostic). ok/no are the
+  // existing bilingual feedback keys, with an English inline fallback via wsMsg.
+  const WORKSHEET = [
+    { correct: 2,
+      ok:  ['ws1ok', "Correct concept. k=1 picks the single closest training point — whichever class it is wins, even if all the other neighbors disagree. That's the high-variance failure mode."],
+      no:  ['ws1no', "Hint: k=1 just copies the label of the single nearest training point — it doesn't average over the neighborhood."] },
+    { correct: 0,
+      ok:  ['ws2ok', "Right. Higher k = more votes averaged = smoother boundary. This is bias-variance: lower variance, but higher bias if k is too large."],
+      no:  ['ws2no', "Try 'smoother'. Averaging 25 neighbors washes out individual noise; k=1's wiggle disappears."] },
+    { correct: 1,
+      ok:  ['ws3ok', "Yes. Manhattan distance contours are diamonds (rotated squares), so equidistant lines run at 45° — boundaries look 'stepped' / axis-aligned compared to Euclidean's circles."],
+      no:  ['ws3no', "Hint: Manhattan = |Δx| + |Δy|. The unit ball is a diamond, so boundaries are straight, axis-aligned segments — not curves or circles."] },
+  ];
+  WORKSHEET.forEach((q, i) => {
+    const n = i + 1;
+    $(`ws${n}btn`).addEventListener('click', () => {
+      const fb = $(`ws${n}fb`);
+      const picked = document.querySelector(`input[name="ws${n}"]:checked`);
+      if (!picked) {
+        fb.textContent = wsMsg('ws-pick', 'Pick an answer first.');
+        fb.style.color = 'var(--muted)';
+        return;
+      }
+      const ok = Number(picked.value) === q.correct;
+      const [key, en] = ok ? q.ok : q.no;
+      fb.textContent = (ok ? '✓ ' : '✗ ') + wsMsg(key, en);
+      fb.style.color = ok ? '#16a34a' : '#dc2626';
+    });
+  });
+
+  // k-fold cross-validation.
+  // Shuffle points, split into f folds, sweep k=1..k_max, score each (f, k) combination.
+  // For each k: average accuracy across all f rotations = CV accuracy. Plot CV accuracy
+  // vs k. The peak identifies the best k for THIS data — and reliably it's NOT k=1.
+  // KNN-on-folds: temporarily replace `points` global with the training fold so the
+  // existing knnPredict() can be reused unchanged. Restore at the end.
+  $('cvFolds').addEventListener('input', () => { $('cvFoldsV').textContent = $('cvFolds').value; });
+  $('cvKmax').addEventListener('input', () => { $('cvKmaxV').textContent = $('cvKmax').value; });
+  function shuffleCopy(arr) {
+    const out = arr.slice();
+    for (let i = out.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [out[i], out[j]] = [out[j], out[i]];
+    }
+    return out;
+  }
+  function runKnnCV() {
+    const f = +$('cvFolds').value, kMax = +$('cvKmax').value;
+    const stats = $('cvStats');
+    if (points.length < Math.max(10, f * 2)) {
+      stats.innerHTML = `<span style="color:#dc2626;">Need at least ${Math.max(10, f * 2)} points for ${f}-fold CV.</span>`;
+      return;
+    }
+    // Stash global state and use a deterministic shuffle of points.
+    const originalPoints = points.slice();
+    const shuffled = shuffleCopy(originalPoints);
+    const accByK = []; // index = k-1, value = avg accuracy over folds.
+    // Pre-build the f folds. Last fold absorbs the remainder so all points are used exactly once.
+    const foldSize = Math.floor(shuffled.length / f);
+    const folds = [];
+    for (let i = 0; i < f; i++) {
+      const start = i * foldSize;
+      const end = (i === f - 1) ? shuffled.length : start + foldSize;
+      folds.push(shuffled.slice(start, end));
+    }
+    try {
+      for (let k = 1; k <= kMax; k++) {
+        let correct = 0, total = 0;
+        for (let valIdx = 0; valIdx < f; valIdx++) {
+          // Train on all OTHER folds; validate on fold[valIdx].
+          const train = [];
+          for (let j = 0; j < f; j++) if (j !== valIdx) train.push(...folds[j]);
+          const val = folds[valIdx];
+          // Swap global `points` so knnPredict uses only the training fold.
+          points.length = 0; points.push(...train);
+          for (const p of val) {
+            if (train.length === 0) continue;
+            const pred = knnPredict(p, k);
+            if (pred && pred.label === p.c) correct++;
+            total++;
+          }
+        }
+        accByK.push(total > 0 ? correct / total : 0);
+      }
+    } finally {
+      // Always restore — leaving the global mutated would break the main viz.
+      points.length = 0; points.push(...originalPoints);
+      render();
+    }
+    drawCvChart(accByK);
+    // Find best k. Break ties toward larger k (less overfit).
+    let bestK = 1, bestAcc = accByK[0];
+    for (let i = 1; i < accByK.length; i++) {
+      if (accByK[i] >= bestAcc) { bestAcc = accByK[i]; bestK = i + 1; }
+    }
+    stats.innerHTML =
+      `<span>Best k = <strong style="color:var(--accent);">${bestK}</strong> ` +
+      `(CV accuracy = <strong>${(bestAcc * 100).toFixed(1)}%</strong>, ` +
+      `${f}-fold, ${originalPoints.length} points). ` +
+      `Click "Apply best k" to update the main viz: ` +
+      `<button class="step-btn" id="cvApplyBtn" style="padding:2px 8px; font-size:0.8rem;">Apply best k</button></span>`;
+    // Wire the just-rendered button.
+    const ab = document.getElementById('cvApplyBtn');
+    if (ab) ab.addEventListener('click', () => { $('k').value = bestK; render(); });
+  }
+  function drawCvChart(accByK) {
+    const cv = $('cvCv');
+    const W = cv.width, H = cv.height;
+    const ctx = cv.getContext('2d');
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : 'white';
+    ctx.fillRect(0, 0, W, H);
+    const pad = { l: 40, r: 12, t: 12, b: 26 };
+    const innerW = W - pad.l - pad.r, innerH = H - pad.t - pad.b;
+    // Y-axis: accuracy in [floor, 1] for tight zoom.
+    const minAcc = Math.min(...accByK);
+    const yMin = Math.max(0, Math.floor(minAcc * 10) / 10 - 0.05);
+    const xMax = accByK.length;
+    // Grid + axes.
+    const muted = document.body.classList.contains('dark-mode') ? '#475569' : '#cbd5e1';
+    ctx.strokeStyle = muted; ctx.lineWidth = 1;
+    ctx.strokeRect(pad.l, pad.t, innerW, innerH);
+    // Y ticks every 0.1.
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#94a3b8' : '#475569';
+    ctx.font = '10px ui-monospace, monospace';
+    for (let y = yMin; y <= 1.001; y += 0.1) {
+      const py = pad.t + innerH - ((y - yMin) / (1 - yMin)) * innerH;
+      ctx.fillText(y.toFixed(1), 6, py + 3);
+      ctx.beginPath(); ctx.moveTo(pad.l, py); ctx.lineTo(pad.l + innerW, py); ctx.strokeStyle = muted + '55'; ctx.stroke();
+    }
+    // X ticks every 5.
+    for (let k = 5; k <= xMax; k += 5) {
+      const px = pad.l + (k / xMax) * innerW;
+      ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#94a3b8' : '#475569';
+      ctx.fillText(k, px - 4, H - 8);
+    }
+    // Line.
+    ctx.strokeStyle = '#7c3aed'; ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i = 0; i < accByK.length; i++) {
+      const px = pad.l + ((i + 1) / xMax) * innerW;
+      const py = pad.t + innerH - ((accByK[i] - yMin) / (1 - yMin)) * innerH;
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    // Dots.
+    ctx.fillStyle = '#7c3aed';
+    for (let i = 0; i < accByK.length; i++) {
+      const px = pad.l + ((i + 1) / xMax) * innerW;
+      const py = pad.t + innerH - ((accByK[i] - yMin) / (1 - yMin)) * innerH;
+      ctx.beginPath(); ctx.arc(px, py, 3, 0, Math.PI * 2); ctx.fill();
+    }
+    // Axis labels.
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#cbd5e1' : '#334155';
+    ctx.font = '11px -apple-system, system-ui, sans-serif';
+    ctx.fillText('k', W / 2, H - 1);
+    ctx.save();
+    ctx.translate(10, H / 2); ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center'; ctx.fillText('CV accuracy', 0, 0);
+    ctx.restore();
+  }
+  $('cvRunBtn').addEventListener('click', runKnnCV);
+
+  // CSV export. Downloads current training points as CSV.
+  document.getElementById('csvExport').addEventListener('click', () => {
+    const rows = ['x,y,class'];
+    for (const p of points) rows.push(`${p.x.toFixed(3)},${p.y.toFixed(3)},${p.c}`);
+    const blob = new Blob([rows.join('\n')], {type: 'text/csv'});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `knn-points-${points.length}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  });
+
+  genMoons(); render();
+})();
+</script>
+  <footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
+    <p style="margin:0 0 6px;"><a href="#top" data-i18n="footer-top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
+    <p style="margin:0;"><span data-i18n="footer-builtby">Built by</span> Logan Dixon · <span data-i18n="footer-course">Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy</span></p>
+    <p style="margin:6px 0 0;"><a href="https://github.com/lmdixon23/ai-playgrounds" data-i18n="footer-source" style="color:var(--accent,#0891b2);">View source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-i18n="footer-issue" style="color:var(--accent,#0891b2);">Report an issue</a> · © 2026 Logan Dixon</p>
+  </footer>
+  <!-- Privacy-friendly analytics — GoatCounter, cookieless. -->
+  <script data-goatcounter="https://lmdixon23.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

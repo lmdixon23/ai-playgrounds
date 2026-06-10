@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visualizing Hill Climbing & Simulated Annealing</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E">
+<meta name="description" content="Six local-search algorithms (simple, steepest, stochastic, first-choice, random-restart, simulated annealing) racing on TSP, N-queens, or a 2D landscape.">
+<link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/hill-climbing/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/hill-climbing/">
+<meta property="og:title" content="Visualizing Hill Climbing & Simulated Annealing — AI Playgrounds">
+<meta property="og:description" content="Six local-search algorithms (simple, steepest, stochastic, first-choice, random-restart, simulated annealing) racing on TSP, N-queens, or a 2D landscape.">
+<meta property="og:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Visualizing Hill Climbing & Simulated Annealing — AI Playgrounds">
+<meta name="twitter:description" content="Six local-search algorithms (simple, steepest, stochastic, first-choice, random-restart, simulated annealing) racing on TSP, N-queens, or a 2D landscape.">
+<meta name="twitter:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Visualizing Hill Climbing & Simulated Annealing — AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/hill-climbing/","description":"Six local-search algorithms (simple, steepest, stochastic, first-choice, random-restart, simulated annealing) racing on TSP, N-queens, or a 2D landscape.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan Dixon"}}
+</script>
+<style>
+  :root {
+    --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #c2410c;
+    --card: #fff; --border: #e5e7eb; --soft: #f9fafb;
+    --good: #16a34a; --bad: #dc2626; --neutral: #2563eb;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", Arial, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; }
+  .page-header { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 24px; }
+  .header-utility { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .header-prefs { display: flex; align-items: center; gap: 8px; }
+  .header-main { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .header-actions { display: flex; align-items: center; gap: 8px; font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem; }
+  .header-actions .header-reset { margin-left: 12px; }
+  .page-header h1 { margin: 0; font-size: 1.5rem; }
+  .page-header .back { color: var(--accent); text-decoration: none; font-size: 0.9rem; font-family: -apple-system, system-ui, sans-serif; }
+  .lang-switch { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .lang-switch button { padding: 4px 10px; background: white; color: var(--muted);
+                          border: none; cursor: pointer; font: inherit; font-size: 0.78rem; }
+  .lang-switch button.active { background: var(--accent); color: white; font-weight: 600; }
+  .header-reset { padding: 6px 12px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font: inherit; font-size: 0.82rem; }
+  .header-reset:hover { background: var(--soft); }
+  .tldr { max-width: 820px; margin: 16px auto 0;
+           background: var(--accent); color: white;
+           border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; font-weight: 500;
+           font-family: -apple-system, system-ui, sans-serif; line-height: 1.45; }
+  .tldr strong { color: rgba(255,255,255,0.85); font-size: 0.72rem; letter-spacing: 0.08em;
+                  text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px; }
+  .interactive { background: var(--card); padding: 24px; border-bottom: 1px solid var(--border); }
+  .interactive-inner { max-width: 1280px; margin: 0 auto;
+                         font-family: -apple-system, system-ui, sans-serif; }
+  .control-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+                  margin-bottom: 12px; font-size: 0.88rem; }
+  .control-row label { color: var(--muted); }
+  .control-row select { padding: 6px 10px; border: 1px solid var(--border);
+                          border-radius: 6px; font: inherit; background: white; }
+  .control-row .step-btn { padding: 7px 14px; background: white; color: var(--fg);
+                            border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                            font: inherit; font-size: 0.85rem; }
+  .control-row .step-btn.primary { background: var(--accent); color: white;
+                                      border-color: var(--accent); font-weight: 600; }
+  .slider-block { display: inline-flex; align-items: center; gap: 6px; }
+  .slider-block input[type=range] { width: 120px; }
+  .slider-block .val { color: var(--accent); font-weight: 700; font-family: monospace;
+                         font-size: 0.92rem; min-width: 40px; text-align: right; }
+  .algo-help { font-size: 0.82rem; color: var(--muted); font-style: italic;
+                background: var(--soft); padding: 8px 12px; border-radius: 6px;
+                margin-bottom: 14px; }
+  .bento { display: grid; grid-template-columns: minmax(300px, 360px) minmax(0, 1fr); gap: 16px; align-items: start; margin-bottom: 14px; }
+  .bento-side, .bento-main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .bento-cell { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+  .bento-cell > :first-child { margin-top: 0 !important; }
+  @media (max-width: 860px) { .bento { grid-template-columns: 1fr; gap: 12px; } }
+  .tp-scrub { min-width: 0; }
+  .canvas-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 14px; }
+  .canvas-card { background: white; border: 1px solid var(--border);
+                   border-radius: 8px; padding: 10px; }
+  .canvas-card h3 { margin: 0 0 6px; font-size: 0.85rem; color: var(--accent);
+                      text-transform: uppercase; letter-spacing: 0.05em; }
+  canvas { display: block; width: 100%; max-width: 420px; height: auto; aspect-ratio: 420 / 280; background: white; border-radius: 4px; }
+  .stats-strip { display: flex; gap: 24px; justify-content: center;
+                   font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem;
+                   margin-top: 12px; flex-wrap: wrap; }
+  .stat-item .label { color: var(--muted); font-size: 0.72rem;
+                       text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-item .val { font-weight: 600; font-family: monospace; font-size: 1rem; color: var(--fg); }
+  .jump-link { display: inline-block; margin-top: 14px;
+                padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px;
+                background: white; color: var(--accent); text-decoration: none;
+                font-family: -apple-system, system-ui, sans-serif; font-size: 0.82rem;
+                font-weight: 600; }
+  .jump-link:hover { background: var(--soft); }
+  .jump-anchor { text-align: center; }
+  .essay { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; font-size: 1.05rem; }
+  .essay h2 { font-size: 1.5rem; margin-top: 36px; margin-bottom: 12px; color: var(--accent); }
+  .essay h3 { font-size: 1.15rem; margin-top: 24px; margin-bottom: 8px; }
+  .essay .lede { font-size: 1.15rem; color: #374151; }
+  .essay .aha { background: #fed7aa; border-left: 4px solid #c2410c;
+                 padding: 12px 18px; margin: 18px 0; border-radius: 0 6px 6px 0;
+                 font-style: italic; color: #7c2d12; }
+  .essay code { background: var(--soft); padding: 1px 6px; border-radius: 4px;
+                 font-family: 'SF Mono', Consolas, monospace; font-size: 0.92em; }
+  .essay ul li { margin-bottom: 6px; }
+  .essay .for-teachers { background: var(--soft); border: 1px solid var(--border);
+                          border-radius: 8px; padding: 20px 24px; margin-top: 36px;
+                          font-family: -apple-system, system-ui, sans-serif; font-size: 0.95rem; }
+  .essay .for-teachers h3 { font-family: -apple-system, system-ui, sans-serif;
+                              color: var(--accent); font-size: 0.9rem;
+                              text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0; }
+  /* ===== Unified transport bar (shared playback controls across stepped applets) ===== */
+  .transport { display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+               padding: 8px 10px; margin: 10px 0; border: 1px solid var(--border);
+               border-radius: 8px; background: var(--soft); }
+  .tp-btn { font: inherit; font-size: 0.9rem; cursor: pointer; border: 1px solid var(--border);
+            background: var(--card); color: var(--fg); border-radius: 6px; padding: 6px 12px; min-width: 40px; line-height: 1; }
+  .tp-btn:hover { background: var(--soft); }
+  .tp-speed { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--muted); }
+  .tp-speed input { accent-color: var(--accent); }
+  .tp-count { margin-left: auto; font-family: ui-monospace, monospace; font-size: 0.82rem;
+              color: var(--muted); font-variant-numeric: tabular-nums; min-width: 128px; text-align: right; }
+  .tp-btn:disabled { opacity: 0.45; cursor: default; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+  /* === dark mode === */
+  body.dark-mode {
+    --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8;
+    --card: #1e293b; --border: #334155; --soft: #1e293b;
+  }
+  body.dark-mode .essay .lede { color: #cbd5e1; }
+  body.dark-mode .essay .for-teachers { background: #0f172a; }
+  /* True canvas dark mode — render fn picks bg directly. */
+  body.dark-mode .header-reset,
+  body.dark-mode .lang-switch button:not(.active),
+  body.dark-mode .header-theme,
+  body.dark-mode .control-row select,
+  body.dark-mode .control-row .step-btn:not(.primary),
+  body.dark-mode .algo-help,
+  body.dark-mode .canvas-card { background: var(--card); color: var(--fg); }
+  .header-theme { padding: 6px 10px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font-size: 1rem; line-height: 1; font-family: inherit; }
+  .header-theme:hover { background: var(--soft); }
+  .header-png { padding: 6px 10px; background: white; color: var(--fg);
+                  border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                  font-size: 0.85rem; font-family: inherit; }
+  .header-png:hover { background: var(--soft); }
+  body.dark-mode .header-png { background: var(--card); color: var(--fg); }
+  /* ===== Slider styling — native themed control via accent-color (consistent across browsers) ===== */
+  input[type="range"] { accent-color: var(--accent); height: 28px; cursor: pointer; }
+  /* embed mode. Strip chrome so the applet fits cleanly in an LMS iframe. */
+  body.embed-mode .page-header,
+  body.embed-mode aside.tldr,
+  body.embed-mode article.essay,
+  body.embed-mode .jump-anchor { display: none !important; }
+  body.embed-mode .interactive { padding: 12px; border-bottom: none; }
+  /* ===== Shared a11y + contrast tokens (review fixes: F4 keyboard focus, F6 banner contrast) ===== */
+  button:focus-visible, a:focus-visible, select:focus-visible,
+  input:focus-visible, textarea:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+  .tldr { background: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), var(--accent); }
+  .tldr strong { color: #fff; }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="header-utility">
+    <a class="back" href="../../" data-i18n="back-link">← Back to all playgrounds</a>
+    <div class="header-prefs">
+      <button class="header-theme" id="themeToggle" aria-label="Toggle dark or light theme"
+              title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
+      <div class="lang-switch" title="Switch interface language">
+        <button data-lang="en" class="active">EN</button>
+        <button data-lang="zh">中文</button>
+      </div>
+    </div>
+  </div>
+  <div class="header-main">
+    <h1 data-i18n="title">Visualizing Hill Climbing &amp; Simulated Annealing</h1>
+    <div class="header-actions">
+      <button class="header-png" id="shareLink"
+              title="Copy a URL that re-opens this problem / algorithm / temperature / cooling in another browser.">🔗 Share</button>
+      <button class="header-png" id="embedLink"
+              title="Copy an <iframe> snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
+      <button class="header-png" id="csvExport"
+              title="Download cost history (per iteration) + algorithm + problem + final state as CSV.">📊 CSV</button>
+      <button class="header-png" id="exportPng"
+              title="Download the current state visualization as a PNG.">📷 PNG</button>
+      <button class="header-reset" id="hardReset" data-i18n="reset-all"
+              title="Reset everything to defaults: TSP, steepest-ascent, T₀=10, cooling=0.995.">↺ Reset all</button>
+    </div>
+  </div>
+</header>
+
+<aside class="tldr">
+  <strong data-i18n="tldr-strong">The big idea</strong>
+  <span data-i18n="tldr-body">Six local-search algorithms on three classic problems. Greedy methods get stuck in local optima; simulated annealing escapes by sometimes accepting worse moves.</span>
+</aside>
+
+<section class="interactive">
+<div class="interactive-inner">
+
+  <div class="bento">
+    <!-- bento-side: controls + transport + stats -->
+    <div class="bento-side">
+      <div class="bento-cell">
+        <!-- control-row: problem + algorithm selects -->
+        <div class="control-row">
+          <label data-i18n="prob-label">Problem:</label>
+          <select id="probSel" data-i18n-title="prob-sel-title" title="The optimization target. Each problem has its own neighbor function.">
+            <option value="tsp" selected data-i18n="opt-tsp">Traveling salesman (12 cities)</option>
+            <option value="queens" data-i18n="opt-queens">N-queens (n=8, minimize attacks)</option>
+            <option value="landscape" data-i18n="opt-landscape">2D function landscape (5 minima)</option>
+          </select>
+          <label data-i18n="algo-label">Algorithm:</label>
+          <select id="algoSel" data-i18n-title="algo-sel-title" title="Which local-search variant to run.">
+            <option value="simple" data-i18n="opt-simple">Simple HC (first improvement)</option>
+            <option value="steepest" selected data-i18n="opt-steepest">Steepest-ascent HC</option>
+            <option value="stochastic" data-i18n="opt-stochastic">Stochastic HC</option>
+            <option value="firstchoice" data-i18n="opt-firstchoice">First-choice HC</option>
+            <option value="restart" data-i18n="opt-restart">Random-restart HC</option>
+            <option value="sa" data-i18n="opt-sa">Simulated annealing</option>
+            <option value="tabu" data-i18n="opt-tabu">Tabu search</option>
+            <option value="ga" data-i18n="opt-ga">Genetic algorithm</option>
+          </select>
+          <span id="gaControls" style="display:none; margin-left:8px;">
+            <label data-i18n="ga-pop-label" data-i18n-title="ga-pop-title"
+                   title="Population size. Larger populations explore more diversity per generation but slow each generation down. Each 'step' here = one generation (evaluate → select → crossover → mutate).">Pop:</label>
+            <input id="gaPop" type="range" min="10" max="100" step="5" value="30" style="width:80px; vertical-align:middle;">
+            <span id="gaPopV" style="font-family:ui-monospace,monospace; color:var(--accent); font-weight:700;">30</span>
+            <label data-i18n="ga-mut-label" data-i18n-title="ga-mut-title" style="margin-left:6px;"
+                   title="Mutation rate per gene. Too low = premature convergence; too high = random search.">Mut:</label>
+            <input id="gaMut" type="range" min="0.01" max="0.5" step="0.01" value="0.10" style="width:80px; vertical-align:middle;">
+            <span id="gaMutV" style="font-family:ui-monospace,monospace; color:var(--accent); font-weight:700;">0.10</span>
+          </span>
+        </div>
+
+        <div class="algo-help" id="algoHelp">Steepest-ascent: examine all neighbors, take the best improving one. Stops at any local optimum.</div>
+
+        <!-- control-row: SA sliders -->
+        <div class="control-row">
+          <span class="slider-block">
+            <label data-i18n="t0-label" data-i18n-title="t0-title" title="Initial temperature for simulated annealing. Higher = more willing to accept bad moves early.">T₀ (SA)</label>
+            <input id="t0" type="range" min="0.1" max="50" step="0.1" value="10" aria-label="Initial temperature (T-zero) for simulated annealing">
+            <span class="val" id="t0V">10.0</span>
+          </span>
+          <span class="slider-block">
+            <label data-i18n="cool-label" data-i18n-title="cool-title" title="Per-step multiplicative cooling factor. 0.999 = slow cool, 0.95 = fast cool.">Cooling</label>
+            <input id="cool" type="range" min="0.9" max="0.999" step="0.001" value="0.995" aria-label="Cooling rate for simulated annealing">
+            <span class="val" id="coolV">0.995</span>
+          </span>
+          <!-- Speed / Step / Run / Restart relocated to the unified transport bar below. -->
+        </div>
+
+        <!-- Unified transport bar (shared playback controls; Speed/Step/Run/Restart relocated here). -->
+        <div class="transport" id="transport" role="group" aria-label="Playback controls">
+          <button class="tp-btn" id="restartBtn" data-i18n-title="restart-title"
+                  title="Restart from a fresh random state. Keeps problem and algorithm.">↺</button>
+          <button class="tp-btn" id="backBtn" data-i18n-title="back-title"
+                  title="Step one iteration backward through the run.">◀❘</button>
+          <button class="tp-btn" id="runBtn" data-i18n="run-btn" aria-pressed="false"
+                  title="Run continuously. Click again to pause.">▶ Run / pause</button>
+          <button class="tp-btn" id="stepBtn" data-i18n="step-btn"
+                  title="Run one step of the chosen algorithm.">❘▶ Step</button>
+          <label class="tp-speed"><span data-i18n="speed-label">Speed</span>
+            <input id="speed" type="range" min="0" max="100" value="50" aria-label="Animation speed"
+                   data-i18n-title="speed-title" title="Visualization speed. Higher = faster (and skips frames at the top)."></label>
+          <span class="tp-scrub" id="hcScrubGroup" style="display:inline-flex; visibility:hidden; align-items:center; gap:8px; flex:1 1 220px; min-width:150px;">
+            <span style="color:var(--accent); font-weight:600; font-size:0.82rem;" title="History">⏪</span>
+            <input type="range" id="replaySlider" min="0" max="0" value="0" step="1"
+                   aria-label="Scrub through past iterations" style="flex:1; min-width:110px;">
+            <label style="color:var(--muted); display:flex; align-items:center; gap:4px; font-size:0.8rem;"><span>iter</span>
+              <input type="number" id="hcJump" min="0" aria-label="Jump to iteration" style="width:64px; padding:3px 6px; border:1px solid var(--border); border-radius:4px; font:inherit;"></label>
+            <span id="replayLabel" style="display:none"></span>
+            <button class="tp-btn" id="replayResume" style="padding:4px 10px; font-size:0.8rem;" disabled data-i18n="return-live">Jump to latest</button>
+          </span>
+          <span class="tp-count" id="tpCount" data-i18n="tp-idle">idle</span>
+        </div>
+
+        <!-- Stats strip (always-visible readout) -->
+        <div class="stats-strip">
+          <div class="stat-item"><div class="label" data-i18n="stat-iter">Iteration</div><div class="val" id="iterV">0</div></div>
+          <div class="stat-item"><div class="label" data-i18n="stat-cost">Current cost</div><div class="val" id="costV">—</div></div>
+          <div class="stat-item"><div class="label" data-i18n="stat-best">Best ever</div><div class="val" id="bestV">—</div></div>
+          <div class="stat-item"><div class="label" data-i18n="stat-temp">Temperature</div><div class="val" id="tempV">—</div></div>
+          <div class="stat-item"><div class="label" data-i18n="stat-ar">SA accept/reject</div><div class="val" id="acceptV">0/0</div></div>
+        </div>
+      </div><!-- /.bento-cell (controls + transport + stats) -->
+    </div><!-- /.bento-side -->
+
+    <!-- bento-main: canvas pair + worksheet + lesson tour -->
+    <div class="bento-main">
+      <div class="bento-cell">
+        <div class="canvas-pair">
+          <div class="canvas-card">
+            <h3 data-i18n="state-h3">Current state</h3>
+            <canvas id="stateCv" width="420" height="280" role="img"
+                    aria-label="Current state of the optimization problem."></canvas>
+          </div>
+          <div class="canvas-card">
+            <h3 data-i18n="cost-h3">Cost over iterations</h3>
+            <canvas id="costCv" width="420" height="280" role="img"
+                    aria-label="Cost over iterations chart."></canvas>
+          </div>
+        </div>
+      </div><!-- /.bento-cell (canvas pair) -->
+    </div><!-- /.bento-main -->
+  </div><!-- /.bento -->
+
+  <!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
+  <details class="lesson-tour">
+          <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+            <span data-i18n="tour-summary">📚 Lesson tour (5 steps)</span>
+          </summary>
+          <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+            <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+              <strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
+              <strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">—</strong>
+            </div>
+            <p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">—</p>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <button class="step-btn secondary" id="tourPrev" data-i18n="tour-prev">← Prev</button>
+              <button class="step-btn" id="tourApply" data-i18n="tour-apply">▶ Apply this scenario</button>
+              <button class="step-btn secondary" id="tourNext" data-i18n="tour-next">Next →</button>
+            </div>
+          </div>
+        </details>
+
+  <!-- Worksheet/lab mode. 3 questions per applet with instant check. -->
+  <details class="worksheet">
+          <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+            <span data-i18n="ws-summary">📝 Worksheet (3 questions)</span>
+          </summary>
+          <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem; line-height:1.5;">
+            <div class="ws-q" id="ws1">
+              <p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">TSP, steepest-ascent HC. Run to convergence several times from different restarts. Does it always find the SAME (global-optimum) solution?</span></p>
+              <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="0"> <span data-i18n="ws1o0">Yes — steepest-ascent always climbs to the single best tour, no matter where it starts.</span></label>
+                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="1"> <span data-i18n="ws1o1">No — it's greedy and stops at a local optimum, so different starts land on different tours.</span></label>
+                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="2"> <span data-i18n="ws1o2">Yes — once the cost stops dropping, that's a proof the tour is globally optimal.</span></label>
+              </div>
+              <button class="step-btn" id="ws1btn" data-i18n="ws-check">Check</button>
+              <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+            </div>
+            <div class="ws-q" id="ws2" style="margin-top:10px;">
+              <p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Same TSP. Switch to random-restart HC. After several minutes, "best ever" cost is:</span></p>
+              <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="0"> <span data-i18n="ws2o0">Better (lower) — restarts sample many local optima and keep the best one found.</span></label>
+                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="1"> <span data-i18n="ws2o1">Worse (higher) — restarting throws away progress, so it never improves on a single climb.</span></label>
+                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="2"> <span data-i18n="ws2o2">The same — every climb reaches the same optimum, so restarts change nothing.</span></label>
+              </div>
+              <button class="step-btn" id="ws2btn" data-i18n="ws-check">Check</button>
+              <span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+            </div>
+            <div class="ws-q" id="ws3" style="margin-top:10px;">
+              <p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Simulated annealing. As temperature T cools toward zero, the algorithm behavior becomes:</span></p>
+              <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="0"> <span data-i18n="ws3o0">More random — low T means it accepts almost any move, good or bad.</span></label>
+                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="1"> <span data-i18n="ws3o1">Unchanged — temperature only affects speed, not which moves get accepted.</span></label>
+                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="2"> <span data-i18n="ws3o2">Greedier — as T→0 the chance of accepting a worse move goes to zero, so it degenerates to greedy HC.</span></label>
+              </div>
+              <button class="step-btn" id="ws3btn" data-i18n="ws-check">Check</button>
+              <span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+            </div>
+          </div>
+        </details>
+
+  <div class="jump-anchor"><a href="#essay" class="jump-link" data-i18n="jump-link">↓ Read the explanation</a></div>
+</div>
+</section>
+
+<article class="essay" id="essay">
+
+  <p class="lede">
+    Local search algorithms don't "see" the whole problem. They see only the current state and a
+    handful of "neighbor" states reachable in one move. They have to decide where to go next from
+    that tiny window. This applet pits six of the classic strategies against three classic problems
+    so you can watch which strategies get stuck and which escape.
+  </p>
+
+  <h2>The two-axis view of local search</h2>
+
+  <p>
+    Every local search algorithm can be described by two choices: <strong>which neighbor to
+    consider</strong> and <strong>which to accept</strong>. Simple hill-climbing considers
+    neighbors one at a time and accepts the first improving one. Steepest-ascent considers all
+    neighbors and accepts the best. Stochastic HC weights by improvement. First-choice HC samples
+    randomly. Random-restart adds a "when stuck, start over" outer loop. Simulated annealing
+    adds the radical option: <em>sometimes accept a worse move</em>.
+  </p>
+
+  <h2>Why greedy methods get stuck</h2>
+
+  <p>
+    On a multi-modal problem (N-queens, TSP, the function landscape with five minima), greedy
+    methods reach a local optimum and stop. From that local optimum, every neighbor looks worse —
+    so a greedy algorithm has nowhere to go, even though a globally better state exists a few
+    steps away on the other side of a hill. This is the central pathology that local search has
+    to solve.
+  </p>
+
+  <div class="aha">
+    Watch steepest-ascent on N-queens. Most runs end at a state with 1 or 2 remaining attacks —
+    not zero. The greedy algorithm has done everything it can without making a move that
+    momentarily looks bad. Sometimes the right move is a worse-looking one.
+  </div>
+
+  <h2>The two ways out of local optima</h2>
+
+  <p>
+    <strong>Random-restart</strong> is the brute-force fix: when stuck, throw the state away and
+    start fresh from a random configuration. Run it long enough and you'll eventually start near
+    the global optimum. Watch the cost chart "jump up" when the restart happens — that's the
+    cost of starting over.
+  </p>
+
+  <p>
+    <strong>Simulated annealing</strong> is the elegant fix: accept worse moves with probability
+    <code>exp(−ΔE/T)</code>, where T is a temperature that decreases over time. Early on (high T),
+    almost any move is accepted, so the algorithm wanders freely. Later (low T), only improving
+    moves are accepted, so it behaves like greedy hill-climbing. The trick is the
+    <em>cooling schedule</em>: cool too fast and you freeze in a bad spot; cool too slow and
+    you waste time wandering.
+  </p>
+
+  <h2>Why each problem teaches something different</h2>
+
+  <ul>
+    <li><strong>TSP</strong> uses 2-opt neighbors (reverse a tour segment). The neighborhood is
+      huge — 66 neighbors per state with 12 cities — so steepest-ascent is expensive but
+      effective.</li>
+    <li><strong>N-queens</strong> has a tiny neighborhood (move one queen in its column) but a
+      rugged cost surface. Local optima are common.</li>
+    <li><strong>Function landscape</strong> is the canonical Bret-Victor-style picture: you can
+      literally see the local minima as dark spots on the heatmap, and the trajectory yellow
+      line shows the algorithm's path. Try simulated annealing here to see the wandering phase.</li>
+  </ul>
+
+  <h2>What this simplifies</h2>
+
+  <p>
+    Real local search uses tabu lists (forbidden recent states), problem-specific moves,
+    population-based methods (genetic algorithms, particle swarm), and parallel restarts. Real
+    SA cooling schedules are designed with theoretical guarantees ("logarithmic cooling is
+    guaranteed to find the global optimum given infinite time"). But the heart — propose a
+    neighbor, decide whether to accept — is exactly what runs here.
+  </p>
+
+  <div class="for-teachers">
+    <h3>For teachers</h3>
+    <p><strong>Curriculum:</strong> Local Search. Russell &amp; Norvig Chapter 4.
+       Distinguish neighbor structure from algorithm choice; experience why local optima trap
+       greedy algorithms; understand temperature in simulated annealing.</p>
+    <p><strong>Pre-exploration prompts:</strong></p>
+    <ul>
+      <li>If you're hiking blind in fog and want the highest peak, what strategy do you use?</li>
+      <li>What's a "local optimum"? Can a greedy algorithm get stuck in one?</li>
+      <li>Why might it sometimes be WORTH taking a step that makes things worse?</li>
+    </ul>
+    <p><strong>Post-exploration prompts:</strong></p>
+    <ul>
+      <li>Run steepest-ascent on TSP a few times. Why does the cost curve flatten before reaching zero?</li>
+      <li>Now run random-restart on the same TSP. Watch the cost "jump up and back down" each restart. Why is this an improvement?</li>
+      <li>Run SA. Watch accept/reject early vs late. Why are early bad-moves useful, and why does SA stop accepting them later?</li>
+      <li>Set cooling to 0.90 (fast). What does SA degenerate into when T → 0 immediately?</li>
+      <li>Try N-queens with steepest-ascent. Why does the algorithm often stop at 1-2 attacks?</li>
+    </ul>
+    <p><strong>Common misconceptions defeated:</strong>
+       "more random = better" (pure random search has no signal);
+       "SA is always better than HC" (no — for unimodal problems HC is faster);
+       "the algorithm sees the landscape" (no — only the current state and its neighbors).</p>
+  </div>
+
+</article>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+
+  // ===== i18n strings =====
+  const STRINGS = {
+    en: {
+      'title': 'Visualizing Hill Climbing & Simulated Annealing',
+      'back-link': '← Back to all playgrounds', 'reset-all': '↺ Reset all',
+      'footer-top': '↑ Back to top', 'footer-builtby': 'Built by', 'footer-course': 'Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy', 'footer-source': 'View source', 'footer-issue': 'Report an issue',
+      'prob-label': 'Problem:', 'algo-label': 'Algorithm:',
+      'step-btn': '❘▶ Step', 'run-btn': '▶ Run / pause', 'restart-btn': 'Restart',
+      'restart-title': 'Restart from a fresh random state. Keeps problem and algorithm.',
+      'back-title': 'Step one iteration backward through the run.',
+      'tp-idle': 'idle',
+      'return-live': 'Jump to latest',
+      'tldr-strong': 'The big idea',
+      'tldr-body': 'Six local-search algorithms on three classic problems. Greedy methods get stuck in local optima; simulated annealing escapes by sometimes accepting worse moves.',
+      'opt-tsp': 'Traveling salesman (12 cities)',
+      'opt-queens': 'N-queens (n=8, minimize attacks)',
+      'opt-landscape': '2D function landscape (5 minima)',
+      'opt-simple': 'Simple HC (first improvement)',
+      'opt-steepest': 'Steepest-ascent HC',
+      'opt-stochastic': 'Stochastic HC',
+      'opt-firstchoice': 'First-choice HC',
+      'opt-restart': 'Random-restart HC',
+      'opt-sa': 'Simulated annealing',
+      'opt-tabu': 'Tabu search',
+      'opt-ga': 'Genetic algorithm',
+      'ga-pop-label': 'Pop:', 'ga-mut-label': 'Mut:',
+      'ga-pop-title': "Population size. Larger populations explore more diversity per generation but slow each generation down. Each 'step' here = one generation (evaluate → select → crossover → mutate).",
+      'ga-mut-title': 'Mutation rate per gene. Too low = premature convergence; too high = random search.',
+      't0-label': 'T₀ (SA)', 'cool-label': 'Cooling', 'speed-label': 'Speed',
+      'state-h3': 'Current state', 'cost-h3': 'Cost over iterations',
+      'stat-iter': 'Iteration', 'stat-cost': 'Current cost', 'stat-best': 'Best ever',
+      'stat-temp': 'Temperature', 'stat-ar': 'SA accept/reject',
+      'jump-link': '↓ Read the explanation',
+      'tour-summary': '📚 Lesson tour (5 steps)',
+      'tour-step': 'Step',
+      'tour-prev': '← Prev', 'tour-next': 'Next →', 'tour-apply': '▶ Apply this scenario',
+      'ws-summary': '📝 Worksheet (3 questions)',
+      'ws-check': 'Check',
+      'ws-pick': 'Pick an answer first.',
+      // Worksheet question prompts (bilingual; English inline span is the fallback).
+      'ws1q': 'TSP, steepest-ascent HC. Run to convergence several times from different restarts. Does it always find the SAME (global-optimum) solution?',
+      'ws2q': 'Same TSP. Switch to random-restart HC. After several minutes, "best ever" cost is:',
+      'ws3q': 'Simulated annealing. As temperature T cools toward zero, the algorithm behavior becomes:',
+      // MCQ option text (bilingual; English inline span is the fallback).
+      'ws1o0': 'Yes — steepest-ascent always climbs to the single best tour, no matter where it starts.',
+      'ws1o1': "No — it's greedy and stops at a local optimum, so different starts land on different tours.",
+      'ws1o2': "Yes — once the cost stops dropping, that's a proof the tour is globally optimal.",
+      'ws2o0': 'Better (lower) — restarts sample many local optima and keep the best one found.',
+      'ws2o1': 'Worse (higher) — restarting throws away progress, so it never improves on a single climb.',
+      'ws2o2': 'The same — every climb reaches the same optimum, so restarts change nothing.',
+      'ws3o0': 'More random — low T means it accepts almost any move, good or bad.',
+      'ws3o1': 'Unchanged — temperature only affects speed, not which moves get accepted.',
+      'ws3o2': 'Greedier — as T→0 the chance of accepting a worse move goes to zero, so it degenerates to greedy HC.',
+      // Lesson-tour scenario names + descriptions (0-based; English fallback kept inline in LESSON_TOUR).
+      'tour0name': 'Steepest-ascent on TSP gets stuck',
+      'tour0desc': "TSP, 12 cities, steepest-ascent. Press Run. It improves rapidly, then plateaus at a local optimum that's clearly not the shortest tour. Greedy ≠ optimal.",
+      'tour1name': 'Random-restart escapes local optima',
+      'tour1desc': "Same TSP, random-restart. When the climb plateaus, jumps to a fresh start. After enough restarts, the best-ever cost is much lower than any single climb. Cheap and effective.",
+      'tour2name': 'Simulated annealing: T₀=10, cool=0.995',
+      'tour2desc': "TSP with SA. Early iterations accept worse moves (escape valleys). As T cools, behavior becomes greedy. The watchword is 'slow cooling' — try cool=0.999 vs 0.95 and compare.",
+      'tour3name': 'N-queens: steepest hits a plateau',
+      'tour3desc': "8-queens, steepest-ascent. Often finds a 0-conflict solution; often gets stuck on a plateau (many neighbors with the same cost). Watch the cost flatline.",
+      'tour4name': '2D landscape: tabu vs simple HC',
+      'tour4desc': "Landscape with 5 minima. Try Simple HC first — observe what minimum it reaches. Switch to Tabu Search — it forbids recently-visited states, often escaping past nearby minima to find better ones.",
+      // Worksheet answer-feedback strings (English fallback passed inline at each call site).
+      'ws1ok': "Correct. Steepest-ascent HC is greedy: it stops at any local optimum. Different starting tours converge to different local optima. This is the central limitation of pure HC.",
+      'ws1no': "Try 'no'. HC stops at the first local optimum it reaches — different random restarts hit different local optima.",
+      'ws2ok': "Right. Random-restart HC takes the BEST result across many independent climbs. With enough restarts, you sample multiple basins of attraction and the global best becomes likely.",
+      'ws2no': "Try 'better'. Random restarts sample multiple local optima — the best one wins.",
+      'ws3ok': "Correct. SA acceptance prob = exp(-Δ/T). As T→0, exp(-Δ/T) → 0 for any worsening Δ, so the algorithm only accepts improvements — pure greedy hill-climbing. Early on (large T), it accepts almost anything.",
+      'ws3no': "Try 'greedier'. Low T means the Boltzmann acceptance probability for worse moves approaches zero — SA degenerates to greedy HC at T=0.",
+      // tooltip translations for main selectors + slider labels.
+      'prob-sel-title': 'The optimization target. Each problem has its own neighbor function.',
+      'algo-sel-title': 'Which local-search variant to run.',
+      't0-title': 'Initial temperature for simulated annealing. Higher = more willing to accept bad moves early.',
+      'cool-title': 'Per-step multiplicative cooling factor. 0.999 = slow cool, 0.95 = fast cool.',
+      'speed-title': 'Visualization speed. Higher = faster (and skips frames at the top).',
+    },
+    zh: {
+      'title': '爬山算法与模拟退火可视化',
+      'back-link': '← 返回所有演示', 'reset-all': '↺ 全部重置',
+      'footer-top': '↑ 返回顶部', 'footer-builtby': '作者', 'footer-course': '为海淀凯文学校 2025–2026《人工智能导论》课程制作', 'footer-source': '查看源代码', 'footer-issue': '反馈问题',
+      'prob-label': '问题:', 'algo-label': '算法:',
+      'step-btn': '❘▶ 单步', 'run-btn': '▶ 运行/暂停', 'restart-btn': '重启',
+      'restart-title': '从一个全新的随机状态重启。保留问题与算法。',
+      'back-title': '在运行中后退一步。',
+      'tp-idle': '空闲',
+      'return-live': '跳到最新',
+      'tldr-strong': '核心思想',
+      'tldr-body': '三个经典问题上的六种局部搜索算法。贪心方法会陷入局部最优;模拟退火通过有时接受更差的移动来逃出。',
+      'opt-tsp': '旅行商问题(12 个城市)',
+      'opt-queens': 'N 皇后(n=8,尽量减少互相攻击)',
+      'opt-landscape': '二维函数景观(5 个极小值)',
+      'opt-simple': '简单爬山(首次改进)',
+      'opt-steepest': '最陡上升爬山',
+      'opt-stochastic': '随机爬山',
+      'opt-firstchoice': '首选爬山',
+      'opt-restart': '随机重启爬山',
+      'opt-sa': '模拟退火',
+      'opt-tabu': '禁忌搜索',
+      'opt-ga': '遗传算法',
+      'ga-pop-label': '种群:', 'ga-mut-label': '变异率:',
+      'ga-pop-title': '种群规模。种群越大,每一代探索的多样性越高,但每一代的速度变慢。这里每一"步"=一个世代(评估 → 选择 → 交叉 → 变异)。',
+      'ga-mut-title': '每个基因的变异概率。太低 = 过早收敛;太高 = 退化为随机搜索。',
+      't0-label': 'T₀(模拟退火)', 'cool-label': '冷却率', 'speed-label': '速度',
+      'state-h3': '当前状态', 'cost-h3': '迭代过程的代价',
+      'stat-iter': '迭代次数', 'stat-cost': '当前代价', 'stat-best': '历史最佳',
+      'stat-temp': '温度', 'stat-ar': '模拟退火 接受/拒绝',
+      'jump-link': '↓ 阅读说明',
+      'tour-summary': '📚 课程导览(5 步)',
+      'tour-step': '步骤',
+      'tour-prev': '← 上一步', 'tour-next': '下一步 →', 'tour-apply': '▶ 应用此场景',
+      'ws-summary': '📝 练习题(3 题)',
+      'ws-check': '核对',
+      'ws-pick': '请先选择一个答案。',
+      // 练习题题干(双语;英文内联 span 作为回退)。
+      'ws1q': 'TSP,最陡上升爬山。从不同的重启多次运行至收敛。它每次都能找到相同的(全局最优)解吗?',
+      'ws2q': '同一个 TSP。改用随机重启爬山。几分钟后,"历史最佳"代价是:',
+      'ws3q': '模拟退火。当温度 T 冷却趋近于零时,算法的行为会变得:',
+      // MCQ 选项文本(双语;英文内联 span 作为回退)。
+      'ws1o0': '能——无论从哪里出发,最陡上升总能爬到那个唯一的最优路线。',
+      'ws1o1': '不能——它是贪心的,会停在某个局部最优,所以不同起点会落到不同的路线。',
+      'ws1o2': '能——一旦代价不再下降,就证明该路线是全局最优的。',
+      'ws2o0': '更好(更低)——重启会采样许多局部最优,并保留找到的最佳结果。',
+      'ws2o1': '更差(更高)——重启会丢掉已有进展,所以不可能优于单次爬升。',
+      'ws2o2': '一样——每次爬升都到达同一个最优,所以重启没有任何改变。',
+      'ws3o0': '更随机——低温意味着它几乎接受任何移动,无论好坏。',
+      'ws3o1': '不变——温度只影响速度,而不影响哪些移动会被接受。',
+      'ws3o2': '更贪心——当 T→0 时,接受更差移动的概率趋于零,于是退化为贪心爬山。',
+      // 课程导览的场景名称与描述(0 起始;英文回退保留在 LESSON_TOUR 内联)。
+      'tour0name': '最陡上升爬山在 TSP 上卡住',
+      'tour0desc': 'TSP,12 个城市,最陡上升。点击运行。它迅速改进,然后在一个明显不是最短路线的局部最优处停滞。贪心 ≠ 最优。',
+      'tour1name': '随机重启逃出局部最优',
+      'tour1desc': '同一个 TSP,随机重启。当爬升停滞时,跳到一个全新的起点。经过足够多次重启后,历史最佳代价远低于任何单次爬升。便宜且有效。',
+      'tour2name': '模拟退火:T₀=10,冷却率=0.995',
+      'tour2desc': 'TSP 配模拟退火。前期的迭代会接受更差的移动(逃出谷底)。随着 T 冷却,行为变得贪心。关键在于"慢冷却"——试试冷却率 0.999 对比 0.95。',
+      'tour3name': 'N 皇后:最陡上升撞上平台',
+      'tour3desc': '8 皇后,最陡上升。常能找到 0 冲突的解;也常卡在一个平台上(许多邻居代价相同)。观察代价曲线变平。',
+      'tour4name': '二维景观:禁忌搜索对比简单爬山',
+      'tour4desc': '有 5 个极小值的景观。先试简单爬山——观察它到达哪个极小值。再切换到禁忌搜索——它禁止最近访问过的状态,常能越过附近的极小值找到更好的解。',
+      // 练习题答案反馈(英文回退在各调用处内联传入)。
+      'ws1ok': '正确。最陡上升爬山是贪心的:它会在任何局部最优处停下。不同的起始路线会收敛到不同的局部最优。这是纯爬山法的核心局限。',
+      'ws1no': '试试"no"。爬山法在到达的第一个局部最优处就停下——不同的随机重启会撞上不同的局部最优。',
+      'ws2ok': '对。随机重启爬山会从多次独立爬升中取最佳结果。重启足够多次,你就采样到多个吸引域,全局最优变得很可能出现。',
+      'ws2no': '试试"better"。随机重启会采样多个局部最优——其中最好的那个获胜。',
+      'ws3ok': '正确。模拟退火的接受概率 = exp(-Δ/T)。当 T→0 时,对任何变差的 Δ,exp(-Δ/T) → 0,因此算法只接受改进——纯贪心爬山。前期(T 较大)它几乎接受任何移动。',
+      'ws3no': '试试"greedier"。低 T 意味着对更差移动的玻尔兹曼接受概率趋近于零——在 T=0 时模拟退火退化为贪心爬山。',
+      // 主要选择器与滑块的提示翻译。
+      'prob-sel-title': '优化目标。每个问题有自己的邻居函数。',
+      'algo-sel-title': '要运行的局部搜索算法。',
+      't0-title': '模拟退火的初始温度。越高,前期越愿意接受较差的移动。',
+      'cool-title': '每步的冷却乘数。0.999 = 慢冷却,0.95 = 快冷却。',
+      'speed-title': '可视化速度。越高越快(顶部会跳帧)。',
+    },
+  };
+  function setLang(lang) {
+    if (!STRINGS[lang]) lang = 'en';
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.dataset.i18n;
+      if (STRINGS[lang][k]) el.textContent = STRINGS[lang][k];
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const k = el.dataset.i18nTitle;
+      if (STRINGS[lang][k]) el.title = STRINGS[lang][k];
+    });
+    document.querySelectorAll('.lang-switch button').forEach(b =>
+      b.classList.toggle('active', b.dataset.lang === lang));
+    try { localStorage.setItem('lang', lang); } catch (_) {}
+  }
+  document.querySelectorAll('.lang-switch button').forEach(b =>
+    b.addEventListener('click', () => {
+      setLang(b.dataset.lang);
+      // F1: re-render the tour in the new language. Safe here — this click handler
+      // only runs post-init, after LESSON_TOUR (a late `const`) is initialized, so
+      // there is no temporal-dead-zone risk (unlike calling it from inside setLang).
+      try { if (typeof renderTour === 'function') renderTour(); } catch (_) {}
+    }));
+  let initialLang = 'en';
+  try { initialLang = localStorage.getItem('lang') || 'en'; } catch (_) {}
+  setLang(initialLang);
+
+  function setTheme(t) {
+    document.body.classList.toggle('dark-mode', t === 'dark');
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+    try { localStorage.setItem('theme', t); } catch (_) {}
+  }
+  let initialTheme = 'light';
+  try {
+    initialTheme = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  } catch (_) {}
+  setTheme(initialTheme);
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    setTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark');
+    if (typeof render === 'function') render();
+  });
+
+  // For-teachers is hidden by default (cognitive-load floor). User toggles persist.
+  // `?teacher=1` opens on load. `?teacher=0` hides completely (no toggle, for projection).
+  try {
+    const tp = new URLSearchParams(location.search).get('teacher');
+    if (tp === '0') {
+      document.querySelectorAll('.for-teachers').forEach(el => el.style.display = 'none');
+    } else {
+      const style = document.createElement('style');
+      style.textContent = '.for-teachers-expander{margin-top:36px}.for-teachers-expander>summary{cursor:pointer;padding:12px 16px;background:var(--soft);border:1px solid var(--border);border-radius:8px;font-family:-apple-system,system-ui,sans-serif;font-size:0.9rem;color:var(--accent);font-weight:600;list-style:none;user-select:none}.for-teachers-expander>summary::-webkit-details-marker{display:none}.for-teachers-expander[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius:0}.for-teachers-expander>.for-teachers{margin-top:0;border-top:0;border-top-left-radius:0;border-top-right-radius:0}';
+      document.head.appendChild(style);
+      document.querySelectorAll('.for-teachers').forEach(div => {
+        const details = document.createElement('details');
+        details.className = 'for-teachers-expander';
+        const summary = document.createElement('summary');
+        summary.textContent = '▸ Show teacher notes (discussion prompts + curriculum)';
+        div.parentNode.insertBefore(details, div);
+        details.appendChild(summary);
+        details.appendChild(div);
+      });
+      const saved = (() => { try { return localStorage.getItem('teacher-notes-open'); } catch (_) { return null; } })();
+      const shouldOpen = tp === '1' || saved === '1';
+      document.querySelectorAll('details.for-teachers-expander').forEach(d => {
+        d.open = shouldOpen;
+        d.addEventListener('toggle', () => {
+          try { localStorage.setItem('teacher-notes-open', d.open ? '1' : '0'); } catch (_) {}
+        });
+      });
+    }
+  } catch (_) {}
+  document.getElementById('exportPng').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'hill-climbing.png';
+    link.href = document.getElementById('stateCv').toDataURL('image/png');
+    link.click();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.code === 'Space' &&
+        e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' &&
+        e.target.tagName !== 'SELECT') {
+      e.preventDefault();
+      document.getElementById('runBtn').click();
+    }
+  });
+
+  function resizeCv(cv) {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = cv.getBoundingClientRect();
+    cv.width = rect.width * dpr; cv.height = rect.height * dpr;
+    cv.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  const HELP = {
+    simple: 'Simple HC: at each step, pick the FIRST improving neighbor you find. Fast but myopic.',
+    steepest: 'Steepest-ascent: examine all neighbors, take the best improving one. Stops at any local optimum.',
+    stochastic: 'Stochastic HC: pick a random IMPROVING neighbor proportionally to how much it improves. Avoids ties.',
+    firstchoice: 'First-choice HC: generate random neighbors until one improves. Useful when neighbor count is huge.',
+    restart: 'Random-restart: run steepest-ascent; when stuck, restart from random. Eventually finds the global optimum.',
+    sa: 'Simulated annealing: accept worsening moves with probability exp(-ΔE/T). Cool T over time.',
+    tabu: 'Tabu search: always move to the best neighbor — even if worse — but keep a short memory of recent states to forbid cycling back. Memory is the only thing pulling it out of local optima.',
+    ga: 'Genetic algorithm: population-based. Each "step" = one generation. Tournament-select parents, crossover, mutate, elite-preserve top 2. The reported state is the best-of-generation. Diverges from all other algorithms here in that the search is parallel across many individuals.',
+  };
+  $('algoSel').addEventListener('change', e => $('algoHelp').textContent = HELP[e.target.value]);
+  $('t0').addEventListener('input', () => $('t0V').textContent = (+$('t0').value).toFixed(1));
+  $('cool').addEventListener('input', () => $('coolV').textContent = (+$('cool').value).toFixed(3));
+  // GA slider live readouts.
+  if ($('gaPop')) $('gaPop').addEventListener('input', () => {
+    $('gaPopV').textContent = $('gaPop').value;
+    gaPopulation = null; // pop-size change invalidates the population
+  });
+  if ($('gaMut')) $('gaMut').addEventListener('input', () => $('gaMutV').textContent = (+$('gaMut').value).toFixed(2));
+
+  function getCSS(v) {
+    return getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  }
+
+  const Problems = {};
+
+  Problems.tsp = (() => {
+    const N = 12;
+    let cities = [];
+    function newCities(W, H) {
+      cities = [];
+      for (let i = 0; i < N; i++) {
+        cities.push({x: 40 + Math.random() * ((W || 420) - 80), y: 30 + Math.random() * ((H || 280) - 60)});
+      }
+    }
+    newCities();
+    function randomState() {
+      const arr = Array.from({length: N}, (_, i) => i);
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+    function cost(s) {
+      let total = 0;
+      for (let i = 0; i < s.length; i++) {
+        const a = cities[s[i]], b = cities[s[(i + 1) % s.length]];
+        total += Math.hypot(a.x - b.x, a.y - b.y);
+      }
+      return total;
+    }
+    function neighbors(s) {
+      const out = [];
+      for (let i = 0; i < s.length - 1; i++) {
+        for (let j = i + 1; j < s.length; j++) {
+          const ns = s.slice();
+          let a = i, b = j;
+          while (a < b) { [ns[a], ns[b]] = [ns[b], ns[a]]; a++; b--; }
+          out.push(ns);
+        }
+      }
+      return out;
+    }
+    function randomNeighbor(s) {
+      const i = Math.floor(Math.random() * s.length);
+      let j = Math.floor(Math.random() * s.length);
+      while (j === i) j = Math.floor(Math.random() * s.length);
+      const ns = s.slice();
+      let a = Math.min(i, j), b = Math.max(i, j);
+      while (a < b) { [ns[a], ns[b]] = [ns[b], ns[a]]; a++; b--; }
+      return ns;
+    }
+    function draw(ctx, s) {
+      const rect = ctx.canvas.getBoundingClientRect();
+      const W = rect.width, H = rect.height;
+      ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : 'white'; ctx.fillRect(0, 0, W, H);
+      ctx.strokeStyle = getCSS('--accent'); ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (let i = 0; i < s.length; i++) {
+        const a = cities[s[i]], b = cities[s[(i + 1) % s.length]];
+        if (i === 0) ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+      }
+      ctx.closePath(); ctx.stroke();
+      for (let i = 0; i < cities.length; i++) {
+        const c = cities[i];
+        ctx.fillStyle = getCSS('--neutral');
+        ctx.beginPath(); ctx.arc(c.x, c.y, 7, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.font = 'bold 10px monospace';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(i, c.x, c.y);
+      }
+      ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+    }
+    // GA operators. TSP is a permutation problem so crossover must
+    // preserve the "visit each city exactly once" invariant. We use Order
+    // Crossover (OX1): copy a contiguous slice from parent A, then fill the
+    // remaining positions with cities from parent B in their original order,
+    // skipping those already used. Mutation = swap two cities.
+    function gaCrossover(a, b) {
+      const n = a.length;
+      const i = Math.floor(Math.random() * n);
+      const j = Math.floor(Math.random() * n);
+      const lo = Math.min(i, j), hi = Math.max(i, j);
+      const child = new Array(n).fill(-1);
+      const used = new Set();
+      for (let k = lo; k <= hi; k++) { child[k] = a[k]; used.add(a[k]); }
+      let fill = (hi + 1) % n;
+      for (let k = 0; k < n; k++) {
+        const city = b[(hi + 1 + k) % n];
+        if (!used.has(city)) { child[fill] = city; fill = (fill + 1) % n; }
+      }
+      return child;
+    }
+    function gaMutate(s, rate) {
+      const child = s.slice();
+      for (let i = 0; i < child.length; i++) {
+        if (Math.random() < rate) {
+          const j = Math.floor(Math.random() * child.length);
+          [child[i], child[j]] = [child[j], child[i]];
+        }
+      }
+      return child;
+    }
+    return {randomState, neighbors, randomNeighbor, cost, draw, newCities, gaCrossover, gaMutate};
+  })();
+
+  Problems.queens = (() => {
+    const N = 8;
+    function randomState() {
+      return Array.from({length: N}, () => Math.floor(Math.random() * N));
+    }
+    function cost(s) {
+      let attacks = 0;
+      for (let i = 0; i < N; i++) for (let j = i + 1; j < N; j++) {
+        if (s[i] === s[j]) attacks++;
+        if (Math.abs(s[i] - s[j]) === j - i) attacks++;
+      }
+      return attacks;
+    }
+    function neighbors(s) {
+      const out = [];
+      for (let col = 0; col < N; col++) {
+        for (let row = 0; row < N; row++) {
+          if (row === s[col]) continue;
+          const ns = s.slice(); ns[col] = row; out.push(ns);
+        }
+      }
+      return out;
+    }
+    function randomNeighbor(s) {
+      const col = Math.floor(Math.random() * N);
+      let row = Math.floor(Math.random() * N);
+      while (row === s[col]) row = Math.floor(Math.random() * N);
+      const ns = s.slice(); ns[col] = row; return ns;
+    }
+    function draw(ctx, s) {
+      const rect = ctx.canvas.getBoundingClientRect();
+      const W = rect.width, H = rect.height;
+      ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : 'white'; ctx.fillRect(0, 0, W, H);
+      const size = Math.min(W, H) - 20;
+      const ox = (W - size) / 2, oy = (H - size) / 2;
+      const cs = size / N;
+      for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+        ctx.fillStyle = ((r + c) % 2) ? '#cbd5e1' : '#e2e8f0';
+        ctx.fillRect(ox + c * cs, oy + r * cs, cs, cs);
+      }
+      const attacking = new Set();
+      for (let i = 0; i < N; i++) for (let j = i + 1; j < N; j++) {
+        if (s[i] === s[j] || Math.abs(s[i] - s[j]) === j - i) {
+          attacking.add(i); attacking.add(j);
+        }
+      }
+      for (let col = 0; col < N; col++) {
+        const row = s[col];
+        const cx = ox + col * cs + cs / 2;
+        const cy = oy + row * cs + cs / 2;
+        ctx.fillStyle = attacking.has(col) ? getCSS('--bad') : getCSS('--good');
+        ctx.beginPath(); ctx.arc(cx, cy, cs * 0.35, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.font = `bold ${cs * 0.4}px serif`;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('♛', cx, cy);
+      }
+      ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+    }
+    // GA operators for N-queens. State is an N-length array of row-per-col.
+    // Crossover: uniform — each column independently inherits from A or B (no
+    // permutation invariant to preserve). Mutation: reassign a column to a random row.
+    function gaCrossover(a, b) {
+      const child = new Array(a.length);
+      for (let i = 0; i < a.length; i++) child[i] = (Math.random() < 0.5) ? a[i] : b[i];
+      return child;
+    }
+    function gaMutate(s, rate) {
+      const child = s.slice();
+      for (let i = 0; i < child.length; i++) {
+        if (Math.random() < rate) child[i] = Math.floor(Math.random() * child.length);
+      }
+      return child;
+    }
+    return {randomState, neighbors, randomNeighbor, cost, draw, gaCrossover, gaMutate};
+  })();
+
+  Problems.landscape = (() => {
+    const peaks = [
+      {x: 30, y: 25, h: -1.0, s: 12},
+      {x: 70, y: 30, h: -0.5, s: 10},
+      {x: 50, y: 70, h: -0.6, s: 14},
+      {x: 20, y: 80, h: -0.4, s: 8},
+      {x: 85, y: 80, h: -0.55, s: 11},
+    ];
+    function f(x, y) {
+      let s = 0;
+      for (const p of peaks) {
+        const d2 = (x - p.x) ** 2 + (y - p.y) ** 2;
+        s += p.h * Math.exp(-d2 / (2 * p.s * p.s));
+      }
+      return s;
+    }
+    function randomState() { return {x: Math.random() * 100, y: Math.random() * 100}; }
+    function cost(s) { return f(s.x, s.y); }
+    function neighbors(s) {
+      const out = []; const STEP = 3;
+      for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) {
+        if (dx === 0 && dy === 0) continue;
+        const nx = Math.max(0, Math.min(100, s.x + dx * STEP));
+        const ny = Math.max(0, Math.min(100, s.y + dy * STEP));
+        out.push({x: nx, y: ny});
+      }
+      return out;
+    }
+    function randomNeighbor(s) {
+      const nx = Math.max(0, Math.min(100, s.x + (Math.random() - 0.5) * 8));
+      const ny = Math.max(0, Math.min(100, s.y + (Math.random() - 0.5) * 8));
+      return {x: nx, y: ny};
+    }
+    function draw(ctx, s) {
+      const rect = ctx.canvas.getBoundingClientRect();
+      const W = rect.width, H = rect.height;
+      const img = ctx.createImageData(Math.floor(W), Math.floor(H));
+      let lo = Infinity, hi = -Infinity;
+      const grid = [];
+      for (let py = 0; py < Math.floor(H); py++) {
+        grid[py] = [];
+        for (let px = 0; px < Math.floor(W); px++) {
+          const x = (px / W) * 100, y = (py / H) * 100;
+          const v = f(x, y); grid[py][px] = v;
+          if (v < lo) lo = v; if (v > hi) hi = v;
+        }
+      }
+      for (let py = 0; py < Math.floor(H); py++) {
+        for (let px = 0; px < Math.floor(W); px++) {
+          const t = (grid[py][px] - lo) / (hi - lo);
+          const r = Math.round(255 * t);
+          const b = Math.round(255 * (1 - t));
+          const i = (py * Math.floor(W) + px) * 4;
+          img.data[i] = r * 0.6 + 60; img.data[i+1] = 60; img.data[i+2] = b * 0.6 + 80;
+          img.data[i+3] = 255;
+        }
+      }
+      ctx.putImageData(img, 0, 0);
+      const sx = (s.x / 100) * W, sy = (s.y / 100) * H;
+      ctx.fillStyle = '#fde047';
+      ctx.beginPath(); ctx.arc(sx, sy, 7, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#000'; ctx.lineWidth = 2; ctx.stroke();
+    }
+    // GA operators for the 2D landscape. State is {x, y}. Arithmetic
+    // crossover = midpoint. Mutation = small Gaussian perturbation per coord.
+    function gaCrossover(a, b) {
+      // Uniformly random mix per axis so siblings can differ even at same midpoint.
+      const tx = Math.random(), ty = Math.random();
+      return { x: tx * a.x + (1 - tx) * b.x, y: ty * a.y + (1 - ty) * b.y };
+    }
+    function gaMutate(s, rate) {
+      // For continuous spaces, `rate` is interpreted as a probability of perturbing
+      // PLUS the magnitude of the perturbation (Gaussian σ scales with rate).
+      let nx = s.x, ny = s.y;
+      if (Math.random() < Math.max(0.5, rate * 5)) {
+        const r = () => { let u = 0, v = 0; while (u === 0) u = Math.random(); while (v === 0) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+        const sigma = 5 + 20 * rate;
+        nx = Math.max(0, Math.min(100, nx + r() * sigma));
+        ny = Math.max(0, Math.min(100, ny + r() * sigma));
+      }
+      return { x: nx, y: ny };
+    }
+    return {randomState, neighbors, randomNeighbor, cost, draw, gaCrossover, gaMutate};
+  })();
+
+  let prob = null, problemKey = 'tsp';
+  let state = null, bestState = null, bestCost = Infinity;
+  // GA population. null = uninitialized; rebuilt on first GA step.
+  let gaPopulation = null;
+  let iter = 0;
+  let costHistory = [];
+  let trajectory = [];
+  let T = 10;
+  let accepts = 0, rejects = 0;
+
+  function reset() {
+    problemKey = $('probSel').value;
+    prob = Problems[problemKey];
+    if (problemKey === 'tsp') {
+      const rect = $('stateCv').getBoundingClientRect();
+      prob.newCities(rect.width, rect.height);
+    }
+    state = prob.randomState();
+    bestState = state; bestCost = prob.cost(state);
+    iter = 0; costHistory = [bestCost]; trajectory = [state];
+    T = +$('t0').value;
+    accepts = 0; rejects = 0;
+    // tabu memory cleared on reset.
+    if (typeof tabuList !== 'undefined') tabuList.clear();
+    // GA population invalidated on reset.
+    gaPopulation = null;
+    render();
+  }
+  function trackBest(c, s) {
+    if (c < bestCost) { bestCost = c; bestState = s; }
+  }
+  function step() {
+    if (!prob) return false;
+    const algo = $('algoSel').value;
+    const curCost = prob.cost(state);
+    let next = null, nextCost = curCost;
+    let stuck = false;
+    if (algo === 'simple') {
+      for (const n of prob.neighbors(state)) {
+        const c = prob.cost(n);
+        if (c < curCost) { next = n; nextCost = c; break; }
+      }
+      if (!next) stuck = true;
+    } else if (algo === 'steepest') {
+      let bestN = null, bestC = curCost;
+      for (const n of prob.neighbors(state)) {
+        const c = prob.cost(n);
+        if (c < bestC) { bestC = c; bestN = n; }
+      }
+      if (bestN) { next = bestN; nextCost = bestC; } else stuck = true;
+    } else if (algo === 'stochastic') {
+      const improving = [];
+      for (const n of prob.neighbors(state)) {
+        const c = prob.cost(n);
+        if (c < curCost) improving.push({n, dc: curCost - c, c});
+      }
+      if (improving.length) {
+        const total = improving.reduce((a, b) => a + b.dc, 0);
+        let r = Math.random() * total;
+        for (const it of improving) {
+          r -= it.dc;
+          if (r <= 0) { next = it.n; nextCost = it.c; break; }
+        }
+      } else stuck = true;
+    } else if (algo === 'firstchoice') {
+      for (let i = 0; i < 100; i++) {
+        const n = prob.randomNeighbor(state);
+        const c = prob.cost(n);
+        if (c < curCost) { next = n; nextCost = c; break; }
+      }
+      if (!next) stuck = true;
+    } else if (algo === 'restart') {
+      let bestN = null, bestC = curCost;
+      for (const n of prob.neighbors(state)) {
+        const c = prob.cost(n);
+        if (c < bestC) { bestC = c; bestN = n; }
+      }
+      if (bestN) { next = bestN; nextCost = bestC; }
+      else { next = prob.randomState(); nextCost = prob.cost(next); }
+    } else if (algo === 'sa') {
+      const n = prob.randomNeighbor(state);
+      const c = prob.cost(n);
+      const dE = c - curCost;
+      if (dE < 0 || Math.random() < Math.exp(-dE / Math.max(1e-9, T))) {
+        next = n; nextCost = c; accepts++;
+      } else { rejects++; }
+      T *= +$('cool').value;
+    } else if (algo === 'tabu') {
+      // Tabu search. Take the best non-tabu neighbor, even if worse than current.
+      // The tabu list holds recent state hashes so the search can't immediately reverse.
+      // Aspiration: accept a tabu move if it beats the global best (standard practice).
+      const TABU_LEN = 7;
+      const hash = (s) => prob.hash ? prob.hash(s) : JSON.stringify(s);
+      const candidates = prob.neighbors(state).map(n => ({n, c: prob.cost(n), h: hash(n)}));
+      let bestN = null, bestC = Infinity;
+      for (const cand of candidates) {
+        const isTabu = tabuList.has(cand.h);
+        // Aspiration override: tabu move OK if it beats global best.
+        if (isTabu && cand.c >= bestCost) continue;
+        if (cand.c < bestC) { bestC = cand.c; bestN = cand.n; }
+      }
+      if (bestN) {
+        next = bestN; nextCost = bestC;
+        tabuList.add(hash(state));
+        // Trim to fixed size.
+        if (tabuList.size > TABU_LEN) {
+          const it = tabuList.values().next().value;
+          tabuList.delete(it);
+        }
+      } else { stuck = true; }
+    } else if (algo === 'ga') {
+      // Genetic Algorithm. One step = one generation. Maintains a
+      // population of `gaPopSize` individuals. Each generation:
+      //   1. Score every individual (fitness = -cost so higher is better).
+      //   2. Tournament-select two parents (k=3 random picks, take the best).
+      //   3. Apply crossover (problem-specific) with probability 0.9.
+      //   4. Mutate the child at the user-set rate.
+      //   5. Elitism: the top 2 carry over unchanged.
+      // The "current state" reported back to the run loop is the population's
+      // best individual this generation (so cost history is the best-of-gen curve).
+      if (!prob.gaCrossover || !prob.gaMutate) {
+        stuck = true;
+      } else {
+        const popSize = +$('gaPop').value;
+        const mutRate = +$('gaMut').value;
+        // Initialize population from `state` (current) + randoms so the first
+        // generation already includes the user's start point.
+        if (!gaPopulation || gaPopulation.length !== popSize) {
+          gaPopulation = [state];
+          while (gaPopulation.length < popSize) gaPopulation.push(prob.randomState());
+        }
+        const scored = gaPopulation.map(s => ({s, c: prob.cost(s)}));
+        scored.sort((a, b) => a.c - b.c);
+        const pick = () => {
+          let bestIdx = -1, bestC = Infinity;
+          for (let k = 0; k < 3; k++) {
+            const idx = Math.floor(Math.random() * scored.length);
+            if (scored[idx].c < bestC) { bestC = scored[idx].c; bestIdx = idx; }
+          }
+          return scored[bestIdx].s;
+        };
+        const nextPop = [scored[0].s, scored[1].s]; // elitism
+        while (nextPop.length < popSize) {
+          const p1 = pick(), p2 = pick();
+          let child = (Math.random() < 0.9) ? prob.gaCrossover(p1, p2) : (Math.random() < 0.5 ? p1 : p2);
+          child = prob.gaMutate(child, mutRate);
+          nextPop.push(child);
+        }
+        gaPopulation = nextPop;
+        next = scored[0].s; nextCost = scored[0].c;
+      }
+    }
+    iter++;
+    if (next) state = next;
+    trackBest(nextCost, state);
+    costHistory.push(prob.cost(state));
+    if (costHistory.length > 1000) costHistory.shift();
+    trajectory.push(state);
+    if (trajectory.length > 200) trajectory.shift();
+    updateReplaySlider();
+    // Tabu and GA can recover from stuck-ness via memory/population, let them keep running.
+    return !stuck || algo === 'restart' || algo === 'sa' || algo === 'tabu' || algo === 'ga';
+  }
+  // tabu memory. Insertion-ordered Set → oldest entry is evicted when full.
+  const tabuList = new Set();
+
+  // Replay scrubber state for hill-climbing.
+  let liveState = null;
+  let replayMode = false;
+  let replayIdx = -1; // current scrubber index into trajectory[], read by drawCost.
+  function updateReplaySlider() {
+    const slider = document.getElementById('replaySlider');
+    const g = document.getElementById('hcScrubGroup');
+    if (!slider || trajectory.length === 0) return;
+    if (trajectory.length < 2) { if (g) g.style.visibility = 'hidden'; return; }
+    if (g) g.style.visibility = 'visible';
+    slider.max = trajectory.length - 1;
+    if (!replayMode) {
+      slider.value = trajectory.length - 1;
+      document.getElementById('replayLabel').textContent = 'live';
+    }
+  }
+
+  function render() {
+    const ctx = $('stateCv').getContext('2d');
+    prob.draw(ctx, state);
+    if (problemKey === 'landscape') {
+      const rect = $('stateCv').getBoundingClientRect();
+      const W = rect.width, H = rect.height;
+      ctx.strokeStyle = 'rgba(253, 224, 71, 0.7)'; ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let i = 0; i < trajectory.length; i++) {
+        const x = (trajectory[i].x / 100) * W, y = (trajectory[i].y / 100) * H;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    drawCost();
+    $('iterV').textContent = iter;
+    if (!replayMode) { const tc = $('tpCount'); if (tc) tc.textContent = iter > 0 ? `iter ${iter}` : 'idle'; }
+    $('costV').textContent = prob.cost(state).toFixed(2);
+    $('bestV').textContent = bestCost.toFixed(2);
+    $('tempV').textContent = $('algoSel').value === 'sa' ? T.toFixed(3) : '—';
+    $('acceptV').textContent = `${accepts}/${rejects}`;
+    $('t0V').textContent = (+$('t0').value).toFixed(1);
+    $('coolV').textContent = (+$('cool').value).toFixed(3);
+  }
+
+  function drawCost() {
+    const ctx = $('costCv').getContext('2d');
+    const rect = $('costCv').getBoundingClientRect();
+    const W = rect.width, H = rect.height, pad = 32;
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : 'white'; ctx.fillRect(0, 0, W, H);
+    if (costHistory.length < 2) return;
+    // Replay mode: the slider works on trajectory indices. Map to costHistory:
+    // both arrays were pushed in lockstep, so the trajectory index i corresponds to
+    // costHistory index (costHistory.length - trajectory.length + i). If the result is
+    // negative (costHistory was already capped+shifted past the trajectory window),
+    // fall back to the full history.
+    let displayLen = costHistory.length;
+    let cursorAbs = -1;
+    if (replayMode && typeof replayIdx === 'number') {
+      const mapped = costHistory.length - trajectory.length + replayIdx + 1;
+      if (mapped > 1) displayLen = Math.min(mapped, costHistory.length);
+      cursorAbs = displayLen - 1;
+    }
+    const window = costHistory.slice(0, displayLen);
+    const lo = Math.min(...window, bestCost);
+    const hi = Math.max(...window);
+    const range = (hi - lo) < 1e-9 ? 1 : (hi - lo);
+    ctx.strokeStyle = document.body.classList.contains('dark-mode') ? '#475569' : '#cbd5e1';
+    ctx.beginPath(); ctx.moveTo(pad, pad); ctx.lineTo(pad, H - pad); ctx.lineTo(W - pad, H - pad); ctx.stroke();
+    // If in replay mode, draw the full curve faintly behind the truncated curve so students
+    // can see "where we ended up" vs "where we are now".
+    if (replayMode && displayLen < costHistory.length) {
+      ctx.strokeStyle = getCSS('--muted'); ctx.lineWidth = 1; ctx.globalAlpha = 0.35;
+      ctx.beginPath();
+      for (let i = 0; i < costHistory.length; i++) {
+        const x = pad + i / (costHistory.length - 1) * (W - 2 * pad);
+        const y = H - pad - (costHistory[i] - lo) / range * (H - 2 * pad);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke(); ctx.globalAlpha = 1;
+    }
+    ctx.strokeStyle = getCSS('--accent'); ctx.lineWidth = 2;
+    ctx.beginPath();
+    const totalLen = costHistory.length;
+    for (let i = 0; i < window.length; i++) {
+      const x = pad + i / (totalLen - 1) * (W - 2 * pad);
+      const y = H - pad - (window[i] - lo) / range * (H - 2 * pad);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    // Vertical cursor at the replay position.
+    if (cursorAbs >= 0) {
+      const cx = pad + cursorAbs / (totalLen - 1) * (W - 2 * pad);
+      ctx.strokeStyle = getCSS('--accent'); ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(cx, pad); ctx.lineTo(cx, H - pad); ctx.stroke();
+      ctx.setLineDash([]);
+      // Marker dot at the current point.
+      const cy = H - pad - (window[cursorAbs] - lo) / range * (H - 2 * pad);
+      ctx.fillStyle = getCSS('--accent');
+      ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI * 2); ctx.fill();
+    }
+    const by = H - pad - (bestCost - lo) / range * (H - 2 * pad);
+    ctx.strokeStyle = getCSS('--good'); ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(pad, by); ctx.lineTo(W - pad, by); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = getCSS('--muted'); ctx.font = '10px monospace';
+    ctx.fillText('cost', 4, pad + 8);
+    ctx.fillText('iters →', W - 60, H - 8);
+    ctx.fillStyle = getCSS('--good');
+    ctx.fillText(`best ${bestCost.toFixed(2)}`, W - 110, by - 4);
+  }
+
+  let running = false;
+  let hcBaseTitle = null;
+  async function loop() {
+    if (hcBaseTitle === null) hcBaseTitle = document.title.replace(/^\(iter \d+\) /, '');
+    while (running) {
+      step();
+      render();
+      document.title = `(iter ${iter}) ${hcBaseTitle}`;
+      const speed = +$('speed').value;
+      await new Promise(r => setTimeout(r, Math.max(0, 200 - speed * 2)));
+      if (speed > 80) {
+        for (let i = 0; i < Math.floor((speed - 80) / 5); i++) step();
+      }
+    }
+    document.title = hcBaseTitle;
+  }
+  $('stepBtn').addEventListener('click', () => {
+    if (replayMode) {
+      // While scrubbed back, ❘▶ walks forward through the trajectory; resume live once caught up.
+      if (replayIdx < trajectory.length - 1) { replayStep(1); return; }
+      $('replayResume').click(); return;
+    }
+    step(); render();
+  });
+  $('runBtn').addEventListener('click', () => {
+    running = !running;
+    $('runBtn').textContent = running ? '⏸ Pause' : '▶ Run / pause';
+    document.getElementById('runBtn').setAttribute('aria-pressed', running ? 'true' : 'false');
+    if (running) loop();
+  });
+  $('restartBtn').addEventListener('click', () => { reset(); });
+  // ===== Unified transport bar: universal step-back =====
+  function replayStep(delta) {
+    if (running) return;
+    if (trajectory.length === 0) return;
+    const s = $('replaySlider');
+    let idx = parseInt(s.value, 10);
+    if (Number.isNaN(idx)) idx = trajectory.length - 1;
+    idx = Math.max(0, Math.min(trajectory.length - 1, idx + delta));
+    s.value = idx;
+    s.dispatchEvent(new Event('input'));   // reuse the existing replay-restore handler
+  }
+  $('backBtn').addEventListener('click', () => replayStep(-1));
+  window.__hillAcceptanceTest = function () {
+    const sp = $('speed');
+    const r = { transportBar: !!$('transport'), backBtn: !!$('backBtn'),
+                restartBtn: !!$('restartBtn'), speedInBar: !!(sp && sp.closest('#transport')),
+                trajectoryLen: trajectory.length };
+    const pass = r.transportBar && r.backBtn && r.restartBtn && r.speedInBar;
+    console.log('[hill-climbing] CONTROLS ACCEPTANCE TEST ' + (pass ? 'passed' : 'FAILED'), r);
+    return Object.assign({ pass }, r);
+  };
+  $('probSel').addEventListener('change', () => { reset(); });
+  // Click the landscape canvas to set the initial state. Lets students
+  // deliberately start in a bad basin (vs the random reset) to see local-optimum
+  // behavior reproducibly. Only active when problem === 'landscape'.
+  $('stateCv').addEventListener('click', e => {
+    if (problemKey !== 'landscape') return;
+    const rect = $('stateCv').getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    state = { x: Math.max(0, Math.min(100, x)), y: Math.max(0, Math.min(100, y)) };
+    bestState = state; bestCost = prob.cost(state);
+    iter = 0; costHistory = [bestCost]; trajectory = [state];
+    T = +$('t0').value; accepts = 0; rejects = 0;
+    if (typeof tabuList !== 'undefined') tabuList.clear();
+    render();
+  });
+  // Cursor hint when the click is meaningful.
+  function updateStateCvCursor() {
+    $('stateCv').style.cursor = (($('probSel').value === 'landscape')) ? 'crosshair' : 'default';
+  }
+  $('probSel').addEventListener('change', updateStateCvCursor);
+  updateStateCvCursor();
+  $('algoSel').addEventListener('change', () => {
+    $('algoHelp').textContent = HELP[$('algoSel').value];
+    // show/hide GA controls based on algo selection.
+    if ($('gaControls')) $('gaControls').style.display = ($('algoSel').value === 'ga') ? '' : 'none';
+    gaPopulation = null; // switching algos invalidates the population
+  });
+  // initial visibility for GA controls (in case URL ?algo=ga arrives).
+  if ($('gaControls')) $('gaControls').style.display = ($('algoSel').value === 'ga') ? '' : 'none';
+  $('hardReset').addEventListener('click', () => {
+    running = false; $('runBtn').textContent = '▶ Run / pause';
+    $('probSel').value = 'tsp'; $('algoSel').value = 'steepest';
+    $('t0').value = 10; $('cool').value = 0.995; $('speed').value = 50;
+    $('algoHelp').textContent = HELP['steepest'];
+    liveState = null; replayMode = false;
+    document.getElementById('replayResume').disabled = true;
+    reset();
+  });
+  // Replay scrubber wiring.
+  document.getElementById('replaySlider').addEventListener('input', () => {
+    const idx = parseInt(document.getElementById('replaySlider').value, 10);
+    if (trajectory.length === 0) return;
+    if (!replayMode) {
+      liveState = state;
+      replayMode = true;
+      document.getElementById('replayResume').disabled = false;
+    }
+    replayIdx = idx;
+    document.getElementById('replayLabel').textContent = `iter ${iter - trajectory.length + 1 + idx}`;
+    { const tc = $('tpCount'); if (tc) tc.textContent = `replay ${idx + 1}/${trajectory.length}`; }
+    state = trajectory[idx];
+    render();
+  });
+  document.getElementById('replayResume').addEventListener('click', () => {
+    if (!replayMode || liveState == null) return;
+    state = liveState; liveState = null; replayMode = false;
+    replayIdx = -1;
+    document.getElementById('replayResume').disabled = true;
+    document.getElementById('replayLabel').textContent = 'live';
+    { const tc = $('tpCount'); if (tc) tc.textContent = 'live'; }
+    document.getElementById('replaySlider').value = trajectory.length - 1;
+    render();
+  });
+  window.addEventListener('resize', () => {
+    resizeCv($('stateCv')); resizeCv($('costCv')); render();
+  });
+  // URL-shareable config — problem, algorithm, initial temp, cooling rate.
+  try {
+    const sp = new URLSearchParams(location.search);
+    const setSel = (key, id) => {
+      const v = sp.get(key); if (!v) return;
+      const opt = Array.from($(id).options).find(o => o.value === v);
+      if (opt) $(id).value = v;
+    };
+    setSel('prob', 'probSel');
+    setSel('algo', 'algoSel');
+    const setNum = (key, id, min, max) => {
+      const v = parseFloat(sp.get(key));
+      if (!Number.isNaN(v) && v >= min && v <= max) $(id).value = v;
+    };
+    setNum('t0', 't0', 0.1, 50);
+    setNum('cool', 'cool', 0.9, 0.999);
+  } catch (_) {}
+  document.getElementById('shareLink').addEventListener('click', async () => {
+    const params = new URLSearchParams();
+    params.set('prob', $('probSel').value);
+    params.set('algo', $('algoSel').value);
+    params.set('t0', $('t0').value);
+    params.set('cool', $('cool').value);
+    const url = `${location.origin}${location.pathname}?${params.toString()}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      const btn = document.getElementById('shareLink');
+      const orig = btn.textContent; btn.textContent = '✓ Copied';
+      setTimeout(() => btn.textContent = orig, 1500);
+    } catch (_) { prompt('Copy this URL:', url); }
+  });
+
+  // CSV export — cost history + config.
+  document.getElementById('csvExport').addEventListener('click', () => {
+    const algo = $('algoSel').value, prob = $('probSel').value;
+    const lines = [
+      '# Hill-climbing export',
+      `problem,${prob}`,
+      `algorithm,${algo}`,
+      `iterations,${iter}`,
+      `best_cost,${bestCost.toFixed(4)}`,
+      '',
+      '# Cost per iteration',
+      'iteration,cost',
+    ];
+    for (let i = 0; i < costHistory.length; i++) lines.push(`${i},${costHistory[i].toFixed(4)}`);
+    const blob = new Blob([lines.join('\n')], {type: 'text/csv'});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `hillclimb-${prob}-${algo}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  });
+
+  resizeCv($('stateCv')); resizeCv($('costCv'));
+  reset();
+
+  // Lesson tour. Five canonical scenarios contrasting local-search algorithms.
+  function applyConfig(prob, algo, t0, cool) {
+    $('probSel').value = prob; $('probSel').dispatchEvent(new Event('change'));
+    $('algoSel').value = algo; $('algoSel').dispatchEvent(new Event('change'));
+    if (t0 != null) { $('t0').value = t0; $('t0').dispatchEvent(new Event('input')); }
+    if (cool != null) { $('cool').value = cool; $('cool').dispatchEvent(new Event('input')); }
+  }
+  const LESSON_TOUR = [
+    { name: 'Steepest-ascent on TSP gets stuck',
+      description: "TSP, 12 cities, steepest-ascent. Press Run. It improves rapidly, then plateaus at a local optimum that's clearly not the shortest tour. Greedy ≠ optimal.",
+      apply: () => applyConfig('tsp', 'steepest') },
+    { name: 'Random-restart escapes local optima',
+      description: "Same TSP, random-restart. When the climb plateaus, jumps to a fresh start. After enough restarts, the best-ever cost is much lower than any single climb. Cheap and effective.",
+      apply: () => applyConfig('tsp', 'restart') },
+    { name: 'Simulated annealing: T₀=10, cool=0.995',
+      description: "TSP with SA. Early iterations accept worse moves (escape valleys). As T cools, behavior becomes greedy. The watchword is 'slow cooling' — try cool=0.999 vs 0.95 and compare.",
+      apply: () => applyConfig('tsp', 'sa', 10, 0.995) },
+    { name: 'N-Queens: steepest hits a plateau',
+      description: "8-queens, steepest-ascent. Often finds a 0-conflict solution; often gets stuck on a plateau (many neighbors with the same cost). Watch the cost flatline.",
+      apply: () => applyConfig('queens', 'steepest') },
+    { name: '2D landscape: tabu vs simple HC',
+      description: "Landscape with 5 minima. Try Simple HC first — observe what minimum it reaches. Switch to Tabu Search — it forbids recently-visited states, often escaping past nearby minima to find better ones.",
+      apply: () => applyConfig('landscape', 'tabu') },
+  ];
+  let tourIdx = 0;
+  function renderTour() {
+    if (!$('tourName')) return;
+    const s = LESSON_TOUR[tourIdx];
+    // F1 bilingual: look up tour{i}name / tour{i}desc with English inline fallback.
+    const L = (document.documentElement.lang || 'en');
+    const S = STRINGS[L] || STRINGS.en;
+    $('tourName').textContent = S['tour' + tourIdx + 'name'] || s.name;
+    $('tourDesc').textContent = S['tour' + tourIdx + 'desc'] || s.description;
+    $('tourPos').textContent = `${tourIdx + 1}/${LESSON_TOUR.length}`;
+    $('tourPrev').disabled = (tourIdx === 0);
+    $('tourNext').disabled = (tourIdx === LESSON_TOUR.length - 1);
+  }
+  $('tourApply').addEventListener('click', () => LESSON_TOUR[tourIdx].apply());
+  $('tourPrev').addEventListener('click', () => { if (tourIdx > 0) { tourIdx--; renderTour(); } });
+  $('tourNext').addEventListener('click', () => { if (tourIdx < LESSON_TOUR.length - 1) { tourIdx++; renderTour(); } });
+  renderTour();
+
+  // Worksheet/lab mode — 3 questions with instant ✓/✗ feedback.
+  // F1 bilingual feedback helper: ws{n}ok / ws{n}no with English inline fallback.
+  function wsMsg(key, en) {
+    const L = (document.documentElement.lang || 'en');
+    return (STRINGS[L] && STRINGS[L][key]) || en;
+  }
+  // MCQ: each question is graded by the selected radio's index, not typed text.
+  // `correct` is the index of the right option (language-agnostic). ok/no are the
+  // existing bilingual feedback keys, with an English inline fallback via wsMsg.
+  const WORKSHEET = [
+    { correct: 1,
+      ok:  ['ws1ok', "Correct. Steepest-ascent HC is greedy: it stops at any local optimum. Different starting tours converge to different local optima. This is the central limitation of pure HC."],
+      no:  ['ws1no', "Try 'no'. HC stops at the first local optimum it reaches — different random restarts hit different local optima."] },
+    { correct: 0,
+      ok:  ['ws2ok', "Right. Random-restart HC takes the BEST result across many independent climbs. With enough restarts, you sample multiple basins of attraction and the global best becomes likely."],
+      no:  ['ws2no', "Try 'better'. Random restarts sample multiple local optima — the best one wins."] },
+    { correct: 2,
+      ok:  ['ws3ok', "Correct. SA acceptance prob = exp(-Δ/T). As T→0, exp(-Δ/T) → 0 for any worsening Δ, so the algorithm only accepts improvements — pure greedy hill-climbing. Early on (large T), it accepts almost anything."],
+      no:  ['ws3no', "Try 'greedier'. Low T means the Boltzmann acceptance probability for worse moves approaches zero — SA degenerates to greedy HC at T=0."] },
+  ];
+  WORKSHEET.forEach((q, i) => {
+    const n = i + 1;
+    $(`ws${n}btn`).addEventListener('click', () => {
+      const fb = $(`ws${n}fb`);
+      const picked = document.querySelector(`input[name="ws${n}"]:checked`);
+      if (!picked) {
+        fb.textContent = wsMsg('ws-pick', 'Pick an answer first.');
+        fb.style.color = 'var(--muted)';
+        return;
+      }
+      const ok = Number(picked.value) === q.correct;
+      const [key, en] = ok ? q.ok : q.no;
+      fb.textContent = (ok ? '✓ ' : '✗ ') + wsMsg(key, en);
+      fb.style.color = ok ? '#16a34a' : '#dc2626';
+    });
+  });
+
+  // Numeric jump-to-iteration input.
+  document.getElementById('hcJump').addEventListener('change', () => {
+    const s = document.getElementById('replaySlider');
+    if (!s) return;
+    let v = parseInt(document.getElementById('hcJump').value, 10);
+    if (Number.isNaN(v)) return;
+    v = Math.max(0, Math.min(parseInt(s.max, 10), v));
+    s.value = v;
+    s.dispatchEvent(new Event('input'));
+  });
+
+  window.__hcScrubTest = function(){ const g=document.getElementById('hcScrubGroup'); const inBar = !!(g && g.closest('#transport')); const r={scrubInBar:inBar, jump:!!document.getElementById('hcJump'), slider:!!document.getElementById('replaySlider')}; const pass=r.scrubInBar&&r.jump&&r.slider; console.log('[hill-climbing] SCRUB-IN-BAR '+(pass?'passed':'FAILED'), r); return Object.assign({pass},r); };
+})();
+</script>
+<!-- Embed mode handler (shared pattern across all 12 applets). -->
+<script>
+(() => {
+  try {
+    if (new URLSearchParams(location.search).get('embed') === '1') {
+      document.body.classList.add('embed-mode');
+    }
+  } catch (_) {}
+  const btn = document.getElementById('embedLink');
+  if (!btn) return;
+  btn.addEventListener('click', async () => {
+    const url = new URL(location.href);
+    url.searchParams.set('embed', '1');
+    const snippet = `<iframe src="${url.toString()}" width="100%" height="720" frameborder="0" style="border:1px solid #e5e7eb; border-radius:8px;" loading="lazy"></iframe>`;
+    try {
+      await navigator.clipboard.writeText(snippet);
+      const orig = btn.textContent; btn.textContent = '✓ Copied iframe';
+      setTimeout(() => btn.textContent = orig, 1800);
+    } catch (_) { prompt('Copy this iframe snippet:', snippet); }
+  });
+})();
+</script>
+  <footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
+    <p style="margin:0 0 6px;"><a href="#top" data-i18n="footer-top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
+    <p style="margin:0;"><span data-i18n="footer-builtby">Built by</span> Logan Dixon · <span data-i18n="footer-course">Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy</span></p>
+    <p style="margin:6px 0 0;"><a href="https://github.com/lmdixon23/ai-playgrounds" data-i18n="footer-source" style="color:var(--accent,#0891b2);">View source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-i18n="footer-issue" style="color:var(--accent,#0891b2);">Report an issue</a> · © 2026 Logan Dixon</p>
+  </footer>
+  <!-- Privacy-friendly analytics — GoatCounter, cookieless. -->
+  <script data-goatcounter="https://lmdixon23.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
