@@ -3,25 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Visualizing Convolutions</title>
+<title>Convolution Playground | AI Playgrounds</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E">
-<meta name="description" content="Interactive visualization of how CNNs see. Draw on a 32x32 canvas, pick a 3x3 filter, watch the convolution detect edges, blur, sharpen, or emboss pixel by pixel.">
+<meta name="description" content="Move a small filter across an image. Inspect every multiply-and-sum operation, then compare edge, blur, pooling, and learned-filter behavior.">
 <link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/">
-<meta property="og:title" content="Visualizing Convolutions — AI Playgrounds">
-<meta property="og:description" content="Interactive visualization of how CNNs see. Draw on a 32x32 canvas, pick a 3x3 filter, watch the convolution detect edges, blur, sharpen, or emboss pixel by pixel.">
+<meta property="og:title" content="Convolution Playground | AI Playgrounds">
+<meta property="og:description" content="Move a small filter across an image. Inspect every multiply-and-sum operation, then compare edge, blur, pooling, and learned-filter behavior.">
 <meta property="og:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Visualizing Convolutions — AI Playgrounds">
-<meta name="twitter:description" content="Interactive visualization of how CNNs see. Draw on a 32x32 canvas, pick a 3x3 filter, watch the convolution detect edges, blur, sharpen, or emboss pixel by pixel.">
+<meta name="twitter:title" content="Convolution Playground | AI Playgrounds">
+<meta name="twitter:description" content="Move a small filter across an image. Inspect every multiply-and-sum operation, then compare edge, blur, pooling, and learned-filter behavior.">
 <meta name="twitter:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Visualizing Convolutions — AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/","description":"Interactive visualization of how CNNs see. Draw on a 32x32 canvas, pick a 3x3 filter, watch the convolution detect edges, blur, sharpen, or emboss pixel by pixel.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan Dixon"}}
-</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Convolution Playground | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/","description":"Move a small filter across an image. Inspect every multiply-and-sum operation, then compare edge, blur, pooling, and learned-filter behavior.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
 <style>
   :root {
-    --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #0891b2;
+    --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #0e7490;
     --card: #fff; --border: #e5e7eb; --soft: #f9fafb;
   }
   * { box-sizing: border-box; }
@@ -53,7 +51,7 @@
   .tldr strong { color: rgba(255,255,255,0.85); font-size: 0.72rem; letter-spacing: 0.08em;
                   text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px; }
   .interactive { background: var(--card); padding: 24px; border-bottom: 1px solid var(--border); }
-  .interactive-inner { max-width: 880px; margin: 0 auto;
+  .interactive-inner { max-width: min(1280px, 100%); margin: 0 auto;
                          font-family: -apple-system, system-ui, sans-serif; }
   .control-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
                   margin-bottom: 14px; font-size: 0.88rem; }
@@ -70,10 +68,18 @@
   .canvas-card h3 { margin: 0 0 6px; font-size: 0.85rem; color: var(--accent);
                       text-transform: uppercase; letter-spacing: 0.05em; }
   canvas { display: block; margin: 0 auto; background: white;
-            border: 1px solid var(--border); border-radius: 4px; image-rendering: pixelated; }
+            border: 1px solid var(--border); border-radius: 4px; image-rendering: pixelated;
+            max-width: 100%; height: auto; }
   .kernel-card { background: var(--soft); border: 1px solid var(--border);
                    border-radius: 8px; padding: 12px; align-self: center;
-                   display: flex; flex-direction: column; gap: 8px; min-width: 160px; }
+                   display: flex; flex-direction: column; gap: 8px; min-width: 160px; max-width: 100%; }
+  /* Phones: stack input → kernel → output vertically so nothing overflows ~380px. */
+  @media (max-width: 640px) {
+    .canvas-pair { grid-template-columns: 1fr; justify-items: center; }
+    .kernel-card { min-width: 0; width: 220px; max-width: 100%; }
+  }
+  /* RGB-channel demo strip: let each small canvas shrink with its cell on phones. */
+  canvas[id^="rgb"] { width: 100%; height: auto; }
   .kernel-card .lbl { font-size: 0.78rem; color: var(--muted);
                         text-transform: uppercase; letter-spacing: 0.05em; text-align: center; }
   .kernel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
@@ -107,6 +113,12 @@
                               text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0; }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+  /* Touch devices: enlarge tap targets to a comfortable minimum without
+     altering the desktop/projector layout (coarse-pointer only). */
+  @media (pointer: coarse) {
+    button, .step-btn, .tp-btn, select, summary { min-height: 44px; }
+    .kernel input { min-height: 40px; }
   }
   /* === dark mode === */
   body.dark-mode {
@@ -223,20 +235,365 @@
   /* embed mode: keep the new opt-in tools available but never auto-shown; the
      panels are display:none until opted-in, so no extra rule needed beyond the
      existing chrome strip. */
-  /* ===== Shared a11y + contrast tokens (review fixes: F4 keyboard focus, F6 banner contrast) ===== */
+  /* ===== Shared a11y + contrast tokens (keyboard focus and contrast tokens) ===== */
   button:focus-visible, a:focus-visible, select:focus-visible,
   input:focus-visible, textarea:focus-visible, summary:focus-visible {
     outline: 2px solid var(--accent); outline-offset: 2px;
   }
   .tldr { background: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), var(--accent); }
   .tldr strong { color: #fff; }
+
+
+  /* Student response packet: local-only assignment packet across the applet family. */
+  .classroom-lab .lab-panel { margin-top:8px; padding:14px; background:var(--card); border:1px solid var(--border); border-radius:8px; }
+  .classroom-lab .lab-intro { margin:0 0 12px; color:var(--muted); font-size:0.88rem; line-height:1.5; }
+  .classroom-lab .lab-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+  .classroom-lab .lab-field { display:flex; flex-direction:column; gap:4px; }
+  .classroom-lab .lab-field label { font-family:-apple-system,system-ui,sans-serif; font-size:0.82rem; font-weight:700; color:var(--accent); }
+  .classroom-lab textarea { min-height:86px; resize:vertical; width:100%; border:1px solid var(--border); border-radius:6px; padding:8px; font:inherit; color:var(--fg); background:var(--bg); }
+  .classroom-lab .lab-state { margin-top:12px; padding:10px 12px; border:1px dashed var(--border); border-radius:8px; background:var(--soft); color:var(--muted); font-family:ui-monospace,monospace; font-size:0.78rem; white-space:pre-wrap; }
+  .classroom-lab .lab-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; align-items:center; }
+  .classroom-lab .lab-status { color:var(--muted); font-size:0.82rem; min-height:1.2em; }
+  @media (max-width:480px) { .classroom-lab .lab-grid { grid-template-columns:1fr; } .classroom-lab .lab-actions button { width:100%; } }
+
+  /* Scenario Gallery: visible, reusable entry points generated from the lesson-tour scenarios. */
+  .scenario-gallery-panel {
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .scenario-gallery-intro {
+    margin: 0 0 10px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .scenario-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .scenario-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--card) 88%, var(--soft));
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 100%;
+  }
+  .scenario-card h3 {
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.98rem;
+    line-height: 1.25;
+  }
+  .scenario-card p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .scenario-card .scenario-meta {
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  .scenario-card .scenario-meta strong { color: var(--fg); }
+  .scenario-card button {
+    margin-top: auto;
+    align-self: flex-start;
+  }
+  @media (max-width: 480px) {
+    .scenario-card-grid { grid-template-columns: 1fr; }
+    .scenario-card button { width: 100%; }
+  }
+
+
+
+  /* Supporting learning components. */
+  .visual-explanation-panel {
+    margin-top: 8px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .visual-explanation-intro {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .visual-flow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+  }
+  .visual-card {
+    position: relative;
+    min-height: 132px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, var(--accent)), var(--card));
+    overflow: hidden;
+  }
+  .visual-card::before {
+    content: attr(data-step);
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    color: color-mix(in srgb, var(--accent) 62%, transparent);
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+  .visual-card h4 {
+    margin: 0 28px 8px 0;
+    color: var(--accent);
+    font-size: 0.9rem;
+    line-height: 1.25;
+  }
+  .visual-card p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .visual-live {
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 8px;
+    background: var(--soft);
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.74rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .visual-live strong { color: var(--accent); font-family: -apple-system, system-ui, sans-serif; font-size: 0.72rem; }
+  .visual-watch-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .visual-snapshot, .visual-misread {
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: var(--soft);
+  }
+  .visual-snapshot strong, .visual-misread strong {
+    display: block;
+    color: var(--accent);
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 0.78rem;
+    margin-bottom: 6px;
+  }
+  .visual-snapshot pre {
+    margin: 0;
+    white-space: pre-wrap;
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+  .visual-misread p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  @media (max-width: 620px) {
+    .visual-watch-grid { grid-template-columns: 1fr; }
+  }
+
+
+
+  /* Supporting learning components. */
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 10px;
+    z-index: 10000;
+    padding: 10px 14px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 8px;
+    font-family: -apple-system, system-ui, sans-serif;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .skip-link:focus { left: 12px; }
+  :focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+  [tabindex="-1"]:focus { outline: none; }
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+  .accessibility-layer {
+    margin-top: 12px;
+  }
+  .accessibility-panel {
+    margin-top: 8px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .accessibility-intro {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .accessibility-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .accessibility-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--card) 92%, var(--soft));
+    padding: 12px;
+  }
+  .accessibility-card h3 {
+    margin: 0 0 8px;
+    color: var(--accent);
+    font-size: 0.92rem;
+  }
+  .accessibility-card p,
+  .accessibility-card li {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .accessibility-card ul {
+    margin: 0;
+    padding-left: 1.15rem;
+  }
+  .a11y-state-grid {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 6px 10px;
+    margin: 0;
+    font-size: 0.84rem;
+  }
+  .a11y-state-grid dt {
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .a11y-state-grid dd {
+    margin: 0;
+    color: var(--fg);
+    overflow-wrap: anywhere;
+  }
+  .accessibility-note {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+  @media (max-width: 620px) {
+    .accessibility-grid { grid-template-columns: 1fr; }
+    .a11y-state-grid { grid-template-columns: 1fr; }
+    .a11y-state-grid dt { margin-top: 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html:focus-within { scroll-behavior: auto !important; }
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+
+
+  /* Supporting learning components. */
+  .interactive-inner { max-width: min(1280px, 100%); }
+  .scenario-card,
+  .accessibility-card,
+  .classroom-lab .lab-panel,
+  .accessibility-panel,
+  .signature-challenge-panel {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, var(--soft)), var(--card));
+  }
+  .signature-challenge-panel {
+    margin-top: 12px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .signature-challenge-panel strong { display:block; color:var(--accent); margin-bottom:4px; }
+  .signature-challenge-panel p { margin: 6px 0 0; color: var(--muted); font-size: 0.88rem; line-height: 1.5; }
+
+
+  /* Supporting learning components. */
+  .learning-deck { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:12px; align-items:start; }
+  .learning-deck > details { margin-top:0 !important; min-width:0; }
+  .learning-deck > .scenario-gallery,
+  .learning-deck > .visual-explanation,
+  .learning-deck > .classroom-lab,
+  .learning-deck > .accessibility-layer { grid-column:1 / -1; }
+  .learning-deck > details > summary { background:var(--card) !important; }
+  .scenario-gallery-panel, .scenario-card, .accessibility-panel, .accessibility-card,
+  .classroom-lab .lab-panel, .signature-challenge-panel {
+    background:linear-gradient(180deg,color-mix(in srgb,var(--card) 90%,var(--accent)),var(--card)) !important;
+  }
+  .scenario-card { box-shadow:0 6px 18px rgba(15,23,42,.05); transition:border-color .16s, box-shadow .16s, transform .16s; }
+  .scenario-card.applied { border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 22%,transparent),0 10px 24px rgba(15,23,42,.08); transform:translateY(-1px); }
+  .scenario-card .scenario-meta:last-of-type { margin-bottom:2px; }
+  @media (max-width:900px) { .learning-deck { grid-template-columns:1fr; } .learning-deck > details { grid-column:1 !important; } }
+
 </style>
+
+
+<style id="learner-house-style">
+/* Learner-facing terminology, compact glossary, and consistent action hierarchy. */
+.header-actions{align-items:center}.header-more{position:relative}.header-more>summary{list-style:none;cursor:pointer;user-select:none}.header-more>summary::-webkit-details-marker{display:none}.header-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:50;min-width:220px;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 16px 35px rgba(15,23,42,.18);display:grid;gap:5px}.header-more-menu button{width:100%;text-align:left;justify-content:flex-start;white-space:normal}.key-terms-panel{padding:14px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}.key-terms-intro{margin:0 0 10px;color:var(--muted)}.key-terms-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.key-term{padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:color-mix(in srgb,var(--card) 97%,var(--accent))}.key-term dt{font-weight:800;color:var(--fg);margin:0 0 3px}.key-term dd{margin:0;color:var(--muted);font-size:.84rem;line-height:1.45}.essay-primer{margin:0 0 22px;padding:15px 17px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--card) 96%,var(--accent));border-radius:10px}.essay-primer h2{margin:0 0 6px!important;font-size:1.05rem!important}.essay-primer p{margin:0 0 10px!important}.essay-primer h3{margin:12px 0 7px;font-size:.92rem}.essay-primer-terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0}.essay-primer-terms>div{padding:8px 9px;border:1px solid var(--border);border-radius:8px;background:var(--card)}.essay-primer-terms dt{font-weight:800}.essay-primer-terms dd{margin:2px 0 0;color:var(--muted);font-size:.82rem;line-height:1.4}.scenario-card .scenario-meta{line-height:1.5}.scenario-card .scenario-meta strong{display:block;margin-bottom:2px}.header-actions>.header-png,.header-actions>.header-theme,.header-actions>.header-reset,.header-more>summary{min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px}
+@media(max-width:720px){.essay-primer-terms{grid-template-columns:1fr}.header-actions{width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}.header-actions>button,.header-actions>.header-more,.header-more>summary{width:100%;justify-content:center}.header-more-menu{right:auto;left:0;max-width:min(290px,90vw)}.key-terms-grid{grid-template-columns:1fr}}
+</style>
+
+<style id="product-consolidation-style">
+/* Product information architecture and restrained visual hierarchy. */
+.learning-deck{display:contents!important}.learning-mode-shell{margin-top:16px;border-top:1px solid var(--border);padding-top:15px}.learning-mode-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px}.learning-mode-head h2{margin:0;font-size:1rem;color:var(--fg)}.learning-mode-head p{margin:2px 0 0;color:var(--muted);font-size:.82rem}.learning-mode-tools{display:flex;gap:8px;flex-wrap:wrap}.learning-mode-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:5px;background:var(--soft);border:1px solid var(--border);border-radius:14px}.learning-mode-tab{min-height:42px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-weight:750;padding:8px 10px}.learning-mode-tab[aria-selected="true"]{background:var(--card);color:var(--accent);box-shadow:0 3px 12px rgba(15,23,42,.08)}.learning-mode-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px;align-items:start}.learning-mode-panel[hidden]{display:none}.learning-mode-panel>details{margin:0!important;min-width:0}.learning-mode-panel>details.mode-wide{grid-column:1/-1}.learning-mode-panel>details>summary{background:var(--card)!important;border:1px solid var(--border)!important;border-left:4px solid color-mix(in srgb,var(--accent) 62%,var(--border))!important;border-radius:10px!important;color:var(--fg)!important;font-weight:750!important;padding:10px 12px!important}.learning-mode-panel>details[open]>summary{border-color:color-mix(in srgb,var(--accent) 55%,var(--border))!important}.learning-mode-panel .scenario-gallery-panel,.learning-mode-panel .accessibility-panel,.learning-mode-panel .classroom-lab .lab-panel{background:var(--card)!important}.scenario-card,.accessibility-card{background:color-mix(in srgb,var(--card) 97%,var(--accent))!important;box-shadow:none!important}.scenario-card.applied{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 78%,var(--accent)),color-mix(in srgb,var(--card) 88%,var(--accent-2,#6366f1)))!important;border-color:var(--accent)!important;box-shadow:0 12px 28px rgba(15,23,42,.10)!important}.signature-challenge>div,.signature-challenge .signature-challenge-panel{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 80%,var(--accent)),color-mix(in srgb,var(--card) 90%,var(--accent-2,#6366f1)))!important;border:1px solid color-mix(in srgb,var(--accent) 40%,var(--border))!important}.visual-card{background:linear-gradient(180deg,color-mix(in srgb,var(--card) 92%,var(--accent)),var(--card))!important}.featured-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.scenario-card button,.featured-actions button{border:0!important;border-radius:8px!important;background:var(--accent)!important;color:#fff!important;font-weight:750!important;padding:8px 11px!important}.scenario-card button:hover,.featured-actions button:hover{filter:brightness(1.05)}.copy-experiment{font-size:.82rem}.experiment-status{color:var(--muted);font-size:.78rem;min-height:1.2em;margin-top:6px}.mode-intro{grid-column:1/-1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--muted);font-size:.86rem}.mode-intro strong{color:var(--fg)}
+@container (min-width:980px){.scenario-card-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.visual-flow{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
+.interactive-inner{container-type:inline-size;max-width:min(1320px,100%)!important}
+@media(max-width:820px){.learning-mode-head{align-items:flex-start;flex-direction:column}.learning-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-mode-panel{grid-template-columns:1fr}.learning-mode-panel>details{grid-column:1!important}.copy-experiment{width:100%}}
+</style>
+
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to applet controls</a>
 
 <!--
   ============================================================================
-  DEFAULT-SCREEN ACCEPTANCE TEST  (maintainer guarantee — read before editing)
+  DEFAULT-SCREEN ACCEPTANCE TEST  (maintainer guarantee: read before editing)
   ----------------------------------------------------------------------------
   Load this file with NO query string and change NO toggles. The page MUST be
   identical to the original applet. Concretely:
@@ -254,7 +611,7 @@
         with the applet is unchanged and is part of the default view.)
     (d) ?embed=1 still hides the header, the TL;DR aside, the essay, and the
         jump link (chrome strip), exactly as before.
-  If ANY of (a)-(d) fails, a new feature has leaked into the default view —
+  If ANY of (a)-(d) fails, a new feature has leaked into the default view -
   revert it behind an opt-in toggle. A scripted version of this check runs in
   the console as window.__convAcceptanceTest() (see the script near the end).
   ============================================================================
@@ -262,7 +619,7 @@
 
 <header class="page-header">
   <div class="header-utility">
-    <a class="back" href="../../" data-i18n="back-link">← Back to all playgrounds</a>
+    <a class="back" href="../../index.html" data-i18n="back-link">← Back to all playgrounds</a>
     <div class="header-prefs">
       <button class="header-theme" id="themeToggle" aria-label="Toggle dark or light theme"
               title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
@@ -273,7 +630,7 @@
     </div>
   </div>
   <div class="header-main">
-    <h1 data-i18n="title">Visualizing Convolutions</h1>
+    <h1 data-i18n="title">Convolution Playground</h1>
     <div class="header-actions">
       <button class="header-png" id="shareLink"
               title="Copy a URL that re-opens this layer mode / image / kernel choice in another browser.">🔗 Share</button>
@@ -292,7 +649,7 @@
   <span data-i18n="tldr-body">A 3×3 grid of numbers, slid across an image and multiplied + summed at every position. That's a "convolution." It's how CNNs turn raw pixels into edges.</span>
 </aside>
 
-<section class="interactive">
+<section class="interactive" id="main" tabindex="-1" role="main">
 <div class="interactive-inner">
 
   <div class="control-row">
@@ -357,7 +714,7 @@
   <div class="opt-row">
     <label title="Show the absolute value of the convolution output. Useful for edge filters that produce both positive and negative numbers.">
       <input type="checkbox" id="absChk" checked> <span data-i18n="opt-abs">Take absolute value</span></label>
-    <label title="Clip negative values to zero — the ReLU non-linearity used in CNNs.">
+    <label title="Clip negative values to zero: the ReLU non-linearity used in CNNs.">
       <input type="checkbox" id="reluChk"> <span data-i18n="opt-relu">Apply ReLU (clip ≥ 0)</span></label>
   </div>
 
@@ -365,7 +722,7 @@
        reproduce a target filter's output. OFF by default → applet behaves as before. -->
   <div class="control-row" id="learnRow"
        style="background:var(--soft); border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-bottom:14px;">
-    <label title="Turn on gradient descent: start from a random 3×3 kernel and learn it to match a target filter's output — the same way a neural network learns its weights.">
+    <label title="Turn on gradient descent: start from a random 3×3 kernel and learn it to match a target filter's output: the same way a neural network learns its weights.">
       <input type="checkbox" id="learnChk"> <span data-i18n="learn-toggle">🎯 Learn the filter</span></label>
     <span id="learnControls" style="display:none; gap:10px; align-items:center; flex-wrap:wrap;">
       <label data-i18n="learn-target-label" data-i18n-title="learn-target-title"
@@ -392,14 +749,14 @@
       </select>
       <span style="font-family:ui-monospace,monospace; font-size:0.85rem; color:var(--fg); margin-left:4px;">
         <span data-i18n="learn-loss-label">loss (MSE):</span>
-        <b id="learnLoss" style="color:var(--accent);">—</b>
+        <b id="learnLoss" style="color:var(--accent);">-</b>
         <span data-i18n="learn-step-label" style="color:var(--muted); margin-left:8px;">step</span>
         <span id="learnStep" style="color:var(--muted);">0</span>
       </span>
     </span>
   </div>
   <p id="learnCaption" style="display:none; margin:-6px 0 14px; color:var(--muted); font-size:0.82rem; font-style:italic; font-family:-apple-system,system-ui,sans-serif;"
-     data-i18n="learn-caption">Last week the network learned its weights by gradient descent. A CNN learns its filters the same way — watch a random kernel become an edge detector.</p>
+     data-i18n="learn-caption">Last week the network learned its weights by gradient descent. A CNN learns its filters the same way: watch a random kernel become an edge detector.</p>
 
   <div class="canvas-pair">
     <div class="canvas-card">
@@ -504,7 +861,7 @@
                 title="Reset the scan to the top-left and redraw the full static output.">↺ Reset</button>
         <span style="font-family:ui-monospace,monospace; font-size:0.82rem; color:var(--muted);">
           <span data-i18n="scan-pos-label">position</span>
-          <b id="scanPos" style="color:var(--accent);">—</b>
+          <b id="scanPos" style="color:var(--accent);">-</b>
         </span>
       </div>
       <!-- hover inspector output -->
@@ -537,7 +894,7 @@
     <div style="margin-top:10px; padding:12px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
       <div style="margin-bottom:8px;">
         <label data-i18n="rgb-preset" style="font-family:-apple-system,system-ui,sans-serif; font-size:0.85rem;">RGB image:</label>
-        <select id="rgbPresetSel" data-i18n-title="rgb-preset-title" title="Pick a synthetic RGB image. Real CNNs convolve a separate kernel over each channel then sum the results — here we use your current kernel for all three channels.">
+        <select id="rgbPresetSel" data-i18n-title="rgb-preset-title" title="Pick a synthetic RGB image. Real CNNs convolve a separate kernel over each channel then sum the results: here we use your current kernel for all three channels.">
           <option value="rgb-bars" selected data-i18n="rgb-bars">Color bars (R | G | B)</option>
           <option value="rgb-diag" data-i18n="rgb-diag">Diagonal gradient</option>
           <option value="rgb-disc" data-i18n="rgb-disc">Red disc on blue field</option>
@@ -559,6 +916,53 @@
     </div>
   </details>
 
+
+  <!-- Scenario gallery. Visible, reusable entry points generated from the lesson-tour scenarios. -->
+  <details class="scenario-gallery" open style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="sg-summary">🎯 Try these scenarios first</span>
+    </summary>
+    <div class="scenario-gallery-panel">
+      <p class="scenario-gallery-intro" data-i18n="sg-intro">Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.</p>
+      <div class="scenario-card-grid" id="scenarioGalleryCards" aria-live="polite"></div>
+    </div>
+  </details>
+
+
+  <!-- Signature challenge. A one-move comparison that gives this applet a memorable first task. -->
+  <details class="signature-challenge" open style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span>✨ Featured comparison</span>
+    </summary>
+    <div class="signature-challenge-panel">
+      <strong>Featured comparison</strong>
+      <p>Switch kernels before training anything. The same image becomes edge, blur, or sharpened evidence depending on the filter.</p>
+      <p><em>Try two hand-built filters, then use the learned-kernel mode to ask what training is actually changing.</em></p>
+    </div>
+  </details>
+
+  <!-- Supporting learning component. -->
+  <details class="visual-explanation" open style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-visual-en="🧭 Visual explanation" data-visual-zh="🧭 可视化解释镜头">🧭 Visual explanation</span>
+    </summary>
+    <div class="visual-explanation-panel">
+      <p class="visual-explanation-intro" data-visual-intro></p>
+      <div class="visual-flow" data-visual-flow></div>
+      <div class="visual-watch-grid">
+        <div class="visual-snapshot">
+          <strong data-visual-en="Live state to watch" data-visual-zh="要观察的实时状态">Live state to watch</strong>
+          <pre data-visual-snapshot>No state captured yet. Run or adjust the applet first.</pre>
+        </div>
+        <div class="visual-misread">
+          <strong data-visual-en="Misread to avoid" data-visual-zh="避免的误读">Misread to avoid</strong>
+          <p data-visual-misread></p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+
   <!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
   <details class="lesson-tour" style="margin-top:12px;">
     <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
@@ -567,9 +971,9 @@
     <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
       <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
         <strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
-        <strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">—</strong>
+        <strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">-</strong>
       </div>
-      <p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">—</p>
+      <p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">-</p>
       <div style="display:flex; gap:8px; align-items:center;">
         <button class="step-btn secondary" id="tourPrev" data-i18n="tour-prev">← Prev</button>
         <button class="step-btn" id="tourApply" data-i18n="tour-apply">▶ Apply this scenario</button>
@@ -587,9 +991,9 @@
       <div class="ws-q" id="ws1">
         <p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">Cross image, Identity kernel. The output image is:</span></p>
         <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="0"> <span data-i18n="ws1o0">Exactly the same as the input — the center weight is 1 and the rest are 0.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="1"> <span data-i18n="ws1o1">Inverted — black and white are swapped.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="2"> <span data-i18n="ws1o2">Blank — multiplying by the identity zeroes everything out.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="0"> <span data-i18n="ws1o0">Exactly the same as the input: the center weight is 1 and the rest are 0.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="1"> <span data-i18n="ws1o1">Inverted: black and white are swapped.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="2"> <span data-i18n="ws1o2">Blank: multiplying by the identity zeroes everything out.</span></label>
         </div>
         <button class="step-btn" id="ws1btn" data-i18n="ws-check">Check</button>
         <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
@@ -597,9 +1001,9 @@
       <div class="ws-q" id="ws2" style="margin-top:10px;">
         <p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Cross image, Sobel-X kernel. Which part of the cross lights up brightest?</span></p>
         <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="0"> <span data-i18n="ws2o0">The vertical bar — Sobel-X responds to horizontal intensity changes, which occur at vertical edges.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="1"> <span data-i18n="ws2o1">The horizontal bar — Sobel-X lines up with edges running the same direction as its name.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="2"> <span data-i18n="ws2o2">The center — the two bars overlap there, so the response is always largest.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="0"> <span data-i18n="ws2o0">The vertical bar: Sobel-X responds to horizontal intensity changes, which occur at vertical edges.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="1"> <span data-i18n="ws2o1">The horizontal bar: Sobel-X lines up with edges running the same direction as its name.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="2"> <span data-i18n="ws2o2">The center: the two bars overlap there, so the response is always largest.</span></label>
         </div>
         <button class="step-btn" id="ws2btn" data-i18n="ws-check">Check</button>
         <span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
@@ -607,9 +1011,9 @@
       <div class="ws-q" id="ws3" style="margin-top:10px;">
         <p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Switch to "Conv → conv" mode (two stacked 3×3 kernels). The effective receptive field becomes:</span></p>
         <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="0"> <span data-i18n="ws3o0">3×3 — stacking kernels doesn't change how far each output pixel can see.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="1"> <span data-i18n="ws3o1">5×5 — each 3×3 layer adds one cell on every side, so two layers reach 5×5.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="2"> <span data-i18n="ws3o2">9×9 — two 3×3 kernels multiply to a 9×9 window.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="0"> <span data-i18n="ws3o0">3×3: stacking kernels doesn't change how far each output pixel can see.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="1"> <span data-i18n="ws3o1">5×5: each 3×3 layer adds one cell on every side, so two layers reach 5×5.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="2"> <span data-i18n="ws3o2">9×9: two 3×3 kernels multiply to a 9×9 window.</span></label>
         </div>
         <button class="step-btn" id="ws3btn" data-i18n="ws-check">Check</button>
         <span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
@@ -617,13 +1021,81 @@
       <div class="ws-q" id="ws4" style="margin-top:10px;">
         <p style="margin:0 0 4px;"><strong>Q4.</strong> <span data-i18n="ws4q">Turn on 🎯 Learn the filter, set the target to Sobel-X, and click Train. Starting from a random kernel, what happens to the 9 numbers as the loss falls?</span></p>
         <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws4" value="0"> <span data-i18n="ws4o0">They stay random — gradient descent only changes the output, never the kernel weights.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws4" value="1"> <span data-i18n="ws4o1">They converge toward the Sobel-X weights — the random kernel learns to become the edge detector.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws4" value="2"> <span data-i18n="ws4o2">They grow without bound — lowering the loss pushes every weight toward infinity.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws4" value="0"> <span data-i18n="ws4o0">They stay random: gradient descent only changes the output, never the kernel weights.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws4" value="1"> <span data-i18n="ws4o1">They converge toward the Sobel-X weights: the random kernel learns to become the edge detector.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws4" value="2"> <span data-i18n="ws4o2">They grow without bound: lowering the loss pushes every weight toward infinity.</span></label>
         </div>
         <button class="step-btn" id="ws4btn" data-i18n="ws-check">Check</button>
         <span id="ws4fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
       </div>
+    </div>
+  </details>
+
+  <!-- Student response packet. Local-only: students copy or print their own response packet; the site stores nothing on a server. -->
+  <details class="classroom-lab" style="margin-top:8px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-lab-en="🧪 Student response packet" data-lab-zh="🧪 课堂实验模式">🧪 Student response packet</span>
+    </summary>
+    <div class="lab-panel">
+      <p class="lab-intro" data-lab-en="Choose a filter, inspect the sliding-window calculation, then explain what feature the kernel makes visible." data-lab-zh="选择一个滤波器、检查滑动窗口计算，然后解释卷积核让什么特征变得可见。">Choose a filter, inspect the sliding-window calculation, then explain what feature the kernel makes visible.</p>
+      <div class="lab-grid">
+        <div class="lab-field">
+          <label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
+          <textarea id="lab-predict" data-lab-answer="predict" data-lab-en="Before running the filter, what image feature should this kernel emphasize?" data-lab-zh="运行滤波器前，这个卷积核应该突出图像中的什么特征？" placeholder="Before running the filter, what image feature should this kernel emphasize?"></textarea>
+        </div>
+        <div class="lab-field">
+          <label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
+          <textarea id="lab-observe" data-lab-answer="observe" data-lab-en="Run the filter or scan a window. Record the kernel, mode, and one visible output change." data-lab-zh="运行滤波器或扫描窗口。记录卷积核、模式和一个可见输出变化。" placeholder="Run the filter or scan a window. Record the kernel, mode, and one visible output change."></textarea>
+        </div>
+        <div class="lab-field">
+          <label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
+          <textarea id="lab-explain" data-lab-answer="explain" data-lab-en="How did multiplying local pixels by kernel weights create the result?" data-lab-zh="局部像素乘以卷积核权重如何产生这个结果？" placeholder="How did multiplying local pixels by kernel weights create the result?"></textarea>
+        </div>
+        <div class="lab-field">
+          <label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
+          <textarea id="lab-transfer" data-lab-answer="transfer" data-lab-en="Where would this kind of filter appear in a computer vision pipeline?" data-lab-zh="这种滤波器会出现在计算机视觉流程的哪个位置？" placeholder="Where would this kind of filter appear in a computer vision pipeline?"></textarea>
+        </div>
+      </div>
+      <div class="lab-state" data-lab-state aria-live="polite">State snapshot appears here.</div>
+      <div class="lab-actions">
+        <button class="step-btn" type="button" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态">↻ Refresh state</button>
+        <button class="step-btn" type="button" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包">📋 Copy packet</button>
+        <button class="step-btn secondary" type="button" data-lab-action="print" data-lab-en="🖨 Print packet" data-lab-zh="🖨 打印实验包">🖨 Print packet</button>
+        <button class="step-btn secondary" type="button" data-lab-action="clear" data-lab-en="Clear local draft" data-lab-zh="清除本地草稿">Clear local draft</button>
+        <span class="lab-status" aria-live="polite"></span>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- Supporting learning component. -->
+  <details class="accessibility-layer" open>
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-a11y-en="♿ Text and keyboard support" data-a11y-zh="♿ 无障碍和文本状态层">♿ Text and keyboard support</span>
+    </summary>
+    <div class="accessibility-panel" role="region" aria-labelledby="a11yLayerTitle">
+      <h2 id="a11yLayerTitle" class="sr-only" data-a11y-title>Text and keyboard support</h2>
+      <p class="accessibility-intro" data-a11y-intro></p>
+      <div class="accessibility-grid">
+        <section class="accessibility-card" aria-labelledby="a11yKeyboardTitle">
+          <h3 id="a11yKeyboardTitle" data-a11y-keyboard-title>Keyboard path</h3>
+          <ul>
+            <li data-a11y-keyboard-1>Use Tab and Shift+Tab to move through controls.</li>
+            <li data-a11y-keyboard-2>Use Enter or Space on buttons, and arrow keys on sliders or select controls.</li>
+            <li data-a11y-keyboard-3>The visual region is focusable and described by the state summary below.</li>
+          </ul>
+        </section>
+        <section class="accessibility-card" aria-labelledby="a11yStateTitle">
+          <h3 id="a11yStateTitle" data-a11y-state-title>Text state summary</h3>
+          <dl class="a11y-state-grid" id="a11yStateSummary" data-a11y-state-grid></dl>
+        </section>
+        <section class="accessibility-card" aria-labelledby="a11yMotionTitle">
+          <h3 id="a11yMotionTitle" data-a11y-motion-title>Reduced motion and non-visual support</h3>
+          <p data-a11y-motion-copy>Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.</p>
+        </section>
+      </div>
+      <p class="accessibility-note" data-a11y-note>Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.</p>
+      <div id="a11yLiveRegion" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
     </div>
   </details>
 
@@ -635,7 +1107,7 @@
 
   <p class="lede">
     A convolutional neural network (CNN) sees images by repeatedly applying a small grid of numbers
-    — a <em>kernel</em> — to local neighborhoods of pixels. This applet lets you draw on a 32×32
+   : a <em>kernel</em>: to local neighborhoods of pixels. This applet lets you draw on a 32×32
     canvas, pick a 3×3 kernel, and watch what falls out the other side. The mechanism is far
     simpler than the name suggests.
   </p>
@@ -674,7 +1146,7 @@
   <h2>What ReLU does</h2>
 
   <p>
-    In a real CNN, every convolutional layer is followed by a non-linear activation — usually
+    In a real CNN, every convolutional layer is followed by a non-linear activation: usually
     ReLU, which clips negative values to zero. Toggle "Apply ReLU" with the Sobel-X kernel: half
     the edge information disappears. That's the cost CNNs pay for the flexibility ReLU provides;
     they compensate by learning <em>both</em> a kernel and its mirror, so no information is lost
@@ -694,14 +1166,14 @@
     <li><strong>Conv + max-pool 2×2.</strong> After the convolution, take 2×2 blocks of pixels
       and keep only the brightest from each block. The output is half the resolution (16×16
       instead of 32×32). This (a) reduces computation for the next layer, and (b) gives the
-      network a small dose of translation-invariance — shifting the input by one pixel doesn't
+      network a small dose of translation-invariance: shifting the input by one pixel doesn't
       change the output much.</li>
     <li><strong>Conv → conv (stacked).</strong> Two 3×3 convolutions in a row. The first sees
       3×3 = 9 input pixels per output pixel; the second sees 3×3 = 9 first-layer outputs per
       its own output pixel. Each of those 9 first-layer outputs was itself computed from 3×3
       input pixels. So each pixel of the final output is a function of a <strong>5×5 region</strong>
       of the original input. Stacking <em>n</em> 3×3 convs gives a receptive field of
-      <code>2n+1</code> in each direction — without ever using a kernel larger than 3×3.</li>
+      <code>2n+1</code> in each direction: without ever using a kernel larger than 3×3.</li>
   </ul>
 
   <div class="aha">
@@ -714,8 +1186,8 @@
   <h2>How CNNs go from one kernel to thousands</h2>
 
   <p>
-    A real CNN doesn't use one kernel — it uses dozens at the first layer, hundreds in the middle,
-    thousands at the end. And the kernels aren't hand-designed (like our edge detectors) — they're
+    A real CNN doesn't use one kernel: it uses dozens at the first layer, hundreds in the middle,
+    thousands at the end. And the kernels aren't hand-designed (like our edge detectors): they're
     <em>learned</em> from data by gradient descent. The training process discovers kernels that
     are useful for the task: early-layer kernels typically end up looking like edge and color
     detectors; middle-layer kernels detect textures and shapes; late-layer kernels detect entire
@@ -727,8 +1199,8 @@
   <p>
     Real CNNs use 3D kernels (height × width × channels), apply many kernels per layer (forming a
     "feature map" stack), interleave convolutions with pooling and batch normalization, and use
-    backprop through the convolution operation to learn the weights. But the basic operation —
-    multiply, sum, slide, repeat — is exactly what runs above.
+    backprop through the convolution operation to learn the weights. But the basic operation -
+    multiply, sum, slide, repeat: is exactly what runs above.
   </p>
 
   <div class="for-teachers">
@@ -736,7 +1208,7 @@
     <p><strong>Curriculum:</strong> Vision with CNNs. Convolution as multiply-and-sum;
        hand-designed vs learned filters; the role of activation functions after convolution.
        The 🎯 Learn the filter mode is the bridge from the neural-network lesson: a CNN learns its filters by gradient descent the same way last week's neural network learned its weights.
-       The Inspect &amp; scan panel lets students check one convolution by hand (the sum stays hidden until they click); the Learner-vs-target view shows a single image can't fully pin down a filter — different kernels can give the same output (under-determination).</p>
+       The Inspect &amp; scan panel lets students check one convolution by hand (the sum stays hidden until they click); the Learner-vs-target view shows a single image can't fully pin down a filter: different kernels can give the same output (under-determination).</p>
     <p><strong>Pre-exploration prompts:</strong></p>
     <ul>
       <li>How might a computer tell that a picture contains "an edge"?</li>
@@ -752,8 +1224,8 @@
       <li>Apply Blur, then Edge. Then try Edge, then Blur. Same result? Why does order matter?</li>
     </ul>
     <p><strong>Common misconceptions defeated:</strong>
-       "CNNs invented edge detection" (no — classical CV used hand-designed filters long before; CNNs LEARN them);
-       "ReLU is the model" (no — it's just a clip; the convolution does the work);
+       "CNNs invented edge detection" (no: classical CV used hand-designed filters long before; CNNs LEARN them);
+       "ReLU is the model" (no: it's just a clip; the convolution does the work);
        "more filters = always better" (more filters add capacity but also computation and overfitting risk).</p>
   </div>
 
@@ -766,8 +1238,8 @@
   // ===== i18n strings =====
   const STRINGS = {
     en: {
-      'title': 'Visualizing Convolutions', 'back-link': '← Back to all playgrounds',
-      'footer-top': '↑ Back to top', 'footer-builtby': 'Built by', 'footer-course': 'Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy', 'footer-source': 'View source', 'footer-issue': 'Report an issue',
+      'title': 'Convolution Playground', 'back-link': '← Back to all playgrounds',
+      'footer-top': '↑ Back to top', 'footer-course': 'Made for the Introduction to AI course at Haidian Kaiwen Academy.', 'footer-portfolio': 'Portfolio', 'footer-project': 'AI Playgrounds', 'footer-source': 'Source', 'footer-issue': 'Report an issue',
       'reset-all': '↺ Reset all', 'input-label': 'Input:',
       'kernel-label': 'Kernel preset:', 'layer-label': 'Layer mode:',
       'tldr-strong': 'The big idea',
@@ -801,7 +1273,7 @@
       'window-empty': '(click on the output canvas to inspect a cell)',
       'rgb-summary': '🎨 Multi-channel demo (RGB → 1 output)',
       'rgb-preset': 'RGB image:',
-      'rgb-preset-title': 'Pick a synthetic RGB image. Real CNNs convolve a separate kernel over each channel then sum the results — here we use your current kernel for all three channels.',
+      'rgb-preset-title': 'Pick a synthetic RGB image. Real CNNs convolve a separate kernel over each channel then sum the results: here we use your current kernel for all three channels.',
       'rgb-bars': 'Color bars (R | G | B)',
       'rgb-diag': 'Diagonal gradient',
       'rgb-disc': 'Red disc on blue field',
@@ -814,6 +1286,16 @@
       'tour-summary': '📚 Lesson tour (5 steps)',
       'tour-step': 'Step',
       'tour-prev': '← Prev', 'tour-next': 'Next →', 'tour-apply': '▶ Apply this scenario',
+      'sg-summary': '🎯 Try these scenarios first',
+      'sg-intro': 'Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.',
+      'sg-card-prefix': 'Scenario',
+      'sg-concept-label': 'Concept',
+      'sg-observe-label': 'What to watch',
+      'sg-misconception-label': 'Predict before applying',
+      'sg-misconception-text': 'Which visible result should change most, and why? Commit to an answer before applying.',
+      'sg-teacher-label': 'Teacher use',
+      'sg-teacher-text': 'Use as a 2–3 minute predict → run → explain prompt.',
+      'sg-apply': 'Apply and compare',
       'ws-summary': '📝 Worksheet (4 questions)',
       'ws-check': 'Check',
       'ws-pick': 'Pick an answer first.',
@@ -822,38 +1304,38 @@
       'ws3q': 'Switch to "Conv → conv" mode (two stacked 3×3 kernels). The effective receptive field becomes:',
       'ws4q': 'Turn on 🎯 Learn the filter, set the target to Sobel-X, and click Train. Starting from a random kernel, what happens to the 9 numbers as the loss falls?',
       // --- MCQ: worksheet option labels (ws{n}o{i}) ---
-      'ws1o0': 'Exactly the same as the input — the center weight is 1 and the rest are 0.',
-      'ws1o1': 'Inverted — black and white are swapped.',
-      'ws1o2': 'Blank — multiplying by the identity zeroes everything out.',
-      'ws2o0': 'The vertical bar — Sobel-X responds to horizontal intensity changes, which occur at vertical edges.',
-      'ws2o1': 'The horizontal bar — Sobel-X lines up with edges running the same direction as its name.',
-      'ws2o2': 'The center — the two bars overlap there, so the response is always largest.',
-      'ws3o0': '3×3 — stacking kernels doesn\'t change how far each output pixel can see.',
-      'ws3o1': '5×5 — each 3×3 layer adds one cell on every side, so two layers reach 5×5.',
-      'ws3o2': '9×9 — two 3×3 kernels multiply to a 9×9 window.',
-      'ws4o0': 'They stay random — gradient descent only changes the output, never the kernel weights.',
-      'ws4o1': 'They converge toward the Sobel-X weights — the random kernel learns to become the edge detector.',
-      'ws4o2': 'They grow without bound — lowering the loss pushes every weight toward infinity.',
-      // --- F1: lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
+      'ws1o0': 'Exactly the same as the input: the center weight is 1 and the rest are 0.',
+      'ws1o1': 'Inverted: black and white are swapped.',
+      'ws1o2': 'Blank: multiplying by the identity zeroes everything out.',
+      'ws2o0': 'The vertical bar: Sobel-X responds to horizontal intensity changes, which occur at vertical edges.',
+      'ws2o1': 'The horizontal bar: Sobel-X lines up with edges running the same direction as its name.',
+      'ws2o2': 'The center: the two bars overlap there, so the response is always largest.',
+      'ws3o0': '3×3: stacking kernels doesn\'t change how far each output pixel can see.',
+      'ws3o1': '5×5: each 3×3 layer adds one cell on every side, so two layers reach 5×5.',
+      'ws3o2': '9×9: two 3×3 kernels multiply to a 9×9 window.',
+      'ws4o0': 'They stay random: gradient descent only changes the output, never the kernel weights.',
+      'ws4o1': 'They converge toward the Sobel-X weights: the random kernel learns to become the edge detector.',
+      'ws4o2': 'They grow without bound: lowering the loss pushes every weight toward infinity.',
+      // lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
       'tour0name': 'Identity kernel = no change',
       'tour0desc': 'Cross image, Identity kernel. Output looks identical to input. Sanity check: the [[0,0,0],[0,1,0],[0,0,0]] kernel passes the center pixel through unchanged.',
       'tour1name': 'Sobel-X finds vertical edges',
-      'tour1desc': "Cross image, Sobel-X. Output lights up where pixels change horizontally — i.e., on the vertical bar of the cross. This is what 'edge detection' literally means.",
+      'tour1desc': "Cross image, Sobel-X. Output lights up where pixels change horizontally: i.e., on the vertical bar of the cross. This is what 'edge detection' literally means.",
       'tour2name': 'Sobel-Y finds horizontal edges',
       'tour2desc': 'Same image, Sobel-Y. Now the horizontal bar lights up instead. The kernel is rotated 90°. Two filters, two complementary features.',
       'tour3name': 'Conv → max-pool downsamples',
-      'tour3desc': "Switch to 'Conv + max-pool'. Output is now 16×16 (downsampled). Pooling keeps the strongest activation in each 2×2 block — translation tolerance comes from here.",
+      'tour3desc': "Switch to 'Conv + max-pool'. Output is now 16×16 (downsampled). Pooling keeps the strongest activation in each 2×2 block: translation tolerance comes from here.",
       'tour4name': 'Stacked convs grow receptive field',
-      'tour4desc': "Switch to 'Conv → conv'. Two 3×3 kernels stacked = a 5×5 effective receptive field. Try the default (Sobel-X then Sobel-Y) — this approximates a corner detector. Real CNNs stack dozens of layers.",
-      // --- F1: worksheet answer-feedback (ws{n}ok / ws{n}no) ---
-      'ws1ok': 'Correct. The Identity kernel [[0,0,0],[0,1,0],[0,0,0]] multiplies the center pixel by 1 and everyone else by 0. The output is exactly the input — a useful sanity check.',
-      'ws1no': "Try 'same as input'. Identity kernel preserves the center pixel and zeros out the rest of the neighborhood — output = input.",
-      'ws2ok': 'Correct. Sobel-X detects horizontal *changes* in intensity — which happen at the edges of vertical lines. The vertical bar of the cross lights up because that\'s where pixel values change horizontally.',
-      'ws2no': "Try 'vertical bar'. Sobel-X kernel = [[-1,0,1],[-2,0,2],[-1,0,1]] computes ∂I/∂x — large where pixels change horizontally, which is at vertical edges.",
+      'tour4desc': "Switch to 'Conv → conv'. Two 3×3 kernels stacked = a 5×5 effective receptive field. Try the default (Sobel-X then Sobel-Y): this approximates a corner detector. Real CNNs stack dozens of layers.",
+      // worksheet answer-feedback (ws{n}ok / ws{n}no) ---
+      'ws1ok': 'Correct. The Identity kernel [[0,0,0],[0,1,0],[0,0,0]] multiplies the center pixel by 1 and everyone else by 0. The output is exactly the input: a useful sanity check.',
+      'ws1no': "Try 'same as input'. Identity kernel preserves the center pixel and zeros out the rest of the neighborhood: output = input.",
+      'ws2ok': 'Correct. Sobel-X detects horizontal *changes* in intensity: which happen at the edges of vertical lines. The vertical bar of the cross lights up because that\'s where pixel values change horizontally.',
+      'ws2no': "Try 'vertical bar'. Sobel-X kernel = [[-1,0,1],[-2,0,2],[-1,0,1]] computes ∂I/∂x: large where pixels change horizontally, which is at vertical edges.",
       'ws3ok': 'Correct. Stacked 3×3 convs grow the receptive field by 2 cells per layer: 3 → 5 → 7. Two 3×3 layers see a 5×5 input patch with FEWER parameters than one 5×5 kernel (18 vs 25). This is why CNN architectures stack small kernels.',
       'ws3no': 'Try 5×5. Each 3×3 conv adds 2 to the receptive field width (1 on each side). Stacking two 3×3s sees 5×5.',
-      'ws4ok': 'Correct. Gradient descent nudges all 9 kernel values toward the Sobel-X target. As the MSE loss falls, the random kernel converges to the edge-detector — exactly how a CNN learns its filters during training.',
-      'ws4no': "Try 'they converge toward Sobel-X' or 'they learn the edge detector'. Gradient descent computes how each of the 9 weights should change to reduce the loss, then updates them — step by step the random kernel becomes the target.",
+      'ws4ok': 'Correct. Gradient descent nudges all 9 kernel values toward the Sobel-X target. As the MSE loss falls, the random kernel converges to the edge-detector: exactly how a CNN learns its filters during training.',
+      'ws4no': "Try 'they converge toward Sobel-X' or 'they learn the edge detector'. Gradient descent computes how each of the 9 weights should change to reduce the loss, then updates them: step by step the random kernel becomes the target.",
       // Learn-the-filter mode.
       'learn-toggle': '🎯 Learn the filter',
       'learn-target-label': 'Target:',
@@ -865,7 +1347,7 @@
       'learn-lr-label': 'Learning rate:',
       'learn-lr-title': 'Learning rate: how big a step gradient descent takes each update. Too large diverges; too small is slow.',
       'learn-loss-label': 'loss (MSE):', 'learn-step-label': 'step',
-      'learn-caption': 'Last week the network learned its weights by gradient descent. A CNN learns its filters the same way — watch a random kernel become an edge detector.',
+      'learn-caption': 'Last week the network learned its weights by gradient descent. A CNN learns its filters the same way: watch a random kernel become an edge detector.',
       // NEW: canvas captions (a11y / "what you're looking at").
       'cap-input': 'The 32×32 image you feed in. Dark pixels = 1, white = 0.',
       'cap-kernel': 'The 3×3 weights slid over every position. Use Tab and the arrow keys to move between cells.',
@@ -894,12 +1376,12 @@
       'lvt-h3': '⚖️ Learner vs. target weights',
       'lvt-learner': 'Learner', 'lvt-target': 'Target', 'lvt-diff': 'Difference (learner − target)',
       'lvt-note-default': 'Train to watch the learner weights move toward the target.',
-      'lvt-note-match': "The outputs match but the numbers don't — this image doesn't pin down all nine weights; the filter only has to match what it sees.",
+      'lvt-note-match': "The outputs match but the numbers don't: this image doesn't pin down all nine weights; the filter only has to match what it sees.",
       'lvt-note-close': 'Learner weights are converging on the target.',
     },
     zh: {
       'title': '卷积可视化', 'back-link': '← 返回所有演示',
-      'footer-top': '↑ 返回顶部', 'footer-builtby': '作者', 'footer-course': '为海淀凯文学校 2025–2026《人工智能导论》课程制作', 'footer-source': '查看源代码', 'footer-issue': '反馈问题',
+      'footer-top': '↑ 返回顶部', 'footer-course': '为海淀凯文学校《人工智能导论》课程制作。', 'footer-portfolio': '作品集', 'footer-project': 'AI Playgrounds', 'footer-source': '源代码', 'footer-issue': '反馈问题',
       'reset-all': '↺ 全部重置', 'input-label': '输入:',
       'kernel-label': '卷积核预设:', 'layer-label': '层模式:',
       'tldr-strong': '核心思想',
@@ -933,7 +1415,7 @@
       'window-empty': '(点击输出画布查看某个格子)',
       'rgb-summary': '🎨 多通道演示(RGB → 单输出)',
       'rgb-preset': 'RGB 图像:',
-      'rgb-preset-title': '选择合成的 RGB 图像。真实 CNN 对每个通道用独立卷积核然后求和——这里我们对三个通道都使用当前的卷积核。',
+      'rgb-preset-title': '选择合成的 RGB 图像。真实 CNN 对每个通道用独立卷积核然后求和--这里我们对三个通道都使用当前的卷积核。',
       'rgb-bars': '彩条 (R | G | B)',
       'rgb-diag': '对角渐变',
       'rgb-disc': '蓝底红圆盘',
@@ -946,6 +1428,16 @@
       'tour-summary': '📚 课程导览(5 步)',
       'tour-step': '步骤',
       'tour-prev': '← 上一步', 'tour-next': '下一步 →', 'tour-apply': '▶ 应用此场景',
+      'sg-summary': '🎯 先试这些场景',
+      'sg-intro': '先选择一个场景并预测结果,再应用它,然后把运行结果与你的预测进行比较。',
+      'sg-card-prefix': '场景',
+      'sg-concept-label': '概念',
+      'sg-observe-label': '预期观察',
+      'sg-misconception-label': '误区检查',
+      'sg-misconception-text': '初学者的第一反应可能会漏掉或过度简化什么?',
+      'sg-teacher-label': '教师用法',
+      'sg-teacher-text': '用作 2–3 分钟的“预测 → 运行 → 解释”活动。',
+      'sg-apply': '应用场景',
       'ws-summary': '📝 练习题(4 题)',
       'ws-check': '核对',
       'ws-pick': '请先选择一个答案。',
@@ -954,38 +1446,38 @@
       'ws3q': '切换到 "Conv → conv" 模式(两个堆叠的 3×3 卷积核)。有效感受野变为:',
       'ws4q': '打开 🎯 Learn the filter(学习卷积核),把目标设为 Sobel-X,点击 Train。从随机卷积核开始,随着损失下降,这 9 个数字会怎样?',
       // --- MCQ:练习题选项(ws{n}o{i})---
-      'ws1o0': '与输入完全相同——中心权重为 1,其余都为 0。',
-      'ws1o1': '颜色反转——黑白互换。',
-      'ws1o2': '全空白——乘以单位卷积核会把一切都置零。',
-      'ws2o0': '竖直条——Sobel-X 对水平方向的强度变化作出响应,而这发生在竖直边缘处。',
-      'ws2o1': '水平条——Sobel-X 与和它名字方向相同的边缘对齐。',
-      'ws2o2': '中心——两条在那里交叠,所以响应总是最大。',
-      'ws3o0': '3×3——堆叠卷积核不会改变每个输出像素能看多远。',
-      'ws3o1': '5×5——每个 3×3 层在每一边各加一格,因此两层可达 5×5。',
-      'ws3o2': '9×9——两个 3×3 卷积核相乘得到 9×9 的窗口。',
-      'ws4o0': '保持随机——梯度下降只改变输出,从不改变卷积核权重。',
-      'ws4o1': '逐渐收敛到 Sobel-X 的权重——随机卷积核学会变成边缘检测器。',
-      'ws4o2': '无限增大——降低损失会把每个权重推向无穷大。',
-      // --- F1: 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
+      'ws1o0': '与输入完全相同--中心权重为 1,其余都为 0。',
+      'ws1o1': '颜色反转--黑白互换。',
+      'ws1o2': '全空白--乘以单位卷积核会把一切都置零。',
+      'ws2o0': '竖直条--Sobel-X 对水平方向的强度变化作出响应,而这发生在竖直边缘处。',
+      'ws2o1': '水平条--Sobel-X 与和它名字方向相同的边缘对齐。',
+      'ws2o2': '中心--两条在那里交叠,所以响应总是最大。',
+      'ws3o0': '3×3--堆叠卷积核不会改变每个输出像素能看多远。',
+      'ws3o1': '5×5--每个 3×3 层在每一边各加一格,因此两层可达 5×5。',
+      'ws3o2': '9×9--两个 3×3 卷积核相乘得到 9×9 的窗口。',
+      'ws4o0': '保持随机--梯度下降只改变输出,从不改变卷积核权重。',
+      'ws4o1': '逐渐收敛到 Sobel-X 的权重--随机卷积核学会变成边缘检测器。',
+      'ws4o2': '无限增大--降低损失会把每个权重推向无穷大。',
+      // 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
       'tour0name': '恒等卷积核 = 不改变',
       'tour0desc': '十字图像,恒等(Identity)卷积核。输出看上去与输入完全相同。完整性检查:[[0,0,0],[0,1,0],[0,0,0]] 卷积核原样保留中心像素。',
       'tour1name': 'Sobel-X 找出竖直边缘',
-      'tour1desc': '十字图像,Sobel-X。输出在像素沿水平方向变化处亮起——也就是十字的竖直条上。这正是"边缘检测"字面上的含义。',
+      'tour1desc': '十字图像,Sobel-X。输出在像素沿水平方向变化处亮起--也就是十字的竖直条上。这正是"边缘检测"字面上的含义。',
       'tour2name': 'Sobel-Y 找出水平边缘',
       'tour2desc': '同一图像,Sobel-Y。现在亮起的换成了水平条。卷积核旋转了 90°。两个过滤器,两个互补的特征。',
       'tour3name': '卷积 → 最大池化降采样',
-      'tour3desc': '切换到"卷积 + 最大池化"。输出现在是 16×16(已降采样)。池化保留每个 2×2 块中最强的激活——平移容忍性正源于此。',
+      'tour3desc': '切换到"卷积 + 最大池化"。输出现在是 16×16(已降采样)。池化保留每个 2×2 块中最强的激活--平移容忍性正源于此。',
       'tour4name': '堆叠卷积扩大感受野',
-      'tour4desc': '切换到"卷积 → 卷积"。两个 3×3 卷积核堆叠 = 5×5 的有效感受野。试试默认配置(先 Sobel-X 再 Sobel-Y)——这近似一个角点检测器。真实 CNN 会堆叠几十层。',
-      // --- F1: 练习题答案反馈(ws{n}ok / ws{n}no)---
-      'ws1ok': '正确。恒等卷积核 [[0,0,0],[0,1,0],[0,0,0]] 把中心像素乘以 1,其余全部乘以 0。输出恰好等于输入——一个有用的完整性检查。',
-      'ws1no': '试试"same as input"。恒等卷积核保留中心像素,把邻域其余部分置零——输出 = 输入。',
-      'ws2ok': '正确。Sobel-X 检测强度沿水平方向的*变化*——这发生在竖直线条的边缘处。十字的竖直条亮起,因为那里像素值沿水平方向变化。',
-      'ws2no': '试试"vertical bar"。Sobel-X 卷积核 = [[-1,0,1],[-2,0,2],[-1,0,1]] 计算 ∂I/∂x——在像素沿水平方向变化处取值大,也就是竖直边缘处。',
+      'tour4desc': '切换到"卷积 → 卷积"。两个 3×3 卷积核堆叠 = 5×5 的有效感受野。试试默认配置(先 Sobel-X 再 Sobel-Y)--这近似一个角点检测器。真实 CNN 会堆叠几十层。',
+      // 练习题答案反馈(ws{n}ok / ws{n}no)---
+      'ws1ok': '正确。恒等卷积核 [[0,0,0],[0,1,0],[0,0,0]] 把中心像素乘以 1,其余全部乘以 0。输出恰好等于输入--一个有用的完整性检查。',
+      'ws1no': '试试"same as input"。恒等卷积核保留中心像素,把邻域其余部分置零--输出 = 输入。',
+      'ws2ok': '正确。Sobel-X 检测强度沿水平方向的*变化*--这发生在竖直线条的边缘处。十字的竖直条亮起,因为那里像素值沿水平方向变化。',
+      'ws2no': '试试"vertical bar"。Sobel-X 卷积核 = [[-1,0,1],[-2,0,2],[-1,0,1]] 计算 ∂I/∂x--在像素沿水平方向变化处取值大,也就是竖直边缘处。',
       'ws3ok': '正确。堆叠的 3×3 卷积每层让感受野扩大 2 格:3 → 5 → 7。两个 3×3 层看到的是 5×5 的输入块,而参数比一个 5×5 卷积核更少(18 对 25)。这正是 CNN 架构堆叠小卷积核的原因。',
       'ws3no': '试试 5×5。每个 3×3 卷积让感受野宽度加 2(每侧各 1)。堆叠两个 3×3 就能看到 5×5。',
-      'ws4ok': '正确。梯度下降把全部 9 个卷积核值朝 Sobel-X 目标推动。随着 MSE 损失下降,随机卷积核收敛为边缘检测器——这正是 CNN 在训练中学习其过滤器的方式。',
-      'ws4no': '试试"they converge toward Sobel-X"或"they learn the edge detector"。梯度下降计算这 9 个权重各自应如何改变以降低损失,然后更新它们——随机卷积核一步步变成目标。',
+      'ws4ok': '正确。梯度下降把全部 9 个卷积核值朝 Sobel-X 目标推动。随着 MSE 损失下降,随机卷积核收敛为边缘检测器--这正是 CNN 在训练中学习其过滤器的方式。',
+      'ws4no': '试试"they converge toward Sobel-X"或"they learn the edge detector"。梯度下降计算这 9 个权重各自应如何改变以降低损失,然后更新它们--随机卷积核一步步变成目标。',
       // 学习卷积核模式。
       'learn-toggle': '🎯 学习卷积核',
       'learn-target-label': '目标:',
@@ -997,7 +1489,7 @@
       'learn-lr-label': '学习率:',
       'learn-lr-title': '学习率:梯度下降每次更新的步长。太大发散;太小则收敛慢。',
       'learn-loss-label': '损失 (MSE):', 'learn-step-label': '步',
-      'learn-caption': '上周神经网络通过梯度下降学习它的权重。CNN 用同样的方式学习它的卷积核——看一个随机卷积核如何变成边缘检测器。',
+      'learn-caption': '上周神经网络通过梯度下降学习它的权重。CNN 用同样的方式学习它的卷积核--看一个随机卷积核如何变成边缘检测器。',
       // 新增:画布说明(无障碍 / "你正在看什么")。
       'cap-input': '你输入的 32×32 图像。深色像素 = 1,白色 = 0。',
       'cap-kernel': '在每个位置滑过的 3×3 权重。用 Tab 和方向键在格子间移动。',
@@ -1026,7 +1518,7 @@
       'lvt-h3': '⚖️ 学习器 vs. 目标权重',
       'lvt-learner': '学习器', 'lvt-target': '目标', 'lvt-diff': '差值(学习器 − 目标)',
       'lvt-note-default': '点击训练,观察学习器权重向目标靠拢。',
-      'lvt-note-match': '输出匹配了,但数字不匹配——这张图像并不能确定全部九个权重;过滤器只需匹配它所看到的内容。',
+      'lvt-note-match': '输出匹配了,但数字不匹配--这张图像并不能确定全部九个权重;过滤器只需匹配它所看到的内容。',
       'lvt-note-close': '学习器权重正在向目标收敛。',
     },
   };
@@ -1048,10 +1540,11 @@
   document.querySelectorAll('.lang-switch button').forEach(b =>
     b.addEventListener('click', () => {
       setLang(b.dataset.lang);
-      // F1: re-render the tour in the new language. Safe here — this click handler
+      // re-render the tour in the new language. Safe here: this click handler
       // only runs post-init, after LESSON_TOUR (a late `const`) is initialized, so
       // there is no temporal-dead-zone risk (unlike calling it from inside setLang).
       try { if (typeof renderTour === 'function') renderTour(); } catch (_) {}
+      try { if (typeof renderScenarioGallery === 'function') renderScenarioGallery(); } catch (_) {}
     }));
   let initialLang = 'en';
   try { initialLang = localStorage.getItem('lang') || 'en'; } catch (_) {}
@@ -1233,7 +1726,7 @@
       }
       return out;
     } else {
-      // 'valid' — only positions where the FULL 3×3 window fits: centre in [1, n-2].
+      // 'valid': only positions where the FULL 3×3 window fits: centre in [1, n-2].
       // Correct count uses the standard rule floor((n − k)/s) + 1 with k = 3, so the
       // last centre is ≤ n−2 and the window never reads out of bounds. (The prior
       // (n−2)/s+1 form was off by one: with n=32,s=1 it produced 31 rows/cols whose
@@ -1313,7 +1806,7 @@
 
   // `signed` is opt-in and passed ONLY by the output panel. When it is true AND
   // abs is OFF, render the diverging zero-centered palette. In EVERY other case
-  // (abs ON — the default — or signed not requested, e.g. the input panel) the
+  // (abs ON: the default: or signed not requested, e.g. the input panel) the
   // ORIGINAL grayscale ramp is used unchanged, so the default view is identical.
   function renderPanel(ctx, buf, takeAbs, relu, dim, signed) {
     const n = dim || N;
@@ -1321,7 +1814,7 @@
     const img = ctx.createImageData(n, n);
     if (useSigned) {
       // Center 0 at neutral; scale intensity by the current max |value| (after
-      // optional ReLU, which clips negatives — so ReLU behavior is preserved:
+      // optional ReLU, which clips negatives: so ReLU behavior is preserved:
       // with ReLU on there are no negatives and the map shows only orange).
       let maxA = 0;
       for (let i = 0; i < buf.length; i++) {
@@ -1368,7 +1861,7 @@
     for (let i = 0; i < pixels.length; i++) inImg[i] = 1 - pixels[i];
     renderPanel(inCtx, inImg, false, false);
     // also redraw the RGB demo (if its details panel is open the
-    // canvases exist — the function bails cleanly if elements are missing).
+    // canvases exist: the function bails cleanly if elements are missing).
     try { renderRgb(); } catch (_) {}
 
     const K = readKernel();
@@ -1476,7 +1969,7 @@
   // last week's neural net: weights/filters are LEARNED by gradient descent.
   //
   // Math note: the LOSS and GRADIENT are computed on the RAW linear conv only
-  // (no abs/ReLU — those are display-only) over the VALID positions (full 3×3
+  // (no abs/ReLU: those are display-only) over the VALID positions (full 3×3
   // windows), regardless of the display padding/stride. The forward conv used
   // for *display* is the applet's existing single-conv renderAll() with the
   // learner kernel written into the kernel cells.
@@ -1583,7 +2076,7 @@
   function startTraining() {
     if (!learnActive || learnTimer) return;
     setTrainBtnLabel(true);
-    // ~30 steps/sec — converges visibly within a few seconds on the default image.
+    // ~30 steps/sec: converges visibly within a few seconds on the default image.
     learnTimer = setInterval(trainStep, 33);
   }
 
@@ -1634,7 +2127,7 @@
   $('presetSel').addEventListener('change', () => { if (learnActive) updateLossReadout(); });
   $('clearBtn').addEventListener('click', () => { if (learnActive) updateLossReadout(); });
 
-  // touch support — synthesize mouse events for tablet drawing.
+  // touch support: synthesize mouse events for tablet drawing.
   (() => {
     const target = inputCv;
     let lastTouch = null;
@@ -1659,7 +2152,7 @@
     }, {passive: false});
   })();
 
-  // URL-shareable config — layer mode, image preset, kernel choice.
+  // URL-shareable config: layer mode, image preset, kernel choice.
   try {
     const sp = new URLSearchParams(location.search);
     const setSel = (key, id) => {
@@ -1748,7 +2241,7 @@
         img.data[i * 4 + 3] = 255;
       }
     }
-    // Scale up to canvas size via createImageBitmap is heavy — use putImageData then drawImage with scaling.
+    // Scale up to canvas size via createImageBitmap is heavy: use putImageData then drawImage with scaling.
     const off = document.createElement('canvas');
     off.width = dim; off.height = dim;
     off.getContext('2d').putImageData(img, 0, 0);
@@ -1809,7 +2302,7 @@
   outCv.addEventListener('click', e => {
     const rect = outCv.getBoundingClientRect();
     // Convert click coords to output-cell coords. In conv mode, output is N×N. In pool/stack
-    // mode the output dim differs — for simplicity we always inspect against the input
+    // mode the output dim differs: for simplicity we always inspect against the input
     // sliding window (the lesson works either way for the FIRST conv layer).
     const cx = (e.clientX - rect.left) * (outCv.width / rect.width);
     const cy = (e.clientY - rect.top)  * (outCv.height / rect.height);
@@ -1889,23 +2382,23 @@
       description: "Cross image, Identity kernel. Output looks identical to input. Sanity check: the [[0,0,0],[0,1,0],[0,0,0]] kernel passes the center pixel through unchanged.",
       apply: () => applyPreset('conv', 'cross', 'identity') },
     { name: 'Sobel-X finds vertical edges',
-      description: "Cross image, Sobel-X. Output lights up where pixels change horizontally — i.e., on the vertical bar of the cross. This is what 'edge detection' literally means.",
+      description: "Cross image, Sobel-X. Output lights up where pixels change horizontally: i.e., on the vertical bar of the cross. This is what 'edge detection' literally means.",
       apply: () => applyPreset('conv', 'cross', 'edgeX') },
     { name: 'Sobel-Y finds horizontal edges',
       description: "Same image, Sobel-Y. Now the horizontal bar lights up instead. The kernel is rotated 90°. Two filters, two complementary features.",
       apply: () => applyPreset('conv', 'cross', 'edgeY') },
     { name: 'Conv → max-pool downsamples',
-      description: "Switch to 'Conv + max-pool'. Output is now 16×16 (downsampled). Pooling keeps the strongest activation in each 2×2 block — translation tolerance comes from here.",
+      description: "Switch to 'Conv + max-pool'. Output is now 16×16 (downsampled). Pooling keeps the strongest activation in each 2×2 block: translation tolerance comes from here.",
       apply: () => applyPreset('conv-pool', 'cross', 'edgeX') },
     { name: 'Stacked convs grow receptive field',
-      description: "Switch to 'Conv → conv'. Two 3×3 kernels stacked = a 5×5 effective receptive field. Try the default (Sobel-X then Sobel-Y) — this approximates a corner detector. Real CNNs stack dozens of layers.",
+      description: "Switch to 'Conv → conv'. Two 3×3 kernels stacked = a 5×5 effective receptive field. Try the default (Sobel-X then Sobel-Y): this approximates a corner detector. Real CNNs stack dozens of layers.",
       apply: () => applyPreset('conv-conv', 'cross', 'edgeX') },
   ];
   let tourIdx = 0;
   function renderTour() {
     if (!$('tourName')) return;
     const s = LESSON_TOUR[tourIdx];
-    // F1 bilingual: look up tour{i}name / tour{i}desc with English inline fallback.
+    // Bilingual: look up tour{i}name / tour{i}desc with English inline fallback.
     const L = (document.documentElement.lang || 'en');
     const S = STRINGS[L] || STRINGS.en;
     $('tourName').textContent = S['tour' + tourIdx + 'name'] || s.name;
@@ -1919,8 +2412,67 @@
   $('tourNext').addEventListener('click', () => { if (tourIdx < LESSON_TOUR.length - 1) { tourIdx++; renderTour(); } });
   renderTour();
 
-  // Worksheet/lab mode — 3 questions with instant ✓/✗ feedback.
-  // F1 bilingual feedback helper: ws{n}ok / ws{n}no with English inline fallback.
+
+  function scenarioGalleryText(key, fallback) {
+    const L = document.documentElement.lang || 'en';
+    const S = STRINGS[L] || STRINGS.en;
+    return S[key] || fallback;
+  }
+  function localizedScenarioField(index, field, fallback) {
+    const L = document.documentElement.lang || 'en';
+    const S = STRINGS[L] || STRINGS.en;
+    return S['tour' + index + field] || fallback || '';
+  }
+  function appendScenarioMeta(card, label, text) {
+    const p = document.createElement('p');
+    p.className = 'scenario-meta';
+    const strong = document.createElement('strong');
+    strong.textContent = label + ': ';
+    p.appendChild(strong);
+    p.appendChild(document.createTextNode(text));
+    card.appendChild(p);
+  }
+  function renderScenarioGallery() {
+    const root = $('scenarioGalleryCards');
+    if (!root || typeof LESSON_TOUR === 'undefined') return;
+    root.innerHTML = '';
+    LESSON_TOUR.forEach((scenario, index) => {
+      const title = localizedScenarioField(index, 'name', scenario.name || (scenarioGalleryText('sg-card-prefix', 'Scenario') + ' ' + (index + 1)));
+      const description = localizedScenarioField(index, 'desc', scenario.description || '');
+      const card = document.createElement('article');
+      card.className = 'scenario-card';
+      card.setAttribute('data-scenario-index', String(index));
+
+      const h = document.createElement('h3');
+      h.textContent = `${scenarioGalleryText('sg-card-prefix', 'Scenario')} ${index + 1}: ${title}`;
+      card.appendChild(h);
+
+      appendScenarioMeta(card, scenarioGalleryText('sg-concept-label', 'Concept'), title);
+      appendScenarioMeta(card, scenarioGalleryText('sg-observe-label', 'What to watch'), description);
+      appendScenarioMeta(card, scenarioGalleryText('sg-misconception-label', 'Predict before applying'), scenarioGalleryText('sg-misconception-text', 'Which visible result should change most, and why? Commit to an answer before applying.'));
+      appendScenarioMeta(card, scenarioGalleryText('sg-teacher-label', 'Teacher use'), scenarioGalleryText('sg-teacher-text', 'Use as a 2–3 minute predict → run → explain prompt.'));
+
+      const btn = document.createElement('button');
+      btn.className = 'step-btn';
+      btn.type = 'button';
+      btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare');
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('.scenario-card').forEach(item => item.classList.remove('applied'));
+        tourIdx = index;
+        renderTour();
+        scenario.apply();
+        card.classList.add('applied');
+        btn.textContent = '✓ ' + scenarioGalleryText('sg-applied', 'Applied; compare the result');
+        setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
+      });
+      card.appendChild(btn);
+      root.appendChild(card);
+    });
+  }
+  renderScenarioGallery();
+
+  // Worksheet/lab mode: 3 questions with instant ✓/✗ feedback.
+  // Bilingual feedback helper: ws{n}ok / ws{n}no with English inline fallback.
   function wsMsg(key, en) {
     const L = (document.documentElement.lang || 'en');
     return (STRINGS[L] && STRINGS[L][key]) || en;
@@ -1930,17 +2482,17 @@
   // existing bilingual feedback keys, with an English inline fallback via wsMsg.
   const WORKSHEET = [
     { correct: 0,
-      ok:  ['ws1ok', "Correct. The Identity kernel [[0,0,0],[0,1,0],[0,0,0]] multiplies the center pixel by 1 and everyone else by 0. The output is exactly the input — a useful sanity check."],
-      no:  ['ws1no', "Try 'same as input'. Identity kernel preserves the center pixel and zeros out the rest of the neighborhood — output = input."] },
+      ok:  ['ws1ok', "Correct. The Identity kernel [[0,0,0],[0,1,0],[0,0,0]] multiplies the center pixel by 1 and everyone else by 0. The output is exactly the input: a useful sanity check."],
+      no:  ['ws1no', "Try 'same as input'. Identity kernel preserves the center pixel and zeros out the rest of the neighborhood: output = input."] },
     { correct: 0,
-      ok:  ['ws2ok', "Correct. Sobel-X detects horizontal *changes* in intensity — which happen at the edges of vertical lines. The vertical bar of the cross lights up because that's where pixel values change horizontally."],
-      no:  ['ws2no', "Try 'vertical bar'. Sobel-X kernel = [[-1,0,1],[-2,0,2],[-1,0,1]] computes ∂I/∂x — large where pixels change horizontally, which is at vertical edges."] },
+      ok:  ['ws2ok', "Correct. Sobel-X detects horizontal *changes* in intensity: which happen at the edges of vertical lines. The vertical bar of the cross lights up because that's where pixel values change horizontally."],
+      no:  ['ws2no', "Try 'vertical bar'. Sobel-X kernel = [[-1,0,1],[-2,0,2],[-1,0,1]] computes ∂I/∂x: large where pixels change horizontally, which is at vertical edges."] },
     { correct: 1,
       ok:  ['ws3ok', "Correct. Stacked 3×3 convs grow the receptive field by 2 cells per layer: 3 → 5 → 7. Two 3×3 layers see a 5×5 input patch with FEWER parameters than one 5×5 kernel (18 vs 25). This is why CNN architectures stack small kernels."],
       no:  ['ws3no', "Try 5×5. Each 3×3 conv adds 2 to the receptive field width (1 on each side). Stacking two 3×3s sees 5×5."] },
     { correct: 1,
-      ok:  ['ws4ok', "Correct. Gradient descent nudges all 9 kernel values toward the Sobel-X target. As the MSE loss falls, the random kernel converges to the edge-detector — exactly how a CNN learns its filters during training."],
-      no:  ['ws4no', "Try 'they converge toward Sobel-X' or 'they learn the edge detector'. Gradient descent computes how each of the 9 weights should change to reduce the loss, then updates them — step by step the random kernel becomes the target."] },
+      ok:  ['ws4ok', "Correct. Gradient descent nudges all 9 kernel values toward the Sobel-X target. As the MSE loss falls, the random kernel converges to the edge-detector: exactly how a CNN learns its filters during training."],
+      no:  ['ws4no', "Try 'they converge toward Sobel-X' or 'they learn the edge detector'. Gradient descent computes how each of the 9 weights should change to reduce the loss, then updates them: step by step the random kernel becomes the target."] },
   ];
   WORKSHEET.forEach((q, i) => {
     const n = i + 1;
@@ -2031,7 +2583,7 @@
     const pad = $('convPad') ? $('convPad').value : 'same';
     const outDim = (pad === 'same')
       ? Math.ceil(N / s)
-      : (Math.floor((N - 3) / s) + 1);   // valid: floor((N−k)/s)+1, k=3 — matches convolveBuf
+      : (Math.floor((N - 3) / s) + 1);   // valid: floor((N−k)/s)+1, k=3: matches convolveBuf
     return { s, pad, outDim };
   }
   // For output cell (oy,ox), reconstruct the 3×3 window EXACTLY as convolveBuf:
@@ -2203,7 +2755,7 @@
     refreshScanOverlay();
     // position label
     const oy = Math.floor(scanIndex / outDim), ox = scanIndex % outDim;
-    if ($('scanPos')) $('scanPos').textContent = (scanIndex < 0) ? '—' : `(${oy}, ${ox})`;
+    if ($('scanPos')) $('scanPos').textContent = (scanIndex < 0) ? '-' : `(${oy}, ${ox})`;
     // live hover panel mirrors the current scan cell (sum revealed during scan).
     if ($('inspectScan') && $('inspectScan').open && scanIndex >= 0) {
       hoverCell = { oy, ox }; sumRevealed = true; renderHover();
@@ -2234,7 +2786,7 @@
     stopScan();
     scanIndex = -1;
     clearHoverHighlights();
-    if ($('scanPos')) $('scanPos').textContent = '—';
+    if ($('scanPos')) $('scanPos').textContent = '-';
     hoverCell = null; sumRevealed = false;
     renderAll();                              // redraw the full static output
     if ($('inspectScan') && $('inspectScan').open) renderHover();
@@ -2372,7 +2924,7 @@
   };
   // NOTE: no need to re-bind the learnChk listener. The original handler calls
   // setLearnActive(…) by name, and because setLearnActive is a (reassigned)
-  // function binding, that lookup resolves to the WRAPPED version at call time —
+  // function binding, that lookup resolves to the WRAPPED version at call time -
   // so the learner-vs-target panel updates automatically on toggle.
   if ($('learnTargetSel')) $('learnTargetSel').addEventListener('change', () => {
     if (typeof learnActive !== 'undefined' && learnActive) renderLearnVsTarget();
@@ -2452,12 +3004,434 @@
   });
 })();
 </script>
-  <footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
+
+<footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
     <p style="margin:0 0 6px;"><a href="#top" data-i18n="footer-top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
-    <p style="margin:0;"><span data-i18n="footer-builtby">Built by</span> Logan Dixon · <span data-i18n="footer-course">Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy</span></p>
-    <p style="margin:6px 0 0;"><a href="https://github.com/lmdixon23/ai-playgrounds" data-i18n="footer-source" style="color:var(--accent,#0891b2);">View source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-i18n="footer-issue" style="color:var(--accent,#0891b2);">Report an issue</a> · © 2026 Logan Dixon</p>
+    <p style="margin:0;"><span data-i18n="footer-course">Made for the Introduction to AI course at Haidian Kaiwen Academy.</span></p>
+    <p style="margin:6px 0 0;">© <span data-current-year>2026</span> Logan M. Dixon · <a href="https://lmdixon23.github.io/" data-i18n="footer-portfolio" style="color:var(--accent,#0891b2);">Portfolio</a> · <a href="../../index.html" data-i18n="footer-project" style="color:var(--accent,#0891b2);">AI Playgrounds</a> · <a href="https://github.com/lmdixon23/ai-playgrounds" data-i18n="footer-source" style="color:var(--accent,#0891b2);">Source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-i18n="footer-issue" style="color:var(--accent,#0891b2);">Report an issue</a> · <a href="https://orcid.org/0009-0001-0592-462X" rel="me" style="color:var(--accent,#0891b2);">ORCID</a></p>
   </footer>
-  <!-- Privacy-friendly analytics — GoatCounter, cookieless. -->
-  <script data-goatcounter="https://lmdixon23.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+
+<script>
+(function() {
+  const LAB_CONFIG = {"slug": "convolution", "title": "Convolution lab packet", "zhTitle": "卷积实验包", "fields": [{"label": "Layer mode", "selector": "#layerSel", "kind": "selected"}, {"label": "Image preset", "selector": "#presetSel", "kind": "selected"}, {"label": "Kernel", "selector": "#kernelSel", "kind": "selected"}, {"label": "Stride", "selector": "#convStride", "kind": "value"}, {"label": "Padding", "selector": "#convPad", "kind": "value"}, {"label": "Learn target", "selector": "#learnTargetSel", "kind": "selected"}, {"label": "Learning loss", "selector": "#learnLoss", "kind": "text"}, {"label": "Scan position", "selector": "#scanPos", "kind": "text"}, {"label": "Window math", "selector": "#windowMath", "kind": "text"}]};
+  const root = document.querySelector('.classroom-lab');
+  if (!root) return;
+  const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;
+  const qs = (sel) => root.querySelector(sel);
+  function currentLang() { return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en'; }
+  function textFor(el, lang) { return el.getAttribute(lang === 'zh' ? 'data-lab-zh' : 'data-lab-en') || el.textContent; }
+  function applyLabLang() {
+    const lang = currentLang();
+    root.querySelectorAll('[data-lab-en]').forEach(el => {
+      const value = textFor(el, lang);
+      if (el.tagName === 'TEXTAREA') el.placeholder = value;
+      else el.textContent = value;
+    });
+  }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? 'on' : 'off';
+    else if (field.kind === 'text') value = el.textContent.trim();
+    else value = el.value;
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? field.label + ': ' + value : null;
+  }
+  function snapshot() {
+    const lines = LAB_CONFIG.fields.map(readField).filter(Boolean);
+    return lines.length ? lines.join('\n') : 'No state captured yet. Run or adjust the applet first.';
+  }
+  function answers() {
+    const data = {};
+    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => data[area.getAttribute('data-lab-answer')] = area.value.trim());
+    return data;
+  }
+  function saveDraft() { try { localStorage.setItem(storageKey, JSON.stringify(answers())); } catch (_) {} }
+  function loadDraft() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      root.querySelectorAll('textarea[data-lab-answer]').forEach(area => { const key = area.getAttribute('data-lab-answer'); if (saved[key]) area.value = saved[key]; });
+    } catch (_) {}
+  }
+  function packet() {
+    const lang = currentLang();
+    const labels = lang === 'zh' ? {title: LAB_CONFIG.zhTitle, state:'状态记录', predict:'预测', observe:'观察', explain:'解释', transfer:'迁移'} : {title: LAB_CONFIG.title, state:'State snapshot', predict:'Predict', observe:'Observe', explain:'Explain', transfer:'Transfer'};
+    const a = answers();
+    return [
+      '# ' + labels.title,
+      '',
+      '- Applet: ' + (document.querySelector('h1') ? document.querySelector('h1').textContent.trim() : document.title),
+      '- Date: ' + new Date().toLocaleString(),
+      '',
+      '## ' + labels.state,
+      snapshot(),
+      '',
+      '## ' + labels.predict,
+      a.predict || '',
+      '',
+      '## ' + labels.observe,
+      a.observe || '',
+      '',
+      '## ' + labels.explain,
+      a.explain || '',
+      '',
+      '## ' + labels.transfer,
+      a.transfer || ''
+    ].join('\n');
+  }
+  function setStatus(en, zh) { const el = qs('.lab-status'); if (el) el.textContent = currentLang() === 'zh' ? zh : en; }
+  function refreshState() { const el = qs('[data-lab-state]'); if (el) el.textContent = snapshot(); }
+  async function copyPacket() {
+    const text = packet();
+    try { await navigator.clipboard.writeText(text); setStatus('Copied local lab packet.', '已复制本地实验包。'); }
+    catch (_) { window.prompt('Copy this lab packet:', text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
+  }
+
+  function markdownToPrintableHtml(markdown) {
+    const escape = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const inline = value => escape(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    const lines = String(markdown).split(/\r?\n/);
+    let html = '', inList = false, inState = false;
+    const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
+    for (const raw of lines) {
+      const line = raw.trimEnd();
+      if (line.startsWith('# ')) { closeList(); html += '<h1>' + inline(line.slice(2)) + '</h1>'; inState=false; }
+      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = /state snapshot|状态记录/i.test(title); }
+      else if (line.startsWith('- ')) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inline(line.slice(2)) + '</li>'; }
+      else if (!line.trim()) { closeList(); }
+      else { closeList(); html += inState ? '<pre class="state">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
+    }
+    closeList(); return html;
+  }
+
+  function printPacket() {
+    const w = window.open('', '_blank');
+    if (!w) { setStatus('Popup blocked. Copy the packet instead.', '弹窗被拦截。请改用复制实验包。'); return; }
+    const rendered = markdownToPrintableHtml(packet());
+    const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+    setStatus('Print page opened.', '打印页面已打开。');
+  }
+  function clearDraft() {
+    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.value = '');
+    try { localStorage.removeItem(storageKey); } catch (_) {}
+    refreshState(); setStatus('Local draft cleared.', '本地草稿已清除。');
+  }
+  root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.addEventListener('input', saveDraft));
+  root.querySelector('[data-lab-action="copy"]')?.addEventListener('click', copyPacket);
+  root.querySelector('[data-lab-action="print"]')?.addEventListener('click', printPacket);
+  root.querySelector('[data-lab-action="refresh"]')?.addEventListener('click', () => { refreshState(); setStatus('State refreshed.', '状态已更新。'); });
+  root.querySelector('[data-lab-action="clear"]')?.addEventListener('click', clearDraft);
+  document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(applyLabLang, 0)));
+  document.addEventListener('change', refreshState);
+  document.addEventListener('click', (event) => { if (!(event.target instanceof HTMLTextAreaElement)) setTimeout(refreshState, 0); }, true);
+  loadDraft(); applyLabLang(); refreshState();
+})();
+</script>
+
+
+<script>
+(function() {
+  const VISUAL_CONFIG = {"intro":"Watch convolution as local evidence aggregation: a small window slides over the image, multiplies by a kernel, sums the result, and builds a new feature map.","zhIntro":"把卷积看成局部证据聚合：小窗口在图像上滑动，与卷积核相乘，求和后形成新的特征图。","misread":"A kernel is not a magic detector. It is a fixed pattern of weights whose result depends on the local window.","zhMisread":"卷积核不是魔法检测器。它是一组固定权重，结果取决于当前局部窗口。","steps":[{"label":"Input window","zhLabel":"输入窗口","text":"Only the pixels inside the current window affect the current output cell.","zhText":"只有当前窗口内的像素会影响当前输出格。","selector":"#scanPos","kind":"text","liveLabel":"Scan","zhLiveLabel":"扫描"},{"label":"Kernel weights","zhLabel":"卷积核权重","text":"The kernel decides which local pattern should be amplified or suppressed.","zhText":"卷积核决定哪种局部模式应该被增强或抑制。","selector":"#kernelSel","kind":"selected","liveLabel":"Kernel","zhLiveLabel":"卷积核"},{"label":"Multiply and sum","zhLabel":"相乘并求和","text":"The visible arithmetic is the bridge from image patch to feature value.","zhText":"可见算术是从图像局部块到特征值的桥梁。","selector":"#windowMath","kind":"text","liveLabel":"Math","zhLiveLabel":"算式"},{"label":"Feature map","zhLabel":"特征图","text":"Moving the same kernel across space builds a map of where that pattern appears.","zhText":"同一个卷积核在空间中移动，形成该模式出现位置的地图。","selector":"#layerSel","kind":"selected","liveLabel":"Layer","zhLiveLabel":"层"}],"fields":[{"label":"Layer mode","zhLabel":"层模式","selector":"#layerSel","kind":"selected"},{"label":"Kernel","zhLabel":"卷积核","selector":"#kernelSel","kind":"selected"},{"label":"Stride","zhLabel":"步幅","selector":"#convStride","kind":"value"},{"label":"Padding","zhLabel":"填充","selector":"#convPad","kind":"value"},{"label":"Window math","zhLabel":"窗口算式","selector":"#windowMath","kind":"text"}]};
+  const root = document.querySelector('.visual-explanation');
+  if (!root) return;
+  const flow = root.querySelector('[data-visual-flow]');
+  const intro = root.querySelector('[data-visual-intro]');
+  const snapshotBox = root.querySelector('[data-visual-snapshot]');
+  const misreadBox = root.querySelector('[data-visual-misread]');
+  function currentLang() { return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en'; }
+  function t(obj, key) { const lang = currentLang(); return (lang === 'zh' && obj['zh' + key[0].toUpperCase() + key.slice(1)]) || obj[key] || ''; }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? 'on' : 'off';
+    else if (field.kind === 'value') value = el.value;
+    else value = el.textContent.trim();
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? { label: field.label, zhLabel: field.zhLabel || field.label, value } : null;
+  }
+  function liveValue(step) {
+    if (!step.selector) return '';
+    const field = readField({ selector: step.selector, kind: step.kind || 'text', label: step.liveLabel || 'Live', zhLabel: step.zhLiveLabel || '实时' });
+    return field ? field.value : (step.fallback || '');
+  }
+  function renderVisualExplanation() {
+    const lang = currentLang();
+    root.querySelectorAll('[data-visual-en]').forEach(el => {
+      el.textContent = el.getAttribute(lang === 'zh' ? 'data-visual-zh' : 'data-visual-en') || el.textContent;
+    });
+    intro.textContent = lang === 'zh' ? VISUAL_CONFIG.zhIntro : VISUAL_CONFIG.intro;
+    misreadBox.textContent = lang === 'zh' ? VISUAL_CONFIG.zhMisread : VISUAL_CONFIG.misread;
+    flow.innerHTML = VISUAL_CONFIG.steps.map((step, idx) => {
+      const title = lang === 'zh' ? step.zhLabel : step.label;
+      const body = lang === 'zh' ? step.zhText : step.text;
+      const liveLabel = lang === 'zh' ? (step.zhLiveLabel || '实时') : (step.liveLabel || 'Live');
+      const live = liveValue(step);
+      const liveHtml = live ? '<span class="visual-live"><strong>' + escapeHtml(liveLabel) + '</strong><span>' + escapeHtml(live) + '</span></span>' : '';
+      return '<article class="visual-card" data-step="' + String(idx + 1).padStart(2, '0') + '"><h4>' + escapeHtml(title) + '</h4><p>' + escapeHtml(body) + '</p>' + liveHtml + '</article>';
+    }).join('');
+    const lines = (VISUAL_CONFIG.fields || []).map(readField).filter(Boolean).map(f => (lang === 'zh' ? f.zhLabel : f.label) + ': ' + f.value);
+    snapshotBox.textContent = lines.length ? lines.join('\n') : (lang === 'zh' ? '还没有捕捉到状态。请先运行或调整小程序。' : 'No state captured yet. Run or adjust the applet first.');
+  }
+  function escapeHtml(text) { return String(text).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+  let visualTimer = null;
+  function scheduleVisualRender() {
+    if (visualTimer) cancelAnimationFrame(visualTimer);
+    visualTimer = requestAnimationFrame(renderVisualExplanation);
+  }
+  document.addEventListener('change', scheduleVisualRender);
+  document.addEventListener('input', scheduleVisualRender);
+  document.addEventListener('click', () => setTimeout(scheduleVisualRender, 0), true);
+  document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(scheduleVisualRender, 0)));
+  setInterval(renderVisualExplanation, 1200);
+  renderVisualExplanation();
+})();
+</script>
+
+<!-- Privacy-friendly analytics: GoatCounter, cookieless. -->
+  <script>
+(function () {
+  const analyticsAllowedHost = location.hostname === 'lmdixon23.github.io';
+  const params = new URLSearchParams(location.search);
+  const analyticsDisabled = params.has('noanalytics') || params.get('analytics') === '0' || navigator.doNotTrack === '1';
+  if (!analyticsAllowedHost || analyticsDisabled) return;
+  const s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://gc.zgo.at/count.js';
+  s.dataset.goatcounter = 'https://lmdixon23.goatcounter.com/count';
+  document.head.appendChild(s);
+})();
+</script>
+
+<script>
+(function() {
+  const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "Layer mode", "zhLabel": "层模式", "selector": "#layerSel", "kind": "selected"}, {"label": "Kernel", "zhLabel": "卷积核", "selector": "#kernelSel", "kind": "selected"}, {"label": "Stride", "zhLabel": "步幅", "selector": "#convStride", "kind": "value"}, {"label": "Padding", "zhLabel": "填充", "selector": "#convPad", "kind": "value"}, {"label": "Window math", "zhLabel": "窗口算式", "selector": "#windowMath", "kind": "text"}]};
+  const layer = document.querySelector('.accessibility-layer');
+  if (!layer) return;
+  const intro = layer.querySelector('[data-a11y-intro]');
+  const stateGrid = layer.querySelector('[data-a11y-state-grid]');
+  const liveRegion = layer.querySelector('#a11yLiveRegion');
+  let renderTimer = 0;
+  let lastSummary = '';
+  function currentLang() {
+    return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+  }
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+  function localized(obj, key) {
+    const lang = currentLang();
+    const zhKey = 'zh' + key[0].toUpperCase() + key.slice(1);
+    return (lang === 'zh' && obj[zhKey]) || obj[key] || '';
+  }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? (currentLang() === 'zh' ? '开' : 'on') : (currentLang() === 'zh' ? '关' : 'off');
+    else if (field.kind === 'value') value = el.value;
+    else value = el.textContent.trim();
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? { label: localized(field, 'label'), value } : null;
+  }
+  function renderAccessibilityLayer(options = {}) {
+    const lang = currentLang();
+    layer.querySelectorAll('[data-a11y-en]').forEach(el => {
+      el.textContent = el.getAttribute(lang === 'zh' ? 'data-a11y-zh' : 'data-a11y-en') || el.textContent;
+    });
+    const copy = A11Y_CONFIG.copy[lang] || A11Y_CONFIG.copy.en;
+    intro.textContent = copy.intro;
+    layer.querySelector('[data-a11y-title]').textContent = copy.title;
+    layer.querySelector('[data-a11y-keyboard-title]').textContent = copy.keyboardTitle;
+    layer.querySelector('[data-a11y-keyboard-1]').textContent = copy.keyboard1;
+    layer.querySelector('[data-a11y-keyboard-2]').textContent = copy.keyboard2;
+    layer.querySelector('[data-a11y-keyboard-3]').textContent = copy.keyboard3;
+    layer.querySelector('[data-a11y-state-title]').textContent = copy.stateTitle;
+    layer.querySelector('[data-a11y-motion-title]').textContent = copy.motionTitle;
+    layer.querySelector('[data-a11y-motion-copy]').textContent = copy.motionCopy;
+    layer.querySelector('[data-a11y-note]').textContent = copy.note;
+    const fields = A11Y_CONFIG.fields.map(readField).filter(Boolean);
+    if (fields.length) {
+      stateGrid.innerHTML = fields.map(field => '<dt>' + escapeHtml(field.label) + '</dt><dd>' + escapeHtml(field.value) + '</dd>').join('');
+    } else {
+      stateGrid.innerHTML = '<dt>' + escapeHtml(copy.emptyLabel) + '</dt><dd>' + escapeHtml(copy.emptyValue) + '</dd>';
+    }
+    const summary = fields.map(field => field.label + ': ' + field.value).join('; ') || copy.emptyValue;
+    if (options.announce && liveRegion && summary !== lastSummary) {
+      liveRegion.textContent = copy.livePrefix + summary;
+    }
+    lastSummary = summary;
+  }
+  function markVisualRegions() {
+    const descriptionId = 'a11yStateSummary';
+    document.querySelectorAll('canvas, svg, [role="img"]').forEach((el, index) => {
+      if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+      if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', A11Y_CONFIG.copy.en.visualLabel + ' ' + (index + 1));
+      const describedBy = (el.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+      if (!describedBy.includes(descriptionId)) {
+        describedBy.push(descriptionId);
+        el.setAttribute('aria-describedby', describedBy.join(' '));
+      }
+    });
+  }
+  function scheduleAccessibilityRender(announce = true) {
+    clearTimeout(renderTimer);
+    renderTimer = setTimeout(() => renderAccessibilityLayer({ announce }), 100);
+  }
+  document.addEventListener('input', () => scheduleAccessibilityRender(true), true);
+  document.addEventListener('change', () => scheduleAccessibilityRender(true), true);
+  document.addEventListener('click', event => {
+    if (event.target && event.target.closest && event.target.closest('button, [role="button"], canvas, svg, select, input')) {
+      scheduleAccessibilityRender(true);
+    }
+  }, true);
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ' || event.key.startsWith('Arrow') || event.key === 'Tab') {
+      scheduleAccessibilityRender(false);
+    }
+  }, true);
+  setInterval(() => {
+    if (!document.hidden) renderAccessibilityLayer({ announce: false });
+  }, 1500);
+  markVisualRegions();
+  renderAccessibilityLayer({ announce: false });
+  window.renderAccessibilityLayer = renderAccessibilityLayer;
+})();
+</script>
+
+<script>
+(function () {
+  document.querySelectorAll('[data-current-year]').forEach(el => { el.textContent = new Date().getFullYear(); });
+})();
+</script>
+
+
+<script id="learner-content-system">
+(() => {
+  const profile = {"slug":"convolution","en":{"title":"Convolution Playground","big":"Move a small filter across an image. Inspect every multiply-and-sum operation, then compare edge, blur, pooling, and learned-filter behavior.","primer":"A convolution converts a local patch of pixels into one output value. Learn the names of the filter, output, and movement settings before stacking layers.","terms":[{"term":"Convolution","definition":"A repeated multiply-and-sum operation applied to local image patches."},{"term":"Kernel or filter","definition":"The small matrix of weights that slides across the image."},{"term":"Feature map","definition":"The grid of output values produced by a filter."},{"term":"Stride","definition":"How many pixels the kernel moves at each step."},{"term":"Padding","definition":"Extra border values added so the kernel can process image edges."},{"term":"Convolutional neural network (CNN)","definition":"A neural network that learns many filters across multiple layers."}],"scenarios":[{"title":"The identity filter preserves the image","question":"What filter would copy each pixel without changing its neighbors?","run":"Apply the identity kernel to the cross image and compare input with output.","predict":"Predict which kernel cell must carry the full weight.","explain":"Explain why a center weight of one and all other weights of zero copies the image."},{"title":"The Sobel x-direction filter detects vertical edges","question":"Why does measuring horizontal brightness change reveal vertical boundaries?","run":"Apply the Sobel x-direction filter and inspect where the output becomes bright or dark.","predict":"Predict which part of the cross will produce the strongest response.","explain":"Connect the left-to-right brightness change to the vertical edge orientation."},{"title":"The Sobel y-direction filter detects horizontal edges","question":"How does rotating a filter change the feature it detects?","run":"Apply the Sobel y-direction filter to the same image and compare it with the x-direction result.","predict":"Predict which bar of the cross will now produce the strongest response.","explain":"Explain how the rotated weights measure top-to-bottom change."},{"title":"Max pooling reduces resolution","question":"What information survives when each small block keeps only its strongest activation?","run":"Switch to convolution followed by two-by-two max pooling and compare output dimensions.","predict":"Predict which small features will remain visible after pooling.","explain":"Explain the tradeoff between lower spatial detail and a smaller, more tolerant representation."},{"title":"Stacked convolutions see a larger region","question":"Why can two small filters detect a pattern larger than either filter alone?","run":"Stack two three-by-three convolutions and inspect the effective receptive field.","predict":"Predict the effective width and height before applying the second layer.","explain":"Trace how one second-layer value depends on a five-by-five region of the original image."}]},"zh":{"title":"卷积演练场","big":"让一个小滤波器在图像上滑动。检查每次乘加运算，再比较边缘、模糊、池化和学习滤波器的行为。","primer":"卷积把一小块像素转换为一个输出值。叠加层之前，先熟悉滤波器、输出和移动设置的名称。","terms":[{"term":"卷积","definition":"对图像局部区域重复进行乘法并求和的运算。"},{"term":"卷积核或滤波器","definition":"在图像上滑动的小型权重矩阵。"},{"term":"特征图","definition":"滤波器产生的输出值网格。"},{"term":"步幅","definition":"卷积核每一步移动的像素数。"},{"term":"填充","definition":"在图像边缘增加的额外数值，使卷积核能处理边界。"},{"term":"卷积神经网络（CNN）","definition":"在多层中学习许多滤波器的神经网络。"}],"scenarios":[{"title":"恒等滤波器保持图像不变","question":"什么滤波器能复制每个像素而不改变邻居？","run":"把恒等卷积核应用到十字图像，并比较输入与输出。","predict":"预测哪个卷积核单元必须承担全部权重。","explain":"解释中心权重为 1、其他权重为 0 为什么会复制图像。"},{"title":"Sobel x 方向滤波器检测垂直边缘","question":"为什么测量水平方向亮度变化会显示垂直边界？","run":"应用 Sobel x 方向滤波器，观察输出哪里变亮或变暗。","predict":"预测十字的哪一部分会产生最强响应。","explain":"把从左到右的亮度变化与垂直边缘方向联系起来。"},{"title":"Sobel y 方向滤波器检测水平边缘","question":"旋转滤波器为什么会改变检测到的特征？","run":"把 Sobel y 方向滤波器应用到同一图像，并与 x 方向结果比较。","predict":"预测十字的哪条横杆会产生最强响应。","explain":"解释旋转后的权重如何测量从上到下的变化。"},{"title":"最大池化降低分辨率","question":"每个小区域只保留最强激活时，哪些信息会留下？","run":"切换到卷积后接二乘二最大池化，并比较输出尺寸。","predict":"预测哪些小特征在池化后仍可见。","explain":"解释空间细节减少与表示更小、更具容忍性之间的取舍。"},{"title":"叠加卷积看到更大区域","question":"为什么两个小滤波器能检测比单个滤波器更大的模式？","run":"叠加两个三乘三卷积并检查有效感受野。","predict":"应用第二层前预测有效宽度和高度。","explain":"追踪第二层一个数值如何依赖原图中的五乘五区域。"}]}};
+  window.APPLET_LEARNER_PROFILE = profile;
+  const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;
+  try {
+    STRINGS.en.title = profile.en.title; STRINGS.zh.title = profile.zh.title;
+    STRINGS.en['tldr-strong'] = 'What this applet shows'; STRINGS.zh['tldr-strong'] = '这个工具展示什么';
+    STRINGS.en['tldr-body'] = profile.en.big; STRINGS.zh['tldr-body'] = profile.zh.big;
+    profile.en.scenarios.forEach((item,i) => { STRINGS.en['tour'+i+'name']=item.title; STRINGS.en['tour'+i+'desc']=item.run; if (typeof LESSON_TOUR !== 'undefined' && LESSON_TOUR[i]) { LESSON_TOUR[i].name=item.title; LESSON_TOUR[i].description=item.run; } });
+    profile.zh.scenarios.forEach((item,i) => { STRINGS.zh['tour'+i+'name']=item.title; STRINGS.zh['tour'+i+'desc']=item.run; });
+  } catch (_) {}
+  function applyCoreCopy(){
+    const c=copy();
+    document.title=c.title+' | AI Playgrounds';
+    const h=document.querySelector('.header-main h1'); if(h) h.textContent=c.title;
+    const strong=document.querySelector('.tldr strong'); if(strong) strong.textContent=currentLocale()==='zh'?'这个工具展示什么':'What this applet shows';
+    const body=document.querySelector('.tldr span'); if(body) body.textContent=c.big;
+    const jump=document.querySelector('.jump-link'); if(jump) jump.textContent=currentLocale()==='zh'?'↓ 阅读分步解释':'↓ Read the step-by-step explanation';
+  }
+  function stateData(){
+    const values={};
+    document.querySelectorAll('#main input,#main select,#main textarea').forEach(el=>{
+      if(!el.id||el.closest('.classroom-lab'))return;
+      if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;
+      values[el.id]=el.type==='checkbox'?el.checked:el.value;
+    });
+    return {applet:profile.en.title,slug:profile.slug,exported_at:new Date().toISOString(),values};
+  }
+  function toolbar(){
+    const actions=document.querySelector('.header-actions'); if(!actions||actions.dataset.standardized==='1')return;
+    const share=document.getElementById('shareLink'), embed=document.getElementById('embedLink'), reset=document.getElementById('hardReset');
+    const csv=document.getElementById('csvExport'), png=document.getElementById('exportPng');
+    const more=document.createElement('details'); more.className='header-more';
+    const summary=document.createElement('summary'); summary.className='header-png'; summary.setAttribute('aria-haspopup','menu'); more.appendChild(summary);
+    const menu=document.createElement('div'); menu.className='header-more-menu'; menu.setAttribute('role','menu'); more.appendChild(menu);
+    if(embed){embed.textContent='📎 Embed in LMS';menu.appendChild(embed)}
+    const jsonBtn=document.createElement('button');jsonBtn.type='button';jsonBtn.className='header-png';jsonBtn.dataset.exportState='';menu.appendChild(jsonBtn);
+    if(csv){csv.textContent='📊 Data table (.csv)';menu.appendChild(csv)}
+    if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
+    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
+    actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
+    window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
+    window.refreshAppletToolbar();
+    document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
+  }
+  function terms(){
+    const inner=document.querySelector('.interactive-inner'); if(!inner||inner.querySelector('.key-terms'))return;
+    const d=document.createElement('details');d.className='key-terms';d.open=true;
+    d.innerHTML='<summary><span data-key-summary></span></summary><div class="key-terms-panel"><p class="key-terms-intro" data-key-intro></p><dl class="key-terms-grid" data-key-grid></dl></div>';
+    const first=inner.querySelector(':scope > details');inner.insertBefore(d,first||inner.firstChild);
+    window.renderAppletKeyTerms=()=>{const c=copy();d.querySelector('[data-key-summary]').textContent=currentLocale()==='zh'?'🔑 先学这些术语':'🔑 Key terms before the explanation';d.querySelector('[data-key-intro]').textContent=c.primer;d.querySelector('[data-key-grid]').innerHTML=c.terms.map(x=>'<div class="key-term"><dt>'+x.term+'</dt><dd>'+x.definition+'</dd></div>').join('')};
+    window.renderAppletKeyTerms();
+  }
+  function essayPrimer(){
+    const essay=document.querySelector('article#essay');if(!essay||essay.querySelector('.essay-primer'))return;
+    const box=document.createElement('section');box.className='essay-primer';essay.insertBefore(box,essay.firstChild);
+    window.renderEssayPrimer=()=>{const c=copy();const heading=currentLocale()==='zh'?'阅读前先准备':'Before you read';const termHeading=currentLocale()==='zh'?'本页会使用的术语':'Terms used in this explanation';box.innerHTML='<h2>'+heading+'</h2><p>'+c.primer+'</p><h3>'+termHeading+'</h3><dl class="essay-primer-terms">'+c.terms.map(x=>'<div><dt>'+x.term+'</dt><dd>'+x.definition+'</dd></div>').join('')+'</dl>'};window.renderEssayPrimer();
+  }
+  function patchScenarioData(){
+    try{if(typeof renderScenarioGallery==='function')renderScenarioGallery();if(typeof renderTour==='function')renderTour()}catch(_){}
+  }
+  window.refreshLearnerContent=()=>{applyCoreCopy();window.renderAppletKeyTerms?.();window.renderEssayPrimer?.();window.refreshAppletToolbar?.()};
+  applyCoreCopy();toolbar();terms();essayPrimer();patchScenarioData();
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(window.refreshLearnerContent,20)));
+})();
+</script>
+
+<script id="product-consolidation-script">
+(() => {
+  const slug = location.pathname.split('/').filter(Boolean).slice(-2,-1)[0] || 'convolution';
+  const inner = document.querySelector('.interactive-inner');
+  if (!inner || inner.querySelector('.learning-mode-shell')) return;
+  const oldDeck = inner.querySelector(':scope > .learning-deck');
+  if (oldDeck) { [...oldDeck.children].forEach(el => inner.insertBefore(el, oldDeck)); oldDeck.remove(); }
+  const details = [...inner.querySelectorAll(':scope > details')];
+  if (!details.length) return;
+  const modeFor = d => {
+    if (d.matches('.visual-explanation,.lesson-tour,.key-terms')) return 'understand';
+    if (d.matches('.worksheet,.classroom-lab')) return 'classroom';
+    if (d.matches('.accessibility-layer')) return 'access';
+    return 'explore';
+  };
+  const lang = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const labels = {explore:['Explore','探索'],understand:['Understand','理解'],classroom:['Use in class','课堂使用'],access:['Text and keyboard','文本与键盘']};
+  const intros = {explore:['Start with the featured experiment, then use the scenarios to test a prediction.','从精选实验开始，再使用情境检验预测。'],understand:['Open the mechanism view and lesson sequence when you need to explain why the result changed.','需要解释结果为什么变化时，打开机制视图和课程序列。'],classroom:['Collect reasoning with the worksheet or the local student response packet.','使用练习题或本地学生回答包收集推理。'],access:['Use the text-state description and keyboard guidance when the visual display is not enough.','当可视显示不足时，使用文本状态说明和键盘指导。']};
+  const shell=document.createElement('section');shell.className='learning-mode-shell';shell.setAttribute('aria-label','Applet learning modes');
+  shell.innerHTML='<div class="learning-mode-head"><div><h2 data-mode-heading></h2><p data-mode-copy></p></div><div class="learning-mode-tools"><button type="button" class="copy-experiment" data-copy-experiment>Copy this experiment</button></div></div><div class="learning-mode-tabs" role="tablist"></div><div class="experiment-status" aria-live="polite"></div>';
+  const tabs=shell.querySelector('.learning-mode-tabs');const panels={};
+  Object.keys(labels).forEach((key,i)=>{const b=document.createElement('button');b.type='button';b.className='learning-mode-tab';b.role='tab';b.dataset.mode=key;b.id='mode-tab-'+key;b.setAttribute('aria-controls','mode-panel-'+key);tabs.appendChild(b);const p=document.createElement('div');p.className='learning-mode-panel';p.id='mode-panel-'+key;p.role='tabpanel';p.setAttribute('aria-labelledby',b.id);p.innerHTML='<div class="mode-intro"></div>';shell.appendChild(p);panels[key]=p});
+  inner.insertBefore(shell,details[0]);details.forEach(d=>{const mode=modeFor(d);if(d.matches('.scenario-gallery,.visual-explanation,.classroom-lab,.accessibility-layer,.signature-challenge'))d.classList.add('mode-wide');panels[mode].appendChild(d)});
+  const sig=panels.explore.querySelector('.signature-challenge');if(sig){panels.explore.insertBefore(sig,panels.explore.querySelector('.mode-intro').nextSibling);sig.open=true;const summary=sig.querySelector('summary span,summary');if(summary&&lang()==='en')summary.textContent='✨ Featured experiment';const body=sig.querySelector('.signature-challenge-panel')||sig.querySelector(':scope > div');if(body&&!body.querySelector('.featured-actions')){const actions=document.createElement('div');actions.className='featured-actions';actions.innerHTML='<button type="button" class="step-btn" data-start-featured>Start featured experiment</button>';body.appendChild(actions)}}
+  const lab=panels.classroom.querySelector('.classroom-lab summary span');if(lab&&lang()==='en')lab.textContent='🧪 Student response packet';
+  const a11y=panels.access.querySelector('.accessibility-layer summary span');if(a11y&&lang()==='en')a11y.textContent='♿ Text and keyboard support';
+  let active=new URL(location.href).searchParams.get('mode')||'explore';if(!panels[active])active='explore';
+  function setMode(mode,write=true){active=mode;Object.entries(panels).forEach(([k,p])=>p.hidden=k!==mode);shell.querySelectorAll('.learning-mode-tab').forEach(b=>{const on=b.dataset.mode===mode;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});shell.querySelector('[data-mode-heading]').textContent=labels[mode][lang()==='zh'?1:0];shell.querySelector('[data-mode-copy]').textContent=intros[mode][lang()==='zh'?1:0];panels[mode].querySelector('.mode-intro').innerHTML='<strong>'+labels[mode][lang()==='zh'?1:0]+'.</strong> '+intros[mode][lang()==='zh'?1:0];if(write){const u=new URL(location.href);u.searchParams.set('mode',mode);history.replaceState(null,'',u)}}
+  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
+  function statePayload(){const out={};inner.querySelectorAll('select,input').forEach(el=>{if(!el.id||el.closest('.classroom-lab')||['button','submit'].includes(el.type))return;if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;out[el.id]=el.type==='checkbox'?el.checked:el.value});return out}
+  function encode(obj){return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))}
+  function decode(s){try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch{return null}}
+  const status=shell.querySelector('.experiment-status');shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('state',encode(statePayload()));try{await navigator.clipboard.writeText(u.href);status.textContent=lang()==='zh'?'实验链接已复制。':'Experiment link copied.'}catch{prompt('Copy this experiment URL',u.href)}};
+  const featuredIndex={"search-pathfinding":0,"bayes-classifier":0,"overfitting":1,"knn-classifier":4,"wumpus-world":4,"cnf-sat":2,"bayes-network":1,"hill-climbing":1,"kmeans":4,"neural-network":1,"convolution":4,"q-learning-gridworld":2};shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('details:not(.signature-challenge)')?.setAttribute('open','')});
+  document.addEventListener('click',e=>{const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode','explore');history.replaceState(null,'',u)});
+  const p=new URL(location.href).searchParams;const restore=()=>{const obj=decode(p.get('state')||'');if(obj)Object.entries(obj).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});const n=Number(p.get('scenario'));if(Number.isInteger(n)){panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click()}if(p.get('featured')==='1')sig?.setAttribute('open','')};
+  function refineCards(){
+    const profile=window.APPLET_LEARNER_PROFILE||{};
+    const locale=lang()==='zh'?'zh':'en';
+    const items=(profile[locale]&&profile[locale].scenarios)||[];
+    const labels=locale==='zh'?['核心问题','运行并观察','先预测','运行后解释']:['Core question','Run and watch','Predict first','Explain afterward'];
+    panels.explore.querySelectorAll('.scenario-card').forEach((card,i)=>{
+      const item=items[i]||{};const h=card.querySelector('h3');
+      if(h&&item.title)h.textContent=(locale==='zh'?'情境 ':'Scenario ')+(i+1)+': '+item.title;
+      const metas=card.querySelectorAll('.scenario-meta');const values=[item.question,item.run,item.predict,item.explain];
+      metas.forEach((meta,j)=>{if(!values[j])return;const strong=meta.querySelector('strong');if(strong)strong.textContent=labels[j]+': ';let node=strong?strong.nextSibling:null;if(node)node.textContent=' '+values[j];else meta.appendChild(document.createTextNode(' '+values[j]));});
+    });
+  }
+  setTimeout(()=>{refineCards();window.renderAppletKeyTerms?.();restore()},250);document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.()},20)));setMode(active,false);
+})();
+</script>
 </body>
 </html>

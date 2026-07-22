@@ -3,22 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Visualizing a Tiny Neural Net</title>
+<title>Tiny Neural Network | AI Playgrounds</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E">
-<meta name="description" content="A tiny neural network learning to classify 2D points. Add hidden neurons, change the activation, watch the loss fall and the decision boundary curve.">
+<meta name="description" content="Train a small classifier and watch its decision boundary change. Compare linear layers with nonlinear activation functions to see what added depth can and cannot represent.">
 <link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/neural-network/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/neural-network/">
-<meta property="og:title" content="Visualizing a Tiny Neural Net — AI Playgrounds">
-<meta property="og:description" content="A tiny neural network learning to classify 2D points. Add hidden neurons, change the activation, watch the loss fall and the decision boundary curve.">
+<meta property="og:title" content="Tiny Neural Network | AI Playgrounds">
+<meta property="og:description" content="Train a small classifier and watch its decision boundary change. Compare linear layers with nonlinear activation functions to see what added depth can and cannot represent.">
 <meta property="og:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Visualizing a Tiny Neural Net — AI Playgrounds">
-<meta name="twitter:description" content="A tiny neural network learning to classify 2D points. Add hidden neurons, change the activation, watch the loss fall and the decision boundary curve.">
+<meta name="twitter:title" content="Tiny Neural Network | AI Playgrounds">
+<meta name="twitter:description" content="Train a small classifier and watch its decision boundary change. Compare linear layers with nonlinear activation functions to see what added depth can and cannot represent.">
 <meta name="twitter:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Visualizing a Tiny Neural Net — AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/neural-network/","description":"A tiny neural network learning to classify 2D points. Add hidden neurons, change the activation, watch the loss fall and the decision boundary curve.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan Dixon"}}
-</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Tiny Neural Network | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/neural-network/","description":"Train a small classifier and watch its decision boundary change. Compare linear layers with nonlinear activation functions to see what added depth can and cannot represent.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
 <style>
   :root {
     --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #4338ca;
@@ -50,7 +48,7 @@
   .tldr strong { color: rgba(255,255,255,0.85); font-size: 0.72rem; letter-spacing: 0.08em;
                   text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px; }
   .interactive { background: var(--card); padding: 24px; border-bottom: 1px solid var(--border); }
-  .interactive-inner { max-width: 1280px; margin: 0 auto;
+  .interactive-inner { max-width: min(1280px, 100%); margin: 0 auto;
                          font-family: -apple-system, system-ui, sans-serif; }
   .control-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
                   margin-bottom: 14px; font-size: 0.88rem; }
@@ -118,6 +116,10 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition: none !important; animation: none !important; }
   }
+  /* Touch devices: comfortable tap targets without changing desktop layout. */
+  @media (pointer: coarse) {
+    button, .step-btn, .tp-btn, .group button, select, summary { min-height: 44px; }
+  }
   /* === dark mode === */
   body.dark-mode {
     --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8;
@@ -125,7 +127,7 @@
   }
   body.dark-mode .essay .lede { color: #cbd5e1; }
   body.dark-mode .essay .for-teachers { background: #0f172a; }
-  /* True canvas dark mode — render fn picks bg directly. */
+  /* True canvas dark mode: render fn picks bg directly. */
   body.dark-mode .header-reset,
   body.dark-mode .lang-switch button:not(.active),
   body.dark-mode .header-theme,
@@ -141,10 +143,10 @@
                   font-size: 0.85rem; font-family: inherit; }
   .header-png:hover { background: var(--soft); }
   body.dark-mode .header-png { background: var(--card); color: var(--fg); }
-  /* ===== Slider styling — ROUTE A TEST: native themed control via accent-color =====
+  /* ===== Slider styling: ROUTE A TEST: native themed control via accent-color =====
      Single variant by design: with accent-color the browser renders the track AND the
      filled portion itself, so there is no authorable "no-fill" Route A. Chrome and
-     Firefox draw that fill in their own way — that difference is part of the comparison. */
+     Firefox draw that fill in their own way: that difference is part of the comparison. */
   input[type="range"] { accent-color: var(--accent); height: 28px; cursor: pointer; }
   /* embed mode. Strip chrome so the applet fits cleanly in an LMS iframe. */
   body.embed-mode .page-header,
@@ -159,20 +161,365 @@
   .bento-cell > :first-child { margin-top: 0 !important; }
   .tp-scrub { min-width: 0; }
   @media (max-width: 860px) { .bento { grid-template-columns: 1fr; gap: 12px; } }
-  /* ===== Shared a11y + contrast tokens (review fixes: F4 keyboard focus, F6 banner contrast) ===== */
+  /* ===== Shared a11y + contrast tokens (keyboard focus and contrast tokens) ===== */
   button:focus-visible, a:focus-visible, select:focus-visible,
   input:focus-visible, textarea:focus-visible, summary:focus-visible {
     outline: 2px solid var(--accent); outline-offset: 2px;
   }
   .tldr { background: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), var(--accent); }
   .tldr strong { color: #fff; }
+
+
+  /* Student response packet: local-only assignment packet across the applet family. */
+  .classroom-lab .lab-panel { margin-top:8px; padding:14px; background:var(--card); border:1px solid var(--border); border-radius:8px; }
+  .classroom-lab .lab-intro { margin:0 0 12px; color:var(--muted); font-size:0.88rem; line-height:1.5; }
+  .classroom-lab .lab-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+  .classroom-lab .lab-field { display:flex; flex-direction:column; gap:4px; }
+  .classroom-lab .lab-field label { font-family:-apple-system,system-ui,sans-serif; font-size:0.82rem; font-weight:700; color:var(--accent); }
+  .classroom-lab textarea { min-height:86px; resize:vertical; width:100%; border:1px solid var(--border); border-radius:6px; padding:8px; font:inherit; color:var(--fg); background:var(--bg); }
+  .classroom-lab .lab-state { margin-top:12px; padding:10px 12px; border:1px dashed var(--border); border-radius:8px; background:var(--soft); color:var(--muted); font-family:ui-monospace,monospace; font-size:0.78rem; white-space:pre-wrap; }
+  .classroom-lab .lab-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; align-items:center; }
+  .classroom-lab .lab-status { color:var(--muted); font-size:0.82rem; min-height:1.2em; }
+  @media (max-width:480px) { .classroom-lab .lab-grid { grid-template-columns:1fr; } .classroom-lab .lab-actions button { width:100%; } }
+
+  /* Scenario Gallery: visible, reusable entry points generated from the lesson-tour scenarios. */
+  .scenario-gallery-panel {
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .scenario-gallery-intro {
+    margin: 0 0 10px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .scenario-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .scenario-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--card) 88%, var(--soft));
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 100%;
+  }
+  .scenario-card h3 {
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.98rem;
+    line-height: 1.25;
+  }
+  .scenario-card p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .scenario-card .scenario-meta {
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  .scenario-card .scenario-meta strong { color: var(--fg); }
+  .scenario-card button {
+    margin-top: auto;
+    align-self: flex-start;
+  }
+  @media (max-width: 480px) {
+    .scenario-card-grid { grid-template-columns: 1fr; }
+    .scenario-card button { width: 100%; }
+  }
+
+
+
+  /* Supporting learning components. */
+  .visual-explanation-panel {
+    margin-top: 8px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .visual-explanation-intro {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .visual-flow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+  }
+  .visual-card {
+    position: relative;
+    min-height: 132px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, var(--accent)), var(--card));
+    overflow: hidden;
+  }
+  .visual-card::before {
+    content: attr(data-step);
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    color: color-mix(in srgb, var(--accent) 62%, transparent);
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+  .visual-card h4 {
+    margin: 0 28px 8px 0;
+    color: var(--accent);
+    font-size: 0.9rem;
+    line-height: 1.25;
+  }
+  .visual-card p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .visual-live {
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 8px;
+    background: var(--soft);
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.74rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .visual-live strong { color: var(--accent); font-family: -apple-system, system-ui, sans-serif; font-size: 0.72rem; }
+  .visual-watch-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .visual-snapshot, .visual-misread {
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: var(--soft);
+  }
+  .visual-snapshot strong, .visual-misread strong {
+    display: block;
+    color: var(--accent);
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 0.78rem;
+    margin-bottom: 6px;
+  }
+  .visual-snapshot pre {
+    margin: 0;
+    white-space: pre-wrap;
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+  .visual-misread p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  @media (max-width: 620px) {
+    .visual-watch-grid { grid-template-columns: 1fr; }
+  }
+
+
+
+  /* Supporting learning components. */
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 10px;
+    z-index: 10000;
+    padding: 10px 14px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 8px;
+    font-family: -apple-system, system-ui, sans-serif;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .skip-link:focus { left: 12px; }
+  :focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+  [tabindex="-1"]:focus { outline: none; }
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+  .accessibility-layer {
+    margin-top: 12px;
+  }
+  .accessibility-panel {
+    margin-top: 8px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .accessibility-intro {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .accessibility-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .accessibility-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--card) 92%, var(--soft));
+    padding: 12px;
+  }
+  .accessibility-card h3 {
+    margin: 0 0 8px;
+    color: var(--accent);
+    font-size: 0.92rem;
+  }
+  .accessibility-card p,
+  .accessibility-card li {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .accessibility-card ul {
+    margin: 0;
+    padding-left: 1.15rem;
+  }
+  .a11y-state-grid {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 6px 10px;
+    margin: 0;
+    font-size: 0.84rem;
+  }
+  .a11y-state-grid dt {
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .a11y-state-grid dd {
+    margin: 0;
+    color: var(--fg);
+    overflow-wrap: anywhere;
+  }
+  .accessibility-note {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+  @media (max-width: 620px) {
+    .accessibility-grid { grid-template-columns: 1fr; }
+    .a11y-state-grid { grid-template-columns: 1fr; }
+    .a11y-state-grid dt { margin-top: 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html:focus-within { scroll-behavior: auto !important; }
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+
+
+  /* Supporting learning components. */
+  .interactive-inner { max-width: min(1280px, 100%); }
+  .scenario-card,
+  .accessibility-card,
+  .classroom-lab .lab-panel,
+  .accessibility-panel,
+  .signature-challenge-panel {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, var(--soft)), var(--card));
+  }
+  .signature-challenge-panel {
+    margin-top: 12px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .signature-challenge-panel strong { display:block; color:var(--accent); margin-bottom:4px; }
+  .signature-challenge-panel p { margin: 6px 0 0; color: var(--muted); font-size: 0.88rem; line-height: 1.5; }
+
+
+  /* Supporting learning components. */
+  .learning-deck { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:12px; align-items:start; }
+  .learning-deck > details { margin-top:0 !important; min-width:0; }
+  .learning-deck > .scenario-gallery,
+  .learning-deck > .visual-explanation,
+  .learning-deck > .classroom-lab,
+  .learning-deck > .accessibility-layer { grid-column:1 / -1; }
+  .learning-deck > details > summary { background:var(--card) !important; }
+  .scenario-gallery-panel, .scenario-card, .accessibility-panel, .accessibility-card,
+  .classroom-lab .lab-panel, .signature-challenge-panel {
+    background:linear-gradient(180deg,color-mix(in srgb,var(--card) 90%,var(--accent)),var(--card)) !important;
+  }
+  .scenario-card { box-shadow:0 6px 18px rgba(15,23,42,.05); transition:border-color .16s, box-shadow .16s, transform .16s; }
+  .scenario-card.applied { border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 22%,transparent),0 10px 24px rgba(15,23,42,.08); transform:translateY(-1px); }
+  .scenario-card .scenario-meta:last-of-type { margin-bottom:2px; }
+  @media (max-width:900px) { .learning-deck { grid-template-columns:1fr; } .learning-deck > details { grid-column:1 !important; } }
+
 </style>
+
+
+<style id="learner-house-style">
+/* Learner-facing terminology, compact glossary, and consistent action hierarchy. */
+.header-actions{align-items:center}.header-more{position:relative}.header-more>summary{list-style:none;cursor:pointer;user-select:none}.header-more>summary::-webkit-details-marker{display:none}.header-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:50;min-width:220px;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 16px 35px rgba(15,23,42,.18);display:grid;gap:5px}.header-more-menu button{width:100%;text-align:left;justify-content:flex-start;white-space:normal}.key-terms-panel{padding:14px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}.key-terms-intro{margin:0 0 10px;color:var(--muted)}.key-terms-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.key-term{padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:color-mix(in srgb,var(--card) 97%,var(--accent))}.key-term dt{font-weight:800;color:var(--fg);margin:0 0 3px}.key-term dd{margin:0;color:var(--muted);font-size:.84rem;line-height:1.45}.essay-primer{margin:0 0 22px;padding:15px 17px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--card) 96%,var(--accent));border-radius:10px}.essay-primer h2{margin:0 0 6px!important;font-size:1.05rem!important}.essay-primer p{margin:0 0 10px!important}.essay-primer h3{margin:12px 0 7px;font-size:.92rem}.essay-primer-terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0}.essay-primer-terms>div{padding:8px 9px;border:1px solid var(--border);border-radius:8px;background:var(--card)}.essay-primer-terms dt{font-weight:800}.essay-primer-terms dd{margin:2px 0 0;color:var(--muted);font-size:.82rem;line-height:1.4}.scenario-card .scenario-meta{line-height:1.5}.scenario-card .scenario-meta strong{display:block;margin-bottom:2px}.header-actions>.header-png,.header-actions>.header-theme,.header-actions>.header-reset,.header-more>summary{min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px}
+@media(max-width:720px){.essay-primer-terms{grid-template-columns:1fr}.header-actions{width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}.header-actions>button,.header-actions>.header-more,.header-more>summary{width:100%;justify-content:center}.header-more-menu{right:auto;left:0;max-width:min(290px,90vw)}.key-terms-grid{grid-template-columns:1fr}}
+</style>
+
+<style id="product-consolidation-style">
+/* Product information architecture and restrained visual hierarchy. */
+.learning-deck{display:contents!important}.learning-mode-shell{margin-top:16px;border-top:1px solid var(--border);padding-top:15px}.learning-mode-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px}.learning-mode-head h2{margin:0;font-size:1rem;color:var(--fg)}.learning-mode-head p{margin:2px 0 0;color:var(--muted);font-size:.82rem}.learning-mode-tools{display:flex;gap:8px;flex-wrap:wrap}.learning-mode-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:5px;background:var(--soft);border:1px solid var(--border);border-radius:14px}.learning-mode-tab{min-height:42px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-weight:750;padding:8px 10px}.learning-mode-tab[aria-selected="true"]{background:var(--card);color:var(--accent);box-shadow:0 3px 12px rgba(15,23,42,.08)}.learning-mode-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px;align-items:start}.learning-mode-panel[hidden]{display:none}.learning-mode-panel>details{margin:0!important;min-width:0}.learning-mode-panel>details.mode-wide{grid-column:1/-1}.learning-mode-panel>details>summary{background:var(--card)!important;border:1px solid var(--border)!important;border-left:4px solid color-mix(in srgb,var(--accent) 62%,var(--border))!important;border-radius:10px!important;color:var(--fg)!important;font-weight:750!important;padding:10px 12px!important}.learning-mode-panel>details[open]>summary{border-color:color-mix(in srgb,var(--accent) 55%,var(--border))!important}.learning-mode-panel .scenario-gallery-panel,.learning-mode-panel .accessibility-panel,.learning-mode-panel .classroom-lab .lab-panel{background:var(--card)!important}.scenario-card,.accessibility-card{background:color-mix(in srgb,var(--card) 97%,var(--accent))!important;box-shadow:none!important}.scenario-card.applied{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 78%,var(--accent)),color-mix(in srgb,var(--card) 88%,var(--accent-2,#6366f1)))!important;border-color:var(--accent)!important;box-shadow:0 12px 28px rgba(15,23,42,.10)!important}.signature-challenge>div,.signature-challenge .signature-challenge-panel{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 80%,var(--accent)),color-mix(in srgb,var(--card) 90%,var(--accent-2,#6366f1)))!important;border:1px solid color-mix(in srgb,var(--accent) 40%,var(--border))!important}.visual-card{background:linear-gradient(180deg,color-mix(in srgb,var(--card) 92%,var(--accent)),var(--card))!important}.featured-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.scenario-card button,.featured-actions button{border:0!important;border-radius:8px!important;background:var(--accent)!important;color:#fff!important;font-weight:750!important;padding:8px 11px!important}.scenario-card button:hover,.featured-actions button:hover{filter:brightness(1.05)}.copy-experiment{font-size:.82rem}.experiment-status{color:var(--muted);font-size:.78rem;min-height:1.2em;margin-top:6px}.mode-intro{grid-column:1/-1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--muted);font-size:.86rem}.mode-intro strong{color:var(--fg)}
+@container (min-width:980px){.scenario-card-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.visual-flow{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
+.interactive-inner{container-type:inline-size;max-width:min(1320px,100%)!important}
+@media(max-width:820px){.learning-mode-head{align-items:flex-start;flex-direction:column}.learning-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-mode-panel{grid-template-columns:1fr}.learning-mode-panel>details{grid-column:1!important}.copy-experiment{width:100%}}
+</style>
+
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to applet controls</a>
 
 <header class="page-header">
   <div class="header-utility">
-    <a class="back" href="../../" data-i18n="back-link">← Back to all playgrounds</a>
+    <a class="back" href="../../index.html" data-i18n="back-link">← Back to all playgrounds</a>
     <div class="header-prefs">
       <button class="header-theme" id="themeToggle" aria-label="Toggle dark or light theme"
               title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
@@ -183,7 +530,7 @@
     </div>
   </div>
   <div class="header-main">
-    <h1 data-i18n="title">Visualizing a Tiny Neural Net</h1>
+    <h1 data-i18n="title">Tiny Neural Network</h1>
     <div class="header-actions">
       <button class="header-png" id="shareLink"
               title="Copy a URL that re-opens this dataset / activation / architecture / learning-rate in another browser.">🔗 Share</button>
@@ -202,7 +549,7 @@
   <span data-i18n="tldr-body">Layers stacked with non-linear activations can carve any decision boundary. Remove the non-linearity and the whole network collapses into a single line.</span>
 </aside>
 
-<section class="interactive">
+<section class="interactive" id="main" tabindex="-1" role="main">
 <div class="interactive-inner">
 
   <div class="bento">
@@ -243,7 +590,7 @@
     </span>
     <label data-i18n="opt-label" style="margin-left:6px;">Optimizer:</label>
     <select id="optSel" data-i18n-title="opt-title"
-            title="SGD: plain gradient descent (w ← w − lr·g). Momentum: accumulates a velocity buffer (v ← βv − lr·g; w ← w + v) — smooths noisy gradients and accelerates through ravines. Adam: combines momentum (1st moment) with adaptive per-parameter learning rates (2nd moment).">
+            title="SGD: plain gradient descent (w ← w − lr·g). Momentum: accumulates a velocity buffer (v ← βv − lr·g; w ← w + v): smooths noisy gradients and accelerates through ravines. Adam: combines momentum (1st moment) with adaptive per-parameter learning rates (2nd moment).">
       <option value="sgd" selected data-i18n="opt-sgd">SGD</option>
       <option value="momentum" data-i18n="opt-momentum">Momentum (β=0.9)</option>
       <option value="adam" data-i18n="opt-adam">Adam (β₁=0.9, β₂=0.999)</option>
@@ -306,9 +653,9 @@
   <div class="bento-cell">
   <div class="stats-strip">
     <div class="stat-item"><div class="label" data-i18n="stat-epoch">Epoch</div><div class="val" id="epochV">0</div></div>
-    <div class="stat-item"><div class="label" data-i18n="stat-loss">Loss (BCE)</div><div class="val" id="lossV">—</div></div>
-    <div class="stat-item"><div class="label" data-i18n="stat-acc">Train accuracy</div><div class="val" id="accV">—</div></div>
-    <div class="stat-item"><div class="label" data-i18n="stat-param">Parameters</div><div class="val" id="paramV">—</div></div>
+    <div class="stat-item"><div class="label" data-i18n="stat-loss">Loss (BCE)</div><div class="val" id="lossV">-</div></div>
+    <div class="stat-item"><div class="label" data-i18n="stat-acc">Train accuracy</div><div class="val" id="accV">-</div></div>
+    <div class="stat-item"><div class="label" data-i18n="stat-param">Parameters</div><div class="val" id="paramV">-</div></div>
   </div>
   </div><!-- /.bento-cell stats -->
   </div><!-- /.bento-side -->
@@ -334,13 +681,13 @@
        weights as edges colored by sign and scaled by magnitude. Open by default. -->
   <details open id="ngDetails" style="margin-top:12px;">
     <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span data-i18n="graph-summary">🕸 Network graph — weights as connections</span>
+      <span data-i18n="graph-summary">🕸 Network graph: weights as connections</span>
     </summary>
     <div style="margin-top:10px; padding:12px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
       <div style="color:var(--muted); font-size:0.82rem; margin-bottom:6px;" data-i18n="graph-hint">
         Each circle is a neuron; each line is one weight. Blue = positive, red = negative; thicker / brighter = larger magnitude. Updates live as the network trains.
       </div>
-      <div id="nnInitHint" style="display:none; font-size:0.82rem; color:var(--muted); background:var(--soft); border:1px solid var(--border); border-radius:6px; padding:6px 10px; margin-bottom:8px;" data-i18n="init-hint">⚠ Random initialization — these weights are noise until you press Train.</div>
+      <div id="nnInitHint" style="display:none; font-size:0.82rem; color:var(--muted); background:var(--soft); border:1px solid var(--border); border-radius:6px; padding:6px 10px; margin-bottom:8px;" data-i18n="init-hint">⚠ Random initialization: these weights are noise until you press Train.</div>
       <!-- Weights | Gradients toggle -->
       <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
         <div style="display:inline-flex; border:1px solid var(--border); border-radius:6px; overflow:hidden;">
@@ -370,7 +717,7 @@
       </div>
       <div id="activationsView">
         <div style="color:var(--muted); font-size:0.82rem; margin-bottom:6px;" data-i18n="acts-hint">
-          Each thumbnail shows one hidden neuron's activation over the 2D input plane — "what this neuron has learned to fire on."
+          Each thumbnail shows one hidden neuron's activation over the 2D input plane: "what this neuron has learned to fire on."
         </div>
         <div id="activationsRows"></div>
       </div>
@@ -380,6 +727,53 @@
   </div><!-- /.bento-main -->
   </div><!-- /.bento -->
 
+
+  <!-- Scenario gallery. Visible, reusable entry points generated from the lesson-tour scenarios. -->
+  <details class="scenario-gallery" open style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="sg-summary">🎯 Try these scenarios first</span>
+    </summary>
+    <div class="scenario-gallery-panel">
+      <p class="scenario-gallery-intro" data-i18n="sg-intro">Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.</p>
+      <div class="scenario-card-grid" id="scenarioGalleryCards" aria-live="polite"></div>
+    </div>
+  </details>
+
+
+  <!-- Signature challenge. A one-move comparison that gives this applet a memorable first task. -->
+  <details class="signature-challenge" open style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span>✨ Featured comparison</span>
+    </summary>
+    <div class="signature-challenge-panel">
+      <strong>Featured comparison</strong>
+      <p>Compare a linear hidden layer with a nonlinear one. A hidden layer alone is not the magic; the activation changes what the network can bend.</p>
+      <p><em>Toggle the nonlinearity and compare the decision boundary before and after training.</em></p>
+    </div>
+  </details>
+
+  <!-- Supporting learning component. -->
+  <details class="visual-explanation" open style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-visual-en="🧭 Visual explanation" data-visual-zh="🧭 可视化解释镜头">🧭 Visual explanation</span>
+    </summary>
+    <div class="visual-explanation-panel">
+      <p class="visual-explanation-intro" data-visual-intro></p>
+      <div class="visual-flow" data-visual-flow></div>
+      <div class="visual-watch-grid">
+        <div class="visual-snapshot">
+          <strong data-visual-en="Live state to watch" data-visual-zh="要观察的实时状态">Live state to watch</strong>
+          <pre data-visual-snapshot>No state captured yet. Run or adjust the applet first.</pre>
+        </div>
+        <div class="visual-misread">
+          <strong data-visual-en="Misread to avoid" data-visual-zh="避免的误读">Misread to avoid</strong>
+          <p data-visual-misread></p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+
   <!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
   <details class="lesson-tour" style="margin-top:12px;">
     <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
@@ -388,9 +782,9 @@
     <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
       <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
         <strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
-        <strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">—</strong>
+        <strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">-</strong>
       </div>
-      <p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">—</p>
+      <p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">-</p>
       <div style="display:flex; gap:8px; align-items:center;">
         <button class="step-btn secondary" id="tourPrev" data-i18n="tour-prev">← Prev</button>
         <button class="step-btn" id="tourApply" data-i18n="tour-apply">▶ Apply this scenario</button>
@@ -408,9 +802,9 @@
       <div class="ws-q" id="ws1">
         <p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">Moons dataset, h1=0, h2=0, linear activation. Train. Final loss is closest to:</span></p>
         <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="0"> <span data-i18n="ws1o0">0 — a single linear layer is enough to separate the two moons.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="1"> <span data-i18n="ws1o1">About 0.3 — a straight line cannot split the moons, so loss plateaus above zero.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="2"> <span data-i18n="ws1o2">NaN — a linear model has no hidden layer, so training diverges.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="0"> <span data-i18n="ws1o0">0: a single linear layer is enough to separate the two moons.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="1"> <span data-i18n="ws1o1">About 0.3: a straight line cannot split the moons, so loss plateaus above zero.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="2"> <span data-i18n="ws1o2">NaN: a linear model has no hidden layer, so training diverges.</span></label>
         </div>
         <button class="step-btn" id="ws1btn" data-i18n="ws-check">Check</button>
         <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
@@ -418,9 +812,9 @@
       <div class="ws-q" id="ws2" style="margin-top:10px;">
         <p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Same dataset, h1=6, activation=ReLU. After training, final loss is closest to:</span></p>
         <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="0"> <span data-i18n="ws2o0">Near 0 — a ReLU hidden layer adds enough capacity to bend the boundary around the moons.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="1"> <span data-i18n="ws2o1">About 0.3 — adding ReLU does not change what a linear model can already do.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="2"> <span data-i18n="ws2o2">NaN — ReLU units always die and stop the network from learning.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="0"> <span data-i18n="ws2o0">Near 0: a ReLU hidden layer adds enough capacity to bend the boundary around the moons.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="1"> <span data-i18n="ws2o1">About 0.3: adding ReLU does not change what a linear model can already do.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="2"> <span data-i18n="ws2o2">NaN: ReLU units always die and stop the network from learning.</span></label>
         </div>
         <button class="step-btn" id="ws2btn" data-i18n="ws-check">Check</button>
         <span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
@@ -428,13 +822,81 @@
       <div class="ws-q" id="ws3" style="margin-top:10px;">
         <p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Moons, h1=6 h2=4, activation=linear (no non-linearity). Compared to 1 linear layer (h1=0), the capacity is:</span></p>
         <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="0"> <span data-i18n="ws3o0">More — two extra layers give the network strictly more expressive power.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="1"> <span data-i18n="ws3o1">Less — stacking layers shrinks the number of usable parameters.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="2"> <span data-i18n="ws3o2">The same — stacked linear layers collapse into a single linear map.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="0"> <span data-i18n="ws3o0">More: two extra layers give the network strictly more expressive power.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="1"> <span data-i18n="ws3o1">Less: stacking layers shrinks the number of usable parameters.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="2"> <span data-i18n="ws3o2">The same: stacked linear layers collapse into a single linear map.</span></label>
         </div>
         <button class="step-btn" id="ws3btn" data-i18n="ws-check">Check</button>
         <span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
       </div>
+    </div>
+  </details>
+
+  <!-- Student response packet. Local-only: students copy or print their own response packet; the site stores nothing on a server. -->
+  <details class="classroom-lab" style="margin-top:8px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-lab-en="🧪 Student response packet" data-lab-zh="🧪 课堂实验模式">🧪 Student response packet</span>
+    </summary>
+    <div class="lab-panel">
+      <p class="lab-intro" data-lab-en="Train a small model, compare capacity and loss, then explain how nonlinear features change the learned boundary." data-lab-zh="训练一个小模型、比较容量和损失，然后解释非线性特征如何改变学习到的边界。">Train a small model, compare capacity and loss, then explain how nonlinear features change the learned boundary.</p>
+      <div class="lab-grid">
+        <div class="lab-field">
+          <label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
+          <textarea id="lab-predict" data-lab-answer="predict" data-lab-en="Before training, do you expect this architecture to fit the dataset well? Why?" data-lab-zh="训练前，你预计这个结构能很好拟合数据集吗？为什么？" placeholder="Before training, do you expect this architecture to fit the dataset well? Why?"></textarea>
+        </div>
+        <div class="lab-field">
+          <label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
+          <textarea id="lab-observe" data-lab-answer="observe" data-lab-en="Train or step the model. Record dataset, hidden units, loss, accuracy, and one visible boundary change." data-lab-zh="训练或单步运行模型。记录数据集、隐藏单元、损失、准确率和一个可见边界变化。" placeholder="Train or step the model. Record dataset, hidden units, loss, accuracy, and one visible boundary change."></textarea>
+        </div>
+        <div class="lab-field">
+          <label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
+          <textarea id="lab-explain" data-lab-answer="explain" data-lab-en="What did extra capacity or nonlinearity change about the model?" data-lab-zh="额外容量或非线性改变了模型的什么方面？" placeholder="What did extra capacity or nonlinearity change about the model?"></textarea>
+        </div>
+        <div class="lab-field">
+          <label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
+          <textarea id="lab-transfer" data-lab-answer="transfer" data-lab-en="When would a more complex neural network overfit rather than generalize?" data-lab-zh="什么时候更复杂的神经网络会过拟合而不是泛化？" placeholder="When would a more complex neural network overfit rather than generalize?"></textarea>
+        </div>
+      </div>
+      <div class="lab-state" data-lab-state aria-live="polite">State snapshot appears here.</div>
+      <div class="lab-actions">
+        <button class="step-btn" type="button" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态">↻ Refresh state</button>
+        <button class="step-btn" type="button" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包">📋 Copy packet</button>
+        <button class="step-btn secondary" type="button" data-lab-action="print" data-lab-en="🖨 Print packet" data-lab-zh="🖨 打印实验包">🖨 Print packet</button>
+        <button class="step-btn secondary" type="button" data-lab-action="clear" data-lab-en="Clear local draft" data-lab-zh="清除本地草稿">Clear local draft</button>
+        <span class="lab-status" aria-live="polite"></span>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- Supporting learning component. -->
+  <details class="accessibility-layer" open>
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-a11y-en="♿ Text and keyboard support" data-a11y-zh="♿ 无障碍和文本状态层">♿ Text and keyboard support</span>
+    </summary>
+    <div class="accessibility-panel" role="region" aria-labelledby="a11yLayerTitle">
+      <h2 id="a11yLayerTitle" class="sr-only" data-a11y-title>Text and keyboard support</h2>
+      <p class="accessibility-intro" data-a11y-intro></p>
+      <div class="accessibility-grid">
+        <section class="accessibility-card" aria-labelledby="a11yKeyboardTitle">
+          <h3 id="a11yKeyboardTitle" data-a11y-keyboard-title>Keyboard path</h3>
+          <ul>
+            <li data-a11y-keyboard-1>Use Tab and Shift+Tab to move through controls.</li>
+            <li data-a11y-keyboard-2>Use Enter or Space on buttons, and arrow keys on sliders or select controls.</li>
+            <li data-a11y-keyboard-3>The visual region is focusable and described by the state summary below.</li>
+          </ul>
+        </section>
+        <section class="accessibility-card" aria-labelledby="a11yStateTitle">
+          <h3 id="a11yStateTitle" data-a11y-state-title>Text state summary</h3>
+          <dl class="a11y-state-grid" id="a11yStateSummary" data-a11y-state-grid></dl>
+        </section>
+        <section class="accessibility-card" aria-labelledby="a11yMotionTitle">
+          <h3 id="a11yMotionTitle" data-a11y-motion-title>Reduced motion and non-visual support</h3>
+          <p data-a11y-motion-copy>Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.</p>
+        </section>
+      </div>
+      <p class="accessibility-note" data-a11y-note>Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.</p>
+      <div id="a11yLiveRegion" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
     </div>
   </details>
 
@@ -445,7 +907,7 @@
 <article class="essay" id="essay">
 
   <p class="lede">
-    A neural network is just a stack of "carve a line, bend it, carve another line, bend it" —
+    A neural network is just a stack of "carve a line, bend it, carve another line, bend it" -
     repeated layer after layer until the function is flexible enough to do what you want.
     This applet trains one on a 2D classification problem so you can watch the decision boundary
     bend in real time as the model learns.
@@ -458,7 +920,7 @@
     a linear combination of its inputs (the matrix <code>W</code> and bias <code>b</code>), then
     a non-linear "activation function" applied element-wise. The first hidden layer turns the 2D
     input into some new feature space; the second hidden layer can carve that feature space
-    further; the final layer collapses everything to one number — the predicted probability of
+    further; the final layer collapses everything to one number: the predicted probability of
     class B.
   </p>
 
@@ -473,8 +935,8 @@
 
   <div class="aha">
     Take "linear" activation with any architecture and try XOR. The model fails forever. Take
-    ReLU with hidden sizes 0/0 and try moons — it also fails. Take ReLU with hidden sizes 6/4
-    and try moons — it works. <em>The non-linearity matters as much as the depth, and depth
+    ReLU with hidden sizes 0/0 and try moons: it also fails. Take ReLU with hidden sizes 6/4
+    and try moons: it works. <em>The non-linearity matters as much as the depth, and depth
     matters only because non-linearity exists.</em>
   </p>
 
@@ -490,10 +952,10 @@
   <h2>Common failure modes you can produce here</h2>
 
   <ul>
-    <li><strong>Too high learning rate</strong> — slide LR to 0.3. Loss oscillates or diverges.</li>
-    <li><strong>Too low learning rate</strong> — slide LR to 0.001. Loss falls so slowly you'll lose patience.</li>
-    <li><strong>Not enough capacity</strong> — hidden=0, dataset=moons. Loss plateaus.</li>
-    <li><strong>Wrong activation for the data</strong> — sigmoid on circles often gets stuck in a bad local minimum because gradients vanish far from zero.</li>
+    <li><strong>Too high learning rate</strong>: slide LR to 0.3. Loss oscillates or diverges.</li>
+    <li><strong>Too low learning rate</strong>: slide LR to 0.001. Loss falls so slowly you'll lose patience.</li>
+    <li><strong>Not enough capacity</strong>: hidden=0, dataset=moons. Loss plateaus.</li>
+    <li><strong>Wrong activation for the data</strong>: sigmoid on circles often gets stuck in a bad local minimum because gradients vanish far from zero.</li>
   </ul>
 
   <h2>What this simplifies</h2>
@@ -502,8 +964,8 @@
     Real neural networks use mini-batch SGD (batches of 32 or 256, not the whole dataset),
     sophisticated optimizers (Adam, AdamW) with momentum and adaptive per-parameter learning
     rates, hundreds or thousands of layers, regularization (dropout, weight decay, batch norm),
-    and millions of parameters. But the core loop — forward pass, compute loss, backward pass,
-    update weights — is exactly what runs here.
+    and millions of parameters. But the core loop: forward pass, compute loss, backward pass,
+    update weights: is exactly what runs here.
   </p>
 
   <div class="for-teachers">
@@ -526,8 +988,8 @@
     </ul>
     <p><strong>Common misconceptions defeated:</strong>
        "deeper is always better" (training instability says no);
-       "the model sees the dataset name" (no — only the (x, y, label) tuples);
-       "a hidden layer alone is enough" (no — without non-linearity it collapses).</p>
+       "the model sees the dataset name" (no: only the (x, y, label) tuples);
+       "a hidden layer alone is enough" (no: without non-linearity it collapses).</p>
   </div>
 
 </article>
@@ -539,8 +1001,8 @@
   // ===== i18n strings =====
   const STRINGS = {
     en: {
-      'title': 'Visualizing a Tiny Neural Net', 'back-link': '← Back to all playgrounds',
-      'footer-top': '↑ Back to top', 'footer-builtby': 'Built by', 'footer-course': 'Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy', 'footer-source': 'View source', 'footer-issue': 'Report an issue',
+      'title': 'Tiny Neural Network', 'back-link': '← Back to all playgrounds',
+      'footer-top': '↑ Back to top', 'footer-course': 'Made for the Introduction to AI course at Haidian Kaiwen Academy.', 'footer-portfolio': 'Portfolio', 'footer-project': 'AI Playgrounds', 'footer-source': 'Source', 'footer-issue': 'Report an issue',
       'reset-all': '↺ Reset all', 'dataset-label': 'Dataset:', 'act-label': 'Activation:',
       'tldr-strong': 'The big idea',
       'tldr-body': 'Layers stacked with non-linear activations can carve any decision boundary. Remove the non-linearity and the whole network collapses into a single line.',
@@ -552,7 +1014,7 @@
       'h1-label': 'Hidden 1', 'h2-label': 'Hidden 2', 'lr-label': 'Learning rate',
       'opt-label': 'Optimizer:', 'opt-sgd': 'SGD',
       'opt-momentum': 'Momentum (β=0.9)', 'opt-adam': 'Adam (β₁=0.9, β₂=0.999)',
-      'opt-title': 'SGD: plain gradient descent (w ← w − lr·g). Momentum: accumulates a velocity buffer (v ← βv − lr·g; w ← w + v) — smooths noisy gradients and accelerates through ravines. Adam: combines momentum (1st moment) with adaptive per-parameter learning rates (2nd moment).',
+      'opt-title': 'SGD: plain gradient descent (w ← w − lr·g). Momentum: accumulates a velocity buffer (v ← βv − lr·g; w ← w + v): smooths noisy gradients and accelerates through ravines. Adam: combines momentum (1st moment) with adaptive per-parameter learning rates (2nd moment).',
       'train-btn': '▶ Train / pause', 'reset-btn': 'Reset weights',
       'step-btn': '❘▶ Step', 'speed-label': 'Speed',
       'restart-title': 'Re-initialize weights randomly; rebuild architecture from current settings.',
@@ -563,7 +1025,7 @@
       'show-test-title': 'Show test-loss curve on the loss chart and mark test points (open shapes) on the decision-boundary chart. Test = held-out 20% never used for gradients.',
       'inside-summary': '🧠 Inside the network (weights + per-neuron activation maps)',
       'weights-hint': 'Each row is a layer; each square is one weight. Blue = positive, red = negative; brightness = magnitude.',
-      'acts-hint': "Each thumbnail shows one hidden neuron's activation over the 2D input plane — \"what this neuron has learned to fire on.\"",
+      'acts-hint': "Each thumbnail shows one hidden neuron's activation over the 2D input plane: \"what this neuron has learned to fire on.\"",
       'bv-h3': 'Decision boundary + training data',
       'lc-h3': 'Loss (BCE) over training',
       'stat-epoch': 'Epoch', 'stat-loss': 'Loss (BCE)',
@@ -572,41 +1034,51 @@
       'tour-summary': '📚 Lesson tour (5 steps)',
       'tour-step': 'Step',
       'tour-prev': '← Prev', 'tour-next': 'Next →', 'tour-apply': '▶ Apply this scenario',
+      'sg-summary': '🎯 Try these scenarios first',
+      'sg-intro': 'Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.',
+      'sg-card-prefix': 'Scenario',
+      'sg-concept-label': 'Concept',
+      'sg-observe-label': 'What to watch',
+      'sg-misconception-label': 'Predict before applying',
+      'sg-misconception-text': 'Which visible result should change most, and why? Commit to an answer before applying.',
+      'sg-teacher-label': 'Teacher use',
+      'sg-teacher-text': 'Use as a 2–3 minute predict → run → explain prompt.',
+      'sg-apply': 'Apply and compare',
       'ws-summary': '📝 Worksheet (3 questions)',
       'ws-check': 'Check',
       'ws-pick': 'Pick an answer first.',
-      // --- F1: worksheet question prompts (data-i18n spans) ---
+      // worksheet question prompts (data-i18n spans) ---
       'ws1q': 'Moons dataset, h1=0, h2=0, linear activation. Train. Final loss is closest to:',
       'ws2q': 'Same dataset, h1=6, activation=ReLU. After training, final loss is closest to:',
       'ws3q': 'Moons, h1=6 h2=4, activation=linear (no non-linearity). Compared to 1 linear layer (h1=0), the capacity is:',
       // --- MCQ: worksheet option labels (ws{n}o{i}) ---
-      'ws1o0': '0 — a single linear layer is enough to separate the two moons.',
-      'ws1o1': 'About 0.3 — a straight line cannot split the moons, so loss plateaus above zero.',
-      'ws1o2': 'NaN — a linear model has no hidden layer, so training diverges.',
-      'ws2o0': 'Near 0 — a ReLU hidden layer adds enough capacity to bend the boundary around the moons.',
-      'ws2o1': 'About 0.3 — adding ReLU does not change what a linear model can already do.',
-      'ws2o2': 'NaN — ReLU units always die and stop the network from learning.',
-      'ws3o0': 'More — two extra layers give the network strictly more expressive power.',
-      'ws3o1': 'Less — stacking layers shrinks the number of usable parameters.',
-      'ws3o2': 'The same — stacked linear layers collapse into a single linear map.',
-      // --- F1: lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
+      'ws1o0': '0: a single linear layer is enough to separate the two moons.',
+      'ws1o1': 'About 0.3: a straight line cannot split the moons, so loss plateaus above zero.',
+      'ws1o2': 'NaN: a linear model has no hidden layer, so training diverges.',
+      'ws2o0': 'Near 0: a ReLU hidden layer adds enough capacity to bend the boundary around the moons.',
+      'ws2o1': 'About 0.3: adding ReLU does not change what a linear model can already do.',
+      'ws2o2': 'NaN: ReLU units always die and stop the network from learning.',
+      'ws3o0': 'More: two extra layers give the network strictly more expressive power.',
+      'ws3o1': 'Less: stacking layers shrinks the number of usable parameters.',
+      'ws3o2': 'The same: stacked linear layers collapse into a single linear map.',
+      // lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
       'tour0name': 'Linear can split linearly-separable data',
-      'tour0desc': "Blobs dataset (two clouds), no hidden layer (h1=0, h2=0), linear activation. The network is just logistic regression — and that's enough. Watch the loss drop fast.",
+      'tour0desc': "Blobs dataset (two clouds), no hidden layer (h1=0, h2=0), linear activation. The network is just logistic regression: and that's enough. Watch the loss drop fast.",
       'tour1name': 'Moons: linear fails, network needs depth',
-      'tour1desc': 'Switch to moons. Same linear setup. Loss plateaus around 0.3+ — no straight line can separate them. The model lacks the capacity. This is the canonical pitch for hidden layers.',
+      'tour1desc': 'Switch to moons. Same linear setup. Loss plateaus around 0.3+: no straight line can separate them. The model lacks the capacity. This is the canonical pitch for hidden layers.',
       'tour2name': 'Add ReLU + one hidden layer → moons solved',
       'tour2desc': 'Moons, one hidden layer of 6 ReLU units. Network now bends. Loss drops to near zero. The non-linearity, not just depth, is what bought you the curve.',
       'tour3name': 'Stack with linear activation collapses',
-      'tour3desc': 'Moons, h1=6 h2=4, but activation = linear. Two linear layers compose to ONE linear layer — math says so. Loss plateaus again. Depth without non-linearity is wasted parameters.',
-      'tour4name': 'XOR — the textbook non-linear task',
+      'tour3desc': 'Moons, h1=6 h2=4, but activation = linear. Two linear layers compose to ONE linear layer: math says so. Loss plateaus again. Depth without non-linearity is wasted parameters.',
+      'tour4name': 'XOR: the textbook non-linear task',
       'tour4desc': 'XOR dataset: opposite corners are the same class. Provably unsolvable by any linear model since Minsky 1969. With ReLU + 2 hidden layers, train and watch the decision boundary become 4 wedges.',
-      // --- F1: worksheet answer-feedback (ws{n}ok / ws{n}no) ---
-      'ws1ok': 'Correct (~0.3+). A linear model is just logistic regression — it can only draw straight lines. The moons are nonlinearly separable, so the best a linear classifier can do is misclassify some — loss plateaus around 0.3.',
+      // worksheet answer-feedback (ws{n}ok / ws{n}no) ---
+      'ws1ok': 'Correct (~0.3+). A linear model is just logistic regression: it can only draw straight lines. The moons are nonlinearly separable, so the best a linear classifier can do is misclassify some: loss plateaus around 0.3.',
       'ws1no': "Try 0.3. With h1=0 + linear activation, the model is logistic regression, which can't curve. Loss plateaus well above zero.",
-      'ws2ok': 'Right. h1=6 ReLU is just enough capacity to bend the boundary into the moon shape. Loss drops to near zero (or actual zero if data is fully separable). Non-linearity is the unlock — depth alone with linear activation would not help.',
+      'ws2ok': 'Right. h1=6 ReLU is just enough capacity to bend the boundary into the moon shape. Loss drops to near zero (or actual zero if data is fully separable). Non-linearity is the unlock: depth alone with linear activation would not help.',
       'ws2no': 'Try 0 (near zero). ReLU + a hidden layer gives the network enough capacity to learn the curved boundary.',
-      'ws3ok': 'Correct. Two linear layers compose to ONE linear layer — math: A·(B·x) = (A·B)·x. Stacking depth without non-linearity is mathematically equivalent to a single layer, just with more parameters wastefully reparameterizing it.',
-      'ws3no': "Try 'same'. f(x) = W₂(W₁x) = (W₂W₁)x — composition of linear maps is linear. Depth alone gains nothing.",
+      'ws3ok': 'Correct. Two linear layers compose to ONE linear layer: math: A·(B·x) = (A·B)·x. Stacking depth without non-linearity is mathematically equivalent to a single layer, just with more parameters wastefully reparameterizing it.',
+      'ws3no': "Try 'same'. f(x) = W₂(W₁x) = (W₂W₁)x: composition of linear maps is linear. Depth alone gains nothing.",
       // tooltip translations for main selectors + slider labels.
       'dataset-sel-title': 'Test problem. XOR forces non-linearity; blobs work with a single line.',
       'act-sel-title': "Non-linearity applied after each hidden layer. 'linear' collapses depth into a single line.",
@@ -623,9 +1095,9 @@
       'feat-sinx-label': 'sin(x)', 'feat-sinx-title': 'Feed sin(x) as an extra input. Adds periodic structure along the x axis.',
       'feat-siny-label': 'sin(y)', 'feat-siny-title': 'Feed sin(y) as an extra input. Adds periodic structure along the y axis.',
       // network-graph view (neurons as nodes, weights as colored connections).
-      'graph-summary': '🕸 Network graph — weights as connections',
+      'graph-summary': '🕸 Network graph: weights as connections',
       'graph-hint': 'Each circle is a neuron; each line is one weight. Blue = positive, red = negative; thicker / brighter = larger magnitude. Updates live as the network trains.',
-      'init-hint': '⚠ Random initialization — these weights are noise until you press Train.',
+      'init-hint': '⚠ Random initialization: these weights are noise until you press Train.',
       'graph-out-label': 'out',
       'ng-view-w': 'Weights',
       'ng-view-g': 'Gradients',
@@ -634,7 +1106,7 @@
     },
     zh: {
       'title': '迷你神经网络可视化', 'back-link': '← 返回所有演示',
-      'footer-top': '↑ 返回顶部', 'footer-builtby': '作者', 'footer-course': '为海淀凯文学校 2025–2026《人工智能导论》课程制作', 'footer-source': '查看源代码', 'footer-issue': '反馈问题',
+      'footer-top': '↑ 返回顶部', 'footer-course': '为海淀凯文学校《人工智能导论》课程制作。', 'footer-portfolio': '作品集', 'footer-project': 'AI Playgrounds', 'footer-source': '源代码', 'footer-issue': '反馈问题',
       'reset-all': '↺ 全部重置', 'dataset-label': '数据集:', 'act-label': '激活函数:',
       'tldr-strong': '核心思想',
       'tldr-body': '带非线性激活函数的层堆叠起来可以刻出任意决策边界。去掉非线性,整个网络就会塌缩成一条直线。',
@@ -646,7 +1118,7 @@
       'h1-label': '隐层 1', 'h2-label': '隐层 2', 'lr-label': '学习率',
       'opt-label': '优化器:', 'opt-sgd': 'SGD',
       'opt-momentum': '动量 (β=0.9)', 'opt-adam': 'Adam (β₁=0.9, β₂=0.999)',
-      'opt-title': 'SGD:朴素梯度下降(w ← w − lr·g)。动量:累积速度缓冲(v ← βv − lr·g;w ← w + v)——平滑噪声梯度并在峡谷中加速。Adam:把动量(一阶矩)与每参数自适应学习率(二阶矩)结合。',
+      'opt-title': 'SGD:朴素梯度下降(w ← w − lr·g)。动量:累积速度缓冲(v ← βv − lr·g;w ← w + v)--平滑噪声梯度并在峡谷中加速。Adam:把动量(一阶矩)与每参数自适应学习率(二阶矩)结合。',
       'train-btn': '▶ 训练 / 暂停', 'reset-btn': '重置权重',
       'step-btn': '❘▶ 单步', 'speed-label': '速度',
       'restart-title': '随机重新初始化权重;按当前设置重建网络结构。',
@@ -657,7 +1129,7 @@
       'show-test-title': '在损失图上显示测试损失曲线,并在决策边界图上以空心形状标注测试点。测试集 = 留出的 20%,从不用于梯度更新。',
       'inside-summary': '🧠 网络内部(权重 + 每个神经元的激活图)',
       'weights-hint': '每行是一层,每个方块是一个权重。蓝 = 正,红 = 负;亮度 = 绝对值大小。',
-      'acts-hint': '每个缩略图显示一个隐藏神经元在 2D 输入平面上的激活——也就是这个神经元学会了"对什么开火"。',
+      'acts-hint': '每个缩略图显示一个隐藏神经元在 2D 输入平面上的激活--也就是这个神经元学会了"对什么开火"。',
       'bv-h3': '决策边界 + 训练数据',
       'lc-h3': '训练过程的损失 (BCE)',
       'stat-epoch': '轮次', 'stat-loss': '损失 (BCE)',
@@ -666,41 +1138,51 @@
       'tour-summary': '📚 课程导览(5 步)',
       'tour-step': '步骤',
       'tour-prev': '← 上一步', 'tour-next': '下一步 →', 'tour-apply': '▶ 应用此场景',
+      'sg-summary': '🎯 先试这些场景',
+      'sg-intro': '先选择一个场景并预测结果,再应用它,然后把运行结果与你的预测进行比较。',
+      'sg-card-prefix': '场景',
+      'sg-concept-label': '概念',
+      'sg-observe-label': '预期观察',
+      'sg-misconception-label': '误区检查',
+      'sg-misconception-text': '初学者的第一反应可能会漏掉或过度简化什么?',
+      'sg-teacher-label': '教师用法',
+      'sg-teacher-text': '用作 2–3 分钟的“预测 → 运行 → 解释”活动。',
+      'sg-apply': '应用场景',
       'ws-summary': '📝 练习题(3 题)',
       'ws-check': '核对',
       'ws-pick': '请先选择一个答案。',
-      // --- F1: 练习题题干(data-i18n span)---
+      // 练习题题干(data-i18n span)---
       'ws1q': '双月数据集,h1=0、h2=0,线性激活。训练。最终损失最接近:',
       'ws2q': '同一数据集,h1=6,激活函数=ReLU。训练后,最终损失最接近:',
       'ws3q': '双月,h1=6、h2=4,激活函数=线性(无非线性)。与 1 个线性层(h1=0)相比,容量是:',
       // --- MCQ: 练习题选项(ws{n}o{i})---
-      'ws1o0': '0——单个线性层就足以分开两个月牙。',
-      'ws1o1': '约 0.3——直线无法分开月牙,所以损失停在零以上。',
-      'ws1o2': 'NaN——线性模型没有隐藏层,所以训练发散。',
-      'ws2o0': '接近 0——一个 ReLU 隐藏层提供了足够的容量,把边界绕着月牙弯曲。',
-      'ws2o1': '约 0.3——加上 ReLU 并不会改变线性模型本就能做的事。',
-      'ws2o2': 'NaN——ReLU 单元总会"死亡",使网络无法学习。',
-      'ws3o0': '更多——两个额外的层让网络拥有严格更强的表达能力。',
-      'ws3o1': '更少——堆叠层会减少可用参数的数量。',
-      'ws3o2': '相同——堆叠的线性层会塌缩成一个线性映射。',
-      // --- F1: 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
+      'ws1o0': '0--单个线性层就足以分开两个月牙。',
+      'ws1o1': '约 0.3--直线无法分开月牙,所以损失停在零以上。',
+      'ws1o2': 'NaN--线性模型没有隐藏层,所以训练发散。',
+      'ws2o0': '接近 0--一个 ReLU 隐藏层提供了足够的容量,把边界绕着月牙弯曲。',
+      'ws2o1': '约 0.3--加上 ReLU 并不会改变线性模型本就能做的事。',
+      'ws2o2': 'NaN--ReLU 单元总会"死亡",使网络无法学习。',
+      'ws3o0': '更多--两个额外的层让网络拥有严格更强的表达能力。',
+      'ws3o1': '更少--堆叠层会减少可用参数的数量。',
+      'ws3o2': '相同--堆叠的线性层会塌缩成一个线性映射。',
+      // 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
       'tour0name': '线性模型可以分开线性可分的数据',
-      'tour0desc': '两团数据集(两片点云),无隐藏层(h1=0、h2=0),线性激活。此时网络就是逻辑回归——而这已经够了。观察损失迅速下降。',
+      'tour0desc': '两团数据集(两片点云),无隐藏层(h1=0、h2=0),线性激活。此时网络就是逻辑回归--而这已经够了。观察损失迅速下降。',
       'tour1name': '双月:线性失败,网络需要深度',
-      'tour1desc': '切换到双月。相同的线性设置。损失在 0.3 上下停滞——没有直线能把它们分开。模型缺乏容量。这正是引入隐藏层的经典理由。',
+      'tour1desc': '切换到双月。相同的线性设置。损失在 0.3 上下停滞--没有直线能把它们分开。模型缺乏容量。这正是引入隐藏层的经典理由。',
       'tour2name': '加入 ReLU + 一个隐藏层 → 双月被解决',
       'tour2desc': '双月,一个含 6 个 ReLU 单元的隐藏层。网络现在会弯曲了。损失降到接近零。让你得到曲线的是非线性,而不只是深度。',
       'tour3name': '用线性激活堆叠会塌缩',
-      'tour3desc': '双月,h1=6、h2=4,但激活函数=线性。两个线性层复合成一个线性层——数学如此。损失再次停滞。没有非线性的深度只是浪费参数。',
-      'tour4name': '异或——教科书式的非线性任务',
+      'tour3desc': '双月,h1=6、h2=4,但激活函数=线性。两个线性层复合成一个线性层--数学如此。损失再次停滞。没有非线性的深度只是浪费参数。',
+      'tour4name': '异或--教科书式的非线性任务',
       'tour4desc': '异或数据集:对角的两个角属于同一类。自 Minsky 1969 起就被证明任何线性模型都无法解决。用 ReLU + 2 个隐藏层,训练并观察决策边界变成 4 个楔形区域。',
-      // --- F1: 练习题答案反馈(ws{n}ok / ws{n}no)---
-      'ws1ok': '正确(约 0.3 以上)。线性模型就是逻辑回归——只能画直线。双月是非线性可分的,所以线性分类器最多只能错分一部分——损失停滞在 0.3 上下。',
+      // 练习题答案反馈(ws{n}ok / ws{n}no)---
+      'ws1ok': '正确(约 0.3 以上)。线性模型就是逻辑回归--只能画直线。双月是非线性可分的,所以线性分类器最多只能错分一部分--损失停滞在 0.3 上下。',
       'ws1no': '试试 0.3。当 h1=0 且激活为线性时,模型是逻辑回归,无法弯曲。损失会停滞在远高于零处。',
-      'ws2ok': '对。h1=6 的 ReLU 恰好提供了足够的容量,把边界弯成双月形状。损失降到接近零(若数据完全可分则为真正的零)。非线性才是关键——只有深度而激活为线性是没用的。',
+      'ws2ok': '对。h1=6 的 ReLU 恰好提供了足够的容量,把边界弯成双月形状。损失降到接近零(若数据完全可分则为真正的零)。非线性才是关键--只有深度而激活为线性是没用的。',
       'ws2no': '试试 0(接近零)。ReLU + 一个隐藏层给了网络足够的容量来学习弯曲的边界。',
-      'ws3ok': '正确。两个线性层复合成一个线性层——数学上:A·(B·x) = (A·B)·x。没有非线性的深度堆叠在数学上等价于单层,只是用更多参数做了多余的重新参数化。',
-      'ws3no': '试试"same"。f(x) = W₂(W₁x) = (W₂W₁)x——线性映射的复合仍是线性。仅有深度毫无收益。',
+      'ws3ok': '正确。两个线性层复合成一个线性层--数学上:A·(B·x) = (A·B)·x。没有非线性的深度堆叠在数学上等价于单层,只是用更多参数做了多余的重新参数化。',
+      'ws3no': '试试"same"。f(x) = W₂(W₁x) = (W₂W₁)x--线性映射的复合仍是线性。仅有深度毫无收益。',
       // 主要选择器与滑块的提示翻译。
       'dataset-sel-title': '测试问题。异或要求非线性;双团数据用一条直线即可。',
       'act-sel-title': '每个隐层之后施加的非线性。"线性"会让深度坍塌为一条直线。',
@@ -717,9 +1199,9 @@
       'feat-sinx-label': 'sin(x)', 'feat-sinx-title': '把 sin(x) 作为额外输入。沿 x 轴添加周期性结构。',
       'feat-siny-label': 'sin(y)', 'feat-siny-title': '把 sin(y) 作为额外输入。沿 y 轴添加周期性结构。',
       // 网络图视图(神经元为节点,权重为彩色连线)。
-      'graph-summary': '🕸 网络图——权重即连线',
+      'graph-summary': '🕸 网络图--权重即连线',
       'graph-hint': '每个圆圈是一个神经元,每条线是一个权重。蓝 = 正,红 = 负;越粗 / 越亮 = 绝对值越大。训练时实时更新。',
-      'init-hint': '⚠ 随机初始化——训练之前,这些权重只是噪声。',
+      'init-hint': '⚠ 随机初始化--训练之前,这些权重只是噪声。',
       'graph-out-label': '输出',
       'ng-view-w': '权重',
       'ng-view-g': '梯度',
@@ -745,10 +1227,11 @@
   document.querySelectorAll('.lang-switch button').forEach(b =>
     b.addEventListener('click', () => {
       setLang(b.dataset.lang);
-      // F1: re-render the tour in the new language. Safe here — this click handler
+      // re-render the tour in the new language. Safe here: this click handler
       // only runs post-init, after LESSON_TOUR (a late `const`) is initialized, so
       // there is no temporal-dead-zone risk (unlike calling it from inside setLang).
       try { if (typeof renderTour === 'function') renderTour(); } catch (_) {}
+      try { if (typeof renderScenarioGallery === 'function') renderScenarioGallery(); } catch (_) {}
     }));
   let initialLang = 'en';
   try { initialLang = localStorage.getItem('lang') || 'en'; } catch (_) {}
@@ -862,7 +1345,7 @@
       }
       train.push({x, y, label});
     }
-    // deterministic 80/20 split — last 40 examples become the test set.
+    // deterministic 80/20 split: last 40 examples become the test set.
     // Deterministic so students can compare runs reproducibly.
     testSet = train.splice(Math.floor(train.length * 0.8));
   }
@@ -875,7 +1358,7 @@
 
   // ===== engineered input features (TensorFlow-Playground style) =====
   // x and y are ALWAYS on. The five engineered features default OFF, so the
-  // default network input is exactly [x, y] — identical to the original applet.
+  // default network input is exactly [x, y]: identical to the original applet.
   // Fixed deterministic order: x, y, x², y², x·y, sin(x), sin(y). Every code
   // path (training, forward, boundary render, neuron heatmaps) maps a raw point
   // through featureVec() so the feature order is guaranteed consistent.
@@ -910,7 +1393,7 @@
   let ngView = 'weights'; // 'weights' | 'gradients'
   // optimizer step counter (used by Adam bias correction). Reset on every
   // network rebuild (changing arch, resetting weights, switching optimizer mid-run
-  // intentionally KEEPS the counter — that mirrors PyTorch behavior).
+  // intentionally KEEPS the counter: that mirrors PyTorch behavior).
   let optStep = 0;
   function buildNet() {
     layers = [];
@@ -1104,7 +1587,7 @@
       ctx.fill();
       ctx.strokeStyle = 'white'; ctx.lineWidth = 1.5; ctx.stroke();
     }
-    // test points (open / hollow shapes) — only when the toggle is on.
+    // test points (open / hollow shapes): only when the toggle is on.
     if ($('showTestLoss') && $('showTestLoss').checked) {
       for (const ex of testSet) {
         const px = (ex.x - xmin) / (xmax - xmin) * W;
@@ -1120,7 +1603,7 @@
   }
   const lossHistory = [];
   const testLossHistory = []; // parallel test-loss series
-  // BCE loss on a held-out set (no gradient update — just forward pass).
+  // BCE loss on a held-out set (no gradient update: just forward pass).
   function evalTestLoss() {
     if (!testSet.length) return 0;
     let total = 0;
@@ -1168,7 +1651,7 @@
   }
   // ===== network graph (TF-Playground style) =====
   // Draws neurons as nodes in left→right columns and every weight as an edge.
-  // Reads the SAME live `layers` weights that renderWeightsView() reads — no
+  // Reads the SAME live `layers` weights that renderWeightsView() reads: no
   // recompute. Edge color encodes the weight's sign (blue +, red −, matching
   // colorForWeight); edge width AND alpha encode |weight| normalized by the
   // current max |weight| in the whole network, so edges stay legible at any scale.
@@ -1221,7 +1704,7 @@
     const gradHint = document.getElementById('ngGradHint');
     if (gradHint) {
       if (ngView === 'gradients' && !lastGradW) {
-        // No gradients yet — show the "train once" hint instead.
+        // No gradients yet: show the "train once" hint instead.
         const lang = document.documentElement.lang || 'en';
         gradHint.textContent = (STRINGS[lang] && STRINGS[lang]['ng-grad-none']) || STRINGS['en']['ng-grad-none'];
         gradHint.style.display = '';
@@ -1242,7 +1725,7 @@
     }
 
     // Edges first (so nodes draw on top). W[r][c] links input node c (col k)
-    // to output node r (col k+1) — exactly the weight-matrix orientation.
+    // to output node r (col k+1): exactly the weight-matrix orientation.
     for (let k = 0; k < layers.length; k++) {
       const L = layers[k];
       const inCount = L.W[0].length, outCount = L.W.length;
@@ -1385,7 +1868,7 @@
       if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     }
     ctx.stroke();
-    // Test loss (dashed orange) —.
+    // Test loss (dashed orange) -.
     if (showTest && testRecent.length > 1) {
       ctx.strokeStyle = '#ea580c'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 3]);
       ctx.beginPath();
@@ -1402,7 +1885,7 @@
     ctx.fillText('epochs →', W - 70, H - 8);
     ctx.fillText(`max=${ymax.toFixed(3)}`, W - 90, pad + 8);
     if (showTest) {
-      ctx.fillStyle = getCSS('--accent'); ctx.fillText('— train', W - 90, pad + 22);
+      ctx.fillStyle = getCSS('--accent'); ctx.fillText('- train', W - 90, pad + 22);
       ctx.fillStyle = '#ea580c'; ctx.fillText('-- test', W - 90, pad + 36);
     }
   }
@@ -1569,7 +2052,7 @@
     nnHistory = []; nnReviewing = false; nnSetCount('idle');
     { const st = $('nnScrubGroup'); if (st) st.style.visibility = 'hidden'; const sc = $('nnScrub'); if (sc) { sc.max = 0; sc.value = 0; } const lv = $('nnLive'); if (lv) lv.disabled = true; }
     buildNet(); drawBoundary(); drawLoss(); renderWeightsView(); renderActivationsView(); drawNetworkGraph();
-    $('epochV').textContent = 0; $('lossV').textContent = '—'; $('accV').textContent = '—';
+    $('epochV').textContent = 0; $('lossV').textContent = '-'; $('accV').textContent = '-';
   });
   $('hardReset').addEventListener('click', () => {
     running = false; $('trainBtn').textContent = '▶ Train / pause';
@@ -1582,7 +2065,7 @@
     nnHistory = []; nnReviewing = false; nnSetCount('idle');
     { const st = $('nnScrubGroup'); if (st) st.style.visibility = 'hidden'; const sc = $('nnScrub'); if (sc) { sc.max = 0; sc.value = 0; } const lv = $('nnLive'); if (lv) lv.disabled = true; }
     genData(); buildNet(); drawBoundary(); drawLoss(); renderWeightsView(); renderActivationsView(); drawNetworkGraph();
-    $('epochV').textContent = 0; $('lossV').textContent = '—'; $('accV').textContent = '—';
+    $('epochV').textContent = 0; $('lossV').textContent = '-'; $('accV').textContent = '-';
   });
   $('h1').addEventListener('input', () => {
     $('h1V').textContent = $('h1').value;
@@ -1604,7 +2087,7 @@
   });
   // Engineered-feature toggles: changing the feature set changes the input-layer
   // size, so re-initialize the network (fresh weights) and reset training (epoch 0)
-  // — the same reset path used by Reset weights / architecture changes.
+  //: the same reset path used by Reset weights / architecture changes.
   FEATURE_DEFS.forEach(f => {
     const el = $(f.id);
     if (!el) return;
@@ -1612,14 +2095,14 @@
       running = false; $('trainBtn').textContent = '▶ Train / pause';
       epoch = 0; lossHistory.length = 0; testLossHistory.length = 0;
       buildNet(); drawBoundary(); drawLoss(); renderWeightsView(); renderActivationsView(); drawNetworkGraph();
-      $('epochV').textContent = 0; $('lossV').textContent = '—'; $('accV').textContent = '—';
+      $('epochV').textContent = 0; $('lossV').textContent = '-'; $('accV').textContent = '-';
     });
   });
   window.addEventListener('resize', () => {
     resizeCv(bv); resizeCv(lc); resizeCv(ng); drawBoundary(); drawLoss(); renderWeightsView(); renderActivationsView(); drawNetworkGraph();
   });
 
-  // URL-shareable config — dataset, activation, h1, h2, learning rate.
+  // URL-shareable config: dataset, activation, h1, h2, learning rate.
   try {
     const sp = new URLSearchParams(location.search);
     const setSel = (key, id) => {
@@ -1678,18 +2161,18 @@
   }
   const LESSON_TOUR = [
     { name: 'Linear can split linearly-separable data',
-      description: "Blobs dataset (two clouds), no hidden layer (h1=0, h2=0), linear activation. The network is just logistic regression — and that's enough. Watch the loss drop fast.",
+      description: "Blobs dataset (two clouds), no hidden layer (h1=0, h2=0), linear activation. The network is just logistic regression: and that's enough. Watch the loss drop fast.",
       apply: () => applyNN('blobs', 'linear', 0, 0, 0.05) },
     { name: 'Moons: linear FAILS, network needs depth',
-      description: "Switch to moons. Same linear setup. Loss plateaus around 0.3+ — no straight line can separate them. The model lacks the capacity. This is the canonical pitch for hidden layers.",
+      description: "Switch to moons. Same linear setup. Loss plateaus around 0.3+: no straight line can separate them. The model lacks the capacity. This is the canonical pitch for hidden layers.",
       apply: () => applyNN('moons', 'linear', 0, 0, 0.05) },
     { name: 'Add ReLU + one hidden layer → moons solved',
       description: "Moons, one hidden layer of 6 ReLU units. Network now bends. Loss drops to near zero. The non-linearity, not just depth, is what bought you the curve.",
       apply: () => applyNN('moons', 'relu', 6, 0, 0.03) },
     { name: 'Stack with linear activation collapses',
-      description: "Moons, h1=6 h2=4, but activation = linear. Two linear layers compose to ONE linear layer — math says so. Loss plateaus again. Depth without non-linearity is wasted parameters.",
+      description: "Moons, h1=6 h2=4, but activation = linear. Two linear layers compose to ONE linear layer: math says so. Loss plateaus again. Depth without non-linearity is wasted parameters.",
       apply: () => applyNN('moons', 'linear', 6, 4, 0.03) },
-    { name: 'XOR — the textbook non-linear task',
+    { name: 'XOR: the textbook non-linear task',
       description: "XOR dataset: opposite corners are the same class. Provably unsolvable by any linear model since Minsky 1969. With ReLU + 2 hidden layers, train and watch decision boundary become 4 wedges.",
       apply: () => applyNN('xor', 'relu', 6, 4, 0.05) },
   ];
@@ -1697,7 +2180,7 @@
   function renderTour() {
     if (!$('tourName')) return;
     const s = LESSON_TOUR[tourIdx];
-    // F1 bilingual: look up tour{i}name / tour{i}desc with English inline fallback.
+    // Bilingual: look up tour{i}name / tour{i}desc with English inline fallback.
     const L = (document.documentElement.lang || 'en');
     const S = STRINGS[L] || STRINGS.en;
     $('tourName').textContent = S['tour' + tourIdx + 'name'] || s.name;
@@ -1711,8 +2194,67 @@
   $('tourNext').addEventListener('click', () => { if (tourIdx < LESSON_TOUR.length - 1) { tourIdx++; renderTour(); } });
   renderTour();
 
-  // Worksheet/lab mode — 3 questions with instant ✓/✗ feedback.
-  // F1 bilingual feedback helper: ws{n}ok / ws{n}no with English inline fallback.
+
+  function scenarioGalleryText(key, fallback) {
+    const L = document.documentElement.lang || 'en';
+    const S = STRINGS[L] || STRINGS.en;
+    return S[key] || fallback;
+  }
+  function localizedScenarioField(index, field, fallback) {
+    const L = document.documentElement.lang || 'en';
+    const S = STRINGS[L] || STRINGS.en;
+    return S['tour' + index + field] || fallback || '';
+  }
+  function appendScenarioMeta(card, label, text) {
+    const p = document.createElement('p');
+    p.className = 'scenario-meta';
+    const strong = document.createElement('strong');
+    strong.textContent = label + ': ';
+    p.appendChild(strong);
+    p.appendChild(document.createTextNode(text));
+    card.appendChild(p);
+  }
+  function renderScenarioGallery() {
+    const root = $('scenarioGalleryCards');
+    if (!root || typeof LESSON_TOUR === 'undefined') return;
+    root.innerHTML = '';
+    LESSON_TOUR.forEach((scenario, index) => {
+      const title = localizedScenarioField(index, 'name', scenario.name || (scenarioGalleryText('sg-card-prefix', 'Scenario') + ' ' + (index + 1)));
+      const description = localizedScenarioField(index, 'desc', scenario.description || '');
+      const card = document.createElement('article');
+      card.className = 'scenario-card';
+      card.setAttribute('data-scenario-index', String(index));
+
+      const h = document.createElement('h3');
+      h.textContent = `${scenarioGalleryText('sg-card-prefix', 'Scenario')} ${index + 1}: ${title}`;
+      card.appendChild(h);
+
+      appendScenarioMeta(card, scenarioGalleryText('sg-concept-label', 'Concept'), title);
+      appendScenarioMeta(card, scenarioGalleryText('sg-observe-label', 'What to watch'), description);
+      appendScenarioMeta(card, scenarioGalleryText('sg-misconception-label', 'Predict before applying'), scenarioGalleryText('sg-misconception-text', 'Which visible result should change most, and why? Commit to an answer before applying.'));
+      appendScenarioMeta(card, scenarioGalleryText('sg-teacher-label', 'Teacher use'), scenarioGalleryText('sg-teacher-text', 'Use as a 2–3 minute predict → run → explain prompt.'));
+
+      const btn = document.createElement('button');
+      btn.className = 'step-btn';
+      btn.type = 'button';
+      btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare');
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('.scenario-card').forEach(item => item.classList.remove('applied'));
+        tourIdx = index;
+        renderTour();
+        scenario.apply();
+        card.classList.add('applied');
+        btn.textContent = '✓ ' + scenarioGalleryText('sg-applied', 'Applied; compare the result');
+        setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
+      });
+      card.appendChild(btn);
+      root.appendChild(card);
+    });
+  }
+  renderScenarioGallery();
+
+  // Worksheet/lab mode: 3 questions with instant ✓/✗ feedback.
+  // Bilingual feedback helper: ws{n}ok / ws{n}no with English inline fallback.
   function wsMsg(key, en) {
     const L = (document.documentElement.lang || 'en');
     return (STRINGS[L] && STRINGS[L][key]) || en;
@@ -1722,14 +2264,14 @@
   // existing bilingual feedback keys, with an English inline fallback via wsMsg.
   const WORKSHEET = [
     { correct: 1,
-      ok:  ['ws1ok', "Correct (~0.3+). A linear model is just logistic regression — it can only draw straight lines. The moons are nonlinearly separable, so the best a linear classifier can do is misclassify some — loss plateaus around 0.3."],
+      ok:  ['ws1ok', "Correct (~0.3+). A linear model is just logistic regression: it can only draw straight lines. The moons are nonlinearly separable, so the best a linear classifier can do is misclassify some: loss plateaus around 0.3."],
       no:  ['ws1no', "Try 0.3. With h1=0 + linear activation, the model is logistic regression, which can't curve. Loss plateaus well above zero."] },
     { correct: 0,
-      ok:  ['ws2ok', "Right. h1=6 ReLU is just enough capacity to bend the boundary into the moon shape. Loss drops to near zero (or actual zero if data is fully separable). Non-linearity is the unlock — depth alone with linear activation would not help."],
+      ok:  ['ws2ok', "Right. h1=6 ReLU is just enough capacity to bend the boundary into the moon shape. Loss drops to near zero (or actual zero if data is fully separable). Non-linearity is the unlock: depth alone with linear activation would not help."],
       no:  ['ws2no', "Try 0 (near zero). ReLU + a hidden layer gives the network enough capacity to learn the curved boundary."] },
     { correct: 2,
-      ok:  ['ws3ok', "Correct. Two linear layers compose to ONE linear layer — math: A·(B·x) = (A·B)·x. Stacking depth without non-linearity is mathematically equivalent to a single layer, just with more parameters wastefully reparameterizing it."],
-      no:  ['ws3no', "Try 'same'. f(x) = W₂(W₁x) = (W₂W₁)x — composition of linear maps is linear. Depth alone gains nothing."] },
+      ok:  ['ws3ok', "Correct. Two linear layers compose to ONE linear layer: math: A·(B·x) = (A·B)·x. Stacking depth without non-linearity is mathematically equivalent to a single layer, just with more parameters wastefully reparameterizing it."],
+      no:  ['ws3no', "Try 'same'. f(x) = W₂(W₁x) = (W₂W₁)x: composition of linear maps is linear. Depth alone gains nothing."] },
   ];
   WORKSHEET.forEach((q, i) => {
     const n = i + 1;
@@ -1779,12 +2321,434 @@
   });
 })();
 </script>
-  <footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
+
+<footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
     <p style="margin:0 0 6px;"><a href="#top" data-i18n="footer-top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
-    <p style="margin:0;"><span data-i18n="footer-builtby">Built by</span> Logan Dixon · <span data-i18n="footer-course">Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy</span></p>
-    <p style="margin:6px 0 0;"><a href="https://github.com/lmdixon23/ai-playgrounds" data-i18n="footer-source" style="color:var(--accent,#0891b2);">View source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-i18n="footer-issue" style="color:var(--accent,#0891b2);">Report an issue</a> · © 2026 Logan Dixon</p>
+    <p style="margin:0;"><span data-i18n="footer-course">Made for the Introduction to AI course at Haidian Kaiwen Academy.</span></p>
+    <p style="margin:6px 0 0;">© <span data-current-year>2026</span> Logan M. Dixon · <a href="https://lmdixon23.github.io/" data-i18n="footer-portfolio" style="color:var(--accent,#0891b2);">Portfolio</a> · <a href="../../index.html" data-i18n="footer-project" style="color:var(--accent,#0891b2);">AI Playgrounds</a> · <a href="https://github.com/lmdixon23/ai-playgrounds" data-i18n="footer-source" style="color:var(--accent,#0891b2);">Source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-i18n="footer-issue" style="color:var(--accent,#0891b2);">Report an issue</a> · <a href="https://orcid.org/0009-0001-0592-462X" rel="me" style="color:var(--accent,#0891b2);">ORCID</a></p>
   </footer>
-  <!-- Privacy-friendly analytics — GoatCounter, cookieless. -->
-  <script data-goatcounter="https://lmdixon23.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+
+<script>
+(function() {
+  const LAB_CONFIG = {"slug": "neural-network", "title": "Tiny neural network lab packet", "zhTitle": "迷你神经网络实验包", "fields": [{"label": "Dataset", "selector": "#datasetSel", "kind": "selected"}, {"label": "Hidden layer 1", "selector": "#h1V", "kind": "text"}, {"label": "Hidden layer 2", "selector": "#h2V", "kind": "text"}, {"label": "Optimizer", "selector": "#optSel", "kind": "selected"}, {"label": "Epoch", "selector": "#epochV", "kind": "text"}, {"label": "Loss", "selector": "#lossV", "kind": "text"}, {"label": "Accuracy", "selector": "#accV", "kind": "text"}, {"label": "Parameters", "selector": "#paramV", "kind": "text"}, {"label": "Training status", "selector": "#tpCount", "kind": "text"}]};
+  const root = document.querySelector('.classroom-lab');
+  if (!root) return;
+  const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;
+  const qs = (sel) => root.querySelector(sel);
+  function currentLang() { return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en'; }
+  function textFor(el, lang) { return el.getAttribute(lang === 'zh' ? 'data-lab-zh' : 'data-lab-en') || el.textContent; }
+  function applyLabLang() {
+    const lang = currentLang();
+    root.querySelectorAll('[data-lab-en]').forEach(el => {
+      const value = textFor(el, lang);
+      if (el.tagName === 'TEXTAREA') el.placeholder = value;
+      else el.textContent = value;
+    });
+  }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? 'on' : 'off';
+    else if (field.kind === 'text') value = el.textContent.trim();
+    else value = el.value;
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? field.label + ': ' + value : null;
+  }
+  function snapshot() {
+    const lines = LAB_CONFIG.fields.map(readField).filter(Boolean);
+    return lines.length ? lines.join('\n') : 'No state captured yet. Run or adjust the applet first.';
+  }
+  function answers() {
+    const data = {};
+    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => data[area.getAttribute('data-lab-answer')] = area.value.trim());
+    return data;
+  }
+  function saveDraft() { try { localStorage.setItem(storageKey, JSON.stringify(answers())); } catch (_) {} }
+  function loadDraft() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      root.querySelectorAll('textarea[data-lab-answer]').forEach(area => { const key = area.getAttribute('data-lab-answer'); if (saved[key]) area.value = saved[key]; });
+    } catch (_) {}
+  }
+  function packet() {
+    const lang = currentLang();
+    const labels = lang === 'zh' ? {title: LAB_CONFIG.zhTitle, state:'状态记录', predict:'预测', observe:'观察', explain:'解释', transfer:'迁移'} : {title: LAB_CONFIG.title, state:'State snapshot', predict:'Predict', observe:'Observe', explain:'Explain', transfer:'Transfer'};
+    const a = answers();
+    return [
+      '# ' + labels.title,
+      '',
+      '- Applet: ' + (document.querySelector('h1') ? document.querySelector('h1').textContent.trim() : document.title),
+      '- Date: ' + new Date().toLocaleString(),
+      '',
+      '## ' + labels.state,
+      snapshot(),
+      '',
+      '## ' + labels.predict,
+      a.predict || '',
+      '',
+      '## ' + labels.observe,
+      a.observe || '',
+      '',
+      '## ' + labels.explain,
+      a.explain || '',
+      '',
+      '## ' + labels.transfer,
+      a.transfer || ''
+    ].join('\n');
+  }
+  function setStatus(en, zh) { const el = qs('.lab-status'); if (el) el.textContent = currentLang() === 'zh' ? zh : en; }
+  function refreshState() { const el = qs('[data-lab-state]'); if (el) el.textContent = snapshot(); }
+  async function copyPacket() {
+    const text = packet();
+    try { await navigator.clipboard.writeText(text); setStatus('Copied local lab packet.', '已复制本地实验包。'); }
+    catch (_) { window.prompt('Copy this lab packet:', text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
+  }
+
+  function markdownToPrintableHtml(markdown) {
+    const escape = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const inline = value => escape(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    const lines = String(markdown).split(/\r?\n/);
+    let html = '', inList = false, inState = false;
+    const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
+    for (const raw of lines) {
+      const line = raw.trimEnd();
+      if (line.startsWith('# ')) { closeList(); html += '<h1>' + inline(line.slice(2)) + '</h1>'; inState=false; }
+      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = /state snapshot|状态记录/i.test(title); }
+      else if (line.startsWith('- ')) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inline(line.slice(2)) + '</li>'; }
+      else if (!line.trim()) { closeList(); }
+      else { closeList(); html += inState ? '<pre class="state">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
+    }
+    closeList(); return html;
+  }
+
+  function printPacket() {
+    const w = window.open('', '_blank');
+    if (!w) { setStatus('Popup blocked. Copy the packet instead.', '弹窗被拦截。请改用复制实验包。'); return; }
+    const rendered = markdownToPrintableHtml(packet());
+    const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+    setStatus('Print page opened.', '打印页面已打开。');
+  }
+  function clearDraft() {
+    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.value = '');
+    try { localStorage.removeItem(storageKey); } catch (_) {}
+    refreshState(); setStatus('Local draft cleared.', '本地草稿已清除。');
+  }
+  root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.addEventListener('input', saveDraft));
+  root.querySelector('[data-lab-action="copy"]')?.addEventListener('click', copyPacket);
+  root.querySelector('[data-lab-action="print"]')?.addEventListener('click', printPacket);
+  root.querySelector('[data-lab-action="refresh"]')?.addEventListener('click', () => { refreshState(); setStatus('State refreshed.', '状态已更新。'); });
+  root.querySelector('[data-lab-action="clear"]')?.addEventListener('click', clearDraft);
+  document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(applyLabLang, 0)));
+  document.addEventListener('change', refreshState);
+  document.addEventListener('click', (event) => { if (!(event.target instanceof HTMLTextAreaElement)) setTimeout(refreshState, 0); }, true);
+  loadDraft(); applyLabLang(); refreshState();
+})();
+</script>
+
+
+<script>
+(function() {
+  const VISUAL_CONFIG = {"intro":"Read the network as repeated transformation: inputs become hidden activations, activations become predictions, error becomes a gradient signal, and training updates weights.","zhIntro":"把神经网络看成重复变换：输入变成隐藏激活，激活变成预测，误差变成梯度信号，训练更新权重。","misread":"More hidden units do not automatically mean better learning; capacity without generalization can still fail.","zhMisread":"更多隐藏单元不一定代表学习更好；没有泛化的容量仍然会失败。","steps":[{"label":"Input pattern","zhLabel":"输入模式","text":"The dataset defines which geometric pattern the network must represent.","zhText":"数据集定义网络需要表示的几何模式。","selector":"#datasetSel","kind":"selected","liveLabel":"Dataset","zhLiveLabel":"数据集"},{"label":"Hidden transform","zhLabel":"隐藏变换","text":"Hidden layers bend the input space so a decision boundary can separate classes.","zhText":"隐藏层弯曲输入空间，使决策边界可以分离类别。","selector":"#h1V","kind":"text","liveLabel":"Hidden 1","zhLiveLabel":"隐藏层 1"},{"label":"Error signal","zhLabel":"误差信号","text":"Loss measures how far predictions are from targets and drives learning.","zhText":"损失衡量预测与目标的距离，并驱动学习。","selector":"#lossV","kind":"text","liveLabel":"Loss","zhLiveLabel":"损失"},{"label":"Training progress","zhLabel":"训练进展","text":"Accuracy and epoch count reveal whether the network is improving or stuck.","zhText":"准确率和轮数显示网络是在进步还是停滞。","selector":"#accV","kind":"text","liveLabel":"Accuracy","zhLiveLabel":"准确率"}],"fields":[{"label":"Dataset","zhLabel":"数据集","selector":"#datasetSel","kind":"selected"},{"label":"Hidden layer 1","zhLabel":"隐藏层 1","selector":"#h1V","kind":"text"},{"label":"Hidden layer 2","zhLabel":"隐藏层 2","selector":"#h2V","kind":"text"},{"label":"Epoch","zhLabel":"轮数","selector":"#epochV","kind":"text"},{"label":"Loss","zhLabel":"损失","selector":"#lossV","kind":"text"},{"label":"Accuracy","zhLabel":"准确率","selector":"#accV","kind":"text"}]};
+  const root = document.querySelector('.visual-explanation');
+  if (!root) return;
+  const flow = root.querySelector('[data-visual-flow]');
+  const intro = root.querySelector('[data-visual-intro]');
+  const snapshotBox = root.querySelector('[data-visual-snapshot]');
+  const misreadBox = root.querySelector('[data-visual-misread]');
+  function currentLang() { return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en'; }
+  function t(obj, key) { const lang = currentLang(); return (lang === 'zh' && obj['zh' + key[0].toUpperCase() + key.slice(1)]) || obj[key] || ''; }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? 'on' : 'off';
+    else if (field.kind === 'value') value = el.value;
+    else value = el.textContent.trim();
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? { label: field.label, zhLabel: field.zhLabel || field.label, value } : null;
+  }
+  function liveValue(step) {
+    if (!step.selector) return '';
+    const field = readField({ selector: step.selector, kind: step.kind || 'text', label: step.liveLabel || 'Live', zhLabel: step.zhLiveLabel || '实时' });
+    return field ? field.value : (step.fallback || '');
+  }
+  function renderVisualExplanation() {
+    const lang = currentLang();
+    root.querySelectorAll('[data-visual-en]').forEach(el => {
+      el.textContent = el.getAttribute(lang === 'zh' ? 'data-visual-zh' : 'data-visual-en') || el.textContent;
+    });
+    intro.textContent = lang === 'zh' ? VISUAL_CONFIG.zhIntro : VISUAL_CONFIG.intro;
+    misreadBox.textContent = lang === 'zh' ? VISUAL_CONFIG.zhMisread : VISUAL_CONFIG.misread;
+    flow.innerHTML = VISUAL_CONFIG.steps.map((step, idx) => {
+      const title = lang === 'zh' ? step.zhLabel : step.label;
+      const body = lang === 'zh' ? step.zhText : step.text;
+      const liveLabel = lang === 'zh' ? (step.zhLiveLabel || '实时') : (step.liveLabel || 'Live');
+      const live = liveValue(step);
+      const liveHtml = live ? '<span class="visual-live"><strong>' + escapeHtml(liveLabel) + '</strong><span>' + escapeHtml(live) + '</span></span>' : '';
+      return '<article class="visual-card" data-step="' + String(idx + 1).padStart(2, '0') + '"><h4>' + escapeHtml(title) + '</h4><p>' + escapeHtml(body) + '</p>' + liveHtml + '</article>';
+    }).join('');
+    const lines = (VISUAL_CONFIG.fields || []).map(readField).filter(Boolean).map(f => (lang === 'zh' ? f.zhLabel : f.label) + ': ' + f.value);
+    snapshotBox.textContent = lines.length ? lines.join('\n') : (lang === 'zh' ? '还没有捕捉到状态。请先运行或调整小程序。' : 'No state captured yet. Run or adjust the applet first.');
+  }
+  function escapeHtml(text) { return String(text).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+  let visualTimer = null;
+  function scheduleVisualRender() {
+    if (visualTimer) cancelAnimationFrame(visualTimer);
+    visualTimer = requestAnimationFrame(renderVisualExplanation);
+  }
+  document.addEventListener('change', scheduleVisualRender);
+  document.addEventListener('input', scheduleVisualRender);
+  document.addEventListener('click', () => setTimeout(scheduleVisualRender, 0), true);
+  document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(scheduleVisualRender, 0)));
+  setInterval(renderVisualExplanation, 1200);
+  renderVisualExplanation();
+})();
+</script>
+
+<!-- Privacy-friendly analytics: GoatCounter, cookieless. -->
+  <script>
+(function () {
+  const analyticsAllowedHost = location.hostname === 'lmdixon23.github.io';
+  const params = new URLSearchParams(location.search);
+  const analyticsDisabled = params.has('noanalytics') || params.get('analytics') === '0' || navigator.doNotTrack === '1';
+  if (!analyticsAllowedHost || analyticsDisabled) return;
+  const s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://gc.zgo.at/count.js';
+  s.dataset.goatcounter = 'https://lmdixon23.goatcounter.com/count';
+  document.head.appendChild(s);
+})();
+</script>
+
+<script>
+(function() {
+  const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "Dataset", "zhLabel": "数据集", "selector": "#datasetSel", "kind": "selected"}, {"label": "Hidden layer 1", "zhLabel": "隐藏层 1", "selector": "#h1V", "kind": "text"}, {"label": "Hidden layer 2", "zhLabel": "隐藏层 2", "selector": "#h2V", "kind": "text"}, {"label": "Epoch", "zhLabel": "轮数", "selector": "#epochV", "kind": "text"}, {"label": "Loss", "zhLabel": "损失", "selector": "#lossV", "kind": "text"}, {"label": "Accuracy", "zhLabel": "准确率", "selector": "#accV", "kind": "text"}]};
+  const layer = document.querySelector('.accessibility-layer');
+  if (!layer) return;
+  const intro = layer.querySelector('[data-a11y-intro]');
+  const stateGrid = layer.querySelector('[data-a11y-state-grid]');
+  const liveRegion = layer.querySelector('#a11yLiveRegion');
+  let renderTimer = 0;
+  let lastSummary = '';
+  function currentLang() {
+    return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+  }
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+  function localized(obj, key) {
+    const lang = currentLang();
+    const zhKey = 'zh' + key[0].toUpperCase() + key.slice(1);
+    return (lang === 'zh' && obj[zhKey]) || obj[key] || '';
+  }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? (currentLang() === 'zh' ? '开' : 'on') : (currentLang() === 'zh' ? '关' : 'off');
+    else if (field.kind === 'value') value = el.value;
+    else value = el.textContent.trim();
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? { label: localized(field, 'label'), value } : null;
+  }
+  function renderAccessibilityLayer(options = {}) {
+    const lang = currentLang();
+    layer.querySelectorAll('[data-a11y-en]').forEach(el => {
+      el.textContent = el.getAttribute(lang === 'zh' ? 'data-a11y-zh' : 'data-a11y-en') || el.textContent;
+    });
+    const copy = A11Y_CONFIG.copy[lang] || A11Y_CONFIG.copy.en;
+    intro.textContent = copy.intro;
+    layer.querySelector('[data-a11y-title]').textContent = copy.title;
+    layer.querySelector('[data-a11y-keyboard-title]').textContent = copy.keyboardTitle;
+    layer.querySelector('[data-a11y-keyboard-1]').textContent = copy.keyboard1;
+    layer.querySelector('[data-a11y-keyboard-2]').textContent = copy.keyboard2;
+    layer.querySelector('[data-a11y-keyboard-3]').textContent = copy.keyboard3;
+    layer.querySelector('[data-a11y-state-title]').textContent = copy.stateTitle;
+    layer.querySelector('[data-a11y-motion-title]').textContent = copy.motionTitle;
+    layer.querySelector('[data-a11y-motion-copy]').textContent = copy.motionCopy;
+    layer.querySelector('[data-a11y-note]').textContent = copy.note;
+    const fields = A11Y_CONFIG.fields.map(readField).filter(Boolean);
+    if (fields.length) {
+      stateGrid.innerHTML = fields.map(field => '<dt>' + escapeHtml(field.label) + '</dt><dd>' + escapeHtml(field.value) + '</dd>').join('');
+    } else {
+      stateGrid.innerHTML = '<dt>' + escapeHtml(copy.emptyLabel) + '</dt><dd>' + escapeHtml(copy.emptyValue) + '</dd>';
+    }
+    const summary = fields.map(field => field.label + ': ' + field.value).join('; ') || copy.emptyValue;
+    if (options.announce && liveRegion && summary !== lastSummary) {
+      liveRegion.textContent = copy.livePrefix + summary;
+    }
+    lastSummary = summary;
+  }
+  function markVisualRegions() {
+    const descriptionId = 'a11yStateSummary';
+    document.querySelectorAll('canvas, svg, [role="img"]').forEach((el, index) => {
+      if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+      if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', A11Y_CONFIG.copy.en.visualLabel + ' ' + (index + 1));
+      const describedBy = (el.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+      if (!describedBy.includes(descriptionId)) {
+        describedBy.push(descriptionId);
+        el.setAttribute('aria-describedby', describedBy.join(' '));
+      }
+    });
+  }
+  function scheduleAccessibilityRender(announce = true) {
+    clearTimeout(renderTimer);
+    renderTimer = setTimeout(() => renderAccessibilityLayer({ announce }), 100);
+  }
+  document.addEventListener('input', () => scheduleAccessibilityRender(true), true);
+  document.addEventListener('change', () => scheduleAccessibilityRender(true), true);
+  document.addEventListener('click', event => {
+    if (event.target && event.target.closest && event.target.closest('button, [role="button"], canvas, svg, select, input')) {
+      scheduleAccessibilityRender(true);
+    }
+  }, true);
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ' || event.key.startsWith('Arrow') || event.key === 'Tab') {
+      scheduleAccessibilityRender(false);
+    }
+  }, true);
+  setInterval(() => {
+    if (!document.hidden) renderAccessibilityLayer({ announce: false });
+  }, 1500);
+  markVisualRegions();
+  renderAccessibilityLayer({ announce: false });
+  window.renderAccessibilityLayer = renderAccessibilityLayer;
+})();
+</script>
+
+<script>
+(function () {
+  document.querySelectorAll('[data-current-year]').forEach(el => { el.textContent = new Date().getFullYear(); });
+})();
+</script>
+
+
+<script id="learner-content-system">
+(() => {
+  const profile = {"slug":"neural-network","en":{"title":"Tiny Neural Network","big":"Train a small classifier and watch its decision boundary change. Compare linear layers with nonlinear activation functions to see what added depth can and cannot represent.","primer":"A neural network transforms inputs in stages. A hidden layer helps only when its activation function introduces a nonlinear change.","terms":[{"term":"Input feature","definition":"A measured value supplied to the network."},{"term":"Hidden layer","definition":"An intermediate set of units that transforms the input before the final prediction."},{"term":"Activation function","definition":"A transformation applied to a unit’s weighted input; a nonlinear activation lets the network bend a boundary."},{"term":"Rectified linear unit (ReLU)","definition":"An activation that keeps positive values and replaces negative values with zero."},{"term":"Loss","definition":"A number measuring how far the predictions are from the target labels."},{"term":"Stochastic gradient descent (SGD)","definition":"An optimization method that repeatedly changes weights to reduce loss."}],"scenarios":[{"title":"A linear model is enough for separated blobs","question":"When is a straight decision boundary all the model needs?","run":"Use the two-blob data with no hidden layer and a linear activation, then train.","predict":"Predict whether adding hidden units would meaningfully improve this easy dataset.","explain":"Explain why a simple linear separator already matches the geometry."},{"title":"A linear model cannot separate two moons","question":"What pattern cannot be divided by one straight line?","run":"Switch to the two-moons data while keeping the network linear.","predict":"Predict where the loss will stop and which regions will remain misclassified.","explain":"Use the curved class shapes to explain the limit of a linear boundary."},{"title":"A ReLU hidden layer bends the boundary","question":"What changes when the hidden layer uses a nonlinear activation?","run":"Use one hidden layer with rectified linear unit (ReLU) activation on the moon data and train again.","predict":"Predict whether the boundary will remain straight or form several connected segments.","explain":"Explain how nonlinear hidden units create a representation the output layer can separate."},{"title":"Several linear layers still collapse to one linear map","question":"Why does adding depth fail when every activation is linear?","run":"Use two hidden layers but set the activation to linear, then train on the moon data.","predict":"Predict whether the extra parameters will create a curved boundary.","explain":"Explain why composing linear transformations still produces one linear transformation."},{"title":"Exclusive OR requires a nonlinear representation","question":"Why can opposite corners belong to the same class while a straight line still fails?","run":"Use the exclusive-OR (XOR) data with nonlinear hidden layers and train.","predict":"Predict how many separate regions the decision boundary must create.","explain":"Explain how the hidden representation rearranges the points into a separable pattern."}]},"zh":{"title":"微型神经网络","big":"训练一个小型分类器并观察决策边界变化。比较线性层与非线性激活函数，理解增加深度能表示什么、不能表示什么。","primer":"神经网络分阶段转换输入。只有当激活函数引入非线性变化时，隐藏层才会提供新的表示能力。","terms":[{"term":"输入特征","definition":"提供给网络的测量数值。"},{"term":"隐藏层","definition":"在最终预测前转换输入的中间单元层。"},{"term":"激活函数","definition":"应用于单元加权输入的变换；非线性激活能让网络弯曲边界。"},{"term":"修正线性单元（ReLU）","definition":"保留正值并把负值变为零的激活函数。"},{"term":"损失","definition":"衡量预测与目标标签相差多远的数值。"},{"term":"随机梯度下降（SGD）","definition":"反复调整权重以降低损失的优化方法。"}],"scenarios":[{"title":"分离点群只需要线性模型","question":"什么时候一条直线决策边界已经足够？","run":"使用两个点群数据，不设置隐藏层并选择线性激活，然后训练。","predict":"预测增加隐藏单元是否会明显改善这个简单数据。","explain":"解释为什么简单线性分隔已经符合数据几何。"},{"title":"线性模型无法分开双月","question":"什么模式无法被一条直线分开？","run":"切换到双月数据，同时保持网络为线性。","predict":"预测损失会停在哪里，以及哪些区域仍会分类错误。","explain":"用弯曲类别形状解释线性边界的限制。"},{"title":"ReLU 隐藏层弯曲边界","question":"隐藏层使用非线性激活后，什么会改变？","run":"在双月数据上使用一个带修正线性单元（ReLU）激活的隐藏层并再次训练。","predict":"预测边界会保持直线还是形成多个相连线段。","explain":"解释非线性隐藏单元如何创建输出层可以分开的表示。"},{"title":"多个线性层仍等价于一个线性映射","question":"为什么所有激活都线性时，增加深度仍失败？","run":"使用两个隐藏层，但把激活设为线性，并在双月数据上训练。","predict":"预测额外参数是否会产生弯曲边界。","explain":"解释线性变换的组合为什么仍是一个线性变换。"},{"title":"异或需要非线性表示","question":"为什么对角角点可属于同一类，而一条直线仍无法分开？","run":"使用异或（XOR）数据和非线性隐藏层进行训练。","predict":"预测决策边界需要创建多少个分离区域。","explain":"解释隐藏表示如何重新组织点，使它们可以被分开。"}]}};
+  window.APPLET_LEARNER_PROFILE = profile;
+  const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;
+  try {
+    STRINGS.en.title = profile.en.title; STRINGS.zh.title = profile.zh.title;
+    STRINGS.en['tldr-strong'] = 'What this applet shows'; STRINGS.zh['tldr-strong'] = '这个工具展示什么';
+    STRINGS.en['tldr-body'] = profile.en.big; STRINGS.zh['tldr-body'] = profile.zh.big;
+    profile.en.scenarios.forEach((item,i) => { STRINGS.en['tour'+i+'name']=item.title; STRINGS.en['tour'+i+'desc']=item.run; if (typeof LESSON_TOUR !== 'undefined' && LESSON_TOUR[i]) { LESSON_TOUR[i].name=item.title; LESSON_TOUR[i].description=item.run; } });
+    profile.zh.scenarios.forEach((item,i) => { STRINGS.zh['tour'+i+'name']=item.title; STRINGS.zh['tour'+i+'desc']=item.run; });
+  } catch (_) {}
+  function applyCoreCopy(){
+    const c=copy();
+    document.title=c.title+' | AI Playgrounds';
+    const h=document.querySelector('.header-main h1'); if(h) h.textContent=c.title;
+    const strong=document.querySelector('.tldr strong'); if(strong) strong.textContent=currentLocale()==='zh'?'这个工具展示什么':'What this applet shows';
+    const body=document.querySelector('.tldr span'); if(body) body.textContent=c.big;
+    const jump=document.querySelector('.jump-link'); if(jump) jump.textContent=currentLocale()==='zh'?'↓ 阅读分步解释':'↓ Read the step-by-step explanation';
+  }
+  function stateData(){
+    const values={};
+    document.querySelectorAll('#main input,#main select,#main textarea').forEach(el=>{
+      if(!el.id||el.closest('.classroom-lab'))return;
+      if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;
+      values[el.id]=el.type==='checkbox'?el.checked:el.value;
+    });
+    return {applet:profile.en.title,slug:profile.slug,exported_at:new Date().toISOString(),values};
+  }
+  function toolbar(){
+    const actions=document.querySelector('.header-actions'); if(!actions||actions.dataset.standardized==='1')return;
+    const share=document.getElementById('shareLink'), embed=document.getElementById('embedLink'), reset=document.getElementById('hardReset');
+    const csv=document.getElementById('csvExport'), png=document.getElementById('exportPng');
+    const more=document.createElement('details'); more.className='header-more';
+    const summary=document.createElement('summary'); summary.className='header-png'; summary.setAttribute('aria-haspopup','menu'); more.appendChild(summary);
+    const menu=document.createElement('div'); menu.className='header-more-menu'; menu.setAttribute('role','menu'); more.appendChild(menu);
+    if(embed){embed.textContent='📎 Embed in LMS';menu.appendChild(embed)}
+    const jsonBtn=document.createElement('button');jsonBtn.type='button';jsonBtn.className='header-png';jsonBtn.dataset.exportState='';menu.appendChild(jsonBtn);
+    if(csv){csv.textContent='📊 Data table (.csv)';menu.appendChild(csv)}
+    if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
+    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
+    actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
+    window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
+    window.refreshAppletToolbar();
+    document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
+  }
+  function terms(){
+    const inner=document.querySelector('.interactive-inner'); if(!inner||inner.querySelector('.key-terms'))return;
+    const d=document.createElement('details');d.className='key-terms';d.open=true;
+    d.innerHTML='<summary><span data-key-summary></span></summary><div class="key-terms-panel"><p class="key-terms-intro" data-key-intro></p><dl class="key-terms-grid" data-key-grid></dl></div>';
+    const first=inner.querySelector(':scope > details');inner.insertBefore(d,first||inner.firstChild);
+    window.renderAppletKeyTerms=()=>{const c=copy();d.querySelector('[data-key-summary]').textContent=currentLocale()==='zh'?'🔑 先学这些术语':'🔑 Key terms before the explanation';d.querySelector('[data-key-intro]').textContent=c.primer;d.querySelector('[data-key-grid]').innerHTML=c.terms.map(x=>'<div class="key-term"><dt>'+x.term+'</dt><dd>'+x.definition+'</dd></div>').join('')};
+    window.renderAppletKeyTerms();
+  }
+  function essayPrimer(){
+    const essay=document.querySelector('article#essay');if(!essay||essay.querySelector('.essay-primer'))return;
+    const box=document.createElement('section');box.className='essay-primer';essay.insertBefore(box,essay.firstChild);
+    window.renderEssayPrimer=()=>{const c=copy();const heading=currentLocale()==='zh'?'阅读前先准备':'Before you read';const termHeading=currentLocale()==='zh'?'本页会使用的术语':'Terms used in this explanation';box.innerHTML='<h2>'+heading+'</h2><p>'+c.primer+'</p><h3>'+termHeading+'</h3><dl class="essay-primer-terms">'+c.terms.map(x=>'<div><dt>'+x.term+'</dt><dd>'+x.definition+'</dd></div>').join('')+'</dl>'};window.renderEssayPrimer();
+  }
+  function patchScenarioData(){
+    try{if(typeof renderScenarioGallery==='function')renderScenarioGallery();if(typeof renderTour==='function')renderTour()}catch(_){}
+  }
+  window.refreshLearnerContent=()=>{applyCoreCopy();window.renderAppletKeyTerms?.();window.renderEssayPrimer?.();window.refreshAppletToolbar?.()};
+  applyCoreCopy();toolbar();terms();essayPrimer();patchScenarioData();
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(window.refreshLearnerContent,20)));
+})();
+</script>
+
+<script id="product-consolidation-script">
+(() => {
+  const slug = location.pathname.split('/').filter(Boolean).slice(-2,-1)[0] || 'neural-network';
+  const inner = document.querySelector('.interactive-inner');
+  if (!inner || inner.querySelector('.learning-mode-shell')) return;
+  const oldDeck = inner.querySelector(':scope > .learning-deck');
+  if (oldDeck) { [...oldDeck.children].forEach(el => inner.insertBefore(el, oldDeck)); oldDeck.remove(); }
+  const details = [...inner.querySelectorAll(':scope > details')];
+  if (!details.length) return;
+  const modeFor = d => {
+    if (d.matches('.visual-explanation,.lesson-tour,.key-terms')) return 'understand';
+    if (d.matches('.worksheet,.classroom-lab')) return 'classroom';
+    if (d.matches('.accessibility-layer')) return 'access';
+    return 'explore';
+  };
+  const lang = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const labels = {explore:['Explore','探索'],understand:['Understand','理解'],classroom:['Use in class','课堂使用'],access:['Text and keyboard','文本与键盘']};
+  const intros = {explore:['Start with the featured experiment, then use the scenarios to test a prediction.','从精选实验开始，再使用情境检验预测。'],understand:['Open the mechanism view and lesson sequence when you need to explain why the result changed.','需要解释结果为什么变化时，打开机制视图和课程序列。'],classroom:['Collect reasoning with the worksheet or the local student response packet.','使用练习题或本地学生回答包收集推理。'],access:['Use the text-state description and keyboard guidance when the visual display is not enough.','当可视显示不足时，使用文本状态说明和键盘指导。']};
+  const shell=document.createElement('section');shell.className='learning-mode-shell';shell.setAttribute('aria-label','Applet learning modes');
+  shell.innerHTML='<div class="learning-mode-head"><div><h2 data-mode-heading></h2><p data-mode-copy></p></div><div class="learning-mode-tools"><button type="button" class="copy-experiment" data-copy-experiment>Copy this experiment</button></div></div><div class="learning-mode-tabs" role="tablist"></div><div class="experiment-status" aria-live="polite"></div>';
+  const tabs=shell.querySelector('.learning-mode-tabs');const panels={};
+  Object.keys(labels).forEach((key,i)=>{const b=document.createElement('button');b.type='button';b.className='learning-mode-tab';b.role='tab';b.dataset.mode=key;b.id='mode-tab-'+key;b.setAttribute('aria-controls','mode-panel-'+key);tabs.appendChild(b);const p=document.createElement('div');p.className='learning-mode-panel';p.id='mode-panel-'+key;p.role='tabpanel';p.setAttribute('aria-labelledby',b.id);p.innerHTML='<div class="mode-intro"></div>';shell.appendChild(p);panels[key]=p});
+  inner.insertBefore(shell,details[0]);details.forEach(d=>{const mode=modeFor(d);if(d.matches('.scenario-gallery,.visual-explanation,.classroom-lab,.accessibility-layer,.signature-challenge'))d.classList.add('mode-wide');panels[mode].appendChild(d)});
+  const sig=panels.explore.querySelector('.signature-challenge');if(sig){panels.explore.insertBefore(sig,panels.explore.querySelector('.mode-intro').nextSibling);sig.open=true;const summary=sig.querySelector('summary span,summary');if(summary&&lang()==='en')summary.textContent='✨ Featured experiment';const body=sig.querySelector('.signature-challenge-panel')||sig.querySelector(':scope > div');if(body&&!body.querySelector('.featured-actions')){const actions=document.createElement('div');actions.className='featured-actions';actions.innerHTML='<button type="button" class="step-btn" data-start-featured>Start featured experiment</button>';body.appendChild(actions)}}
+  const lab=panels.classroom.querySelector('.classroom-lab summary span');if(lab&&lang()==='en')lab.textContent='🧪 Student response packet';
+  const a11y=panels.access.querySelector('.accessibility-layer summary span');if(a11y&&lang()==='en')a11y.textContent='♿ Text and keyboard support';
+  let active=new URL(location.href).searchParams.get('mode')||'explore';if(!panels[active])active='explore';
+  function setMode(mode,write=true){active=mode;Object.entries(panels).forEach(([k,p])=>p.hidden=k!==mode);shell.querySelectorAll('.learning-mode-tab').forEach(b=>{const on=b.dataset.mode===mode;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});shell.querySelector('[data-mode-heading]').textContent=labels[mode][lang()==='zh'?1:0];shell.querySelector('[data-mode-copy]').textContent=intros[mode][lang()==='zh'?1:0];panels[mode].querySelector('.mode-intro').innerHTML='<strong>'+labels[mode][lang()==='zh'?1:0]+'.</strong> '+intros[mode][lang()==='zh'?1:0];if(write){const u=new URL(location.href);u.searchParams.set('mode',mode);history.replaceState(null,'',u)}}
+  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
+  function statePayload(){const out={};inner.querySelectorAll('select,input').forEach(el=>{if(!el.id||el.closest('.classroom-lab')||['button','submit'].includes(el.type))return;if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;out[el.id]=el.type==='checkbox'?el.checked:el.value});return out}
+  function encode(obj){return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))}
+  function decode(s){try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch{return null}}
+  const status=shell.querySelector('.experiment-status');shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('state',encode(statePayload()));try{await navigator.clipboard.writeText(u.href);status.textContent=lang()==='zh'?'实验链接已复制。':'Experiment link copied.'}catch{prompt('Copy this experiment URL',u.href)}};
+  const featuredIndex={"search-pathfinding":0,"bayes-classifier":0,"overfitting":1,"knn-classifier":4,"wumpus-world":4,"cnf-sat":2,"bayes-network":1,"hill-climbing":1,"kmeans":4,"neural-network":1,"convolution":4,"q-learning-gridworld":2};shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('details:not(.signature-challenge)')?.setAttribute('open','')});
+  document.addEventListener('click',e=>{const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode','explore');history.replaceState(null,'',u)});
+  const p=new URL(location.href).searchParams;const restore=()=>{const obj=decode(p.get('state')||'');if(obj)Object.entries(obj).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});const n=Number(p.get('scenario'));if(Number.isInteger(n)){panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click()}if(p.get('featured')==='1')sig?.setAttribute('open','')};
+  function refineCards(){
+    const profile=window.APPLET_LEARNER_PROFILE||{};
+    const locale=lang()==='zh'?'zh':'en';
+    const items=(profile[locale]&&profile[locale].scenarios)||[];
+    const labels=locale==='zh'?['核心问题','运行并观察','先预测','运行后解释']:['Core question','Run and watch','Predict first','Explain afterward'];
+    panels.explore.querySelectorAll('.scenario-card').forEach((card,i)=>{
+      const item=items[i]||{};const h=card.querySelector('h3');
+      if(h&&item.title)h.textContent=(locale==='zh'?'情境 ':'Scenario ')+(i+1)+': '+item.title;
+      const metas=card.querySelectorAll('.scenario-meta');const values=[item.question,item.run,item.predict,item.explain];
+      metas.forEach((meta,j)=>{if(!values[j])return;const strong=meta.querySelector('strong');if(strong)strong.textContent=labels[j]+': ';let node=strong?strong.nextSibling:null;if(node)node.textContent=' '+values[j];else meta.appendChild(document.createTextNode(' '+values[j]));});
+    });
+  }
+  setTimeout(()=>{refineCards();window.renderAppletKeyTerms?.();restore()},250);document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.()},20)));setMode(active,false);
+})();
+</script>
 </body>
 </html>

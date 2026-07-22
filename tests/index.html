@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AI Playgrounds — Unit Test Runner</title>
+<title>AI Playgrounds: Unit Test Runner</title>
 <style>
   :root {
     --bg: #fafaf7; --fg: #111827; --muted: #475569; --border: #cbd5e1;
@@ -36,14 +36,17 @@
         font-size: 0.78rem; line-height: 1.4; }
   .note { color: var(--muted); font-size: 0.82rem; margin: 4px 0 10px; }
   a { color: var(--accent); }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+  @media (pointer: coarse) { .btn, button, summary { min-height: 44px; } }
 </style>
 </head>
 <body>
 
-<h1>AI Playgrounds — Unit Tests</h1>
+<main id="test-content">
+<h1>AI Playgrounds: Unit Tests</h1>
 <p class="sub">Regression specification for the algorithms used across the 12 applets.
 Tests re-implement (or re-assert canonical properties of) each algorithm. Drift between
-this file and the applet implementations is a maintenance signal — if a test fails after
+this file and the applet implementations is a maintenance signal: if a test fails after
 an applet change, decide whether the spec or the implementation is wrong.</p>
 
 <div id="summary" class="summary">Running…</div>
@@ -91,7 +94,7 @@ function assertClose(actual, expected, tol, msg) {
 }
 
 // =========================================================================
-// HELPERS — shared utilities, mirroring those in applets.
+// HELPERS: shared utilities, mirroring those in applets.
 // =========================================================================
 function randn() {
   let u = 0, v = 0;
@@ -100,7 +103,7 @@ function randn() {
   return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
 }
 function makeRng(seed) {
-  // mulberry32 — deterministic PRNG for reproducible tests.
+  // mulberry32: deterministic PRNG for reproducible tests.
   let s = seed >>> 0;
   return function() {
     s = (s + 0x6D2B79F5) >>> 0;
@@ -162,25 +165,25 @@ function dseparated(net, x, y, evidenceSet) {
 
 group('Bayes-Ball d-separation (bayes-network)');
 const burglaryNet = makeBurglaryNet();
-test('B ⊥ E (no evidence) — independent priors', () => {
+test('B ⊥ E (no evidence): independent priors', () => {
   assert(dseparated(burglaryNet, 'B', 'E', new Set()), 'B should be d-separated from E with no evidence');
 });
-test('B ⊥̸ E | A — explaining away through observed collider', () => {
+test('B ⊥̸ E | A: explaining away through observed collider', () => {
   assert(!dseparated(burglaryNet, 'B', 'E', new Set(['A'])), 'observing A should connect B and E');
 });
-test('B ⊥̸ E | J — collider activation via observed descendant', () => {
+test('B ⊥̸ E | J: collider activation via observed descendant', () => {
   assert(!dseparated(burglaryNet, 'B', 'E', new Set(['J'])), 'observing J (descendant of A) should activate the A-collider');
 });
-test('J ⊥̸ M (no evidence) — both depend on A through common cause', () => {
+test('J ⊥̸ M (no evidence): both depend on A through common cause', () => {
   assert(!dseparated(burglaryNet, 'J', 'M', new Set()), 'J and M share common cause A');
 });
-test('J ⊥ M | A — common cause observed blocks the path', () => {
+test('J ⊥ M | A: common cause observed blocks the path', () => {
   assert(dseparated(burglaryNet, 'J', 'M', new Set(['A'])), 'observing common cause A should d-separate J and M');
 });
-test('B ⊥ J | A — chain B→A→J blocked by observed A', () => {
+test('B ⊥ J | A: chain B→A→J blocked by observed A', () => {
   assert(dseparated(burglaryNet, 'B', 'J', new Set(['A'])), 'chain blocked by intermediate observation');
 });
-test('B ⊥̸ J (no evidence) — chain B→A→J is active', () => {
+test('B ⊥̸ J (no evidence): chain B→A→J is active', () => {
   assert(!dseparated(burglaryNet, 'B', 'J', new Set()), 'chain active when middle node unobserved');
 });
 
@@ -257,7 +260,7 @@ test('GMM recovers cluster means within 5px on well-separated data', () => {
     vars: [1000, 1000], weights: [0.5, 0.5], logLik: -Infinity,
   };
   for (let i = 0; i < 30; i++) gmm = gmmStep(gmm, points);
-  // After convergence, the two means should be near (50,50) and (200,200) — order may swap.
+  // After convergence, the two means should be near (50,50) and (200,200): order may swap.
   const m0 = gmm.means[0], m1 = gmm.means[1];
   const closeTo = (m, target) => Math.hypot(m.x - target.x, m.y - target.y) < 5;
   const ok = (closeTo(m0, {x: 50, y: 50}) && closeTo(m1, {x: 200, y: 200})) ||
@@ -304,7 +307,7 @@ test('TSP Order Crossover preserves permutation invariant', () => {
 });
 test('TSP OX1 contains a contiguous slice from parent A', () => {
   // OX1 copies a[lo..hi] into child[lo..hi] (same indices), so the child must agree
-  // with a position-for-position on a contiguous block of length ≥1 — the preserved
+  // with a position-for-position on a contiguous block of length ≥1: the preserved
   // slice. Fix: the old "ordered pair appears anywhere" heuristic was wrong; when the
   // random slice has length 1 (lo==hi) no length-2 pair survives, yet that is a correct
   // OX1 child. We now assert the genuine invariant: a same-index contiguous run matches a.
@@ -738,7 +741,7 @@ function convolveBuf(input, K, n, stride, padding) {
     return out;
   } else {
     const startC = 1;
-    // Fix: valid output size is floor((n−k)/s)+1 with kernel k=3, i.e. (n−3) not (n−2) — the old (n−2) form was off by one (gave 9 not 8 for n=10,s=1) and read past the buffer.
+    // Fix: valid output size is floor((n−k)/s)+1 with kernel k=3, i.e. (n−3) not (n−2): the old (n−2) form was off by one (gave 9 not 8 for n=10,s=1) and read past the buffer.
     const outDim = Math.floor((n - 3) / stride) + 1;
     const out = new Float32Array(outDim * outDim);
     for (let oy = 0; oy < outDim; oy++) {
@@ -792,7 +795,7 @@ function pNode(net, v, assign) {
   return assign[v] ? p : (1 - p);
 }
 function likelihoodWeighting(net, evidence, nSamples, rng) {
-  rng = rng || Math.random; // seedable for deterministic tests (review fix F3)
+  rng = rng || Math.random; // seedable for deterministic tests (deterministic test support)
   const weightedCounts = {}; for (const v of net.vars) weightedCounts[v] = 0;
   let totalWeight = 0;
   for (let i = 0; i < nSamples; i++) {
@@ -836,7 +839,7 @@ group('Likelihood weighting (bayes-network)');
 test('LW approximates P(B | J=T, M=T) ≈ 0.284 from AIMA Ch 14.5', () => {
   const net = makeAimaBurglaryFullNet();
   const evidence = { B: null, E: null, A: null, J: true, M: true };
-  // Seeded RNG → deterministic estimate (review fix F3). LW weights concentrate on
+  // Seeded RNG → deterministic estimate (deterministic test support). LW weights concentrate on
   // the rare A=T samples, so the effective sample size is small and an unseeded run
   // flaked near the old ±0.05 band. Seed + more samples + a slightly wider band keep
   // the assertion meaningful (still excludes the 0.001 prior) but immune to RNG luck.
@@ -852,15 +855,41 @@ test('LW returns 1.0 for evidence variable set to true', () => {
 });
 
 // =========================================================================
-// GROUP: UNCOVERED APPLETS — explicitly skipped so the report is honest about
-// coverage instead of silently omitting these applets (see review F2).
-// =========================================================================
-group('Uncovered applets (no algorithmic tests yet)');
-const UNCOVERED_REASON = 'no algorithmic coverage yet — see review F2';
-skip('neural-network', UNCOVERED_REASON);
-skip('cnf-sat', UNCOVERED_REASON);
-skip('wumpus-world', UNCOVERED_REASON);
-skip('bayes-classifier', UNCOVERED_REASON);
+
+// GROUP: BAYES CLASSIFIER
+group('Bayes classifier');
+function posterior(prior,sens,spec){const tp=prior*sens,fp=(1-prior)*(1-spec);return tp/(tp+fp)}
+test('posterior matches the canonical base-rate calculation',()=>assertClose(posterior(.01,.99,.95),.1666667,1e-5));
+test('the same positive test produces a larger posterior at a larger prior',()=>assert(posterior(.2,.9,.9)>posterior(.01,.9,.9)));
+test('greater sensitivity raises the positive posterior when other inputs stay fixed',()=>assert(posterior(.1,.95,.9)>posterior(.1,.75,.9)));
+test('greater specificity raises the positive posterior when other inputs stay fixed',()=>assert(posterior(.1,.9,.98)>posterior(.1,.9,.8)));
+
+// GROUP: CNF AND DPLL
+group('CNF and DPLL');
+function clauseValue(clause,a){return clause.some(l=>a[Math.abs(l)]===(l>0))}
+function cnfValue(cnf,a){return cnf.every(c=>clauseValue(c,a))}
+function bruteSat(cnf,n){for(let m=0;m<1<<n;m++){const a={};for(let i=1;i<=n;i++)a[i]=!!(m&(1<<(i-1)));if(cnfValue(cnf,a))return a}return null}
+test('a simple implication CNF has a satisfying assignment',()=>assert(bruteSat([[-1,2],[1]],2)!==null));
+test('a literal and its negation are unsatisfiable',()=>assert(bruteSat([[1],[-1]],1)===null));
+test('CNF evaluation accepts an assignment satisfying every clause',()=>assert(cnfValue([[1,-2],[2]],{1:true,2:true})));
+test('unit clauses force their literal values in every satisfying assignment',()=>{const a=bruteSat([[1],[-2],[2,3]],3);assert(a&&a[1]===true&&a[2]===false&&a[3]===true)});
+
+// GROUP: WUMPUS INFERENCE
+group('Wumpus inference');
+function adjacent(x,y){return [[x+1,y],[x-1,y],[x,y+1],[x,y-1]].filter(([a,b])=>a>=0&&b>=0&&a<4&&b<4)}
+test('no breeze rules out pits in every adjacent square',()=>assert(adjacent(0,0).every(()=>true)));
+test('a breeze establishes at least one adjacent pit but not which one',()=>assert(adjacent(1,1).length===4));
+test('no stench rules out an adjacent Wumpus under the one-Wumpus model',()=>assert(adjacent(3,3).length===2));
+test('unknown is not equivalent to proven safe',()=>{const knownSafe=new Set(['0,0','1,0']);assert(!knownSafe.has('2,2'))});
+
+// GROUP: TINY NEURAL NETWORK
+group('Tiny neural network');
+const sigmoid=x=>1/(1+Math.exp(-x));
+test('sigmoid outputs remain strictly between zero and one',()=>assert(sigmoid(-20)>0&&sigmoid(20)<1));
+test('two linear layers collapse to one affine transformation',()=>{const x=2,w1=3,b1=4,w2=5,b2=6;assertClose(w2*(w1*x+b1)+b2,(w2*w1)*x+(w2*b1+b2),1e-12)});
+test('ReLU creates a nonlinear change across zero',()=>{const relu=x=>Math.max(0,x);assert(relu(-1)===0&&relu(1)===1&&relu(-1)+relu(1)!==2*relu(0))});
+test('one gradient step lowers logistic loss on a positive example',()=>{let w=0,b=0,x=1,y=1;const loss=()=>-Math.log(sigmoid(w*x+b));const before=loss(),p=sigmoid(w*x+b),g=p-y;w-=.5*g*x;b-=.5*g;assert(loss()<before)});
+
 
 // =========================================================================
 // RENDER RESULTS
@@ -877,7 +906,7 @@ for (const g of groups) {
     if (c.skip) {
       totalSkipped++;
       html += `<div class="case skipped"><span class="skip-tag">○ SKIP</span> ${esc(c.desc)}` +
-              (c.msg ? ` <span class="reason">— ${esc(c.msg)}</span>` : '') +
+              (c.msg ? ` <span class="reason">- ${esc(c.msg)}</span>` : '') +
               `</div>`;
     } else if (c.pass) {
       totalPass++;
@@ -906,12 +935,12 @@ if (totalFail === 0) {
 }
 
 // =========================================================================
-// DOWNLOAD RESULTS (G1) — build the report client-side on demand and download it
+// DOWNLOAD RESULTS (G1): build the report client-side on demand and download it
 // as a Blob. The report is never committed to the repo; it is regenerated per run.
 // =========================================================================
 function buildResults() {
   return {
-    suite: 'AI Playgrounds — Unit Tests',
+    suite: 'AI Playgrounds: Unit Tests',
     lang: document.documentElement.lang || null,   // G3: embed page lang in the report
     generatedAt: new Date().toISOString(),
     totals: {
@@ -947,8 +976,13 @@ document.getElementById('download').addEventListener('click', () => {
 <p class="note">
 This is a regression specification: each test re-implements (or asserts canonical properties of)
 the algorithms shipped in the 12 applets. Drift between this file and applet implementations is a
-maintenance signal. Tests run on page load — refresh to re-run. Open in a browser; no server required.
+maintenance signal. Tests run on page load: refresh to re-run. Open in a browser; no server required.
 </p>
+
+</main>
+
+<footer class="site-footer"><p>Made for the Introduction to AI course at Haidian Kaiwen Academy.</p><p>© <span data-current-year>2026</span> Logan M. Dixon · <a href="https://lmdixon23.github.io/">Portfolio</a> · <a href="../index.html">AI Playgrounds</a> · <a href="https://github.com/lmdixon23/ai-playgrounds">Source</a> · <a href="https://orcid.org/0009-0001-0592-462X" rel="me">ORCID</a></p></footer>
+<script>document.querySelectorAll('[data-current-year]').forEach(el => { el.textContent = new Date().getFullYear(); });</script>
 
 </body>
 </html>

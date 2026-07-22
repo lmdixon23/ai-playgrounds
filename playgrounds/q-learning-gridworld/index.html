@@ -3,25 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Visualizing Q-Learning</title>
+<title>Q-Learning Gridworld | AI Playgrounds</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E">
-<meta name="description" content="Interactive visualization of Q-learning in a gridworld. Watch the agent's value function spread out from the goal as it learns through trial and error.">
+<meta name="description" content="Train an agent through trial and error. Watch rewards update action values, compare exploration settings, and see a policy emerge without a prewritten route.">
 <link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/q-learning-gridworld/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/q-learning-gridworld/">
-<meta property="og:title" content="Visualizing Q-Learning — AI Playgrounds">
-<meta property="og:description" content="Interactive visualization of Q-learning in a gridworld. Watch the agent's value function spread out from the goal as it learns through trial and error.">
+<meta property="og:title" content="Q-Learning Gridworld | AI Playgrounds">
+<meta property="og:description" content="Train an agent through trial and error. Watch rewards update action values, compare exploration settings, and see a policy emerge without a prewritten route.">
 <meta property="og:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Visualizing Q-Learning — AI Playgrounds">
-<meta name="twitter:description" content="Interactive visualization of Q-learning in a gridworld. Watch the agent's value function spread out from the goal as it learns through trial and error.">
+<meta name="twitter:title" content="Q-Learning Gridworld | AI Playgrounds">
+<meta name="twitter:description" content="Train an agent through trial and error. Watch rewards update action values, compare exploration settings, and see a policy emerge without a prewritten route.">
 <meta name="twitter:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Visualizing Q-Learning — AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/q-learning-gridworld/","description":"Interactive visualization of Q-learning in a gridworld. Watch the agent's value function spread out from the goal as it learns through trial and error.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan Dixon"}}
-</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Q-Learning Gridworld | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/q-learning-gridworld/","description":"Train an agent through trial and error. Watch rewards update action values, compare exploration settings, and see a policy emerge without a prewritten route.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
 <style>
   :root {
-    --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #15803d;
+    --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #b91c1c;
     --card: #fff; --border: #e5e7eb; --soft: #f9fafb;
     --goal: #16a34a; --pit: #dc2626; --wall: #475569; --agent: #2563eb;
   }
@@ -50,7 +48,7 @@
   .tldr strong { color: rgba(255,255,255,0.85); font-size: 0.72rem; letter-spacing: 0.08em;
                   text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px; }
   .interactive { background: var(--card); padding: 24px; border-bottom: 1px solid var(--border); }
-  .interactive-inner { max-width: 1280px; margin: 0 auto; }
+  .interactive-inner { max-width: min(1280px, 100%); margin: 0 auto; }
   .bento { display: grid; grid-template-columns: minmax(300px, 360px) minmax(0, 1fr); gap: 16px; align-items: start; margin-bottom: 14px; }
   .bento-side, .bento-main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
   .bento-cell { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; min-width: 0; }
@@ -131,6 +129,10 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition: none !important; animation: none !important; }
   }
+  /* Touch devices: comfortable tap targets without changing desktop layout. */
+  @media (pointer: coarse) {
+    button, .step-btn, .tp-btn, .group button, select, summary { min-height: 44px; }
+  }
   /* === dark mode === */
   body.dark-mode {
     --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8;
@@ -138,7 +140,7 @@
   }
   body.dark-mode .essay .lede { color: #cbd5e1; }
   body.dark-mode .essay .for-teachers { background: #0f172a; }
-  /* True canvas dark mode — render fn picks bg directly. */
+  /* True canvas dark mode: render fn picks bg directly. */
   body.dark-mode .header-reset,
   body.dark-mode .lang-switch button:not(.active),
   body.dark-mode .header-theme,
@@ -154,7 +156,7 @@
                   font-size: 0.85rem; font-family: inherit; }
   .header-png:hover { background: var(--soft); }
   body.dark-mode .header-png { background: var(--card); color: var(--fg); }
-  /* ===== Slider styling — native themed control via accent-color (consistent across browsers) ===== */
+  /* ===== Slider styling: native themed control via accent-color (consistent across browsers) ===== */
   input[type="range"] { accent-color: var(--accent); height: 28px; cursor: pointer; }
   /* embed mode. Strip chrome so the applet fits cleanly in an LMS iframe. */
   body.embed-mode .page-header,
@@ -162,20 +164,365 @@
   body.embed-mode article.essay,
   body.embed-mode .jump-anchor { display: none !important; }
   body.embed-mode .interactive { padding: 12px; border-bottom: none; }
-  /* ===== Shared a11y + contrast tokens (review fixes: F4 keyboard focus, F6 banner contrast) ===== */
+  /* ===== Shared a11y + contrast tokens (keyboard focus and contrast tokens) ===== */
   button:focus-visible, a:focus-visible, select:focus-visible,
   input:focus-visible, textarea:focus-visible, summary:focus-visible {
     outline: 2px solid var(--accent); outline-offset: 2px;
   }
   .tldr { background: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), var(--accent); }
   .tldr strong { color: #fff; }
+
+  /* Student response packet: local-only assignment packet across the applet family. */
+  .classroom-lab .lab-panel { margin-top:8px; padding:14px; background:var(--card); border:1px solid var(--border); border-radius:8px; }
+  .classroom-lab .lab-intro { margin:0 0 12px; color:var(--muted); font-size:0.88rem; line-height:1.5; }
+  .classroom-lab .lab-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+  .classroom-lab .lab-field { display:flex; flex-direction:column; gap:4px; }
+  .classroom-lab .lab-field label { font-family:-apple-system,system-ui,sans-serif; font-size:0.82rem; font-weight:700; color:var(--accent); }
+  .classroom-lab textarea { min-height:86px; resize:vertical; width:100%; border:1px solid var(--border); border-radius:6px; padding:8px; font:inherit; color:var(--fg); background:var(--bg); }
+  .classroom-lab .lab-state { margin-top:12px; padding:10px 12px; border:1px dashed var(--border); border-radius:8px; background:var(--soft); color:var(--muted); font-family:ui-monospace,monospace; font-size:0.78rem; white-space:pre-wrap; }
+  .classroom-lab .lab-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; align-items:center; }
+  .classroom-lab .lab-status { color:var(--muted); font-size:0.82rem; min-height:1.2em; }
+  @media (max-width:480px) { .classroom-lab .lab-grid { grid-template-columns:1fr; } .classroom-lab .lab-actions button { width:100%; } }
+
+
+  /* Scenario Gallery: visible, reusable entry points generated from the lesson-tour scenarios. */
+  .scenario-gallery-panel {
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .scenario-gallery-intro {
+    margin: 0 0 10px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .scenario-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .scenario-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--card) 88%, var(--soft));
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 100%;
+  }
+  .scenario-card h3 {
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.98rem;
+    line-height: 1.25;
+  }
+  .scenario-card p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .scenario-card .scenario-meta {
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  .scenario-card .scenario-meta strong { color: var(--fg); }
+  .scenario-card button {
+    margin-top: auto;
+    align-self: flex-start;
+  }
+  @media (max-width: 480px) {
+    .scenario-card-grid { grid-template-columns: 1fr; }
+    .scenario-card button { width: 100%; }
+  }
+
+
+
+  /* Supporting learning components. */
+  .visual-explanation-panel {
+    margin-top: 8px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .visual-explanation-intro {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .visual-flow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+  }
+  .visual-card {
+    position: relative;
+    min-height: 132px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, var(--accent)), var(--card));
+    overflow: hidden;
+  }
+  .visual-card::before {
+    content: attr(data-step);
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    color: color-mix(in srgb, var(--accent) 62%, transparent);
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+  .visual-card h4 {
+    margin: 0 28px 8px 0;
+    color: var(--accent);
+    font-size: 0.9rem;
+    line-height: 1.25;
+  }
+  .visual-card p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .visual-live {
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 8px;
+    background: var(--soft);
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.74rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .visual-live strong { color: var(--accent); font-family: -apple-system, system-ui, sans-serif; font-size: 0.72rem; }
+  .visual-watch-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .visual-snapshot, .visual-misread {
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: var(--soft);
+  }
+  .visual-snapshot strong, .visual-misread strong {
+    display: block;
+    color: var(--accent);
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 0.78rem;
+    margin-bottom: 6px;
+  }
+  .visual-snapshot pre {
+    margin: 0;
+    white-space: pre-wrap;
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+  .visual-misread p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  @media (max-width: 620px) {
+    .visual-watch-grid { grid-template-columns: 1fr; }
+  }
+
+
+
+  /* Supporting learning components. */
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 10px;
+    z-index: 10000;
+    padding: 10px 14px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 8px;
+    font-family: -apple-system, system-ui, sans-serif;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .skip-link:focus { left: 12px; }
+  :focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+  [tabindex="-1"]:focus { outline: none; }
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+  .accessibility-layer {
+    margin-top: 12px;
+  }
+  .accessibility-panel {
+    margin-top: 8px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .accessibility-intro {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .accessibility-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .accessibility-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--card) 92%, var(--soft));
+    padding: 12px;
+  }
+  .accessibility-card h3 {
+    margin: 0 0 8px;
+    color: var(--accent);
+    font-size: 0.92rem;
+  }
+  .accessibility-card p,
+  .accessibility-card li {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .accessibility-card ul {
+    margin: 0;
+    padding-left: 1.15rem;
+  }
+  .a11y-state-grid {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 6px 10px;
+    margin: 0;
+    font-size: 0.84rem;
+  }
+  .a11y-state-grid dt {
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .a11y-state-grid dd {
+    margin: 0;
+    color: var(--fg);
+    overflow-wrap: anywhere;
+  }
+  .accessibility-note {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+  @media (max-width: 620px) {
+    .accessibility-grid { grid-template-columns: 1fr; }
+    .a11y-state-grid { grid-template-columns: 1fr; }
+    .a11y-state-grid dt { margin-top: 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html:focus-within { scroll-behavior: auto !important; }
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+
+
+  /* Supporting learning components. */
+  .interactive-inner { max-width: min(1280px, 100%); }
+  .scenario-card,
+  .accessibility-card,
+  .classroom-lab .lab-panel,
+  .accessibility-panel,
+  .signature-challenge-panel {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, var(--soft)), var(--card));
+  }
+  .signature-challenge-panel {
+    margin-top: 12px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .signature-challenge-panel strong { display:block; color:var(--accent); margin-bottom:4px; }
+  .signature-challenge-panel p { margin: 6px 0 0; color: var(--muted); font-size: 0.88rem; line-height: 1.5; }
+
+
+  /* Supporting learning components. */
+  .learning-deck { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:12px; align-items:start; }
+  .learning-deck > details { margin-top:0 !important; min-width:0; }
+  .learning-deck > .scenario-gallery,
+  .learning-deck > .visual-explanation,
+  .learning-deck > .classroom-lab,
+  .learning-deck > .accessibility-layer { grid-column:1 / -1; }
+  .learning-deck > details > summary { background:var(--card) !important; }
+  .scenario-gallery-panel, .scenario-card, .accessibility-panel, .accessibility-card,
+  .classroom-lab .lab-panel, .signature-challenge-panel {
+    background:linear-gradient(180deg,color-mix(in srgb,var(--card) 90%,var(--accent)),var(--card)) !important;
+  }
+  .scenario-card { box-shadow:0 6px 18px rgba(15,23,42,.05); transition:border-color .16s, box-shadow .16s, transform .16s; }
+  .scenario-card.applied { border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 22%,transparent),0 10px 24px rgba(15,23,42,.08); transform:translateY(-1px); }
+  .scenario-card .scenario-meta:last-of-type { margin-bottom:2px; }
+  @media (max-width:900px) { .learning-deck { grid-template-columns:1fr; } .learning-deck > details { grid-column:1 !important; } }
+
 </style>
+
+
+<style id="learner-house-style">
+/* Learner-facing terminology, compact glossary, and consistent action hierarchy. */
+.header-actions{align-items:center}.header-more{position:relative}.header-more>summary{list-style:none;cursor:pointer;user-select:none}.header-more>summary::-webkit-details-marker{display:none}.header-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:50;min-width:220px;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 16px 35px rgba(15,23,42,.18);display:grid;gap:5px}.header-more-menu button{width:100%;text-align:left;justify-content:flex-start;white-space:normal}.key-terms-panel{padding:14px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}.key-terms-intro{margin:0 0 10px;color:var(--muted)}.key-terms-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.key-term{padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:color-mix(in srgb,var(--card) 97%,var(--accent))}.key-term dt{font-weight:800;color:var(--fg);margin:0 0 3px}.key-term dd{margin:0;color:var(--muted);font-size:.84rem;line-height:1.45}.essay-primer{margin:0 0 22px;padding:15px 17px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--card) 96%,var(--accent));border-radius:10px}.essay-primer h2{margin:0 0 6px!important;font-size:1.05rem!important}.essay-primer p{margin:0 0 10px!important}.essay-primer h3{margin:12px 0 7px;font-size:.92rem}.essay-primer-terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0}.essay-primer-terms>div{padding:8px 9px;border:1px solid var(--border);border-radius:8px;background:var(--card)}.essay-primer-terms dt{font-weight:800}.essay-primer-terms dd{margin:2px 0 0;color:var(--muted);font-size:.82rem;line-height:1.4}.scenario-card .scenario-meta{line-height:1.5}.scenario-card .scenario-meta strong{display:block;margin-bottom:2px}.header-actions>.header-png,.header-actions>.header-theme,.header-actions>.header-reset,.header-more>summary{min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px}
+@media(max-width:720px){.essay-primer-terms{grid-template-columns:1fr}.header-actions{width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}.header-actions>button,.header-actions>.header-more,.header-more>summary{width:100%;justify-content:center}.header-more-menu{right:auto;left:0;max-width:min(290px,90vw)}.key-terms-grid{grid-template-columns:1fr}}
+</style>
+
+<style id="product-consolidation-style">
+/* Product information architecture and restrained visual hierarchy. */
+.learning-deck{display:contents!important}.learning-mode-shell{margin-top:16px;border-top:1px solid var(--border);padding-top:15px}.learning-mode-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px}.learning-mode-head h2{margin:0;font-size:1rem;color:var(--fg)}.learning-mode-head p{margin:2px 0 0;color:var(--muted);font-size:.82rem}.learning-mode-tools{display:flex;gap:8px;flex-wrap:wrap}.learning-mode-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:5px;background:var(--soft);border:1px solid var(--border);border-radius:14px}.learning-mode-tab{min-height:42px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-weight:750;padding:8px 10px}.learning-mode-tab[aria-selected="true"]{background:var(--card);color:var(--accent);box-shadow:0 3px 12px rgba(15,23,42,.08)}.learning-mode-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px;align-items:start}.learning-mode-panel[hidden]{display:none}.learning-mode-panel>details{margin:0!important;min-width:0}.learning-mode-panel>details.mode-wide{grid-column:1/-1}.learning-mode-panel>details>summary{background:var(--card)!important;border:1px solid var(--border)!important;border-left:4px solid color-mix(in srgb,var(--accent) 62%,var(--border))!important;border-radius:10px!important;color:var(--fg)!important;font-weight:750!important;padding:10px 12px!important}.learning-mode-panel>details[open]>summary{border-color:color-mix(in srgb,var(--accent) 55%,var(--border))!important}.learning-mode-panel .scenario-gallery-panel,.learning-mode-panel .accessibility-panel,.learning-mode-panel .classroom-lab .lab-panel{background:var(--card)!important}.scenario-card,.accessibility-card{background:color-mix(in srgb,var(--card) 97%,var(--accent))!important;box-shadow:none!important}.scenario-card.applied{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 78%,var(--accent)),color-mix(in srgb,var(--card) 88%,var(--accent-2,#6366f1)))!important;border-color:var(--accent)!important;box-shadow:0 12px 28px rgba(15,23,42,.10)!important}.signature-challenge>div,.signature-challenge .signature-challenge-panel{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 80%,var(--accent)),color-mix(in srgb,var(--card) 90%,var(--accent-2,#6366f1)))!important;border:1px solid color-mix(in srgb,var(--accent) 40%,var(--border))!important}.visual-card{background:linear-gradient(180deg,color-mix(in srgb,var(--card) 92%,var(--accent)),var(--card))!important}.featured-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.scenario-card button,.featured-actions button{border:0!important;border-radius:8px!important;background:var(--accent)!important;color:#fff!important;font-weight:750!important;padding:8px 11px!important}.scenario-card button:hover,.featured-actions button:hover{filter:brightness(1.05)}.copy-experiment{font-size:.82rem}.experiment-status{color:var(--muted);font-size:.78rem;min-height:1.2em;margin-top:6px}.mode-intro{grid-column:1/-1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--muted);font-size:.86rem}.mode-intro strong{color:var(--fg)}
+@container (min-width:980px){.scenario-card-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.visual-flow{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
+.interactive-inner{container-type:inline-size;max-width:min(1320px,100%)!important}
+@media(max-width:820px){.learning-mode-head{align-items:flex-start;flex-direction:column}.learning-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-mode-panel{grid-template-columns:1fr}.learning-mode-panel>details{grid-column:1!important}.copy-experiment{width:100%}}
+</style>
+
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to applet controls</a>
 
 <header class="page-header">
   <div class="header-utility">
-    <a class="back" href="../../" data-i18n="back-link">← Back to all playgrounds</a>
+    <a class="back" href="../../index.html" data-i18n="back-link">← Back to all playgrounds</a>
     <div class="header-prefs">
       <button class="header-theme" id="themeToggle" aria-label="Toggle dark or light theme"
               title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
@@ -186,7 +533,7 @@
     </div>
   </div>
   <div class="header-main">
-    <h1 data-i18n="title">Visualizing Q-Learning</h1>
+    <h1 data-i18n="title">Q-Learning Gridworld</h1>
     <div class="header-actions">
       <button class="header-png" id="shareLink"
               title="Copy a URL that re-opens this exact configuration in another browser.">🔗 Share</button>
@@ -204,10 +551,10 @@
 
 <aside class="tldr">
   <strong data-i18n="tldr-strong">The big idea</strong>
-  <span data-i18n="tldr-body">An agent learns to find the goal by random trial and error. Its Q-values — one number per (state, action) — grow outward from the goal as reward "propagates backward" through experience.</span>
+  <span data-i18n="tldr-body">An agent learns to find the goal by random trial and error. Its Q-values: one number per (state, action): grow outward from the goal as reward "propagates backward" through experience.</span>
 </aside>
 
-<section class="interactive">
+<section class="interactive" id="main" tabindex="-1" role="main">
 <div class="interactive-inner">
 
 <div class="bento">
@@ -308,8 +655,8 @@
       <div class="stats-strip">
         <div class="stat-item"><div class="label">Episodes</div><div class="val" id="epV">0</div></div>
         <div class="stat-item"><div class="label">Total steps</div><div class="val" id="stV">0</div></div>
-        <div class="stat-item"><div class="label">Last return</div><div class="val" id="retV">—</div></div>
-        <div class="stat-item"><div class="label">Avg return (20)</div><div class="val" id="avgV">—</div></div>
+        <div class="stat-item"><div class="label">Last return</div><div class="val" id="retV">-</div></div>
+        <div class="stat-item"><div class="label">Avg return (20)</div><div class="val" id="avgV">-</div></div>
       </div>
 
     </div><!-- /.bento-cell controls -->
@@ -336,22 +683,22 @@
     <div class="bento-cell">
       <!-- Bellman backup: the exact local Q-update for the agent's last move (the highlight on the grid shows where). -->
       <div id="bellmanPanel" style="padding:10px 14px; background:var(--soft); border:1px solid var(--border); border-radius:8px;">
-        <div style="font-size:0.82rem; color:var(--accent); font-weight:600; font-family:-apple-system,system-ui,sans-serif; margin-bottom:6px;" data-i18n="bellman-title">🔄 Bellman backup — the agent's last Q-update</div>
-        <div id="bellmanOut" style="font-family:ui-monospace,monospace; font-size:0.9rem; line-height:1.8; overflow-x:auto;"><span style="color:var(--muted);" data-i18n="bellman-empty">Step the agent (or run one episode) to see a single Q-value update — value bootstraps from the cell it lands on back into the cell it left.</span></div>
+        <div style="font-size:0.82rem; color:var(--accent); font-weight:600; font-family:-apple-system,system-ui,sans-serif; margin-bottom:6px;" data-i18n="bellman-title">🔄 Bellman backup: the agent's last Q-update</div>
+        <div id="bellmanOut" style="font-family:ui-monospace,monospace; font-size:0.9rem; line-height:1.8; overflow-x:auto;"><span style="color:var(--muted);" data-i18n="bellman-empty">Step the agent (or run one episode) to see a single Q-value update: value bootstraps from the cell it lands on back into the cell it left.</span></div>
       </div>
     </div><!-- /.bento-cell bellman -->
 
     <div class="bento-cell">
       <!-- linear function approximation (bridge to deep RL).
            Same gridworld, but Q(s,a) = w_a · φ(s) instead of a table. Far fewer parameters
-           generalize across cells — the deep-RL insight in miniature. -->
+           generalize across cells: the deep-RL insight in miniature. -->
       <details style="margin-top:0;">
         <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.9rem; color:var(--accent); font-weight:600;">
           <span data-i18n="fa-summary">🧮 Linear function approximation (bridge to deep RL)</span>
         </summary>
         <div style="margin-top:10px; padding:12px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
           <p style="margin:0 0 6px; color:var(--muted); font-size:0.85rem;" data-i18n="fa-intro">
-            Instead of a Q-table with one entry per (state, action), we approximate Q(s,a) = w_a · φ(s). For a 7×9 grid that's 252 numbers tabular vs only 36 with this 9-tile coding (4 actions × 9 tile weights). The trade-off: weights generalize across cells — fewer parameters, but the model can't represent arbitrary value functions.
+            Instead of a Q-table with one entry per (state, action), we approximate Q(s,a) = w_a · φ(s). For a 7×9 grid that's 252 numbers tabular vs only 36 with this 9-tile coding (4 actions × 9 tile weights). The trade-off: weights generalize across cells: fewer parameters, but the model can't represent arbitrary value functions.
           </p>
           <p style="margin:0 0 8px; color:var(--muted); font-size:0.8rem; font-style:italic;" data-i18n="fa-update">
             Update rule: w_a ← w_a + α · (target − Q(s,a)) · φ(s). One TD step changes ALL the active tile weights at once.
@@ -364,7 +711,7 @@
           </div>
           <div>
             <canvas id="faCv" width="540" height="280" style="border:1px solid var(--border); width:100%; height:auto; background:white;"></canvas>
-            <div id="faStats" style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted); margin-top:4px;">—</div>
+            <div id="faStats" style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted); margin-top:4px;">-</div>
           </div>
         </div>
       </details>
@@ -372,7 +719,7 @@
 
     <div class="bento-cell">
       <!-- Q-learning vs SARSA on the cliff-walk environment (Sutton & Barto Ch 6.5).
-           Self-contained — runs both algorithms in parallel on identical cliff worlds and shows the
+           Self-contained: runs both algorithms in parallel on identical cliff worlds and shows the
            resulting policies side-by-side. Demonstrates the "Q-learning takes the cliff edge, SARSA
            plays safe" textbook result. -->
       <details style="margin-top:0;">
@@ -393,12 +740,12 @@
             <div>
               <div style="font-family:-apple-system,system-ui,sans-serif; font-weight:600; color:#0284c7; margin-bottom:4px;">Q-learning (off-policy)</div>
               <canvas id="cwQcv" width="384" height="160" style="border:1px solid var(--border); width:100%; height:auto; image-rendering:pixelated; background:white;"></canvas>
-              <div id="cwQstats" style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted); margin-top:4px;">—</div>
+              <div id="cwQstats" style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted); margin-top:4px;">-</div>
             </div>
             <div>
               <div style="font-family:-apple-system,system-ui,sans-serif; font-weight:600; color:#16a34a; margin-bottom:4px;">SARSA (on-policy)</div>
               <canvas id="cwScv" width="384" height="160" style="border:1px solid var(--border); width:100%; height:auto; image-rendering:pixelated; background:white;"></canvas>
-              <div id="cwSstats" style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted); margin-top:4px;">—</div>
+              <div id="cwSstats" style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted); margin-top:4px;">-</div>
             </div>
           </div>
           <div style="margin-top:8px;">
@@ -412,6 +759,53 @@
   </div><!-- /.bento-main -->
 </div><!-- /.bento -->
 
+
+  <!-- Scenario gallery. Visible, reusable entry points generated from the lesson-tour scenarios. -->
+  <details class="scenario-gallery" open style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="sg-summary">🎯 Try these scenarios first</span>
+    </summary>
+    <div class="scenario-gallery-panel">
+      <p class="scenario-gallery-intro" data-i18n="sg-intro">Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.</p>
+      <div class="scenario-card-grid" id="scenarioGalleryCards" aria-live="polite"></div>
+    </div>
+  </details>
+
+
+  <!-- Signature challenge. A one-move comparison that gives this applet a memorable first task. -->
+  <details class="signature-challenge" open style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span>✨ Featured comparison</span>
+    </summary>
+    <div class="signature-challenge-panel">
+      <strong>Featured comparison</strong>
+      <p>Run a short training pass and a longer one. The grid does not receive a plan; it gradually builds value through repeated backup.</p>
+      <p><em>Compare early and later policies, then inspect which cells changed most.</em></p>
+    </div>
+  </details>
+
+  <!-- Supporting learning component. -->
+  <details class="visual-explanation" open style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-visual-en="🧭 Visual explanation" data-visual-zh="🧭 可视化解释镜头">🧭 Visual explanation</span>
+    </summary>
+    <div class="visual-explanation-panel">
+      <p class="visual-explanation-intro" data-visual-intro></p>
+      <div class="visual-flow" data-visual-flow></div>
+      <div class="visual-watch-grid">
+        <div class="visual-snapshot">
+          <strong data-visual-en="Live state to watch" data-visual-zh="要观察的实时状态">Live state to watch</strong>
+          <pre data-visual-snapshot>No state captured yet. Run or adjust the applet first.</pre>
+        </div>
+        <div class="visual-misread">
+          <strong data-visual-en="Misread to avoid" data-visual-zh="避免的误读">Misread to avoid</strong>
+          <p data-visual-misread></p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+
   <!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
   <details class="lesson-tour" style="margin-top:12px;">
     <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
@@ -420,9 +814,9 @@
     <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
       <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
         <strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
-        <strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">—</strong>
+        <strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">-</strong>
       </div>
-      <p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">—</p>
+      <p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">-</p>
       <div style="display:flex; gap:8px; align-items:center;">
         <button class="step-btn secondary" id="tourPrev" data-i18n="tour-prev">← Prev</button>
         <button class="step-btn" id="tourApply" data-i18n="tour-apply">▶ Apply this scenario</button>
@@ -440,9 +834,9 @@
       <div class="ws-q" id="ws1">
         <p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">Default grid. Set ε=0. Reset Q-values. Train continuously for ~500 episodes. Does the agent reliably reach the goal?</span></p>
         <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="0"> <span data-i18n="ws1o0">Yes — ε=0 makes it greedy, and greedy always heads straight for the highest reward.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="1"> <span data-i18n="ws1o1">Yes — 500 episodes is more than enough training time for any setting.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="2"> <span data-i18n="ws1o2">No — with ε=0 and all Q-values tied at 0, it never explores and can't discover the goal.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="0"> <span data-i18n="ws1o0">Yes: ε=0 makes it greedy, and greedy always heads straight for the highest reward.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="1"> <span data-i18n="ws1o1">Yes: 500 episodes is more than enough training time for any setting.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="2"> <span data-i18n="ws1o2">No: with ε=0 and all Q-values tied at 0, it never explores and can't discover the goal.</span></label>
         </div>
         <button class="step-btn" id="ws1btn" data-i18n="ws-check">Check</button>
         <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
@@ -450,9 +844,9 @@
       <div class="ws-q" id="ws2" style="margin-top:10px;">
         <p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Set γ=0, ε=0.2. Reset Q. Train. Q-values (green color) appear:</span></p>
         <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="0"> <span data-i18n="ws2o0">Only in cells adjacent to the goal/pit — γ=0 means no future reward propagates backward.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="1"> <span data-i18n="ws2o1">Everywhere — every visited cell still accumulates value over many episodes.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="2"> <span data-i18n="ws2o2">Nowhere — γ=0 zeroes out every Q-value, so nothing turns green.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="0"> <span data-i18n="ws2o0">Only in cells adjacent to the goal/pit: γ=0 means no future reward propagates backward.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="1"> <span data-i18n="ws2o1">Everywhere: every visited cell still accumulates value over many episodes.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="2"> <span data-i18n="ws2o2">Nowhere: γ=0 zeroes out every Q-value, so nothing turns green.</span></label>
         </div>
         <button class="step-btn" id="ws2btn" data-i18n="ws-check">Check</button>
         <span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
@@ -460,15 +854,84 @@
       <div class="ws-q" id="ws3" style="margin-top:10px;">
         <p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Default grid, γ=0.9. Compare α=0.05 vs α=0.8 (same training time, slip=0). The α=0.8 Q-values evolve:</span></p>
         <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="0"> <span data-i18n="ws3o0">More stably — a bigger α averages over more updates, smoothing out the noise.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="1"> <span data-i18n="ws3o1">Less stably — α=0.8 replaces 80% of the old Q each step, so values jump around erratically.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="2"> <span data-i18n="ws3o2">Identically — α only changes how fast it converges, not how smooth the path is.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="0"> <span data-i18n="ws3o0">More stably: a bigger α averages over more updates, smoothing out the noise.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="1"> <span data-i18n="ws3o1">Less stably: α=0.8 replaces 80% of the old Q each step, so values jump around erratically.</span></label>
+          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="2"> <span data-i18n="ws3o2">Identically: α only changes how fast it converges, not how smooth the path is.</span></label>
         </div>
         <button class="step-btn" id="ws3btn" data-i18n="ws-check">Check</button>
         <span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
       </div>
     </div>
   </details>
+
+  <!-- Student response packet. Local-only: students copy or print their own response packet; the site stores nothing on a server. -->
+  <details class="classroom-lab" style="margin-top:8px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-lab-en="🧪 Student response packet" data-lab-zh="🧪 课堂实验模式">🧪 Student response packet</span>
+    </summary>
+    <div class="lab-panel">
+      <p class="lab-intro" data-lab-en="Predict how exploration and discounting affect learning, train the agent, then explain how value propagates from reward." data-lab-zh="先预测探索和折扣如何影响学习，再训练智能体，然后解释价值如何从奖励传播。">Predict how exploration and discounting affect learning, train the agent, then explain how value propagates from reward.</p>
+      <div class="lab-grid">
+        <div class="lab-field">
+          <label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
+          <textarea id="lab-predict" data-lab-answer="predict" data-lab-en="What happens if epsilon is 0 before the goal has been discovered?" data-lab-zh="如果还没有发现目标时 ε 为 0，会发生什么？" placeholder="What happens if epsilon is 0 before the goal has been discovered?"></textarea>
+        </div>
+        <div class="lab-field">
+          <label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
+          <textarea id="lab-observe" data-lab-answer="observe" data-lab-en="Train two settings. Record the visible Q-value pattern, reward pattern, or policy difference." data-lab-zh="训练两组设置。记录可见的 Q 值模式、奖励模式或策略差异。" placeholder="Train two settings. Record the visible Q-value pattern, reward pattern, or policy difference."></textarea>
+        </div>
+        <div class="lab-field">
+          <label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
+          <textarea id="lab-explain" data-lab-answer="explain" data-lab-en="How did gamma, epsilon, or alpha change learning in your run?" data-lab-zh="在你的运行中，γ、ε 或 α 如何改变学习？" placeholder="How did gamma, epsilon, or alpha change learning in your run?"></textarea>
+        </div>
+        <div class="lab-field">
+          <label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
+          <textarea id="lab-transfer" data-lab-answer="transfer" data-lab-en="Give a task where exploration is necessary before exploitation becomes useful." data-lab-zh="举一个任务，说明先探索后利用为什么必要。" placeholder="Give a task where exploration is necessary before exploitation becomes useful."></textarea>
+        </div>
+      </div>
+      <div class="lab-state" data-lab-state aria-live="polite">State snapshot appears here.</div>
+      <div class="lab-actions">
+        <button class="step-btn" type="button" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态">↻ Refresh state</button>
+        <button class="step-btn" type="button" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包">📋 Copy packet</button>
+        <button class="step-btn secondary" type="button" data-lab-action="print" data-lab-en="🖨 Print packet" data-lab-zh="🖨 打印实验包">🖨 Print packet</button>
+        <button class="step-btn secondary" type="button" data-lab-action="clear" data-lab-en="Clear local draft" data-lab-zh="清除本地草稿">Clear local draft</button>
+        <span class="lab-status" aria-live="polite"></span>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- Supporting learning component. -->
+  <details class="accessibility-layer" open>
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-a11y-en="♿ Text and keyboard support" data-a11y-zh="♿ 无障碍和文本状态层">♿ Text and keyboard support</span>
+    </summary>
+    <div class="accessibility-panel" role="region" aria-labelledby="a11yLayerTitle">
+      <h2 id="a11yLayerTitle" class="sr-only" data-a11y-title>Text and keyboard support</h2>
+      <p class="accessibility-intro" data-a11y-intro></p>
+      <div class="accessibility-grid">
+        <section class="accessibility-card" aria-labelledby="a11yKeyboardTitle">
+          <h3 id="a11yKeyboardTitle" data-a11y-keyboard-title>Keyboard path</h3>
+          <ul>
+            <li data-a11y-keyboard-1>Use Tab and Shift+Tab to move through controls.</li>
+            <li data-a11y-keyboard-2>Use Enter or Space on buttons, and arrow keys on sliders or select controls.</li>
+            <li data-a11y-keyboard-3>The visual region is focusable and described by the state summary below.</li>
+          </ul>
+        </section>
+        <section class="accessibility-card" aria-labelledby="a11yStateTitle">
+          <h3 id="a11yStateTitle" data-a11y-state-title>Text state summary</h3>
+          <dl class="a11y-state-grid" id="a11yStateSummary" data-a11y-state-grid></dl>
+        </section>
+        <section class="accessibility-card" aria-labelledby="a11yMotionTitle">
+          <h3 id="a11yMotionTitle" data-a11y-motion-title>Reduced motion and non-visual support</h3>
+          <p data-a11y-motion-copy>Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.</p>
+        </section>
+      </div>
+      <p class="accessibility-note" data-a11y-note>Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.</p>
+      <div id="a11yLiveRegion" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+    </div>
+  </details>
+
 
   <div class="jump-anchor"><a href="#essay" class="jump-link">↓ Read the explanation</a></div>
 </div>
@@ -479,7 +942,7 @@
   <p class="lede">
     Reinforcement learning answers a question that supervised learning can't:
     <em>how does an agent learn to act when there's no teacher to tell it the right answer?</em>
-    Q-learning's answer is simple and powerful — try things, see what reward you get, and remember.
+    Q-learning's answer is simple and powerful: try things, see what reward you get, and remember.
   </p>
 
   <h2>The Q-table</h2>
@@ -488,7 +951,7 @@
     The agent maintains a number <code>Q(state, action)</code> for every cell of the grid and
     every action it might take from that cell. This number estimates "if I take this action from
     this state and then play optimally forever after, how much total reward will I collect?"
-    At the start, every Q-value is zero — the agent knows nothing.
+    At the start, every Q-value is zero: the agent knows nothing.
   </p>
 
   <h2>The Bellman update</h2>
@@ -503,7 +966,7 @@
   </p>
 
   <p>
-    The bracketed quantity is the <em>temporal-difference error</em> — the difference between
+    The bracketed quantity is the <em>temporal-difference error</em>: the difference between
     what the agent expected (<code>Q(s, a)</code>) and what it actually saw (the reward plus the
     discounted best value of the next state). α controls how much the agent moves toward the
     new estimate; γ controls how much it cares about that "best value of the next state" versus
@@ -512,7 +975,7 @@
 
   <div class="aha">
     The Q-values literally spread outward from the goal. Watch the green color expand cell by
-    cell as the agent stumbles upon the goal a few times — each visit nudges the Q-value of the
+    cell as the agent stumbles upon the goal a few times: each visit nudges the Q-value of the
     cell just outside, which on the next visit nudges the cell outside <em>that</em>, and so on.
     That's "reward propagating backward through experience."
   </div>
@@ -526,20 +989,20 @@
   </p>
 
   <ul>
-    <li><strong>Q-learning</strong> uses <code>r + γ · max<sub>a'</sub> Q(s', a')</code> —
+    <li><strong>Q-learning</strong> uses <code>r + γ · max<sub>a'</sub> Q(s', a')</code> -
       always the best possible next action. <em>Off-policy</em>: the policy used to act (ε-greedy)
       is different from the policy used to evaluate (greedy). Bold, optimistic, sometimes overestimates.</li>
     <li><strong>SARSA</strong> uses <code>r + γ · Q(s', a')</code>, where <code>a'</code> is the
       action the agent actually picks next (using ε-greedy). <em>On-policy</em>: the policy used
       to act is the same one being evaluated. Tends to be more cautious near cliffs because it
       accounts for the chance of taking a risky exploration step.</li>
-    <li><strong>Expected SARSA</strong> uses <code>r + γ · Σ<sub>a'</sub> π(a'|s') · Q(s', a')</code> —
+    <li><strong>Expected SARSA</strong> uses <code>r + γ · Σ<sub>a'</sub> π(a'|s') · Q(s', a')</code> -
       the expected next-state value under the current policy. A smoother on-policy alternative
       to SARSA; lower variance because it averages over all possible next actions instead of just
       one sampled one.</li>
     <li><strong>Monte Carlo (first-visit control)</strong> waits until the end of an episode, then
       updates each visited (s, a) toward the full return <code>G<sub>t</sub></code> from that point
-      forward. No bootstrapping at all — pure samples. The "Step" button is disabled in MC mode
+      forward. No bootstrapping at all: pure samples. The "Step" button is disabled in MC mode
       because MC updates only happen at episode end.</li>
   </ul>
 
@@ -567,14 +1030,14 @@
     might be better. That's <em>exploitation only</em>. If it always took random actions, it
     would never get good at anything. That's <em>exploration only</em>. Q-learning's standard
     fix is the <strong>ε-greedy</strong> policy: with probability ε take a random action, otherwise
-    take the best one known so far. Watch what happens when you slide ε all the way to 0 — the
+    take the best one known so far. Watch what happens when you slide ε all the way to 0: the
     agent gets stuck in whatever wrong path it happened to find first.
   </p>
 
   <h2>The role of the step penalty</h2>
 
   <p>
-    Without a small per-step penalty, the agent has no reason to find a <em>short</em> path —
+    Without a small per-step penalty, the agent has no reason to find a <em>short</em> path -
     just any path that eventually reaches the goal. Slide step reward to 0 and watch the agent
     learn meandering, beautiful, useless routes. The −0.04 default is borrowed from Russell &amp;
     Norvig's textbook gridworld and is a real engineering knob in production RL.
@@ -584,7 +1047,7 @@
 
   <p>
     Real RL uses neural networks (deep Q-learning, DQN) when the state space is too big to fit
-    in a table — chess has more states than atoms in the observable universe. Real RL also has
+    in a table: chess has more states than atoms in the observable universe. Real RL also has
     to handle partial observability, continuous actions, and credit assignment over hundreds of
     steps. But the heart is exactly what you see here: a Bellman update, propagating signal
     backward through experience.
@@ -597,7 +1060,7 @@
        how delayed rewards propagate backward through a value function.</p>
     <p><strong>Pre-exploration prompts:</strong></p>
     <ul>
-      <li>How would you teach a dog a trick using only treats — no words?</li>
+      <li>How would you teach a dog a trick using only treats: no words?</li>
       <li>If the goal is far away and every step costs a tiny bit, how do you decide which way to go?</li>
       <li>What's the difference between "always trying the best-known action" and "sometimes trying something new"?</li>
     </ul>
@@ -610,8 +1073,8 @@
       <li>Add a pit between the agent and the goal. Watch the Q-values around it. How does the agent learn to avoid it?</li>
     </ul>
     <p><strong>Common misconceptions defeated:</strong>
-       "RL agents have a plan" (no — they have a value table that implicitly defines a plan);
-       "more exploration is always better" (no — too much ε prevents the policy from improving);
+       "RL agents have a plan" (no: they have a value table that implicitly defines a plan);
+       "more exploration is always better" (no: too much ε prevents the policy from improving);
        "the agent sees the whole grid" (in this demo it does, but in real RL the agent only sees its own state).</p>
   </div>
 
@@ -622,8 +1085,8 @@
   // ===== bilingual + reduced motion + hard reset =====
   const STRINGS = {
     en: {
-      'title': 'Visualizing Q-Learning', 'back-link': '← Back to all playgrounds',
-      'footer-top': '↑ Back to top', 'footer-builtby': 'Built by', 'footer-course': 'Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy', 'footer-source': 'View source', 'footer-issue': 'Report an issue',
+      'title': 'Q-Learning Gridworld', 'back-link': '← Back to all playgrounds',
+      'footer-top': '↑ Back to top', 'footer-course': 'Made for the Introduction to AI course at Haidian Kaiwen Academy.', 'footer-portfolio': 'Portfolio', 'footer-project': 'AI Playgrounds', 'footer-source': 'Source', 'footer-issue': 'Report an issue',
       'reset-all': '↺ Reset all', 'edit-label': 'Click grid to:',
       'algo-label': 'Algorithm:',
       'step-btn': 'Step', 'ep-btn': '❘▶ One episode',
@@ -634,10 +1097,10 @@
       'back-title': 'Step one episode backward through training.',
       'tp-idle': 'idle',
       'return-live': 'Jump to latest',
-      'bellman-title': '🔄 Bellman backup — the agent\'s last Q-update',
-      'bellman-empty': 'Step the agent (or run one episode) to see a single Q-value update — value bootstraps from the cell it lands on back into the cell it left.',
+      'bellman-title': '🔄 Bellman backup: the agent\'s last Q-update',
+      'bellman-empty': 'Step the agent (or run one episode) to see a single Q-value update: value bootstraps from the cell it lands on back into the cell it left.',
       'tldr-strong': 'The big idea',
-      'tldr-body': 'An agent learns to find the goal by random trial and error. Its Q-values — one number per (state, action) — grow outward from the goal as reward "propagates backward" through experience.',
+      'tldr-body': 'An agent learns to find the goal by random trial and error. Its Q-values: one number per (state, action): grow outward from the goal as reward "propagates backward" through experience.',
       'm-wall': '+ wall', 'm-goal': '+ goal (✓ +1)', 'm-pit': '+ pit (✗ −1)', 'm-erase': 'erase',
       'opt-qlearn-eps': 'Q-learning (ε-greedy)',
       'opt-sarsa-eps': 'SARSA (ε-greedy)',
@@ -647,7 +1110,7 @@
       'step-reward-label': 'step reward',
       'show-q': 'Q-heatmap', 'show-pi': 'Policy arrows',
       'fa-summary': '🧮 Linear function approximation (bridge to deep RL)',
-      'fa-intro': "Instead of a Q-table with one entry per (state, action), we approximate Q(s,a) = w_a · φ(s). For a 7×9 grid that's 252 numbers tabular vs only 36 with this 9-tile coding (4 actions × 9 tile weights). The trade-off: weights generalize across cells — fewer parameters, but the model can't represent arbitrary value functions.",
+      'fa-intro': "Instead of a Q-table with one entry per (state, action), we approximate Q(s,a) = w_a · φ(s). For a 7×9 grid that's 252 numbers tabular vs only 36 with this 9-tile coding (4 actions × 9 tile weights). The trade-off: weights generalize across cells: fewer parameters, but the model can't represent arbitrary value functions.",
       'fa-update': 'Update rule: w_a ← w_a + α · (target − Q(s,a)) · φ(s). One TD step changes ALL the active tile weights at once.',
       'fa-episodes': 'Episodes:',
       'fa-run': '▶ Train linear FA agent',
@@ -659,6 +1122,16 @@
       'tour-summary': '📚 Lesson tour (5 steps)',
       'tour-step': 'Step',
       'tour-prev': '← Prev', 'tour-next': 'Next →', 'tour-apply': '▶ Apply this scenario',
+      'sg-summary': '🎯 Try these scenarios first',
+      'sg-intro': 'Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.',
+      'sg-card-prefix': 'Scenario',
+      'sg-concept-label': 'Concept',
+      'sg-observe-label': 'What to watch',
+      'sg-misconception-label': 'Predict before applying',
+      'sg-misconception-text': 'Which visible result should change most, and why? Commit to an answer before applying.',
+      'sg-teacher-label': 'Teacher use',
+      'sg-teacher-text': 'Use as a 2–3 minute predict → run → explain prompt.',
+      'sg-apply': 'Apply and compare',
       'ws-summary': '📝 Worksheet (3 questions)',
       'ws-check': 'Check',
       'ws-pick': 'Pick an answer first.',
@@ -667,33 +1140,33 @@
       'ws2q': 'Set γ=0, ε=0.2. Reset Q. Train. Q-values (green color) appear:',
       'ws3q': 'Default grid, γ=0.9. Compare α=0.05 vs α=0.8 (same training time, slip=0). The α=0.8 Q-values evolve:',
       // MCQ option text (bilingual; English inline span is the fallback).
-      'ws1o0': 'Yes — ε=0 makes it greedy, and greedy always heads straight for the highest reward.',
-      'ws1o1': 'Yes — 500 episodes is more than enough training time for any setting.',
-      'ws1o2': "No — with ε=0 and all Q-values tied at 0, it never explores and can't discover the goal.",
-      'ws2o0': 'Only in cells adjacent to the goal/pit — γ=0 means no future reward propagates backward.',
-      'ws2o1': 'Everywhere — every visited cell still accumulates value over many episodes.',
-      'ws2o2': 'Nowhere — γ=0 zeroes out every Q-value, so nothing turns green.',
-      'ws3o0': 'More stably — a bigger α averages over more updates, smoothing out the noise.',
-      'ws3o1': 'Less stably — α=0.8 replaces 80% of the old Q each step, so values jump around erratically.',
-      'ws3o2': 'Identically — α only changes how fast it converges, not how smooth the path is.',
+      'ws1o0': 'Yes: ε=0 makes it greedy, and greedy always heads straight for the highest reward.',
+      'ws1o1': 'Yes: 500 episodes is more than enough training time for any setting.',
+      'ws1o2': "No: with ε=0 and all Q-values tied at 0, it never explores and can't discover the goal.",
+      'ws2o0': 'Only in cells adjacent to the goal/pit: γ=0 means no future reward propagates backward.',
+      'ws2o1': 'Everywhere: every visited cell still accumulates value over many episodes.',
+      'ws2o2': 'Nowhere: γ=0 zeroes out every Q-value, so nothing turns green.',
+      'ws3o0': 'More stably: a bigger α averages over more updates, smoothing out the noise.',
+      'ws3o1': 'Less stably: α=0.8 replaces 80% of the old Q each step, so values jump around erratically.',
+      'ws3o2': 'Identically: α only changes how fast it converges, not how smooth the path is.',
       // Lesson-tour scenario names + descriptions (0-based; English fallback kept inline in LESSON_TOUR).
       'tour0name': 'Default: train continuously and watch value spread',
-      'tour0desc': "Start with the default grid. Set α=0.1, γ=0.9, ε=0.2. Click Train continuously. Watch high-Q values (green) propagate backward from the goal. The agent has no plan — only Q-values.",
+      'tour0desc': "Start with the default grid. Set α=0.1, γ=0.9, ε=0.2. Click Train continuously. Watch high-Q values (green) propagate backward from the goal. The agent has no plan: only Q-values.",
       'tour1name': 'ε=0: no exploration → never finds goal',
-      'tour1desc': "Same grid, ε=0. Reset Q-values. Train. The agent picks the 'best' known action — but every Q is 0, so it ties. With no random tie-breaking and no exploration, it can't discover the goal. Exploration is mandatory.",
+      'tour1desc': "Same grid, ε=0. Reset Q-values. Train. The agent picks the 'best' known action: but every Q is 0, so it ties. With no random tie-breaking and no exploration, it can't discover the goal. Exploration is mandatory.",
       'tour2name': 'γ=0: pure greed, ignores future',
-      'tour2desc': "γ=0 means 'only the immediate reward matters'. Reset Q. Train. Q-values only become non-zero in cells adjacent to the goal/pit. The rest stay at 0 — no temporal credit propagation.",
+      'tour2desc': "γ=0 means 'only the immediate reward matters'. Reset Q. Train. Q-values only become non-zero in cells adjacent to the goal/pit. The rest stay at 0: no temporal credit propagation.",
       'tour3name': 'step reward = 0: no time pressure',
-      'tour3desc': "Step reward = 0. The agent eventually finds the goal but wanders — every path has the same return. With step reward = −0.04, shorter paths score higher and the policy converges to a direct route.",
+      'tour3desc': "Step reward = 0. The agent eventually finds the goal but wanders: every path has the same return. With step reward = −0.04, shorter paths score higher and the policy converges to a direct route.",
       'tour4name': 'High α with slip=0.3: unstable updates',
-      'tour4desc': "Stochastic world (slip=0.3) with α=0.8. Reset Q. Train. The high learning rate makes the Q-values jump erratically — TD updates over-react to noisy single-step outcomes. Drop α to 0.05 and rerun for comparison.",
+      'tour4desc': "Stochastic world (slip=0.3) with α=0.8. Reset Q. Train. The high learning rate makes the Q-values jump erratically: TD updates over-react to noisy single-step outcomes. Drop α to 0.05 and rerun for comparison.",
       // Worksheet answer-feedback strings (English fallback passed inline at each call site).
-      'ws1ok': "Correct. With ε=0 the agent always picks the 'greedy' action — but at start all Q-values are 0 (tied), and the policy picks a fixed default direction. The agent wanders deterministically and may never stumble onto the goal. Exploration is mandatory in RL.",
-      'ws1no': "Try 'no'. ε=0 means no exploration. With all Q-values starting at 0, the agent can't discover the goal — it never tries unfamiliar actions.",
-      'ws2ok': "Correct. γ=0 means 'all future reward is worth zero'. Only cells where action leads directly to a +1 or −1 reward get non-zero Q. The rest stay at 0 — no propagation of value backward through state space.",
-      'ws2no': "Try 'only adjacent to goal/pit'. γ=0 kills temporal credit assignment — only the cells one step from terminal rewards get non-zero Q.",
+      'ws1ok': "Correct. With ε=0 the agent always picks the 'greedy' action: but at start all Q-values are 0 (tied), and the policy picks a fixed default direction. The agent wanders deterministically and may never stumble onto the goal. Exploration is mandatory in RL.",
+      'ws1no': "Try 'no'. ε=0 means no exploration. With all Q-values starting at 0, the agent can't discover the goal: it never tries unfamiliar actions.",
+      'ws2ok': "Correct. γ=0 means 'all future reward is worth zero'. Only cells where action leads directly to a +1 or −1 reward get non-zero Q. The rest stay at 0: no propagation of value backward through state space.",
+      'ws2no': "Try 'only adjacent to goal/pit'. γ=0 kills temporal credit assignment: only the cells one step from terminal rewards get non-zero Q.",
       'ws3ok': "Correct. α=0.8 means each TD update REPLACES 80% of the old Q with the new (noisy) target. Q-values jump around erratically. α=0.05 averages many updates smoothly. Trade-off: high α = fast learning + instability; low α = slow + smooth.",
-      'ws3no': "Try 'less stable'. High α makes Q-updates over-react to noisy single-step targets — instability is the cost of fast learning.",
+      'ws3no': "Try 'less stable'. High α makes Q-updates over-react to noisy single-step targets: instability is the cost of fast learning.",
       // tooltip translations for edit modes + main selectors + Greek-letter sliders.
       'm-wall-title': 'Add an impassable wall cell. The agent bumps and stays put.',
       'm-goal-title': 'Mark the goal cell (+1 reward, ends the episode). Only one goal at a time.',
@@ -706,7 +1179,7 @@
     },
     zh: {
       'title': 'Q-学习可视化', 'back-link': '← 返回所有演示',
-      'footer-top': '↑ 返回顶部', 'footer-builtby': '作者', 'footer-course': '为海淀凯文学校 2025–2026《人工智能导论》课程制作', 'footer-source': '查看源代码', 'footer-issue': '反馈问题',
+      'footer-top': '↑ 返回顶部', 'footer-course': '为海淀凯文学校《人工智能导论》课程制作。', 'footer-portfolio': '作品集', 'footer-project': 'AI Playgrounds', 'footer-source': '源代码', 'footer-issue': '反馈问题',
       'reset-all': '↺ 全部重置', 'edit-label': '点击网格:',
       'algo-label': '算法:',
       'step-btn': '单步', 'ep-btn': '❘▶ 一回合',
@@ -717,10 +1190,10 @@
       'back-title': '在训练中后退一个回合。',
       'tp-idle': '空闲',
       'return-live': '跳到最新',
-      'bellman-title': '🔄 贝尔曼回传——智能体上一步的 Q 值更新',
-      'bellman-empty': '让智能体走一步(或跑一个回合),看一次 Q 值更新——价值从它落到的格子回传到它离开的格子。',
+      'bellman-title': '🔄 贝尔曼回传--智能体上一步的 Q 值更新',
+      'bellman-empty': '让智能体走一步(或跑一个回合),看一次 Q 值更新--价值从它落到的格子回传到它离开的格子。',
       'tldr-strong': '核心思想',
-      'tldr-body': '智能体通过随机试错学会到达终点。它的 Q 值——每个(状态, 动作)对应一个数——会从终点向外扩散,因为奖励通过经验"向后传播"。',
+      'tldr-body': '智能体通过随机试错学会到达终点。它的 Q 值--每个(状态, 动作)对应一个数--会从终点向外扩散,因为奖励通过经验"向后传播"。',
       'm-wall': '+ 墙', 'm-goal': '+ 终点 (✓ +1)', 'm-pit': '+ 陷阱 (✗ −1)', 'm-erase': '擦除',
       'opt-qlearn-eps': 'Q-学习(ε-贪心)',
       'opt-sarsa-eps': 'SARSA(ε-贪心)',
@@ -730,7 +1203,7 @@
       'step-reward-label': '每步奖励',
       'show-q': 'Q 值热力图', 'show-pi': '策略箭头',
       'fa-summary': '🧮 线性函数近似(通向深度强化学习)',
-      'fa-intro': '我们不再为每个(状态,动作)存一个 Q 值,而是用 Q(s,a) = w_a · φ(s) 近似。7×9 网格的表格法需要 252 个数,这里用 9 个格子的瓦片编码只需 36(4 个动作 × 9 个瓦片权重)。代价:权重在多个单元格之间共享——参数更少,但无法表示任意值函数。',
+      'fa-intro': '我们不再为每个(状态,动作)存一个 Q 值,而是用 Q(s,a) = w_a · φ(s) 近似。7×9 网格的表格法需要 252 个数,这里用 9 个格子的瓦片编码只需 36(4 个动作 × 9 个瓦片权重)。代价:权重在多个单元格之间共享--参数更少,但无法表示任意值函数。',
       'fa-update': '更新规则:w_a ← w_a + α · (target − Q(s,a)) · φ(s)。一次 TD 更新会同时改变所有激活瓦片的权重。',
       'fa-episodes': '回合数:',
       'fa-run': '▶ 训练线性函数近似智能体',
@@ -742,6 +1215,16 @@
       'tour-summary': '📚 课程导览(5 步)',
       'tour-step': '步骤',
       'tour-prev': '← 上一步', 'tour-next': '下一步 →', 'tour-apply': '▶ 应用此场景',
+      'sg-summary': '🎯 先试这些场景',
+      'sg-intro': '先选择一个场景并预测结果,再应用它,然后把运行结果与你的预测进行比较。',
+      'sg-card-prefix': '场景',
+      'sg-concept-label': '概念',
+      'sg-observe-label': '预期观察',
+      'sg-misconception-label': '误区检查',
+      'sg-misconception-text': '初学者的第一反应可能会漏掉或过度简化什么?',
+      'sg-teacher-label': '教师用法',
+      'sg-teacher-text': '用作 2–3 分钟的“预测 → 运行 → 解释”活动。',
+      'sg-apply': '应用场景',
       'ws-summary': '📝 练习题(3 题)',
       'ws-check': '核对',
       'ws-pick': '请先选择一个答案。',
@@ -750,33 +1233,33 @@
       'ws2q': '设 γ=0、ε=0.2。重置 Q。训练。Q 值(绿色)出现在:',
       'ws3q': '默认网格,γ=0.9。比较 α=0.05 与 α=0.8(相同训练时长,slip=0)。α=0.8 时 Q 值的演变:',
       // MCQ 选项文本(双语;英文内联 span 作为回退)。
-      'ws1o0': '能——ε=0 让它变得贪心,而贪心总会径直奔向最高的奖励。',
-      'ws1o1': '能——对任何设置来说,500 个回合的训练时间都绰绰有余。',
-      'ws1o2': '不能——ε=0 且所有 Q 值都并列为 0 时,它从不探索,无法发现终点。',
-      'ws2o0': '只出现在与终点/陷阱相邻的格子——γ=0 意味着没有未来奖励向后传播。',
-      'ws2o1': '到处都有——经过许多回合,每个访问过的格子都会累积价值。',
-      'ws2o2': '哪里都没有——γ=0 把每个 Q 值都归零,所以什么都不会变绿。',
-      'ws3o0': '更稳定——更大的 α 会对更多次更新求平均,把噪声平滑掉。',
-      'ws3o1': '更不稳定——α=0.8 每步都替换掉旧 Q 的 80%,所以数值剧烈跳动。',
-      'ws3o2': '完全一样——α 只改变收敛的快慢,而不改变路径的平滑程度。',
+      'ws1o0': '能--ε=0 让它变得贪心,而贪心总会径直奔向最高的奖励。',
+      'ws1o1': '能--对任何设置来说,500 个回合的训练时间都绰绰有余。',
+      'ws1o2': '不能--ε=0 且所有 Q 值都并列为 0 时,它从不探索,无法发现终点。',
+      'ws2o0': '只出现在与终点/陷阱相邻的格子--γ=0 意味着没有未来奖励向后传播。',
+      'ws2o1': '到处都有--经过许多回合,每个访问过的格子都会累积价值。',
+      'ws2o2': '哪里都没有--γ=0 把每个 Q 值都归零,所以什么都不会变绿。',
+      'ws3o0': '更稳定--更大的 α 会对更多次更新求平均,把噪声平滑掉。',
+      'ws3o1': '更不稳定--α=0.8 每步都替换掉旧 Q 的 80%,所以数值剧烈跳动。',
+      'ws3o2': '完全一样--α 只改变收敛的快慢,而不改变路径的平滑程度。',
       // 课程导览的场景名称与描述(0 起始;英文回退保留在 LESSON_TOUR 内联)。
       'tour0name': '默认:持续训练,观察价值扩散',
-      'tour0desc': '从默认网格开始。设 α=0.1、γ=0.9、ε=0.2。点击"持续训练"。观察高 Q 值(绿色)从终点向后传播。智能体没有计划——只有 Q 值。',
+      'tour0desc': '从默认网格开始。设 α=0.1、γ=0.9、ε=0.2。点击"持续训练"。观察高 Q 值(绿色)从终点向后传播。智能体没有计划--只有 Q 值。',
       'tour1name': 'ε=0:没有探索 → 永远找不到终点',
-      'tour1desc': '同一网格,ε=0。重置 Q 值。训练。智能体总是选"最佳"已知动作——但每个 Q 都是 0,因此并列。没有随机打破并列,也没有探索,它无法发现终点。探索是必需的。',
+      'tour1desc': '同一网格,ε=0。重置 Q 值。训练。智能体总是选"最佳"已知动作--但每个 Q 都是 0,因此并列。没有随机打破并列,也没有探索,它无法发现终点。探索是必需的。',
       'tour2name': 'γ=0:纯粹贪婪,忽视未来',
-      'tour2desc': 'γ=0 意味着"只有即时奖励才重要"。重置 Q。训练。只有与终点/陷阱相邻的格子的 Q 值才变为非零。其余保持为 0——没有时间信用的传播。',
+      'tour2desc': 'γ=0 意味着"只有即时奖励才重要"。重置 Q。训练。只有与终点/陷阱相邻的格子的 Q 值才变为非零。其余保持为 0--没有时间信用的传播。',
       'tour3name': '每步奖励 = 0:没有时间压力',
-      'tour3desc': '每步奖励 = 0。智能体最终会找到终点,但会乱走——每条路径的回报都一样。当每步奖励 = −0.04 时,较短的路径得分更高,策略会收敛到一条直接路线。',
+      'tour3desc': '每步奖励 = 0。智能体最终会找到终点,但会乱走--每条路径的回报都一样。当每步奖励 = −0.04 时,较短的路径得分更高,策略会收敛到一条直接路线。',
       'tour4name': '高 α 加 slip=0.3:不稳定的更新',
-      'tour4desc': '随机世界(slip=0.3)加上 α=0.8。重置 Q。训练。过高的学习率使 Q 值剧烈跳动——TD 更新对带噪声的单步结果反应过度。把 α 降到 0.05 再跑一次作对比。',
+      'tour4desc': '随机世界(slip=0.3)加上 α=0.8。重置 Q。训练。过高的学习率使 Q 值剧烈跳动--TD 更新对带噪声的单步结果反应过度。把 α 降到 0.05 再跑一次作对比。',
       // 练习题答案反馈(英文回退在各调用处内联传入)。
-      'ws1ok': '正确。当 ε=0 时,智能体总是选"贪心"动作——但一开始所有 Q 值都是 0(并列),策略会选一个固定的默认方向。智能体确定性地乱走,可能永远碰不到终点。在强化学习中探索是必需的。',
-      'ws1no': '试试"no"。ε=0 意味着没有探索。所有 Q 值都从 0 开始,智能体无法发现终点——它从不尝试陌生的动作。',
-      'ws2ok': '正确。γ=0 意味着"所有未来奖励都不值钱"。只有动作直接导向 +1 或 −1 奖励的格子才有非零 Q。其余保持为 0——价值不会在状态空间中向后传播。',
-      'ws2no': '试试"only adjacent to goal/pit"。γ=0 抹掉了时间信用分配——只有距离终止奖励一步的格子才有非零 Q。',
+      'ws1ok': '正确。当 ε=0 时,智能体总是选"贪心"动作--但一开始所有 Q 值都是 0(并列),策略会选一个固定的默认方向。智能体确定性地乱走,可能永远碰不到终点。在强化学习中探索是必需的。',
+      'ws1no': '试试"no"。ε=0 意味着没有探索。所有 Q 值都从 0 开始,智能体无法发现终点--它从不尝试陌生的动作。',
+      'ws2ok': '正确。γ=0 意味着"所有未来奖励都不值钱"。只有动作直接导向 +1 或 −1 奖励的格子才有非零 Q。其余保持为 0--价值不会在状态空间中向后传播。',
+      'ws2no': '试试"only adjacent to goal/pit"。γ=0 抹掉了时间信用分配--只有距离终止奖励一步的格子才有非零 Q。',
       'ws3ok': '正确。α=0.8 意味着每次 TD 更新会用新的(带噪声的)目标替换掉旧 Q 的 80%。Q 值剧烈跳动。α=0.05 则平滑地平均许多次更新。权衡:高 α = 学习快但不稳定;低 α = 慢但平滑。',
-      'ws3no': '试试"less stable"。高 α 使 Q 更新对带噪声的单步目标反应过度——不稳定是快速学习的代价。',
+      'ws3no': '试试"less stable"。高 α 使 Q 更新对带噪声的单步目标反应过度--不稳定是快速学习的代价。',
       // 编辑模式、主选择器与希腊字母滑块的提示翻译。
       'm-wall-title': '添加不可通行的墙壁格。智能体撞墙后留在原地。',
       'm-goal-title': '标记终点格(+1 奖励,结束回合)。同一时间只能有一个终点。',
@@ -806,10 +1289,11 @@
   document.querySelectorAll('.lang-switch button').forEach(b =>
     b.addEventListener('click', () => {
       setLang(b.dataset.lang);
-      // F1: re-render the tour in the new language. Safe here — this click handler
+      // re-render the tour in the new language. Safe here: this click handler
       // only runs post-init, after LESSON_TOUR (a late `const`) is initialized, so
       // there is no temporal-dead-zone risk (unlike calling it from inside setLang).
       try { if (typeof renderTour === 'function') renderTour(); } catch (_) {}
+      try { if (typeof renderScenarioGallery === 'function') renderScenarioGallery(); } catch (_) {}
     }));
   let initialLang = 'en';
   try { initialLang = localStorage.getItem('lang') || 'en'; } catch (_) {}
@@ -957,7 +1441,7 @@
     const [algo, explore] = v.split('-');
     return { algo, explore };
   }
-  // Policy distribution over actions at state (r,c) — used by ε-greedy AND Expected SARSA.
+  // Policy distribution over actions at state (r,c): used by ε-greedy AND Expected SARSA.
   function policyProbs(r, c) {
     const q = Q[r][c];
     const { explore } = getStrategy();
@@ -985,7 +1469,7 @@
   }
   function update(r, c, a, reward, nr, nc, done, nextA) {
     const { algo } = getStrategy();
-    // Monte Carlo defers updates to end of episode — see runEpisode.
+    // Monte Carlo defers updates to end of episode: see runEpisode.
     if (algo === 'mc') return;
     const alpha = +$('alpha').value;
     const gamma = +$('gamma').value;
@@ -1100,7 +1584,7 @@
       return;
     }
 
-    // Q-learning + Expected SARSA — single-step TD updates per action.
+    // Q-learning + Expected SARSA: single-step TD updates per action.
     while (safety-- > 0) {
       const a = chooseAction(agent.r, agent.c);
       const {r, c, reward, done} = step(agent.r, agent.c, a);
@@ -1202,7 +1686,7 @@
     if (!replayMode) { const tc = $('tpCount'); if (tc) tc.textContent = episodes > 0 ? `ep ${episodes}` : 'idle'; }
     $('stV').textContent = steps;
     $('retV').textContent = returnLog.length
-      ? returnLog[returnLog.length - 1].toFixed(2) : '—';
+      ? returnLog[returnLog.length - 1].toFixed(2) : '-';
     if (returnLog.length >= 1) {
       const last = returnLog.slice(-20);
       const avg = last.reduce((a, b) => a + b, 0) / last.length;
@@ -1291,7 +1775,7 @@
   });
 
   // Replay scrubber wiring. Dragging the slider enters replay mode (training pauses
-  // visually — Q is swapped for a historical snapshot). The Resume button restores live Q.
+  // visually: Q is swapped for a historical snapshot). The Resume button restores live Q.
   $('replaySlider').addEventListener('input', () => {
     const idx = parseInt($('replaySlider').value, 10);
     if (qSnapshots.length === 0) return;
@@ -1301,7 +1785,7 @@
       $('replayResume').disabled = false;
     }
     if (idx === qSnapshots.length - 1) {
-      // Slid back to most-recent snapshot — treat as live unless we explicitly resumed.
+      // Slid back to most-recent snapshot: treat as live unless we explicitly resumed.
       $('replayLabel').textContent = `ep ${episodes - qSnapshots.length + 1 + idx}`;
     } else {
       $('replayLabel').textContent = `ep ${episodes - qSnapshots.length + 1 + idx}`;
@@ -1361,11 +1845,11 @@
   function updateAlgoUI() {
     const { explore } = getStrategy();
     $('tempBlock').style.display = (explore === 'soft') ? 'inline-flex' : 'none';
-    // When switching to MC, the per-step update is deferred — disable the "Step" button.
+    // When switching to MC, the per-step update is deferred: disable the "Step" button.
     const { algo } = getStrategy();
     $('stepBtn').disabled = (algo === 'mc');
     $('stepBtn').title = (algo === 'mc')
-      ? 'Monte Carlo updates Q only at the end of an episode — use "One episode" instead.'
+      ? 'Monte Carlo updates Q only at the end of an episode: use "One episode" instead.'
       : 'Take one move with the current policy + ε-greedy exploration.';
   }
   $('algoSel').addEventListener('change', updateAlgoUI);
@@ -1412,7 +1896,7 @@
   });
   updateAlgoUI();
 
-  // touch support — synthesize click events from touch events for tablet use.
+  // touch support: synthesize click events from touch events for tablet use.
   (() => {
     const target = cv;
     let lastTouch = null;
@@ -1432,7 +1916,7 @@
   initGrid();
   render();
 
-  // CSV export — episode return history + current Q-table.
+  // CSV export: episode return history + current Q-table.
   document.getElementById('csvExport').addEventListener('click', () => {
     const lines = ['# Q-learning gridworld export', '# Section 1: episode returns', 'episode,return'];
     for (let i = 0; i < returnLog.length; i++) lines.push(`${i + 1},${returnLog[i].toFixed(3)}`);
@@ -1535,7 +2019,7 @@
                     : (r === startCell.r && c === startCell.c) ? '#bbf7d0' : (dark ? '#1e293b' : '#f8fafc');
       ctx.fillRect(c * cellW, r * cellH, cellW, cellH);
     }
-    // Tile boundaries — thick lines showing FA tile partition.
+    // Tile boundaries: thick lines showing FA tile partition.
     ctx.strokeStyle = '#9333ea'; ctx.lineWidth = 1.5;
     for (let t = 1; t < FA.TILE_ROWS; t++) {
       const y = (ROWS / FA.TILE_ROWS) * t * cellH;
@@ -1586,7 +2070,7 @@
   $('faRunBtn').addEventListener('click', faRun);
 
   // ===== Cliff Walk Q-vs-SARSA comparison (Sutton & Barto Ch 6.5) =====
-  // Self-contained — uses its own 4x12 grid, its own Q-tables, its own training loop.
+  // Self-contained: uses its own 4x12 grid, its own Q-tables, its own training loop.
   // Doesn't share state with the main applet.
   const CW = {
     ROWS: 4, COLS: 12,
@@ -1730,8 +2214,8 @@
     ctx.fillText(`min ${minV.toFixed(0)}`, 4, H - pad - 2);
     ctx.fillText(`max ${maxV.toFixed(0)}`, 4, pad + 8);
     ctx.fillText('episodes →', W - 70, H - 8);
-    ctx.fillStyle = '#0284c7'; ctx.fillText('— Q-learning', pad + 6, pad + 8);
-    ctx.fillStyle = '#16a34a'; ctx.fillText('— SARSA', pad + 6, pad + 22);
+    ctx.fillStyle = '#0284c7'; ctx.fillText('- Q-learning', pad + 6, pad + 8);
+    ctx.fillStyle = '#16a34a'; ctx.fillText('- SARSA', pad + 6, pad + 22);
   }
   function cwRun() {
     const nEp = +$('cwEpisodes').value;
@@ -1756,26 +2240,26 @@
   function setParam(id, val) { $(id).value = val; $(id).dispatchEvent(new Event('input')); }
   const LESSON_TOUR = [
     { name: 'Default: train continuously and watch value spread',
-      description: "Start with the default grid. Set α=0.1, γ=0.9, ε=0.2. Click Train continuously. Watch high-Q values (green) propagate backward from the goal. The agent has no plan — only Q-values.",
+      description: "Start with the default grid. Set α=0.1, γ=0.9, ε=0.2. Click Train continuously. Watch high-Q values (green) propagate backward from the goal. The agent has no plan: only Q-values.",
       apply: () => { setParam('alpha', 0.1); setParam('gamma', 0.9); setParam('epsilon', 0.2); setParam('step', -0.04); $('resetQBtn').click(); } },
     { name: 'ε=0: no exploration → never finds goal',
-      description: "Same grid, ε=0. Reset Q-values. Train. The agent picks the 'best' known action — but every Q is 0, so it ties. With no random tie-breaking and no exploration, it can't discover the goal. Exploration is mandatory.",
+      description: "Same grid, ε=0. Reset Q-values. Train. The agent picks the 'best' known action: but every Q is 0, so it ties. With no random tie-breaking and no exploration, it can't discover the goal. Exploration is mandatory.",
       apply: () => { setParam('alpha', 0.1); setParam('gamma', 0.9); setParam('epsilon', 0); setParam('step', -0.04); $('resetQBtn').click(); } },
     { name: 'γ=0: pure greed, ignores future',
-      description: "γ=0 means 'only the immediate reward matters'. Reset Q. Train. Q-values only become non-zero in cells adjacent to the goal/pit. The rest stay at 0 — no temporal credit propagation.",
+      description: "γ=0 means 'only the immediate reward matters'. Reset Q. Train. Q-values only become non-zero in cells adjacent to the goal/pit. The rest stay at 0: no temporal credit propagation.",
       apply: () => { setParam('alpha', 0.1); setParam('gamma', 0); setParam('epsilon', 0.2); setParam('step', -0.04); $('resetQBtn').click(); } },
     { name: 'step reward = 0: no time pressure',
-      description: "Step reward = 0. The agent eventually finds the goal but wanders — every path has the same return. With step reward = −0.04, shorter paths score higher and the policy converges to a direct route.",
+      description: "Step reward = 0. The agent eventually finds the goal but wanders: every path has the same return. With step reward = −0.04, shorter paths score higher and the policy converges to a direct route.",
       apply: () => { setParam('alpha', 0.1); setParam('gamma', 0.9); setParam('epsilon', 0.2); setParam('step', 0); $('resetQBtn').click(); } },
     { name: 'High α with slip=0.3: unstable updates',
-      description: "Stochastic world (slip=0.3) with α=0.8. Reset Q. Train. The high learning rate makes the Q-values jump erratically — TD updates over-react to noisy single-step outcomes. Drop α to 0.05 and rerun for comparison.",
+      description: "Stochastic world (slip=0.3) with α=0.8. Reset Q. Train. The high learning rate makes the Q-values jump erratically: TD updates over-react to noisy single-step outcomes. Drop α to 0.05 and rerun for comparison.",
       apply: () => { setParam('alpha', 0.8); setParam('gamma', 0.9); setParam('epsilon', 0.2); setParam('slip', 0.3); $('resetQBtn').click(); } },
   ];
   let tourIdx = 0;
   function renderTour() {
     if (!$('tourName')) return;
     const s = LESSON_TOUR[tourIdx];
-    // F1 bilingual: look up tour{i}name / tour{i}desc with English inline fallback.
+    // Bilingual: look up tour{i}name / tour{i}desc with English inline fallback.
     const L = (document.documentElement.lang || 'en');
     const S = STRINGS[L] || STRINGS.en;
     $('tourName').textContent = S['tour' + tourIdx + 'name'] || s.name;
@@ -1789,8 +2273,67 @@
   $('tourNext').addEventListener('click', () => { if (tourIdx < LESSON_TOUR.length - 1) { tourIdx++; renderTour(); } });
   renderTour();
 
-  // Worksheet/lab mode — 3 questions with instant ✓/✗ feedback.
-  // F1 bilingual feedback helper: ws{n}ok / ws{n}no with English inline fallback.
+
+  function scenarioGalleryText(key, fallback) {
+    const L = document.documentElement.lang || 'en';
+    const S = STRINGS[L] || STRINGS.en;
+    return S[key] || fallback;
+  }
+  function localizedScenarioField(index, field, fallback) {
+    const L = document.documentElement.lang || 'en';
+    const S = STRINGS[L] || STRINGS.en;
+    return S['tour' + index + field] || fallback || '';
+  }
+  function appendScenarioMeta(card, label, text) {
+    const p = document.createElement('p');
+    p.className = 'scenario-meta';
+    const strong = document.createElement('strong');
+    strong.textContent = label + ': ';
+    p.appendChild(strong);
+    p.appendChild(document.createTextNode(text));
+    card.appendChild(p);
+  }
+  function renderScenarioGallery() {
+    const root = $('scenarioGalleryCards');
+    if (!root || typeof LESSON_TOUR === 'undefined') return;
+    root.innerHTML = '';
+    LESSON_TOUR.forEach((scenario, index) => {
+      const title = localizedScenarioField(index, 'name', scenario.name || (scenarioGalleryText('sg-card-prefix', 'Scenario') + ' ' + (index + 1)));
+      const description = localizedScenarioField(index, 'desc', scenario.description || '');
+      const card = document.createElement('article');
+      card.className = 'scenario-card';
+      card.setAttribute('data-scenario-index', String(index));
+
+      const h = document.createElement('h3');
+      h.textContent = `${scenarioGalleryText('sg-card-prefix', 'Scenario')} ${index + 1}: ${title}`;
+      card.appendChild(h);
+
+      appendScenarioMeta(card, scenarioGalleryText('sg-concept-label', 'Concept'), title);
+      appendScenarioMeta(card, scenarioGalleryText('sg-observe-label', 'What to watch'), description);
+      appendScenarioMeta(card, scenarioGalleryText('sg-misconception-label', 'Predict before applying'), scenarioGalleryText('sg-misconception-text', 'Which visible result should change most, and why? Commit to an answer before applying.'));
+      appendScenarioMeta(card, scenarioGalleryText('sg-teacher-label', 'Teacher use'), scenarioGalleryText('sg-teacher-text', 'Use as a 2–3 minute predict → run → explain prompt.'));
+
+      const btn = document.createElement('button');
+      btn.className = 'step-btn';
+      btn.type = 'button';
+      btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare');
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('.scenario-card').forEach(item => item.classList.remove('applied'));
+        tourIdx = index;
+        renderTour();
+        scenario.apply();
+        card.classList.add('applied');
+        btn.textContent = '✓ ' + scenarioGalleryText('sg-applied', 'Applied; compare the result');
+        setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
+      });
+      card.appendChild(btn);
+      root.appendChild(card);
+    });
+  }
+  renderScenarioGallery();
+
+  // Worksheet/lab mode: 3 questions with instant ✓/✗ feedback.
+  // Bilingual feedback helper: ws{n}ok / ws{n}no with English inline fallback.
   function wsMsg(key, en) {
     const L = (document.documentElement.lang || 'en');
     return (STRINGS[L] && STRINGS[L][key]) || en;
@@ -1800,14 +2343,14 @@
   // existing bilingual feedback keys, with an English inline fallback via wsMsg.
   const WORKSHEET = [
     { correct: 2,
-      ok:  ['ws1ok', "Correct. With ε=0 the agent always picks the 'greedy' action — but at start all Q-values are 0 (tied), and the policy picks a fixed default direction. The agent wanders deterministically and may never stumble onto the goal. Exploration is mandatory in RL."],
-      no:  ['ws1no', "Try 'no'. ε=0 means no exploration. With all Q-values starting at 0, the agent can't discover the goal — it never tries unfamiliar actions."] },
+      ok:  ['ws1ok', "Correct. With ε=0 the agent always picks the 'greedy' action: but at start all Q-values are 0 (tied), and the policy picks a fixed default direction. The agent wanders deterministically and may never stumble onto the goal. Exploration is mandatory in RL."],
+      no:  ['ws1no', "Try 'no'. ε=0 means no exploration. With all Q-values starting at 0, the agent can't discover the goal: it never tries unfamiliar actions."] },
     { correct: 0,
-      ok:  ['ws2ok', "Correct. γ=0 means 'all future reward is worth zero'. Only cells where action leads directly to a +1 or −1 reward get non-zero Q. The rest stay at 0 — no propagation of value backward through state space."],
-      no:  ['ws2no', "Try 'only adjacent to goal/pit'. γ=0 kills temporal credit assignment — only the cells one step from terminal rewards get non-zero Q."] },
+      ok:  ['ws2ok', "Correct. γ=0 means 'all future reward is worth zero'. Only cells where action leads directly to a +1 or −1 reward get non-zero Q. The rest stay at 0: no propagation of value backward through state space."],
+      no:  ['ws2no', "Try 'only adjacent to goal/pit'. γ=0 kills temporal credit assignment: only the cells one step from terminal rewards get non-zero Q."] },
     { correct: 1,
       ok:  ['ws3ok', "Correct. α=0.8 means each TD update REPLACES 80% of the old Q with the new (noisy) target. Q-values jump around erratically. α=0.05 averages many updates smoothly. Trade-off: high α = fast learning + instability; low α = slow + smooth."],
-      no:  ['ws3no', "Try 'less stable'. High α makes Q-updates over-react to noisy single-step targets — instability is the cost of fast learning."] },
+      no:  ['ws3no', "Try 'less stable'. High α makes Q-updates over-react to noisy single-step targets: instability is the cost of fast learning."] },
   ];
   WORKSHEET.forEach((q, i) => {
     const n = i + 1;
@@ -1850,12 +2393,434 @@
   });
 })();
 </script>
-  <footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
+
+<footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
     <p style="margin:0 0 6px;"><a href="#top" data-i18n="footer-top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
-    <p style="margin:0;"><span data-i18n="footer-builtby">Built by</span> Logan Dixon · <span data-i18n="footer-course">Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy</span></p>
-    <p style="margin:6px 0 0;"><a href="https://github.com/lmdixon23/ai-playgrounds" data-i18n="footer-source" style="color:var(--accent,#0891b2);">View source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-i18n="footer-issue" style="color:var(--accent,#0891b2);">Report an issue</a> · © 2026 Logan Dixon</p>
+    <p style="margin:0;"><span data-i18n="footer-course">Made for the Introduction to AI course at Haidian Kaiwen Academy.</span></p>
+    <p style="margin:6px 0 0;">© <span data-current-year>2026</span> Logan M. Dixon · <a href="https://lmdixon23.github.io/" data-i18n="footer-portfolio" style="color:var(--accent,#0891b2);">Portfolio</a> · <a href="../../index.html" data-i18n="footer-project" style="color:var(--accent,#0891b2);">AI Playgrounds</a> · <a href="https://github.com/lmdixon23/ai-playgrounds" data-i18n="footer-source" style="color:var(--accent,#0891b2);">Source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-i18n="footer-issue" style="color:var(--accent,#0891b2);">Report an issue</a> · <a href="https://orcid.org/0009-0001-0592-462X" rel="me" style="color:var(--accent,#0891b2);">ORCID</a></p>
   </footer>
-  <!-- Privacy-friendly analytics — GoatCounter, cookieless. -->
-  <script data-goatcounter="https://lmdixon23.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+
+<script>
+(function() {
+  const LAB_CONFIG = {"slug": "q-learning-gridworld", "title": "Q-learning lab packet", "zhTitle": "Q 学习实验包", "fields": [{"label": "Algorithm", "selector": "#algoSel", "kind": "selected"}, {"label": "Alpha", "selector": "#alpha", "kind": "value"}, {"label": "Gamma", "selector": "#gamma", "kind": "value"}, {"label": "Epsilon", "selector": "#epsilon", "kind": "value"}, {"label": "Temperature", "selector": "#temp", "kind": "value"}, {"label": "Step reward", "selector": "#step", "kind": "value"}, {"label": "Slip", "selector": "#slip", "kind": "value"}, {"label": "FA episodes", "selector": "#faEpisodesV", "kind": "text"}, {"label": "Cliff Q stats", "selector": "#cwQstats", "kind": "text"}, {"label": "Cliff SARSA stats", "selector": "#cwSstats", "kind": "text"}]};
+  const root = document.querySelector('.classroom-lab');
+  if (!root) return;
+  const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;
+  const qs = (sel) => root.querySelector(sel);
+  function currentLang() { return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en'; }
+  function textFor(el, lang) { return el.getAttribute(lang === 'zh' ? 'data-lab-zh' : 'data-lab-en') || el.textContent; }
+  function applyLabLang() {
+    const lang = currentLang();
+    root.querySelectorAll('[data-lab-en]').forEach(el => {
+      const value = textFor(el, lang);
+      if (el.tagName === 'TEXTAREA') el.placeholder = value;
+      else el.textContent = value;
+    });
+  }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? 'on' : 'off';
+    else if (field.kind === 'text') value = el.textContent.trim();
+    else value = el.value;
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? field.label + ': ' + value : null;
+  }
+  function snapshot() {
+    const lines = LAB_CONFIG.fields.map(readField).filter(Boolean);
+    return lines.length ? lines.join('\n') : 'No state captured yet. Run or adjust the applet first.';
+  }
+  function answers() {
+    const data = {};
+    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => data[area.getAttribute('data-lab-answer')] = area.value.trim());
+    return data;
+  }
+  function saveDraft() { try { localStorage.setItem(storageKey, JSON.stringify(answers())); } catch (_) {} }
+  function loadDraft() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      root.querySelectorAll('textarea[data-lab-answer]').forEach(area => { const key = area.getAttribute('data-lab-answer'); if (saved[key]) area.value = saved[key]; });
+    } catch (_) {}
+  }
+  function packet() {
+    const lang = currentLang();
+    const labels = lang === 'zh' ? {title: LAB_CONFIG.zhTitle, state:'状态记录', predict:'预测', observe:'观察', explain:'解释', transfer:'迁移'} : {title: LAB_CONFIG.title, state:'State snapshot', predict:'Predict', observe:'Observe', explain:'Explain', transfer:'Transfer'};
+    const a = answers();
+    return [
+      '# ' + labels.title,
+      '',
+      '- Applet: ' + (document.querySelector('h1') ? document.querySelector('h1').textContent.trim() : document.title),
+      '- Date: ' + new Date().toLocaleString(),
+      '',
+      '## ' + labels.state,
+      snapshot(),
+      '',
+      '## ' + labels.predict,
+      a.predict || '',
+      '',
+      '## ' + labels.observe,
+      a.observe || '',
+      '',
+      '## ' + labels.explain,
+      a.explain || '',
+      '',
+      '## ' + labels.transfer,
+      a.transfer || ''
+    ].join('\n');
+  }
+  function setStatus(en, zh) { const el = qs('.lab-status'); if (el) el.textContent = currentLang() === 'zh' ? zh : en; }
+  function refreshState() { const el = qs('[data-lab-state]'); if (el) el.textContent = snapshot(); }
+  async function copyPacket(btn) {
+    const text = packet();
+    try { await navigator.clipboard.writeText(text); setStatus('Copied local lab packet.', '已复制本地实验包。'); }
+    catch (_) { window.prompt('Copy this lab packet:', text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
+  }
+
+  function markdownToPrintableHtml(markdown) {
+    const escape = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const inline = value => escape(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    const lines = String(markdown).split(/\r?\n/);
+    let html = '', inList = false, inState = false;
+    const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
+    for (const raw of lines) {
+      const line = raw.trimEnd();
+      if (line.startsWith('# ')) { closeList(); html += '<h1>' + inline(line.slice(2)) + '</h1>'; inState=false; }
+      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = /state snapshot|状态记录/i.test(title); }
+      else if (line.startsWith('- ')) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inline(line.slice(2)) + '</li>'; }
+      else if (!line.trim()) { closeList(); }
+      else { closeList(); html += inState ? '<pre class="state">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
+    }
+    closeList(); return html;
+  }
+
+  function printPacket() {
+    const w = window.open('', '_blank');
+    if (!w) { setStatus('Popup blocked. Copy the packet instead.', '弹窗被拦截。请改用复制实验包。'); return; }
+    const rendered = markdownToPrintableHtml(packet());
+    const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+    setStatus('Print page opened.', '打印页面已打开。');
+  }
+  function clearDraft() {
+    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.value = '');
+    try { localStorage.removeItem(storageKey); } catch (_) {}
+    refreshState(); setStatus('Local draft cleared.', '本地草稿已清除。');
+  }
+  root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.addEventListener('input', saveDraft));
+  root.querySelector('[data-lab-action="copy"]')?.addEventListener('click', copyPacket);
+  root.querySelector('[data-lab-action="print"]')?.addEventListener('click', printPacket);
+  root.querySelector('[data-lab-action="refresh"]')?.addEventListener('click', () => { refreshState(); setStatus('State refreshed.', '状态已更新。'); });
+  root.querySelector('[data-lab-action="clear"]')?.addEventListener('click', clearDraft);
+  document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(applyLabLang, 0)));
+  document.addEventListener('change', refreshState);
+  document.addEventListener('click', (event) => { if (!(event.target instanceof HTMLTextAreaElement)) setTimeout(refreshState, 0); }, true);
+  loadDraft(); applyLabLang(); refreshState();
+})();
+</script>
+
+
+<script>
+(function() {
+  const VISUAL_CONFIG = {"intro":"Q-learning turns trial-and-error into a table of action values. Watch reward, discounting, exploration, and updates shape which action looks best from each state.","zhIntro":"Q 学习把试错转化为动作价值表。观察奖励、折扣、探索和更新如何塑造每个状态下看起来最好的动作。","misread":"A greedy-looking policy may be premature if exploration is too low or learning has not stabilized.","zhMisread":"如果探索太低或学习尚未稳定，看起来贪心的策略可能还太早。","steps":[{"label":"Reward signal","zhLabel":"奖励信号","text":"Terminal reward, step cost, and slip define what experience teaches the agent.","zhText":"终点奖励、步进成本和滑移定义经验会教给智能体什么。","selector":"#step","kind":"value","liveLabel":"Step reward","zhLiveLabel":"步进奖励"},{"label":"Backup rule","zhLabel":"回传规则","text":"Alpha controls update size, while gamma controls how far future rewards matter.","zhText":"alpha 控制更新幅度，gamma 控制未来奖励的重要程度。","selector":"#gamma","kind":"value","liveLabel":"Gamma","zhLiveLabel":"Gamma"},{"label":"Exploration pressure","zhLabel":"探索压力","text":"Epsilon or temperature decides how often the agent tries actions that are not currently best.","zhText":"epsilon 或温度决定智能体多久尝试当前不是最优的动作。","selector":"#epsilon","kind":"value","liveLabel":"Epsilon","zhLiveLabel":"Epsilon"},{"label":"Policy evidence","zhLabel":"策略证据","text":"The visible arrows or Q statistics show which action the learned values currently favor.","zhText":"可见箭头或 Q 统计显示学习到的价值当前偏向哪个动作。","selector":"#cwQstats","kind":"text","liveLabel":"Q stats","zhLiveLabel":"Q 统计"}],"fields":[{"label":"Algorithm","zhLabel":"算法","selector":"#algoSel","kind":"selected"},{"label":"Alpha","zhLabel":"Alpha","selector":"#alpha","kind":"value"},{"label":"Gamma","zhLabel":"Gamma","selector":"#gamma","kind":"value"},{"label":"Epsilon","zhLabel":"Epsilon","selector":"#epsilon","kind":"value"},{"label":"Q stats","zhLabel":"Q 统计","selector":"#cwQstats","kind":"text"}]};
+  const root = document.querySelector('.visual-explanation');
+  if (!root) return;
+  const flow = root.querySelector('[data-visual-flow]');
+  const intro = root.querySelector('[data-visual-intro]');
+  const snapshotBox = root.querySelector('[data-visual-snapshot]');
+  const misreadBox = root.querySelector('[data-visual-misread]');
+  function currentLang() { return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en'; }
+  function t(obj, key) { const lang = currentLang(); return (lang === 'zh' && obj['zh' + key[0].toUpperCase() + key.slice(1)]) || obj[key] || ''; }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? 'on' : 'off';
+    else if (field.kind === 'value') value = el.value;
+    else value = el.textContent.trim();
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? { label: field.label, zhLabel: field.zhLabel || field.label, value } : null;
+  }
+  function liveValue(step) {
+    if (!step.selector) return '';
+    const field = readField({ selector: step.selector, kind: step.kind || 'text', label: step.liveLabel || 'Live', zhLabel: step.zhLiveLabel || '实时' });
+    return field ? field.value : (step.fallback || '');
+  }
+  function renderVisualExplanation() {
+    const lang = currentLang();
+    root.querySelectorAll('[data-visual-en]').forEach(el => {
+      el.textContent = el.getAttribute(lang === 'zh' ? 'data-visual-zh' : 'data-visual-en') || el.textContent;
+    });
+    intro.textContent = lang === 'zh' ? VISUAL_CONFIG.zhIntro : VISUAL_CONFIG.intro;
+    misreadBox.textContent = lang === 'zh' ? VISUAL_CONFIG.zhMisread : VISUAL_CONFIG.misread;
+    flow.innerHTML = VISUAL_CONFIG.steps.map((step, idx) => {
+      const title = lang === 'zh' ? step.zhLabel : step.label;
+      const body = lang === 'zh' ? step.zhText : step.text;
+      const liveLabel = lang === 'zh' ? (step.zhLiveLabel || '实时') : (step.liveLabel || 'Live');
+      const live = liveValue(step);
+      const liveHtml = live ? '<span class="visual-live"><strong>' + escapeHtml(liveLabel) + '</strong><span>' + escapeHtml(live) + '</span></span>' : '';
+      return '<article class="visual-card" data-step="' + String(idx + 1).padStart(2, '0') + '"><h4>' + escapeHtml(title) + '</h4><p>' + escapeHtml(body) + '</p>' + liveHtml + '</article>';
+    }).join('');
+    const lines = (VISUAL_CONFIG.fields || []).map(readField).filter(Boolean).map(f => (lang === 'zh' ? f.zhLabel : f.label) + ': ' + f.value);
+    snapshotBox.textContent = lines.length ? lines.join('\n') : (lang === 'zh' ? '还没有捕捉到状态。请先运行或调整小程序。' : 'No state captured yet. Run or adjust the applet first.');
+  }
+  function escapeHtml(text) { return String(text).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+  let visualTimer = null;
+  function scheduleVisualRender() {
+    if (visualTimer) cancelAnimationFrame(visualTimer);
+    visualTimer = requestAnimationFrame(renderVisualExplanation);
+  }
+  document.addEventListener('change', scheduleVisualRender);
+  document.addEventListener('input', scheduleVisualRender);
+  document.addEventListener('click', () => setTimeout(scheduleVisualRender, 0), true);
+  document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(scheduleVisualRender, 0)));
+  setInterval(renderVisualExplanation, 1200);
+  renderVisualExplanation();
+})();
+</script>
+
+<!-- Privacy-friendly analytics: GoatCounter, cookieless. -->
+  <script>
+(function () {
+  const analyticsAllowedHost = location.hostname === 'lmdixon23.github.io';
+  const params = new URLSearchParams(location.search);
+  const analyticsDisabled = params.has('noanalytics') || params.get('analytics') === '0' || navigator.doNotTrack === '1';
+  if (!analyticsAllowedHost || analyticsDisabled) return;
+  const s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://gc.zgo.at/count.js';
+  s.dataset.goatcounter = 'https://lmdixon23.goatcounter.com/count';
+  document.head.appendChild(s);
+})();
+</script>
+
+<script>
+(function() {
+  const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "Algorithm", "zhLabel": "算法", "selector": "#algoSel", "kind": "selected"}, {"label": "Alpha", "zhLabel": "Alpha", "selector": "#alpha", "kind": "value"}, {"label": "Gamma", "zhLabel": "Gamma", "selector": "#gamma", "kind": "value"}, {"label": "Epsilon", "zhLabel": "Epsilon", "selector": "#epsilon", "kind": "value"}, {"label": "Q stats", "zhLabel": "Q 统计", "selector": "#cwQstats", "kind": "text"}]};
+  const layer = document.querySelector('.accessibility-layer');
+  if (!layer) return;
+  const intro = layer.querySelector('[data-a11y-intro]');
+  const stateGrid = layer.querySelector('[data-a11y-state-grid]');
+  const liveRegion = layer.querySelector('#a11yLiveRegion');
+  let renderTimer = 0;
+  let lastSummary = '';
+  function currentLang() {
+    return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+  }
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+  function localized(obj, key) {
+    const lang = currentLang();
+    const zhKey = 'zh' + key[0].toUpperCase() + key.slice(1);
+    return (lang === 'zh' && obj[zhKey]) || obj[key] || '';
+  }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? (currentLang() === 'zh' ? '开' : 'on') : (currentLang() === 'zh' ? '关' : 'off');
+    else if (field.kind === 'value') value = el.value;
+    else value = el.textContent.trim();
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? { label: localized(field, 'label'), value } : null;
+  }
+  function renderAccessibilityLayer(options = {}) {
+    const lang = currentLang();
+    layer.querySelectorAll('[data-a11y-en]').forEach(el => {
+      el.textContent = el.getAttribute(lang === 'zh' ? 'data-a11y-zh' : 'data-a11y-en') || el.textContent;
+    });
+    const copy = A11Y_CONFIG.copy[lang] || A11Y_CONFIG.copy.en;
+    intro.textContent = copy.intro;
+    layer.querySelector('[data-a11y-title]').textContent = copy.title;
+    layer.querySelector('[data-a11y-keyboard-title]').textContent = copy.keyboardTitle;
+    layer.querySelector('[data-a11y-keyboard-1]').textContent = copy.keyboard1;
+    layer.querySelector('[data-a11y-keyboard-2]').textContent = copy.keyboard2;
+    layer.querySelector('[data-a11y-keyboard-3]').textContent = copy.keyboard3;
+    layer.querySelector('[data-a11y-state-title]').textContent = copy.stateTitle;
+    layer.querySelector('[data-a11y-motion-title]').textContent = copy.motionTitle;
+    layer.querySelector('[data-a11y-motion-copy]').textContent = copy.motionCopy;
+    layer.querySelector('[data-a11y-note]').textContent = copy.note;
+    const fields = A11Y_CONFIG.fields.map(readField).filter(Boolean);
+    if (fields.length) {
+      stateGrid.innerHTML = fields.map(field => '<dt>' + escapeHtml(field.label) + '</dt><dd>' + escapeHtml(field.value) + '</dd>').join('');
+    } else {
+      stateGrid.innerHTML = '<dt>' + escapeHtml(copy.emptyLabel) + '</dt><dd>' + escapeHtml(copy.emptyValue) + '</dd>';
+    }
+    const summary = fields.map(field => field.label + ': ' + field.value).join('; ') || copy.emptyValue;
+    if (options.announce && liveRegion && summary !== lastSummary) {
+      liveRegion.textContent = copy.livePrefix + summary;
+    }
+    lastSummary = summary;
+  }
+  function markVisualRegions() {
+    const descriptionId = 'a11yStateSummary';
+    document.querySelectorAll('canvas, svg, [role="img"]').forEach((el, index) => {
+      if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+      if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', A11Y_CONFIG.copy.en.visualLabel + ' ' + (index + 1));
+      const describedBy = (el.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+      if (!describedBy.includes(descriptionId)) {
+        describedBy.push(descriptionId);
+        el.setAttribute('aria-describedby', describedBy.join(' '));
+      }
+    });
+  }
+  function scheduleAccessibilityRender(announce = true) {
+    clearTimeout(renderTimer);
+    renderTimer = setTimeout(() => renderAccessibilityLayer({ announce }), 100);
+  }
+  document.addEventListener('input', () => scheduleAccessibilityRender(true), true);
+  document.addEventListener('change', () => scheduleAccessibilityRender(true), true);
+  document.addEventListener('click', event => {
+    if (event.target && event.target.closest && event.target.closest('button, [role="button"], canvas, svg, select, input')) {
+      scheduleAccessibilityRender(true);
+    }
+  }, true);
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ' || event.key.startsWith('Arrow') || event.key === 'Tab') {
+      scheduleAccessibilityRender(false);
+    }
+  }, true);
+  setInterval(() => {
+    if (!document.hidden) renderAccessibilityLayer({ announce: false });
+  }, 1500);
+  markVisualRegions();
+  renderAccessibilityLayer({ announce: false });
+  window.renderAccessibilityLayer = renderAccessibilityLayer;
+})();
+</script>
+
+<script>
+(function () {
+  document.querySelectorAll('[data-current-year]').forEach(el => { el.textContent = new Date().getFullYear(); });
+})();
+</script>
+
+
+<script id="learner-content-system">
+(() => {
+  const profile = {"slug":"q-learning-gridworld","en":{"title":"Q-Learning Gridworld","big":"Train an agent through trial and error. Watch rewards update action values, compare exploration settings, and see a policy emerge without a prewritten route.","primer":"Reinforcement learning connects actions to delayed consequences. The symbols are compact, so learn each setting’s name before interpreting the value updates.","terms":[{"term":"Reinforcement learning (RL)","definition":"Learning actions from rewards and penalties received through interaction."},{"term":"Q-value","definition":"An estimate of the long-term return from taking one action in one state."},{"term":"Learning rate (α)","definition":"How strongly a new experience changes the current Q-value."},{"term":"Discount factor (γ)","definition":"How much future rewards matter compared with immediate rewards."},{"term":"Exploration rate (ε)","definition":"How often the agent tries a random action instead of its current best action."},{"term":"Temporal-difference update (TD update)","definition":"A step that compares the current estimate with reward plus an estimate of the next state."}],"scenarios":[{"title":"Watch values spread backward from the goal","question":"How can a reward influence states that are several steps away?","run":"Use the default grid, train continuously, and watch high action values (Q-values) move backward from the goal.","predict":"Predict which nearby cells will gain useful values first.","explain":"Explain how repeated temporal-difference updates carry delayed reward information backward."},{"title":"No exploration can prevent discovery","question":"Why can choosing only the current best action stop learning before it starts?","run":"Set the exploration rate (ε) to zero, reset the action values (Q-values), and train from an all-zero table.","predict":"Predict whether the agent will reliably discover the goal.","explain":"Explain how unseen actions cannot become valuable if they are never tried."},{"title":"A zero discount factor ignores the future","question":"What remains when only immediate reward matters?","run":"Set the discount factor (γ) to zero, reset the action values (Q-values), and train.","predict":"Predict which cells will receive nonzero Q-values.","explain":"Explain why reward information cannot travel beyond the cells immediately beside a terminal reward."},{"title":"A zero step penalty removes time pressure","question":"Why does the agent wander when long and short successful routes earn the same return?","run":"Set the per-step reward to zero, train, then compare with a small negative step reward.","predict":"Predict whether the learned policy will prefer a short route when movement is free.","explain":"Explain how a step cost turns route length into part of the objective."},{"title":"A high learning rate reacts strongly to noisy outcomes","question":"Why can fast updates become unstable in a stochastic world?","run":"Set slip probability to 0.3 and learning rate (α) to 0.8, then compare the changes in action values (Q-values) with a lower learning rate.","predict":"Predict which setting will produce more erratic Q-value changes.","explain":"Explain how one surprising transition can dominate when new experience receives too much weight."}]},"zh":{"title":"Q 学习网格世界","big":"让智能体通过试错训练。观察奖励如何更新动作价值，比较探索设置，并看到策略在没有预设路线时形成。","primer":"强化学习把动作与延迟后果联系起来。符号很简洁，因此解释价值更新前，先学习每个设置的名称。","terms":[{"term":"强化学习（RL）","definition":"通过交互获得的奖励和惩罚来学习动作。"},{"term":"Q 值","definition":"在某状态采取某动作后长期回报的估计。"},{"term":"学习率（α）","definition":"一次新经验改变当前 Q 值的程度。"},{"term":"折扣因子（γ）","definition":"未来奖励相对于即时奖励的重要程度。"},{"term":"探索率（ε）","definition":"智能体尝试随机动作而不是当前最佳动作的频率。"},{"term":"时序差分更新（TD 更新）","definition":"把当前估计与奖励加下一状态估计进行比较的更新步骤。"}],"scenarios":[{"title":"观察价值从目标向后传播","question":"奖励如何影响相隔多步的状态？","run":"使用默认网格连续训练，观察高动作价值（Q 值）如何从目标向后传播。","predict":"预测哪些附近格子会最先获得有用价值。","explain":"解释重复的时序差分更新如何把延迟奖励信息向后传递。"},{"title":"没有探索会阻止发现","question":"为什么只选择当前最佳动作可能让学习在开始前就停止？","run":"把探索率（ε）设为零，重置动作价值（Q 值），并从全零表开始训练。","predict":"预测智能体是否会可靠发现目标。","explain":"解释从未尝试的动作为什么无法被发现为有价值。"},{"title":"折扣因子为零会忽略未来","question":"只关心即时奖励时会留下什么？","run":"把折扣因子（γ）设为零，重置动作价值（Q 值），然后训练。","predict":"预测哪些格子会得到非零 Q 值。","explain":"解释奖励信息为什么无法传播到终点奖励旁边之外。"},{"title":"步长惩罚为零会消除时间压力","question":"为什么长短成功路线回报相同时，智能体会绕路？","run":"把每步奖励设为 0，训练后再与小负步长奖励比较。","predict":"预测移动免费时，策略是否会偏好短路线。","explain":"解释步长成本如何让路线长度成为目标的一部分。"},{"title":"高学习率对噪声结果反应过强","question":"随机世界中，快速更新为什么可能不稳定？","run":"把滑移概率设为 0.3、学习率（α）设为 0.8，再与较低学习率下的动作价值（Q 值）变化比较。","predict":"预测哪个设置会产生更不稳定的 Q 值变化。","explain":"解释新经验权重过大时，一次意外转移如何主导更新。"}]}};
+  window.APPLET_LEARNER_PROFILE = profile;
+  const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;
+  try {
+    STRINGS.en.title = profile.en.title; STRINGS.zh.title = profile.zh.title;
+    STRINGS.en['tldr-strong'] = 'What this applet shows'; STRINGS.zh['tldr-strong'] = '这个工具展示什么';
+    STRINGS.en['tldr-body'] = profile.en.big; STRINGS.zh['tldr-body'] = profile.zh.big;
+    profile.en.scenarios.forEach((item,i) => { STRINGS.en['tour'+i+'name']=item.title; STRINGS.en['tour'+i+'desc']=item.run; if (typeof LESSON_TOUR !== 'undefined' && LESSON_TOUR[i]) { LESSON_TOUR[i].name=item.title; LESSON_TOUR[i].description=item.run; } });
+    profile.zh.scenarios.forEach((item,i) => { STRINGS.zh['tour'+i+'name']=item.title; STRINGS.zh['tour'+i+'desc']=item.run; });
+  } catch (_) {}
+  function applyCoreCopy(){
+    const c=copy();
+    document.title=c.title+' | AI Playgrounds';
+    const h=document.querySelector('.header-main h1'); if(h) h.textContent=c.title;
+    const strong=document.querySelector('.tldr strong'); if(strong) strong.textContent=currentLocale()==='zh'?'这个工具展示什么':'What this applet shows';
+    const body=document.querySelector('.tldr span'); if(body) body.textContent=c.big;
+    const jump=document.querySelector('.jump-link'); if(jump) jump.textContent=currentLocale()==='zh'?'↓ 阅读分步解释':'↓ Read the step-by-step explanation';
+  }
+  function stateData(){
+    const values={};
+    document.querySelectorAll('#main input,#main select,#main textarea').forEach(el=>{
+      if(!el.id||el.closest('.classroom-lab'))return;
+      if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;
+      values[el.id]=el.type==='checkbox'?el.checked:el.value;
+    });
+    return {applet:profile.en.title,slug:profile.slug,exported_at:new Date().toISOString(),values};
+  }
+  function toolbar(){
+    const actions=document.querySelector('.header-actions'); if(!actions||actions.dataset.standardized==='1')return;
+    const share=document.getElementById('shareLink'), embed=document.getElementById('embedLink'), reset=document.getElementById('hardReset');
+    const csv=document.getElementById('csvExport'), png=document.getElementById('exportPng');
+    const more=document.createElement('details'); more.className='header-more';
+    const summary=document.createElement('summary'); summary.className='header-png'; summary.setAttribute('aria-haspopup','menu'); more.appendChild(summary);
+    const menu=document.createElement('div'); menu.className='header-more-menu'; menu.setAttribute('role','menu'); more.appendChild(menu);
+    if(embed){embed.textContent='📎 Embed in LMS';menu.appendChild(embed)}
+    const jsonBtn=document.createElement('button');jsonBtn.type='button';jsonBtn.className='header-png';jsonBtn.dataset.exportState='';menu.appendChild(jsonBtn);
+    if(csv){csv.textContent='📊 Data table (.csv)';menu.appendChild(csv)}
+    if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
+    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
+    actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
+    window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
+    window.refreshAppletToolbar();
+    document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
+  }
+  function terms(){
+    const inner=document.querySelector('.interactive-inner'); if(!inner||inner.querySelector('.key-terms'))return;
+    const d=document.createElement('details');d.className='key-terms';d.open=true;
+    d.innerHTML='<summary><span data-key-summary></span></summary><div class="key-terms-panel"><p class="key-terms-intro" data-key-intro></p><dl class="key-terms-grid" data-key-grid></dl></div>';
+    const first=inner.querySelector(':scope > details');inner.insertBefore(d,first||inner.firstChild);
+    window.renderAppletKeyTerms=()=>{const c=copy();d.querySelector('[data-key-summary]').textContent=currentLocale()==='zh'?'🔑 先学这些术语':'🔑 Key terms before the explanation';d.querySelector('[data-key-intro]').textContent=c.primer;d.querySelector('[data-key-grid]').innerHTML=c.terms.map(x=>'<div class="key-term"><dt>'+x.term+'</dt><dd>'+x.definition+'</dd></div>').join('')};
+    window.renderAppletKeyTerms();
+  }
+  function essayPrimer(){
+    const essay=document.querySelector('article#essay');if(!essay||essay.querySelector('.essay-primer'))return;
+    const box=document.createElement('section');box.className='essay-primer';essay.insertBefore(box,essay.firstChild);
+    window.renderEssayPrimer=()=>{const c=copy();const heading=currentLocale()==='zh'?'阅读前先准备':'Before you read';const termHeading=currentLocale()==='zh'?'本页会使用的术语':'Terms used in this explanation';box.innerHTML='<h2>'+heading+'</h2><p>'+c.primer+'</p><h3>'+termHeading+'</h3><dl class="essay-primer-terms">'+c.terms.map(x=>'<div><dt>'+x.term+'</dt><dd>'+x.definition+'</dd></div>').join('')+'</dl>'};window.renderEssayPrimer();
+  }
+  function patchScenarioData(){
+    try{if(typeof renderScenarioGallery==='function')renderScenarioGallery();if(typeof renderTour==='function')renderTour()}catch(_){}
+  }
+  window.refreshLearnerContent=()=>{applyCoreCopy();window.renderAppletKeyTerms?.();window.renderEssayPrimer?.();window.refreshAppletToolbar?.()};
+  applyCoreCopy();toolbar();terms();essayPrimer();patchScenarioData();
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(window.refreshLearnerContent,20)));
+})();
+</script>
+
+<script id="product-consolidation-script">
+(() => {
+  const slug = location.pathname.split('/').filter(Boolean).slice(-2,-1)[0] || 'q-learning-gridworld';
+  const inner = document.querySelector('.interactive-inner');
+  if (!inner || inner.querySelector('.learning-mode-shell')) return;
+  const oldDeck = inner.querySelector(':scope > .learning-deck');
+  if (oldDeck) { [...oldDeck.children].forEach(el => inner.insertBefore(el, oldDeck)); oldDeck.remove(); }
+  const details = [...inner.querySelectorAll(':scope > details')];
+  if (!details.length) return;
+  const modeFor = d => {
+    if (d.matches('.visual-explanation,.lesson-tour,.key-terms')) return 'understand';
+    if (d.matches('.worksheet,.classroom-lab')) return 'classroom';
+    if (d.matches('.accessibility-layer')) return 'access';
+    return 'explore';
+  };
+  const lang = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const labels = {explore:['Explore','探索'],understand:['Understand','理解'],classroom:['Use in class','课堂使用'],access:['Text and keyboard','文本与键盘']};
+  const intros = {explore:['Start with the featured experiment, then use the scenarios to test a prediction.','从精选实验开始，再使用情境检验预测。'],understand:['Open the mechanism view and lesson sequence when you need to explain why the result changed.','需要解释结果为什么变化时，打开机制视图和课程序列。'],classroom:['Collect reasoning with the worksheet or the local student response packet.','使用练习题或本地学生回答包收集推理。'],access:['Use the text-state description and keyboard guidance when the visual display is not enough.','当可视显示不足时，使用文本状态说明和键盘指导。']};
+  const shell=document.createElement('section');shell.className='learning-mode-shell';shell.setAttribute('aria-label','Applet learning modes');
+  shell.innerHTML='<div class="learning-mode-head"><div><h2 data-mode-heading></h2><p data-mode-copy></p></div><div class="learning-mode-tools"><button type="button" class="copy-experiment" data-copy-experiment>Copy this experiment</button></div></div><div class="learning-mode-tabs" role="tablist"></div><div class="experiment-status" aria-live="polite"></div>';
+  const tabs=shell.querySelector('.learning-mode-tabs');const panels={};
+  Object.keys(labels).forEach((key,i)=>{const b=document.createElement('button');b.type='button';b.className='learning-mode-tab';b.role='tab';b.dataset.mode=key;b.id='mode-tab-'+key;b.setAttribute('aria-controls','mode-panel-'+key);tabs.appendChild(b);const p=document.createElement('div');p.className='learning-mode-panel';p.id='mode-panel-'+key;p.role='tabpanel';p.setAttribute('aria-labelledby',b.id);p.innerHTML='<div class="mode-intro"></div>';shell.appendChild(p);panels[key]=p});
+  inner.insertBefore(shell,details[0]);details.forEach(d=>{const mode=modeFor(d);if(d.matches('.scenario-gallery,.visual-explanation,.classroom-lab,.accessibility-layer,.signature-challenge'))d.classList.add('mode-wide');panels[mode].appendChild(d)});
+  const sig=panels.explore.querySelector('.signature-challenge');if(sig){panels.explore.insertBefore(sig,panels.explore.querySelector('.mode-intro').nextSibling);sig.open=true;const summary=sig.querySelector('summary span,summary');if(summary&&lang()==='en')summary.textContent='✨ Featured experiment';const body=sig.querySelector('.signature-challenge-panel')||sig.querySelector(':scope > div');if(body&&!body.querySelector('.featured-actions')){const actions=document.createElement('div');actions.className='featured-actions';actions.innerHTML='<button type="button" class="step-btn" data-start-featured>Start featured experiment</button>';body.appendChild(actions)}}
+  const lab=panels.classroom.querySelector('.classroom-lab summary span');if(lab&&lang()==='en')lab.textContent='🧪 Student response packet';
+  const a11y=panels.access.querySelector('.accessibility-layer summary span');if(a11y&&lang()==='en')a11y.textContent='♿ Text and keyboard support';
+  let active=new URL(location.href).searchParams.get('mode')||'explore';if(!panels[active])active='explore';
+  function setMode(mode,write=true){active=mode;Object.entries(panels).forEach(([k,p])=>p.hidden=k!==mode);shell.querySelectorAll('.learning-mode-tab').forEach(b=>{const on=b.dataset.mode===mode;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});shell.querySelector('[data-mode-heading]').textContent=labels[mode][lang()==='zh'?1:0];shell.querySelector('[data-mode-copy]').textContent=intros[mode][lang()==='zh'?1:0];panels[mode].querySelector('.mode-intro').innerHTML='<strong>'+labels[mode][lang()==='zh'?1:0]+'.</strong> '+intros[mode][lang()==='zh'?1:0];if(write){const u=new URL(location.href);u.searchParams.set('mode',mode);history.replaceState(null,'',u)}}
+  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
+  function statePayload(){const out={};inner.querySelectorAll('select,input').forEach(el=>{if(!el.id||el.closest('.classroom-lab')||['button','submit'].includes(el.type))return;if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;out[el.id]=el.type==='checkbox'?el.checked:el.value});return out}
+  function encode(obj){return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))}
+  function decode(s){try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch{return null}}
+  const status=shell.querySelector('.experiment-status');shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('state',encode(statePayload()));try{await navigator.clipboard.writeText(u.href);status.textContent=lang()==='zh'?'实验链接已复制。':'Experiment link copied.'}catch{prompt('Copy this experiment URL',u.href)}};
+  const featuredIndex={"search-pathfinding":0,"bayes-classifier":0,"overfitting":1,"knn-classifier":4,"wumpus-world":4,"cnf-sat":2,"bayes-network":1,"hill-climbing":1,"kmeans":4,"neural-network":1,"convolution":4,"q-learning-gridworld":2};shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('details:not(.signature-challenge)')?.setAttribute('open','')});
+  document.addEventListener('click',e=>{const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode','explore');history.replaceState(null,'',u)});
+  const p=new URL(location.href).searchParams;const restore=()=>{const obj=decode(p.get('state')||'');if(obj)Object.entries(obj).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});const n=Number(p.get('scenario'));if(Number.isInteger(n)){panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click()}if(p.get('featured')==='1')sig?.setAttribute('open','')};
+  function refineCards(){
+    const profile=window.APPLET_LEARNER_PROFILE||{};
+    const locale=lang()==='zh'?'zh':'en';
+    const items=(profile[locale]&&profile[locale].scenarios)||[];
+    const labels=locale==='zh'?['核心问题','运行并观察','先预测','运行后解释']:['Core question','Run and watch','Predict first','Explain afterward'];
+    panels.explore.querySelectorAll('.scenario-card').forEach((card,i)=>{
+      const item=items[i]||{};const h=card.querySelector('h3');
+      if(h&&item.title)h.textContent=(locale==='zh'?'情境 ':'Scenario ')+(i+1)+': '+item.title;
+      const metas=card.querySelectorAll('.scenario-meta');const values=[item.question,item.run,item.predict,item.explain];
+      metas.forEach((meta,j)=>{if(!values[j])return;const strong=meta.querySelector('strong');if(strong)strong.textContent=labels[j]+': ';let node=strong?strong.nextSibling:null;if(node)node.textContent=' '+values[j];else meta.appendChild(document.createTextNode(' '+values[j]));});
+    });
+  }
+  setTimeout(()=>{refineCards();window.renderAppletKeyTerms?.();restore()},250);document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.()},20)));setMode(active,false);
+})();
+</script>
 </body>
 </html>

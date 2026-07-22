@@ -3,25 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Visualizing Hill Climbing & Simulated Annealing</title>
+<title>Hill Climbing and Simulated Annealing | AI Playgrounds</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E">
-<meta name="description" content="Six local-search algorithms (simple, steepest, stochastic, first-choice, random-restart, simulated annealing) racing on TSP, N-queens, or a 2D landscape.">
+<meta name="description" content="Compare local-search algorithms that improve one candidate at a time. Hill climbing accepts only better moves; simulated annealing can temporarily accept worse moves to escape a local optimum.">
 <link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/hill-climbing/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/hill-climbing/">
-<meta property="og:title" content="Visualizing Hill Climbing & Simulated Annealing — AI Playgrounds">
-<meta property="og:description" content="Six local-search algorithms (simple, steepest, stochastic, first-choice, random-restart, simulated annealing) racing on TSP, N-queens, or a 2D landscape.">
+<meta property="og:title" content="Hill Climbing and Simulated Annealing | AI Playgrounds">
+<meta property="og:description" content="Compare local-search algorithms that improve one candidate at a time. Hill climbing accepts only better moves; simulated annealing can temporarily accept worse moves to escape a local optimum.">
 <meta property="og:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Visualizing Hill Climbing & Simulated Annealing — AI Playgrounds">
-<meta name="twitter:description" content="Six local-search algorithms (simple, steepest, stochastic, first-choice, random-restart, simulated annealing) racing on TSP, N-queens, or a 2D landscape.">
+<meta name="twitter:title" content="Hill Climbing and Simulated Annealing | AI Playgrounds">
+<meta name="twitter:description" content="Compare local-search algorithms that improve one candidate at a time. Hill climbing accepts only better moves; simulated annealing can temporarily accept worse moves to escape a local optimum.">
 <meta name="twitter:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Visualizing Hill Climbing & Simulated Annealing — AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/hill-climbing/","description":"Six local-search algorithms (simple, steepest, stochastic, first-choice, random-restart, simulated annealing) racing on TSP, N-queens, or a 2D landscape.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan Dixon"}}
-</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Hill Climbing and Simulated Annealing | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/hill-climbing/","description":"Compare local-search algorithms that improve one candidate at a time. Hill climbing accepts only better moves; simulated annealing can temporarily accept worse moves to escape a local optimum.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
 <style>
   :root {
-    --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #c2410c;
+    --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #a16207;
     --card: #fff; --border: #e5e7eb; --soft: #f9fafb;
     --good: #16a34a; --bad: #dc2626; --neutral: #2563eb;
   }
@@ -50,7 +48,7 @@
   .tldr strong { color: rgba(255,255,255,0.85); font-size: 0.72rem; letter-spacing: 0.08em;
                   text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px; }
   .interactive { background: var(--card); padding: 24px; border-bottom: 1px solid var(--border); }
-  .interactive-inner { max-width: 1280px; margin: 0 auto;
+  .interactive-inner { max-width: min(1280px, 100%); margin: 0 auto;
                          font-family: -apple-system, system-ui, sans-serif; }
   .control-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
                   margin-bottom: 12px; font-size: 0.88rem; }
@@ -125,6 +123,10 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition: none !important; animation: none !important; }
   }
+  /* Touch devices: comfortable tap targets without changing desktop layout. */
+  @media (pointer: coarse) {
+    button, .step-btn, .tp-btn, .group button, select, summary { min-height: 44px; }
+  }
   /* === dark mode === */
   body.dark-mode {
     --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8;
@@ -132,7 +134,7 @@
   }
   body.dark-mode .essay .lede { color: #cbd5e1; }
   body.dark-mode .essay .for-teachers { background: #0f172a; }
-  /* True canvas dark mode — render fn picks bg directly. */
+  /* True canvas dark mode: render fn picks bg directly. */
   body.dark-mode .header-reset,
   body.dark-mode .lang-switch button:not(.active),
   body.dark-mode .header-theme,
@@ -149,7 +151,7 @@
                   font-size: 0.85rem; font-family: inherit; }
   .header-png:hover { background: var(--soft); }
   body.dark-mode .header-png { background: var(--card); color: var(--fg); }
-  /* ===== Slider styling — native themed control via accent-color (consistent across browsers) ===== */
+  /* ===== Slider styling: native themed control via accent-color (consistent across browsers) ===== */
   input[type="range"] { accent-color: var(--accent); height: 28px; cursor: pointer; }
   /* embed mode. Strip chrome so the applet fits cleanly in an LMS iframe. */
   body.embed-mode .page-header,
@@ -157,20 +159,365 @@
   body.embed-mode article.essay,
   body.embed-mode .jump-anchor { display: none !important; }
   body.embed-mode .interactive { padding: 12px; border-bottom: none; }
-  /* ===== Shared a11y + contrast tokens (review fixes: F4 keyboard focus, F6 banner contrast) ===== */
+  /* ===== Shared a11y + contrast tokens (keyboard focus and contrast tokens) ===== */
   button:focus-visible, a:focus-visible, select:focus-visible,
   input:focus-visible, textarea:focus-visible, summary:focus-visible {
     outline: 2px solid var(--accent); outline-offset: 2px;
   }
   .tldr { background: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), var(--accent); }
   .tldr strong { color: #fff; }
+
+
+  /* Student response packet: local-only assignment packet across the applet family. */
+  .classroom-lab .lab-panel { margin-top:8px; padding:14px; background:var(--card); border:1px solid var(--border); border-radius:8px; }
+  .classroom-lab .lab-intro { margin:0 0 12px; color:var(--muted); font-size:0.88rem; line-height:1.5; }
+  .classroom-lab .lab-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+  .classroom-lab .lab-field { display:flex; flex-direction:column; gap:4px; }
+  .classroom-lab .lab-field label { font-family:-apple-system,system-ui,sans-serif; font-size:0.82rem; font-weight:700; color:var(--accent); }
+  .classroom-lab textarea { min-height:86px; resize:vertical; width:100%; border:1px solid var(--border); border-radius:6px; padding:8px; font:inherit; color:var(--fg); background:var(--bg); }
+  .classroom-lab .lab-state { margin-top:12px; padding:10px 12px; border:1px dashed var(--border); border-radius:8px; background:var(--soft); color:var(--muted); font-family:ui-monospace,monospace; font-size:0.78rem; white-space:pre-wrap; }
+  .classroom-lab .lab-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; align-items:center; }
+  .classroom-lab .lab-status { color:var(--muted); font-size:0.82rem; min-height:1.2em; }
+  @media (max-width:480px) { .classroom-lab .lab-grid { grid-template-columns:1fr; } .classroom-lab .lab-actions button { width:100%; } }
+
+  /* Scenario Gallery: visible, reusable entry points generated from the lesson-tour scenarios. */
+  .scenario-gallery-panel {
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .scenario-gallery-intro {
+    margin: 0 0 10px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .scenario-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .scenario-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--card) 88%, var(--soft));
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 100%;
+  }
+  .scenario-card h3 {
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.98rem;
+    line-height: 1.25;
+  }
+  .scenario-card p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .scenario-card .scenario-meta {
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  .scenario-card .scenario-meta strong { color: var(--fg); }
+  .scenario-card button {
+    margin-top: auto;
+    align-self: flex-start;
+  }
+  @media (max-width: 480px) {
+    .scenario-card-grid { grid-template-columns: 1fr; }
+    .scenario-card button { width: 100%; }
+  }
+
+
+
+  /* Supporting learning components. */
+  .visual-explanation-panel {
+    margin-top: 8px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .visual-explanation-intro {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .visual-flow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+  }
+  .visual-card {
+    position: relative;
+    min-height: 132px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, var(--accent)), var(--card));
+    overflow: hidden;
+  }
+  .visual-card::before {
+    content: attr(data-step);
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    color: color-mix(in srgb, var(--accent) 62%, transparent);
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+  .visual-card h4 {
+    margin: 0 28px 8px 0;
+    color: var(--accent);
+    font-size: 0.9rem;
+    line-height: 1.25;
+  }
+  .visual-card p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .visual-live {
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 8px;
+    background: var(--soft);
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.74rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .visual-live strong { color: var(--accent); font-family: -apple-system, system-ui, sans-serif; font-size: 0.72rem; }
+  .visual-watch-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .visual-snapshot, .visual-misread {
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: var(--soft);
+  }
+  .visual-snapshot strong, .visual-misread strong {
+    display: block;
+    color: var(--accent);
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 0.78rem;
+    margin-bottom: 6px;
+  }
+  .visual-snapshot pre {
+    margin: 0;
+    white-space: pre-wrap;
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+  .visual-misread p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  @media (max-width: 620px) {
+    .visual-watch-grid { grid-template-columns: 1fr; }
+  }
+
+
+
+  /* Supporting learning components. */
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 10px;
+    z-index: 10000;
+    padding: 10px 14px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 8px;
+    font-family: -apple-system, system-ui, sans-serif;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .skip-link:focus { left: 12px; }
+  :focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+  [tabindex="-1"]:focus { outline: none; }
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+  .accessibility-layer {
+    margin-top: 12px;
+  }
+  .accessibility-panel {
+    margin-top: 8px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .accessibility-intro {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .accessibility-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .accessibility-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--card) 92%, var(--soft));
+    padding: 12px;
+  }
+  .accessibility-card h3 {
+    margin: 0 0 8px;
+    color: var(--accent);
+    font-size: 0.92rem;
+  }
+  .accessibility-card p,
+  .accessibility-card li {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .accessibility-card ul {
+    margin: 0;
+    padding-left: 1.15rem;
+  }
+  .a11y-state-grid {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 6px 10px;
+    margin: 0;
+    font-size: 0.84rem;
+  }
+  .a11y-state-grid dt {
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .a11y-state-grid dd {
+    margin: 0;
+    color: var(--fg);
+    overflow-wrap: anywhere;
+  }
+  .accessibility-note {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+  @media (max-width: 620px) {
+    .accessibility-grid { grid-template-columns: 1fr; }
+    .a11y-state-grid { grid-template-columns: 1fr; }
+    .a11y-state-grid dt { margin-top: 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html:focus-within { scroll-behavior: auto !important; }
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+
+
+  /* Supporting learning components. */
+  .interactive-inner { max-width: min(1280px, 100%); }
+  .scenario-card,
+  .accessibility-card,
+  .classroom-lab .lab-panel,
+  .accessibility-panel,
+  .signature-challenge-panel {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, var(--soft)), var(--card));
+  }
+  .signature-challenge-panel {
+    margin-top: 12px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .signature-challenge-panel strong { display:block; color:var(--accent); margin-bottom:4px; }
+  .signature-challenge-panel p { margin: 6px 0 0; color: var(--muted); font-size: 0.88rem; line-height: 1.5; }
+
+
+  /* Supporting learning components. */
+  .learning-deck { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:12px; align-items:start; }
+  .learning-deck > details { margin-top:0 !important; min-width:0; }
+  .learning-deck > .scenario-gallery,
+  .learning-deck > .visual-explanation,
+  .learning-deck > .classroom-lab,
+  .learning-deck > .accessibility-layer { grid-column:1 / -1; }
+  .learning-deck > details > summary { background:var(--card) !important; }
+  .scenario-gallery-panel, .scenario-card, .accessibility-panel, .accessibility-card,
+  .classroom-lab .lab-panel, .signature-challenge-panel {
+    background:linear-gradient(180deg,color-mix(in srgb,var(--card) 90%,var(--accent)),var(--card)) !important;
+  }
+  .scenario-card { box-shadow:0 6px 18px rgba(15,23,42,.05); transition:border-color .16s, box-shadow .16s, transform .16s; }
+  .scenario-card.applied { border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 22%,transparent),0 10px 24px rgba(15,23,42,.08); transform:translateY(-1px); }
+  .scenario-card .scenario-meta:last-of-type { margin-bottom:2px; }
+  @media (max-width:900px) { .learning-deck { grid-template-columns:1fr; } .learning-deck > details { grid-column:1 !important; } }
+
 </style>
+
+
+<style id="learner-house-style">
+/* Learner-facing terminology, compact glossary, and consistent action hierarchy. */
+.header-actions{align-items:center}.header-more{position:relative}.header-more>summary{list-style:none;cursor:pointer;user-select:none}.header-more>summary::-webkit-details-marker{display:none}.header-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:50;min-width:220px;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 16px 35px rgba(15,23,42,.18);display:grid;gap:5px}.header-more-menu button{width:100%;text-align:left;justify-content:flex-start;white-space:normal}.key-terms-panel{padding:14px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}.key-terms-intro{margin:0 0 10px;color:var(--muted)}.key-terms-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.key-term{padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:color-mix(in srgb,var(--card) 97%,var(--accent))}.key-term dt{font-weight:800;color:var(--fg);margin:0 0 3px}.key-term dd{margin:0;color:var(--muted);font-size:.84rem;line-height:1.45}.essay-primer{margin:0 0 22px;padding:15px 17px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--card) 96%,var(--accent));border-radius:10px}.essay-primer h2{margin:0 0 6px!important;font-size:1.05rem!important}.essay-primer p{margin:0 0 10px!important}.essay-primer h3{margin:12px 0 7px;font-size:.92rem}.essay-primer-terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0}.essay-primer-terms>div{padding:8px 9px;border:1px solid var(--border);border-radius:8px;background:var(--card)}.essay-primer-terms dt{font-weight:800}.essay-primer-terms dd{margin:2px 0 0;color:var(--muted);font-size:.82rem;line-height:1.4}.scenario-card .scenario-meta{line-height:1.5}.scenario-card .scenario-meta strong{display:block;margin-bottom:2px}.header-actions>.header-png,.header-actions>.header-theme,.header-actions>.header-reset,.header-more>summary{min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px}
+@media(max-width:720px){.essay-primer-terms{grid-template-columns:1fr}.header-actions{width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}.header-actions>button,.header-actions>.header-more,.header-more>summary{width:100%;justify-content:center}.header-more-menu{right:auto;left:0;max-width:min(290px,90vw)}.key-terms-grid{grid-template-columns:1fr}}
+</style>
+
+<style id="product-consolidation-style">
+/* Product information architecture and restrained visual hierarchy. */
+.learning-deck{display:contents!important}.learning-mode-shell{margin-top:16px;border-top:1px solid var(--border);padding-top:15px}.learning-mode-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px}.learning-mode-head h2{margin:0;font-size:1rem;color:var(--fg)}.learning-mode-head p{margin:2px 0 0;color:var(--muted);font-size:.82rem}.learning-mode-tools{display:flex;gap:8px;flex-wrap:wrap}.learning-mode-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:5px;background:var(--soft);border:1px solid var(--border);border-radius:14px}.learning-mode-tab{min-height:42px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-weight:750;padding:8px 10px}.learning-mode-tab[aria-selected="true"]{background:var(--card);color:var(--accent);box-shadow:0 3px 12px rgba(15,23,42,.08)}.learning-mode-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px;align-items:start}.learning-mode-panel[hidden]{display:none}.learning-mode-panel>details{margin:0!important;min-width:0}.learning-mode-panel>details.mode-wide{grid-column:1/-1}.learning-mode-panel>details>summary{background:var(--card)!important;border:1px solid var(--border)!important;border-left:4px solid color-mix(in srgb,var(--accent) 62%,var(--border))!important;border-radius:10px!important;color:var(--fg)!important;font-weight:750!important;padding:10px 12px!important}.learning-mode-panel>details[open]>summary{border-color:color-mix(in srgb,var(--accent) 55%,var(--border))!important}.learning-mode-panel .scenario-gallery-panel,.learning-mode-panel .accessibility-panel,.learning-mode-panel .classroom-lab .lab-panel{background:var(--card)!important}.scenario-card,.accessibility-card{background:color-mix(in srgb,var(--card) 97%,var(--accent))!important;box-shadow:none!important}.scenario-card.applied{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 78%,var(--accent)),color-mix(in srgb,var(--card) 88%,var(--accent-2,#6366f1)))!important;border-color:var(--accent)!important;box-shadow:0 12px 28px rgba(15,23,42,.10)!important}.signature-challenge>div,.signature-challenge .signature-challenge-panel{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 80%,var(--accent)),color-mix(in srgb,var(--card) 90%,var(--accent-2,#6366f1)))!important;border:1px solid color-mix(in srgb,var(--accent) 40%,var(--border))!important}.visual-card{background:linear-gradient(180deg,color-mix(in srgb,var(--card) 92%,var(--accent)),var(--card))!important}.featured-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.scenario-card button,.featured-actions button{border:0!important;border-radius:8px!important;background:var(--accent)!important;color:#fff!important;font-weight:750!important;padding:8px 11px!important}.scenario-card button:hover,.featured-actions button:hover{filter:brightness(1.05)}.copy-experiment{font-size:.82rem}.experiment-status{color:var(--muted);font-size:.78rem;min-height:1.2em;margin-top:6px}.mode-intro{grid-column:1/-1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--muted);font-size:.86rem}.mode-intro strong{color:var(--fg)}
+@container (min-width:980px){.scenario-card-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.visual-flow{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
+.interactive-inner{container-type:inline-size;max-width:min(1320px,100%)!important}
+@media(max-width:820px){.learning-mode-head{align-items:flex-start;flex-direction:column}.learning-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-mode-panel{grid-template-columns:1fr}.learning-mode-panel>details{grid-column:1!important}.copy-experiment{width:100%}}
+</style>
+
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to applet controls</a>
 
 <header class="page-header">
   <div class="header-utility">
-    <a class="back" href="../../" data-i18n="back-link">← Back to all playgrounds</a>
+    <a class="back" href="../../index.html" data-i18n="back-link">← Back to all playgrounds</a>
     <div class="header-prefs">
       <button class="header-theme" id="themeToggle" aria-label="Toggle dark or light theme"
               title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
@@ -181,7 +528,7 @@
     </div>
   </div>
   <div class="header-main">
-    <h1 data-i18n="title">Visualizing Hill Climbing &amp; Simulated Annealing</h1>
+    <h1 data-i18n="title">Hill Climbing and Simulated Annealing</h1>
     <div class="header-actions">
       <button class="header-png" id="shareLink"
               title="Copy a URL that re-opens this problem / algorithm / temperature / cooling in another browser.">🔗 Share</button>
@@ -202,7 +549,7 @@
   <span data-i18n="tldr-body">Six local-search algorithms on three classic problems. Greedy methods get stuck in local optima; simulated annealing escapes by sometimes accepting worse moves.</span>
 </aside>
 
-<section class="interactive">
+<section class="interactive" id="main" tabindex="-1" role="main">
 <div class="interactive-inner">
 
   <div class="bento">
@@ -285,9 +632,9 @@
         <!-- Stats strip (always-visible readout) -->
         <div class="stats-strip">
           <div class="stat-item"><div class="label" data-i18n="stat-iter">Iteration</div><div class="val" id="iterV">0</div></div>
-          <div class="stat-item"><div class="label" data-i18n="stat-cost">Current cost</div><div class="val" id="costV">—</div></div>
-          <div class="stat-item"><div class="label" data-i18n="stat-best">Best ever</div><div class="val" id="bestV">—</div></div>
-          <div class="stat-item"><div class="label" data-i18n="stat-temp">Temperature</div><div class="val" id="tempV">—</div></div>
+          <div class="stat-item"><div class="label" data-i18n="stat-cost">Current cost</div><div class="val" id="costV">-</div></div>
+          <div class="stat-item"><div class="label" data-i18n="stat-best">Best ever</div><div class="val" id="bestV">-</div></div>
+          <div class="stat-item"><div class="label" data-i18n="stat-temp">Temperature</div><div class="val" id="tempV">-</div></div>
           <div class="stat-item"><div class="label" data-i18n="stat-ar">SA accept/reject</div><div class="val" id="acceptV">0/0</div></div>
         </div>
       </div><!-- /.bento-cell (controls + transport + stats) -->
@@ -312,6 +659,53 @@
     </div><!-- /.bento-main -->
   </div><!-- /.bento -->
 
+
+  <!-- Scenario gallery. Visible, reusable entry points generated from the lesson-tour scenarios. -->
+  <details class="scenario-gallery" open style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-i18n="sg-summary">🎯 Try these scenarios first</span>
+    </summary>
+    <div class="scenario-gallery-panel">
+      <p class="scenario-gallery-intro" data-i18n="sg-intro">Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.</p>
+      <div class="scenario-card-grid" id="scenarioGalleryCards" aria-live="polite"></div>
+    </div>
+  </details>
+
+
+  <!-- Signature challenge. A one-move comparison that gives this applet a memorable first task. -->
+  <details class="signature-challenge" open style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span>✨ Featured comparison</span>
+    </summary>
+    <div class="signature-challenge-panel">
+      <strong>Featured comparison</strong>
+      <p>Run greedy hill climbing and simulated annealing from the same landscape. The useful question is not which is smarter, but which escape options each one has.</p>
+      <p><em>Use the same starting state, then compare the route, final score, and local-trap behavior.</em></p>
+    </div>
+  </details>
+
+  <!-- Supporting learning component. -->
+  <details class="visual-explanation" open style="margin-top:12px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-visual-en="🧭 Visual explanation" data-visual-zh="🧭 可视化解释镜头">🧭 Visual explanation</span>
+    </summary>
+    <div class="visual-explanation-panel">
+      <p class="visual-explanation-intro" data-visual-intro></p>
+      <div class="visual-flow" data-visual-flow></div>
+      <div class="visual-watch-grid">
+        <div class="visual-snapshot">
+          <strong data-visual-en="Live state to watch" data-visual-zh="要观察的实时状态">Live state to watch</strong>
+          <pre data-visual-snapshot>No state captured yet. Run or adjust the applet first.</pre>
+        </div>
+        <div class="visual-misread">
+          <strong data-visual-en="Misread to avoid" data-visual-zh="避免的误读">Misread to avoid</strong>
+          <p data-visual-misread></p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+
   <!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
   <details class="lesson-tour">
           <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
@@ -320,9 +714,9 @@
           <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
             <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
               <strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
-              <strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">—</strong>
+              <strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">-</strong>
             </div>
-            <p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">—</p>
+            <p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">-</p>
             <div style="display:flex; gap:8px; align-items:center;">
               <button class="step-btn secondary" id="tourPrev" data-i18n="tour-prev">← Prev</button>
               <button class="step-btn" id="tourApply" data-i18n="tour-apply">▶ Apply this scenario</button>
@@ -340,9 +734,9 @@
             <div class="ws-q" id="ws1">
               <p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">TSP, steepest-ascent HC. Run to convergence several times from different restarts. Does it always find the SAME (global-optimum) solution?</span></p>
               <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="0"> <span data-i18n="ws1o0">Yes — steepest-ascent always climbs to the single best tour, no matter where it starts.</span></label>
-                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="1"> <span data-i18n="ws1o1">No — it's greedy and stops at a local optimum, so different starts land on different tours.</span></label>
-                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="2"> <span data-i18n="ws1o2">Yes — once the cost stops dropping, that's a proof the tour is globally optimal.</span></label>
+                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="0"> <span data-i18n="ws1o0">Yes: steepest-ascent always climbs to the single best tour, no matter where it starts.</span></label>
+                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="1"> <span data-i18n="ws1o1">No: it's greedy and stops at a local optimum, so different starts land on different tours.</span></label>
+                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="2"> <span data-i18n="ws1o2">Yes: once the cost stops dropping, that's a proof the tour is globally optimal.</span></label>
               </div>
               <button class="step-btn" id="ws1btn" data-i18n="ws-check">Check</button>
               <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
@@ -350,9 +744,9 @@
             <div class="ws-q" id="ws2" style="margin-top:10px;">
               <p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Same TSP. Switch to random-restart HC. After several minutes, "best ever" cost is:</span></p>
               <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="0"> <span data-i18n="ws2o0">Better (lower) — restarts sample many local optima and keep the best one found.</span></label>
-                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="1"> <span data-i18n="ws2o1">Worse (higher) — restarting throws away progress, so it never improves on a single climb.</span></label>
-                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="2"> <span data-i18n="ws2o2">The same — every climb reaches the same optimum, so restarts change nothing.</span></label>
+                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="0"> <span data-i18n="ws2o0">Better (lower): restarts sample many local optima and keep the best one found.</span></label>
+                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="1"> <span data-i18n="ws2o1">Worse (higher): restarting throws away progress, so it never improves on a single climb.</span></label>
+                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="2"> <span data-i18n="ws2o2">The same: every climb reaches the same optimum, so restarts change nothing.</span></label>
               </div>
               <button class="step-btn" id="ws2btn" data-i18n="ws-check">Check</button>
               <span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
@@ -360,15 +754,83 @@
             <div class="ws-q" id="ws3" style="margin-top:10px;">
               <p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Simulated annealing. As temperature T cools toward zero, the algorithm behavior becomes:</span></p>
               <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="0"> <span data-i18n="ws3o0">More random — low T means it accepts almost any move, good or bad.</span></label>
-                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="1"> <span data-i18n="ws3o1">Unchanged — temperature only affects speed, not which moves get accepted.</span></label>
-                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="2"> <span data-i18n="ws3o2">Greedier — as T→0 the chance of accepting a worse move goes to zero, so it degenerates to greedy HC.</span></label>
+                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="0"> <span data-i18n="ws3o0">More random: low T means it accepts almost any move, good or bad.</span></label>
+                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="1"> <span data-i18n="ws3o1">Unchanged: temperature only affects speed, not which moves get accepted.</span></label>
+                <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="2"> <span data-i18n="ws3o2">Greedier: as T→0 the chance of accepting a worse move goes to zero, so it degenerates to greedy HC.</span></label>
               </div>
               <button class="step-btn" id="ws3btn" data-i18n="ws-check">Check</button>
               <span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
             </div>
           </div>
         </details>
+
+  <!-- Student response packet. Local-only: students copy or print their own response packet; the site stores nothing on a server. -->
+  <details class="classroom-lab" style="margin-top:8px;">
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-lab-en="🧪 Student response packet" data-lab-zh="🧪 课堂实验模式">🧪 Student response packet</span>
+    </summary>
+    <div class="lab-panel">
+      <p class="lab-intro" data-lab-en="Run a local-search strategy, watch its cost trajectory, then explain why it got stuck or escaped." data-lab-zh="运行一种局部搜索策略、观察代价轨迹，然后解释它为什么卡住或逃离。">Run a local-search strategy, watch its cost trajectory, then explain why it got stuck or escaped.</p>
+      <div class="lab-grid">
+        <div class="lab-field">
+          <label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
+          <textarea id="lab-predict" data-lab-answer="predict" data-lab-en="Before running, do you expect this strategy to improve steadily, get stuck, or sometimes accept worse moves? Why?" data-lab-zh="运行前，你预计这种策略会稳定改进、卡住，还是有时接受更差的移动？为什么？" placeholder="Before running, do you expect this strategy to improve steadily, get stuck, or sometimes accept worse moves? Why?"></textarea>
+        </div>
+        <div class="lab-field">
+          <label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
+          <textarea id="lab-observe" data-lab-answer="observe" data-lab-en="Run or step the search. Record the problem, algorithm, current cost, best cost, and one trajectory feature." data-lab-zh="运行或单步搜索。记录问题、算法、当前代价、最佳代价和一个轨迹特征。" placeholder="Run or step the search. Record the problem, algorithm, current cost, best cost, and one trajectory feature."></textarea>
+        </div>
+        <div class="lab-field">
+          <label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
+          <textarea id="lab-explain" data-lab-answer="explain" data-lab-en="How did the search rule decide which neighboring state to accept?" data-lab-zh="搜索规则如何决定接受哪个邻近状态？" placeholder="How did the search rule decide which neighboring state to accept?"></textarea>
+        </div>
+        <div class="lab-field">
+          <label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
+          <textarea id="lab-transfer" data-lab-answer="transfer" data-lab-en="What kind of optimization problem would need restarts or annealing instead of plain greedy hill climbing?" data-lab-zh="什么样的优化问题需要重启或退火，而不是普通贪心爬山法？" placeholder="What kind of optimization problem would need restarts or annealing instead of plain greedy hill climbing?"></textarea>
+        </div>
+      </div>
+      <div class="lab-state" data-lab-state aria-live="polite">State snapshot appears here.</div>
+      <div class="lab-actions">
+        <button class="step-btn" type="button" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态">↻ Refresh state</button>
+        <button class="step-btn" type="button" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包">📋 Copy packet</button>
+        <button class="step-btn secondary" type="button" data-lab-action="print" data-lab-en="🖨 Print packet" data-lab-zh="🖨 打印实验包">🖨 Print packet</button>
+        <button class="step-btn secondary" type="button" data-lab-action="clear" data-lab-en="Clear local draft" data-lab-zh="清除本地草稿">Clear local draft</button>
+        <span class="lab-status" aria-live="polite"></span>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- Supporting learning component. -->
+  <details class="accessibility-layer" open>
+    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+      <span data-a11y-en="♿ Text and keyboard support" data-a11y-zh="♿ 无障碍和文本状态层">♿ Text and keyboard support</span>
+    </summary>
+    <div class="accessibility-panel" role="region" aria-labelledby="a11yLayerTitle">
+      <h2 id="a11yLayerTitle" class="sr-only" data-a11y-title>Text and keyboard support</h2>
+      <p class="accessibility-intro" data-a11y-intro></p>
+      <div class="accessibility-grid">
+        <section class="accessibility-card" aria-labelledby="a11yKeyboardTitle">
+          <h3 id="a11yKeyboardTitle" data-a11y-keyboard-title>Keyboard path</h3>
+          <ul>
+            <li data-a11y-keyboard-1>Use Tab and Shift+Tab to move through controls.</li>
+            <li data-a11y-keyboard-2>Use Enter or Space on buttons, and arrow keys on sliders or select controls.</li>
+            <li data-a11y-keyboard-3>The visual region is focusable and described by the state summary below.</li>
+          </ul>
+        </section>
+        <section class="accessibility-card" aria-labelledby="a11yStateTitle">
+          <h3 id="a11yStateTitle" data-a11y-state-title>Text state summary</h3>
+          <dl class="a11y-state-grid" id="a11yStateSummary" data-a11y-state-grid></dl>
+        </section>
+        <section class="accessibility-card" aria-labelledby="a11yMotionTitle">
+          <h3 id="a11yMotionTitle" data-a11y-motion-title>Reduced motion and non-visual support</h3>
+          <p data-a11y-motion-copy>Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.</p>
+        </section>
+      </div>
+      <p class="accessibility-note" data-a11y-note>Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.</p>
+      <div id="a11yLiveRegion" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+    </div>
+  </details>
 
   <div class="jump-anchor"><a href="#essay" class="jump-link" data-i18n="jump-link">↓ Read the explanation</a></div>
 </div>
@@ -398,14 +860,14 @@
 
   <p>
     On a multi-modal problem (N-queens, TSP, the function landscape with five minima), greedy
-    methods reach a local optimum and stop. From that local optimum, every neighbor looks worse —
+    methods reach a local optimum and stop. From that local optimum, every neighbor looks worse -
     so a greedy algorithm has nowhere to go, even though a globally better state exists a few
     steps away on the other side of a hill. This is the central pathology that local search has
     to solve.
   </p>
 
   <div class="aha">
-    Watch steepest-ascent on N-queens. Most runs end at a state with 1 or 2 remaining attacks —
+    Watch steepest-ascent on N-queens. Most runs end at a state with 1 or 2 remaining attacks -
     not zero. The greedy algorithm has done everything it can without making a move that
     momentarily looks bad. Sometimes the right move is a worse-looking one.
   </div>
@@ -415,7 +877,7 @@
   <p>
     <strong>Random-restart</strong> is the brute-force fix: when stuck, throw the state away and
     start fresh from a random configuration. Run it long enough and you'll eventually start near
-    the global optimum. Watch the cost chart "jump up" when the restart happens — that's the
+    the global optimum. Watch the cost chart "jump up" when the restart happens: that's the
     cost of starting over.
   </p>
 
@@ -432,7 +894,7 @@
 
   <ul>
     <li><strong>TSP</strong> uses 2-opt neighbors (reverse a tour segment). The neighborhood is
-      huge — 66 neighbors per state with 12 cities — so steepest-ascent is expensive but
+      huge: 66 neighbors per state with 12 cities: so steepest-ascent is expensive but
       effective.</li>
     <li><strong>N-queens</strong> has a tiny neighborhood (move one queen in its column) but a
       rugged cost surface. Local optima are common.</li>
@@ -447,8 +909,8 @@
     Real local search uses tabu lists (forbidden recent states), problem-specific moves,
     population-based methods (genetic algorithms, particle swarm), and parallel restarts. Real
     SA cooling schedules are designed with theoretical guarantees ("logarithmic cooling is
-    guaranteed to find the global optimum given infinite time"). But the heart — propose a
-    neighbor, decide whether to accept — is exactly what runs here.
+    guaranteed to find the global optimum given infinite time"). But the heart: propose a
+    neighbor, decide whether to accept: is exactly what runs here.
   </p>
 
   <div class="for-teachers">
@@ -472,8 +934,8 @@
     </ul>
     <p><strong>Common misconceptions defeated:</strong>
        "more random = better" (pure random search has no signal);
-       "SA is always better than HC" (no — for unimodal problems HC is faster);
-       "the algorithm sees the landscape" (no — only the current state and its neighbors).</p>
+       "SA is always better than HC" (no: for unimodal problems HC is faster);
+       "the algorithm sees the landscape" (no: only the current state and its neighbors).</p>
   </div>
 
 </article>
@@ -485,9 +947,9 @@
   // ===== i18n strings =====
   const STRINGS = {
     en: {
-      'title': 'Visualizing Hill Climbing & Simulated Annealing',
+      'title': 'Hill Climbing and Simulated Annealing',
       'back-link': '← Back to all playgrounds', 'reset-all': '↺ Reset all',
-      'footer-top': '↑ Back to top', 'footer-builtby': 'Built by', 'footer-course': 'Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy', 'footer-source': 'View source', 'footer-issue': 'Report an issue',
+      'footer-top': '↑ Back to top', 'footer-course': 'Made for the Introduction to AI course at Haidian Kaiwen Academy.', 'footer-portfolio': 'Portfolio', 'footer-project': 'AI Playgrounds', 'footer-source': 'Source', 'footer-issue': 'Report an issue',
       'prob-label': 'Problem:', 'algo-label': 'Algorithm:',
       'step-btn': '❘▶ Step', 'run-btn': '▶ Run / pause', 'restart-btn': 'Restart',
       'restart-title': 'Restart from a fresh random state. Keeps problem and algorithm.',
@@ -518,6 +980,16 @@
       'tour-summary': '📚 Lesson tour (5 steps)',
       'tour-step': 'Step',
       'tour-prev': '← Prev', 'tour-next': 'Next →', 'tour-apply': '▶ Apply this scenario',
+      'sg-summary': '🎯 Try these scenarios first',
+      'sg-intro': 'Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.',
+      'sg-card-prefix': 'Scenario',
+      'sg-concept-label': 'Concept',
+      'sg-observe-label': 'What to watch',
+      'sg-misconception-label': 'Predict before applying',
+      'sg-misconception-text': 'Which visible result should change most, and why? Commit to an answer before applying.',
+      'sg-teacher-label': 'Teacher use',
+      'sg-teacher-text': 'Use as a 2–3 minute predict → run → explain prompt.',
+      'sg-apply': 'Apply and compare',
       'ws-summary': '📝 Worksheet (3 questions)',
       'ws-check': 'Check',
       'ws-pick': 'Pick an answer first.',
@@ -526,33 +998,33 @@
       'ws2q': 'Same TSP. Switch to random-restart HC. After several minutes, "best ever" cost is:',
       'ws3q': 'Simulated annealing. As temperature T cools toward zero, the algorithm behavior becomes:',
       // MCQ option text (bilingual; English inline span is the fallback).
-      'ws1o0': 'Yes — steepest-ascent always climbs to the single best tour, no matter where it starts.',
-      'ws1o1': "No — it's greedy and stops at a local optimum, so different starts land on different tours.",
-      'ws1o2': "Yes — once the cost stops dropping, that's a proof the tour is globally optimal.",
-      'ws2o0': 'Better (lower) — restarts sample many local optima and keep the best one found.',
-      'ws2o1': 'Worse (higher) — restarting throws away progress, so it never improves on a single climb.',
-      'ws2o2': 'The same — every climb reaches the same optimum, so restarts change nothing.',
-      'ws3o0': 'More random — low T means it accepts almost any move, good or bad.',
-      'ws3o1': 'Unchanged — temperature only affects speed, not which moves get accepted.',
-      'ws3o2': 'Greedier — as T→0 the chance of accepting a worse move goes to zero, so it degenerates to greedy HC.',
+      'ws1o0': 'Yes: steepest-ascent always climbs to the single best tour, no matter where it starts.',
+      'ws1o1': "No: it's greedy and stops at a local optimum, so different starts land on different tours.",
+      'ws1o2': "Yes: once the cost stops dropping, that's a proof the tour is globally optimal.",
+      'ws2o0': 'Better (lower): restarts sample many local optima and keep the best one found.',
+      'ws2o1': 'Worse (higher): restarting throws away progress, so it never improves on a single climb.',
+      'ws2o2': 'The same: every climb reaches the same optimum, so restarts change nothing.',
+      'ws3o0': 'More random: low T means it accepts almost any move, good or bad.',
+      'ws3o1': 'Unchanged: temperature only affects speed, not which moves get accepted.',
+      'ws3o2': 'Greedier: as T→0 the chance of accepting a worse move goes to zero, so it degenerates to greedy HC.',
       // Lesson-tour scenario names + descriptions (0-based; English fallback kept inline in LESSON_TOUR).
       'tour0name': 'Steepest-ascent on TSP gets stuck',
       'tour0desc': "TSP, 12 cities, steepest-ascent. Press Run. It improves rapidly, then plateaus at a local optimum that's clearly not the shortest tour. Greedy ≠ optimal.",
       'tour1name': 'Random-restart escapes local optima',
       'tour1desc': "Same TSP, random-restart. When the climb plateaus, jumps to a fresh start. After enough restarts, the best-ever cost is much lower than any single climb. Cheap and effective.",
       'tour2name': 'Simulated annealing: T₀=10, cool=0.995',
-      'tour2desc': "TSP with SA. Early iterations accept worse moves (escape valleys). As T cools, behavior becomes greedy. The watchword is 'slow cooling' — try cool=0.999 vs 0.95 and compare.",
+      'tour2desc': "TSP with SA. Early iterations accept worse moves (escape valleys). As T cools, behavior becomes greedy. The watchword is 'slow cooling': try cool=0.999 vs 0.95 and compare.",
       'tour3name': 'N-queens: steepest hits a plateau',
       'tour3desc': "8-queens, steepest-ascent. Often finds a 0-conflict solution; often gets stuck on a plateau (many neighbors with the same cost). Watch the cost flatline.",
       'tour4name': '2D landscape: tabu vs simple HC',
-      'tour4desc': "Landscape with 5 minima. Try Simple HC first — observe what minimum it reaches. Switch to Tabu Search — it forbids recently-visited states, often escaping past nearby minima to find better ones.",
+      'tour4desc': "Landscape with 5 minima. Try Simple HC first: observe what minimum it reaches. Switch to Tabu Search: it forbids recently-visited states, often escaping past nearby minima to find better ones.",
       // Worksheet answer-feedback strings (English fallback passed inline at each call site).
       'ws1ok': "Correct. Steepest-ascent HC is greedy: it stops at any local optimum. Different starting tours converge to different local optima. This is the central limitation of pure HC.",
-      'ws1no': "Try 'no'. HC stops at the first local optimum it reaches — different random restarts hit different local optima.",
+      'ws1no': "Try 'no'. HC stops at the first local optimum it reaches: different random restarts hit different local optima.",
       'ws2ok': "Right. Random-restart HC takes the BEST result across many independent climbs. With enough restarts, you sample multiple basins of attraction and the global best becomes likely.",
-      'ws2no': "Try 'better'. Random restarts sample multiple local optima — the best one wins.",
-      'ws3ok': "Correct. SA acceptance prob = exp(-Δ/T). As T→0, exp(-Δ/T) → 0 for any worsening Δ, so the algorithm only accepts improvements — pure greedy hill-climbing. Early on (large T), it accepts almost anything.",
-      'ws3no': "Try 'greedier'. Low T means the Boltzmann acceptance probability for worse moves approaches zero — SA degenerates to greedy HC at T=0.",
+      'ws2no': "Try 'better'. Random restarts sample multiple local optima: the best one wins.",
+      'ws3ok': "Correct. SA acceptance prob = exp(-Δ/T). As T→0, exp(-Δ/T) → 0 for any worsening Δ, so the algorithm only accepts improvements: pure greedy hill-climbing. Early on (large T), it accepts almost anything.",
+      'ws3no': "Try 'greedier'. Low T means the Boltzmann acceptance probability for worse moves approaches zero: SA degenerates to greedy HC at T=0.",
       // tooltip translations for main selectors + slider labels.
       'prob-sel-title': 'The optimization target. Each problem has its own neighbor function.',
       'algo-sel-title': 'Which local-search variant to run.',
@@ -563,7 +1035,7 @@
     zh: {
       'title': '爬山算法与模拟退火可视化',
       'back-link': '← 返回所有演示', 'reset-all': '↺ 全部重置',
-      'footer-top': '↑ 返回顶部', 'footer-builtby': '作者', 'footer-course': '为海淀凯文学校 2025–2026《人工智能导论》课程制作', 'footer-source': '查看源代码', 'footer-issue': '反馈问题',
+      'footer-top': '↑ 返回顶部', 'footer-course': '为海淀凯文学校《人工智能导论》课程制作。', 'footer-portfolio': '作品集', 'footer-project': 'AI Playgrounds', 'footer-source': '源代码', 'footer-issue': '反馈问题',
       'prob-label': '问题:', 'algo-label': '算法:',
       'step-btn': '❘▶ 单步', 'run-btn': '▶ 运行/暂停', 'restart-btn': '重启',
       'restart-title': '从一个全新的随机状态重启。保留问题与算法。',
@@ -594,6 +1066,16 @@
       'tour-summary': '📚 课程导览(5 步)',
       'tour-step': '步骤',
       'tour-prev': '← 上一步', 'tour-next': '下一步 →', 'tour-apply': '▶ 应用此场景',
+      'sg-summary': '🎯 先试这些场景',
+      'sg-intro': '先选择一个场景并预测结果,再应用它,然后把运行结果与你的预测进行比较。',
+      'sg-card-prefix': '场景',
+      'sg-concept-label': '概念',
+      'sg-observe-label': '预期观察',
+      'sg-misconception-label': '误区检查',
+      'sg-misconception-text': '初学者的第一反应可能会漏掉或过度简化什么?',
+      'sg-teacher-label': '教师用法',
+      'sg-teacher-text': '用作 2–3 分钟的“预测 → 运行 → 解释”活动。',
+      'sg-apply': '应用场景',
       'ws-summary': '📝 练习题(3 题)',
       'ws-check': '核对',
       'ws-pick': '请先选择一个答案。',
@@ -602,33 +1084,33 @@
       'ws2q': '同一个 TSP。改用随机重启爬山。几分钟后,"历史最佳"代价是:',
       'ws3q': '模拟退火。当温度 T 冷却趋近于零时,算法的行为会变得:',
       // MCQ 选项文本(双语;英文内联 span 作为回退)。
-      'ws1o0': '能——无论从哪里出发,最陡上升总能爬到那个唯一的最优路线。',
-      'ws1o1': '不能——它是贪心的,会停在某个局部最优,所以不同起点会落到不同的路线。',
-      'ws1o2': '能——一旦代价不再下降,就证明该路线是全局最优的。',
-      'ws2o0': '更好(更低)——重启会采样许多局部最优,并保留找到的最佳结果。',
-      'ws2o1': '更差(更高)——重启会丢掉已有进展,所以不可能优于单次爬升。',
-      'ws2o2': '一样——每次爬升都到达同一个最优,所以重启没有任何改变。',
-      'ws3o0': '更随机——低温意味着它几乎接受任何移动,无论好坏。',
-      'ws3o1': '不变——温度只影响速度,而不影响哪些移动会被接受。',
-      'ws3o2': '更贪心——当 T→0 时,接受更差移动的概率趋于零,于是退化为贪心爬山。',
+      'ws1o0': '能--无论从哪里出发,最陡上升总能爬到那个唯一的最优路线。',
+      'ws1o1': '不能--它是贪心的,会停在某个局部最优,所以不同起点会落到不同的路线。',
+      'ws1o2': '能--一旦代价不再下降,就证明该路线是全局最优的。',
+      'ws2o0': '更好(更低)--重启会采样许多局部最优,并保留找到的最佳结果。',
+      'ws2o1': '更差(更高)--重启会丢掉已有进展,所以不可能优于单次爬升。',
+      'ws2o2': '一样--每次爬升都到达同一个最优,所以重启没有任何改变。',
+      'ws3o0': '更随机--低温意味着它几乎接受任何移动,无论好坏。',
+      'ws3o1': '不变--温度只影响速度,而不影响哪些移动会被接受。',
+      'ws3o2': '更贪心--当 T→0 时,接受更差移动的概率趋于零,于是退化为贪心爬山。',
       // 课程导览的场景名称与描述(0 起始;英文回退保留在 LESSON_TOUR 内联)。
       'tour0name': '最陡上升爬山在 TSP 上卡住',
       'tour0desc': 'TSP,12 个城市,最陡上升。点击运行。它迅速改进,然后在一个明显不是最短路线的局部最优处停滞。贪心 ≠ 最优。',
       'tour1name': '随机重启逃出局部最优',
       'tour1desc': '同一个 TSP,随机重启。当爬升停滞时,跳到一个全新的起点。经过足够多次重启后,历史最佳代价远低于任何单次爬升。便宜且有效。',
       'tour2name': '模拟退火:T₀=10,冷却率=0.995',
-      'tour2desc': 'TSP 配模拟退火。前期的迭代会接受更差的移动(逃出谷底)。随着 T 冷却,行为变得贪心。关键在于"慢冷却"——试试冷却率 0.999 对比 0.95。',
+      'tour2desc': 'TSP 配模拟退火。前期的迭代会接受更差的移动(逃出谷底)。随着 T 冷却,行为变得贪心。关键在于"慢冷却"--试试冷却率 0.999 对比 0.95。',
       'tour3name': 'N 皇后:最陡上升撞上平台',
       'tour3desc': '8 皇后,最陡上升。常能找到 0 冲突的解;也常卡在一个平台上(许多邻居代价相同)。观察代价曲线变平。',
       'tour4name': '二维景观:禁忌搜索对比简单爬山',
-      'tour4desc': '有 5 个极小值的景观。先试简单爬山——观察它到达哪个极小值。再切换到禁忌搜索——它禁止最近访问过的状态,常能越过附近的极小值找到更好的解。',
+      'tour4desc': '有 5 个极小值的景观。先试简单爬山--观察它到达哪个极小值。再切换到禁忌搜索--它禁止最近访问过的状态,常能越过附近的极小值找到更好的解。',
       // 练习题答案反馈(英文回退在各调用处内联传入)。
       'ws1ok': '正确。最陡上升爬山是贪心的:它会在任何局部最优处停下。不同的起始路线会收敛到不同的局部最优。这是纯爬山法的核心局限。',
-      'ws1no': '试试"no"。爬山法在到达的第一个局部最优处就停下——不同的随机重启会撞上不同的局部最优。',
+      'ws1no': '试试"no"。爬山法在到达的第一个局部最优处就停下--不同的随机重启会撞上不同的局部最优。',
       'ws2ok': '对。随机重启爬山会从多次独立爬升中取最佳结果。重启足够多次,你就采样到多个吸引域,全局最优变得很可能出现。',
-      'ws2no': '试试"better"。随机重启会采样多个局部最优——其中最好的那个获胜。',
-      'ws3ok': '正确。模拟退火的接受概率 = exp(-Δ/T)。当 T→0 时,对任何变差的 Δ,exp(-Δ/T) → 0,因此算法只接受改进——纯贪心爬山。前期(T 较大)它几乎接受任何移动。',
-      'ws3no': '试试"greedier"。低 T 意味着对更差移动的玻尔兹曼接受概率趋近于零——在 T=0 时模拟退火退化为贪心爬山。',
+      'ws2no': '试试"better"。随机重启会采样多个局部最优--其中最好的那个获胜。',
+      'ws3ok': '正确。模拟退火的接受概率 = exp(-Δ/T)。当 T→0 时,对任何变差的 Δ,exp(-Δ/T) → 0,因此算法只接受改进--纯贪心爬山。前期(T 较大)它几乎接受任何移动。',
+      'ws3no': '试试"greedier"。低 T 意味着对更差移动的玻尔兹曼接受概率趋近于零--在 T=0 时模拟退火退化为贪心爬山。',
       // 主要选择器与滑块的提示翻译。
       'prob-sel-title': '优化目标。每个问题有自己的邻居函数。',
       'algo-sel-title': '要运行的局部搜索算法。',
@@ -655,10 +1137,11 @@
   document.querySelectorAll('.lang-switch button').forEach(b =>
     b.addEventListener('click', () => {
       setLang(b.dataset.lang);
-      // F1: re-render the tour in the new language. Safe here — this click handler
+      // re-render the tour in the new language. Safe here: this click handler
       // only runs post-init, after LESSON_TOUR (a late `const`) is initialized, so
       // there is no temporal-dead-zone risk (unlike calling it from inside setLang).
       try { if (typeof renderTour === 'function') renderTour(); } catch (_) {}
+      try { if (typeof renderScenarioGallery === 'function') renderScenarioGallery(); } catch (_) {}
     }));
   let initialLang = 'en';
   try { initialLang = localStorage.getItem('lang') || 'en'; } catch (_) {}
@@ -739,7 +1222,7 @@
     firstchoice: 'First-choice HC: generate random neighbors until one improves. Useful when neighbor count is huge.',
     restart: 'Random-restart: run steepest-ascent; when stuck, restart from random. Eventually finds the global optimum.',
     sa: 'Simulated annealing: accept worsening moves with probability exp(-ΔE/T). Cool T over time.',
-    tabu: 'Tabu search: always move to the best neighbor — even if worse — but keep a short memory of recent states to forbid cycling back. Memory is the only thing pulling it out of local optima.',
+    tabu: 'Tabu search: always move to the best neighbor: even if worse: but keep a short memory of recent states to forbid cycling back. Memory is the only thing pulling it out of local optima.',
     ga: 'Genetic algorithm: population-based. Each "step" = one generation. Tournament-select parents, crossover, mutate, elite-preserve top 2. The reported state is the best-of-generation. Diverges from all other algorithms here in that the search is parallel across many individuals.',
   };
   $('algoSel').addEventListener('change', e => $('algoHelp').textContent = HELP[e.target.value]);
@@ -919,7 +1402,7 @@
       ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
     }
     // GA operators for N-queens. State is an N-length array of row-per-col.
-    // Crossover: uniform — each column independently inherits from A or B (no
+    // Crossover: uniform: each column independently inherits from A or B (no
     // permutation invariant to preserve). Mutation: reassign a column to a random row.
     function gaCrossover(a, b) {
       const child = new Array(a.length);
@@ -1223,7 +1706,7 @@
     if (!replayMode) { const tc = $('tpCount'); if (tc) tc.textContent = iter > 0 ? `iter ${iter}` : 'idle'; }
     $('costV').textContent = prob.cost(state).toFixed(2);
     $('bestV').textContent = bestCost.toFixed(2);
-    $('tempV').textContent = $('algoSel').value === 'sa' ? T.toFixed(3) : '—';
+    $('tempV').textContent = $('algoSel').value === 'sa' ? T.toFixed(3) : '-';
     $('acceptV').textContent = `${accepts}/${rejects}`;
     $('t0V').textContent = (+$('t0').value).toFixed(1);
     $('coolV').textContent = (+$('cool').value).toFixed(3);
@@ -1415,7 +1898,7 @@
   window.addEventListener('resize', () => {
     resizeCv($('stateCv')); resizeCv($('costCv')); render();
   });
-  // URL-shareable config — problem, algorithm, initial temp, cooling rate.
+  // URL-shareable config: problem, algorithm, initial temp, cooling rate.
   try {
     const sp = new URLSearchParams(location.search);
     const setSel = (key, id) => {
@@ -1447,7 +1930,7 @@
     } catch (_) { prompt('Copy this URL:', url); }
   });
 
-  // CSV export — cost history + config.
+  // CSV export: cost history + config.
   document.getElementById('csvExport').addEventListener('click', () => {
     const algo = $('algoSel').value, prob = $('probSel').value;
     const lines = [
@@ -1487,20 +1970,20 @@
       description: "Same TSP, random-restart. When the climb plateaus, jumps to a fresh start. After enough restarts, the best-ever cost is much lower than any single climb. Cheap and effective.",
       apply: () => applyConfig('tsp', 'restart') },
     { name: 'Simulated annealing: T₀=10, cool=0.995',
-      description: "TSP with SA. Early iterations accept worse moves (escape valleys). As T cools, behavior becomes greedy. The watchword is 'slow cooling' — try cool=0.999 vs 0.95 and compare.",
+      description: "TSP with SA. Early iterations accept worse moves (escape valleys). As T cools, behavior becomes greedy. The watchword is 'slow cooling': try cool=0.999 vs 0.95 and compare.",
       apply: () => applyConfig('tsp', 'sa', 10, 0.995) },
     { name: 'N-Queens: steepest hits a plateau',
       description: "8-queens, steepest-ascent. Often finds a 0-conflict solution; often gets stuck on a plateau (many neighbors with the same cost). Watch the cost flatline.",
       apply: () => applyConfig('queens', 'steepest') },
     { name: '2D landscape: tabu vs simple HC',
-      description: "Landscape with 5 minima. Try Simple HC first — observe what minimum it reaches. Switch to Tabu Search — it forbids recently-visited states, often escaping past nearby minima to find better ones.",
+      description: "Landscape with 5 minima. Try Simple HC first: observe what minimum it reaches. Switch to Tabu Search: it forbids recently-visited states, often escaping past nearby minima to find better ones.",
       apply: () => applyConfig('landscape', 'tabu') },
   ];
   let tourIdx = 0;
   function renderTour() {
     if (!$('tourName')) return;
     const s = LESSON_TOUR[tourIdx];
-    // F1 bilingual: look up tour{i}name / tour{i}desc with English inline fallback.
+    // Bilingual: look up tour{i}name / tour{i}desc with English inline fallback.
     const L = (document.documentElement.lang || 'en');
     const S = STRINGS[L] || STRINGS.en;
     $('tourName').textContent = S['tour' + tourIdx + 'name'] || s.name;
@@ -1514,8 +1997,67 @@
   $('tourNext').addEventListener('click', () => { if (tourIdx < LESSON_TOUR.length - 1) { tourIdx++; renderTour(); } });
   renderTour();
 
-  // Worksheet/lab mode — 3 questions with instant ✓/✗ feedback.
-  // F1 bilingual feedback helper: ws{n}ok / ws{n}no with English inline fallback.
+
+  function scenarioGalleryText(key, fallback) {
+    const L = document.documentElement.lang || 'en';
+    const S = STRINGS[L] || STRINGS.en;
+    return S[key] || fallback;
+  }
+  function localizedScenarioField(index, field, fallback) {
+    const L = document.documentElement.lang || 'en';
+    const S = STRINGS[L] || STRINGS.en;
+    return S['tour' + index + field] || fallback || '';
+  }
+  function appendScenarioMeta(card, label, text) {
+    const p = document.createElement('p');
+    p.className = 'scenario-meta';
+    const strong = document.createElement('strong');
+    strong.textContent = label + ': ';
+    p.appendChild(strong);
+    p.appendChild(document.createTextNode(text));
+    card.appendChild(p);
+  }
+  function renderScenarioGallery() {
+    const root = $('scenarioGalleryCards');
+    if (!root || typeof LESSON_TOUR === 'undefined') return;
+    root.innerHTML = '';
+    LESSON_TOUR.forEach((scenario, index) => {
+      const title = localizedScenarioField(index, 'name', scenario.name || (scenarioGalleryText('sg-card-prefix', 'Scenario') + ' ' + (index + 1)));
+      const description = localizedScenarioField(index, 'desc', scenario.description || '');
+      const card = document.createElement('article');
+      card.className = 'scenario-card';
+      card.setAttribute('data-scenario-index', String(index));
+
+      const h = document.createElement('h3');
+      h.textContent = `${scenarioGalleryText('sg-card-prefix', 'Scenario')} ${index + 1}: ${title}`;
+      card.appendChild(h);
+
+      appendScenarioMeta(card, scenarioGalleryText('sg-concept-label', 'Concept'), title);
+      appendScenarioMeta(card, scenarioGalleryText('sg-observe-label', 'What to watch'), description);
+      appendScenarioMeta(card, scenarioGalleryText('sg-misconception-label', 'Predict before applying'), scenarioGalleryText('sg-misconception-text', 'Which visible result should change most, and why? Commit to an answer before applying.'));
+      appendScenarioMeta(card, scenarioGalleryText('sg-teacher-label', 'Teacher use'), scenarioGalleryText('sg-teacher-text', 'Use as a 2–3 minute predict → run → explain prompt.'));
+
+      const btn = document.createElement('button');
+      btn.className = 'step-btn';
+      btn.type = 'button';
+      btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare');
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('.scenario-card').forEach(item => item.classList.remove('applied'));
+        tourIdx = index;
+        renderTour();
+        scenario.apply();
+        card.classList.add('applied');
+        btn.textContent = '✓ ' + scenarioGalleryText('sg-applied', 'Applied; compare the result');
+        setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
+      });
+      card.appendChild(btn);
+      root.appendChild(card);
+    });
+  }
+  renderScenarioGallery();
+
+  // Worksheet/lab mode: 3 questions with instant ✓/✗ feedback.
+  // Bilingual feedback helper: ws{n}ok / ws{n}no with English inline fallback.
   function wsMsg(key, en) {
     const L = (document.documentElement.lang || 'en');
     return (STRINGS[L] && STRINGS[L][key]) || en;
@@ -1526,13 +2068,13 @@
   const WORKSHEET = [
     { correct: 1,
       ok:  ['ws1ok', "Correct. Steepest-ascent HC is greedy: it stops at any local optimum. Different starting tours converge to different local optima. This is the central limitation of pure HC."],
-      no:  ['ws1no', "Try 'no'. HC stops at the first local optimum it reaches — different random restarts hit different local optima."] },
+      no:  ['ws1no', "Try 'no'. HC stops at the first local optimum it reaches: different random restarts hit different local optima."] },
     { correct: 0,
       ok:  ['ws2ok', "Right. Random-restart HC takes the BEST result across many independent climbs. With enough restarts, you sample multiple basins of attraction and the global best becomes likely."],
-      no:  ['ws2no', "Try 'better'. Random restarts sample multiple local optima — the best one wins."] },
+      no:  ['ws2no', "Try 'better'. Random restarts sample multiple local optima: the best one wins."] },
     { correct: 2,
-      ok:  ['ws3ok', "Correct. SA acceptance prob = exp(-Δ/T). As T→0, exp(-Δ/T) → 0 for any worsening Δ, so the algorithm only accepts improvements — pure greedy hill-climbing. Early on (large T), it accepts almost anything."],
-      no:  ['ws3no', "Try 'greedier'. Low T means the Boltzmann acceptance probability for worse moves approaches zero — SA degenerates to greedy HC at T=0."] },
+      ok:  ['ws3ok', "Correct. SA acceptance prob = exp(-Δ/T). As T→0, exp(-Δ/T) → 0 for any worsening Δ, so the algorithm only accepts improvements: pure greedy hill-climbing. Early on (large T), it accepts almost anything."],
+      no:  ['ws3no', "Try 'greedier'. Low T means the Boltzmann acceptance probability for worse moves approaches zero: SA degenerates to greedy HC at T=0."] },
   ];
   WORKSHEET.forEach((q, i) => {
     const n = i + 1;
@@ -1587,12 +2129,434 @@
   });
 })();
 </script>
-  <footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
+
+<footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
     <p style="margin:0 0 6px;"><a href="#top" data-i18n="footer-top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
-    <p style="margin:0;"><span data-i18n="footer-builtby">Built by</span> Logan Dixon · <span data-i18n="footer-course">Made for the 2025–2026 Intro to AI course, Haidian Kaiwen Academy</span></p>
-    <p style="margin:6px 0 0;"><a href="https://github.com/lmdixon23/ai-playgrounds" data-i18n="footer-source" style="color:var(--accent,#0891b2);">View source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-i18n="footer-issue" style="color:var(--accent,#0891b2);">Report an issue</a> · © 2026 Logan Dixon</p>
+    <p style="margin:0;"><span data-i18n="footer-course">Made for the Introduction to AI course at Haidian Kaiwen Academy.</span></p>
+    <p style="margin:6px 0 0;">© <span data-current-year>2026</span> Logan M. Dixon · <a href="https://lmdixon23.github.io/" data-i18n="footer-portfolio" style="color:var(--accent,#0891b2);">Portfolio</a> · <a href="../../index.html" data-i18n="footer-project" style="color:var(--accent,#0891b2);">AI Playgrounds</a> · <a href="https://github.com/lmdixon23/ai-playgrounds" data-i18n="footer-source" style="color:var(--accent,#0891b2);">Source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-i18n="footer-issue" style="color:var(--accent,#0891b2);">Report an issue</a> · <a href="https://orcid.org/0009-0001-0592-462X" rel="me" style="color:var(--accent,#0891b2);">ORCID</a></p>
   </footer>
-  <!-- Privacy-friendly analytics — GoatCounter, cookieless. -->
-  <script data-goatcounter="https://lmdixon23.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+
+<script>
+(function() {
+  const LAB_CONFIG = {"slug": "hill-climbing", "title": "Hill climbing and simulated annealing lab packet", "zhTitle": "爬山法与模拟退火实验包", "fields": [{"label": "Problem", "selector": "#probSel", "kind": "selected"}, {"label": "Algorithm", "selector": "#algoSel", "kind": "selected"}, {"label": "Iteration", "selector": "#iterV", "kind": "text"}, {"label": "Current cost", "selector": "#costV", "kind": "text"}, {"label": "Best cost", "selector": "#bestV", "kind": "text"}, {"label": "Temperature", "selector": "#tempV", "kind": "text"}, {"label": "Acceptance", "selector": "#acceptV", "kind": "text"}]};
+  const root = document.querySelector('.classroom-lab');
+  if (!root) return;
+  const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;
+  const qs = (sel) => root.querySelector(sel);
+  function currentLang() { return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en'; }
+  function textFor(el, lang) { return el.getAttribute(lang === 'zh' ? 'data-lab-zh' : 'data-lab-en') || el.textContent; }
+  function applyLabLang() {
+    const lang = currentLang();
+    root.querySelectorAll('[data-lab-en]').forEach(el => {
+      const value = textFor(el, lang);
+      if (el.tagName === 'TEXTAREA') el.placeholder = value;
+      else el.textContent = value;
+    });
+  }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? 'on' : 'off';
+    else if (field.kind === 'text') value = el.textContent.trim();
+    else value = el.value;
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? field.label + ': ' + value : null;
+  }
+  function snapshot() {
+    const lines = LAB_CONFIG.fields.map(readField).filter(Boolean);
+    return lines.length ? lines.join('\n') : 'No state captured yet. Run or adjust the applet first.';
+  }
+  function answers() {
+    const data = {};
+    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => data[area.getAttribute('data-lab-answer')] = area.value.trim());
+    return data;
+  }
+  function saveDraft() { try { localStorage.setItem(storageKey, JSON.stringify(answers())); } catch (_) {} }
+  function loadDraft() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      root.querySelectorAll('textarea[data-lab-answer]').forEach(area => { const key = area.getAttribute('data-lab-answer'); if (saved[key]) area.value = saved[key]; });
+    } catch (_) {}
+  }
+  function packet() {
+    const lang = currentLang();
+    const labels = lang === 'zh' ? {title: LAB_CONFIG.zhTitle, state:'状态记录', predict:'预测', observe:'观察', explain:'解释', transfer:'迁移'} : {title: LAB_CONFIG.title, state:'State snapshot', predict:'Predict', observe:'Observe', explain:'Explain', transfer:'Transfer'};
+    const a = answers();
+    return [
+      '# ' + labels.title,
+      '',
+      '- Applet: ' + (document.querySelector('h1') ? document.querySelector('h1').textContent.trim() : document.title),
+      '- Date: ' + new Date().toLocaleString(),
+      '',
+      '## ' + labels.state,
+      snapshot(),
+      '',
+      '## ' + labels.predict,
+      a.predict || '',
+      '',
+      '## ' + labels.observe,
+      a.observe || '',
+      '',
+      '## ' + labels.explain,
+      a.explain || '',
+      '',
+      '## ' + labels.transfer,
+      a.transfer || ''
+    ].join('\n');
+  }
+  function setStatus(en, zh) { const el = qs('.lab-status'); if (el) el.textContent = currentLang() === 'zh' ? zh : en; }
+  function refreshState() { const el = qs('[data-lab-state]'); if (el) el.textContent = snapshot(); }
+  async function copyPacket() {
+    const text = packet();
+    try { await navigator.clipboard.writeText(text); setStatus('Copied local lab packet.', '已复制本地实验包。'); }
+    catch (_) { window.prompt('Copy this lab packet:', text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
+  }
+
+  function markdownToPrintableHtml(markdown) {
+    const escape = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const inline = value => escape(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    const lines = String(markdown).split(/\r?\n/);
+    let html = '', inList = false, inState = false;
+    const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
+    for (const raw of lines) {
+      const line = raw.trimEnd();
+      if (line.startsWith('# ')) { closeList(); html += '<h1>' + inline(line.slice(2)) + '</h1>'; inState=false; }
+      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = /state snapshot|状态记录/i.test(title); }
+      else if (line.startsWith('- ')) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inline(line.slice(2)) + '</li>'; }
+      else if (!line.trim()) { closeList(); }
+      else { closeList(); html += inState ? '<pre class="state">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
+    }
+    closeList(); return html;
+  }
+
+  function printPacket() {
+    const w = window.open('', '_blank');
+    if (!w) { setStatus('Popup blocked. Copy the packet instead.', '弹窗被拦截。请改用复制实验包。'); return; }
+    const rendered = markdownToPrintableHtml(packet());
+    const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+    setStatus('Print page opened.', '打印页面已打开。');
+  }
+  function clearDraft() {
+    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.value = '');
+    try { localStorage.removeItem(storageKey); } catch (_) {}
+    refreshState(); setStatus('Local draft cleared.', '本地草稿已清除。');
+  }
+  root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.addEventListener('input', saveDraft));
+  root.querySelector('[data-lab-action="copy"]')?.addEventListener('click', copyPacket);
+  root.querySelector('[data-lab-action="print"]')?.addEventListener('click', printPacket);
+  root.querySelector('[data-lab-action="refresh"]')?.addEventListener('click', () => { refreshState(); setStatus('State refreshed.', '状态已更新。'); });
+  root.querySelector('[data-lab-action="clear"]')?.addEventListener('click', clearDraft);
+  document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(applyLabLang, 0)));
+  document.addEventListener('change', refreshState);
+  document.addEventListener('click', (event) => { if (!(event.target instanceof HTMLTextAreaElement)) setTimeout(refreshState, 0); }, true);
+  loadDraft(); applyLabLang(); refreshState();
+})();
+</script>
+
+
+<script>
+(function() {
+  const VISUAL_CONFIG = {"intro":"Read the trace as a tension between local improvement and escape. Greedy hill climbing follows the best nearby move, while annealing can accept worse moves early to avoid traps.","zhIntro":"把轨迹看成局部改进和逃离之间的张力。贪心爬山法选择附近最好的移动，而模拟退火早期可能接受更差移动来避免陷阱。","misread":"A temporary cost increase is not always a mistake under simulated annealing; it can be the escape mechanism.","zhMisread":"在模拟退火中，成本暂时上升不一定是错误；它可能正是逃离机制。","steps":[{"label":"Current state","zhLabel":"当前状态","text":"The algorithm stands at one candidate solution and measures its cost.","zhText":"算法位于一个候选解，并测量它的成本。","selector":"#costV","kind":"text","liveLabel":"Cost","zhLiveLabel":"成本"},{"label":"Neighbor choice","zhLabel":"邻居选择","text":"Each step compares nearby alternatives instead of seeing the whole search space.","zhText":"每一步比较附近的替代方案，而不是看到整个搜索空间。","selector":"#algoSel","kind":"selected","liveLabel":"Algorithm","zhLiveLabel":"算法"},{"label":"Escape pressure","zhLabel":"逃离压力","text":"Temperature controls whether a worse move can still be accepted.","zhText":"温度控制是否仍然可以接受较差移动。","selector":"#tempV","kind":"text","liveLabel":"Temp","zhLiveLabel":"温度"},{"label":"Best-so-far evidence","zhLabel":"当前最优证据","text":"Best cost separates current wandering from the strongest solution found so far.","zhText":"最优成本把当前游走和目前找到的最强解区分开。","selector":"#bestV","kind":"text","liveLabel":"Best","zhLiveLabel":"最优"}],"fields":[{"label":"Problem","zhLabel":"问题","selector":"#probSel","kind":"selected"},{"label":"Algorithm","zhLabel":"算法","selector":"#algoSel","kind":"selected"},{"label":"Iteration","zhLabel":"迭代","selector":"#iterV","kind":"text"},{"label":"Current cost","zhLabel":"当前成本","selector":"#costV","kind":"text"},{"label":"Best cost","zhLabel":"最优成本","selector":"#bestV","kind":"text"},{"label":"Acceptance","zhLabel":"接受情况","selector":"#acceptV","kind":"text"}]};
+  const root = document.querySelector('.visual-explanation');
+  if (!root) return;
+  const flow = root.querySelector('[data-visual-flow]');
+  const intro = root.querySelector('[data-visual-intro]');
+  const snapshotBox = root.querySelector('[data-visual-snapshot]');
+  const misreadBox = root.querySelector('[data-visual-misread]');
+  function currentLang() { return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en'; }
+  function t(obj, key) { const lang = currentLang(); return (lang === 'zh' && obj['zh' + key[0].toUpperCase() + key.slice(1)]) || obj[key] || ''; }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? 'on' : 'off';
+    else if (field.kind === 'value') value = el.value;
+    else value = el.textContent.trim();
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? { label: field.label, zhLabel: field.zhLabel || field.label, value } : null;
+  }
+  function liveValue(step) {
+    if (!step.selector) return '';
+    const field = readField({ selector: step.selector, kind: step.kind || 'text', label: step.liveLabel || 'Live', zhLabel: step.zhLiveLabel || '实时' });
+    return field ? field.value : (step.fallback || '');
+  }
+  function renderVisualExplanation() {
+    const lang = currentLang();
+    root.querySelectorAll('[data-visual-en]').forEach(el => {
+      el.textContent = el.getAttribute(lang === 'zh' ? 'data-visual-zh' : 'data-visual-en') || el.textContent;
+    });
+    intro.textContent = lang === 'zh' ? VISUAL_CONFIG.zhIntro : VISUAL_CONFIG.intro;
+    misreadBox.textContent = lang === 'zh' ? VISUAL_CONFIG.zhMisread : VISUAL_CONFIG.misread;
+    flow.innerHTML = VISUAL_CONFIG.steps.map((step, idx) => {
+      const title = lang === 'zh' ? step.zhLabel : step.label;
+      const body = lang === 'zh' ? step.zhText : step.text;
+      const liveLabel = lang === 'zh' ? (step.zhLiveLabel || '实时') : (step.liveLabel || 'Live');
+      const live = liveValue(step);
+      const liveHtml = live ? '<span class="visual-live"><strong>' + escapeHtml(liveLabel) + '</strong><span>' + escapeHtml(live) + '</span></span>' : '';
+      return '<article class="visual-card" data-step="' + String(idx + 1).padStart(2, '0') + '"><h4>' + escapeHtml(title) + '</h4><p>' + escapeHtml(body) + '</p>' + liveHtml + '</article>';
+    }).join('');
+    const lines = (VISUAL_CONFIG.fields || []).map(readField).filter(Boolean).map(f => (lang === 'zh' ? f.zhLabel : f.label) + ': ' + f.value);
+    snapshotBox.textContent = lines.length ? lines.join('\n') : (lang === 'zh' ? '还没有捕捉到状态。请先运行或调整小程序。' : 'No state captured yet. Run or adjust the applet first.');
+  }
+  function escapeHtml(text) { return String(text).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+  let visualTimer = null;
+  function scheduleVisualRender() {
+    if (visualTimer) cancelAnimationFrame(visualTimer);
+    visualTimer = requestAnimationFrame(renderVisualExplanation);
+  }
+  document.addEventListener('change', scheduleVisualRender);
+  document.addEventListener('input', scheduleVisualRender);
+  document.addEventListener('click', () => setTimeout(scheduleVisualRender, 0), true);
+  document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(scheduleVisualRender, 0)));
+  setInterval(renderVisualExplanation, 1200);
+  renderVisualExplanation();
+})();
+</script>
+
+<!-- Privacy-friendly analytics: GoatCounter, cookieless. -->
+  <script>
+(function () {
+  const analyticsAllowedHost = location.hostname === 'lmdixon23.github.io';
+  const params = new URLSearchParams(location.search);
+  const analyticsDisabled = params.has('noanalytics') || params.get('analytics') === '0' || navigator.doNotTrack === '1';
+  if (!analyticsAllowedHost || analyticsDisabled) return;
+  const s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://gc.zgo.at/count.js';
+  s.dataset.goatcounter = 'https://lmdixon23.goatcounter.com/count';
+  document.head.appendChild(s);
+})();
+</script>
+
+<script>
+(function() {
+  const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "Problem", "zhLabel": "问题", "selector": "#probSel", "kind": "selected"}, {"label": "Algorithm", "zhLabel": "算法", "selector": "#algoSel", "kind": "selected"}, {"label": "Iteration", "zhLabel": "迭代", "selector": "#iterV", "kind": "text"}, {"label": "Current cost", "zhLabel": "当前成本", "selector": "#costV", "kind": "text"}, {"label": "Best cost", "zhLabel": "最优成本", "selector": "#bestV", "kind": "text"}, {"label": "Acceptance", "zhLabel": "接受情况", "selector": "#acceptV", "kind": "text"}]};
+  const layer = document.querySelector('.accessibility-layer');
+  if (!layer) return;
+  const intro = layer.querySelector('[data-a11y-intro]');
+  const stateGrid = layer.querySelector('[data-a11y-state-grid]');
+  const liveRegion = layer.querySelector('#a11yLiveRegion');
+  let renderTimer = 0;
+  let lastSummary = '';
+  function currentLang() {
+    return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+  }
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+  function localized(obj, key) {
+    const lang = currentLang();
+    const zhKey = 'zh' + key[0].toUpperCase() + key.slice(1);
+    return (lang === 'zh' && obj[zhKey]) || obj[key] || '';
+  }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? (currentLang() === 'zh' ? '开' : 'on') : (currentLang() === 'zh' ? '关' : 'off');
+    else if (field.kind === 'value') value = el.value;
+    else value = el.textContent.trim();
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? { label: localized(field, 'label'), value } : null;
+  }
+  function renderAccessibilityLayer(options = {}) {
+    const lang = currentLang();
+    layer.querySelectorAll('[data-a11y-en]').forEach(el => {
+      el.textContent = el.getAttribute(lang === 'zh' ? 'data-a11y-zh' : 'data-a11y-en') || el.textContent;
+    });
+    const copy = A11Y_CONFIG.copy[lang] || A11Y_CONFIG.copy.en;
+    intro.textContent = copy.intro;
+    layer.querySelector('[data-a11y-title]').textContent = copy.title;
+    layer.querySelector('[data-a11y-keyboard-title]').textContent = copy.keyboardTitle;
+    layer.querySelector('[data-a11y-keyboard-1]').textContent = copy.keyboard1;
+    layer.querySelector('[data-a11y-keyboard-2]').textContent = copy.keyboard2;
+    layer.querySelector('[data-a11y-keyboard-3]').textContent = copy.keyboard3;
+    layer.querySelector('[data-a11y-state-title]').textContent = copy.stateTitle;
+    layer.querySelector('[data-a11y-motion-title]').textContent = copy.motionTitle;
+    layer.querySelector('[data-a11y-motion-copy]').textContent = copy.motionCopy;
+    layer.querySelector('[data-a11y-note]').textContent = copy.note;
+    const fields = A11Y_CONFIG.fields.map(readField).filter(Boolean);
+    if (fields.length) {
+      stateGrid.innerHTML = fields.map(field => '<dt>' + escapeHtml(field.label) + '</dt><dd>' + escapeHtml(field.value) + '</dd>').join('');
+    } else {
+      stateGrid.innerHTML = '<dt>' + escapeHtml(copy.emptyLabel) + '</dt><dd>' + escapeHtml(copy.emptyValue) + '</dd>';
+    }
+    const summary = fields.map(field => field.label + ': ' + field.value).join('; ') || copy.emptyValue;
+    if (options.announce && liveRegion && summary !== lastSummary) {
+      liveRegion.textContent = copy.livePrefix + summary;
+    }
+    lastSummary = summary;
+  }
+  function markVisualRegions() {
+    const descriptionId = 'a11yStateSummary';
+    document.querySelectorAll('canvas, svg, [role="img"]').forEach((el, index) => {
+      if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+      if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', A11Y_CONFIG.copy.en.visualLabel + ' ' + (index + 1));
+      const describedBy = (el.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+      if (!describedBy.includes(descriptionId)) {
+        describedBy.push(descriptionId);
+        el.setAttribute('aria-describedby', describedBy.join(' '));
+      }
+    });
+  }
+  function scheduleAccessibilityRender(announce = true) {
+    clearTimeout(renderTimer);
+    renderTimer = setTimeout(() => renderAccessibilityLayer({ announce }), 100);
+  }
+  document.addEventListener('input', () => scheduleAccessibilityRender(true), true);
+  document.addEventListener('change', () => scheduleAccessibilityRender(true), true);
+  document.addEventListener('click', event => {
+    if (event.target && event.target.closest && event.target.closest('button, [role="button"], canvas, svg, select, input')) {
+      scheduleAccessibilityRender(true);
+    }
+  }, true);
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ' || event.key.startsWith('Arrow') || event.key === 'Tab') {
+      scheduleAccessibilityRender(false);
+    }
+  }, true);
+  setInterval(() => {
+    if (!document.hidden) renderAccessibilityLayer({ announce: false });
+  }, 1500);
+  markVisualRegions();
+  renderAccessibilityLayer({ announce: false });
+  window.renderAccessibilityLayer = renderAccessibilityLayer;
+})();
+</script>
+
+<script>
+(function () {
+  document.querySelectorAll('[data-current-year]').forEach(el => { el.textContent = new Date().getFullYear(); });
+})();
+</script>
+
+
+<script id="learner-content-system">
+(() => {
+  const profile = {"slug":"hill-climbing","en":{"title":"Hill Climbing and Simulated Annealing","big":"Compare local-search algorithms that improve one candidate at a time. Hill climbing accepts only better moves; simulated annealing can temporarily accept worse moves to escape a local optimum.","primer":"Local search does not build a path through every possibility. It keeps one current candidate and changes it. Learn the problem, move, and escape terms before comparing algorithms.","terms":[{"term":"Traveling salesperson problem (TSP)","definition":"Find the shortest tour that visits every city once and returns to the start."},{"term":"Hill climbing","definition":"Move to a better neighboring solution and stop when no neighbor improves the score."},{"term":"Simulated annealing (SA)","definition":"Sometimes accept a worse move early, then become more selective as temperature falls."},{"term":"Local optimum","definition":"A solution better than all nearby alternatives but not necessarily best overall."},{"term":"Temperature","definition":"A simulated-annealing setting that controls willingness to accept worse moves."},{"term":"Cooling rate","definition":"How quickly the temperature decreases during simulated annealing."}],"scenarios":[{"title":"Hill climbing gets stuck on a traveling-salesperson tour","question":"Why can rapid improvement stop before the shortest tour is found?","run":"Use the traveling salesperson problem (TSP) with steepest-ascent hill climbing and run until the cost stops changing.","predict":"Predict whether every random start will finish with the same tour cost.","explain":"Explain why no better nearby tour does not mean no better tour exists anywhere."},{"title":"Random restarts search more than one basin","question":"How can repeating a greedy search improve the final result?","run":"Keep the traveling salesperson problem (TSP) fixed, switch to random-restart hill climbing, and compare the best-ever cost across restarts.","predict":"Predict whether each restart will improve the result or only some restarts will help.","explain":"Explain how new starting points expose regions that one climb could never reach."},{"title":"Simulated annealing accepts some worse moves","question":"How can a temporary loss create a better final result?","run":"Run simulated annealing (SA) with starting temperature 10 and cooling rate 0.995, then compare slower and faster cooling.","predict":"Predict which cooling rate will preserve the ability to escape for longer.","explain":"Use accepted worse moves and final cost to explain the exploration-versus-greediness tradeoff."},{"title":"Eight queens can stall on a plateau","question":"Why can a search stop changing even when the score is not optimal?","run":"Use the eight-queens problem with steepest-ascent hill climbing and watch the conflict count.","predict":"Predict whether a flat score means every neighboring board is identical.","explain":"Explain how many equal-cost neighbors create a plateau without giving the algorithm a preferred direction."},{"title":"Tabu search remembers recent states","question":"How can short-term memory prevent an immediate return to the same local region?","run":"Run simple hill climbing on the two-dimensional landscape, then run tabu search from the same start.","predict":"Predict which algorithm is more likely to leave the first local minimum.","explain":"Explain how forbidding recently visited states changes the available moves."}]},"zh":{"title":"爬山法与模拟退火","big":"比较一次改进一个候选解的局部搜索算法。爬山法只接受更好的移动；模拟退火可以暂时接受更差的移动，以逃离局部最优。","primer":"局部搜索不会建立穿过所有可能性的路径。它保留一个当前候选解并不断修改。比较算法前，先熟悉问题、移动和逃逸术语。","terms":[{"term":"旅行商问题（TSP）","definition":"寻找访问每个城市一次并返回起点的最短回路。"},{"term":"爬山法","definition":"移动到更好的邻居解；当没有邻居能改进分数时停止。"},{"term":"模拟退火（SA）","definition":"前期有时接受更差移动，温度下降后逐渐变得更严格。"},{"term":"局部最优","definition":"比所有附近方案更好，但不一定是全局最好的方案。"},{"term":"温度","definition":"控制模拟退火接受更差移动意愿的设置。"},{"term":"冷却率","definition":"模拟退火过程中温度下降的速度。"}],"scenarios":[{"title":"爬山法会卡在旅行商路线中","question":"为什么快速改进会在找到最短路线前停止？","run":"在旅行商问题（TSP）中使用最陡上升爬山法，运行到成本不再变化。","predict":"预测每个随机起点是否都会得到相同路线成本。","explain":"解释附近没有更好路线为什么不代表全局没有更好路线。"},{"title":"随机重启搜索多个区域","question":"重复一次贪心搜索为什么能改进最终结果？","run":"保持旅行商问题（TSP）不变，切换到随机重启爬山法，比较多次重启的历史最佳成本。","predict":"预测每次重启都会改进，还是只有部分重启有帮助。","explain":"解释新起点如何暴露单次爬升永远无法到达的区域。"},{"title":"模拟退火接受一些更差移动","question":"暂时变差为什么可能得到更好的最终结果？","run":"用起始温度 10、冷却率 0.995 运行模拟退火（SA），再比较更慢和更快冷却。","predict":"预测哪种冷却率会更久保持逃逸能力。","explain":"用接受的更差移动和最终成本解释探索与贪心之间的取舍。"},{"title":"八皇后会停在平台上","question":"为什么分数不是最优时，搜索仍可能停止变化？","run":"在八皇后问题中运行最陡上升爬山法并观察冲突数量。","predict":"预测平坦分数是否表示每个邻居棋盘都完全相同。","explain":"解释许多等成本邻居如何形成平台，却不给算法明确方向。"},{"title":"禁忌搜索记住最近状态","question":"短期记忆如何避免立即返回同一局部区域？","run":"在二维景观上先运行简单爬山法，再从同一起点运行禁忌搜索。","predict":"预测哪种算法更可能离开第一个局部最小值。","explain":"解释禁止最近访问状态如何改变可用移动。"}]}};
+  window.APPLET_LEARNER_PROFILE = profile;
+  const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;
+  try {
+    STRINGS.en.title = profile.en.title; STRINGS.zh.title = profile.zh.title;
+    STRINGS.en['tldr-strong'] = 'What this applet shows'; STRINGS.zh['tldr-strong'] = '这个工具展示什么';
+    STRINGS.en['tldr-body'] = profile.en.big; STRINGS.zh['tldr-body'] = profile.zh.big;
+    profile.en.scenarios.forEach((item,i) => { STRINGS.en['tour'+i+'name']=item.title; STRINGS.en['tour'+i+'desc']=item.run; if (typeof LESSON_TOUR !== 'undefined' && LESSON_TOUR[i]) { LESSON_TOUR[i].name=item.title; LESSON_TOUR[i].description=item.run; } });
+    profile.zh.scenarios.forEach((item,i) => { STRINGS.zh['tour'+i+'name']=item.title; STRINGS.zh['tour'+i+'desc']=item.run; });
+  } catch (_) {}
+  function applyCoreCopy(){
+    const c=copy();
+    document.title=c.title+' | AI Playgrounds';
+    const h=document.querySelector('.header-main h1'); if(h) h.textContent=c.title;
+    const strong=document.querySelector('.tldr strong'); if(strong) strong.textContent=currentLocale()==='zh'?'这个工具展示什么':'What this applet shows';
+    const body=document.querySelector('.tldr span'); if(body) body.textContent=c.big;
+    const jump=document.querySelector('.jump-link'); if(jump) jump.textContent=currentLocale()==='zh'?'↓ 阅读分步解释':'↓ Read the step-by-step explanation';
+  }
+  function stateData(){
+    const values={};
+    document.querySelectorAll('#main input,#main select,#main textarea').forEach(el=>{
+      if(!el.id||el.closest('.classroom-lab'))return;
+      if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;
+      values[el.id]=el.type==='checkbox'?el.checked:el.value;
+    });
+    return {applet:profile.en.title,slug:profile.slug,exported_at:new Date().toISOString(),values};
+  }
+  function toolbar(){
+    const actions=document.querySelector('.header-actions'); if(!actions||actions.dataset.standardized==='1')return;
+    const share=document.getElementById('shareLink'), embed=document.getElementById('embedLink'), reset=document.getElementById('hardReset');
+    const csv=document.getElementById('csvExport'), png=document.getElementById('exportPng');
+    const more=document.createElement('details'); more.className='header-more';
+    const summary=document.createElement('summary'); summary.className='header-png'; summary.setAttribute('aria-haspopup','menu'); more.appendChild(summary);
+    const menu=document.createElement('div'); menu.className='header-more-menu'; menu.setAttribute('role','menu'); more.appendChild(menu);
+    if(embed){embed.textContent='📎 Embed in LMS';menu.appendChild(embed)}
+    const jsonBtn=document.createElement('button');jsonBtn.type='button';jsonBtn.className='header-png';jsonBtn.dataset.exportState='';menu.appendChild(jsonBtn);
+    if(csv){csv.textContent='📊 Data table (.csv)';menu.appendChild(csv)}
+    if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
+    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
+    actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
+    window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
+    window.refreshAppletToolbar();
+    document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
+  }
+  function terms(){
+    const inner=document.querySelector('.interactive-inner'); if(!inner||inner.querySelector('.key-terms'))return;
+    const d=document.createElement('details');d.className='key-terms';d.open=true;
+    d.innerHTML='<summary><span data-key-summary></span></summary><div class="key-terms-panel"><p class="key-terms-intro" data-key-intro></p><dl class="key-terms-grid" data-key-grid></dl></div>';
+    const first=inner.querySelector(':scope > details');inner.insertBefore(d,first||inner.firstChild);
+    window.renderAppletKeyTerms=()=>{const c=copy();d.querySelector('[data-key-summary]').textContent=currentLocale()==='zh'?'🔑 先学这些术语':'🔑 Key terms before the explanation';d.querySelector('[data-key-intro]').textContent=c.primer;d.querySelector('[data-key-grid]').innerHTML=c.terms.map(x=>'<div class="key-term"><dt>'+x.term+'</dt><dd>'+x.definition+'</dd></div>').join('')};
+    window.renderAppletKeyTerms();
+  }
+  function essayPrimer(){
+    const essay=document.querySelector('article#essay');if(!essay||essay.querySelector('.essay-primer'))return;
+    const box=document.createElement('section');box.className='essay-primer';essay.insertBefore(box,essay.firstChild);
+    window.renderEssayPrimer=()=>{const c=copy();const heading=currentLocale()==='zh'?'阅读前先准备':'Before you read';const termHeading=currentLocale()==='zh'?'本页会使用的术语':'Terms used in this explanation';box.innerHTML='<h2>'+heading+'</h2><p>'+c.primer+'</p><h3>'+termHeading+'</h3><dl class="essay-primer-terms">'+c.terms.map(x=>'<div><dt>'+x.term+'</dt><dd>'+x.definition+'</dd></div>').join('')+'</dl>'};window.renderEssayPrimer();
+  }
+  function patchScenarioData(){
+    try{if(typeof renderScenarioGallery==='function')renderScenarioGallery();if(typeof renderTour==='function')renderTour()}catch(_){}
+  }
+  window.refreshLearnerContent=()=>{applyCoreCopy();window.renderAppletKeyTerms?.();window.renderEssayPrimer?.();window.refreshAppletToolbar?.()};
+  applyCoreCopy();toolbar();terms();essayPrimer();patchScenarioData();
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(window.refreshLearnerContent,20)));
+})();
+</script>
+
+<script id="product-consolidation-script">
+(() => {
+  const slug = location.pathname.split('/').filter(Boolean).slice(-2,-1)[0] || 'hill-climbing';
+  const inner = document.querySelector('.interactive-inner');
+  if (!inner || inner.querySelector('.learning-mode-shell')) return;
+  const oldDeck = inner.querySelector(':scope > .learning-deck');
+  if (oldDeck) { [...oldDeck.children].forEach(el => inner.insertBefore(el, oldDeck)); oldDeck.remove(); }
+  const details = [...inner.querySelectorAll(':scope > details')];
+  if (!details.length) return;
+  const modeFor = d => {
+    if (d.matches('.visual-explanation,.lesson-tour,.key-terms')) return 'understand';
+    if (d.matches('.worksheet,.classroom-lab')) return 'classroom';
+    if (d.matches('.accessibility-layer')) return 'access';
+    return 'explore';
+  };
+  const lang = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const labels = {explore:['Explore','探索'],understand:['Understand','理解'],classroom:['Use in class','课堂使用'],access:['Text and keyboard','文本与键盘']};
+  const intros = {explore:['Start with the featured experiment, then use the scenarios to test a prediction.','从精选实验开始，再使用情境检验预测。'],understand:['Open the mechanism view and lesson sequence when you need to explain why the result changed.','需要解释结果为什么变化时，打开机制视图和课程序列。'],classroom:['Collect reasoning with the worksheet or the local student response packet.','使用练习题或本地学生回答包收集推理。'],access:['Use the text-state description and keyboard guidance when the visual display is not enough.','当可视显示不足时，使用文本状态说明和键盘指导。']};
+  const shell=document.createElement('section');shell.className='learning-mode-shell';shell.setAttribute('aria-label','Applet learning modes');
+  shell.innerHTML='<div class="learning-mode-head"><div><h2 data-mode-heading></h2><p data-mode-copy></p></div><div class="learning-mode-tools"><button type="button" class="copy-experiment" data-copy-experiment>Copy this experiment</button></div></div><div class="learning-mode-tabs" role="tablist"></div><div class="experiment-status" aria-live="polite"></div>';
+  const tabs=shell.querySelector('.learning-mode-tabs');const panels={};
+  Object.keys(labels).forEach((key,i)=>{const b=document.createElement('button');b.type='button';b.className='learning-mode-tab';b.role='tab';b.dataset.mode=key;b.id='mode-tab-'+key;b.setAttribute('aria-controls','mode-panel-'+key);tabs.appendChild(b);const p=document.createElement('div');p.className='learning-mode-panel';p.id='mode-panel-'+key;p.role='tabpanel';p.setAttribute('aria-labelledby',b.id);p.innerHTML='<div class="mode-intro"></div>';shell.appendChild(p);panels[key]=p});
+  inner.insertBefore(shell,details[0]);details.forEach(d=>{const mode=modeFor(d);if(d.matches('.scenario-gallery,.visual-explanation,.classroom-lab,.accessibility-layer,.signature-challenge'))d.classList.add('mode-wide');panels[mode].appendChild(d)});
+  const sig=panels.explore.querySelector('.signature-challenge');if(sig){panels.explore.insertBefore(sig,panels.explore.querySelector('.mode-intro').nextSibling);sig.open=true;const summary=sig.querySelector('summary span,summary');if(summary&&lang()==='en')summary.textContent='✨ Featured experiment';const body=sig.querySelector('.signature-challenge-panel')||sig.querySelector(':scope > div');if(body&&!body.querySelector('.featured-actions')){const actions=document.createElement('div');actions.className='featured-actions';actions.innerHTML='<button type="button" class="step-btn" data-start-featured>Start featured experiment</button>';body.appendChild(actions)}}
+  const lab=panels.classroom.querySelector('.classroom-lab summary span');if(lab&&lang()==='en')lab.textContent='🧪 Student response packet';
+  const a11y=panels.access.querySelector('.accessibility-layer summary span');if(a11y&&lang()==='en')a11y.textContent='♿ Text and keyboard support';
+  let active=new URL(location.href).searchParams.get('mode')||'explore';if(!panels[active])active='explore';
+  function setMode(mode,write=true){active=mode;Object.entries(panels).forEach(([k,p])=>p.hidden=k!==mode);shell.querySelectorAll('.learning-mode-tab').forEach(b=>{const on=b.dataset.mode===mode;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});shell.querySelector('[data-mode-heading]').textContent=labels[mode][lang()==='zh'?1:0];shell.querySelector('[data-mode-copy]').textContent=intros[mode][lang()==='zh'?1:0];panels[mode].querySelector('.mode-intro').innerHTML='<strong>'+labels[mode][lang()==='zh'?1:0]+'.</strong> '+intros[mode][lang()==='zh'?1:0];if(write){const u=new URL(location.href);u.searchParams.set('mode',mode);history.replaceState(null,'',u)}}
+  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
+  function statePayload(){const out={};inner.querySelectorAll('select,input').forEach(el=>{if(!el.id||el.closest('.classroom-lab')||['button','submit'].includes(el.type))return;if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;out[el.id]=el.type==='checkbox'?el.checked:el.value});return out}
+  function encode(obj){return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))}
+  function decode(s){try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch{return null}}
+  const status=shell.querySelector('.experiment-status');shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('state',encode(statePayload()));try{await navigator.clipboard.writeText(u.href);status.textContent=lang()==='zh'?'实验链接已复制。':'Experiment link copied.'}catch{prompt('Copy this experiment URL',u.href)}};
+  const featuredIndex={"search-pathfinding":0,"bayes-classifier":0,"overfitting":1,"knn-classifier":4,"wumpus-world":4,"cnf-sat":2,"bayes-network":1,"hill-climbing":1,"kmeans":4,"neural-network":1,"convolution":4,"q-learning-gridworld":2};shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('details:not(.signature-challenge)')?.setAttribute('open','')});
+  document.addEventListener('click',e=>{const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode','explore');history.replaceState(null,'',u)});
+  const p=new URL(location.href).searchParams;const restore=()=>{const obj=decode(p.get('state')||'');if(obj)Object.entries(obj).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});const n=Number(p.get('scenario'));if(Number.isInteger(n)){panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click()}if(p.get('featured')==='1')sig?.setAttribute('open','')};
+  function refineCards(){
+    const profile=window.APPLET_LEARNER_PROFILE||{};
+    const locale=lang()==='zh'?'zh':'en';
+    const items=(profile[locale]&&profile[locale].scenarios)||[];
+    const labels=locale==='zh'?['核心问题','运行并观察','先预测','运行后解释']:['Core question','Run and watch','Predict first','Explain afterward'];
+    panels.explore.querySelectorAll('.scenario-card').forEach((card,i)=>{
+      const item=items[i]||{};const h=card.querySelector('h3');
+      if(h&&item.title)h.textContent=(locale==='zh'?'情境 ':'Scenario ')+(i+1)+': '+item.title;
+      const metas=card.querySelectorAll('.scenario-meta');const values=[item.question,item.run,item.predict,item.explain];
+      metas.forEach((meta,j)=>{if(!values[j])return;const strong=meta.querySelector('strong');if(strong)strong.textContent=labels[j]+': ';let node=strong?strong.nextSibling:null;if(node)node.textContent=' '+values[j];else meta.appendChild(document.createTextNode(' '+values[j]));});
+    });
+  }
+  setTimeout(()=>{refineCards();window.renderAppletKeyTerms?.();restore()},250);document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.()},20)));setMode(active,false);
+})();
+</script>
 </body>
 </html>
