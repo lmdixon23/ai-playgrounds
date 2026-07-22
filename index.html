@@ -1,466 +1,51 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Playgrounds — Interactive Intro-to-AI</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E">
-<meta name="description" content="Twelve single-file interactive visualizations of core AI concepts: pathfinding, Bayes rule, KNN, overfitting, neural nets, k-means, convolutions, Q-learning, Wumpus World, hill climbing, CNF/SAT, Bayesian networks. Free for any classroom.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Playgrounds | Twelve interactive foundations of AI</title>
+<meta name="description" content="Twelve bilingual, offline-ready AI interactives for search, logic, probability, machine learning, vision, and reinforcement learning.">
 <link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://lmdixon23.github.io/ai-playgrounds/">
-<meta property="og:title" content="AI Playgrounds — Interactive Intro-to-AI">
-<meta property="og:description" content="Twelve single-file interactive visualizations of core AI concepts — drag a slider, watch the algorithm run. Free for any classroom.">
-<meta property="og:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<meta property="og:type" content="website"><meta property="og:title" content="AI Playgrounds"><meta property="og:description" content="Twelve bilingual, single-file AI interactives built for classroom use and independent exploration."><meta property="og:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="AI Playgrounds — Interactive Intro-to-AI">
-<meta name="twitter:description" content="Twelve single-file interactive visualizations of core AI concepts — drag a slider, watch the algorithm run.">
-<meta name="twitter:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": ["WebApplication", "LearningResource"],
-  "name": "AI Playgrounds",
-  "url": "https://lmdixon23.github.io/ai-playgrounds/",
-  "description": "Twelve single-file interactive visualizations of core intro-AI and machine-learning concepts — search and A*, logic and SAT, Bayesian networks, naive Bayes, KNN, k-means, neural networks, convolutions, Q-learning, overfitting, and local search. Mapped to Russell & Norvig (AIMA).",
-  "applicationCategory": "EducationalApplication",
-  "operatingSystem": "Any (web browser)",
-  "isAccessibleForFree": true,
-  "inLanguage": ["en", "zh"],
-  "license": "https://opensource.org/licenses/MIT",
-  "learningResourceType": "interactive simulation",
-  "educationalUse": ["instruction", "self-study"],
-  "educationalLevel": ["high school", "undergraduate"],
-  "author": { "@type": "Person", "name": "Logan Dixon" },
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
-}
-</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/","description":"Twelve bilingual, offline-ready interactives for foundational artificial intelligence.","applicationCategory":"EducationalApplication","operatingSystem":"Any modern web browser","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
 <style>
-  /* Light theme (default) — warm cream backdrop matching the applets' default. */
-  :root {
-    --bg: #fefdf8;
-    --fg: #1f2937;
-    --muted: #6b7280;
-    --accent: #0284c7;
-    --accent-2: #6366f1;
-    --card: #ffffff;
-    --border: #e5e7eb;
-    --header-glow: rgba(2, 132, 199, 0.10);
-  }
-  /* Dark theme — same palette the applets use after toggle. */
-  body.dark-mode {
-    --bg: #0f172a;
-    --fg: #e2e8f0;
-    --muted: #94a3b8;
-    --accent: #38bdf8;
-    --accent-2: #818cf8;
-    --card: #1e293b;
-    --border: #334155;
-    --header-glow: rgba(56, 189, 248, 0.15);
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', Arial, sans-serif;
-    background: var(--bg);
-    color: var(--fg);
-    line-height: 1.55;
-    transition: background 0.2s, color 0.2s;
-  }
-  header {
-    padding: 64px 24px 32px;
-    text-align: center;
-    background: radial-gradient(ellipse at top, var(--header-glow), transparent 70%);
-    position: relative;
-  }
-  header h1 {
-    margin: 0 0 12px;
-    font-size: clamp(2rem, 5vw, 3rem);
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  header p {
-    max-width: 640px;
-    margin: 0 auto;
-    color: var(--muted);
-    font-size: 1.05rem;
-  }
-  /* Theme + language controls float in the top-right of the header. */
-  .header-controls { position: absolute; top: 20px; right: 24px; display: flex; align-items: center; gap: 10px; }
-  .lang-switch { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
-  .lang-switch button { padding: 7px 12px; background: var(--card); color: var(--fg); border: none; cursor: pointer; font: inherit; font-size: 0.8rem; transition: background 0.15s; }
-  .lang-switch button:hover { background: var(--soft, #f1f5f9); }
-  .lang-switch button.active { background: var(--accent); color: #fff; font-weight: 600; }
-  .theme-toggle {
-    background: var(--card);
-    color: var(--fg);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 8px 14px;
-    font-size: 1rem;
-    cursor: pointer;
-    font-family: inherit;
-    transition: background 0.15s, border-color 0.15s, transform 0.15s;
-  }
-  .theme-toggle:hover {
-    border-color: var(--accent);
-    transform: translateY(-1px);
-  }
-  .theme-toggle:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-  main {
-    max-width: 1100px;
-    margin: 32px auto;
-    padding: 0 24px 64px;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-  }
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    text-decoration: none;
-    color: var(--fg);
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
-  }
-  .card:hover {
-    transform: translateY(-3px);
-    border-color: var(--accent);
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
-  }
-  body.dark-mode .card:hover {
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
-  }
-  .card .unit {
-    color: var(--accent);
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-  .card h2 {
-    margin: 0 0 8px;
-    font-size: 1.25rem;
-  }
-  .card p {
-    margin: 0;
-    color: var(--muted);
-    font-size: 0.95rem;
-    flex: 1;
-  }
-  .card .aha {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-    font-size: 0.85rem;
-    color: var(--accent);
-    font-style: italic;
-  }
-  .meta {
-    text-align: center;
-    margin-top: 48px;
-    padding: 28px 24px 12px;
-    border-top: 1px solid var(--border);
-    color: var(--muted);
-    font-size: 0.9rem;
-    line-height: 1.6;
-  }
-  .meta p { margin: 0 0 10px; }
-  .meta .to-top { margin-bottom: 22px; }
-  .meta a { color: var(--accent); }
-  /* ===== Shared a11y tokens (review fix F4: consistent keyboard focus) ===== */
-  a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
-    outline: 2px solid var(--accent); outline-offset: 2px;
-  }
-  .card:focus-visible { border-color: var(--accent); outline: 2px solid var(--accent); outline-offset: 2px; }
+:root{--bg:#f7f8fb;--surface:#fff;--surface-2:#f1f5f9;--text:#172033;--muted:#607087;--line:#dfe5ed;--accent:#0369a1;--accent-2:#4f46e5;--good:#047857;--shadow:0 18px 45px rgba(15,23,42,.09);--radius:20px}
+body.dark{--bg:#0c1423;--surface:#172033;--surface-2:#111b2e;--text:#edf3fb;--muted:#a9b6c9;--line:#304158;--accent:#38bdf8;--accent-2:#a5b4fc;--good:#6ee7b7;--shadow:0 22px 54px rgba(0,0,0,.34)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.55}a{color:inherit}.skip{position:absolute;top:-50px;left:12px;background:var(--accent);color:#fff;padding:10px 14px;border-radius:10px;z-index:20}.skip:focus{top:12px}button,input{font:inherit}button,.button{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:12px;min-height:42px;padding:9px 14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px}.button.primary,.run-proof{background:var(--accent);color:#fff;border-color:transparent;font-weight:800}.button:hover,button:hover{border-color:var(--accent)}:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 60%,transparent);outline-offset:3px}.site-head{max-width:1220px;margin:auto;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{text-decoration:none;font-weight:900;letter-spacing:-.03em;font-size:1.18rem}.nav{display:flex;align-items:center;gap:4px;flex-wrap:wrap}.nav a{text-decoration:none;color:var(--muted);padding:7px 9px;border-radius:999px;font-size:.92rem}.nav a:hover{color:var(--text);background:var(--surface-2)}.tools{display:flex;gap:8px}.lang{display:flex;border:1px solid var(--line);border-radius:12px;overflow:hidden}.lang button{border:0;border-radius:0;min-height:38px;padding:7px 10px}.lang button.active{background:var(--accent);color:#fff}.hero{max-width:1220px;margin:auto;padding:54px 24px 52px;display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,.9fr);gap:42px;align-items:center}.kicker{color:var(--accent);font-weight:900;letter-spacing:.08em;text-transform:uppercase;font-size:.78rem;margin:0 0 12px}.hero h1{font-size:clamp(2.8rem,6vw,5.6rem);letter-spacing:-.065em;line-height:.95;margin:0 0 20px}.hero-copy{font-size:clamp(1.04rem,2vw,1.24rem);max-width:690px;color:var(--muted);margin:0}.hero-actions{display:flex;gap:11px;flex-wrap:wrap;margin-top:24px}.proof{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:var(--shadow)}.proof-head{display:flex;justify-content:space-between;gap:14px;align-items:start;margin-bottom:14px}.proof h2{font-size:1rem;margin:0}.proof p{font-size:.86rem;color:var(--muted);margin:3px 0 0}.proof-grids{display:grid;grid-template-columns:1fr 1fr;gap:12px}.proof-grid-wrap{min-width:0}.proof-label{display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:6px}.mini-grid{display:grid;grid-template-columns:repeat(12,1fr);aspect-ratio:12/7;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface-2)}.mini-cell{border-right:1px solid color-mix(in srgb,var(--line) 55%,transparent);border-bottom:1px solid color-mix(in srgb,var(--line) 55%,transparent);background:var(--surface)}.mini-cell.wall{background:#475569}.mini-cell.visited{background:#bae6fd}.mini-cell.path{background:#fbbf24}.mini-cell.start{background:#34d399}.mini-cell.goal{background:#fb7185}.proof-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px}.proof-result{font-size:.82rem;color:var(--muted)}main{max-width:1220px;margin:auto;padding:0 24px 78px}.section{padding:48px 0;border-top:1px solid var(--line)}.section-head{display:flex;justify-content:space-between;align-items:end;gap:22px;margin-bottom:20px}.section-head h2{font-size:clamp(1.7rem,3vw,2.35rem);letter-spacing:-.04em;margin:0}.section-head p{max-width:700px;color:var(--muted);margin:0}.catalogue-tools{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}.search{flex:1 1 280px;min-height:44px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text);padding:9px 13px}.filters{display:flex;gap:7px;flex-wrap:wrap}.filter.active{background:var(--text);color:var(--bg);border-color:var(--text)}.applet-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.applet{--applet-accent:var(--accent);background:linear-gradient(145deg,color-mix(in srgb,var(--surface) 84%,var(--applet-accent)),var(--surface) 64%);border:1px solid color-mix(in srgb,var(--line) 52%,var(--applet-accent));border-top:4px solid var(--applet-accent);border-radius:18px;padding:18px;text-decoration:none;display:flex;flex-direction:column;min-height:260px;transition:transform .16s,border-color .16s,box-shadow .16s}.applet:hover{transform:translateY(-3px);border-color:var(--applet-accent);box-shadow:var(--shadow)}.applet-top{display:flex;justify-content:space-between;gap:10px}.icon{font-size:1.6rem}.meta{font-size:.75rem;color:var(--applet-accent);text-align:right;font-weight:800;background:color-mix(in srgb,var(--surface) 84%,var(--applet-accent));border:1px solid color-mix(in srgb,var(--line) 55%,var(--applet-accent));border-radius:999px;padding:5px 9px;line-height:1.35}.applet h3{font-size:1.14rem;margin:16px 0 6px}.applet p{color:var(--muted);font-size:.91rem;margin:0}.featured{margin-top:auto;padding-top:16px;color:var(--applet-accent);font-weight:800;font-size:.86rem}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px}.card h3{margin:0 0 7px;font-size:1rem}.card p{margin:0;color:var(--muted);font-size:.92rem}.card .button{margin-top:15px}.difference{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}.difference-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.difference-item{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px}.difference-item strong{display:block;margin-bottom:4px}.difference-item span{color:var(--muted);font-size:.88rem}.quote-card{background:linear-gradient(145deg,color-mix(in srgb,var(--surface) 78%,var(--accent)),color-mix(in srgb,var(--surface) 86%,var(--accent-2)));border:1px solid var(--line);border-radius:22px;padding:25px}.quote-card p{font-size:1.15rem;margin:0 0 20px}.reuse{display:grid;grid-template-columns:1fr 1fr;gap:18px}.reuse .card{min-height:210px}.link-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}.support-panel{display:grid;grid-template-columns:1.05fr .95fr;gap:22px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:24px}.support-panel h3{margin:0 0 8px;font-size:1.35rem}.support-panel p{margin:0;color:var(--muted)}.support-actions{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}.empty{padding:32px;border:1px dashed var(--line);border-radius:16px;text-align:center;color:var(--muted);grid-column:1/-1}footer{border-top:1px solid var(--line);padding:30px 24px 45px;text-align:center;color:var(--muted);font-size:.9rem}footer a{color:var(--accent)}
+@media(max-width:960px){.hero{grid-template-columns:1fr}.support-panel{grid-template-columns:1fr}.support-actions{justify-content:flex-start}.applet-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.difference{grid-template-columns:1fr}.nav{display:none}}
+@media(max-width:640px){.site-head{padding:14px 16px}.hero{padding:34px 16px 42px}.hero h1{font-size:3.2rem}.proof-grids,.applet-grid,.cards,.difference-list,.reuse{grid-template-columns:1fr}.section{padding:38px 0}main{padding:0 16px 60px}.section-head{align-items:start;flex-direction:column}.proof-actions{align-items:stretch;flex-direction:column}.run-proof{width:100%}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation-duration:.001ms!important;transition-duration:.001ms!important}}
 </style>
 </head>
 <body>
-<header>
-  <div class="header-controls">
-    <button class="theme-toggle" id="themeToggle"
-            aria-label="Toggle dark or light theme"
-            title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
-    <div class="lang-switch" title="Switch interface language / 切换界面语言">
-      <button data-lang="en" class="active">EN</button>
-      <button data-lang="zh">中文</button>
-    </div>
-  </div>
-  <h1 data-i18n="h1">AI Playgrounds</h1>
-  <p data-i18n="tagline">Twelve interactive visualizations of the core ideas in any
-     introductory AI course. Drag the sliders. Click the canvas. Watch the
-     algorithms run, step by step.</p>
-</header>
+<a class="skip" href="#applets">Skip to applets</a>
+<header class="site-head"><a class="brand" href="index.html">AI Playgrounds</a><nav class="nav"><a href="#applets" data-t="navExplore">Explore</a><a href="#teach" data-t="navTeach">Teach</a><a href="#why" data-t="navWhy">Why this suite</a><a href="#research" data-t="navResearch">Research and reuse</a></nav><div class="tools"><button id="theme" aria-label="Toggle theme">◐</button><div class="lang"><button data-lang="en" class="active">EN</button><button data-lang="zh">中文</button></div></div></header>
+<section class="hero"><div><p class="kicker" data-t="kicker">Foundational AI, made manipulable</p><h1 data-t="heroTitle">Move the idea.<br>See what changes.</h1><p class="hero-copy" data-t="heroCopy">Twelve bilingual interactives for search, logic, probability, machine learning, vision, and reinforcement learning. Each runs as one portable HTML file, with no account or backend.</p><div class="hero-actions"><a class="button primary" href="#applets" data-t="exploreAll">Explore all twelve</a><a class="button" href="teacher-pack.html" data-t="teachTomorrow">Teach with the suite</a><a class="button" href="research-and-citation.html" data-t="readPaper">Research and citation</a></div></div><div class="proof" aria-labelledby="proof-title"><div class="proof-head"><div><h2 id="proof-title" data-t="proofTitle">Live proof: same maze, different search</h2><p data-t="proofCopy">BFS and A* find the same shortest path. A* usually explores less because the heuristic focuses the search.</p></div></div><div class="proof-grids"><div class="proof-grid-wrap"><div class="proof-label"><strong>BFS</strong><span id="bfsCount">0</span></div><div class="mini-grid" id="bfsGrid"></div></div><div class="proof-grid-wrap"><div class="proof-label"><strong>A*</strong><span id="astarCount">0</span></div><div class="mini-grid" id="astarGrid"></div></div></div><div class="proof-actions"><span class="proof-result" id="proofResult" data-t="proofReady">Run the comparison to reveal the search traces.</span><button class="run-proof" id="runProof" data-t="runProof">Run comparison</button></div></div></section>
 <main>
-  <div class="grid">
-
-    <a class="card" href="playgrounds/search-pathfinding/">
-      <div class="unit" data-i18n="u-1">Search</div>
-      <h2 data-i18n="t-1">Pathfinding Visualizer</h2>
-      <p data-i18n="d-1">BFS, DFS, and A* race across a grid you draw. Watch the search frontier expand in real time.</p>
-      <div class="aha" data-i18n="a-1">→ Why A* explores fewer nodes than BFS</div>
-    </a>
-
-    <a class="card" href="playgrounds/wumpus-world/">
-      <div class="unit" data-i18n="u-2">Logical agent</div>
-      <h2 data-i18n="t-2">Wumpus World</h2>
-      <p data-i18n="d-2">The classic Russell &amp; Norvig environment. Watch a logical agent infer safe squares from percepts — world view next to the agent's knowledge map.</p>
-      <div class="aha" data-i18n="a-2">→ The difference between "I haven't seen it" and "I've proved it's not there"</div>
-    </a>
-
-    <a class="card" href="playgrounds/cnf-sat/">
-      <div class="unit" data-i18n="u-3">Logic & knowledge bases</div>
-      <h2 data-i18n="t-3">CNF & SAT Builder</h2>
-      <p data-i18n="d-3">Type propositional sentences. Watch them get rewritten into CNF, step by step. Brute-force SAT-checks the formula and shows every satisfying model.</p>
-      <div class="aha" data-i18n="a-3">→ Why every SAT solver in the world wants CNF as input</div>
-    </a>
-
-    <a class="card" href="playgrounds/bayes-classifier/">
-      <div class="unit" data-i18n="u-4">Probability</div>
-      <h2 data-i18n="t-4">Bayes Rule Playground</h2>
-      <p data-i18n="d-4">Slide the prior. Slide the accuracy. See how a "99% accurate" test changes its mind about a rare disease.</p>
-      <div class="aha" data-i18n="a-4">→ Why intuition about probability is usually wrong</div>
-    </a>
-
-    <a class="card" href="playgrounds/bayes-network/">
-      <div class="unit" data-i18n="u-5">Bayesian networks</div>
-      <h2 data-i18n="t-5">Bayesian Network</h2>
-      <p data-i18n="d-5">The R&amp;N burglar-earthquake network. Editable CPTs, exact inference, Gibbs sampling. See the "explaining away" effect live.</p>
-      <div class="aha" data-i18n="a-5">→ Why learning of an earthquake LOWERS your belief in a burglary</div>
-    </a>
-
-    <a class="card" href="playgrounds/knn-classifier/">
-      <div class="unit" data-i18n="u-6">Supervised learning</div>
-      <h2 data-i18n="t-6">K-Nearest Neighbors</h2>
-      <p data-i18n="d-6">Click to add training points of either class. Watch the decision boundary redraw itself as you change k.</p>
-      <div class="aha" data-i18n="a-6">→ What "k" actually does to a model</div>
-    </a>
-
-    <a class="card" href="playgrounds/overfitting/">
-      <div class="unit" data-i18n="u-7">Evaluation</div>
-      <h2 data-i18n="t-7">Overfitting Explorer</h2>
-      <p data-i18n="d-7">Fit polynomials from degree 1 to degree 20. Watch train error drop while test error explodes.</p>
-      <div class="aha" data-i18n="a-7">→ Why a perfect training fit can fail in the real world</div>
-    </a>
-
-    <a class="card" href="playgrounds/hill-climbing/">
-      <div class="unit" data-i18n="u-8">Local search</div>
-      <h2 data-i18n="t-8">Hill Climbing & SA</h2>
-      <p data-i18n="d-8">Six algorithm variants × three problems (TSP, N-queens, function landscape). Watch greedy methods get stuck while simulated annealing escapes.</p>
-      <div class="aha" data-i18n="a-8">→ Why sometimes you have to take a worse step</div>
-    </a>
-
-    <a class="card" href="playgrounds/neural-network/">
-      <div class="unit" data-i18n="u-9">Neural networks</div>
-      <h2 data-i18n="t-9">Tiny Neural Net</h2>
-      <p data-i18n="d-9">Train a small network to classify points. Add neurons, engineer input features (x², x·y, sin), change the activation, and watch the weights move as a live network graph while the loss falls.</p>
-      <div class="aha" data-i18n="a-9">→ How layers + non-linearity carve up space</div>
-    </a>
-
-    <a class="card" href="playgrounds/kmeans/">
-      <div class="unit" data-i18n="u-10">Unsupervised learning</div>
-      <h2 data-i18n="t-10">K-Means Clustering</h2>
-      <p data-i18n="d-10">Drop points, set k, then step through assignments and updates. The whole algorithm in one screen.</p>
-      <div class="aha" data-i18n="a-10">→ What "iterating to convergence" looks like</div>
-    </a>
-
-    <a class="card" href="playgrounds/convolution/">
-      <div class="unit" data-i18n="u-11">Vision</div>
-      <h2 data-i18n="t-11">Convolution Playground</h2>
-      <p data-i18n="d-11">Draw on a canvas, pick a 3×3 filter, and see it detect edges, blur, or sharpen — then watch a random filter learn itself by gradient descent.</p>
-      <div class="aha" data-i18n="a-11">→ Why a tiny matrix can "see" features</div>
-    </a>
-
-    <a class="card" href="playgrounds/q-learning-gridworld/">
-      <div class="unit" data-i18n="u-12">Reinforcement learning</div>
-      <h2 data-i18n="t-12">Q-Learning Gridworld</h2>
-      <p data-i18n="d-12">An agent learns to find the goal by trial and error. Watch its Q-values fill in across the grid as it plays.</p>
-      <div class="aha" data-i18n="a-12">→ How a value function emerges from random walking</div>
-    </a>
-
-  </div>
-
-  <footer class="meta">
-    <p class="to-top"><a href="#top" data-i18n="to-top">↑ Back to top</a></p>
-    <p data-i18n="built-for">Built for the 2025–2026 Intro to AI course at Haidian Kaiwen Academy.</p>
-    <p data-i18n="mit">MIT licensed — fork, remix, and use in your classroom.</p>
-    <p class="cta"><a href="https://github.com/lmdixon23/ai-playgrounds" data-i18n="star-cta">★ Star it on GitHub</a> <span data-i18n="watch-note">— or Watch → Releases to hear when new applets land.</span></p>
-    <p><span data-i18n="source-label">Source:</span> <a href="https://github.com/lmdixon23/ai-playgrounds">github.com/lmdixon23/ai-playgrounds</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-i18n="report-issue">Report an issue</a></p>
-  </footer>
+<section class="section" id="applets"><div class="section-head"><div><h2 data-t="allTitle">Explore the twelve applets</h2><p data-t="allCopy">Start with a featured experiment or filter by the idea you need to teach.</p></div></div><div class="catalogue-tools"><input class="search" id="search" type="search" data-t-placeholder="searchPlaceholder" placeholder="Search concepts or applets"><div class="filters" id="filters"></div></div><div class="applet-grid" id="appletGrid"></div></section>
+<section class="section" id="teach"><div class="section-head"><div><h2 data-t="teachTitle">Use one in class</h2><p data-t="teachCopy">The applets are designed for a short demonstration, a full inquiry cycle, or independent practice. Student work stays on the learner's device until they submit it through your normal classroom system.</p></div></div><div class="cards"><article class="card"><h3 data-t="teachQuick">A ten-minute comparison</h3><p data-t="teachQuickCopy">Open a featured experiment, ask for a prediction, run the comparison, and collect one explanation.</p><a class="button" href="playgrounds/search-pathfinding/index.html?mode=explore&featured=1" data-t="openExample">Open an example</a></article><article class="card"><h3 data-t="teachLesson">A complete lesson</h3><p data-t="teachLessonCopy">Use the scenario gallery, visual explanation, and response packet as one Predict, Observe, Explain, Transfer sequence.</p><a class="button" href="teacher-pack.html" data-t="openTeacher">Open the Teacher Pack</a></article><article class="card"><h3 data-t="teachPlan">A four-lesson sequence</h3><p data-t="teachPlanCopy">Move from search and logic to probability, model evaluation, and reinforcement learning.</p><a class="button" href="curriculum.html" data-t="openCurriculum">Open the curriculum map</a></article></div></section>
+<section class="section" id="why"><div class="section-head"><div><h2 data-t="whyTitle">What makes the suite different</h2><p data-t="whyCopy">The contribution is not one new algorithm visualization. It is a coherent classroom packaging pattern across the foundational AI canon.</p></div></div><div class="difference"><div class="difference-list"><div class="difference-item"><strong data-t="d1">One concept at a time</strong><span data-t="d1c">Each applet opens on a concrete behavior rather than a menu or setup screen.</span></div><div class="difference-item"><strong data-t="d2">English and Chinese</strong><span data-t="d2c">The interface, teaching prompts, and state descriptions support both languages.</span></div><div class="difference-item"><strong data-t="d3">Portable by design</strong><span data-t="d3c">Each applet is one HTML file that can run offline without an account or backend.</span></div><div class="difference-item"><strong data-t="d4">Misconception and fidelity notes</strong><span data-t="d4c">Teacher guidance names the error the applet targets and what the model leaves out.</span></div><div class="difference-item"><strong data-t="d5">Classroom evidence flow</strong><span data-t="d5c">Scenario comparisons and local response packets keep student reasoning visible.</span></div><div class="difference-item"><strong data-t="d6">Inspectable quality</strong><span data-t="d6c">Algorithmic regression tests and browser QA are included in the repository.</span></div></div><aside class="quote-card"><p data-t="pattern">Predict what will happen. Change one meaningful condition. Compare the evidence. Explain why the mechanism produced it.</p><a class="button" href="quality.html" data-t="howWorks">How the project works</a></aside></div></section>
+<section class="section" id="support"><div class="support-panel"><div><h3 data-t="supportTitle">Use it, adapt it, or help others find it</h3><p data-t="supportCopy">AI Playgrounds is an open teaching project. Use it in class, reuse it under MIT, or support discovery with a GitHub star or a shared link.</p></div><div class="support-actions"><a class="button primary" href="teacher-pack.html" data-t="supportTeach">Use in class</a><a class="button" href="https://github.com/lmdixon23/ai-playgrounds" data-t="supportStar">Star on GitHub</a><a class="button" href="https://github.com/lmdixon23/ai-playgrounds/releases" data-t="supportReleases">Follow releases</a><button class="button" id="shareProject" data-t="supportShare">Share the suite</button></div></div></section>
+<section class="section" id="research"><div class="section-head"><div><h2 data-t="researchTitle">Research, source, and reuse</h2><p data-t="researchCopy">Use the tagged release as the artifact of record, cite the project, inspect the implementation, or adapt one applet for your own course.</p></div></div><div class="reuse"><article class="card"><h3 data-t="scholarTitle">For researchers and reviewers</h3><p data-t="scholarCopy">The design paper, citation metadata, architecture notes, and exact release information connect the public artifact to its scholarly account.</p><div class="link-row"><a class="button" href="research-and-citation.html" data-t="citationGuide">Citation guide</a><a class="button" href="CITATION.cff">CITATION.cff</a><a class="button" href="tests/index.html" data-t="testReport">Test report</a></div></article><article class="card"><h3 data-t="developerTitle">For developers and teachers</h3><p data-t="developerCopy">The source is intentionally plain HTML, CSS, and JavaScript. Fork the project, take one applet, translate it, or change the scenarios without adopting a build system.</p><div class="link-row"><a class="button" href="https://github.com/lmdixon23/ai-playgrounds" data-t="source">View source</a><a class="button" href="ARCHITECTURE.md">Architecture</a><a class="button" href="CONTRIBUTING.md">Contributing</a><a class="button" href="applets.json">Applet metadata</a></div></article></div></section>
 </main>
-
+<footer>
+  <p>Made for the Introduction to AI course at Haidian Kaiwen Academy.</p>
+  <p>© <span id="year"></span> Logan M. Dixon · <a href="https://lmdixon23.github.io/">Portfolio</a> · <a href="https://github.com/lmdixon23/ai-playgrounds">Source</a> · <a href="LICENSE">MIT</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues">Report an issue</a> · <a href="https://orcid.org/0009-0001-0592-462X" rel="me">ORCID</a></p>
+</footer>
 <script>
-  // Theme: default LIGHT. Read shared 'theme' key (same as applets) so user's choice
-  // persists across the landing page and any applet they open.
-  (function () {
-    const KEY = 'theme';
-    let saved = null;
-    try { saved = localStorage.getItem(KEY); } catch (_) {}
-    // Default light if nothing saved. Honor saved value if it exists.
-    if (saved === 'dark') document.body.classList.add('dark-mode');
-    function refreshIcon() {
-      const dark = document.body.classList.contains('dark-mode');
-      document.getElementById('themeToggle').textContent = dark ? '☀️' : '🌙';
-    }
-    refreshIcon();
-    document.getElementById('themeToggle').addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode');
-      const dark = document.body.classList.contains('dark-mode');
-      try { localStorage.setItem(KEY, dark ? 'dark' : 'light'); } catch (_) {}
-      refreshIcon();
-    });
-  })();
+const APPLETS=[{"slug":"search-pathfinding","icon":"🧭","category":"search","category_en":"Search","category_zh":"搜索","title":"Pathfinding Visualizer","title_zh":"寻路可视化","desc":"Compare breadth-first search (BFS), depth-first search (DFS), Dijkstra’s algorithm, and A* on the same grid.","desc_zh":"在同一网格上比较广度优先搜索（BFS）、深度优先搜索（DFS）、Dijkstra 算法和 A*。","time":"20 min","level":"start","featured":"Race A* against BFS on the same weighted maze.","featured_zh":"让 A* 与 BFS 在同一个加权迷宫中竞速。","accent":"#2563eb","course_order":1,"showcase_order":1,"course_phase":"Search and problem solving","accent_name":"Cobalt"},{"slug":"bayes-classifier","icon":"🎯","category":"probability","category_en":"Probability","category_zh":"概率","title":"Bayes Rule Playground","title_zh":"贝叶斯定理演练场","desc":"Change the base rate and test quality to see why high accuracy can still produce a surprising posterior.","desc_zh":"改变基率和检测质量，观察高准确率为什么仍会产生意外的后验概率。","time":"20 min","level":"start","featured":"Compare the same test under rare and common conditions.","featured_zh":"比较同一检测在罕见和常见条件下的结果。","accent":"#a21caf","course_order":5,"showcase_order":2,"course_phase":"Probability","accent_name":"Fuchsia"},{"slug":"overfitting","icon":"📈","category":"ml","category_en":"Model evaluation","category_zh":"模型评估","title":"Overfitting Explorer","title_zh":"过拟合探索器","desc":"Raise model complexity and compare training error with test error on fresh samples.","desc_zh":"提高模型复杂度，并比较训练误差与新样本上的测试误差。","time":"25 min","level":"start","featured":"Find the point where a better fit becomes a worse model.","featured_zh":"找到拟合更好却模型更差的转折点。","accent":"#047857","course_order":8,"showcase_order":3,"course_phase":"Machine learning and evaluation","accent_name":"Emerald"},{"slug":"q-learning-gridworld","icon":"🤖","category":"rl","category_en":"Reinforcement learning","category_zh":"强化学习","title":"Q-Learning Gridworld","title_zh":"Q 学习网格世界","desc":"Train by trial and error, inspect value backups, and compare exploration schedules on the same world.","desc_zh":"通过试错训练，检查价值回传，并在同一世界上比较探索策略。","time":"30 min","level":"advanced","featured":"Compare an early policy with one learned from longer experience.","featured_zh":"比较早期策略与经过更长经验学习的策略。","accent":"#b91c1c","course_order":12,"showcase_order":4,"course_phase":"Reinforcement learning","accent_name":"Crimson"},{"slug":"wumpus-world","icon":"🕳️","category":"logic","category_en":"Logical agents","category_zh":"逻辑智能体","title":"Wumpus World","title_zh":"Wumpus 世界","desc":"Follow a logical agent as percepts become safe-cell conclusions, unresolved risks, and forced choices.","desc_zh":"观察逻辑智能体如何把感知转化为安全结论、未解决风险和被迫选择。","time":"25 min","level":"core","featured":"Separate a square that is unknown from one proven safe.","featured_zh":"区分未知格子与已证明安全的格子。","accent":"#c2410c","course_order":3,"showcase_order":5,"course_phase":"Logic and knowledge","accent_name":"Burnt orange"},{"slug":"cnf-sat","icon":"🧩","category":"logic","category_en":"Logic and SAT","category_zh":"逻辑与 SAT","title":"CNF and SAT Builder","title_zh":"CNF 与 SAT 构建器","desc":"Rewrite propositions into conjunctive normal form (CNF), then watch a satisfiability solver prune assignments.","desc_zh":"把命题改写为合取范式（CNF），再观察可满足性求解器如何剪枝赋值。","time":"25 min","level":"core","featured":"Compare a satisfiable formula with a forced contradiction.","featured_zh":"比较一个可满足公式与一个必然矛盾。","accent":"#6d28d9","course_order":4,"showcase_order":6,"course_phase":"Logic and knowledge","accent_name":"Violet"},{"slug":"bayes-network","icon":"🔗","category":"probability","category_en":"Probabilistic inference","category_zh":"概率推理","title":"Bayesian Network","title_zh":"贝叶斯网络","desc":"Edit evidence, compare exact inference with sampling, and see explaining away in a causal graph.","desc_zh":"编辑证据，比较精确推理与采样，并在因果图中观察解释消除。","time":"30 min","level":"core","featured":"Observe how evidence for one cause can lower belief in another.","featured_zh":"观察一个原因的证据如何降低对另一个原因的信念。","accent":"#0f766e","course_order":6,"showcase_order":7,"course_phase":"Probabilistic reasoning","accent_name":"Teal"},{"slug":"knn-classifier","icon":"🗳️","category":"ml","category_en":"Classification","category_zh":"分类","title":"K-Nearest Neighbors","title_zh":"K 最近邻","desc":"Move a query point, change k and vote weighting, and inspect every neighbor that determines the class.","desc_zh":"移动查询点，改变 k 和投票权重，并检查决定类别的每个邻居。","time":"20 min","level":"start","featured":"Compare k=1 with a larger vote near a noisy boundary.","featured_zh":"在有噪声的边界附近比较 k=1 与更大的投票范围。","accent":"#be123c","course_order":7,"showcase_order":8,"course_phase":"Machine learning","accent_name":"Rose"},{"slug":"hill-climbing","icon":"⛰️","category":"search","category_en":"Local search","category_zh":"局部搜索","title":"Hill Climbing and Simulated Annealing","title_zh":"爬山法与模拟退火","desc":"Compare hill climbing with simulated annealing on the same optimization problem and starting state.","desc_zh":"在同一优化问题和起始状态上比较爬山法与模拟退火。","time":"25 min","level":"core","featured":"Use one start state to expose the difference between climbing and escaping.","featured_zh":"用同一起点揭示上升与逃逸之间的区别。","accent":"#a16207","course_order":2,"showcase_order":9,"course_phase":"Search and optimization","accent_name":"Ochre"},{"slug":"neural-network","icon":"🧠","category":"neural","category_en":"Neural networks","category_zh":"神经网络","title":"Tiny Neural Network","title_zh":"微型神经网络","desc":"Train a compact network and compare linear composition with a nonlinear hidden representation.","desc_zh":"训练一个小型网络，并比较线性组合与非线性隐藏表示。","time":"30 min","level":"advanced","featured":"Toggle the activation to see what the hidden layer can actually represent.","featured_zh":"切换激活函数，观察隐藏层真正能表示什么。","accent":"#4338ca","course_order":9,"showcase_order":10,"course_phase":"Neural networks","accent_name":"Indigo"},{"slug":"kmeans","icon":"🟣","category":"ml","category_en":"Clustering","category_zh":"聚类","title":"K-Means Clustering","title_zh":"K 均值聚类","desc":"Change k and initialization, then watch assignment and center updates reshape the clusters.","desc_zh":"改变 k 和初始化方式，观察分配与中心更新如何重塑聚类。","time":"25 min","level":"core","featured":"Run the same data from two initializations and compare the final clusters.","featured_zh":"用两种初始化运行同一数据并比较最终聚类。","accent":"#4d7c0f","course_order":10,"showcase_order":11,"course_phase":"Unsupervised learning","accent_name":"Olive"},{"slug":"convolution","icon":"🖼️","category":"vision","category_en":"Computer vision","category_zh":"计算机视觉","title":"Convolution Playground","title_zh":"卷积演练场","desc":"Slide kernels across an image, inspect each multiply-and-sum, and compare hand-built with learned filters.","desc_zh":"让卷积核滑过图像，检查每次乘加，并比较手工滤波器与学习滤波器。","time":"30 min","level":"advanced","featured":"Apply edge, blur, and learned kernels to the same image.","featured_zh":"在同一图像上应用边缘、模糊和学习卷积核。","accent":"#0e7490","course_order":11,"showcase_order":12,"course_phase":"Computer vision","accent_name":"Cyan"}];
+const COPY={en:{navExplore:'Explore',navTeach:'Teach',navWhy:'Why this suite',navResearch:'Research and reuse',kicker:'Foundational AI, made manipulable',heroTitle:'Move the idea.<br>See what changes.',heroCopy:'Twelve bilingual interactives for search, logic, probability, machine learning, vision, and reinforcement learning. Each runs as one portable HTML file, with no account or backend.',exploreAll:'Explore all twelve',teachTomorrow:'Teach with the suite',readPaper:'Research and citation',proofTitle:'Live proof: same maze, different search',proofCopy:'BFS and A* find the same shortest path. A* usually explores less because the heuristic focuses the search.',proofReady:'Run the comparison to reveal the search traces.',runProof:'Run comparison',allTitle:'Explore the twelve applets',allCopy:'Start with a featured experiment or filter by the idea you need to teach.',searchPlaceholder:'Search concepts or applets',teachTitle:'Use one in class',teachCopy:"The applets are designed for a short demonstration, a full inquiry cycle, or independent practice. Student work stays on the learner's device until they submit it through your normal classroom system.",teachQuick:'A ten-minute comparison',teachQuickCopy:'Open a featured experiment, ask for a prediction, run the comparison, and collect one explanation.',openExample:'Open an example',teachLesson:'A complete lesson',teachLessonCopy:'Use the scenario gallery, visual explanation, and response packet as one Predict, Observe, Explain, Transfer sequence.',openTeacher:'Open the Teacher Pack',teachPlan:'A four-lesson sequence',teachPlanCopy:'Move from search and logic to probability, model evaluation, and reinforcement learning.',openCurriculum:'Open the curriculum map',whyTitle:'What makes the suite different',whyCopy:'The contribution is not one new algorithm visualization. It is a coherent classroom packaging pattern across the foundational AI canon.',d1:'One concept at a time',d1c:'Each applet opens on a concrete behavior rather than a menu or setup screen.',d2:'English and Chinese',d2c:'The interface, teaching prompts, and state descriptions support both languages.',d3:'Portable by design',d3c:'Each applet is one HTML file that can run offline without an account or backend.',d4:'Misconception and fidelity notes',d4c:'Teacher guidance names the error the applet targets and what the model leaves out.',d5:'Classroom evidence flow',d5c:'Scenario comparisons and local response packets keep student reasoning visible.',d6:'Inspectable quality',d6c:'Algorithmic regression tests and browser QA are included in the repository.',pattern:'Predict what will happen. Change one meaningful condition. Compare the evidence. Explain why the mechanism produced it.',howWorks:'How the project works',researchTitle:'Research, source, and reuse',researchCopy:'Use the tagged release as the artifact of record, cite the project, inspect the implementation, or adapt one applet for your own course.',scholarTitle:'For researchers and reviewers',scholarCopy:'The design paper, citation metadata, architecture notes, and exact release information connect the public artifact to its scholarly account.',citationGuide:'Citation guide',testReport:'Test report',developerTitle:'For developers and teachers',developerCopy:'The source is intentionally plain HTML, CSS, and JavaScript. Fork the project, take one applet, translate it, or change the scenarios without adopting a build system.',source:'View source',supportTitle:'Use it, adapt it, or help others find it',supportCopy:'AI Playgrounds is an open teaching project. Use it in class, reuse it under MIT, or support discovery with a GitHub star or a shared link.',supportTeach:'Use in class',supportStar:'Star on GitHub',supportReleases:'Follow releases',supportShare:'Share the suite',shareCopied:'Project link copied',empty:'No applets match these filters.'},zh:{navExplore:'探索',navTeach:'教学',navWhy:'项目特色',navResearch:'研究与复用',kicker:'让人工智能基础概念可以被操控',heroTitle:'移动概念。<br>观察变化。',heroCopy:'十二个双语交互工具，涵盖搜索、逻辑、概率、机器学习、视觉和强化学习。每个工具都是一个可离线运行的 HTML 文件，不需要账户或后端。',exploreAll:'探索全部十二个',teachTomorrow:'用本套件教学',readPaper:'研究与引用',proofTitle:'实时演示：同一迷宫，不同搜索',proofCopy:'BFS 和 A* 找到相同的最短路径。A* 通常探索更少，因为启发式会聚焦搜索。',proofReady:'运行比较以显示搜索轨迹。',runProof:'运行比较',allTitle:'探索十二个交互工具',allCopy:'从精选实验开始，或按需要教授的概念筛选。',searchPlaceholder:'搜索概念或工具',teachTitle:'明天即可用于课堂',teachCopy:'这些工具可用于短演示、完整探究循环或独立练习。学生作品保留在学习者设备上，直到通过日常课堂系统提交。',teachQuick:'十分钟比较',teachQuickCopy:'打开一个精选实验，要求学生预测，运行比较，并收集一段解释。',openExample:'打开示例',teachLesson:'完整课时',teachLessonCopy:'把情境库、可视化解释和回答包组合为预测、观察、解释、迁移流程。',openTeacher:'打开教师包',teachPlan:'四课时序列',teachPlanCopy:'从搜索和逻辑发展到概率、模型评估和强化学习。',openCurriculum:'打开课程地图',whyTitle:'本套件的不同之处',whyCopy:'贡献不是某一个新算法可视化，而是覆盖人工智能基础内容的一致课堂包装模式。',d1:'一次聚焦一个概念',d1c:'每个工具直接打开具体行为，而不是菜单或设置页面。',d2:'英文与中文',d2c:'界面、教学提示和状态说明均支持两种语言。',d3:'便携设计',d3c:'每个工具都是单个 HTML 文件，可离线运行，无需账户或后端。',d4:'误解与简化说明',d4c:'教师指导明确指出目标误解以及模型省略的内容。',d5:'课堂证据流程',d5c:'情境比较和本地回答包让学生推理保持可见。',d6:'可检查的质量',d6c:'仓库包含算法回归测试和浏览器质量检查。',pattern:'先预测。改变一个有意义的条件。比较证据。解释机制为什么产生这个结果。',howWorks:'项目如何运作',researchTitle:'研究、源代码与复用',researchCopy:'使用带标签的版本作为记录工件，引用项目，检查实现，或为自己的课程改编一个工具。',scholarTitle:'面向研究者和评审者',scholarCopy:'设计论文、引用元数据、架构说明和精确版本信息把公共工件连接到学术说明。',citationGuide:'引用指南',testReport:'测试报告',developerTitle:'面向开发者和教师',developerCopy:'源代码有意采用普通 HTML、CSS 和 JavaScript。无需引入构建系统即可复刻项目、取用单个工具、翻译或修改情境。',source:'查看源代码',supportTitle:'使用、改编，或帮助更多人发现',supportCopy:'AI Playgrounds 是一个开放教学项目。你可以用于课堂、依据 MIT 许可改编，或通过 GitHub 星标和分享链接帮助更多人发现。',supportTeach:'用于课堂',supportStar:'在 GitHub 加星',supportReleases:'关注版本',supportShare:'分享套件',shareCopied:'项目链接已复制',empty:'没有符合当前筛选条件的工具。'}};
+let lang=localStorage.getItem('ai-playgrounds-lang')||'en';let filter='all';
+const categories={all:['All','全部'],search:['Search','搜索'],logic:['Logic','逻辑'],probability:['Probability','概率'],ml:['Machine learning','机器学习'],neural:['Neural networks','神经网络'],vision:['Vision','视觉'],rl:['Reinforcement learning','强化学习']};
+function t(k){return (COPY[lang]&&COPY[lang][k])||COPY.en[k]||k}
+function applyLanguage(){document.documentElement.lang=lang;document.querySelectorAll('[data-t]').forEach(el=>el.innerHTML=t(el.dataset.t));document.querySelectorAll('[data-t-placeholder]').forEach(el=>el.placeholder=t(el.dataset.tPlaceholder));document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));renderFilters();renderApplets();localStorage.setItem('ai-playgrounds-lang',lang)}
+function renderFilters(){const root=document.getElementById('filters');root.innerHTML='';Object.entries(categories).forEach(([key,label])=>{const b=document.createElement('button');b.className='filter'+(filter===key?' active':'');b.textContent=label[lang==='zh'?1:0];b.onclick=()=>{filter=key;renderFilters();renderApplets()};root.appendChild(b)})}
+function renderApplets(){const q=document.getElementById('search').value.trim().toLowerCase();const list=APPLETS.filter(a=>(filter==='all'||a.category===filter)&&(!q||[a.title,a.title_zh,a.desc,a.desc_zh,a.category_en,a.category_zh,a.featured,a.featured_zh].join(' ').toLowerCase().includes(q)));const root=document.getElementById('appletGrid');root.innerHTML='';if(!list.length){root.innerHTML=`<div class="empty">${t('empty')}</div>`;return}list.forEach(a=>{const el=document.createElement('a');el.className='applet';el.style.setProperty('--applet-accent',a.accent||'var(--accent)');el.href=`playgrounds/${a.slug}/index.html?mode=explore&featured=1`;el.innerHTML=`<div class="applet-top"><span class="icon">${a.icon}</span><span class="meta">${lang==='zh'?a.category_zh:a.category_en}<br>${a.time}</span></div><h3>${lang==='zh'?a.title_zh:a.title}</h3><p>${lang==='zh'?a.desc_zh:a.desc}</p><span class="featured">${lang==='zh'?a.featured_zh:a.featured} →</span>`;root.appendChild(el)})}
+document.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{lang=b.dataset.lang;applyLanguage()});document.getElementById('search').addEventListener('input',renderApplets);document.getElementById('theme').onclick=()=>{document.body.classList.toggle('dark');localStorage.setItem('ai-playgrounds-theme',document.body.classList.contains('dark')?'dark':'light')};if(localStorage.getItem('ai-playgrounds-theme')==='dark')document.body.classList.add('dark');document.getElementById('year').textContent=new Date().getFullYear();
+const shareProject=document.getElementById('shareProject');
+if(shareProject){shareProject.addEventListener('click',async()=>{const url='https://lmdixon23.github.io/ai-playgrounds/';try{if(navigator.share){await navigator.share({title:'AI Playgrounds',text:COPY[lang].heroCopy,url});}else{await navigator.clipboard.writeText(url);shareProject.textContent=t('shareCopied');setTimeout(()=>shareProject.textContent=t('supportShare'),1600);}}catch(_err){}})}
 
-  // Language: EN / 中文. Persisted in localStorage 'lang' (default 'en').
-  // Swaps textContent on every [data-i18n] element from the I18N table.
-  (function () {
-    const I18N = {
-      en: {
-        "h1": "AI Playgrounds",
-        "tagline": "Twelve interactive visualizations of the core ideas in any\n     introductory AI course. Drag the sliders. Click the canvas. Watch the\n     algorithms run, step by step.",
-        "u-1": "Search",
-        "t-1": "Pathfinding Visualizer",
-        "d-1": "BFS, DFS, and A* race across a grid you draw. Watch the search frontier expand in real time.",
-        "a-1": "→ Why A* explores fewer nodes than BFS",
-        "u-2": "Logical agent",
-        "t-2": "Wumpus World",
-        "d-2": "The classic Russell & Norvig environment. Watch a logical agent infer safe squares from percepts — world view next to the agent's knowledge map.",
-        "a-2": "→ The difference between \"I haven't seen it\" and \"I've proved it's not there\"",
-        "u-3": "Logic & knowledge bases",
-        "t-3": "CNF & SAT Builder",
-        "d-3": "Type propositional sentences. Watch them get rewritten into CNF, step by step. Brute-force SAT-checks the formula and shows every satisfying model.",
-        "a-3": "→ Why every SAT solver in the world wants CNF as input",
-        "u-4": "Probability",
-        "t-4": "Bayes Rule Playground",
-        "d-4": "Slide the prior. Slide the accuracy. See how a \"99% accurate\" test changes its mind about a rare disease.",
-        "a-4": "→ Why intuition about probability is usually wrong",
-        "u-5": "Bayesian networks",
-        "t-5": "Bayesian Network",
-        "d-5": "The R&N burglar-earthquake network. Editable CPTs, exact inference, Gibbs sampling. See the \"explaining away\" effect live.",
-        "a-5": "→ Why learning of an earthquake LOWERS your belief in a burglary",
-        "u-6": "Supervised learning",
-        "t-6": "K-Nearest Neighbors",
-        "d-6": "Click to add training points of either class. Watch the decision boundary redraw itself as you change k.",
-        "a-6": "→ What \"k\" actually does to a model",
-        "u-7": "Evaluation",
-        "t-7": "Overfitting Explorer",
-        "d-7": "Fit polynomials from degree 1 to degree 20. Watch train error drop while test error explodes.",
-        "a-7": "→ Why a perfect training fit can fail in the real world",
-        "u-8": "Local search",
-        "t-8": "Hill Climbing & SA",
-        "d-8": "Six algorithm variants × three problems (TSP, N-queens, function landscape). Watch greedy methods get stuck while simulated annealing escapes.",
-        "a-8": "→ Why sometimes you have to take a worse step",
-        "u-9": "Neural networks",
-        "t-9": "Tiny Neural Net",
-        "d-9": "Train a small network to classify points. Add neurons, engineer input features (x², x·y, sin), change the activation, and watch the weights move as a live network graph while the loss falls.",
-        "a-9": "→ How layers + non-linearity carve up space",
-        "u-10": "Unsupervised learning",
-        "t-10": "K-Means Clustering",
-        "d-10": "Drop points, set k, then step through assignments and updates. The whole algorithm in one screen.",
-        "a-10": "→ What \"iterating to convergence\" looks like",
-        "u-11": "Vision",
-        "t-11": "Convolution Playground",
-        "d-11": "Draw on a canvas, pick a 3×3 filter, and see it detect edges, blur, or sharpen — then watch a random filter learn itself by gradient descent.",
-        "a-11": "→ Why a tiny matrix can \"see\" features",
-        "u-12": "Reinforcement learning",
-        "t-12": "Q-Learning Gridworld",
-        "d-12": "An agent learns to find the goal by trial and error. Watch its Q-values fill in across the grid as it plays.",
-        "a-12": "→ How a value function emerges from random walking",
-        "to-top": "↑ Back to top",
-        "built-for": "Built for the 2025–2026 Intro to AI course at Haidian Kaiwen Academy.",
-        "mit": "MIT licensed — fork, remix, and use in your classroom.",
-        "source-label": "Source:",
-        "star-cta": "★ Star it on GitHub",
-        "watch-note": "— or Watch → Releases to hear when new applets land.",
-        "report-issue": "Report an issue"
-      },
-      zh: {
-        "h1": "AI 演练场",
-        "tagline": "十二个交互式可视化演示,涵盖人工智能导论课程的核心思想。拖动滑块,点击画布,一步步观看算法运行。",
-        "u-1": "搜索",
-        "t-1": "寻路可视化",
-        "d-1": "BFS、DFS 和 A* 在你绘制的网格上竞速,实时观看搜索前沿的扩展。",
-        "a-1": "→ 为什么 A* 比 BFS 探索的节点更少",
-        "u-2": "逻辑智能体",
-        "t-2": "Wumpus 世界",
-        "d-2": "经典的 Russell & Norvig 环境。观看逻辑智能体根据感知推断安全格——世界视图与智能体的知识地图并排显示。",
-        "a-2": "→ “我没看到它”与“我已证明它不在那里”之间的区别",
-        "u-3": "逻辑与知识库",
-        "t-3": "CNF 与 SAT 构建器",
-        "d-3": "输入命题语句,一步步观看它们被改写为 CNF。暴力求解 SAT 并显示每一个可满足的模型。",
-        "a-3": "→ 为什么世界上每个 SAT 求解器都想要 CNF 作为输入",
-        "u-4": "概率",
-        "t-4": "贝叶斯定理演练场",
-        "d-4": "调整先验,调整准确率,看看一项“99% 准确”的检测如何改变对罕见疾病的判断。",
-        "a-4": "→ 为什么关于概率的直觉通常是错的",
-        "u-5": "贝叶斯网络",
-        "t-5": "贝叶斯网络",
-        "d-5": "R&N 的“入室盗窃-地震”网络。可编辑 CPT、精确推理、吉布斯采样。实时观察“解释消除”效应。",
-        "a-5": "→ 为什么得知发生了地震反而会降低你对入室盗窃的相信程度",
-        "u-6": "监督学习",
-        "t-6": "K 近邻",
-        "d-6": "点击添加任一类别的训练点。改变 k 时观看决策边界自动重绘。",
-        "a-6": "→ “k”究竟如何影响模型",
-        "u-7": "评估",
-        "t-7": "过拟合探索器",
-        "d-7": "拟合 1 到 20 次的多项式。观看训练误差下降而测试误差飙升。",
-        "a-7": "→ 为什么完美的训练拟合会在现实中失败",
-        "u-8": "局部搜索",
-        "t-8": "爬山法与模拟退火",
-        "d-8": "六种算法变体 × 三个问题(TSP、N 皇后、函数地形)。观看贪心方法陷入局部最优,而模拟退火得以逃脱。",
-        "a-8": "→ 为什么有时你必须走一步更差的棋",
-        "u-9": "神经网络",
-        "t-9": "迷你神经网络",
-        "d-9": "训练一个小型网络来分类点。添加神经元、构造输入特征(x²、x·y、sin)、改变激活函数,在损失下降的同时以实时网络图观看权重移动。",
-        "a-9": "→ 层 + 非线性如何切分空间",
-        "u-10": "无监督学习",
-        "t-10": "K-均值聚类",
-        "d-10": "放置点,设定 k,然后逐步执行分配与更新。整个算法尽在一屏。",
-        "a-10": "→ “迭代至收敛”是什么样子",
-        "u-11": "视觉",
-        "t-11": "卷积演练场",
-        "d-11": "在画布上绘制,选择一个 3×3 滤波器,看它检测边缘、模糊或锐化——然后观看一个随机滤波器通过梯度下降自我学习。",
-        "a-11": "→ 为什么一个小矩阵能“看见”特征",
-        "u-12": "强化学习",
-        "t-12": "Q-学习网格世界",
-        "d-12": "智能体通过试错学习找到目标。观看它在游玩中将 Q 值逐渐填满整个网格。",
-        "a-12": "→ 价值函数如何从随机游走中涌现",
-        "to-top": "↑ 返回顶部",
-        "built-for": "为海淀凯文学校 2025–2026《人工智能导论》课程制作。",
-        "mit": "采用 MIT 许可——可自由复刻、改编并用于课堂。",
-        "source-label": "源代码:",
-        "star-cta": "★ 在 GitHub 上 Star",
-        "watch-note": "—— 或 Watch → Releases，新应用上线时获得通知。",
-        "report-issue": "反馈问题"
-      }
-    };
-    function applyLang(lang){
-      lang = (lang === 'zh') ? 'zh' : 'en';
-      document.documentElement.lang = (lang === 'zh') ? 'zh-CN' : 'en';
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const k = el.getAttribute('data-i18n'); const v = I18N[lang][k];
-        if (v != null) el.textContent = v;
-      });
-      document.querySelectorAll('.lang-switch button').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
-      try { localStorage.setItem('lang', lang); } catch(_){}
-    }
-    let savedLang='en'; try { savedLang = localStorage.getItem('lang') || 'en'; } catch(_){}
-    applyLang(savedLang);
-    document.querySelectorAll('.lang-switch button').forEach(b => b.addEventListener('click', () => applyLang(b.dataset.lang)));
-  })();
+const W=12,H=7,start=0,goal=W*H-1;const walls=new Set([14,15,16,17,29,41,53,65,66,67,68,43,44,45,46,58]);function neigh(i){const x=i%W,y=Math.floor(i/W),out=[];if(x>0)out.push(i-1);if(x<W-1)out.push(i+1);if(y>0)out.push(i-W);if(y<H-1)out.push(i+W);return out.filter(n=>!walls.has(n))}function solve(astar){const open=[start],came=new Map(),g=new Map([[start,0]]),seen=[],queued=new Set([start]);while(open.length){open.sort((a,b)=>{const ha=Math.abs(a%W-goal%W)+Math.abs(Math.floor(a/W)-Math.floor(goal/W)),hb=Math.abs(b%W-goal%W)+Math.abs(Math.floor(b/W)-Math.floor(goal/W));return (g.get(a)+(astar?ha:0))-(g.get(b)+(astar?hb:0))||(astar?ha-hb:0)});const cur=open.shift();seen.push(cur);if(cur===goal)break;for(const n of neigh(cur)){const ng=g.get(cur)+1;if(!g.has(n)||ng<g.get(n)){g.set(n,ng);came.set(n,cur);if(!queued.has(n)){open.push(n);queued.add(n)}}}}const path=[];let cur=goal;while(cur!==undefined){path.push(cur);if(cur===start)break;cur=came.get(cur)}return{seen,path:path.reverse()}}const sols={bfs:solve(false),astar:solve(true)};function buildGrid(id){const root=document.getElementById(id);root.innerHTML='';for(let i=0;i<W*H;i++){const c=document.createElement('span');c.className='mini-cell'+(walls.has(i)?' wall':'')+(i===start?' start':'')+(i===goal?' goal':'');c.dataset.i=i;root.appendChild(c)}}buildGrid('bfsGrid');buildGrid('astarGrid');function paint(id,sol){const root=document.getElementById(id),reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;root.querySelectorAll('.mini-cell').forEach(c=>c.classList.remove('visited','path'));sol.seen.forEach((i,n)=>setTimeout(()=>{const c=root.querySelector(`[data-i="${i}"]`);if(c&&!c.classList.contains('start')&&!c.classList.contains('goal'))c.classList.add('visited')},reduce?0:n*8));setTimeout(()=>sol.path.forEach(i=>{const c=root.querySelector(`[data-i="${i}"]`);if(c&&!c.classList.contains('start')&&!c.classList.contains('goal'))c.classList.add('path')}),reduce?0:sol.seen.length*8+80)}document.getElementById('runProof').onclick=()=>{paint('bfsGrid',sols.bfs);paint('astarGrid',sols.astar);document.getElementById('bfsCount').textContent=sols.bfs.seen.length+' explored';document.getElementById('astarCount').textContent=sols.astar.seen.length+' explored';document.getElementById('proofResult').textContent=lang==='zh'?`A* 少探索 ${sols.bfs.seen.length-sols.astar.seen.length} 个格子，并保持相同路径长度。`:`A* explores ${sols.bfs.seen.length-sols.astar.seen.length} fewer cells with the same path length.`};applyLanguage();
 </script>
-  <!-- Privacy-friendly analytics — GoatCounter, cookieless. -->
-  <script data-goatcounter="https://lmdixon23.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-</body>
-</html>
+</body></html>
