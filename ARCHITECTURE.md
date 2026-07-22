@@ -1,12 +1,13 @@
 # Architecture
 
-AI Playgrounds deliberately uses a no-build, single-file applet architecture.
+AI Playgrounds uses a no-build, single-file applet architecture.
 
-## Public surface
+## Public surfaces
 
 - `index.html` provides the live demonstration and searchable catalogue.
 - `playgrounds/<slug>/index.html` contains one complete applet.
-- Teacher, curriculum, student-lab, quality, and citation pages are plain HTML.
+- Teacher, curriculum, student, quality, and citation pages are plain HTML.
+- `applets.json` provides shared public metadata for the twelve applets.
 
 ## Applet structure
 
@@ -14,17 +15,21 @@ Each applet contains:
 
 1. the primary interactive model,
 2. Explore, Understand, Use in class, and Text and keyboard modes,
-3. bilingual interface strings,
-4. local response-packet logic,
+3. English and Chinese interface strings,
+4. local response-packet tools,
 5. shareable URL state,
-6. optional host-scoped analytics that remains silent for local files and forks.
+6. optional analytics restricted to the canonical hosted site.
 
-No applet requires a framework, package manager, account, backend, or remote runtime asset.
-## Applet color identity
+No applet requires a framework, account, backend, package manager, model download, or remote runtime asset.
 
-`applets.json` is the source of truth for the twelve applet accent colors. Each applet receives one unique categorical accent, while the icon, title, category label, and sequence number remain the primary identifiers. Public card grids may use a soft accent tint, border, and label. Dense tables use only a row rail or numbered marker so color supports scanning without overwhelming the content.
+## Privacy and portability
 
+Student responses remain in the browser unless the learner copies or prints them. The site has no student accounts, database, upload endpoint, or response-collection backend.
 
-## Learner-facing writing
+## Visual identity
 
-Public applet copy follows [`CONTENT_STYLE_GUIDE.md`](CONTENT_STYLE_GUIDE.md), including canonical naming, abbreviation rules, scenario structure, bilingual parity, and toolbar hierarchy.
+Each applet has one categorical accent defined in `applets.json`. Color supports recognition but is never the only identifier. Applet names, icons, categories, and sequence numbers remain visible throughout the suite.
+
+## Browser support
+
+The public site is designed for current desktop and mobile browsers. Each applet can also be opened directly from the local filesystem.

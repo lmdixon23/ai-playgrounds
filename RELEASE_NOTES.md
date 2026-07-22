@@ -1,32 +1,47 @@
 # Release notes
 
-## Current release candidate
+## Current release
 
-### Interaction and layout
+AI Playgrounds includes twelve bilingual, offline-ready interactive demonstrations covering:
 
-- Reorganized every applet into Explore, Understand, Use in class, and Text and keyboard modes.
-- Added featured experiments and exact experiment links.
-- Rebuilt the landing page with a live search comparison and searchable applet catalogue.
-- Reserved rich gradients for selected scenarios and featured experiment bodies rather than ordinary section headings.
+- search,
+- local optimization,
+- logical agents,
+- satisfiability,
+- Bayesian reasoning,
+- supervised learning,
+- model evaluation,
+- neural networks,
+- clustering,
+- convolution,
+- reinforcement learning.
 
-### Teaching and access
+## Included with every applet
 
-- Added five or more scenarios to each applet.
-- Added local student response packets with formatted print output.
-- Added visual mechanism explanations, keyboard guidance, and text-state descriptions.
-- Added the printable Teacher Pack, curriculum map, and one-page student lab sheet.
+- a focused interactive model,
+- five learner scenarios,
+- a featured comparison,
+- visual and text-based explanations,
+- teacher notes,
+- model limitations,
+- keyboard guidance,
+- a printable student response packet,
+- shareable experiment settings.
 
-### Software quality
+## Teaching materials
 
-- Added algorithmic tests for all twelve applets.
-- Added static source checks and a browser matrix for mobile, tablet, and desktop widths.
-- Added citation metadata, architecture notes, contribution guidance, and public release metadata.
-- Removed internal workflow records from the public release tree.
+The release includes:
 
-## Portfolio and footer refinement
+- a printable Teacher Pack,
+- a responsive Curriculum Map,
+- a one-page Student Lab Sheet,
+- course-aligned and quick-entry sequences,
+- citation and reuse information.
 
-- Every public page links to the author portfolio.
-- Footers use one author-name occurrence and a consistent professional link set.
-- The homepage and Teacher Pack include a restrained support call to action.
-- Curriculum materials separate the course/AIMA-aligned order from the quick-entry sampler.
-- Applet accent colors now remain consistent across the public catalogue and teacher materials.
+## Privacy and portability
+
+The applets require no account, backend, database, package manager, or build step. Student responses remain local unless the learner copies or prints them.
+
+## Scope
+
+The project provides interactive teaching tools. Claims about learning gains, classroom adoption, or accessibility conformance require separate classroom and user studies.

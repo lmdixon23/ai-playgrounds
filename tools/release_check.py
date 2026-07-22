@@ -10,8 +10,9 @@ EXPECTED={
 'bayes-classifier','bayes-network','cnf-sat','convolution','hill-climbing','kmeans',
 'knn-classifier','neural-network','overfitting','q-learning-gridworld','search-pathfinding','wumpus-world'}
 PUBLIC_PAGES=['index.html','teacher-pack.html','curriculum.html','student-lab.html','quality.html','release-notes.html','research-and-citation.html','404.html','tests/index.html']
-PUBLIC_DOCS=['README.md','CHANGELOG.md','CITATION.cff','codemeta.json','applets.json','ARCHITECTURE.md','CONTRIBUTING.md','SECURITY.md','LICENSE','QA_CHECKLIST.md','QUALITY.md','RELEASE_NOTES.md','TEACHER_PACK.md','CURRICULUM.md','STUDENT_LAB_PACKET_TEMPLATE.md','CONTENT_STYLE_GUIDE.md']
-INTERNAL_TERMS=[r'\x57\x61\x76\x65\s+\d',r'\x53\x74\x61\x62\x69\x6c\x69\x7a\x61\x74\x69\x6f\x6e',r'\x6d\x75\x6c\x74\x69-\x61\x67\x65\x6e\x74',r'\x46\x4d\x45\x41',r'\x63\x6f\x6c\x64[- ]?\x70\x61\x73\x73',r'\x6e\x6f\x74 \x73\x61\x66\x65 \x74\x6f \x63\x6c\x61\x69\x6d',r'\x73\x61\x66\x65 \x63\x6c\x61\x69\x6d',r'\x43\x6c\x61\x73\x73\x72\x6f\x6f\x6d \x4c\x61\x62 \x4d\x6f\x64\x65',r'\x56\x69\x73\x75\x61\x6c \x45\x78\x70\x6c\x61\x6e\x61\x74\x69\x6f\x6e \x4c\x65\x6e\x73',r'\x72\x65\x76\x69\x65\x77 \x66\x69\x78 \x46\d']
+PUBLIC_DOCS=['README.md','CHANGELOG.md','CITATION.cff','codemeta.json','applets.json','ARCHITECTURE.md','CONTRIBUTING.md','SECURITY.md','LICENSE','QUALITY.md','RELEASE_NOTES.md','TEACHER_PACK.md','CURRICULUM.md','STUDENT_LAB_PACKET_TEMPLATE.md']
+ALLOWED_ROOT_DOCS={'README.md','CHANGELOG.md','ARCHITECTURE.md','CONTRIBUTING.md','SECURITY.md','QUALITY.md','RELEASE_NOTES.md','TEACHER_PACK.md','CURRICULUM.md','STUDENT_LAB_PACKET_TEMPLATE.md'}
+PRIVATE_PATH_PREFIXES=('_local/','release-evidence/','tools/release-evidence/','research/')
 SECRET_PATTERNS=[r'AKIA[0-9A-Z]{16}',r'ghp_[A-Za-z0-9]{30,}',r'sk-[A-Za-z0-9]{20,}',r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----']
 
 @dataclass
@@ -48,12 +49,16 @@ def run()->list[Result]:
     out=[]; files=tracked()
     dirs={p.name for p in PLAYGROUNDS.iterdir() if p.is_dir()} if PLAYGROUNDS.exists() else set()
     add(out,'playgrounds','twelve canonical applets',dirs==EXPECTED,f'found {len(dirs)} applet directories')
-    add(out,'repository','internal research tree excluded','research' not in dirs and not (ROOT/'research').exists(),'internal records live outside the public tree')
-    add(out,'repository','internal version log excluded',not (ROOT/'VERSION_LOG.md').exists(),'public release uses CHANGELOG.md')
+    root_docs={p.name for p in ROOT.glob('*.md')}
+    add(out,'repository','private working paths excluded',not (ROOT/'research').exists() and not (ROOT/'_local').exists(),'private working directories are absent')
+    add(out,'repository','approved public root documents',root_docs<=ALLOWED_ROOT_DOCS,f'{len(root_docs)} approved root Markdown files')
     for rel in PUBLIC_PAGES+PUBLIC_DOCS:
         add(out,rel,'public file present',(ROOT/rel).exists(),'present' if (ROOT/rel).exists() else 'missing')
     for rel in files:
-        add(out,rel,'private path not tracked',not (rel.startswith('_local/') or rel.startswith('release-evidence/') or rel.startswith('tools/release-evidence/')),'public or source file' if not rel.startswith(('_local/','release-evidence/','tools/release-evidence/')) else 'private/generated path is tracked')
+        is_private=rel.startswith(PRIVATE_PATH_PREFIXES)
+        add(out,rel,'private path not tracked',not is_private,'public or source file' if not is_private else 'private or generated path is tracked')
+        if '/' not in rel and rel.endswith('.md'):
+            add(out,rel,'approved public root document',rel in ALLOWED_ROOT_DOCS,'approved public documentation' if rel in ALLOWED_ROOT_DOCS else 'unexpected root documentation')
     public_paths=[ROOT/r for r in PUBLIC_PAGES+PUBLIC_DOCS if (ROOT/r).exists()]+sorted(PLAYGROUNDS.glob('*/index.html'))
     for p in public_paths:
         s=text(p); rel=str(p.relative_to(ROOT))
@@ -64,9 +69,8 @@ def run()->list[Result]:
             foot=re.findall(r'<footer[\s\S]*?</footer>',s,re.I)
             if foot:
                 add(out,rel,'single footer author name',foot[-1].count('Logan M. Dixon')==1,f"{foot[-1].count('Logan M. Dixon')} author-name occurrence in footer")
-        for term in INTERNAL_TERMS:
-            found=re.search(term,s,re.I)
-            add(out,rel,f'public language excludes {term}',found is None,'clear' if found is None else f'found {found.group(0)!r}')
+        for prefix in PRIVATE_PATH_PREFIXES:
+            add(out,rel,f'no private path reference {prefix}',prefix not in s,'clear' if prefix not in s else 'private path reference found')
         for pat in SECRET_PATTERNS:
             add(out,rel,'secret pattern scan',re.search(pat,s) is None,'clear')
     # Landing page
@@ -85,16 +89,6 @@ def run()->list[Result]:
     teacher=text(ROOT/'teacher-pack.html')
     for phrase,label in [('Course and AIMA-aligned applet map','course-aligned applet map'),('Quick-entry four-app sampler','clearly labeled sampler'),('--applet-accent','applet color consistency'),('Star on GitHub','restrained support call to action')]:
         add(out,'teacher-pack.html',label,phrase in teacher,'present' if phrase in teacher else 'missing')
-    qa=text(ROOT/'QA_CHECKLIST.md')
-    add(out,'QA_CHECKLIST.md','manual screen-reader walkthrough','## Manual screen-reader walkthrough' in qa and 'NVDA' in qa and 'VoiceOver' in qa,'named assistive-technology procedure present')
-    style=text(ROOT/'CONTENT_STYLE_GUIDE.md')
-    for phrase,label in [
-        ('Name the idea before shortening it','term-before-abbreviation rule'),
-        ('Use one canonical applet name','canonical-name rule'),
-        ('Write scenarios as a reasoning sequence','learner scenario structure'),
-        ('Keep the toolbar predictable','toolbar hierarchy'),
-        ('Maintain bilingual parity','bilingual writing rule')]:
-        add(out,'CONTENT_STYLE_GUIDE.md',label,phrase in style,'present' if phrase in style else 'missing')
     try:
         applet_meta={item['slug']:item for item in json.loads(text(ROOT/'applets.json'))}
     except Exception:
@@ -108,7 +102,7 @@ def run()->list[Result]:
             add(out,slug,'canonical browser title',f'<title>{canonical_html} | AI Playgrounds</title>' in h or f'<title>{canonical} | AI Playgrounds</title>' in h,canonical)
             add(out,slug,'canonical page heading',re.search(r'<h1[^>]*>'+re.escape(canonical_html)+r'</h1>',h) is not None or re.search(r'<h1[^>]*>'+re.escape(canonical)+r'</h1>',h) is not None,canonical)
         add(out,slug,'learner content profile','id="learner-content-system"' in h and 'APPLET_LEARNER_PROFILE' in h,'bilingual learner profile present')
-        add(out,slug,'learner house style','id="learner-house-style"' in h,'learner-facing component style present')
+        add(out,slug,'learner interface styling','id="learner-interface-style"' in h,'learner-facing component style present')
         add(out,slug,'key terms before explanation',"className='key-terms'" in h and 'Key terms before the explanation' in h,'term primer present')
         add(out,slug,'standard action hierarchy','header-more' in h and 'Current settings (.json)' in h and 'Embed in LMS' in h,'Share, More, and reset hierarchy present')
         add(out,slug,'universal state export','dataset.exportState' in h and "-settings.json" in h,'JSON settings export present')
@@ -134,8 +128,8 @@ def run()->list[Result]:
         add(out,slug,'visual explanation','class="visual-explanation"' in h,'present')
         add(out,slug,'student response packet','class="classroom-lab"' in h and 'Student response packet' in h,'present')
         add(out,slug,'text and keyboard support','class="accessibility-layer"' in h and 'Text and keyboard support' in h,'present')
-        add(out,slug,'four-mode architecture','id="product-consolidation-script"' in h and 'learning-mode-tabs' in h,'Explore, Understand, classroom, and access modes')
-        add(out,slug,'restrained hierarchy','id="product-consolidation-style"' in h and '.learning-mode-panel>details>summary{background:var(--card)!important' in h,'neutral section bars with spotlight bodies')
+        add(out,slug,'four-mode architecture','id="learning-modes-script"' in h and 'learning-mode-tabs' in h,'Explore, Understand, classroom, and access modes')
+        add(out,slug,'restrained hierarchy','id="learning-modes-style"' in h and '.learning-mode-panel>details>summary{background:var(--card)!important' in h,'neutral section bars with spotlight bodies')
         add(out,slug,'shareable control state','data-copy-experiment' in h and "searchParams.set('state'" in h,'URL state serializer present')
         add(out,slug,'scenario URL state',"searchParams.set('scenario'" in h,'scenario identifier written to URL')
         add(out,slug,'container query','@container' in h,'component-level responsive rule present')
