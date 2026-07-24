@@ -1,0 +1,85 @@
+name: One-time social preview refresh
+
+on:
+  push:
+    paths:
+      - .github/workflows/refresh-social-preview.yml
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: python -m pip install pillow
+      - name: Generate current AI Playgrounds card
+        run: |
+          python - <<'PY'
+          from PIL import Image, ImageDraw, ImageFont
+          from pathlib import Path
+
+          W, H = 1200, 630
+          image = Image.new("RGB", (W, H), "#f7f8fb")
+          draw = ImageDraw.Draw(image)
+
+          def font(size, bold=False):
+              candidates = [
+                  "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+                  "/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf" if bold else "/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf",
+              ]
+              for path in candidates:
+                  if Path(path).is_file():
+                      return ImageFont.truetype(path, size)
+              return ImageFont.load_default()
+
+          ink = "#172033"
+          muted = "#607087"
+          blue = "#0369a1"
+          indigo = "#4f46e5"
+          line = "#dfe5ed"
+
+          draw.rounded_rectangle((56, 50, 1144, 580), radius=34, fill="#ffffff", outline=line, width=3)
+          draw.text((92, 85), "AI PLAYGROUNDS", font=font(24, True), fill=blue)
+          draw.text((92, 130), "Move the idea.", font=font(70, True), fill=ink)
+          draw.text((92, 210), "See what changes.", font=font(70, True), fill=indigo)
+          draw.text((94, 305), "Twelve bilingual, offline-ready interactives for foundational AI", font=font(28), fill=muted)
+
+          cards = [
+              ("Search", "BFS and A*"),
+              ("Probability", "Bayes and networks"),
+              ("Machine learning", "KNN, k-means, overfitting"),
+              ("Neural networks", "Tiny network playground"),
+              ("Vision", "3 × 3 convolution"),
+              ("Reinforcement learning", "Q-learning gridworld"),
+          ]
+          x0, y0 = 92, 375
+          cw, ch, gap = 310, 70, 18
+          for i, (title, detail) in enumerate(cards):
+              row, col = divmod(i, 3)
+              x = x0 + col * (cw + gap)
+              y = y0 + row * (ch + gap)
+              draw.rounded_rectangle((x, y, x + cw, y + ch), radius=15, fill="#f1f5f9", outline=line, width=2)
+              draw.text((x + 18, y + 11), title, font=font(19, True), fill=ink)
+              draw.text((x + 18, y + 38), detail, font=font(16), fill=muted)
+
+          draw.text((92, 548), "lmdixon23.github.io/ai-playgrounds", font=font(20, True), fill=blue)
+          image.save("og-image-v3.png", optimize=True)
+
+          path = Path("index.html")
+          text = path.read_text(encoding="utf-8")
+          text = text.replace("og-image-v2.png", "og-image-v3.png")
+          path.write_text(text, encoding="utf-8", newline="\n")
+          PY
+      - name: Verify and commit
+        run: |
+          rm .github/workflows/refresh-social-preview.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html og-image-v3.png .github/workflows/refresh-social-preview.yml
+          git commit -m "Refresh AI Playgrounds social preview"
+          git push
