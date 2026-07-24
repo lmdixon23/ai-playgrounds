@@ -149,6 +149,98 @@ def exercise_home_proof(page: Any, checks: List[Dict[str, Any]]) -> None:
     })
 
 
+
+
+def check_home_localization(page: Any, checks: List[Dict[str, Any]]) -> None:
+    cards = page.locator("#appletGrid .applet")
+    checks.append({"name": "twelve_applet_cards", "pass": cards.count() == 12, "detail": {"count": cards.count()}})
+    zh = page.locator("button[data-lang='zh']")
+    en = page.locator("button[data-lang='en']")
+    if zh.count() and en.count():
+        zh.first.click(timeout=1500)
+        page.wait_for_timeout(100)
+        first_meta = page.locator("#appletGrid .meta").first.inner_text() if page.locator("#appletGrid .meta").count() else ""
+        research = page.locator("#research").inner_text() if page.locator("#research").count() else ""
+        footer = page.locator("footer").inner_text() if page.locator("footer").count() else ""
+        checks.append({"name": "home_zh_minutes", "pass": "分钟" in first_meta, "detail": {"meta": first_meta}})
+        checks.append({"name": "home_zh_resource_labels", "pass": "架构说明" in research and "贡献指南" in research and "交互工具元数据" in research, "detail": {"excerpt": research[-260:]}})
+        checks.append({"name": "home_zh_footer", "pass": "源代码" in footer and "报告问题" in footer, "detail": {"footer": footer}})
+        en.first.click(timeout=1500)
+        page.wait_for_timeout(50)
+
+
+def check_support_localization(page: Any, checks: List[Dict[str, Any]], slug: str) -> None:
+    markers = {
+        "quality": "项目如何运作",
+        "teacher_pack": "快速开始",
+        "curriculum": "课程地图",
+        "student_lab": "学生实验记录",
+        "release_notes": "发布说明",
+        "research_citation": "研究与引用",
+        "not_found": "此处没有这个实验。",
+    }
+    zh = page.locator("[data-support-lang='zh']")
+    en = page.locator("[data-support-lang='en']")
+    checks.append({"name": "support_language_switch", "pass": zh.count() == 1 and en.count() == 1, "detail": {"zh": zh.count(), "en": en.count()}})
+    if zh.count() and en.count():
+        zh.click(timeout=1500)
+        page.wait_for_timeout(100)
+        body = page.locator("body").inner_text()
+        marker = markers.get(slug, "")
+        checks.append({"name": "support_zh_content", "pass": document_lang(page) == "zh-Hans" and (not marker or marker in body), "detail": {"lang": document_lang(page), "marker": marker, "excerpt": body[:220]}})
+        en.click(timeout=1500)
+        page.wait_for_timeout(50)
+
+
+def document_lang(page: Any) -> str:
+    return page.locator("html").get_attribute("lang") or ""
+
+
+def check_applet_extended(page: Any, checks: List[Dict[str, Any]], slug: str) -> None:
+    visible_cards = page.locator(".learning-mode-panel:not([hidden]) .scenario-card")
+    visible_height = 0
+    if visible_cards.count():
+        box = visible_cards.first.bounding_box()
+        visible_height = 0 if not box else box.get("height", 0)
+    checks.append({"name": "explore_panel_nonempty", "pass": visible_cards.count() >= 1 and visible_height > 20, "detail": {"cards": visible_cards.count(), "first_height": visible_height}})
+    terms = page.locator(".key-term")
+    checks.append({"name": "concept_sized_glossary", "pass": 6 <= terms.count() <= 12, "detail": {"count": terms.count()}})
+    checks.append({"name": "bilingual_full_explanation", "pass": page.locator("[data-essay-lang='en']").count() == 1 and page.locator("[data-essay-lang='zh']").count() == 1, "detail": {"en": page.locator("[data-essay-lang='en']").count(), "zh": page.locator("[data-essay-lang='zh']").count()}})
+
+    hint_en = page.locator("#hint").inner_text() if slug == "kmeans" and page.locator("#hint").count() else ""
+    zh = page.locator("button[data-lang='zh']")
+    en = page.locator("button[data-lang='en']")
+    if zh.count() and en.count():
+        zh.first.click(timeout=1500)
+        page.wait_for_timeout(140)
+        shell_text = page.locator(".learning-mode-shell").inner_text() if page.locator(".learning-mode-shell").count() else ""
+        share_text = page.locator("#shareLink").inner_text() if page.locator("#shareLink").count() else ""
+        checks.append({"name": "applet_zh_shared_chrome", "pass": "分享" in share_text and "复制此实验" in shell_text and "精选实验" in shell_text, "detail": {"share": share_text, "excerpt": shell_text[:260]}})
+        checks.append({"name": "applet_zh_explanation_visibility", "pass": page.locator("[data-essay-lang='zh']:visible").count() == 1 and page.locator("[data-essay-lang='en']:visible").count() == 0, "detail": {"zh_visible": page.locator("[data-essay-lang='zh']:visible").count(), "en_visible": page.locator("[data-essay-lang='en']:visible").count()}})
+        if slug == "kmeans" and page.locator("#hint").count():
+            hint_zh = page.locator("#hint").inner_text()
+            checks.append({"name": "kmeans_dynamic_hint_translates_immediately", "pass": hint_zh != hint_en and ("现在选择" in hint_zh or "选择初始化" in hint_zh), "detail": {"en": hint_en, "zh": hint_zh}})
+        en.first.click(timeout=1500)
+        page.wait_for_timeout(100)
+        if slug == "kmeans" and page.locator("#hint").count():
+            checks.append({"name": "kmeans_dynamic_hint_returns_to_english", "pass": page.locator("#hint").inner_text() == hint_en, "detail": {"expected": hint_en, "actual": page.locator("#hint").inner_text()}})
+
+    if slug == "overfitting" and all(page.locator(selector).count() for selector in ("#deg", "#n", "#lam")):
+        scenario = page.locator(".scenario-card button").first
+        if scenario.count():
+            scenario.click(timeout=1500)
+        for selector, value in (("#deg", "17"), ("#n", "37"), ("#lam", "0.321")):
+            page.locator(selector).evaluate("(el,v)=>{el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));}", value)
+        page.wait_for_timeout(120)
+        payload = page.evaluate("""() => {
+          const u = new URL(window.__buildExperimentUrl());
+          const encoded = u.searchParams.get('state');
+          const state = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+          return {url:u.href, hasScenario:u.searchParams.has('scenario'), state};
+        }""")
+        exact = payload.get("state", {})
+        checks.append({"name": "overfitting_copy_uses_authoritative_controls", "pass": not payload.get("hasScenario") and exact.get("deg") == "17" and exact.get("n") == "37" and exact.get("lam") == "0.321", "detail": payload})
+
 def single_check(page_path: str, slug: str, kind: str, viewport_name: str, screenshots: bool) -> Dict[str, Any]:
     from playwright.sync_api import sync_playwright
 
@@ -182,6 +274,9 @@ def single_check(page_path: str, slug: str, kind: str, viewport_name: str, scree
                     count = page.locator(selector).count()
                     checks.append({"name": f"home_selector_{selector}", "pass": count >= 1, "detail": {"selector": selector, "count": count}})
                 exercise_home_proof(page, checks)
+                check_home_localization(page, checks)
+            if kind == "support":
+                check_support_localization(page, checks, slug)
             if kind == "applet":
                 for selector in REQUIRED_APPLET_SELECTORS:
                     count = page.locator(selector).count()
@@ -216,6 +311,7 @@ def single_check(page_path: str, slug: str, kind: str, viewport_name: str, scree
                 if scenario_btn.count():
                     scenario_btn.click(timeout=1500)
                     checks.append({"name": "scenario_updates_url", "pass": "scenario=" in effective_url(page), "detail": {"url": effective_url(page)}})
+                check_applet_extended(page, checks, slug)
             if screenshots:
                 shot_dir = EVIDENCE_ROOT / "screenshots" / viewport_name
                 shot_dir.mkdir(parents=True, exist_ok=True)
@@ -312,6 +408,9 @@ def run_all(screenshots: bool, child_timeout: int) -> Dict[str, Any]:
                             for selector in REQUIRED_HOME_SELECTORS:
                                 count=page.locator(selector).count();checks.append({"name":f"home_selector_{selector}","pass":count>=1,"detail":{"selector":selector,"count":count}})
                             exercise_home_proof(page, checks)
+                            check_home_localization(page, checks)
+                        if meta["kind"]=="support":
+                            check_support_localization(page, checks, meta["slug"])
                         if meta["kind"]=="applet":
                             for selector in REQUIRED_APPLET_SELECTORS:
                                 count=page.locator(selector).count();checks.append({"name":f"applet_selector_{selector}","pass":count>=1,"detail":{"selector":selector,"count":count}})
@@ -343,6 +442,7 @@ def run_all(screenshots: bool, child_timeout: int) -> Dict[str, Any]:
                                 checks.append({"name":"scenario_updates_url","pass":"scenario=" in effective_url(page),"detail":{"url":page.url}})
                             checks.append({"name":"aria_live_present","pass":page.locator("[aria-live]").count()>=1,"detail":{"count":page.locator("[aria-live]").count()}})
                             checks.append({"name":"a11y_summary_present","pass":page.locator("#a11yStateSummary").count()>=1,"detail":{}})
+                            check_applet_extended(page, checks, meta["slug"])
                         if meta["slug"]=="tests_index":
                             summary=page.locator("#summary").inner_text()
                             checks.append({"name":"algorithmic_test_report","pass":"45" in summary and "skipped" not in summary.lower() and "fail" not in summary.lower(),"detail":{"summary":summary}})

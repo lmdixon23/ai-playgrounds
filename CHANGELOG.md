@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-07-24
+
+### State reliability
+
+- Made the current controls authoritative when copying an experiment link.
+- Removed scenario and featured aliases from copied links so presets cannot overwrite later manual changes.
+- Restored scenario presets before exact serialized controls so exact state wins.
+- Added regression coverage for Overfitting degree, training-sample count, and regularization strength.
+
+### Complete localization
+
+- Extended English and Simplified Chinese coverage through every applet explanation, scenario, featured experiment, shared control, hint, footer, and educator-facing support page.
+- Added immediate dynamic-hint translation for K-Means.
+- Localized landing-page durations, developer-resource labels, and footer controls while preserving stable filenames, URLs, formulas, names, licenses, and code identifiers.
+- Replaced the fixed glossary quota with concept-sized bilingual glossaries containing six to twelve matched terms.
+- Added language preference persistence, language query propagation, and `hreflang` metadata on support pages.
+
+### Teaching accuracy
+
+- Introduced Ridge regression, coefficient vectors, the squared Euclidean norm, and lambda before using the regularization objective.
+- Corrected the Bayes specificity example, polynomial coefficient count, full-batch gradient terminology, and several overbroad claims across the applet essays.
+- Added complete English and Chinese explanations to all twelve applets.
+
+### Resilience and verification
+
+- Pre-rendered Explore scenarios so the panel remains useful before JavaScript enhancement.
+- Expanded browser QA for Chinese content, dynamic translation, nonempty Explore panels, concept-sized glossaries, and authoritative copied state.
+- Expanded release checks for localization surfaces, exact-state precedence, support-page language metadata, and the canonical social image.
+
 ## 2026-07-22
 
 ### Interface

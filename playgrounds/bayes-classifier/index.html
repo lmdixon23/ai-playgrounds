@@ -1,21 +1,22 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Bayes Rule Playground | AI Playgrounds</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E">
-<meta name="description" content="Change the base rate and test quality, then watch a positive result update the probability of the condition. The same test can mean something very different in rare and common populations.">
-<link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-classifier/">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-classifier/">
-<meta property="og:title" content="Bayes Rule Playground | AI Playgrounds">
-<meta property="og:description" content="Change the base rate and test quality, then watch a positive result update the probability of the condition. The same test can mean something very different in rare and common populations.">
-<meta property="og:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Bayes Rule Playground | AI Playgrounds">
-<meta name="twitter:description" content="Change the base rate and test quality, then watch a positive result update the probability of the condition. The same test can mean something very different in rare and common populations.">
-<meta name="twitter:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E" rel="icon"/>
+<meta content="Change the base rate and test quality, then watch a positive result update the probability of the condition. The same test can mean something very different in rare and common populations." name="description"/>
+<link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-classifier/" rel="canonical"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-classifier/?lang=en" hreflang="en" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-classifier/?lang=zh" hreflang="zh-Hans" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-classifier/?lang=en" hreflang="x-default" rel="alternate"/>
+<meta content="website" property="og:type"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-classifier/" property="og:url"/>
+<meta content="Bayes Rule Playground | AI Playgrounds" property="og:title"/>
+<meta content="Change the base rate and test quality, then watch a positive result update the probability of the condition. The same test can mean something very different in rare and common populations." property="og:description"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" property="og:image"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="Bayes Rule Playground | AI Playgrounds" name="twitter:title"/>
+<meta content="Change the base rate and test quality, then watch a positive result update the probability of the condition. The same test can mean something very different in rare and common populations." name="twitter:description"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" name="twitter:image"/>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Bayes Rule Playground | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-classifier/","description":"Change the base rate and test quality, then watch a positive result update the probability of the condition. The same test can mean something very different in rare and common populations.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
 <style>
   :root {
@@ -502,14 +503,11 @@
   @media (max-width:900px) { .learning-deck { grid-template-columns:1fr; } .learning-deck > details { grid-column:1 !important; } }
 
 </style>
-
-
 <style id="learner-interface-style">
 /* Learner-facing terminology, compact glossary, and consistent action hierarchy. */
 .header-actions{align-items:center}.header-more{position:relative}.header-more>summary{list-style:none;cursor:pointer;user-select:none}.header-more>summary::-webkit-details-marker{display:none}.header-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:50;min-width:220px;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 16px 35px rgba(15,23,42,.18);display:grid;gap:5px}.header-more-menu button{width:100%;text-align:left;justify-content:flex-start;white-space:normal}.key-terms-panel{padding:14px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}.key-terms-intro{margin:0 0 10px;color:var(--muted)}.key-terms-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.key-term{padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:color-mix(in srgb,var(--card) 97%,var(--accent))}.key-term dt{font-weight:800;color:var(--fg);margin:0 0 3px}.key-term dd{margin:0;color:var(--muted);font-size:.84rem;line-height:1.45}.essay-primer{margin:0 0 22px;padding:15px 17px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--card) 96%,var(--accent));border-radius:10px}.essay-primer h2{margin:0 0 6px!important;font-size:1.05rem!important}.essay-primer p{margin:0 0 10px!important}.essay-primer h3{margin:12px 0 7px;font-size:.92rem}.essay-primer-terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0}.essay-primer-terms>div{padding:8px 9px;border:1px solid var(--border);border-radius:8px;background:var(--card)}.essay-primer-terms dt{font-weight:800}.essay-primer-terms dd{margin:2px 0 0;color:var(--muted);font-size:.82rem;line-height:1.4}.scenario-card .scenario-meta{line-height:1.5}.scenario-card .scenario-meta strong{display:block;margin-bottom:2px}.header-actions>.header-png,.header-actions>.header-theme,.header-actions>.header-reset,.header-more>summary{min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px}
 @media(max-width:720px){.essay-primer-terms{grid-template-columns:1fr}.header-actions{width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}.header-actions>button,.header-actions>.header-more,.header-more>summary{width:100%;justify-content:center}.header-more-menu{right:auto;left:0;max-width:min(290px,90vw)}.key-terms-grid{grid-template-columns:1fr}}
 </style>
-
 <style id="learning-modes-style">
 /* Product information architecture and restrained visual hierarchy. */
 .learning-deck{display:contents!important}.learning-mode-shell{margin-top:16px;border-top:1px solid var(--border);padding-top:15px}.learning-mode-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px}.learning-mode-head h2{margin:0;font-size:1rem;color:var(--fg)}.learning-mode-head p{margin:2px 0 0;color:var(--muted);font-size:.82rem}.learning-mode-tools{display:flex;gap:8px;flex-wrap:wrap}.learning-mode-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:5px;background:var(--soft);border:1px solid var(--border);border-radius:14px}.learning-mode-tab{min-height:42px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-weight:750;padding:8px 10px}.learning-mode-tab[aria-selected="true"]{background:var(--card);color:var(--accent);box-shadow:0 3px 12px rgba(15,23,42,.08)}.learning-mode-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px;align-items:start}.learning-mode-panel[hidden]{display:none}.learning-mode-panel>details{margin:0!important;min-width:0}.learning-mode-panel>details.mode-wide{grid-column:1/-1}.learning-mode-panel>details>summary{background:var(--card)!important;border:1px solid var(--border)!important;border-left:4px solid color-mix(in srgb,var(--accent) 62%,var(--border))!important;border-radius:10px!important;color:var(--fg)!important;font-weight:750!important;padding:10px 12px!important}.learning-mode-panel>details[open]>summary{border-color:color-mix(in srgb,var(--accent) 55%,var(--border))!important}.learning-mode-panel .scenario-gallery-panel,.learning-mode-panel .accessibility-panel,.learning-mode-panel .classroom-lab .lab-panel{background:var(--card)!important}.scenario-card,.accessibility-card{background:color-mix(in srgb,var(--card) 97%,var(--accent))!important;box-shadow:none!important}.scenario-card.applied{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 78%,var(--accent)),color-mix(in srgb,var(--card) 88%,var(--accent-2,#6366f1)))!important;border-color:var(--accent)!important;box-shadow:0 12px 28px rgba(15,23,42,.10)!important}.signature-challenge>div,.signature-challenge .signature-challenge-panel{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 80%,var(--accent)),color-mix(in srgb,var(--card) 90%,var(--accent-2,#6366f1)))!important;border:1px solid color-mix(in srgb,var(--accent) 40%,var(--border))!important}.visual-card{background:linear-gradient(180deg,color-mix(in srgb,var(--card) 92%,var(--accent)),var(--card))!important}.featured-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.scenario-card button,.featured-actions button{border:0!important;border-radius:8px!important;background:var(--accent)!important;color:#fff!important;font-weight:750!important;padding:8px 11px!important}.scenario-card button:hover,.featured-actions button:hover{filter:brightness(1.05)}.copy-experiment{font-size:.82rem}.experiment-status{color:var(--muted);font-size:.78rem;min-height:1.2em;margin-top:6px}.mode-intro{grid-column:1/-1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--muted);font-size:.86rem}.mode-intro strong{color:var(--fg)}
@@ -517,460 +515,496 @@
 .interactive-inner{container-type:inline-size;max-width:min(1320px,100%)!important}
 @media(max-width:820px){.learning-mode-head{align-items:flex-start;flex-direction:column}.learning-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-mode-panel{grid-template-columns:1fr}.learning-mode-panel>details{grid-column:1!important}.copy-experiment{width:100%}}
 </style>
-
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to applet controls</a>
-
 <header class="page-header">
-  <div class="header-utility">
-    <a class="back" href="../../index.html" data-i18n="back-link">← Back to all playgrounds</a>
-    <div class="header-prefs">
-      <button class="header-theme" id="themeToggle" aria-label="Toggle dark or light theme"
-              title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
-      <div class="lang-switch" title="Switch interface language">
-        <button data-lang="en" class="active">EN</button>
-        <button data-lang="zh">中文</button>
-      </div>
-    </div>
-  </div>
-  <div class="header-main">
-    <h1 data-i18n="title">Bayes Rule Playground</h1>
-    <div class="header-actions">
-      <button class="header-png" id="shareLink"
-              title="Copy a URL that re-opens this prior / sensitivity / specificity / population in another browser.">🔗 Share</button>
-      <button class="header-png" id="embedLink"
-              title="Copy an <iframe> snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
-      <button class="header-png" id="csvExport"
-              title="Download the current Bayes scenario (prior, sens, spec, population) and the resulting contingency table + posteriors as CSV.">📊 CSV</button>
-      <button class="header-png" id="exportPng"
-              title="Download the population dot-grid as a PNG.">📷 PNG</button>
-      <button class="header-reset" id="hardReset" data-i18n="reset-all"
-              title="Reset to default disease scenario: prior=1%, sensitivity=99%, specificity=95%, population=10000.">↺ Reset all</button>
-    </div>
-  </div>
+<div class="header-utility">
+<a class="back" data-i18n="back-link" href="../../index.html">← Back to all playgrounds</a>
+<div class="header-prefs">
+<button aria-label="Toggle dark or light theme" class="header-theme" id="themeToggle" title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
+<div class="lang-switch" title="Switch interface language">
+<button class="active" data-lang="en">EN</button>
+<button data-lang="zh">中文</button>
+</div>
+</div>
+</div>
+<div class="header-main">
+<h1 data-i18n="title">Bayes Rule Playground</h1>
+<div class="header-actions">
+<button class="header-png" id="shareLink" title="Copy a URL that re-opens this prior / sensitivity / specificity / population in another browser.">🔗 Share</button>
+<button class="header-png" id="embedLink" title="Copy an &lt;iframe&gt; snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
+<button class="header-png" id="csvExport" title="Download the current Bayes scenario (prior, sens, spec, population) and the resulting contingency table + posteriors as CSV.">📊 CSV</button>
+<button class="header-png" id="exportPng" title="Download the population dot-grid as a PNG.">📷 PNG</button>
+<button class="header-reset" data-i18n="reset-all" id="hardReset" title="Reset to default disease scenario: prior=1%, sensitivity=99%, specificity=95%, population=10000.">↺ Reset all</button>
+</div>
+</div>
 </header>
-
 <aside class="tldr">
-  <strong data-i18n="tldr-strong">The big idea</strong>
-  <span data-i18n="tldr-body">A "99% accurate" test for a 1%-rare disease is wrong most of the time when it says positive. Bayes' rule is just counting groups of people.</span>
+<strong data-i18n="tldr-strong">The big idea</strong>
+<span data-i18n="tldr-body">A "99% accurate" test for a 1%-rare disease is wrong most of the time when it says positive. Bayes' rule is just counting groups of people.</span>
 </aside>
-
-<section class="interactive" id="main" tabindex="-1" role="main">
+<section class="interactive" id="main" role="main" tabindex="-1">
 <div class="interactive-inner">
-
 <div class="bento">
-  <div class="bento-side">
-    <div class="bento-cell">
-      <div class="control-row">
-        <label data-i18n="scenario-label">Scenario:</label>
-        <div class="group scenario-tabs">
-          <button data-scen="disease" class="active" data-i18n="scen-disease" data-i18n-title="scen-disease-title" title="Medical screening: detect a rare disease in the population.">Disease test</button>
-          <button data-scen="spam" data-i18n="scen-spam" data-i18n-title="scen-spam-title" title="Email filter: flag spam messages. Same math, different stakes.">Spam filter</button>
-        </div>
-      </div>
-
-      <div class="sliders-grid">
-        <div class="slider-field">
-          <div class="row">
-            <span class="lbl" id="priorLabel">P(disease)</span>
-            <span class="val" id="priorV">1.0%</span>
-          </div>
-          <input id="prior" type="range" min="0.1" max="50" step="0.1" value="1" aria-label="Prior probability percent"
-                 data-i18n-title="prior-slider-title"
-                 title="How common is the condition? Slide far left for a rare disease and watch the posterior collapse.">
-          <div class="help" data-i18n="prior-help">How common is the condition in the population?</div>
-        </div>
-        <div class="slider-field">
-          <div class="row">
-            <span class="lbl" id="sensLabel">P(test+ | disease)</span>
-            <span class="val" id="sensV">99.0%</span>
-          </div>
-          <input id="sens" type="range" min="50" max="100" step="0.1" value="99" aria-label="Sensitivity (true positive rate) percent"
-                 data-i18n-title="sens-slider-title"
-                 title="When the person IS sick, what % of the time does the test say so? (True positive rate.)">
-          <div class="help" data-i18n="sens-help">Sensitivity: when sick, % the test correctly says so.</div>
-        </div>
-        <div class="slider-field">
-          <div class="row">
-            <span class="lbl" id="specLabel">P(test− | healthy)</span>
-            <span class="val" id="specV">95.0%</span>
-          </div>
-          <input id="spec" type="range" min="50" max="100" step="0.1" value="95" aria-label="Specificity (true negative rate) percent"
-                 data-i18n-title="spec-slider-title"
-                 title="When the person is healthy, what % of the time does the test correctly say so? (True negative rate.)">
-          <div class="help" data-i18n="spec-help">Specificity: when healthy, % the test correctly says so.</div>
-        </div>
-        <div class="slider-field">
-          <div class="row">
-            <span class="lbl" data-i18n="pop-label">Population shown</span>
-            <span class="val" id="popV">10,000</span>
-          </div>
-          <input id="pop" type="range" min="100" max="100000" step="100" value="10000" aria-label="Population size"
-                 data-i18n-title="pop-slider-title"
-                 title="Larger population = smoother visualization. Same math regardless.">
-          <div class="help" data-i18n="pop-help">Larger = smoother visualization; same math regardless.</div>
-        </div>
-      </div>
-
-      <div class="formula-box">
+<div class="bento-side">
+<div class="bento-cell">
+<div class="control-row">
+<label data-i18n="scenario-label">Scenario:</label>
+<div class="group scenario-tabs">
+<button class="active" data-i18n="scen-disease" data-i18n-title="scen-disease-title" data-scen="disease" title="Medical screening: detect a rare disease in the population.">Disease test</button>
+<button data-i18n="scen-spam" data-i18n-title="scen-spam-title" data-scen="spam" title="Email filter: flag spam messages. Same math, different stakes.">Spam filter</button>
+</div>
+</div>
+<div class="sliders-grid">
+<div class="slider-field">
+<div class="row">
+<span class="lbl" id="priorLabel">P(disease)</span>
+<span class="val" id="priorV">1.0%</span>
+</div>
+<input aria-label="Prior probability percent" data-i18n-title="prior-slider-title" id="prior" max="50" min="0.1" step="0.1" title="How common is the condition? Slide far left for a rare disease and watch the posterior collapse." type="range" value="1"/>
+<div class="help" data-i18n="prior-help">How common is the condition in the population?</div>
+</div>
+<div class="slider-field">
+<div class="row">
+<span class="lbl" id="sensLabel">P(test+ | disease)</span>
+<span class="val" id="sensV">99.0%</span>
+</div>
+<input aria-label="Sensitivity (true positive rate) percent" data-i18n-title="sens-slider-title" id="sens" max="100" min="50" step="0.1" title="When the person IS sick, what % of the time does the test say so? (True positive rate.)" type="range" value="99"/>
+<div class="help" data-i18n="sens-help">Sensitivity: when sick, % the test correctly says so.</div>
+</div>
+<div class="slider-field">
+<div class="row">
+<span class="lbl" id="specLabel">P(test− | healthy)</span>
+<span class="val" id="specV">95.0%</span>
+</div>
+<input aria-label="Specificity (true negative rate) percent" data-i18n-title="spec-slider-title" id="spec" max="100" min="50" step="0.1" title="When the person is healthy, what % of the time does the test correctly say so? (True negative rate.)" type="range" value="95"/>
+<div class="help" data-i18n="spec-help">Specificity: when healthy, % the test correctly says so.</div>
+</div>
+<div class="slider-field">
+<div class="row">
+<span class="lbl" data-i18n="pop-label">Population shown</span>
+<span class="val" id="popV">10,000</span>
+</div>
+<input aria-label="Population size" data-i18n-title="pop-slider-title" id="pop" max="100000" min="100" step="100" title="Larger population = smoother visualization. Same math regardless." type="range" value="10000"/>
+<div class="help" data-i18n="pop-help">Larger = smoother visualization; same math regardless.</div>
+</div>
+</div>
+<div class="formula-box">
         P(<b>disease</b> | <b>test+</b>) = [P(<b>test+</b> | <b>disease</b>) × P(<b>disease</b>)] ÷ P(<b>test+</b>)
         <div id="formulaPlugged" style="margin-top:8px"></div>
-      </div>
-
-      <!-- Likelihood ratio readout. LR+ and LR- expose the clinical-practice quantities. -->
-      <div class="lr-box" style="margin-top:8px; padding:10px 14px; background:var(--soft); border:1px solid var(--border); border-radius:8px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem;">
-        <strong style="color:var(--accent);" data-i18n="lr-strong">Likelihood ratios:</strong>
-        <span style="margin-left:10px;">
-          <b>LR⁺</b> = <span data-i18n="lr-plus-def">sensitivity ÷ (1 − specificity)</span> =
+</div>
+<!-- Likelihood ratio readout. LR+ and LR- expose the clinical-practice quantities. -->
+<div class="lr-box" style="margin-top:8px; padding:10px 14px; background:var(--soft); border:1px solid var(--border); border-radius:8px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem;">
+<strong data-i18n="lr-strong" style="color:var(--accent);">Likelihood ratios:</strong>
+<span style="margin-left:10px;">
+<b>LR⁺</b> = <span data-i18n="lr-plus-def">sensitivity ÷ (1 − specificity)</span> =
           <span id="lrPos" style="font-family:ui-monospace,monospace; color:var(--accent); font-weight:700;">-</span>
-        </span>
-        <span style="margin-left:18px;">
-          <b>LR⁻</b> = <span data-i18n="lr-minus-def">(1 − sensitivity) ÷ specificity</span> =
+</span>
+<span style="margin-left:18px;">
+<b>LR⁻</b> = <span data-i18n="lr-minus-def">(1 − sensitivity) ÷ specificity</span> =
           <span id="lrNeg" style="font-family:ui-monospace,monospace; color:var(--accent); font-weight:700;">-</span>
-        </span>
-        <div style="color:var(--muted); font-size:0.78rem; margin-top:4px;" data-i18n="lr-hint">
+</span>
+<div data-i18n="lr-hint" style="color:var(--muted); font-size:0.78rem; margin-top:4px;">
           LR⁺ &gt; 10 = strong positive evidence. LR⁻ &lt; 0.1 = strong negative evidence.
           Multiply the prior odds by the LR to get posterior odds (the way doctors actually compute Bayes).
         </div>
-      </div>
-
-      <!-- Sequential updating. The first posterior becomes the second prior: the
+</div>
+<!-- Sequential updating. The first posterior becomes the second prior: the
            clinical-practice point that this applet was missing. -->
-      <div class="sequential-box" style="margin-top:12px; padding:12px 16px; background:var(--soft); border:1px solid var(--border); border-radius:8px;">
-        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-          <strong style="color:var(--accent);" data-i18n="seq-strong">Run a second test:</strong>
-          <span style="color:var(--muted); font-size:0.9rem;" data-i18n="seq-explain">The posterior from the first test becomes the prior for the second. Watch P(sick) update twice.</span>
-          <button class="step-btn" id="seqPosBtn" data-i18n="seq-pos-btn"
-                  data-i18n-title="seq-pos-title"
-                  title="Set the prior to P(sick | positive), then re-test. A second positive should push the posterior even higher.">
+<div class="sequential-box" style="margin-top:12px; padding:12px 16px; background:var(--soft); border:1px solid var(--border); border-radius:8px;">
+<div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+<strong data-i18n="seq-strong" style="color:var(--accent);">Run a second test:</strong>
+<span data-i18n="seq-explain" style="color:var(--muted); font-size:0.9rem;">The posterior from the first test becomes the prior for the second. Watch P(sick) update twice.</span>
+<button class="step-btn" data-i18n="seq-pos-btn" data-i18n-title="seq-pos-title" id="seqPosBtn" title="Set the prior to P(sick | positive), then re-test. A second positive should push the posterior even higher.">
             ✓ Test came back POSITIVE
           </button>
-          <button class="step-btn secondary" id="seqNegBtn" data-i18n="seq-neg-btn"
-                  data-i18n-title="seq-neg-title"
-                  title="Set the prior to P(sick | negative). A second negative should drop the posterior even lower.">
+<button class="step-btn secondary" data-i18n="seq-neg-btn" data-i18n-title="seq-neg-title" id="seqNegBtn" title="Set the prior to P(sick | negative). A second negative should drop the posterior even lower.">
             ✗ Test came back NEGATIVE
           </button>
-          <button class="step-btn secondary" id="seqResetBtn" data-i18n="seq-reset-btn"
-                  data-i18n-title="seq-reset-title"
-                  title="Discard the chained prior and reset to the scenario default.">↺ Reset chain</button>
-        </div>
-        <div id="seqHistory" style="margin-top:8px; font-family:ui-monospace,monospace; font-size:0.85rem; color:var(--muted); min-height:1.4em;"></div>
-      </div>
-    </div><!-- /.bento-cell controls -->
-  </div><!-- /.bento-side -->
-
-  <div class="bento-main">
-    <div class="bento-cell">
-      <canvas id="dots" width="1000" height="280" role="img"
-              aria-label="Population dot grid showing true/false positives and true/false negatives for the current Bayes scenario."></canvas>
-      <div class="legend-strip">
-        <span><span class="dot" style="background:var(--sick)"></span>Has disease (red)</span>
-        <span><span class="dot" style="background:var(--healthy)"></span>Healthy (green)</span>
-        <span>Yellow ring = test +</span>
-        <span>Blue ring = test −</span>
-      </div>
-    </div><!-- /.bento-cell canvas -->
-
-    <div class="bento-cell">
-      <div class="posterior-row">
-        <div class="post-card primary">
-          <div class="lbl" data-i18n="post-pos">If your test is POSITIVE, prob. you're actually sick:</div>
-          <div class="num" id="posteriorPos">-</div>
-        </div>
-        <div class="post-card">
-          <div class="lbl" data-i18n="post-neg">If your test is NEGATIVE, prob. you're actually sick:</div>
-          <div class="num" id="posteriorNeg">-</div>
-        </div>
-      </div>
-
-      <div class="counts-box" id="counts"></div>
-    </div><!-- /.bento-cell readouts -->
-
-    <!-- Tree diagram view (alternative representation to the dot grid): moved to the wide main column so the 520px SVG has room. -->
-    <div class="bento-cell">
-      <details class="tree-details" style="margin-top:0;">
-        <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-          <span data-i18n="tree-summary">🌳 Show probability tree (alternative representation)</span>
-        </summary>
-        <div style="padding:10px 14px; border:1px solid var(--border); border-top:0; border-radius:0 0 6px 6px;">
-          <svg id="treeSvg" width="100%" viewBox="0 0 520 220" style="display:block; max-width:520px; margin:0 auto;"
-               role="img" aria-label="Probability tree showing prior → conditional → joint at each leaf."></svg>
-        </div>
-      </details>
-    </div><!-- /.bento-cell tree -->
-  </div><!-- /.bento-main -->
+<button class="step-btn secondary" data-i18n="seq-reset-btn" data-i18n-title="seq-reset-title" id="seqResetBtn" title="Discard the chained prior and reset to the scenario default.">↺ Reset chain</button>
+</div>
+<div id="seqHistory" style="margin-top:8px; font-family:ui-monospace,monospace; font-size:0.85rem; color:var(--muted); min-height:1.4em;"></div>
+</div>
+</div><!-- /.bento-cell controls -->
+</div><!-- /.bento-side -->
+<div class="bento-main">
+<div class="bento-cell">
+<canvas aria-label="Population dot grid showing true/false positives and true/false negatives for the current Bayes scenario." height="280" id="dots" role="img" width="1000"></canvas>
+<div class="legend-strip">
+<span><span class="dot" style="background:var(--sick)"></span>Has disease (red)</span>
+<span><span class="dot" style="background:var(--healthy)"></span>Healthy (green)</span>
+<span>Yellow ring = test +</span>
+<span>Blue ring = test −</span>
+</div>
+</div><!-- /.bento-cell canvas -->
+<div class="bento-cell">
+<div class="posterior-row">
+<div class="post-card primary">
+<div class="lbl" data-i18n="post-pos">If your test is POSITIVE, prob. you're actually sick:</div>
+<div class="num" id="posteriorPos">-</div>
+</div>
+<div class="post-card">
+<div class="lbl" data-i18n="post-neg">If your test is NEGATIVE, prob. you're actually sick:</div>
+<div class="num" id="posteriorNeg">-</div>
+</div>
+</div>
+<div class="counts-box" id="counts"></div>
+</div><!-- /.bento-cell readouts -->
+<!-- Tree diagram view (alternative representation to the dot grid): moved to the wide main column so the 520px SVG has room. -->
+<div class="bento-cell">
+<details class="tree-details" style="margin-top:0;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="tree-summary">🌳 Show probability tree (alternative representation)</span>
+</summary>
+<div style="padding:10px 14px; border:1px solid var(--border); border-top:0; border-radius:0 0 6px 6px;">
+<svg aria-label="Probability tree showing prior → conditional → joint at each leaf." id="treeSvg" role="img" style="display:block; max-width:520px; margin:0 auto;" viewbox="0 0 520 220" width="100%"></svg>
+</div>
+</details>
+</div><!-- /.bento-cell tree -->
+</div><!-- /.bento-main -->
 </div><!-- /.bento -->
-
-
-  <!-- Scenario gallery. Visible, reusable entry points generated from the lesson-tour scenarios. -->
-  <details class="scenario-gallery" open style="margin-top:12px;">
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span data-i18n="sg-summary">🎯 Try these scenarios first</span>
-    </summary>
-    <div class="scenario-gallery-panel">
-      <p class="scenario-gallery-intro" data-i18n="sg-intro">Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.</p>
-      <div class="scenario-card-grid" id="scenarioGalleryCards" aria-live="polite"></div>
-    </div>
-  </details>
-
-
-  <!-- Signature challenge. A one-move comparison that gives this applet a memorable first task. -->
-  <details class="signature-challenge" open style="margin-top:12px;">
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span>✨ Featured comparison</span>
-    </summary>
-    <div class="signature-challenge-panel">
-      <strong>Featured comparison</strong>
-      <p>Change the base rate before touching test accuracy. A strong test can still produce a surprising posterior when the condition is rare.</p>
-      <p><em>Run one scenario with a rare condition and one with a common condition, then compare posterior probability.</em></p>
-    </div>
-  </details>
-
-  <!-- Supporting learning component. -->
-  <details class="visual-explanation" open style="margin-top:12px;">
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span data-visual-en="🧭 Visual explanation" data-visual-zh="🧭 可视化解释镜头">🧭 Visual explanation</span>
-    </summary>
-    <div class="visual-explanation-panel">
-      <p class="visual-explanation-intro" data-visual-intro></p>
-      <div class="visual-flow" data-visual-flow></div>
-      <div class="visual-watch-grid">
-        <div class="visual-snapshot">
-          <strong data-visual-en="Live state to watch" data-visual-zh="要观察的实时状态">Live state to watch</strong>
-          <pre data-visual-snapshot>No state captured yet. Run or adjust the applet first.</pre>
-        </div>
-        <div class="visual-misread">
-          <strong data-visual-en="Misread to avoid" data-visual-zh="避免的误读">Misread to avoid</strong>
-          <p data-visual-misread></p>
-        </div>
-      </div>
-    </div>
-  </details>
-
-
-  <!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
-  <details class="lesson-tour" style="margin-top:12px;">
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span data-i18n="tour-summary">📚 Lesson tour (5 steps)</span>
-    </summary>
-    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
-      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
-        <strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
-        <strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">-</strong>
-      </div>
-      <p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">-</p>
-      <div style="display:flex; gap:8px; align-items:center;">
-        <button class="step-btn secondary" id="tourPrev" data-i18n="tour-prev">← Prev</button>
-        <button class="step-btn" id="tourApply" data-i18n="tour-apply">▶ Apply this scenario</button>
-        <button class="step-btn secondary" id="tourNext" data-i18n="tour-next">Next →</button>
-      </div>
-    </div>
-  </details>
-
-  <!-- Worksheet/lab mode. 3 questions per applet with instant check. -->
-  <details class="worksheet" style="margin-top:8px;">
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span data-i18n="ws-summary">📝 Worksheet (3 questions)</span>
-    </summary>
-    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem; line-height:1.5;">
-      <div class="ws-q" id="ws1">
-        <p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">Disease test. Set prior=1%, sensitivity=99%, specificity=99%. P(disease | positive) is closest to:</span></p>
-        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="0"> <span data-i18n="ws1o0">~99%: the test is 99% accurate, so a positive is almost certainly real.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="1"> <span data-i18n="ws1o1">~50%: false positives from the huge healthy majority roughly equal the true positives.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="2"> <span data-i18n="ws1o2">~1%: one test barely moves the 1% prior at all.</span></label>
-        </div>
-        <button class="step-btn" id="ws1btn" data-i18n="ws-check">Check</button>
-        <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
-      </div>
-      <div class="ws-q" id="ws2" style="margin-top:10px;">
-        <p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Hold sens=99%, spec=99%. Raise prior from 1% to 20%. P(disease | positive) goes:</span></p>
-        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="0"> <span data-i18n="ws2o0">Down: a higher prior leaves less room for the posterior to rise.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="1"> <span data-i18n="ws2o1">Same: the test's accuracy is unchanged, so the result is unchanged.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="2"> <span data-i18n="ws2o2">Up: a higher prior means more true positives relative to false positives.</span></label>
-        </div>
-        <button class="step-btn" id="ws2btn" data-i18n="ws-check">Check</button>
-        <span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
-      </div>
-      <div class="ws-q" id="ws3" style="margin-top:10px;">
-        <p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Back to prior=1%, sens=99%, spec=99%. After ONE positive (posterior ≈ 50%), click "Test came back POSITIVE" to retest. After the SECOND positive, P(disease) is closest to:</span></p>
-        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="0"> <span data-i18n="ws3o0">~99%: the second positive updates from the new ~50% prior and multiplies the odds.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="1"> <span data-i18n="ws3o1">~50%: a repeat of the same test just gives the same result again.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="2"> <span data-i18n="ws3o2">~90%: two positives add up but never get near certainty.</span></label>
-        </div>
-        <button class="step-btn" id="ws3btn" data-i18n="ws-check">Check</button>
-        <span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
-      </div>
-    </div>
-  </details>
-
-  <!-- Student response packet. Local-only: students copy or print their own response packet; the site stores nothing on a server. -->
-  <details class="classroom-lab" style="margin-top:8px;">
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span data-lab-en="🧪 Student response packet" data-lab-zh="🧪 课堂实验模式">🧪 Student response packet</span>
-    </summary>
-    <div class="lab-panel">
-      <p class="lab-intro" data-lab-en="Predict how a positive result changes belief, adjust the prior and test accuracy, then explain the base-rate effect." data-lab-zh="先预测阳性结果如何改变相信程度，再调整先验和检测准确率，然后解释基率效应。">Predict how a positive result changes belief, adjust the prior and test accuracy, then explain the base-rate effect.</p>
-      <div class="lab-grid">
-        <div class="lab-field">
-          <label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
-          <textarea id="lab-predict" data-lab-answer="predict" data-lab-en="Before moving sliders, will a positive test make disease more likely than healthy? Why?" data-lab-zh="移动滑块前，阳性测试会让“患病”比“健康”更可能吗？为什么？" placeholder="Before moving sliders, will a positive test make disease more likely than healthy? Why?"></textarea>
-        </div>
-        <div class="lab-field">
-          <label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
-          <textarea id="lab-observe" data-lab-answer="observe" data-lab-en="Change the prior and accuracy. Record one setting where a positive test still leaves low disease probability." data-lab-zh="改变先验和准确率。记录一个阳性测试后患病概率仍较低的设置。" placeholder="Change the prior and accuracy. Record one setting where a positive test still leaves low disease probability."></textarea>
-        </div>
-        <div class="lab-field">
-          <label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
-          <textarea id="lab-explain" data-lab-answer="explain" data-lab-en="Which mattered most in your example: prior, sensitivity, or specificity?" data-lab-zh="在你的例子中，先验、敏感度、特异度哪一个影响最大？" placeholder="Which mattered most in your example: prior, sensitivity, or specificity?"></textarea>
-        </div>
-        <div class="lab-field">
-          <label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
-          <textarea id="lab-transfer" data-lab-answer="transfer" data-lab-en="Give a non-medical case where the base rate changes how evidence should be interpreted." data-lab-zh="举一个非医学例子，说明基率如何改变对证据的解释。" placeholder="Give a non-medical case where the base rate changes how evidence should be interpreted."></textarea>
-        </div>
-      </div>
-      <div class="lab-state" data-lab-state aria-live="polite">State snapshot appears here.</div>
-      <div class="lab-actions">
-        <button class="step-btn" type="button" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态">↻ Refresh state</button>
-        <button class="step-btn" type="button" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包">📋 Copy packet</button>
-        <button class="step-btn secondary" type="button" data-lab-action="print" data-lab-en="🖨 Print packet" data-lab-zh="🖨 打印实验包">🖨 Print packet</button>
-        <button class="step-btn secondary" type="button" data-lab-action="clear" data-lab-en="Clear local draft" data-lab-zh="清除本地草稿">Clear local draft</button>
-        <span class="lab-status" aria-live="polite"></span>
-      </div>
-    </div>
-  </details>
-
-
-  <!-- Supporting learning component. -->
-  <details class="accessibility-layer" open>
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span data-a11y-en="♿ Text and keyboard support" data-a11y-zh="♿ 无障碍和文本状态层">♿ Text and keyboard support</span>
-    </summary>
-    <div class="accessibility-panel" role="region" aria-labelledby="a11yLayerTitle">
-      <h2 id="a11yLayerTitle" class="sr-only" data-a11y-title>Text and keyboard support</h2>
-      <p class="accessibility-intro" data-a11y-intro></p>
-      <div class="accessibility-grid">
-        <section class="accessibility-card" aria-labelledby="a11yKeyboardTitle">
-          <h3 id="a11yKeyboardTitle" data-a11y-keyboard-title>Keyboard path</h3>
-          <ul>
-            <li data-a11y-keyboard-1>Use Tab and Shift+Tab to move through controls.</li>
-            <li data-a11y-keyboard-2>Use Enter or Space on buttons, and arrow keys on sliders or select controls.</li>
-            <li data-a11y-keyboard-3>The visual region is focusable and described by the state summary below.</li>
-          </ul>
-        </section>
-        <section class="accessibility-card" aria-labelledby="a11yStateTitle">
-          <h3 id="a11yStateTitle" data-a11y-state-title>Text state summary</h3>
-          <dl class="a11y-state-grid" id="a11yStateSummary" data-a11y-state-grid></dl>
-        </section>
-        <section class="accessibility-card" aria-labelledby="a11yMotionTitle">
-          <h3 id="a11yMotionTitle" data-a11y-motion-title>Reduced motion and non-visual support</h3>
-          <p data-a11y-motion-copy>Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.</p>
-        </section>
-      </div>
-      <p class="accessibility-note" data-a11y-note>Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.</p>
-      <div id="a11yLiveRegion" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
-    </div>
-  </details>
-
-
-  <div class="jump-anchor"><a href="#essay" class="jump-link">↓ Read the explanation</a></div>
+<!-- Scenario gallery. Visible, reusable entry points generated from the lesson-tour scenarios. -->
+<details class="scenario-gallery" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="sg-summary">🎯 Try these scenarios first</span>
+</summary>
+<div class="scenario-gallery-panel">
+<p class="scenario-gallery-intro" data-i18n="sg-intro">Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.</p>
+<div aria-live="polite" class="scenario-card-grid" id="scenarioGalleryCards">
+<article class="scenario-card" data-scenario-index="0">
+<h3>Scenario 1: A rare condition with a strong test</h3>
+<p class="scenario-meta"><strong>Core question: </strong> Why can a 99 percent accurate test produce only about a 50 percent posterior probability?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Use a 1 percent base rate with 99 percent sensitivity and 99 percent specificity, then inspect the people counts after a positive result.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Before applying, estimate the posterior probability and identify which group will create most positive results.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain how the large healthy population creates enough false positives to compete with true positives.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="1">
+<h3>Scenario 2: A small loss of specificity has a large effect</h3>
+<p class="scenario-meta"><strong>Core question: </strong> Why does specificity matter so much when the condition is rare?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Keep the 1 percent base rate and 99 percent sensitivity, but lower specificity to 95 percent.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict whether the posterior will fall slightly or dramatically.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Use the false-positive count to explain the size of the change.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="2">
+<h3>Scenario 3: A higher base rate changes the meaning of the same test</h3>
+<p class="scenario-meta"><strong>Core question: </strong> How can the same test result mean something different in a higher-risk population?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Raise the prior probability to 20 percent while keeping the test settings fixed.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict how much the posterior will increase before you apply the scenario.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain why changing the population changes the interpretation even though the test did not change.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="3">
+<h3>Scenario 4: A second independent positive result</h3>
+<p class="scenario-meta"><strong>Core question: </strong> Why can repeated evidence change belief more strongly than one result?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Start with the rare-condition scenario, apply one positive result, then use the positive-test button again.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict whether the second positive adds the same number of percentage points as the first.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain how the first posterior becomes the prior for the second update.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="4">
+<h3>Scenario 5: A spam filter uses the same mathematics</h3>
+<p class="scenario-meta"><strong>Core question: </strong> What changes when false positives and false negatives have different consequences?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Switch to the spam-filter context and compare a common event with the rare-condition case.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict which error type will be more costly for a real inbox.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Separate the probability calculation from the decision about which error matters more.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+</div>
+</div>
+</details>
+<!-- Signature challenge. A one-move comparison that gives this applet a memorable first task. -->
+<details class="signature-challenge" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span>✨ Featured comparison</span>
+</summary>
+<div class="signature-challenge-panel">
+<strong>Featured comparison</strong>
+<p>Change the base rate before touching test accuracy. A strong test can still produce a surprising posterior when the condition is rare.</p>
+<p><em>Run one scenario with a rare condition and one with a common condition, then compare posterior probability.</em></p>
+</div>
+</details>
+<!-- Supporting learning component. -->
+<details class="visual-explanation" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-visual-en="🧭 Visual explanation" data-visual-zh="🧭 可视化解释镜头">🧭 Visual explanation</span>
+</summary>
+<div class="visual-explanation-panel">
+<p class="visual-explanation-intro" data-visual-intro=""></p>
+<div class="visual-flow" data-visual-flow=""></div>
+<div class="visual-watch-grid">
+<div class="visual-snapshot">
+<strong data-visual-en="Live state to watch" data-visual-zh="要观察的实时状态">Live state to watch</strong>
+<pre data-visual-snapshot="">No state captured yet. Run or adjust the applet first.</pre>
+</div>
+<div class="visual-misread">
+<strong data-visual-en="Misread to avoid" data-visual-zh="避免的误读">Misread to avoid</strong>
+<p data-visual-misread=""></p>
+</div>
+</div>
+</div>
+</details>
+<!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
+<details class="lesson-tour" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="tour-summary">📚 Lesson tour (5 steps)</span>
+</summary>
+<div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+<div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+<strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
+<strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">-</strong>
+</div>
+<p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">-</p>
+<div style="display:flex; gap:8px; align-items:center;">
+<button class="step-btn secondary" data-i18n="tour-prev" id="tourPrev">← Prev</button>
+<button class="step-btn" data-i18n="tour-apply" id="tourApply">▶ Apply this scenario</button>
+<button class="step-btn secondary" data-i18n="tour-next" id="tourNext">Next →</button>
+</div>
+</div>
+</details>
+<!-- Worksheet/lab mode. 3 questions per applet with instant check. -->
+<details class="worksheet" style="margin-top:8px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="ws-summary">📝 Worksheet (3 questions)</span>
+</summary>
+<div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem; line-height:1.5;">
+<div class="ws-q" id="ws1">
+<p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">Disease test. Set prior=1%, sensitivity=99%, specificity=99%. P(disease | positive) is closest to:</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="0"/> <span data-i18n="ws1o0">~99%: the test is 99% accurate, so a positive is almost certainly real.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="1"/> <span data-i18n="ws1o1">~50%: false positives from the huge healthy majority roughly equal the true positives.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="2"/> <span data-i18n="ws1o2">~1%: one test barely moves the 1% prior at all.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws1btn">Check</button>
+<span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+<div class="ws-q" id="ws2" style="margin-top:10px;">
+<p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Hold sens=99%, spec=99%. Raise prior from 1% to 20%. P(disease | positive) goes:</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="0"/> <span data-i18n="ws2o0">Down: a higher prior leaves less room for the posterior to rise.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="1"/> <span data-i18n="ws2o1">Same: the test's accuracy is unchanged, so the result is unchanged.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="2"/> <span data-i18n="ws2o2">Up: a higher prior means more true positives relative to false positives.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws2btn">Check</button>
+<span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+<div class="ws-q" id="ws3" style="margin-top:10px;">
+<p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Back to prior=1%, sens=99%, spec=99%. After ONE positive (posterior ≈ 50%), click "Test came back POSITIVE" to retest. After the SECOND positive, P(disease) is closest to:</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="0"/> <span data-i18n="ws3o0">~99%: the second positive updates from the new ~50% prior and multiplies the odds.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="1"/> <span data-i18n="ws3o1">~50%: a repeat of the same test just gives the same result again.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="2"/> <span data-i18n="ws3o2">~90%: two positives add up but never get near certainty.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws3btn">Check</button>
+<span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+</div>
+</details>
+<!-- Student response packet. Local-only: students copy or print their own response packet; the site stores nothing on a server. -->
+<details class="classroom-lab" style="margin-top:8px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-lab-en="🧪 Student response packet" data-lab-zh="🧪 课堂实验模式">🧪 Student response packet</span>
+</summary>
+<div class="lab-panel">
+<p class="lab-intro" data-lab-en="Predict how a positive result changes belief, adjust the prior and test accuracy, then explain the base-rate effect." data-lab-zh="先预测阳性结果如何改变相信程度，再调整先验和检测准确率，然后解释基率效应。">Predict how a positive result changes belief, adjust the prior and test accuracy, then explain the base-rate effect.</p>
+<div class="lab-grid">
+<div class="lab-field">
+<label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
+<textarea data-lab-answer="predict" data-lab-en="Before moving sliders, will a positive test make disease more likely than healthy? Why?" data-lab-zh="移动滑块前，阳性测试会让“患病”比“健康”更可能吗？为什么？" id="lab-predict" placeholder="Before moving sliders, will a positive test make disease more likely than healthy? Why?"></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
+<textarea data-lab-answer="observe" data-lab-en="Change the prior and accuracy. Record one setting where a positive test still leaves low disease probability." data-lab-zh="改变先验和准确率。记录一个阳性测试后患病概率仍较低的设置。" id="lab-observe" placeholder="Change the prior and accuracy. Record one setting where a positive test still leaves low disease probability."></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
+<textarea data-lab-answer="explain" data-lab-en="Which mattered most in your example: prior, sensitivity, or specificity?" data-lab-zh="在你的例子中，先验、敏感度、特异度哪一个影响最大？" id="lab-explain" placeholder="Which mattered most in your example: prior, sensitivity, or specificity?"></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
+<textarea data-lab-answer="transfer" data-lab-en="Give a non-medical case where the base rate changes how evidence should be interpreted." data-lab-zh="举一个非医学例子，说明基率如何改变对证据的解释。" id="lab-transfer" placeholder="Give a non-medical case where the base rate changes how evidence should be interpreted."></textarea>
+</div>
+</div>
+<div aria-live="polite" class="lab-state" data-lab-state="">State snapshot appears here.</div>
+<div class="lab-actions">
+<button class="step-btn" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态" type="button">↻ Refresh state</button>
+<button class="step-btn" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包" type="button">📋 Copy packet</button>
+<button class="step-btn secondary" data-lab-action="print" data-lab-en="🖨 Print packet" data-lab-zh="🖨 打印实验包" type="button">🖨 Print packet</button>
+<button class="step-btn secondary" data-lab-action="clear" data-lab-en="Clear local draft" data-lab-zh="清除本地草稿" type="button">Clear local draft</button>
+<span aria-live="polite" class="lab-status"></span>
+</div>
+</div>
+</details>
+<!-- Supporting learning component. -->
+<details class="accessibility-layer" open="">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-a11y-en="♿ Text and keyboard support" data-a11y-zh="♿ 无障碍和文本状态层">♿ Text and keyboard support</span>
+</summary>
+<div aria-labelledby="a11yLayerTitle" class="accessibility-panel" role="region">
+<h2 class="sr-only" data-a11y-title="" id="a11yLayerTitle">Text and keyboard support</h2>
+<p class="accessibility-intro" data-a11y-intro=""></p>
+<div class="accessibility-grid">
+<section aria-labelledby="a11yKeyboardTitle" class="accessibility-card">
+<h3 data-a11y-keyboard-title="" id="a11yKeyboardTitle">Keyboard path</h3>
+<ul>
+<li data-a11y-keyboard-1="">Use Tab and Shift+Tab to move through controls.</li>
+<li data-a11y-keyboard-2="">Use Enter or Space on buttons, and arrow keys on sliders or select controls.</li>
+<li data-a11y-keyboard-3="">The visual region is focusable and described by the state summary below.</li>
+</ul>
+</section>
+<section aria-labelledby="a11yStateTitle" class="accessibility-card">
+<h3 data-a11y-state-title="" id="a11yStateTitle">Text state summary</h3>
+<dl class="a11y-state-grid" data-a11y-state-grid="" id="a11yStateSummary"></dl>
+</section>
+<section aria-labelledby="a11yMotionTitle" class="accessibility-card">
+<h3 data-a11y-motion-title="" id="a11yMotionTitle">Reduced motion and non-visual support</h3>
+<p data-a11y-motion-copy="">Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.</p>
+</section>
+</div>
+<p class="accessibility-note" data-a11y-note="">Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.</p>
+<div aria-atomic="true" aria-live="polite" class="sr-only" id="a11yLiveRegion" role="status"></div>
+</div>
+</details>
+<div class="jump-anchor"><a class="jump-link" href="#essay">↓ Read the explanation</a></div>
 </div>
 </section>
-
 <article class="essay" id="essay">
-
-  <p class="lede">
-    Imagine a disease that affects 1 person in 100. There's a test for it that is "99% accurate"
-    in both directions: when you're sick it says positive 99% of the time, and when you're healthy
-    it says negative 99% of the time. You take the test. It comes back positive. What's the
-    probability that you actually have the disease? Most people guess somewhere between 95% and 99%.
-    The real answer is <strong>about 50%</strong>. That gap is what Bayes' rule is for.
+<section data-essay-lang="en">
+<p class="lede">
+    Imagine a condition that affects 1 person in 100. A test has 99% sensitivity and 99%
+    specificity: it detects 99% of people who have the condition and correctly clears 99% of
+    people who do not. Your result is positive. The probability that you actually have the
+    condition is not 99%. With these numbers, it is about <strong>50%</strong>. Bayes' rule
+    explains why.
   </p>
-
-  <h2>Why intuition fails</h2>
-
-  <p>
-    Test accuracy and personal probability are not the same number. "99% accurate" describes how the
-    test behaves when you condition on the truth. What you care about is how the test behaves
-    when you condition on its own output. Bayes' rule converts between the two by adding one piece
-    of information: how common the condition is to begin with: the <em>prior</em>.
+<h2>Start with the four quantities</h2>
+<ul>
+<li><strong>Prior or base rate:</strong> how common the condition is before seeing the test.</li>
+<li><strong>Sensitivity:</strong> P(positive | condition), the true positive rate.</li>
+<li><strong>Specificity:</strong> P(negative | no condition), the true negative rate.</li>
+<li><strong>Posterior:</strong> P(condition | positive), the probability you want after seeing the result.</li>
+</ul>
+<p>
+    Sensitivity and specificity describe the test after the true condition is known. The posterior
+    reverses the conditioning: it asks about the condition after the test result is known. Bayes'
+    rule performs that reversal by including the prior.
   </p>
-
-  <p>
-    The applet above is doing nothing fancy. It's just counting people. Of 10,000 people, 100 are
-    sick (1% prior). Of those 100 sick people, 99 test positive (sensitivity). Of the 9,900
-    healthy people, 5%: that's 495: test positive anyway (false positives). So of the 99 + 495 = 594
-    people who test positive, only 99 are actually sick. 99 / 594 ≈ 16.7%.
+<h2>Why the answer is about 50%</h2>
+<p>
+    Count 10,000 people. With a 1% prior, 100 have the condition and 9,900 do not. At 99%
+    sensitivity, 99 of the 100 affected people test positive. At 99% specificity, 1% of the 9,900
+    unaffected people also test positive, which is 99 false positives. The positive group therefore
+    contains 99 true positives and 99 false positives. The posterior is
+    <code>99 / (99 + 99) = 0.50</code>.
   </p>
-
-  <div class="aha">
-    Bayes' rule isn't a math trick. It's literally counting groups. The "trick" is remembering
-    that the false positives from the much larger healthy group can outnumber the true positives
-    from the small sick group.
+<div class="aha">
+    Bayes' rule can be understood as group counting. A small false positive rate applied to a very
+    large unaffected group can produce as many positive results as a high sensitivity applied to a
+    small affected group.
   </div>
-
-  <h2>The two levers</h2>
-
-  <p>
-    Two factors push the posterior probability around:
+<h2>The two main levers</h2>
+<p>Two controls have especially strong effects on the posterior:</p>
+<ul>
+<li><strong>The prior.</strong> Make the condition rarer while holding test quality fixed. The
+      false positives come from a much larger group, so the posterior usually falls.</li>
+<li><strong>The specificity.</strong> Hold the prior fixed and increase specificity. The false
+      positive rate, <code>1 − specificity</code>, shrinks, often raising the posterior sharply for
+      rare conditions.</li>
+</ul>
+<h2>The spam scenario uses the same structure</h2>
+<p>
+    Select the spam-filter scenario. Spam is usually more common than a rare medical condition, so
+    the prior changes. The costs also change: a false positive sends a legitimate message to junk,
+    while a false negative lets spam through. The probability calculation has the same form even
+    though the interpretation and decision costs differ.
   </p>
-
-  <ul>
-    <li><strong>The prior.</strong> Slide the disease prior from 1% down to 0.1% (one in a thousand
-     : about right for a rare cancer screening). Watch the posterior collapse. Diseases that are
-      genuinely rare make positive tests genuinely uninformative.</li>
-    <li><strong>The specificity.</strong> Hold the prior at 1%. Now slide specificity from 95% to
-      99.9%. The posterior shoots up. Reducing false positives matters far more than reducing
-      false negatives when the prior is low.</li>
-  </ul>
-
-  <h2>The spam scenario is the same math</h2>
-
-  <p>
-    Click "Spam filter" up top. The math is identical. The numbers are different because spam is
-    common (30%-ish prior) and false positives are catastrophic (a real email goes to junk).
-    A spam filter with 95% sensitivity and 99% specificity has a much better posterior than the
-    same numbers applied to a rare disease: because the prior is so much higher.
+<h2>What this model leaves out</h2>
+<p>
+    Real diagnostic tests often produce continuous measurements rather than a single positive or
+    negative label. Changing the decision threshold trades sensitivity against specificity. Multiple
+    test results may also be dependent, so they cannot always be multiplied as though each were new,
+    independent evidence. Real spam filters combine many features. The applet isolates the base-rate
+    mechanism before those complications are added.
   </p>
-
-  <h2>What this simplifies</h2>
-
-  <p>
-    Real Bayesian reasoning chains many pieces of evidence (each test result updates the prior
-    for the next). Real diagnostic tests have a continuous range of outcomes, not just
-    positive/negative: and the cutoff for "positive" itself is a knob with its own bias.
-    Real spam filters use thousands of features rather than one binary indicator. But every one
-    of those systems is doing what this applet is doing: counting groups, then renormalizing.
+<div class="for-teachers">
+<h3>For teachers</h3>
+<p><strong>Curriculum:</strong> Conditional probability and Bayes' rule. Distinguish
+      P(test | condition) from P(condition | test), interpret a confusion matrix, and explain why
+      base rates matter.</p>
+<p><strong>Pre-exploration prompts:</strong></p>
+<ul>
+<li>If a test is 99% sensitive and 99% specific, what else must you know before interpreting a positive result?</li>
+<li>How are sensitivity and specificity different from the probability that one positive result is correct?</li>
+<li>Why can a low false positive rate still create many false alarms?</li>
+</ul>
+<p><strong>Post-exploration prompts:</strong></p>
+<ul>
+<li>Set prior, sensitivity, and specificity to 1%, 99%, and 99%. Reconstruct the result with 10,000 people.</li>
+<li>Lower the prior to 0.1% while keeping test quality fixed. Which count changes most?</li>
+<li>Hold the prior at 1% and raise specificity. Why is this control so influential?</li>
+<li>Switch to spam filtering. Which probability structure stays the same, and which decision costs change?</li>
+</ul>
+<p><strong>Misconceptions to test:</strong> test accuracy equals the posterior; a positive result
+      means the condition is probably present; Bayes' rule is detached from ordinary counting.</p>
+</div>
+</section>
+<section data-essay-lang="zh" hidden="" lang="zh">
+<p class="lede">
+    设想某种情况在 100 人中影响 1 人。某项检测的灵敏度和特异度都为 99%：它能检出 99% 的患病者，也能正确排除 99% 的未患病者。你的检测结果为阳性。你真正患有该情况的概率并不是 99%。按照这些数值，答案约为 <strong>50%</strong>。贝叶斯定理解释了原因。
   </p>
-
-  <div class="for-teachers">
-    <h3>For teachers</h3>
-    <p><strong>Curriculum:</strong> Probability &amp; Naïve Bayes. Apply Bayes' rule;
-       distinguish P(A|B) from P(B|A); understand why test accuracy alone isn't enough to
-       interpret a result.</p>
-    <p><strong>Pre-exploration prompts:</strong></p>
-    <ul>
-      <li>If a test is 99% accurate and yours comes back positive, what's the chance you actually have the condition? (Most students guess ~99%.)</li>
-      <li>What's the difference between "P(test positive given sick)" and "P(sick given test positive)"?</li>
-      <li>How could a "great test" still produce mostly wrong-positive results?</li>
-    </ul>
-    <p><strong>Post-exploration prompts:</strong></p>
-    <ul>
-      <li>Set prior = 0.1% and sensitivity = specificity = 99%. Did the posterior surprise you? Why?</li>
-      <li>Hold prior at 1%. Crank specificity from 95% → 99.9%. Why does the posterior change so much?</li>
-      <li>Switch to spam filter. The math is identical: what changes is the consequence of a false positive vs a false negative. Discuss.</li>
-    </ul>
-    <p><strong>Common misconceptions defeated:</strong>
-       "test accuracy = my chance of being correct" (conflates P(test|truth) with P(truth|test));
-       "if the test is positive, I'm probably sick" (only true when prior is high or specificity is near-perfect);
-       "Bayes is a math trick" (it's just counting groups of people).</p>
+<h2>先明确四个量</h2>
+<ul>
+<li><strong>先验概率或基率：</strong>在看到检测结果之前，该情况有多常见。</li>
+<li><strong>灵敏度：</strong>P(阳性 | 患病)，也就是真阳性率。</li>
+<li><strong>特异度：</strong>P(阴性 | 未患病)，也就是真阴性率。</li>
+<li><strong>后验概率：</strong>P(患病 | 阳性)，即看到结果后真正想求的概率。</li>
+</ul>
+<p>
+    灵敏度和特异度描述的是在真实情况已知时检测如何表现。后验概率把条件反过来：在检测结果已知时，真实情况有多可能。贝叶斯定理通过加入先验概率完成这种条件转换。
+  </p>
+<h2>为什么答案约为 50%</h2>
+<p>
+    以 10,000 人为例。先验概率为 1%，因此 100 人患病，9,900 人未患病。灵敏度为 99%，所以 100 名患病者中有 99 人检测为阳性。特异度为 99%，意味着 9,900 名未患病者中有 1% 也会检测为阳性，即 99 个假阳性。因此阳性人群中有 99 个真阳性和 99 个假阳性。后验概率为 <code>99 / (99 + 99) = 0.50</code>。
+  </p>
+<div class="aha">
+    贝叶斯定理可以理解为对不同人群进行计数。即使假阳性率很低，只要它作用于一个非常大的未患病人群，产生的阳性数量也可能与小型患病人群中的真阳性一样多。
   </div>
-
+<h2>两个主要杠杆</h2>
+<p>下面两个控制量对后验概率尤其重要：</p>
+<ul>
+<li><strong>先验概率。</strong>保持检测质量不变，让该情况变得更罕见。假阳性来自更大的人群，因此后验概率通常会下降。</li>
+<li><strong>特异度。</strong>保持先验概率不变并提高特异度。假阳性率 <code>1 − 特异度</code> 会降低，这通常会显著提高罕见情况的后验概率。</li>
+</ul>
+<h2>垃圾邮件情境使用相同结构</h2>
+<p>
+    选择垃圾邮件过滤情境。垃圾邮件通常比罕见疾病更常见，因此先验概率不同。错误的代价也不同：假阳性会把正常邮件送入垃圾箱，假阴性则会让垃圾邮件通过。概率计算的结构相同，解释和决策成本却不同。
+  </p>
+<h2>这个模型省略了什么</h2>
+<p>
+    真实诊断检测通常产生连续测量值，而不是单一的阳性或阴性标签。改变判断阈值会在灵敏度和特异度之间形成权衡。多次检测结果也可能相互依赖，因此不能总把它们当作独立的新证据直接相乘。真实垃圾邮件过滤器会组合大量特征。本工具先单独呈现基率机制，再让学习者理解这些更复杂的情况。
+  </p>
+<div class="for-teachers">
+<h3>教师指导</h3>
+<p><strong>课程目标：</strong>条件概率与贝叶斯定理。区分 P(检测 | 真实情况) 与 P(真实情况 | 检测)，解释混淆矩阵，并说明基率为什么重要。</p>
+<p><strong>探索前问题：</strong></p>
+<ul>
+<li>如果某项检测的灵敏度和特异度都是 99%，在解释阳性结果前还必须知道什么？</li>
+<li>灵敏度和特异度与某一次阳性结果正确的概率有什么不同？</li>
+<li>为什么很低的假阳性率仍可能产生许多误报？</li>
+</ul>
+<p><strong>探索后问题：</strong></p>
+<ul>
+<li>把先验概率、灵敏度和特异度设为 1%、99% 和 99%，用 10,000 人重新计算结果。</li>
+<li>保持检测质量不变，把先验概率降到 0.1%。哪一组人数的变化最关键？</li>
+<li>把先验概率保持在 1%，提高特异度。为什么这个控制量影响如此大？</li>
+<li>切换到垃圾邮件过滤。哪些概率结构保持不变，哪些决策成本发生变化？</li>
+</ul>
+<p><strong>需要检验的误解：</strong>检测准确率等于后验概率；阳性就意味着很可能患病；贝叶斯定理与普通计数无关。</p>
+</div>
+</section>
 </article>
-
 <script>
 (() => {
   const $ = id => document.getElementById(id);
@@ -1155,7 +1189,7 @@
     });
     document.querySelectorAll('.lang-switch button').forEach(b =>
       b.classList.toggle('active', b.dataset.lang === lang));
-    try { localStorage.setItem('lang', lang); } catch (_) {}
+    try { localStorage.setItem('ai-playgrounds-lang', lang); localStorage.setItem('lang', lang); } catch (_) {}
     // Re-translate dynamic slider labels (their text isn't in data-i18n).
     // try/catch: on the initial setLang call these helpers read `scen` / `seqHistory`,
     // which are `let` bindings declared further down: TDZ. The catch swallows the
@@ -1173,7 +1207,7 @@
       try { if (typeof renderScenarioGallery === 'function') renderScenarioGallery(); } catch (_) {}
     }));
   let initialLang = 'en';
-  try { initialLang = localStorage.getItem('lang') || 'en'; } catch (_) {}
+  try { initialLang = new URLSearchParams(location.search).get('lang') || localStorage.getItem('ai-playgrounds-lang') || localStorage.getItem('lang') || 'en'; } catch (_) {}
   setLang(initialLang);
 
   function setTheme(t) {
@@ -1732,13 +1766,11 @@
   });
 })();
 </script>
-
 <footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
-    <p style="margin:0 0 6px;"><a href="#top" data-i18n="footer-top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
-    <p style="margin:0;"><span data-i18n="footer-course">Made for the Introduction to AI course at Haidian Kaiwen Academy.</span></p>
-    <p style="margin:6px 0 0;">© <span data-current-year>2026</span> Logan M. Dixon · <a href="https://lmdixon23.github.io/" data-i18n="footer-portfolio" style="color:var(--accent,#0891b2);">Portfolio</a> · <a href="../../index.html" data-i18n="footer-project" style="color:var(--accent,#0891b2);">AI Playgrounds</a> · <a href="https://github.com/lmdixon23/ai-playgrounds" data-i18n="footer-source" style="color:var(--accent,#0891b2);">Source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-i18n="footer-issue" style="color:var(--accent,#0891b2);">Report an issue</a> · <a href="https://orcid.org/0009-0001-0592-462X" rel="me" style="color:var(--accent,#0891b2);">ORCID</a></p>
-  </footer>
-
+<p style="margin:0 0 6px;"><a data-i18n="footer-top" href="#top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
+<p style="margin:0;"><span data-i18n="footer-course">Made for the Introduction to AI course at Haidian Kaiwen Academy.</span></p>
+<p style="margin:6px 0 0;">© <span data-current-year="">2026</span> Logan M. Dixon · <a data-i18n="footer-portfolio" href="https://lmdixon23.github.io/" style="color:var(--accent,#0891b2);">Portfolio</a> · <a data-i18n="footer-project" href="../../index.html" style="color:var(--accent,#0891b2);">AI Playgrounds</a> · <a data-i18n="footer-source" href="https://github.com/lmdixon23/ai-playgrounds" style="color:var(--accent,#0891b2);">Source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a data-i18n="footer-issue" href="https://github.com/lmdixon23/ai-playgrounds/issues" style="color:var(--accent,#0891b2);">Report an issue</a> · <a href="https://orcid.org/0009-0001-0592-462X" rel="me" style="color:var(--accent,#0891b2);">ORCID</a></p>
+</footer>
 <script>
 (function() {
   const LAB_CONFIG = {"slug": "bayes-classifier", "title": "Bayes lab packet", "zhTitle": "贝叶斯实验包", "fields": [{"label": "Prior", "selector": "#priorV", "kind": "text"}, {"label": "Sensitivity", "selector": "#sensV", "kind": "text"}, {"label": "Specificity", "selector": "#specV", "kind": "text"}, {"label": "Population", "selector": "#pop", "kind": "value"}, {"label": "Posterior after positive", "selector": "#posteriorPos", "kind": "text"}, {"label": "Posterior after negative", "selector": "#posteriorNeg", "kind": "text"}]};
@@ -1860,8 +1892,6 @@
   loadDraft(); applyLabLang(); refreshState();
 })();
 </script>
-
-
 <script>
 (function() {
   const VISUAL_CONFIG = {"intro":"Read the display as population first, test second, posterior last. The visual point is to compare true positives with false positives, not only to notice that a positive test sounds alarming.","zhIntro":"先看总体，再看测试，最后看后验概率。关键是比较真阳性和假阳性，而不只是觉得阳性结果很吓人。","misread":"A highly accurate test can still produce many false alarms when the prior probability is low.","zhMisread":"当前概率很低时，即使测试很准确，也可能产生很多假警报。","steps":[{"label":"Base rate","zhLabel":"基础概率","text":"The prior decides how many actual cases exist before any test result is observed.","zhText":"先验概率决定在观察测试结果之前真实病例有多少。","selector":"#priorV","kind":"text","liveLabel":"Prior","zhLiveLabel":"先验"},{"label":"Test filter","zhLabel":"测试过滤器","text":"Sensitivity keeps true cases. Specificity removes non-cases. Both operate on unequal groups.","zhText":"敏感度保留真实病例，特异度排除非病例。两者作用在大小不同的群体上。","selector":"#sensV","kind":"text","liveLabel":"Sensitivity","zhLiveLabel":"敏感度"},{"label":"Evidence mix","zhLabel":"证据混合","text":"A positive group contains both true positives and false positives; the ratio matters.","zhText":"阳性群体同时包含真阳性和假阳性，比例才是关键。","selector":"#specV","kind":"text","liveLabel":"Specificity","zhLiveLabel":"特异度"},{"label":"Posterior update","zhLabel":"后验更新","text":"The posterior is the updated probability after the evidence has been combined with the prior.","zhText":"后验概率是在证据与先验结合之后得到的更新概率。","selector":"#posteriorPos","kind":"text","liveLabel":"After +","zhLiveLabel":"阳性后"}],"fields":[{"label":"Prior","zhLabel":"先验","selector":"#priorV","kind":"text"},{"label":"Sensitivity","zhLabel":"敏感度","selector":"#sensV","kind":"text"},{"label":"Specificity","zhLabel":"特异度","selector":"#specV","kind":"text"},{"label":"Posterior after positive","zhLabel":"阳性后的后验","selector":"#posteriorPos","kind":"text"},{"label":"Posterior after negative","zhLabel":"阴性后的后验","selector":"#posteriorNeg","kind":"text"}]};
@@ -1921,9 +1951,8 @@
   renderVisualExplanation();
 })();
 </script>
-
 <!-- Privacy-friendly analytics: GoatCounter, cookieless. -->
-  <script>
+<script>
 (function () {
   const analyticsAllowedHost = location.hostname === 'lmdixon23.github.io';
   const params = new URLSearchParams(location.search);
@@ -1936,7 +1965,6 @@
   document.head.appendChild(s);
 })();
 </script>
-
 <script>
 (function() {
   const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "Prior", "zhLabel": "先验", "selector": "#priorV", "kind": "text"}, {"label": "Sensitivity", "zhLabel": "敏感度", "selector": "#sensV", "kind": "text"}, {"label": "Specificity", "zhLabel": "特异度", "selector": "#specV", "kind": "text"}, {"label": "Posterior after positive", "zhLabel": "阳性后的后验", "selector": "#posteriorPos", "kind": "text"}, {"label": "Posterior after negative", "zhLabel": "阴性后的后验", "selector": "#posteriorNeg", "kind": "text"}]};
@@ -2033,17 +2061,14 @@
   window.renderAccessibilityLayer = renderAccessibilityLayer;
 })();
 </script>
-
 <script>
 (function () {
   document.querySelectorAll('[data-current-year]').forEach(el => { el.textContent = new Date().getFullYear(); });
 })();
 </script>
-
-
 <script id="learner-content-system">
 (() => {
-  const profile = {"slug":"bayes-classifier","en":{"title":"Bayes Rule Playground","big":"Change the base rate and test quality, then watch a positive result update the probability of the condition. The same test can mean something very different in rare and common populations.","primer":"Bayes’ rule combines what was plausible before the evidence with how strongly the evidence favors each possibility. The terms below keep those two ideas separate.","terms":[{"term":"Prior probability (base rate)","definition":"The probability of the condition before the new test result."},{"term":"Sensitivity","definition":"Among people who truly have the condition, the proportion who test positive."},{"term":"Specificity","definition":"Among people who do not have the condition, the proportion who test negative."},{"term":"Posterior probability","definition":"The updated probability after the evidence is included."},{"term":"False positive","definition":"A positive result for someone who does not have the condition."},{"term":"Likelihood ratio (LR)","definition":"A multiplier that summarizes how strongly a result changes the odds."}],"scenarios":[{"title":"A rare condition with a strong test","question":"Why can a 99 percent accurate test produce only about a 50 percent posterior probability?","run":"Use a 1 percent base rate with 99 percent sensitivity and 99 percent specificity, then inspect the people counts after a positive result.","predict":"Before applying, estimate the posterior probability and identify which group will create most positive results.","explain":"Explain how the large healthy population creates enough false positives to compete with true positives."},{"title":"A small loss of specificity has a large effect","question":"Why does specificity matter so much when the condition is rare?","run":"Keep the 1 percent base rate and 99 percent sensitivity, but lower specificity to 95 percent.","predict":"Predict whether the posterior will fall slightly or dramatically.","explain":"Use the false-positive count to explain the size of the change."},{"title":"A higher base rate changes the meaning of the same test","question":"How can the same test result mean something different in a higher-risk population?","run":"Raise the prior probability to 20 percent while keeping the test settings fixed.","predict":"Predict how much the posterior will increase before you apply the scenario.","explain":"Explain why changing the population changes the interpretation even though the test did not change."},{"title":"A second independent positive result","question":"Why can repeated evidence change belief more strongly than one result?","run":"Start with the rare-condition scenario, apply one positive result, then use the positive-test button again.","predict":"Predict whether the second positive adds the same number of percentage points as the first.","explain":"Explain how the first posterior becomes the prior for the second update."},{"title":"A spam filter uses the same mathematics","question":"What changes when false positives and false negatives have different consequences?","run":"Switch to the spam-filter context and compare a common event with the rare-condition case.","predict":"Predict which error type will be more costly for a real inbox.","explain":"Separate the probability calculation from the decision about which error matters more."}]},"zh":{"title":"贝叶斯定理演练场","big":"改变基率和检测质量，观察阳性结果如何更新患病概率。同一种检测在罕见与常见人群中可能具有完全不同的含义。","primer":"贝叶斯定理把证据出现前的可能性与证据支持各个结果的强度结合起来。下面的术语帮助你区分这两部分。","terms":[{"term":"先验概率（基率）","definition":"在看到新检测结果之前，某种情况发生的概率。"},{"term":"灵敏度","definition":"在真正患有该情况的人中，检测为阳性的比例。"},{"term":"特异度","definition":"在没有该情况的人中，检测为阴性的比例。"},{"term":"后验概率","definition":"加入证据后更新得到的概率。"},{"term":"假阳性","definition":"没有该情况的人却得到阳性结果。"},{"term":"似然比（LR）","definition":"概括一个结果会把几率改变多少的乘数。"}],"scenarios":[{"title":"罕见情况与强检测","question":"为什么 99% 准确的检测可能只得到约 50% 的后验概率？","run":"设置 1% 基率、99% 灵敏度和 99% 特异度，再查看阳性结果后的人员数量。","predict":"应用前估计后验概率，并判断哪一组会产生大多数阳性结果。","explain":"解释庞大的健康人群如何产生足够多的假阳性，与真阳性数量接近。"},{"title":"特异度的小幅下降会产生大影响","question":"为什么情况罕见时，特异度特别重要？","run":"保持 1% 基率和 99% 灵敏度，把特异度降到 95%。","predict":"预测后验概率会轻微下降还是大幅下降。","explain":"用假阳性数量解释变化幅度。"},{"title":"更高基率改变同一检测的含义","question":"为什么同一检测在高风险人群中含义不同？","run":"把先验概率提高到 20%，其他检测设置保持不变。","predict":"应用前预测后验概率会上升多少。","explain":"解释为什么人群变化会改变解释，即使检测本身没有变化。"},{"title":"第二次独立阳性结果","question":"为什么重复证据比一次结果更能改变信念？","run":"从罕见情况开始，应用一次阳性结果，再次点击阳性检测按钮。","predict":"预测第二次阳性增加的百分点是否与第一次相同。","explain":"解释第一次后验如何成为第二次更新的先验。"},{"title":"垃圾邮件过滤器使用相同数学","question":"当假阳性和假阴性的后果不同时，什么发生变化？","run":"切换到垃圾邮件场景，并与罕见情况比较。","predict":"预测真实收件箱中哪种错误代价更高。","explain":"把概率计算与判断哪种错误更重要区分开。"}]}};
+  const profile = {"slug":"bayes-classifier","en":{"title":"Bayes Rule Playground","big":"Change the base rate and test quality, then watch a positive result update the probability of the condition. The same test can mean something very different in rare and common populations.","primer":"Bayes’ rule combines what was plausible before the evidence with how strongly the evidence favors each possibility. The terms below keep those two ideas separate.","terms":[{"term":"Prior probability (base rate)","definition":"The probability of the condition before the new test result."},{"term":"Sensitivity","definition":"Among people who truly have the condition, the proportion who test positive."},{"term":"Specificity","definition":"Among people who do not have the condition, the proportion who test negative."},{"term":"Posterior probability","definition":"The updated probability after the evidence is included."},{"term":"False positive","definition":"A positive result for someone who does not have the condition."},{"term":"Likelihood ratio (LR)","definition":"A multiplier that summarizes how strongly a result changes the odds."},{"term":"Prevalence","definition":"The proportion of the population that has the condition; in this applet it is the prior probability."},{"term":"Confusion matrix","definition":"A table that counts true positives, false positives, true negatives, and false negatives."}],"scenarios":[{"title":"A rare condition with a strong test","question":"Why can a 99 percent accurate test produce only about a 50 percent posterior probability?","run":"Use a 1 percent base rate with 99 percent sensitivity and 99 percent specificity, then inspect the people counts after a positive result.","predict":"Before applying, estimate the posterior probability and identify which group will create most positive results.","explain":"Explain how the large healthy population creates enough false positives to compete with true positives."},{"title":"A small loss of specificity has a large effect","question":"Why does specificity matter so much when the condition is rare?","run":"Keep the 1 percent base rate and 99 percent sensitivity, but lower specificity to 95 percent.","predict":"Predict whether the posterior will fall slightly or dramatically.","explain":"Use the false-positive count to explain the size of the change."},{"title":"A higher base rate changes the meaning of the same test","question":"How can the same test result mean something different in a higher-risk population?","run":"Raise the prior probability to 20 percent while keeping the test settings fixed.","predict":"Predict how much the posterior will increase before you apply the scenario.","explain":"Explain why changing the population changes the interpretation even though the test did not change."},{"title":"A second independent positive result","question":"Why can repeated evidence change belief more strongly than one result?","run":"Start with the rare-condition scenario, apply one positive result, then use the positive-test button again.","predict":"Predict whether the second positive adds the same number of percentage points as the first.","explain":"Explain how the first posterior becomes the prior for the second update."},{"title":"A spam filter uses the same mathematics","question":"What changes when false positives and false negatives have different consequences?","run":"Switch to the spam-filter context and compare a common event with the rare-condition case.","predict":"Predict which error type will be more costly for a real inbox.","explain":"Separate the probability calculation from the decision about which error matters more."}]},"zh":{"title":"贝叶斯定理演练场","big":"改变基率和检测质量，观察阳性结果如何更新患病概率。同一种检测在罕见与常见人群中可能具有完全不同的含义。","primer":"贝叶斯定理把证据出现前的可能性与证据支持各个结果的强度结合起来。下面的术语帮助你区分这两部分。","terms":[{"term":"先验概率（基率）","definition":"在看到新检测结果之前，某种情况发生的概率。"},{"term":"灵敏度","definition":"在真正患有该情况的人中，检测为阳性的比例。"},{"term":"特异度","definition":"在没有该情况的人中，检测为阴性的比例。"},{"term":"后验概率","definition":"加入证据后更新得到的概率。"},{"term":"假阳性","definition":"没有该情况的人却得到阳性结果。"},{"term":"似然比（LR）","definition":"概括一个结果会把几率改变多少的乘数。"},{"term":"患病率","definition":"总体中具有该情况的比例；在本工具中，它就是先验概率。"},{"term":"混淆矩阵","definition":"统计真正例、假正例、真负例和假负例的表格。"}],"scenarios":[{"title":"罕见情况与强检测","question":"为什么 99% 准确的检测可能只得到约 50% 的后验概率？","run":"设置 1% 基率、99% 灵敏度和 99% 特异度，再查看阳性结果后的人员数量。","predict":"应用前估计后验概率，并判断哪一组会产生大多数阳性结果。","explain":"解释庞大的健康人群如何产生足够多的假阳性，与真阳性数量接近。"},{"title":"特异度的小幅下降会产生大影响","question":"为什么情况罕见时，特异度特别重要？","run":"保持 1% 基率和 99% 灵敏度，把特异度降到 95%。","predict":"预测后验概率会轻微下降还是大幅下降。","explain":"用假阳性数量解释变化幅度。"},{"title":"更高基率改变同一检测的含义","question":"为什么同一检测在高风险人群中含义不同？","run":"把先验概率提高到 20%，其他检测设置保持不变。","predict":"应用前预测后验概率会上升多少。","explain":"解释为什么人群变化会改变解释，即使检测本身没有变化。"},{"title":"第二次独立阳性结果","question":"为什么重复证据比一次结果更能改变信念？","run":"从罕见情况开始，应用一次阳性结果，再次点击阳性检测按钮。","predict":"预测第二次阳性增加的百分点是否与第一次相同。","explain":"解释第一次后验如何成为第二次更新的先验。"},{"title":"垃圾邮件过滤器使用相同数学","question":"当假阳性和假阴性的后果不同时，什么发生变化？","run":"切换到垃圾邮件场景，并与罕见情况比较。","predict":"预测真实收件箱中哪种错误代价更高。","explain":"把概率计算与判断哪种错误更重要区分开。"}]}};
   window.APPLET_LEARNER_PROFILE = profile;
   const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
   const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;
@@ -2084,7 +2109,7 @@
     if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
     jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
     actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
-    window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
+    window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';if(share){share.textContent=zh?'🔗 分享':'🔗 Share';share.title=zh?'复制可在另一浏览器中重新打开当前设置的链接。':'Copy a link that reopens the current settings in another browser.';}summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
     window.refreshAppletToolbar();
     document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
   }
@@ -2109,16 +2134,23 @@
   document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(window.refreshLearnerContent,20)));
 })();
 </script>
-
+<script id="essay-language-script">
+(() => {
+  window.refreshEssayLanguage=()=>{const zh=(document.documentElement.lang||'en').startsWith('zh');document.querySelectorAll('[data-essay-lang]').forEach(el=>{el.hidden=(el.dataset.essayLang==='zh')!==zh})};
+  window.refreshEssayLanguage();
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(window.refreshEssayLanguage,30)));
+})();
+</script>
 <script id="learning-modes-script">
 (() => {
-  const slug = location.pathname.split('/').filter(Boolean).slice(-2,-1)[0] || 'bayes-classifier';
+  const slug = location.pathname.split('/').filter(Boolean).slice(-2,-1)[0] || 'applet';
   const inner = document.querySelector('.interactive-inner');
   if (!inner || inner.querySelector('.learning-mode-shell')) return;
-  const oldDeck = inner.querySelector(':scope > .learning-deck');
+  const oldDeck = [...inner.children].find(el => el.classList && el.classList.contains('learning-deck'));
   if (oldDeck) { [...oldDeck.children].forEach(el => inner.insertBefore(el, oldDeck)); oldDeck.remove(); }
-  const details = [...inner.querySelectorAll(':scope > details')];
+  const details = [...inner.children].filter(el => el.tagName === 'DETAILS');
   if (!details.length) return;
+
   const modeFor = d => {
     if (d.matches('.visual-explanation,.lesson-tour,.key-terms')) return 'understand';
     if (d.matches('.worksheet,.classroom-lab')) return 'classroom';
@@ -2127,39 +2159,173 @@
   };
   const lang = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
   const labels = {explore:['Explore','探索'],understand:['Understand','理解'],classroom:['Use in class','课堂使用'],access:['Text and keyboard','文本与键盘']};
-  const intros = {explore:['Start with the featured experiment, then use the scenarios to test a prediction.','从精选实验开始，再使用情境检验预测。'],understand:['Open the mechanism view and lesson sequence when you need to explain why the result changed.','需要解释结果为什么变化时，打开机制视图和课程序列。'],classroom:['Collect reasoning with the worksheet or the local student response packet.','使用练习题或本地学生回答包收集推理。'],access:['Use the text-state description and keyboard guidance when the visual display is not enough.','当可视显示不足时，使用文本状态说明和键盘指导。']};
-  const shell=document.createElement('section');shell.className='learning-mode-shell';shell.setAttribute('aria-label','Applet learning modes');
-  shell.innerHTML='<div class="learning-mode-head"><div><h2 data-mode-heading></h2><p data-mode-copy></p></div><div class="learning-mode-tools"><button type="button" class="copy-experiment" data-copy-experiment>Copy this experiment</button></div></div><div class="learning-mode-tabs" role="tablist"></div><div class="experiment-status" aria-live="polite"></div>';
-  const tabs=shell.querySelector('.learning-mode-tabs');const panels={};
-  Object.keys(labels).forEach((key,i)=>{const b=document.createElement('button');b.type='button';b.className='learning-mode-tab';b.role='tab';b.dataset.mode=key;b.id='mode-tab-'+key;b.setAttribute('aria-controls','mode-panel-'+key);tabs.appendChild(b);const p=document.createElement('div');p.className='learning-mode-panel';p.id='mode-panel-'+key;p.role='tabpanel';p.setAttribute('aria-labelledby',b.id);p.innerHTML='<div class="mode-intro"></div>';shell.appendChild(p);panels[key]=p});
-  inner.insertBefore(shell,details[0]);details.forEach(d=>{const mode=modeFor(d);if(d.matches('.scenario-gallery,.visual-explanation,.classroom-lab,.accessibility-layer,.signature-challenge'))d.classList.add('mode-wide');panels[mode].appendChild(d)});
-  const sig=panels.explore.querySelector('.signature-challenge');if(sig){panels.explore.insertBefore(sig,panels.explore.querySelector('.mode-intro').nextSibling);sig.open=true;const summary=sig.querySelector('summary span,summary');if(summary&&lang()==='en')summary.textContent='✨ Featured experiment';const body=sig.querySelector('.signature-challenge-panel')||sig.querySelector(':scope > div');if(body&&!body.querySelector('.featured-actions')){const actions=document.createElement('div');actions.className='featured-actions';actions.innerHTML='<button type="button" class="step-btn" data-start-featured>Start featured experiment</button>';body.appendChild(actions)}}
-  const lab=panels.classroom.querySelector('.classroom-lab summary span');if(lab&&lang()==='en')lab.textContent='🧪 Student response packet';
-  const a11y=panels.access.querySelector('.accessibility-layer summary span');if(a11y&&lang()==='en')a11y.textContent='♿ Text and keyboard support';
+  const intros = {
+    explore:['Start with the featured experiment, then use the scenarios to test a prediction.','从精选实验开始，再使用情境检验预测。'],
+    understand:['Open the mechanism view and lesson sequence when you need to explain why the result changed.','需要解释结果为什么变化时，打开机制视图和课程序列。'],
+    classroom:['Collect reasoning with the worksheet or the local student response packet.','使用练习题或本地学生回答包收集推理。'],
+    access:['Use the text-state description and keyboard guidance when the visual display is not enough.','当可视显示不足时，使用文本状态说明和键盘指导。']
+  };
+  const ui = {
+    en:{copy:'Copy this experiment',copied:'Experiment link copied.',copyPrompt:'Copy this experiment URL',featuredSummary:'✨ Featured experiment',featuredPrefix:'Featured experiment',featuredQuestion:'Core question',featuredRun:'Run and watch',start:'Start featured experiment',shell:'Applet learning modes'},
+    zh:{copy:'复制此实验',copied:'实验链接已复制。',copyPrompt:'复制此实验链接',featuredSummary:'✨ 精选实验',featuredPrefix:'精选实验',featuredQuestion:'核心问题',featuredRun:'运行并观察',start:'开始精选实验',shell:'交互工具学习模式'}
+  };
+  const featuredIndex={"search-pathfinding":0,"bayes-classifier":0,"overfitting":1,"knn-classifier":4,"wumpus-world":4,"cnf-sat":2,"bayes-network":1,"hill-climbing":1,"kmeans":4,"neural-network":1,"convolution":4,"q-learning-gridworld":2};
+
+  const shell=document.createElement('section');
+  shell.className='learning-mode-shell';
+  shell.innerHTML='<div class="learning-mode-head"><div><h2 data-mode-heading></h2><p data-mode-copy></p></div><div class="learning-mode-tools"><button type="button" class="copy-experiment" data-copy-experiment></button></div></div><div class="learning-mode-tabs" role="tablist"></div><div class="experiment-status" aria-live="polite"></div>';
+  const tabs=shell.querySelector('.learning-mode-tabs');
+  const panels={};
+  Object.keys(labels).forEach(key=>{
+    const b=document.createElement('button');b.type='button';b.className='learning-mode-tab';b.role='tab';b.dataset.mode=key;b.id='mode-tab-'+key;b.setAttribute('aria-controls','mode-panel-'+key);tabs.appendChild(b);
+    const p=document.createElement('div');p.className='learning-mode-panel';p.id='mode-panel-'+key;p.role='tabpanel';p.setAttribute('aria-labelledby',b.id);p.innerHTML='<div class="mode-intro"></div>';shell.appendChild(p);panels[key]=p;
+  });
+  inner.insertBefore(shell,details[0]);
+  details.forEach(d=>{const mode=modeFor(d);if(d.matches('.scenario-gallery,.visual-explanation,.classroom-lab,.accessibility-layer,.signature-challenge'))d.classList.add('mode-wide');panels[mode].appendChild(d)});
+
+  const sig=panels.explore.querySelector('.signature-challenge');
+  if(sig){
+    panels.explore.insertBefore(sig,panels.explore.querySelector('.mode-intro').nextSibling);
+    sig.open=true;
+    const body=sig.querySelector('.signature-challenge-panel')||sig.querySelector(':scope > div');
+    if(body&&!body.querySelector('.featured-actions')){const actions=document.createElement('div');actions.className='featured-actions';actions.innerHTML='<button type="button" class="step-btn" data-start-featured></button>';body.appendChild(actions)}
+  }
   let active=new URL(location.href).searchParams.get('mode')||'explore';if(!panels[active])active='explore';
-  function setMode(mode,write=true){active=mode;Object.entries(panels).forEach(([k,p])=>p.hidden=k!==mode);shell.querySelectorAll('.learning-mode-tab').forEach(b=>{const on=b.dataset.mode===mode;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});shell.querySelector('[data-mode-heading]').textContent=labels[mode][lang()==='zh'?1:0];shell.querySelector('[data-mode-copy]').textContent=intros[mode][lang()==='zh'?1:0];panels[mode].querySelector('.mode-intro').innerHTML='<strong>'+labels[mode][lang()==='zh'?1:0]+'.</strong> '+intros[mode][lang()==='zh'?1:0];if(write){const u=new URL(location.href);u.searchParams.set('mode',mode);history.replaceState(null,'',u)}}
+  let restoring=false;
+
+  function profileScenario(){
+    const profile=window.APPLET_LEARNER_PROFILE||{};
+    const locale=lang();
+    const items=(profile[locale]&&profile[locale].scenarios)||[];
+    return items[featuredIndex[slug]??0]||items[0]||{};
+  }
+  function renderFeatured(){
+    if(!sig)return;
+    const c=ui[lang()],item=profileScenario();
+    const summary=sig.querySelector('summary span,summary');if(summary)summary.textContent=c.featuredSummary;
+    const body=sig.querySelector('.signature-challenge-panel')||sig.querySelector(':scope > div');if(!body)return;
+    let strong=body.querySelector(':scope > strong');if(!strong){strong=document.createElement('strong');body.prepend(strong)}
+    strong.textContent=item.title||c.featuredPrefix;
+    let paras=[...body.querySelectorAll(':scope > p')];
+    while(paras.length<2){const p=document.createElement('p');body.insertBefore(p,body.querySelector('.featured-actions'));paras.push(p)}
+    paras[0].innerHTML='<b>'+c.featuredQuestion+':</b> '+(item.question||'');
+    paras[1].innerHTML='<em><b>'+c.featuredRun+':</b> '+(item.run||'')+'</em>';
+    const start=body.querySelector('[data-start-featured]');if(start)start.textContent=c.start;
+  }
+  function renderModeChrome(){
+    const locale=lang(),c=ui[locale];
+    shell.setAttribute('aria-label',c.shell);
+    shell.querySelector('[data-copy-experiment]').textContent=c.copy;
+    shell.querySelectorAll('.learning-mode-tab').forEach(b=>b.textContent=labels[b.dataset.mode][locale==='zh'?1:0]);
+    const heading=shell.querySelector('[data-mode-heading]'),copy=shell.querySelector('[data-mode-copy]');
+    heading.textContent=labels[active][locale==='zh'?1:0];copy.textContent=intros[active][locale==='zh'?1:0];
+    panels[active].querySelector('.mode-intro').innerHTML='<strong>'+labels[active][locale==='zh'?1:0]+'.</strong> '+intros[active][locale==='zh'?1:0];
+    renderFeatured();
+  }
+  function setMode(mode,write=true){
+    active=mode;
+    Object.entries(panels).forEach(([k,p])=>p.hidden=k!==mode);
+    shell.querySelectorAll('.learning-mode-tab').forEach(b=>{const on=b.dataset.mode===mode;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});
+    renderModeChrome();
+    if(write){const u=new URL(location.href);u.searchParams.set('mode',mode);history.replaceState(null,'',u)}
+  }
   shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
-  function statePayload(){const out={};inner.querySelectorAll('select,input').forEach(el=>{if(!el.id||el.closest('.classroom-lab')||['button','submit'].includes(el.type))return;if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;out[el.id]=el.type==='checkbox'?el.checked:el.value});return out}
+
+  function statePayload(){
+    const out={};
+    inner.querySelectorAll('select,input').forEach(el=>{
+      if(!el.id||el.closest('.classroom-lab')||['button','submit'].includes(el.type))return;
+      if(el.type==='radio'){if(el.checked)out[el.id]=el.value;return}
+      out[el.id]=el.type==='checkbox'?el.checked:el.value;
+    });
+    return out;
+  }
   function encode(obj){return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))}
   function decode(s){try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch{return null}}
-  const status=shell.querySelector('.experiment-status');shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('state',encode(statePayload()));try{await navigator.clipboard.writeText(u.href);status.textContent=lang()==='zh'?'实验链接已复制。':'Experiment link copied.'}catch{prompt('Copy this experiment URL',u.href)}};
-  const featuredIndex={"search-pathfinding":0,"bayes-classifier":0,"overfitting":1,"knn-classifier":4,"wumpus-world":4,"cnf-sat":2,"bayes-network":1,"hill-climbing":1,"kmeans":4,"neural-network":1,"convolution":4,"q-learning-gridworld":2};shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('details:not(.signature-challenge)')?.setAttribute('open','')});
-  document.addEventListener('click',e=>{const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode','explore');history.replaceState(null,'',u)});
-  const p=new URL(location.href).searchParams;const restore=()=>{const obj=decode(p.get('state')||'');if(obj)Object.entries(obj).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});const n=Number(p.get('scenario'));if(Number.isInteger(n)){panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click()}if(p.get('featured')==='1')sig?.setAttribute('open','')};
-  function refineCards(){
-    const profile=window.APPLET_LEARNER_PROFILE||{};
-    const locale=lang()==='zh'?'zh':'en';
-    const items=(profile[locale]&&profile[locale].scenarios)||[];
-    const labels=locale==='zh'?['核心问题','运行并观察','先预测','运行后解释']:['Core question','Run and watch','Predict first','Explain afterward'];
-    panels.explore.querySelectorAll('.scenario-card').forEach((card,i)=>{
-      const item=items[i]||{};const h=card.querySelector('h3');
-      if(h&&item.title)h.textContent=(locale==='zh'?'情境 ':'Scenario ')+(i+1)+': '+item.title;
-      const metas=card.querySelectorAll('.scenario-meta');const values=[item.question,item.run,item.predict,item.explain];
-      metas.forEach((meta,j)=>{if(!values[j])return;const strong=meta.querySelector('strong');if(strong)strong.textContent=labels[j]+': ';let node=strong?strong.nextSibling:null;if(node)node.textContent=' '+values[j];else meta.appendChild(document.createTextNode(' '+values[j]));});
-    });
+  function currentExperimentUrl(){
+    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',lang());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
   }
-  setTimeout(()=>{refineCards();window.renderAppletKeyTerms?.();restore()},250);document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.()},20)));setMode(active,false);
+  window.__buildExperimentUrl=()=>currentExperimentUrl().href;
+  const status=shell.querySelector('.experiment-status');
+  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(ui[lang()].copyPrompt,u.href)}};
+
+  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','')});
+  document.addEventListener('click',e=>{const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode','explore');u.searchParams.set('lang',lang());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
+
+  let urlSyncTimer=0;
+  function scheduleUrlState(e){
+    if(restoring)return;
+    const el=e.target;if(!el||!inner.contains(el)||el.closest('.classroom-lab')||!el.matches('input,select'))return;
+    clearTimeout(urlSyncTimer);urlSyncTimer=setTimeout(()=>{const u=currentExperimentUrl();history.replaceState(null,'',u)},80);
+  }
+  document.addEventListener('input',scheduleUrlState,true);document.addEventListener('change',scheduleUrlState,true);
+
+  function applyState(obj){
+    if(!obj)return;
+    Object.entries(obj).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else if(el.type==='radio')el.checked=String(el.value)===String(value);else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});
+  }
+  function restore(){
+    const p=new URL(location.href).searchParams;restoring=true;
+    const n=Number(p.get('scenario'));if(Number.isInteger(n))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
+    applyState(decode(p.get('state')||''));
+    if(p.get('featured')==='1')sig?.setAttribute('open','');
+    restoring=false;
+  }
+  function refineCards(){
+    const profile=window.APPLET_LEARNER_PROFILE||{},locale=lang(),items=(profile[locale]&&profile[locale].scenarios)||[];
+    const labels2=locale==='zh'?['核心问题','运行并观察','先预测','运行后解释']:['Core question','Run and watch','Predict first','Explain afterward'];
+    panels.explore.querySelectorAll('.scenario-card').forEach((card,i)=>{const item=items[i]||{},h=card.querySelector('h3');if(h&&item.title)h.textContent=(locale==='zh'?'情境 ':'Scenario ')+(i+1)+': '+item.title;const metas=card.querySelectorAll('.scenario-meta'),values=[item.question,item.run,item.predict,item.explain];metas.forEach((meta,j)=>{if(!values[j])return;const strong=meta.querySelector('strong');if(strong)strong.textContent=labels2[j]+': ';let node=strong?strong.nextSibling:null;if(node)node.textContent=' '+values[j];else meta.appendChild(document.createTextNode(' '+values[j]))});const button=card.querySelector('button');if(button&&!button.textContent.startsWith('✓'))button.textContent=locale==='zh'?'应用并比较':'Apply and compare'});
+  }
+  function ensureExploreContent(){
+    const hasContent=panels.explore.querySelector('details,.scenario-card');
+    if(!hasContent){details.filter(d=>modeFor(d)==='explore').forEach(d=>panels.explore.appendChild(d))}
+  }
+  setMode(active,false);ensureExploreContent();
+  setTimeout(()=>{refineCards();window.renderAppletKeyTerms?.();restore();renderModeChrome()},250);
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',lang());history.replaceState(null,'',u)},25)));
 })();
 </script>
-</body>
+<script id="applet-translation-completion">
+(() => {
+  const exact = {"Skip to applet controls":"跳到交互控件","▸ Show teacher notes (discussion prompts + curriculum)":"▸ 展开教师说明（讨论提示与课程联系）","▾ Hide teacher notes (discussion prompts + curriculum)":"▾ 收起教师说明（讨论提示与课程联系）","idle":"空闲","(empty)":"（空）","(no actions yet)":"（尚无动作）","exploring":"探索中","disease":"患病","healthy":"健康","test+":"检测阳性","test−":"检测阴性","test-":"检测阴性","Has disease (red)":"患病（红色）","Healthy (green)":"健康（绿色）","Yellow ring = test +":"黄色圆环 = 检测阳性","Blue ring = test −":"蓝色圆环 = 检测阴性","Of 10,000 people:":"在 10,000 人中：","100 have disease, 9,900 are healthy.":"100 人患病，9,900 人健康。"};
+  const rules = [["^True positives: ([0-9,]+)\\s+False positives: ([0-9,]+)$","真阳性：\\1　误报：\\2"],["^True negatives: ([0-9,]+)\\s+False negatives: ([0-9,]+)$","真阴性：\\1　漏报：\\2"],["^\\(joint ([0-9.]+%)\\)$","（联合概率 \\1）"]].map(([source,target])=>[new RegExp(source),target]);
+  const currentLanguage=()=>((document.documentElement.lang||'en').startsWith('zh')?'zh':'en');
+  const excluded=node=>node.parentElement && node.parentElement.closest('script,style,noscript,[data-essay-lang="en"]');
+  const applyRule=text=>{
+    if(Object.prototype.hasOwnProperty.call(exact,text))return exact[text];
+    for(const [pattern,target] of rules){if(pattern.test(text)){pattern.lastIndex=0;return text.replace(pattern,target)}}
+    return null;
+  };
+  function translateNode(node){
+    if(excluded(node))return;
+    const raw=node.nodeValue||'',trimmed=raw.trim();if(!trimmed)return;
+    if(currentLanguage()==='en'){
+      if(node.__appletEnglish!==undefined){const start=raw.indexOf(trimmed);node.nodeValue=raw.slice(0,start)+node.__appletEnglish+raw.slice(start+trimmed.length);delete node.__appletEnglish}
+      return;
+    }
+    const translated=applyRule(trimmed);if(translated===null||translated===trimmed)return;
+    node.__appletEnglish=trimmed;const start=raw.indexOf(trimmed);node.nodeValue=raw.slice(0,start)+translated+raw.slice(start+trimmed.length);
+  }
+  function translateAttribute(el,attr){
+    const value=el.getAttribute(attr);if(!value)return;
+    const prop='__appletEnglish_'+attr;
+    if(currentLanguage()==='en'){
+      if(el[prop]!==undefined){el.setAttribute(attr,el[prop]);delete el[prop]}
+      return;
+    }
+    const translated=applyRule(value.trim());if(translated===null||translated===value.trim())return;
+    el[prop]=value;el.setAttribute(attr,translated);
+  }
+  function refresh(root=document){
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);nodes.forEach(translateNode);
+    const elements=(root.querySelectorAll?root.querySelectorAll('[title],[aria-label],[placeholder]'):[]);elements.forEach(el=>['title','aria-label','placeholder'].forEach(a=>{if(el.hasAttribute(a))translateAttribute(el,a)}));
+  }
+  let queued=false;const schedule=()=>{if(queued)return;queued=true;queueMicrotask(()=>{queued=false;refresh()})};
+  const observer=new MutationObserver(mutations=>{if(currentLanguage()!=='zh')return;for(const m of mutations){if(m.type==='characterData'||m.addedNodes.length){schedule();break}}});
+  observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+  document.querySelectorAll('button[data-lang]').forEach(button=>button.addEventListener('click',()=>setTimeout(()=>refresh(),45)));
+  refresh();
+  window.refreshAppletTranslationCompletion=refresh;
+})();
+</script></body>
 </html>

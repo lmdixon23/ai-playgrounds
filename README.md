@@ -13,13 +13,13 @@ AI Playgrounds turns those mechanisms into direct experiments that learners can 
 Each applet includes:
 
 - one focused AI concept,
-- English and Chinese interfaces,
+- complete English and Chinese learner and educator experiences,
 - a featured experiment and scenario gallery,
 - visual and text-based explanations,
 - teacher notes and model limitations,
 - a local student response packet,
 - keyboard guidance,
-- shareable experiment links,
+- shareable experiment links that preserve exact current controls,
 - offline operation in one HTML file.
 
 ## Explore
@@ -44,6 +44,7 @@ The project is released under the MIT License.
 - [Contributing](CONTRIBUTING.md)
 - [Citation metadata](CITATION.cff)
 - [Release notes](RELEASE_NOTES.md)
+- [Localization standard](docs/LOCALIZATION.md)
 
 Built by Logan M. Dixon
 

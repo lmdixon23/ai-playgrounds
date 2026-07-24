@@ -1,21 +1,22 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Convolution Playground | AI Playgrounds</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E">
-<meta name="description" content="Move a small filter across an image. Inspect every multiply-and-sum operation, then compare edge, blur, pooling, and learned-filter behavior.">
-<link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/">
-<meta property="og:title" content="Convolution Playground | AI Playgrounds">
-<meta property="og:description" content="Move a small filter across an image. Inspect every multiply-and-sum operation, then compare edge, blur, pooling, and learned-filter behavior.">
-<meta property="og:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Convolution Playground | AI Playgrounds">
-<meta name="twitter:description" content="Move a small filter across an image. Inspect every multiply-and-sum operation, then compare edge, blur, pooling, and learned-filter behavior.">
-<meta name="twitter:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E" rel="icon"/>
+<meta content="Move a small filter across an image. Inspect every multiply-and-sum operation, then compare edge, blur, pooling, and learned-filter behavior." name="description"/>
+<link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/" rel="canonical"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/?lang=en" hreflang="en" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/?lang=zh" hreflang="zh-Hans" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/?lang=en" hreflang="x-default" rel="alternate"/>
+<meta content="website" property="og:type"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/" property="og:url"/>
+<meta content="Convolution Playground | AI Playgrounds" property="og:title"/>
+<meta content="Move a small filter across an image. Inspect every multiply-and-sum operation, then compare edge, blur, pooling, and learned-filter behavior." property="og:description"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" property="og:image"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="Convolution Playground | AI Playgrounds" name="twitter:title"/>
+<meta content="Move a small filter across an image. Inspect every multiply-and-sum operation, then compare edge, blur, pooling, and learned-filter behavior." name="twitter:description"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" name="twitter:image"/>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Convolution Playground | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/","description":"Move a small filter across an image. Inspect every multiply-and-sum operation, then compare edge, blur, pooling, and learned-filter behavior.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
 <style>
   :root {
@@ -571,14 +572,11 @@
   @media (max-width:900px) { .learning-deck { grid-template-columns:1fr; } .learning-deck > details { grid-column:1 !important; } }
 
 </style>
-
-
 <style id="learner-interface-style">
 /* Learner-facing terminology, compact glossary, and consistent action hierarchy. */
 .header-actions{align-items:center}.header-more{position:relative}.header-more>summary{list-style:none;cursor:pointer;user-select:none}.header-more>summary::-webkit-details-marker{display:none}.header-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:50;min-width:220px;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 16px 35px rgba(15,23,42,.18);display:grid;gap:5px}.header-more-menu button{width:100%;text-align:left;justify-content:flex-start;white-space:normal}.key-terms-panel{padding:14px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}.key-terms-intro{margin:0 0 10px;color:var(--muted)}.key-terms-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.key-term{padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:color-mix(in srgb,var(--card) 97%,var(--accent))}.key-term dt{font-weight:800;color:var(--fg);margin:0 0 3px}.key-term dd{margin:0;color:var(--muted);font-size:.84rem;line-height:1.45}.essay-primer{margin:0 0 22px;padding:15px 17px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--card) 96%,var(--accent));border-radius:10px}.essay-primer h2{margin:0 0 6px!important;font-size:1.05rem!important}.essay-primer p{margin:0 0 10px!important}.essay-primer h3{margin:12px 0 7px;font-size:.92rem}.essay-primer-terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0}.essay-primer-terms>div{padding:8px 9px;border:1px solid var(--border);border-radius:8px;background:var(--card)}.essay-primer-terms dt{font-weight:800}.essay-primer-terms dd{margin:2px 0 0;color:var(--muted);font-size:.82rem;line-height:1.4}.scenario-card .scenario-meta{line-height:1.5}.scenario-card .scenario-meta strong{display:block;margin-bottom:2px}.header-actions>.header-png,.header-actions>.header-theme,.header-actions>.header-reset,.header-more>summary{min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px}
 @media(max-width:720px){.essay-primer-terms{grid-template-columns:1fr}.header-actions{width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}.header-actions>button,.header-actions>.header-more,.header-more>summary{width:100%;justify-content:center}.header-more-menu{right:auto;left:0;max-width:min(290px,90vw)}.key-terms-grid{grid-template-columns:1fr}}
 </style>
-
 <style id="learning-modes-style">
 /* Product information architecture and restrained visual hierarchy. */
 .learning-deck{display:contents!important}.learning-mode-shell{margin-top:16px;border-top:1px solid var(--border);padding-top:15px}.learning-mode-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px}.learning-mode-head h2{margin:0;font-size:1rem;color:var(--fg)}.learning-mode-head p{margin:2px 0 0;color:var(--muted);font-size:.82rem}.learning-mode-tools{display:flex;gap:8px;flex-wrap:wrap}.learning-mode-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:5px;background:var(--soft);border:1px solid var(--border);border-radius:14px}.learning-mode-tab{min-height:42px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-weight:750;padding:8px 10px}.learning-mode-tab[aria-selected="true"]{background:var(--card);color:var(--accent);box-shadow:0 3px 12px rgba(15,23,42,.08)}.learning-mode-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px;align-items:start}.learning-mode-panel[hidden]{display:none}.learning-mode-panel>details{margin:0!important;min-width:0}.learning-mode-panel>details.mode-wide{grid-column:1/-1}.learning-mode-panel>details>summary{background:var(--card)!important;border:1px solid var(--border)!important;border-left:4px solid color-mix(in srgb,var(--accent) 62%,var(--border))!important;border-radius:10px!important;color:var(--fg)!important;font-weight:750!important;padding:10px 12px!important}.learning-mode-panel>details[open]>summary{border-color:color-mix(in srgb,var(--accent) 55%,var(--border))!important}.learning-mode-panel .scenario-gallery-panel,.learning-mode-panel .accessibility-panel,.learning-mode-panel .classroom-lab .lab-panel{background:var(--card)!important}.scenario-card,.accessibility-card{background:color-mix(in srgb,var(--card) 97%,var(--accent))!important;box-shadow:none!important}.scenario-card.applied{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 78%,var(--accent)),color-mix(in srgb,var(--card) 88%,var(--accent-2,#6366f1)))!important;border-color:var(--accent)!important;box-shadow:0 12px 28px rgba(15,23,42,.10)!important}.signature-challenge>div,.signature-challenge .signature-challenge-panel{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 80%,var(--accent)),color-mix(in srgb,var(--card) 90%,var(--accent-2,#6366f1)))!important;border:1px solid color-mix(in srgb,var(--accent) 40%,var(--border))!important}.visual-card{background:linear-gradient(180deg,color-mix(in srgb,var(--card) 92%,var(--accent)),var(--card))!important}.featured-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.scenario-card button,.featured-actions button{border:0!important;border-radius:8px!important;background:var(--accent)!important;color:#fff!important;font-weight:750!important;padding:8px 11px!important}.scenario-card button:hover,.featured-actions button:hover{filter:brightness(1.05)}.copy-experiment{font-size:.82rem}.experiment-status{color:var(--muted);font-size:.78rem;min-height:1.2em;margin-top:6px}.mode-intro{grid-column:1/-1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--muted);font-size:.86rem}.mode-intro strong{color:var(--fg)}
@@ -586,11 +584,9 @@
 .interactive-inner{container-type:inline-size;max-width:min(1320px,100%)!important}
 @media(max-width:820px){.learning-mode-head{align-items:flex-start;flex-direction:column}.learning-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-mode-panel{grid-template-columns:1fr}.learning-mode-panel>details{grid-column:1!important}.copy-experiment{width:100%}}
 </style>
-
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to applet controls</a>
-
 <!--
   ============================================================================
   DEFAULT-SCREEN ACCEPTANCE TEST  (maintainer guarantee: read before editing)
@@ -616,621 +612,624 @@
   the console as window.__convAcceptanceTest() (see the script near the end).
   ============================================================================
 -->
-
 <header class="page-header">
-  <div class="header-utility">
-    <a class="back" href="../../index.html" data-i18n="back-link">← Back to all playgrounds</a>
-    <div class="header-prefs">
-      <button class="header-theme" id="themeToggle" aria-label="Toggle dark or light theme"
-              title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
-      <div class="lang-switch" title="Switch interface language">
-        <button data-lang="en" class="active">EN</button>
-        <button data-lang="zh">中文</button>
-      </div>
-    </div>
-  </div>
-  <div class="header-main">
-    <h1 data-i18n="title">Convolution Playground</h1>
-    <div class="header-actions">
-      <button class="header-png" id="shareLink"
-              title="Copy a URL that re-opens this layer mode / image / kernel choice in another browser.">🔗 Share</button>
-      <button class="header-png" id="embedLink"
-              title="Copy an <iframe> snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
-      <button class="header-png" id="exportPng"
-              title="Download the convolution output as a PNG.">📷 PNG</button>
-      <button class="header-reset" id="hardReset" data-i18n="reset-all"
-              title="Reset to default: cross input, Sobel-X edge kernel, abs ON, ReLU OFF.">↺ Reset all</button>
-    </div>
-  </div>
+<div class="header-utility">
+<a class="back" data-i18n="back-link" href="../../index.html">← Back to all playgrounds</a>
+<div class="header-prefs">
+<button aria-label="Toggle dark or light theme" class="header-theme" id="themeToggle" title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
+<div class="lang-switch" title="Switch interface language">
+<button class="active" data-lang="en">EN</button>
+<button data-lang="zh">中文</button>
+</div>
+</div>
+</div>
+<div class="header-main">
+<h1 data-i18n="title">Convolution Playground</h1>
+<div class="header-actions">
+<button class="header-png" id="shareLink" title="Copy a URL that re-opens this layer mode / image / kernel choice in another browser.">🔗 Share</button>
+<button class="header-png" id="embedLink" title="Copy an &lt;iframe&gt; snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
+<button class="header-png" id="exportPng" title="Download the convolution output as a PNG.">📷 PNG</button>
+<button class="header-reset" data-i18n="reset-all" id="hardReset" title="Reset to default: cross input, Sobel-X edge kernel, abs ON, ReLU OFF.">↺ Reset all</button>
+</div>
+</div>
 </header>
-
 <aside class="tldr">
-  <strong data-i18n="tldr-strong">The big idea</strong>
-  <span data-i18n="tldr-body">A 3×3 grid of numbers, slid across an image and multiplied + summed at every position. That's a "convolution." It's how CNNs turn raw pixels into edges.</span>
+<strong data-i18n="tldr-strong">The big idea</strong>
+<span data-i18n="tldr-body">A 3×3 grid of numbers, slid across an image and multiplied + summed at every position. That's a "convolution." It's how CNNs turn raw pixels into edges.</span>
 </aside>
-
-<section class="interactive" id="main" tabindex="-1" role="main">
+<section class="interactive" id="main" role="main" tabindex="-1">
 <div class="interactive-inner">
-
-  <div class="control-row">
-    <label data-i18n="layer-label">Layer mode:</label>
-    <select id="layerSel" data-i18n-title="layer-sel-title" title="Single conv = current (one 3×3 kernel). Conv + max-pool = adds p×p pooling. Conv → conv = stacks two 3×3 kernels (receptive field becomes 5×5).">
-      <option value="conv" selected data-i18n="layer-conv">Single conv (one kernel)</option>
-      <option value="conv-pool" data-i18n="layer-pool">Conv + max-pool (downsamples)</option>
-      <option value="conv-conv" data-i18n="layer-stack">Conv → conv (stacks two kernels)</option>
-    </select>
-    <!-- pool size slider. Active when layer mode = conv-pool. p=stride. -->
-    <span id="poolControls" style="display:none; margin-left:10px;">
-      <label data-i18n="pool-label" data-i18n-title="pool-title"
-             title="Window size p of the max-pool operation (stride = p, non-overlapping). Larger p downsamples more aggressively: p=2 → 16×16, p=4 → 8×8, p=8 → 4×4.">Pool size p:</label>
-      <select id="poolSize" style="padding:2px 4px; font:inherit;">
-        <option value="2" selected>2×2 → 16×16</option>
-        <option value="4">4×4 → 8×8</option>
-        <option value="8">8×8 → 4×4</option>
-      </select>
-    </span>
-    <!-- stride + padding (single-conv mode only). -->
-    <span id="strideControls" style="margin-left:10px;">
-      <label data-i18n="stride-label" data-i18n-title="stride-title"
-             title="Convolution stride: how far the 3×3 window moves between samples. Stride 2 halves the output dimension.">Stride:</label>
-      <select id="convStride" style="padding:2px 4px; font:inherit;">
-        <option value="1" selected>1</option>
-        <option value="2">2</option>
-        <option value="4">4</option>
-      </select>
-      <label data-i18n="pad-label" data-i18n-title="pad-title" style="margin-left:6px;"
-             title="Padding: 'same' edge-clamps so output stays the same size (with stride 1). 'valid' applies the kernel only where the full 3×3 window fits, shrinking the output by 2 cells.">Padding:</label>
-      <select id="convPad" style="padding:2px 4px; font:inherit;">
-        <option value="same" selected data-i18n="pad-same">same (edge-clamp)</option>
-        <option value="valid" data-i18n="pad-valid">valid (no padding)</option>
-      </select>
-    </span>
-  </div>
-  <div class="control-row">
-    <label data-i18n="input-label">Input:</label>
-    <select id="presetSel" data-i18n-title="preset-sel-title" title="Pick a preset image or 'Draw' to make your own.">
-      <option value="draw" data-i18n="pre-draw">Draw your own</option>
-      <option value="cross" selected data-i18n="pre-cross">Cross</option>
-      <option value="circle" data-i18n="pre-circle">Circle outline</option>
-      <option value="diag" data-i18n="pre-diag">Diagonal stripes</option>
-      <option value="checker" data-i18n="pre-checker">Checkerboard</option>
-      <option value="text" data-i18n="pre-text">AI text</option>
-    </select>
-    <button class="step-btn" id="clearBtn" data-i18n="clear-btn" data-i18n-title="clear-btn-title" title="Clear the input canvas so you can draw your own.">Clear canvas</button>
-    <label data-i18n="kernel-label">Kernel preset:</label>
-    <select id="kernelSel" data-i18n-title="kernel-sel-title" title="Choose a standard 3×3 filter. Edit cells below to make a custom one.">
-      <option value="identity" data-i18n="k-identity">Identity</option>
-      <option value="edgeX" selected data-i18n="k-edgeX">Sobel-X (vertical edges)</option>
-      <option value="edgeY" data-i18n="k-edgeY">Sobel-Y (horizontal edges)</option>
-      <option value="lapl" data-i18n="k-lapl">Laplacian (all edges)</option>
-      <option value="blur" data-i18n="k-blur">Blur (3×3 box)</option>
-      <option value="gauss" data-i18n="k-gauss">Gaussian blur</option>
-      <option value="sharp" data-i18n="k-sharp">Sharpen</option>
-      <option value="emboss" data-i18n="k-emboss">Emboss</option>
-      <option value="custom" data-i18n="k-custom">Custom</option>
-    </select>
-  </div>
-
-  <div class="opt-row">
-    <label title="Show the absolute value of the convolution output. Useful for edge filters that produce both positive and negative numbers.">
-      <input type="checkbox" id="absChk" checked> <span data-i18n="opt-abs">Take absolute value</span></label>
-    <label title="Clip negative values to zero: the ReLU non-linearity used in CNNs.">
-      <input type="checkbox" id="reluChk"> <span data-i18n="opt-relu">Apply ReLU (clip ≥ 0)</span></label>
-  </div>
-
-  <!-- Learn-the-filter mode. Gradient descent learns a random 3×3 kernel to
+<div class="control-row">
+<label data-i18n="layer-label">Layer mode:</label>
+<select data-i18n-title="layer-sel-title" id="layerSel" title="Single conv = current (one 3×3 kernel). Conv + max-pool = adds p×p pooling. Conv → conv = stacks two 3×3 kernels (receptive field becomes 5×5).">
+<option data-i18n="layer-conv" selected="" value="conv">Single conv (one kernel)</option>
+<option data-i18n="layer-pool" value="conv-pool">Conv + max-pool (downsamples)</option>
+<option data-i18n="layer-stack" value="conv-conv">Conv → conv (stacks two kernels)</option>
+</select>
+<!-- pool size slider. Active when layer mode = conv-pool. p=stride. -->
+<span id="poolControls" style="display:none; margin-left:10px;">
+<label data-i18n="pool-label" data-i18n-title="pool-title" title="Window size p of the max-pool operation (stride = p, non-overlapping). Larger p downsamples more aggressively: p=2 → 16×16, p=4 → 8×8, p=8 → 4×4.">Pool size p:</label>
+<select id="poolSize" style="padding:2px 4px; font:inherit;">
+<option selected="" value="2">2×2 → 16×16</option>
+<option value="4">4×4 → 8×8</option>
+<option value="8">8×8 → 4×4</option>
+</select>
+</span>
+<!-- stride + padding (single-conv mode only). -->
+<span id="strideControls" style="margin-left:10px;">
+<label data-i18n="stride-label" data-i18n-title="stride-title" title="Convolution stride: how far the 3×3 window moves between samples. Stride 2 halves the output dimension.">Stride:</label>
+<select id="convStride" style="padding:2px 4px; font:inherit;">
+<option selected="" value="1">1</option>
+<option value="2">2</option>
+<option value="4">4</option>
+</select>
+<label data-i18n="pad-label" data-i18n-title="pad-title" style="margin-left:6px;" title="Padding: 'same' edge-clamps so output stays the same size (with stride 1). 'valid' applies the kernel only where the full 3×3 window fits, shrinking the output by 2 cells.">Padding:</label>
+<select id="convPad" style="padding:2px 4px; font:inherit;">
+<option data-i18n="pad-same" selected="" value="same">same (edge-clamp)</option>
+<option data-i18n="pad-valid" value="valid">valid (no padding)</option>
+</select>
+</span>
+</div>
+<div class="control-row">
+<label data-i18n="input-label">Input:</label>
+<select data-i18n-title="preset-sel-title" id="presetSel" title="Pick a preset image or 'Draw' to make your own.">
+<option data-i18n="pre-draw" value="draw">Draw your own</option>
+<option data-i18n="pre-cross" selected="" value="cross">Cross</option>
+<option data-i18n="pre-circle" value="circle">Circle outline</option>
+<option data-i18n="pre-diag" value="diag">Diagonal stripes</option>
+<option data-i18n="pre-checker" value="checker">Checkerboard</option>
+<option data-i18n="pre-text" value="text">AI text</option>
+</select>
+<button class="step-btn" data-i18n="clear-btn" data-i18n-title="clear-btn-title" id="clearBtn" title="Clear the input canvas so you can draw your own.">Clear canvas</button>
+<label data-i18n="kernel-label">Kernel preset:</label>
+<select data-i18n-title="kernel-sel-title" id="kernelSel" title="Choose a standard 3×3 filter. Edit cells below to make a custom one.">
+<option data-i18n="k-identity" value="identity">Identity</option>
+<option data-i18n="k-edgeX" selected="" value="edgeX">Sobel-X (vertical edges)</option>
+<option data-i18n="k-edgeY" value="edgeY">Sobel-Y (horizontal edges)</option>
+<option data-i18n="k-lapl" value="lapl">Laplacian (all edges)</option>
+<option data-i18n="k-blur" value="blur">Blur (3×3 box)</option>
+<option data-i18n="k-gauss" value="gauss">Gaussian blur</option>
+<option data-i18n="k-sharp" value="sharp">Sharpen</option>
+<option data-i18n="k-emboss" value="emboss">Emboss</option>
+<option data-i18n="k-custom" value="custom">Custom</option>
+</select>
+</div>
+<div class="opt-row">
+<label title="Show the absolute value of the convolution output. Useful for edge filters that produce both positive and negative numbers.">
+<input checked="" id="absChk" type="checkbox"/> <span data-i18n="opt-abs">Take absolute value</span></label>
+<label title="Clip negative values to zero: the ReLU non-linearity used in CNNs.">
+<input id="reluChk" type="checkbox"/> <span data-i18n="opt-relu">Apply ReLU (clip ≥ 0)</span></label>
+</div>
+<!-- Learn-the-filter mode. Gradient descent learns a random 3×3 kernel to
        reproduce a target filter's output. OFF by default → applet behaves as before. -->
-  <div class="control-row" id="learnRow"
-       style="background:var(--soft); border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-bottom:14px;">
-    <label title="Turn on gradient descent: start from a random 3×3 kernel and learn it to match a target filter's output: the same way a neural network learns its weights.">
-      <input type="checkbox" id="learnChk"> <span data-i18n="learn-toggle">🎯 Learn the filter</span></label>
-    <span id="learnControls" style="display:none; gap:10px; align-items:center; flex-wrap:wrap;">
-      <label data-i18n="learn-target-label" data-i18n-title="learn-target-title"
-             title="Which known filter's output the learner is trying to reproduce. Target output = this kernel applied to the current input.">Target:</label>
-      <select id="learnTargetSel" data-i18n-title="learn-target-title"
-              title="Which known filter's output the learner is trying to reproduce. Target output = this kernel applied to the current input.">
-        <option value="edgeX" selected data-i18n="k-edgeX">Sobel-X (vertical edges)</option>
-        <option value="edgeY" data-i18n="k-edgeY">Sobel-Y (horizontal edges)</option>
-        <option value="lapl" data-i18n="k-lapl">Laplacian (all edges)</option>
-        <option value="blur" data-i18n="k-blur">Blur (3×3 box)</option>
-      </select>
-      <button class="step-btn" id="learnTrainBtn" data-i18n="learn-train" data-i18n-title="learn-train-title"
-              title="Run / pause gradient descent. Each step updates all 9 kernel cells toward the target.">▶ Train</button>
-      <button class="step-btn" id="learnRandBtn" data-i18n="learn-rand" data-i18n-title="learn-rand-title"
-              title="Re-initialize the learner kernel to fresh small random values.">🎲 Randomize</button>
-      <label data-i18n="learn-lr-label" data-i18n-title="learn-lr-title" style="margin-left:4px;"
-             title="Learning rate: how big a step gradient descent takes each update. Too large diverges; too small is slow.">Learning rate:</label>
-      <select id="learnLrSel" data-i18n-title="learn-lr-title"
-              title="Learning rate: how big a step gradient descent takes each update. Too large diverges; too small is slow.">
-        <option value="0.05">0.05</option>
-        <option value="0.2" selected>0.2</option>
-        <option value="0.5">0.5</option>
-        <option value="1">1.0</option>
-      </select>
-      <span style="font-family:ui-monospace,monospace; font-size:0.85rem; color:var(--fg); margin-left:4px;">
-        <span data-i18n="learn-loss-label">loss (MSE):</span>
-        <b id="learnLoss" style="color:var(--accent);">-</b>
-        <span data-i18n="learn-step-label" style="color:var(--muted); margin-left:8px;">step</span>
-        <span id="learnStep" style="color:var(--muted);">0</span>
-      </span>
-    </span>
-  </div>
-  <p id="learnCaption" style="display:none; margin:-6px 0 14px; color:var(--muted); font-size:0.82rem; font-style:italic; font-family:-apple-system,system-ui,sans-serif;"
-     data-i18n="learn-caption">Last week the network learned its weights by gradient descent. A CNN learns its filters the same way: watch a random kernel become an edge detector.</p>
-
-  <div class="canvas-pair">
-    <div class="canvas-card">
-      <h3 data-i18n="input-h3" id="inputH3">Input</h3>
-      <div class="cv-stage" id="inputStage">
-        <canvas id="input" width="320" height="320" role="img"
-                aria-labelledby="inputH3 inputCap"
-                aria-label="32 by 32 input image. Click and drag to draw."></canvas>
-        <div class="cv-hl patch" id="inputPatchHl" aria-hidden="true"></div>
-      </div>
-      <p style="color:var(--muted); font-size:0.78rem; margin-top:4px; font-style:italic;" data-i18n="input-hint">
+<div class="control-row" id="learnRow" style="background:var(--soft); border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-bottom:14px;">
+<label title="Turn on gradient descent: start from a random 3×3 kernel and learn it to match a target filter's output: the same way a neural network learns its weights.">
+<input id="learnChk" type="checkbox"/> <span data-i18n="learn-toggle">🎯 Learn the filter</span></label>
+<span id="learnControls" style="display:none; gap:10px; align-items:center; flex-wrap:wrap;">
+<label data-i18n="learn-target-label" data-i18n-title="learn-target-title" title="Which known filter's output the learner is trying to reproduce. Target output = this kernel applied to the current input.">Target:</label>
+<select data-i18n-title="learn-target-title" id="learnTargetSel" title="Which known filter's output the learner is trying to reproduce. Target output = this kernel applied to the current input.">
+<option data-i18n="k-edgeX" selected="" value="edgeX">Sobel-X (vertical edges)</option>
+<option data-i18n="k-edgeY" value="edgeY">Sobel-Y (horizontal edges)</option>
+<option data-i18n="k-lapl" value="lapl">Laplacian (all edges)</option>
+<option data-i18n="k-blur" value="blur">Blur (3×3 box)</option>
+</select>
+<button class="step-btn" data-i18n="learn-train" data-i18n-title="learn-train-title" id="learnTrainBtn" title="Run / pause gradient descent. Each step updates all 9 kernel cells toward the target.">▶ Train</button>
+<button class="step-btn" data-i18n="learn-rand" data-i18n-title="learn-rand-title" id="learnRandBtn" title="Re-initialize the learner kernel to fresh small random values.">🎲 Randomize</button>
+<label data-i18n="learn-lr-label" data-i18n-title="learn-lr-title" style="margin-left:4px;" title="Learning rate: how big a step gradient descent takes each update. Too large diverges; too small is slow.">Learning rate:</label>
+<select data-i18n-title="learn-lr-title" id="learnLrSel" title="Learning rate: how big a step gradient descent takes each update. Too large diverges; too small is slow.">
+<option value="0.05">0.05</option>
+<option selected="" value="0.2">0.2</option>
+<option value="0.5">0.5</option>
+<option value="1">1.0</option>
+</select>
+<span style="font-family:ui-monospace,monospace; font-size:0.85rem; color:var(--fg); margin-left:4px;">
+<span data-i18n="learn-loss-label">loss (MSE):</span>
+<b id="learnLoss" style="color:var(--accent);">-</b>
+<span data-i18n="learn-step-label" style="color:var(--muted); margin-left:8px;">step</span>
+<span id="learnStep" style="color:var(--muted);">0</span>
+</span>
+</span>
+</div>
+<p data-i18n="learn-caption" id="learnCaption" style="display:none; margin:-6px 0 14px; color:var(--muted); font-size:0.82rem; font-style:italic; font-family:-apple-system,system-ui,sans-serif;">Last week the network learned its weights by gradient descent. A CNN learns its filters the same way: watch a random kernel become an edge detector.</p>
+<div class="canvas-pair">
+<div class="canvas-card">
+<h3 data-i18n="input-h3" id="inputH3">Input</h3>
+<div class="cv-stage" id="inputStage">
+<canvas aria-label="32 by 32 input image. Click and drag to draw." aria-labelledby="inputH3 inputCap" height="320" id="input" role="img" width="320"></canvas>
+<div aria-hidden="true" class="cv-hl patch" id="inputPatchHl"></div>
+</div>
+<p data-i18n="input-hint" style="color:var(--muted); font-size:0.78rem; margin-top:4px; font-style:italic;">
         Click and drag to draw.
       </p>
-      <p class="cv-caption" id="inputCap" data-i18n="cap-input">The 32×32 image you feed in. Dark pixels = 1, white = 0.</p>
-    </div>
-    <div class="kernel-card" role="group" aria-labelledby="kernel1Label">
-      <span class="lbl" id="kernel1Label" data-i18n="k1-label">3×3 kernel</span>
-      <div class="kernel" id="kernelGrid">
-        <input type="number" step="0.1" value="0">
-        <input type="number" step="0.1" value="0">
-        <input type="number" step="0.1" value="0">
-        <input type="number" step="0.1" value="0">
-        <input type="number" step="0.1" value="0">
-        <input type="number" step="0.1" value="0">
-        <input type="number" step="0.1" value="0">
-        <input type="number" step="0.1" value="0">
-        <input type="number" step="0.1" value="0">
-      </div>
-      <span class="lbl" data-i18n="k-edit-hint">Edit any cell → kernel becomes "custom"</span>
-      <!-- Second kernel for conv → conv mode. Hidden otherwise. -->
-      <div id="kernel2Section" style="display:none; margin-top:8px; padding-top:8px; border-top:1px solid var(--border);">
-        <span class="lbl" data-i18n="k2-label">2nd 3×3 kernel (after first conv)</span>
-        <div class="kernel" id="kernelGrid2">
-          <input type="number" step="0.1" value="-1">
-          <input type="number" step="0.1" value="-2">
-          <input type="number" step="0.1" value="-1">
-          <input type="number" step="0.1" value="0">
-          <input type="number" step="0.1" value="0">
-          <input type="number" step="0.1" value="0">
-          <input type="number" step="0.1" value="1">
-          <input type="number" step="0.1" value="2">
-          <input type="number" step="0.1" value="1">
-        </div>
-        <span class="lbl" data-i18n="k2-hint">Default = Sobel-Y. Stacks with kernel 1 above to give a 5×5 effective receptive field.</span>
-      </div>
-    </div>
-    <div class="canvas-card">
-      <h3 data-i18n="output-h3" id="outputH3">Output (after convolution)</h3>
-      <div class="cv-stage" id="outputStage">
-        <canvas id="output" width="320" height="320" role="img"
-                aria-labelledby="outputH3 outputCap"
-                aria-label="Output of the convolution pipeline applied to the input image."></canvas>
-        <div class="cv-hl cell" id="outputCellHl" aria-hidden="true"></div>
-      </div>
-      <p style="color:var(--muted); font-size:0.78rem; margin-top:4px; font-style:italic;" data-i18n="output-hint">
+<p class="cv-caption" data-i18n="cap-input" id="inputCap">The 32×32 image you feed in. Dark pixels = 1, white = 0.</p>
+</div>
+<div aria-labelledby="kernel1Label" class="kernel-card" role="group">
+<span class="lbl" data-i18n="k1-label" id="kernel1Label">3×3 kernel</span>
+<div class="kernel" id="kernelGrid">
+<input step="0.1" type="number" value="0"/>
+<input step="0.1" type="number" value="0"/>
+<input step="0.1" type="number" value="0"/>
+<input step="0.1" type="number" value="0"/>
+<input step="0.1" type="number" value="0"/>
+<input step="0.1" type="number" value="0"/>
+<input step="0.1" type="number" value="0"/>
+<input step="0.1" type="number" value="0"/>
+<input step="0.1" type="number" value="0"/>
+</div>
+<span class="lbl" data-i18n="k-edit-hint">Edit any cell → kernel becomes "custom"</span>
+<!-- Second kernel for conv → conv mode. Hidden otherwise. -->
+<div id="kernel2Section" style="display:none; margin-top:8px; padding-top:8px; border-top:1px solid var(--border);">
+<span class="lbl" data-i18n="k2-label">2nd 3×3 kernel (after first conv)</span>
+<div class="kernel" id="kernelGrid2">
+<input step="0.1" type="number" value="-1"/>
+<input step="0.1" type="number" value="-2"/>
+<input step="0.1" type="number" value="-1"/>
+<input step="0.1" type="number" value="0"/>
+<input step="0.1" type="number" value="0"/>
+<input step="0.1" type="number" value="0"/>
+<input step="0.1" type="number" value="1"/>
+<input step="0.1" type="number" value="2"/>
+<input step="0.1" type="number" value="1"/>
+</div>
+<span class="lbl" data-i18n="k2-hint">Default = Sobel-Y. Stacks with kernel 1 above to give a 5×5 effective receptive field.</span>
+</div>
+</div>
+<div class="canvas-card">
+<h3 data-i18n="output-h3" id="outputH3">Output (after convolution)</h3>
+<div class="cv-stage" id="outputStage">
+<canvas aria-label="Output of the convolution pipeline applied to the input image." aria-labelledby="outputH3 outputCap" height="320" id="output" role="img" width="320"></canvas>
+<div aria-hidden="true" class="cv-hl cell" id="outputCellHl"></div>
+</div>
+<p data-i18n="output-hint" style="color:var(--muted); font-size:0.78rem; margin-top:4px; font-style:italic;">
         What the CNN "sees."
       </p>
-      <p class="cv-caption" id="outputCap" data-i18n="cap-output">Each pixel = the kernel multiplied + summed over its 3×3 input neighbourhood. Grayscale = magnitude (abs on).</p>
-    </div>
-  </div>
-  <p class="cv-caption" id="kernelCap" data-i18n="cap-kernel" style="text-align:center;">The 3×3 weights slid over every position. Use Tab and the arrow keys to move between cells.</p>
-
-  <!-- learner-vs-target panel. Visible ONLY in 🎯 Learn-the-filter mode.
+<p class="cv-caption" data-i18n="cap-output" id="outputCap">Each pixel = the kernel multiplied + summed over its 3×3 input neighbourhood. Grayscale = magnitude (abs on).</p>
+</div>
+</div>
+<p class="cv-caption" data-i18n="cap-kernel" id="kernelCap" style="text-align:center;">The 3×3 weights slid over every position. Use Tab and the arrow keys to move between cells.</p>
+<!-- learner-vs-target panel. Visible ONLY in 🎯 Learn-the-filter mode.
        Shows the learner kernel and target side by side with per-cell diff and
        a one-line under-determination note when loss is low but weights differ. -->
-  <div id="learnVsTarget">
-    <h3 data-i18n="lvt-h3">⚖️ Learner vs. target weights</h3>
-    <div class="lvt-row">
-      <div class="lvt-block">
-        <div class="lvt-lbl" data-i18n="lvt-learner">Learner</div>
-        <div class="lvt-grid" id="lvtLearner"></div>
-      </div>
-      <div class="lvt-block">
-        <div class="lvt-lbl" data-i18n="lvt-target">Target</div>
-        <div class="lvt-grid" id="lvtTarget"></div>
-      </div>
-      <div class="lvt-block">
-        <div class="lvt-lbl" data-i18n="lvt-diff">Difference (learner − target)</div>
-        <div class="lvt-grid" id="lvtDiff"></div>
-      </div>
-    </div>
-    <p id="lvtNote" data-i18n="lvt-note-default">Train to watch the learner weights move toward the target.</p>
-  </div>
-
-  <!-- ===== NEW opt-in: "Inspect & scan" disclosure =====
+<div id="learnVsTarget">
+<h3 data-i18n="lvt-h3">⚖️ Learner vs. target weights</h3>
+<div class="lvt-row">
+<div class="lvt-block">
+<div class="lvt-lbl" data-i18n="lvt-learner">Learner</div>
+<div class="lvt-grid" id="lvtLearner"></div>
+</div>
+<div class="lvt-block">
+<div class="lvt-lbl" data-i18n="lvt-target">Target</div>
+<div class="lvt-grid" id="lvtTarget"></div>
+</div>
+<div class="lvt-block">
+<div class="lvt-lbl" data-i18n="lvt-diff">Difference (learner − target)</div>
+<div class="lvt-grid" id="lvtDiff"></div>
+</div>
+</div>
+<p data-i18n="lvt-note-default" id="lvtNote">Train to watch the learner weights move toward the target.</p>
+</div>
+<!-- ===== NEW opt-in: "Inspect & scan" disclosure =====
        Groups hover-to-inspect (receptive field + numbers + gated sum), the
        sliding-window scan animation, and the mode-aware output-size readout.
        CLOSED by default → none of this appears on first load. -->
-  <details class="inspect-scan" id="inspectScan">
-    <summary><span data-i18n="is-summary">🛰️ Inspect &amp; scan (hover math · sliding window · output size)</span></summary>
-    <div class="inspect-body">
-      <p style="margin:0 0 8px; color:var(--muted); font-size:0.82rem; font-family:-apple-system,system-ui,sans-serif;" data-i18n="is-intro">
+<details class="inspect-scan" id="inspectScan">
+<summary><span data-i18n="is-summary">🛰️ Inspect &amp; scan (hover math · sliding window · output size)</span></summary>
+<div class="inspect-body">
+<p data-i18n="is-intro" style="margin:0 0 8px; color:var(--muted); font-size:0.82rem; font-family:-apple-system,system-ui,sans-serif;">
         Hover any Output cell to see its 3×3 receptive field and the nine products (the sum stays hidden until you click). Or run the sliding window across the image. These tools work in single-conv mode.
       </p>
-      <!-- sliding-window scan controls -->
-      <div class="scan-controls">
-        <button class="step-btn" id="scanPlay" data-i18n="scan-play" data-i18n-title="scan-title"
-                title="Animate the 3×3 window marching across the input (left→right, top→bottom), filling the output cell by cell.">▶ Play scan</button>
-        <button class="step-btn" id="scanStep" data-i18n="scan-step" data-i18n-title="scan-step-title"
-                title="Advance the sliding window by one cell.">❘▶ Step</button>
-        <button class="step-btn" id="scanReset" data-i18n="scan-reset" data-i18n-title="scan-reset-title"
-                title="Reset the scan to the top-left and redraw the full static output.">↺ Reset</button>
-        <span style="font-family:ui-monospace,monospace; font-size:0.82rem; color:var(--muted);">
-          <span data-i18n="scan-pos-label">position</span>
-          <b id="scanPos" style="color:var(--accent);">-</b>
-        </span>
-      </div>
-      <!-- hover inspector output -->
-      <div class="hover-inspect" id="hoverInspect" aria-live="polite">
-        <span style="color:var(--muted); font-style:italic;" data-i18n="hi-empty">Hover an output cell to inspect it. (Single-conv mode.)</span>
-      </div>
-      <!-- mode-aware output-size readout -->
-      <div class="size-readout" id="sizeReadout" aria-live="polite"></div>
-    </div>
-  </details>
-
-  <!-- sliding-window inspector. Click any output cell to see the 3×3 input
+<!-- sliding-window scan controls -->
+<div class="scan-controls">
+<button class="step-btn" data-i18n="scan-play" data-i18n-title="scan-title" id="scanPlay" title="Animate the 3×3 window marching across the input (left→right, top→bottom), filling the output cell by cell.">▶ Play scan</button>
+<button class="step-btn" data-i18n="scan-step" data-i18n-title="scan-step-title" id="scanStep" title="Advance the sliding window by one cell.">❘▶ Step</button>
+<button class="step-btn" data-i18n="scan-reset" data-i18n-title="scan-reset-title" id="scanReset" title="Reset the scan to the top-left and redraw the full static output.">↺ Reset</button>
+<span style="font-family:ui-monospace,monospace; font-size:0.82rem; color:var(--muted);">
+<span data-i18n="scan-pos-label">position</span>
+<b id="scanPos" style="color:var(--accent);">-</b>
+</span>
+</div>
+<!-- hover inspector output -->
+<div aria-live="polite" class="hover-inspect" id="hoverInspect">
+<span data-i18n="hi-empty" style="color:var(--muted); font-style:italic;">Hover an output cell to inspect it. (Single-conv mode.)</span>
+</div>
+<!-- mode-aware output-size readout -->
+<div aria-live="polite" class="size-readout" id="sizeReadout"></div>
+</div>
+</details>
+<!-- sliding-window inspector. Click any output cell to see the 3×3 input
        window + dot-product math that produced it. -->
-  <div id="windowInspector" style="margin-top:12px; padding:12px 16px; background:var(--soft); border:1px solid var(--border); border-radius:8px;">
-    <h3 style="margin:0 0 8px; font-size:0.95rem; color:var(--accent);" data-i18n="window-h3">🔍 Sliding-window inspector</h3>
-    <p style="margin:0 0 8px; color:var(--muted); font-size:0.82rem;" data-i18n="window-hint">
+<div id="windowInspector" style="margin-top:12px; padding:12px 16px; background:var(--soft); border:1px solid var(--border); border-radius:8px;">
+<h3 data-i18n="window-h3" style="margin:0 0 8px; font-size:0.95rem; color:var(--accent);">🔍 Sliding-window inspector</h3>
+<p data-i18n="window-hint" style="margin:0 0 8px; color:var(--muted); font-size:0.82rem;">
       Click any cell on the output canvas to see the 3×3 input window centered on it, the kernel, and the dot-product math that produced that pixel.
     </p>
-    <div id="windowMath" style="font-family:ui-monospace,monospace; font-size:0.85rem; line-height:1.6; color:var(--fg);">
-      <span style="color:var(--muted); font-style:italic;" data-i18n="window-empty">(click on the output canvas to inspect a cell)</span>
-    </div>
-  </div>
-
-  <!-- multi-channel (RGB) demo.
+<div id="windowMath" style="font-family:ui-monospace,monospace; font-size:0.85rem; line-height:1.6; color:var(--fg);">
+<span data-i18n="window-empty" style="color:var(--muted); font-style:italic;">(click on the output canvas to inspect a cell)</span>
+</div>
+</div>
+<!-- multi-channel (RGB) demo.
        Shows that real CNNs apply the kernel to each channel and sum the results. -->
-  <details style="margin-top:12px;">
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span data-i18n="rgb-summary">🎨 Multi-channel demo (RGB → 1 output)</span>
-    </summary>
-    <div style="margin-top:10px; padding:12px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
-      <div style="margin-bottom:8px;">
-        <label data-i18n="rgb-preset" style="font-family:-apple-system,system-ui,sans-serif; font-size:0.85rem;">RGB image:</label>
-        <select id="rgbPresetSel" data-i18n-title="rgb-preset-title" title="Pick a synthetic RGB image. Real CNNs convolve a separate kernel over each channel then sum the results: here we use your current kernel for all three channels.">
-          <option value="rgb-bars" selected data-i18n="rgb-bars">Color bars (R | G | B)</option>
-          <option value="rgb-diag" data-i18n="rgb-diag">Diagonal gradient</option>
-          <option value="rgb-disc" data-i18n="rgb-disc">Red disc on blue field</option>
-        </select>
-      </div>
-      <div style="color:var(--muted); font-size:0.78rem; margin-bottom:10px;" data-i18n="rgb-hint">
+<details style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="rgb-summary">🎨 Multi-channel demo (RGB → 1 output)</span>
+</summary>
+<div style="margin-top:10px; padding:12px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+<div style="margin-bottom:8px;">
+<label data-i18n="rgb-preset" style="font-family:-apple-system,system-ui,sans-serif; font-size:0.85rem;">RGB image:</label>
+<select data-i18n-title="rgb-preset-title" id="rgbPresetSel" title="Pick a synthetic RGB image. Real CNNs convolve a separate kernel over each channel then sum the results: here we use your current kernel for all three channels.">
+<option data-i18n="rgb-bars" selected="" value="rgb-bars">Color bars (R | G | B)</option>
+<option data-i18n="rgb-diag" value="rgb-diag">Diagonal gradient</option>
+<option data-i18n="rgb-disc" value="rgb-disc">Red disc on blue field</option>
+</select>
+</div>
+<div data-i18n="rgb-hint" style="color:var(--muted); font-size:0.78rem; margin-bottom:10px;">
         Each channel is convolved with your current kernel independently. The final output is the sum of the three channel outputs (just like a single 3×3×3 kernel in PyTorch).
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:10px;">
-        <div><div style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted); margin-bottom:2px;">RGB input</div><canvas id="rgbInputCv" width="120" height="120" style="border:1px solid var(--border); image-rendering:pixelated;"></canvas></div>
-        <div><div style="font-family:ui-monospace,monospace; font-size:0.78rem; color:#dc2626; margin-bottom:2px;">R channel</div><canvas id="rgbRcv" width="120" height="120" style="border:1px solid var(--border); image-rendering:pixelated;"></canvas></div>
-        <div><div style="font-family:ui-monospace,monospace; font-size:0.78rem; color:#16a34a; margin-bottom:2px;">G channel</div><canvas id="rgbGcv" width="120" height="120" style="border:1px solid var(--border); image-rendering:pixelated;"></canvas></div>
-        <div><div style="font-family:ui-monospace,monospace; font-size:0.78rem; color:#2563eb; margin-bottom:2px;">B channel</div><canvas id="rgbBcv" width="120" height="120" style="border:1px solid var(--border); image-rendering:pixelated;"></canvas></div>
-        <div><div style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted); margin-bottom:2px;">R out</div><canvas id="rgbRoutCv" width="120" height="120" style="border:1px solid var(--border); image-rendering:pixelated;"></canvas></div>
-        <div><div style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted); margin-bottom:2px;">G out</div><canvas id="rgbGoutCv" width="120" height="120" style="border:1px solid var(--border); image-rendering:pixelated;"></canvas></div>
-        <div><div style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted); margin-bottom:2px;">B out</div><canvas id="rgbBoutCv" width="120" height="120" style="border:1px solid var(--border); image-rendering:pixelated;"></canvas></div>
-        <div><div style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--accent); margin-bottom:2px; font-weight:700;">Σ = output</div><canvas id="rgbSumCv" width="120" height="120" style="border:2px solid var(--accent); image-rendering:pixelated;"></canvas></div>
-      </div>
-    </div>
-  </details>
-
-
-  <!-- Scenario gallery. Visible, reusable entry points generated from the lesson-tour scenarios. -->
-  <details class="scenario-gallery" open style="margin-top:12px;">
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span data-i18n="sg-summary">🎯 Try these scenarios first</span>
-    </summary>
-    <div class="scenario-gallery-panel">
-      <p class="scenario-gallery-intro" data-i18n="sg-intro">Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.</p>
-      <div class="scenario-card-grid" id="scenarioGalleryCards" aria-live="polite"></div>
-    </div>
-  </details>
-
-
-  <!-- Signature challenge. A one-move comparison that gives this applet a memorable first task. -->
-  <details class="signature-challenge" open style="margin-top:12px;">
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span>✨ Featured comparison</span>
-    </summary>
-    <div class="signature-challenge-panel">
-      <strong>Featured comparison</strong>
-      <p>Switch kernels before training anything. The same image becomes edge, blur, or sharpened evidence depending on the filter.</p>
-      <p><em>Try two hand-built filters, then use the learned-kernel mode to ask what training is actually changing.</em></p>
-    </div>
-  </details>
-
-  <!-- Supporting learning component. -->
-  <details class="visual-explanation" open style="margin-top:12px;">
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span data-visual-en="🧭 Visual explanation" data-visual-zh="🧭 可视化解释镜头">🧭 Visual explanation</span>
-    </summary>
-    <div class="visual-explanation-panel">
-      <p class="visual-explanation-intro" data-visual-intro></p>
-      <div class="visual-flow" data-visual-flow></div>
-      <div class="visual-watch-grid">
-        <div class="visual-snapshot">
-          <strong data-visual-en="Live state to watch" data-visual-zh="要观察的实时状态">Live state to watch</strong>
-          <pre data-visual-snapshot>No state captured yet. Run or adjust the applet first.</pre>
-        </div>
-        <div class="visual-misread">
-          <strong data-visual-en="Misread to avoid" data-visual-zh="避免的误读">Misread to avoid</strong>
-          <p data-visual-misread></p>
-        </div>
-      </div>
-    </div>
-  </details>
-
-
-  <!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
-  <details class="lesson-tour" style="margin-top:12px;">
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span data-i18n="tour-summary">📚 Lesson tour (5 steps)</span>
-    </summary>
-    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
-      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
-        <strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
-        <strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">-</strong>
-      </div>
-      <p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">-</p>
-      <div style="display:flex; gap:8px; align-items:center;">
-        <button class="step-btn secondary" id="tourPrev" data-i18n="tour-prev">← Prev</button>
-        <button class="step-btn" id="tourApply" data-i18n="tour-apply">▶ Apply this scenario</button>
-        <button class="step-btn secondary" id="tourNext" data-i18n="tour-next">Next →</button>
-      </div>
-    </div>
-  </details>
-
-  <!-- Worksheet/lab mode. 3 questions per applet with instant check. -->
-  <details class="worksheet" style="margin-top:8px;">
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span data-i18n="ws-summary">📝 Worksheet (4 questions)</span>
-    </summary>
-    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem; line-height:1.5;">
-      <div class="ws-q" id="ws1">
-        <p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">Cross image, Identity kernel. The output image is:</span></p>
-        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="0"> <span data-i18n="ws1o0">Exactly the same as the input: the center weight is 1 and the rest are 0.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="1"> <span data-i18n="ws1o1">Inverted: black and white are swapped.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="2"> <span data-i18n="ws1o2">Blank: multiplying by the identity zeroes everything out.</span></label>
-        </div>
-        <button class="step-btn" id="ws1btn" data-i18n="ws-check">Check</button>
-        <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
-      </div>
-      <div class="ws-q" id="ws2" style="margin-top:10px;">
-        <p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Cross image, Sobel-X kernel. Which part of the cross lights up brightest?</span></p>
-        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="0"> <span data-i18n="ws2o0">The vertical bar: Sobel-X responds to horizontal intensity changes, which occur at vertical edges.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="1"> <span data-i18n="ws2o1">The horizontal bar: Sobel-X lines up with edges running the same direction as its name.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="2"> <span data-i18n="ws2o2">The center: the two bars overlap there, so the response is always largest.</span></label>
-        </div>
-        <button class="step-btn" id="ws2btn" data-i18n="ws-check">Check</button>
-        <span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
-      </div>
-      <div class="ws-q" id="ws3" style="margin-top:10px;">
-        <p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Switch to "Conv → conv" mode (two stacked 3×3 kernels). The effective receptive field becomes:</span></p>
-        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="0"> <span data-i18n="ws3o0">3×3: stacking kernels doesn't change how far each output pixel can see.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="1"> <span data-i18n="ws3o1">5×5: each 3×3 layer adds one cell on every side, so two layers reach 5×5.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="2"> <span data-i18n="ws3o2">9×9: two 3×3 kernels multiply to a 9×9 window.</span></label>
-        </div>
-        <button class="step-btn" id="ws3btn" data-i18n="ws-check">Check</button>
-        <span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
-      </div>
-      <div class="ws-q" id="ws4" style="margin-top:10px;">
-        <p style="margin:0 0 4px;"><strong>Q4.</strong> <span data-i18n="ws4q">Turn on 🎯 Learn the filter, set the target to Sobel-X, and click Train. Starting from a random kernel, what happens to the 9 numbers as the loss falls?</span></p>
-        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws4" value="0"> <span data-i18n="ws4o0">They stay random: gradient descent only changes the output, never the kernel weights.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws4" value="1"> <span data-i18n="ws4o1">They converge toward the Sobel-X weights: the random kernel learns to become the edge detector.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws4" value="2"> <span data-i18n="ws4o2">They grow without bound: lowering the loss pushes every weight toward infinity.</span></label>
-        </div>
-        <button class="step-btn" id="ws4btn" data-i18n="ws-check">Check</button>
-        <span id="ws4fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
-      </div>
-    </div>
-  </details>
-
-  <!-- Student response packet. Local-only: students copy or print their own response packet; the site stores nothing on a server. -->
-  <details class="classroom-lab" style="margin-top:8px;">
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span data-lab-en="🧪 Student response packet" data-lab-zh="🧪 课堂实验模式">🧪 Student response packet</span>
-    </summary>
-    <div class="lab-panel">
-      <p class="lab-intro" data-lab-en="Choose a filter, inspect the sliding-window calculation, then explain what feature the kernel makes visible." data-lab-zh="选择一个滤波器、检查滑动窗口计算，然后解释卷积核让什么特征变得可见。">Choose a filter, inspect the sliding-window calculation, then explain what feature the kernel makes visible.</p>
-      <div class="lab-grid">
-        <div class="lab-field">
-          <label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
-          <textarea id="lab-predict" data-lab-answer="predict" data-lab-en="Before running the filter, what image feature should this kernel emphasize?" data-lab-zh="运行滤波器前，这个卷积核应该突出图像中的什么特征？" placeholder="Before running the filter, what image feature should this kernel emphasize?"></textarea>
-        </div>
-        <div class="lab-field">
-          <label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
-          <textarea id="lab-observe" data-lab-answer="observe" data-lab-en="Run the filter or scan a window. Record the kernel, mode, and one visible output change." data-lab-zh="运行滤波器或扫描窗口。记录卷积核、模式和一个可见输出变化。" placeholder="Run the filter or scan a window. Record the kernel, mode, and one visible output change."></textarea>
-        </div>
-        <div class="lab-field">
-          <label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
-          <textarea id="lab-explain" data-lab-answer="explain" data-lab-en="How did multiplying local pixels by kernel weights create the result?" data-lab-zh="局部像素乘以卷积核权重如何产生这个结果？" placeholder="How did multiplying local pixels by kernel weights create the result?"></textarea>
-        </div>
-        <div class="lab-field">
-          <label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
-          <textarea id="lab-transfer" data-lab-answer="transfer" data-lab-en="Where would this kind of filter appear in a computer vision pipeline?" data-lab-zh="这种滤波器会出现在计算机视觉流程的哪个位置？" placeholder="Where would this kind of filter appear in a computer vision pipeline?"></textarea>
-        </div>
-      </div>
-      <div class="lab-state" data-lab-state aria-live="polite">State snapshot appears here.</div>
-      <div class="lab-actions">
-        <button class="step-btn" type="button" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态">↻ Refresh state</button>
-        <button class="step-btn" type="button" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包">📋 Copy packet</button>
-        <button class="step-btn secondary" type="button" data-lab-action="print" data-lab-en="🖨 Print packet" data-lab-zh="🖨 打印实验包">🖨 Print packet</button>
-        <button class="step-btn secondary" type="button" data-lab-action="clear" data-lab-en="Clear local draft" data-lab-zh="清除本地草稿">Clear local draft</button>
-        <span class="lab-status" aria-live="polite"></span>
-      </div>
-    </div>
-  </details>
-
-
-  <!-- Supporting learning component. -->
-  <details class="accessibility-layer" open>
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span data-a11y-en="♿ Text and keyboard support" data-a11y-zh="♿ 无障碍和文本状态层">♿ Text and keyboard support</span>
-    </summary>
-    <div class="accessibility-panel" role="region" aria-labelledby="a11yLayerTitle">
-      <h2 id="a11yLayerTitle" class="sr-only" data-a11y-title>Text and keyboard support</h2>
-      <p class="accessibility-intro" data-a11y-intro></p>
-      <div class="accessibility-grid">
-        <section class="accessibility-card" aria-labelledby="a11yKeyboardTitle">
-          <h3 id="a11yKeyboardTitle" data-a11y-keyboard-title>Keyboard path</h3>
-          <ul>
-            <li data-a11y-keyboard-1>Use Tab and Shift+Tab to move through controls.</li>
-            <li data-a11y-keyboard-2>Use Enter or Space on buttons, and arrow keys on sliders or select controls.</li>
-            <li data-a11y-keyboard-3>The visual region is focusable and described by the state summary below.</li>
-          </ul>
-        </section>
-        <section class="accessibility-card" aria-labelledby="a11yStateTitle">
-          <h3 id="a11yStateTitle" data-a11y-state-title>Text state summary</h3>
-          <dl class="a11y-state-grid" id="a11yStateSummary" data-a11y-state-grid></dl>
-        </section>
-        <section class="accessibility-card" aria-labelledby="a11yMotionTitle">
-          <h3 id="a11yMotionTitle" data-a11y-motion-title>Reduced motion and non-visual support</h3>
-          <p data-a11y-motion-copy>Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.</p>
-        </section>
-      </div>
-      <p class="accessibility-note" data-a11y-note>Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.</p>
-      <div id="a11yLiveRegion" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
-    </div>
-  </details>
-
-  <div class="jump-anchor"><a href="#essay" class="jump-link" data-i18n="jump-link">↓ Read the explanation</a></div>
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:10px;">
+<div><div style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted); margin-bottom:2px;">RGB input</div><canvas height="120" id="rgbInputCv" style="border:1px solid var(--border); image-rendering:pixelated;" width="120"></canvas></div>
+<div><div style="font-family:ui-monospace,monospace; font-size:0.78rem; color:#dc2626; margin-bottom:2px;">R channel</div><canvas height="120" id="rgbRcv" style="border:1px solid var(--border); image-rendering:pixelated;" width="120"></canvas></div>
+<div><div style="font-family:ui-monospace,monospace; font-size:0.78rem; color:#16a34a; margin-bottom:2px;">G channel</div><canvas height="120" id="rgbGcv" style="border:1px solid var(--border); image-rendering:pixelated;" width="120"></canvas></div>
+<div><div style="font-family:ui-monospace,monospace; font-size:0.78rem; color:#2563eb; margin-bottom:2px;">B channel</div><canvas height="120" id="rgbBcv" style="border:1px solid var(--border); image-rendering:pixelated;" width="120"></canvas></div>
+<div><div style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted); margin-bottom:2px;">R out</div><canvas height="120" id="rgbRoutCv" style="border:1px solid var(--border); image-rendering:pixelated;" width="120"></canvas></div>
+<div><div style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted); margin-bottom:2px;">G out</div><canvas height="120" id="rgbGoutCv" style="border:1px solid var(--border); image-rendering:pixelated;" width="120"></canvas></div>
+<div><div style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted); margin-bottom:2px;">B out</div><canvas height="120" id="rgbBoutCv" style="border:1px solid var(--border); image-rendering:pixelated;" width="120"></canvas></div>
+<div><div style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--accent); margin-bottom:2px; font-weight:700;">Σ = output</div><canvas height="120" id="rgbSumCv" style="border:2px solid var(--accent); image-rendering:pixelated;" width="120"></canvas></div>
+</div>
+</div>
+</details>
+<!-- Scenario gallery. Visible, reusable entry points generated from the lesson-tour scenarios. -->
+<details class="scenario-gallery" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="sg-summary">🎯 Try these scenarios first</span>
+</summary>
+<div class="scenario-gallery-panel">
+<p class="scenario-gallery-intro" data-i18n="sg-intro">Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.</p>
+<div aria-live="polite" class="scenario-card-grid" id="scenarioGalleryCards">
+<article class="scenario-card" data-scenario-index="0">
+<h3>Scenario 1: The identity filter preserves the image</h3>
+<p class="scenario-meta"><strong>Core question: </strong> What filter would copy each pixel without changing its neighbors?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Apply the identity kernel to the cross image and compare input with output.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict which kernel cell must carry the full weight.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain why a center weight of one and all other weights of zero copies the image.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="1">
+<h3>Scenario 2: The Sobel x-direction filter detects vertical edges</h3>
+<p class="scenario-meta"><strong>Core question: </strong> Why does measuring horizontal brightness change reveal vertical boundaries?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Apply the Sobel x-direction filter and inspect where the output becomes bright or dark.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict which part of the cross will produce the strongest response.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Connect the left-to-right brightness change to the vertical edge orientation.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="2">
+<h3>Scenario 3: The Sobel y-direction filter detects horizontal edges</h3>
+<p class="scenario-meta"><strong>Core question: </strong> How does rotating a filter change the feature it detects?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Apply the Sobel y-direction filter to the same image and compare it with the x-direction result.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict which bar of the cross will now produce the strongest response.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain how the rotated weights measure top-to-bottom change.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="3">
+<h3>Scenario 4: Max pooling reduces resolution</h3>
+<p class="scenario-meta"><strong>Core question: </strong> What information survives when each small block keeps only its strongest activation?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Switch to convolution followed by two-by-two max pooling and compare output dimensions.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict which small features will remain visible after pooling.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain the tradeoff between lower spatial detail and a smaller, more tolerant representation.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="4">
+<h3>Scenario 5: Stacked convolutions see a larger region</h3>
+<p class="scenario-meta"><strong>Core question: </strong> Why can two small filters detect a pattern larger than either filter alone?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Stack two three-by-three convolutions and inspect the effective receptive field.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict the effective width and height before applying the second layer.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Trace how one second-layer value depends on a five-by-five region of the original image.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+</div>
+</div>
+</details>
+<!-- Signature challenge. A one-move comparison that gives this applet a memorable first task. -->
+<details class="signature-challenge" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span>✨ Featured comparison</span>
+</summary>
+<div class="signature-challenge-panel">
+<strong>Featured comparison</strong>
+<p>Switch kernels before training anything. The same image becomes edge, blur, or sharpened evidence depending on the filter.</p>
+<p><em>Try two hand-built filters, then use the learned-kernel mode to ask what training is actually changing.</em></p>
+</div>
+</details>
+<!-- Supporting learning component. -->
+<details class="visual-explanation" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-visual-en="🧭 Visual explanation" data-visual-zh="🧭 可视化解释镜头">🧭 Visual explanation</span>
+</summary>
+<div class="visual-explanation-panel">
+<p class="visual-explanation-intro" data-visual-intro=""></p>
+<div class="visual-flow" data-visual-flow=""></div>
+<div class="visual-watch-grid">
+<div class="visual-snapshot">
+<strong data-visual-en="Live state to watch" data-visual-zh="要观察的实时状态">Live state to watch</strong>
+<pre data-visual-snapshot="">No state captured yet. Run or adjust the applet first.</pre>
+</div>
+<div class="visual-misread">
+<strong data-visual-en="Misread to avoid" data-visual-zh="避免的误读">Misread to avoid</strong>
+<p data-visual-misread=""></p>
+</div>
+</div>
+</div>
+</details>
+<!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
+<details class="lesson-tour" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="tour-summary">📚 Lesson tour (5 steps)</span>
+</summary>
+<div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+<div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+<strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
+<strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">-</strong>
+</div>
+<p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">-</p>
+<div style="display:flex; gap:8px; align-items:center;">
+<button class="step-btn secondary" data-i18n="tour-prev" id="tourPrev">← Prev</button>
+<button class="step-btn" data-i18n="tour-apply" id="tourApply">▶ Apply this scenario</button>
+<button class="step-btn secondary" data-i18n="tour-next" id="tourNext">Next →</button>
+</div>
+</div>
+</details>
+<!-- Worksheet/lab mode. 3 questions per applet with instant check. -->
+<details class="worksheet" style="margin-top:8px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="ws-summary">📝 Worksheet (4 questions)</span>
+</summary>
+<div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem; line-height:1.5;">
+<div class="ws-q" id="ws1">
+<p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">Cross image, Identity kernel. The output image is:</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="0"/> <span data-i18n="ws1o0">Exactly the same as the input: the center weight is 1 and the rest are 0.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="1"/> <span data-i18n="ws1o1">Inverted: black and white are swapped.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="2"/> <span data-i18n="ws1o2">Blank: multiplying by the identity zeroes everything out.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws1btn">Check</button>
+<span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+<div class="ws-q" id="ws2" style="margin-top:10px;">
+<p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Cross image, Sobel-X kernel. Which part of the cross lights up brightest?</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="0"/> <span data-i18n="ws2o0">The vertical bar: Sobel-X responds to horizontal intensity changes, which occur at vertical edges.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="1"/> <span data-i18n="ws2o1">The horizontal bar: Sobel-X lines up with edges running the same direction as its name.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="2"/> <span data-i18n="ws2o2">The center: the two bars overlap there, so the response is always largest.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws2btn">Check</button>
+<span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+<div class="ws-q" id="ws3" style="margin-top:10px;">
+<p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Switch to "Conv → conv" mode (two stacked 3×3 kernels). The effective receptive field becomes:</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="0"/> <span data-i18n="ws3o0">3×3: stacking kernels doesn't change how far each output pixel can see.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="1"/> <span data-i18n="ws3o1">5×5: each 3×3 layer adds one cell on every side, so two layers reach 5×5.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="2"/> <span data-i18n="ws3o2">9×9: two 3×3 kernels multiply to a 9×9 window.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws3btn">Check</button>
+<span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+<div class="ws-q" id="ws4" style="margin-top:10px;">
+<p style="margin:0 0 4px;"><strong>Q4.</strong> <span data-i18n="ws4q">Turn on 🎯 Learn the filter, set the target to Sobel-X, and click Train. Starting from a random kernel, what happens to the 9 numbers as the loss falls?</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws4" type="radio" value="0"/> <span data-i18n="ws4o0">They stay random: gradient descent only changes the output, never the kernel weights.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws4" type="radio" value="1"/> <span data-i18n="ws4o1">They converge toward the Sobel-X weights: the random kernel learns to become the edge detector.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws4" type="radio" value="2"/> <span data-i18n="ws4o2">They grow without bound: lowering the loss pushes every weight toward infinity.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws4btn">Check</button>
+<span id="ws4fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+</div>
+</details>
+<!-- Student response packet. Local-only: students copy or print their own response packet; the site stores nothing on a server. -->
+<details class="classroom-lab" style="margin-top:8px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-lab-en="🧪 Student response packet" data-lab-zh="🧪 课堂实验模式">🧪 Student response packet</span>
+</summary>
+<div class="lab-panel">
+<p class="lab-intro" data-lab-en="Choose a filter, inspect the sliding-window calculation, then explain what feature the kernel makes visible." data-lab-zh="选择一个滤波器、检查滑动窗口计算，然后解释卷积核让什么特征变得可见。">Choose a filter, inspect the sliding-window calculation, then explain what feature the kernel makes visible.</p>
+<div class="lab-grid">
+<div class="lab-field">
+<label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
+<textarea data-lab-answer="predict" data-lab-en="Before running the filter, what image feature should this kernel emphasize?" data-lab-zh="运行滤波器前，这个卷积核应该突出图像中的什么特征？" id="lab-predict" placeholder="Before running the filter, what image feature should this kernel emphasize?"></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
+<textarea data-lab-answer="observe" data-lab-en="Run the filter or scan a window. Record the kernel, mode, and one visible output change." data-lab-zh="运行滤波器或扫描窗口。记录卷积核、模式和一个可见输出变化。" id="lab-observe" placeholder="Run the filter or scan a window. Record the kernel, mode, and one visible output change."></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
+<textarea data-lab-answer="explain" data-lab-en="How did multiplying local pixels by kernel weights create the result?" data-lab-zh="局部像素乘以卷积核权重如何产生这个结果？" id="lab-explain" placeholder="How did multiplying local pixels by kernel weights create the result?"></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
+<textarea data-lab-answer="transfer" data-lab-en="Where would this kind of filter appear in a computer vision pipeline?" data-lab-zh="这种滤波器会出现在计算机视觉流程的哪个位置？" id="lab-transfer" placeholder="Where would this kind of filter appear in a computer vision pipeline?"></textarea>
+</div>
+</div>
+<div aria-live="polite" class="lab-state" data-lab-state="">State snapshot appears here.</div>
+<div class="lab-actions">
+<button class="step-btn" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态" type="button">↻ Refresh state</button>
+<button class="step-btn" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包" type="button">📋 Copy packet</button>
+<button class="step-btn secondary" data-lab-action="print" data-lab-en="🖨 Print packet" data-lab-zh="🖨 打印实验包" type="button">🖨 Print packet</button>
+<button class="step-btn secondary" data-lab-action="clear" data-lab-en="Clear local draft" data-lab-zh="清除本地草稿" type="button">Clear local draft</button>
+<span aria-live="polite" class="lab-status"></span>
+</div>
+</div>
+</details>
+<!-- Supporting learning component. -->
+<details class="accessibility-layer" open="">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-a11y-en="♿ Text and keyboard support" data-a11y-zh="♿ 无障碍和文本状态层">♿ Text and keyboard support</span>
+</summary>
+<div aria-labelledby="a11yLayerTitle" class="accessibility-panel" role="region">
+<h2 class="sr-only" data-a11y-title="" id="a11yLayerTitle">Text and keyboard support</h2>
+<p class="accessibility-intro" data-a11y-intro=""></p>
+<div class="accessibility-grid">
+<section aria-labelledby="a11yKeyboardTitle" class="accessibility-card">
+<h3 data-a11y-keyboard-title="" id="a11yKeyboardTitle">Keyboard path</h3>
+<ul>
+<li data-a11y-keyboard-1="">Use Tab and Shift+Tab to move through controls.</li>
+<li data-a11y-keyboard-2="">Use Enter or Space on buttons, and arrow keys on sliders or select controls.</li>
+<li data-a11y-keyboard-3="">The visual region is focusable and described by the state summary below.</li>
+</ul>
+</section>
+<section aria-labelledby="a11yStateTitle" class="accessibility-card">
+<h3 data-a11y-state-title="" id="a11yStateTitle">Text state summary</h3>
+<dl class="a11y-state-grid" data-a11y-state-grid="" id="a11yStateSummary"></dl>
+</section>
+<section aria-labelledby="a11yMotionTitle" class="accessibility-card">
+<h3 data-a11y-motion-title="" id="a11yMotionTitle">Reduced motion and non-visual support</h3>
+<p data-a11y-motion-copy="">Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.</p>
+</section>
+</div>
+<p class="accessibility-note" data-a11y-note="">Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.</p>
+<div aria-atomic="true" aria-live="polite" class="sr-only" id="a11yLiveRegion" role="status"></div>
+</div>
+</details>
+<div class="jump-anchor"><a class="jump-link" data-i18n="jump-link" href="#essay">↓ Read the explanation</a></div>
 </div>
 </section>
-
 <article class="essay" id="essay">
-
-  <p class="lede">
-    A convolutional neural network (CNN) sees images by repeatedly applying a small grid of numbers
-   : a <em>kernel</em>: to local neighborhoods of pixels. This applet lets you draw on a 32×32
-    canvas, pick a 3×3 kernel, and watch what falls out the other side. The mechanism is far
-    simpler than the name suggests.
+<section data-essay-lang="en">
+<p class="lede">
+    A convolutional neural network processes an image by applying small grids of numbers, called
+    kernels or filters, to local pixel neighborhoods. Draw on the 32×32 canvas, choose a 3×3 kernel,
+    and inspect the multiply-and-sum operation that creates each output value.
   </p>
-
-  <h2>What "convolution" actually means here</h2>
-
-  <p>
-    For every pixel in the output, look at the 3×3 neighborhood centered on that pixel in the
-    input. Multiply each input pixel by the corresponding cell of the kernel. Sum the nine
-    products. That sum becomes the output pixel. Slide the 3×3 window one pixel over and repeat,
-    until every output pixel is computed. That's the entire operation.
+<h2>What the operation does</h2>
+<p>
+    Center the 3×3 kernel on an input location, multiply each of its nine entries by the aligned
+    pixel value, and add the products. The sum becomes one output value. Then move the window and
+    repeat. Most deep-learning libraries implement this operation as <strong>cross-correlation</strong>
+    because the kernel is not flipped; it is commonly called convolution in CNN practice.
   </p>
-
-  <p>
-    The Sobel-X kernel <code>[[−1,0,1],[−2,0,2],[−1,0,1]]</code> measures the horizontal gradient.
-    Wherever the input transitions from dark to light in the horizontal direction, the convolution
-    output spikes positive. Where it transitions light to dark, it spikes negative. The
-    "edges" you see in the output are literally these spikes, brightened.
+<p>
+    The Sobel-X kernel estimates change in the horizontal coordinate. It responds strongly where
+    brightness changes from left to right, so it highlights mostly vertical edges. Positive and
+    negative responses represent opposite edge directions.
   </p>
-
-  <div class="aha">
-    The detection of vertical edges is not pattern recognition. It is nine multiplications and an
-    addition, repeated for every output pixel. The kernel just happens to be designed so that the
-    arithmetic gives you a large result exactly when an edge exists.
+<div class="aha">
+    An edge map begins with local arithmetic, not object recognition. The kernel produces a large
+    magnitude when the pattern of nearby pixel values aligns with the differences encoded in its weights.
   </div>
-
-  <h2>Why the absolute value matters</h2>
-
-  <p>
-    Sobel-X gives positive numbers for one direction of edge and negative for the other. If you
-    display the raw output, the "going light-to-dark" edges look black and the "going dark-to-light"
-    edges look bright. Most visualizations take the absolute value to show edge <em>strength</em>
-    rather than edge direction. Toggle "Take absolute value" to see the difference.
+<h2>Absolute value and ReLU</h2>
+<p>
+    Taking an absolute value discards response direction and keeps magnitude, so both light-to-dark
+    and dark-to-light transitions appear bright. ReLU instead replaces negative values with zero.
+    Many CNN blocks use an activation after a convolution, but architectures vary. One learned channel
+    may preserve a response orientation while another channel learns a complementary filter; no single
+    ReLU channel should be assumed to preserve all information.
   </p>
-
-  <h2>What ReLU does</h2>
-
-  <p>
-    In a real CNN, every convolutional layer is followed by a non-linear activation: usually
-    ReLU, which clips negative values to zero. Toggle "Apply ReLU" with the Sobel-X kernel: half
-    the edge information disappears. That's the cost CNNs pay for the flexibility ReLU provides;
-    they compensate by learning <em>both</em> a kernel and its mirror, so no information is lost
-    across the layer.
-  </p>
-
-  <h2>Stacking layers: pooling and conv-on-conv</h2>
-
-  <p>
-    A single 3×3 convolution sees only 9 pixels at a time. To recognize larger structures
-    (a whole letter, a face, an object), CNNs <em>stack</em> convolutions and interleave them
-    with downsampling operations. The layer-mode dropdown above demonstrates the two basic
-    stacking moves:
-  </p>
-
-  <ul>
-    <li><strong>Conv + max-pool 2×2.</strong> After the convolution, take 2×2 blocks of pixels
-      and keep only the brightest from each block. The output is half the resolution (16×16
-      instead of 32×32). This (a) reduces computation for the next layer, and (b) gives the
-      network a small dose of translation-invariance: shifting the input by one pixel doesn't
-      change the output much.</li>
-    <li><strong>Conv → conv (stacked).</strong> Two 3×3 convolutions in a row. The first sees
-      3×3 = 9 input pixels per output pixel; the second sees 3×3 = 9 first-layer outputs per
-      its own output pixel. Each of those 9 first-layer outputs was itself computed from 3×3
-      input pixels. So each pixel of the final output is a function of a <strong>5×5 region</strong>
-      of the original input. Stacking <em>n</em> 3×3 convs gives a receptive field of
-      <code>2n+1</code> in each direction: without ever using a kernel larger than 3×3.</li>
-  </ul>
-
-  <div class="aha">
-    Modern CNNs almost never use kernels larger than 3×3. They get arbitrary receptive fields by
-    stacking. Two stacked 3×3 convs have the same receptive field as one 5×5 conv but use fewer
-    parameters (18 vs 25) and produce a more expressive function (because of the non-linearity
-    between them). This is the central insight of VGGNet (2014) and every CNN since.
+<h2>Pooling and receptive fields</h2>
+<ul>
+<li><strong>Convolution plus 2×2 max pooling:</strong> each 2×2 output region is reduced to its
+      largest value. Resolution is halved, computation falls, and small translations may affect the
+      pooled representation less.</li>
+<li><strong>Two stacked 3×3 convolutions:</strong> with stride one and suitable padding, each
+      final output depends on a 5×5 region of the original input. Stacking <code>n</code> such layers
+      gives a theoretical receptive-field width of <code>2n + 1</code>.</li>
+</ul>
+<div class="aha">
+    Small kernels are common because stacking them expands the receptive field while inserting
+    nonlinear transformations between layers. Two 3×3 kernels use 18 spatial weights versus 25 for
+    one 5×5 kernel per input-output channel pair, before biases and channel counts are considered.
+    VGG popularized this design, although modern architectures also use 1×1, 5×5, 7×7, dilated, and
+    larger depthwise kernels when useful.
   </div>
-
-  <h2>How CNNs go from one kernel to thousands</h2>
-
-  <p>
-    A real CNN doesn't use one kernel: it uses dozens at the first layer, hundreds in the middle,
-    thousands at the end. And the kernels aren't hand-designed (like our edge detectors): they're
-    <em>learned</em> from data by gradient descent. The training process discovers kernels that
-    are useful for the task: early-layer kernels typically end up looking like edge and color
-    detectors; middle-layer kernels detect textures and shapes; late-layer kernels detect entire
-    objects (eyes, wheels, faces).
+<h2>From one kernel to many channels</h2>
+<p>
+    A real CNN layer applies multiple learned kernels across all input channels. Each kernel produces
+    an output feature map, and the stack of maps becomes the next layer's representation. Early
+    features often resemble oriented edges or color contrasts; later features can combine simpler
+    patterns into textures, parts, and task-relevant structures. These interpretations are tendencies,
+    not fixed labels assigned to every channel.
   </p>
-
-  <h2>What this simplifies</h2>
-
-  <p>
-    Real CNNs use 3D kernels (height × width × channels), apply many kernels per layer (forming a
-    "feature map" stack), interleave convolutions with pooling and batch normalization, and use
-    backprop through the convolution operation to learn the weights. But the basic operation -
-    multiply, sum, slide, repeat: is exactly what runs above.
+<h2>What this model leaves out</h2>
+<p>
+    Practical CNNs use kernels with height, width, and channel dimensions; learned biases; padding and
+    stride choices; normalization; residual connections; and backpropagation through all operations.
+    The applet isolates the local computation and the distinction between hand-designed and learned filters.
   </p>
-
-  <div class="for-teachers">
-    <h3>For teachers</h3>
-    <p><strong>Curriculum:</strong> Vision with CNNs. Convolution as multiply-and-sum;
-       hand-designed vs learned filters; the role of activation functions after convolution.
-       The 🎯 Learn the filter mode is the bridge from the neural-network lesson: a CNN learns its filters by gradient descent the same way last week's neural network learned its weights.
-       The Inspect &amp; scan panel lets students check one convolution by hand (the sum stays hidden until they click); the Learner-vs-target view shows a single image can't fully pin down a filter: different kernels can give the same output (under-determination).</p>
-    <p><strong>Pre-exploration prompts:</strong></p>
-    <ul>
-      <li>How might a computer tell that a picture contains "an edge"?</li>
-      <li>If I gave you a 3×3 number grid, what could you do with it to highlight an edge in a picture?</li>
-      <li>Why do CNNs use LOTS of small filters instead of one big one?</li>
-    </ul>
-    <p><strong>Post-exploration prompts:</strong></p>
-    <ul>
-      <li>Draw a vertical line. Apply Sobel-X. Apply Sobel-Y. Which one lights up? Why?</li>
-      <li>Apply the Identity kernel. Why does the output look like the input?</li>
-      <li>Apply Sobel-X with "absolute value" OFF. The right side of the edge is black. What's mathematically happening?</li>
-      <li>Build a custom kernel that highlights just diagonal edges. (Hint: rotate the Sobel-X pattern.)</li>
-      <li>Apply Blur, then Edge. Then try Edge, then Blur. Same result? Why does order matter?</li>
-    </ul>
-    <p><strong>Common misconceptions defeated:</strong>
-       "CNNs invented edge detection" (no: classical CV used hand-designed filters long before; CNNs LEARN them);
-       "ReLU is the model" (no: it's just a clip; the convolution does the work);
-       "more filters = always better" (more filters add capacity but also computation and overfitting risk).</p>
+<div class="for-teachers">
+<h3>For teachers</h3>
+<p><strong>Curriculum:</strong> Cross-correlation as multiply-and-sum, kernels, feature maps,
+      edge direction, activation functions, pooling, receptive fields, and learned filters.</p>
+<p><strong>Pre-exploration prompts:</strong></p>
+<ul>
+<li>How could nine numbers detect a local brightness change?</li>
+<li>Why might one filter respond to vertical edges and another to horizontal edges?</li>
+<li>What information is lost when a response is replaced by its absolute value or clipped by ReLU?</li>
+</ul>
+<p><strong>Post-exploration prompts:</strong></p>
+<ul>
+<li>Draw vertical and horizontal lines, then compare Sobel-X and Sobel-Y.</li>
+<li>Inspect one output location and verify every multiplication before revealing the sum.</li>
+<li>Compare convolution followed by pooling with two stacked convolutions. Which quantities change?</li>
+<li>Use the learner-versus-target view. Why can one example fail to determine a unique kernel?</li>
+</ul>
+<p><strong>Misconceptions to test:</strong> the operation already recognizes objects; Sobel-X
+      detects horizontal edges because of its name; every convolution must be followed by ReLU;
+      modern networks use only 3×3 kernels.</p>
+</div>
+</section>
+<section data-essay-lang="zh" hidden="" lang="zh">
+<p class="lede">
+    卷积神经网络通过把称为卷积核或滤波器的小型数字网格应用到局部像素邻域来处理图像。你可以在 32×32 画布上绘图，选择 3×3 卷积核，并检查生成每个输出值的乘加过程。
+  </p>
+<h2>这一运算做了什么</h2>
+<p>
+    把 3×3 卷积核对准一个输入位置，将九个核值分别与对应像素相乘，再把乘积相加。这个和成为一个输出值。随后移动窗口并重复。多数深度学习库实际执行的是<strong>互相关</strong>，因为卷积核没有翻转；在 CNN 语境中仍通常称为卷积。
+  </p>
+<p>
+    Sobel-X 核估计水平方向坐标上的变化。它对亮度从左向右的变化反应强烈，因此主要突出垂直边缘。正响应与负响应表示相反的边缘方向。
+  </p>
+<div class="aha">
+    边缘图首先来自局部算术，而不是物体识别。当邻近像素模式与卷积核权重编码的差分结构一致时，输出幅度就会较大。
   </div>
-
+<h2>绝对值与 ReLU</h2>
+<p>
+    取绝对值会丢弃响应方向并保留幅度，因此由亮到暗和由暗到亮的变化都会显示为明亮边缘。ReLU 则把负值替换为零。许多 CNN 模块会在卷积后使用激活函数，但架构并不完全相同。一个学习到的通道可能保留某一方向响应，另一个通道可能学习互补滤波器；不能假设单个经过 ReLU 的通道保留了全部信息。
+  </p>
+<h2>池化与感受野</h2>
+<ul>
+<li><strong>卷积加 2×2 最大池化：</strong>每个 2×2 输出区域只保留最大值。分辨率减半，计算量降低，小幅平移对池化表示的影响也可能减小。</li>
+<li><strong>两个堆叠的 3×3 卷积：</strong>在步幅为一并使用适当填充时，最终每个输出依赖原始输入中的 5×5 区域。堆叠 <code>n</code> 个此类层会得到宽度为 <code>2n + 1</code> 的理论感受野。</li>
+</ul>
+<div class="aha">
+    小卷积核很常见，因为堆叠可以扩大感受野，并在层之间插入非线性变换。对每一对输入和输出通道而言，两个 3×3 核使用 18 个空间权重，一个 5×5 核使用 25 个，尚未计入偏置和通道数量。VGG 推广了这种设计，不过现代架构也会按需要使用 1×1、5×5、7×7、空洞卷积和更大的深度卷积核。
+  </div>
+<h2>从一个卷积核到多个通道</h2>
+<p>
+    真实 CNN 层会在所有输入通道上应用多个学习到的卷积核。每个核产生一个输出特征图，多个特征图组成下一层表示。早期特征常类似有方向的边缘或颜色对比，后期特征可把简单模式组合为纹理、局部部件和任务相关结构。这些是常见趋势，并不是每个通道都具有固定的人类标签。
+  </p>
+<h2>这个模型省略了什么</h2>
+<p>
+    实际 CNN 使用具有高度、宽度和通道维度的卷积核、学习到的偏置、不同填充与步幅、归一化、残差连接，以及穿过全部运算的反向传播。本工具集中呈现局部计算，以及手工滤波器与学习滤波器的区别。
+  </p>
+<div class="for-teachers">
+<h3>教师指导</h3>
+<p><strong>课程目标：</strong>把互相关理解为乘加、卷积核、特征图、边缘方向、激活函数、池化、感受野和学习滤波器。</p>
+<p><strong>探索前问题：</strong></p>
+<ul>
+<li>九个数字如何检测局部亮度变化？</li>
+<li>为什么一个滤波器可能响应垂直边缘，另一个响应水平边缘？</li>
+<li>取绝对值或用 ReLU 截断时会丢失什么信息？</li>
+</ul>
+<p><strong>探索后问题：</strong></p>
+<ul>
+<li>绘制垂直线和水平线，再比较 Sobel-X 与 Sobel-Y。</li>
+<li>检查一个输出位置，在显示总和前验证每一次乘法。</li>
+<li>比较卷积后池化与两个堆叠卷积。哪些量发生变化？</li>
+<li>使用学习者与目标视图。为什么一个样本无法确定唯一卷积核？</li>
+</ul>
+<p><strong>需要检验的误解：</strong>该运算已经在识别物体；Sobel-X 因名称而检测水平边缘；每个卷积后都必须使用 ReLU；现代网络只使用 3×3 卷积核。</p>
+</div>
+</section>
 </article>
-
 <script>
 (() => {
   const $ = id => document.getElementById(id);
@@ -1535,7 +1534,7 @@
     });
     document.querySelectorAll('.lang-switch button').forEach(b =>
       b.classList.toggle('active', b.dataset.lang === lang));
-    try { localStorage.setItem('lang', lang); } catch (_) {}
+    try { localStorage.setItem('ai-playgrounds-lang', lang); localStorage.setItem('lang', lang); } catch (_) {}
   }
   document.querySelectorAll('.lang-switch button').forEach(b =>
     b.addEventListener('click', () => {
@@ -1547,7 +1546,7 @@
       try { if (typeof renderScenarioGallery === 'function') renderScenarioGallery(); } catch (_) {}
     }));
   let initialLang = 'en';
-  try { initialLang = localStorage.getItem('lang') || 'en'; } catch (_) {}
+  try { initialLang = new URLSearchParams(location.search).get('lang') || localStorage.getItem('ai-playgrounds-lang') || localStorage.getItem('lang') || 'en'; } catch (_) {}
   setLang(initialLang);
 
   function setTheme(t) {
@@ -3004,13 +3003,11 @@
   });
 })();
 </script>
-
 <footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
-    <p style="margin:0 0 6px;"><a href="#top" data-i18n="footer-top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
-    <p style="margin:0;"><span data-i18n="footer-course">Made for the Introduction to AI course at Haidian Kaiwen Academy.</span></p>
-    <p style="margin:6px 0 0;">© <span data-current-year>2026</span> Logan M. Dixon · <a href="https://lmdixon23.github.io/" data-i18n="footer-portfolio" style="color:var(--accent,#0891b2);">Portfolio</a> · <a href="../../index.html" data-i18n="footer-project" style="color:var(--accent,#0891b2);">AI Playgrounds</a> · <a href="https://github.com/lmdixon23/ai-playgrounds" data-i18n="footer-source" style="color:var(--accent,#0891b2);">Source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-i18n="footer-issue" style="color:var(--accent,#0891b2);">Report an issue</a> · <a href="https://orcid.org/0009-0001-0592-462X" rel="me" style="color:var(--accent,#0891b2);">ORCID</a></p>
-  </footer>
-
+<p style="margin:0 0 6px;"><a data-i18n="footer-top" href="#top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
+<p style="margin:0;"><span data-i18n="footer-course">Made for the Introduction to AI course at Haidian Kaiwen Academy.</span></p>
+<p style="margin:6px 0 0;">© <span data-current-year="">2026</span> Logan M. Dixon · <a data-i18n="footer-portfolio" href="https://lmdixon23.github.io/" style="color:var(--accent,#0891b2);">Portfolio</a> · <a data-i18n="footer-project" href="../../index.html" style="color:var(--accent,#0891b2);">AI Playgrounds</a> · <a data-i18n="footer-source" href="https://github.com/lmdixon23/ai-playgrounds" style="color:var(--accent,#0891b2);">Source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a data-i18n="footer-issue" href="https://github.com/lmdixon23/ai-playgrounds/issues" style="color:var(--accent,#0891b2);">Report an issue</a> · <a href="https://orcid.org/0009-0001-0592-462X" rel="me" style="color:var(--accent,#0891b2);">ORCID</a></p>
+</footer>
 <script>
 (function() {
   const LAB_CONFIG = {"slug": "convolution", "title": "Convolution lab packet", "zhTitle": "卷积实验包", "fields": [{"label": "Layer mode", "selector": "#layerSel", "kind": "selected"}, {"label": "Image preset", "selector": "#presetSel", "kind": "selected"}, {"label": "Kernel", "selector": "#kernelSel", "kind": "selected"}, {"label": "Stride", "selector": "#convStride", "kind": "value"}, {"label": "Padding", "selector": "#convPad", "kind": "value"}, {"label": "Learn target", "selector": "#learnTargetSel", "kind": "selected"}, {"label": "Learning loss", "selector": "#learnLoss", "kind": "text"}, {"label": "Scan position", "selector": "#scanPos", "kind": "text"}, {"label": "Window math", "selector": "#windowMath", "kind": "text"}]};
@@ -3132,8 +3129,6 @@
   loadDraft(); applyLabLang(); refreshState();
 })();
 </script>
-
-
 <script>
 (function() {
   const VISUAL_CONFIG = {"intro":"Watch convolution as local evidence aggregation: a small window slides over the image, multiplies by a kernel, sums the result, and builds a new feature map.","zhIntro":"把卷积看成局部证据聚合：小窗口在图像上滑动，与卷积核相乘，求和后形成新的特征图。","misread":"A kernel is not a magic detector. It is a fixed pattern of weights whose result depends on the local window.","zhMisread":"卷积核不是魔法检测器。它是一组固定权重，结果取决于当前局部窗口。","steps":[{"label":"Input window","zhLabel":"输入窗口","text":"Only the pixels inside the current window affect the current output cell.","zhText":"只有当前窗口内的像素会影响当前输出格。","selector":"#scanPos","kind":"text","liveLabel":"Scan","zhLiveLabel":"扫描"},{"label":"Kernel weights","zhLabel":"卷积核权重","text":"The kernel decides which local pattern should be amplified or suppressed.","zhText":"卷积核决定哪种局部模式应该被增强或抑制。","selector":"#kernelSel","kind":"selected","liveLabel":"Kernel","zhLiveLabel":"卷积核"},{"label":"Multiply and sum","zhLabel":"相乘并求和","text":"The visible arithmetic is the bridge from image patch to feature value.","zhText":"可见算术是从图像局部块到特征值的桥梁。","selector":"#windowMath","kind":"text","liveLabel":"Math","zhLiveLabel":"算式"},{"label":"Feature map","zhLabel":"特征图","text":"Moving the same kernel across space builds a map of where that pattern appears.","zhText":"同一个卷积核在空间中移动，形成该模式出现位置的地图。","selector":"#layerSel","kind":"selected","liveLabel":"Layer","zhLiveLabel":"层"}],"fields":[{"label":"Layer mode","zhLabel":"层模式","selector":"#layerSel","kind":"selected"},{"label":"Kernel","zhLabel":"卷积核","selector":"#kernelSel","kind":"selected"},{"label":"Stride","zhLabel":"步幅","selector":"#convStride","kind":"value"},{"label":"Padding","zhLabel":"填充","selector":"#convPad","kind":"value"},{"label":"Window math","zhLabel":"窗口算式","selector":"#windowMath","kind":"text"}]};
@@ -3193,9 +3188,8 @@
   renderVisualExplanation();
 })();
 </script>
-
 <!-- Privacy-friendly analytics: GoatCounter, cookieless. -->
-  <script>
+<script>
 (function () {
   const analyticsAllowedHost = location.hostname === 'lmdixon23.github.io';
   const params = new URLSearchParams(location.search);
@@ -3208,7 +3202,6 @@
   document.head.appendChild(s);
 })();
 </script>
-
 <script>
 (function() {
   const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "Layer mode", "zhLabel": "层模式", "selector": "#layerSel", "kind": "selected"}, {"label": "Kernel", "zhLabel": "卷积核", "selector": "#kernelSel", "kind": "selected"}, {"label": "Stride", "zhLabel": "步幅", "selector": "#convStride", "kind": "value"}, {"label": "Padding", "zhLabel": "填充", "selector": "#convPad", "kind": "value"}, {"label": "Window math", "zhLabel": "窗口算式", "selector": "#windowMath", "kind": "text"}]};
@@ -3305,17 +3298,14 @@
   window.renderAccessibilityLayer = renderAccessibilityLayer;
 })();
 </script>
-
 <script>
 (function () {
   document.querySelectorAll('[data-current-year]').forEach(el => { el.textContent = new Date().getFullYear(); });
 })();
 </script>
-
-
 <script id="learner-content-system">
 (() => {
-  const profile = {"slug":"convolution","en":{"title":"Convolution Playground","big":"Move a small filter across an image. Inspect every multiply-and-sum operation, then compare edge, blur, pooling, and learned-filter behavior.","primer":"A convolution converts a local patch of pixels into one output value. Learn the names of the filter, output, and movement settings before stacking layers.","terms":[{"term":"Convolution","definition":"A repeated multiply-and-sum operation applied to local image patches."},{"term":"Kernel or filter","definition":"The small matrix of weights that slides across the image."},{"term":"Feature map","definition":"The grid of output values produced by a filter."},{"term":"Stride","definition":"How many pixels the kernel moves at each step."},{"term":"Padding","definition":"Extra border values added so the kernel can process image edges."},{"term":"Convolutional neural network (CNN)","definition":"A neural network that learns many filters across multiple layers."}],"scenarios":[{"title":"The identity filter preserves the image","question":"What filter would copy each pixel without changing its neighbors?","run":"Apply the identity kernel to the cross image and compare input with output.","predict":"Predict which kernel cell must carry the full weight.","explain":"Explain why a center weight of one and all other weights of zero copies the image."},{"title":"The Sobel x-direction filter detects vertical edges","question":"Why does measuring horizontal brightness change reveal vertical boundaries?","run":"Apply the Sobel x-direction filter and inspect where the output becomes bright or dark.","predict":"Predict which part of the cross will produce the strongest response.","explain":"Connect the left-to-right brightness change to the vertical edge orientation."},{"title":"The Sobel y-direction filter detects horizontal edges","question":"How does rotating a filter change the feature it detects?","run":"Apply the Sobel y-direction filter to the same image and compare it with the x-direction result.","predict":"Predict which bar of the cross will now produce the strongest response.","explain":"Explain how the rotated weights measure top-to-bottom change."},{"title":"Max pooling reduces resolution","question":"What information survives when each small block keeps only its strongest activation?","run":"Switch to convolution followed by two-by-two max pooling and compare output dimensions.","predict":"Predict which small features will remain visible after pooling.","explain":"Explain the tradeoff between lower spatial detail and a smaller, more tolerant representation."},{"title":"Stacked convolutions see a larger region","question":"Why can two small filters detect a pattern larger than either filter alone?","run":"Stack two three-by-three convolutions and inspect the effective receptive field.","predict":"Predict the effective width and height before applying the second layer.","explain":"Trace how one second-layer value depends on a five-by-five region of the original image."}]},"zh":{"title":"卷积演练场","big":"让一个小滤波器在图像上滑动。检查每次乘加运算，再比较边缘、模糊、池化和学习滤波器的行为。","primer":"卷积把一小块像素转换为一个输出值。叠加层之前，先熟悉滤波器、输出和移动设置的名称。","terms":[{"term":"卷积","definition":"对图像局部区域重复进行乘法并求和的运算。"},{"term":"卷积核或滤波器","definition":"在图像上滑动的小型权重矩阵。"},{"term":"特征图","definition":"滤波器产生的输出值网格。"},{"term":"步幅","definition":"卷积核每一步移动的像素数。"},{"term":"填充","definition":"在图像边缘增加的额外数值，使卷积核能处理边界。"},{"term":"卷积神经网络（CNN）","definition":"在多层中学习许多滤波器的神经网络。"}],"scenarios":[{"title":"恒等滤波器保持图像不变","question":"什么滤波器能复制每个像素而不改变邻居？","run":"把恒等卷积核应用到十字图像，并比较输入与输出。","predict":"预测哪个卷积核单元必须承担全部权重。","explain":"解释中心权重为 1、其他权重为 0 为什么会复制图像。"},{"title":"Sobel x 方向滤波器检测垂直边缘","question":"为什么测量水平方向亮度变化会显示垂直边界？","run":"应用 Sobel x 方向滤波器，观察输出哪里变亮或变暗。","predict":"预测十字的哪一部分会产生最强响应。","explain":"把从左到右的亮度变化与垂直边缘方向联系起来。"},{"title":"Sobel y 方向滤波器检测水平边缘","question":"旋转滤波器为什么会改变检测到的特征？","run":"把 Sobel y 方向滤波器应用到同一图像，并与 x 方向结果比较。","predict":"预测十字的哪条横杆会产生最强响应。","explain":"解释旋转后的权重如何测量从上到下的变化。"},{"title":"最大池化降低分辨率","question":"每个小区域只保留最强激活时，哪些信息会留下？","run":"切换到卷积后接二乘二最大池化，并比较输出尺寸。","predict":"预测哪些小特征在池化后仍可见。","explain":"解释空间细节减少与表示更小、更具容忍性之间的取舍。"},{"title":"叠加卷积看到更大区域","question":"为什么两个小滤波器能检测比单个滤波器更大的模式？","run":"叠加两个三乘三卷积并检查有效感受野。","predict":"应用第二层前预测有效宽度和高度。","explain":"追踪第二层一个数值如何依赖原图中的五乘五区域。"}]}};
+  const profile = {"slug":"convolution","en":{"title":"Convolution Playground","big":"Move a small filter across an image. Inspect every multiply-and-sum operation, then compare edge, blur, pooling, and learned-filter behavior.","primer":"A convolution converts a local patch of pixels into one output value. Learn the names of the filter, output, and movement settings before stacking layers.","terms":[{"term":"Convolution","definition":"A repeated multiply-and-sum operation applied to local image patches."},{"term":"Kernel or filter","definition":"The small matrix of weights that slides across the image."},{"term":"Feature map","definition":"The grid of output values produced by a filter."},{"term":"Stride","definition":"How many pixels the kernel moves at each step."},{"term":"Padding","definition":"Extra border values added so the kernel can process image edges."},{"term":"Convolutional neural network (CNN)","definition":"A neural network that learns many filters across multiple layers."},{"term":"Channel","definition":"One component of an image or feature map, such as red, green, and blue."},{"term":"Receptive field","definition":"The region of the input that can affect one output value."},{"term":"Learned filter","definition":"A kernel whose values are adjusted from data during training rather than chosen by hand."}],"scenarios":[{"title":"The identity filter preserves the image","question":"What filter would copy each pixel without changing its neighbors?","run":"Apply the identity kernel to the cross image and compare input with output.","predict":"Predict which kernel cell must carry the full weight.","explain":"Explain why a center weight of one and all other weights of zero copies the image."},{"title":"The Sobel x-direction filter detects vertical edges","question":"Why does measuring horizontal brightness change reveal vertical boundaries?","run":"Apply the Sobel x-direction filter and inspect where the output becomes bright or dark.","predict":"Predict which part of the cross will produce the strongest response.","explain":"Connect the left-to-right brightness change to the vertical edge orientation."},{"title":"The Sobel y-direction filter detects horizontal edges","question":"How does rotating a filter change the feature it detects?","run":"Apply the Sobel y-direction filter to the same image and compare it with the x-direction result.","predict":"Predict which bar of the cross will now produce the strongest response.","explain":"Explain how the rotated weights measure top-to-bottom change."},{"title":"Max pooling reduces resolution","question":"What information survives when each small block keeps only its strongest activation?","run":"Switch to convolution followed by two-by-two max pooling and compare output dimensions.","predict":"Predict which small features will remain visible after pooling.","explain":"Explain the tradeoff between lower spatial detail and a smaller, more tolerant representation."},{"title":"Stacked convolutions see a larger region","question":"Why can two small filters detect a pattern larger than either filter alone?","run":"Stack two three-by-three convolutions and inspect the effective receptive field.","predict":"Predict the effective width and height before applying the second layer.","explain":"Trace how one second-layer value depends on a five-by-five region of the original image."}]},"zh":{"title":"卷积演练场","big":"让一个小滤波器在图像上滑动。检查每次乘加运算，再比较边缘、模糊、池化和学习滤波器的行为。","primer":"卷积把一小块像素转换为一个输出值。叠加层之前，先熟悉滤波器、输出和移动设置的名称。","terms":[{"term":"卷积","definition":"对图像局部区域重复进行乘法并求和的运算。"},{"term":"卷积核或滤波器","definition":"在图像上滑动的小型权重矩阵。"},{"term":"特征图","definition":"滤波器产生的输出值网格。"},{"term":"步幅","definition":"卷积核每一步移动的像素数。"},{"term":"填充","definition":"在图像边缘增加的额外数值，使卷积核能处理边界。"},{"term":"卷积神经网络（CNN）","definition":"在多层中学习许多滤波器的神经网络。"},{"term":"通道","definition":"图像或特征图的一个分量，例如红、绿、蓝通道。"},{"term":"感受野","definition":"能够影响某一个输出值的输入区域。"},{"term":"学习得到的滤波器","definition":"在训练中根据数据调整数值，而不是由人手工指定的卷积核。"}],"scenarios":[{"title":"恒等滤波器保持图像不变","question":"什么滤波器能复制每个像素而不改变邻居？","run":"把恒等卷积核应用到十字图像，并比较输入与输出。","predict":"预测哪个卷积核单元必须承担全部权重。","explain":"解释中心权重为 1、其他权重为 0 为什么会复制图像。"},{"title":"Sobel x 方向滤波器检测垂直边缘","question":"为什么测量水平方向亮度变化会显示垂直边界？","run":"应用 Sobel x 方向滤波器，观察输出哪里变亮或变暗。","predict":"预测十字的哪一部分会产生最强响应。","explain":"把从左到右的亮度变化与垂直边缘方向联系起来。"},{"title":"Sobel y 方向滤波器检测水平边缘","question":"旋转滤波器为什么会改变检测到的特征？","run":"把 Sobel y 方向滤波器应用到同一图像，并与 x 方向结果比较。","predict":"预测十字的哪条横杆会产生最强响应。","explain":"解释旋转后的权重如何测量从上到下的变化。"},{"title":"最大池化降低分辨率","question":"每个小区域只保留最强激活时，哪些信息会留下？","run":"切换到卷积后接二乘二最大池化，并比较输出尺寸。","predict":"预测哪些小特征在池化后仍可见。","explain":"解释空间细节减少与表示更小、更具容忍性之间的取舍。"},{"title":"叠加卷积看到更大区域","question":"为什么两个小滤波器能检测比单个滤波器更大的模式？","run":"叠加两个三乘三卷积并检查有效感受野。","predict":"应用第二层前预测有效宽度和高度。","explain":"追踪第二层一个数值如何依赖原图中的五乘五区域。"}]}};
   window.APPLET_LEARNER_PROFILE = profile;
   const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
   const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;
@@ -3356,7 +3346,7 @@
     if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
     jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
     actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
-    window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
+    window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';if(share){share.textContent=zh?'🔗 分享':'🔗 Share';share.title=zh?'复制可在另一浏览器中重新打开当前设置的链接。':'Copy a link that reopens the current settings in another browser.';}summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
     window.refreshAppletToolbar();
     document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
   }
@@ -3381,16 +3371,23 @@
   document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(window.refreshLearnerContent,20)));
 })();
 </script>
-
+<script id="essay-language-script">
+(() => {
+  window.refreshEssayLanguage=()=>{const zh=(document.documentElement.lang||'en').startsWith('zh');document.querySelectorAll('[data-essay-lang]').forEach(el=>{el.hidden=(el.dataset.essayLang==='zh')!==zh})};
+  window.refreshEssayLanguage();
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(window.refreshEssayLanguage,30)));
+})();
+</script>
 <script id="learning-modes-script">
 (() => {
-  const slug = location.pathname.split('/').filter(Boolean).slice(-2,-1)[0] || 'convolution';
+  const slug = location.pathname.split('/').filter(Boolean).slice(-2,-1)[0] || 'applet';
   const inner = document.querySelector('.interactive-inner');
   if (!inner || inner.querySelector('.learning-mode-shell')) return;
-  const oldDeck = inner.querySelector(':scope > .learning-deck');
+  const oldDeck = [...inner.children].find(el => el.classList && el.classList.contains('learning-deck'));
   if (oldDeck) { [...oldDeck.children].forEach(el => inner.insertBefore(el, oldDeck)); oldDeck.remove(); }
-  const details = [...inner.querySelectorAll(':scope > details')];
+  const details = [...inner.children].filter(el => el.tagName === 'DETAILS');
   if (!details.length) return;
+
   const modeFor = d => {
     if (d.matches('.visual-explanation,.lesson-tour,.key-terms')) return 'understand';
     if (d.matches('.worksheet,.classroom-lab')) return 'classroom';
@@ -3399,39 +3396,173 @@
   };
   const lang = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
   const labels = {explore:['Explore','探索'],understand:['Understand','理解'],classroom:['Use in class','课堂使用'],access:['Text and keyboard','文本与键盘']};
-  const intros = {explore:['Start with the featured experiment, then use the scenarios to test a prediction.','从精选实验开始，再使用情境检验预测。'],understand:['Open the mechanism view and lesson sequence when you need to explain why the result changed.','需要解释结果为什么变化时，打开机制视图和课程序列。'],classroom:['Collect reasoning with the worksheet or the local student response packet.','使用练习题或本地学生回答包收集推理。'],access:['Use the text-state description and keyboard guidance when the visual display is not enough.','当可视显示不足时，使用文本状态说明和键盘指导。']};
-  const shell=document.createElement('section');shell.className='learning-mode-shell';shell.setAttribute('aria-label','Applet learning modes');
-  shell.innerHTML='<div class="learning-mode-head"><div><h2 data-mode-heading></h2><p data-mode-copy></p></div><div class="learning-mode-tools"><button type="button" class="copy-experiment" data-copy-experiment>Copy this experiment</button></div></div><div class="learning-mode-tabs" role="tablist"></div><div class="experiment-status" aria-live="polite"></div>';
-  const tabs=shell.querySelector('.learning-mode-tabs');const panels={};
-  Object.keys(labels).forEach((key,i)=>{const b=document.createElement('button');b.type='button';b.className='learning-mode-tab';b.role='tab';b.dataset.mode=key;b.id='mode-tab-'+key;b.setAttribute('aria-controls','mode-panel-'+key);tabs.appendChild(b);const p=document.createElement('div');p.className='learning-mode-panel';p.id='mode-panel-'+key;p.role='tabpanel';p.setAttribute('aria-labelledby',b.id);p.innerHTML='<div class="mode-intro"></div>';shell.appendChild(p);panels[key]=p});
-  inner.insertBefore(shell,details[0]);details.forEach(d=>{const mode=modeFor(d);if(d.matches('.scenario-gallery,.visual-explanation,.classroom-lab,.accessibility-layer,.signature-challenge'))d.classList.add('mode-wide');panels[mode].appendChild(d)});
-  const sig=panels.explore.querySelector('.signature-challenge');if(sig){panels.explore.insertBefore(sig,panels.explore.querySelector('.mode-intro').nextSibling);sig.open=true;const summary=sig.querySelector('summary span,summary');if(summary&&lang()==='en')summary.textContent='✨ Featured experiment';const body=sig.querySelector('.signature-challenge-panel')||sig.querySelector(':scope > div');if(body&&!body.querySelector('.featured-actions')){const actions=document.createElement('div');actions.className='featured-actions';actions.innerHTML='<button type="button" class="step-btn" data-start-featured>Start featured experiment</button>';body.appendChild(actions)}}
-  const lab=panels.classroom.querySelector('.classroom-lab summary span');if(lab&&lang()==='en')lab.textContent='🧪 Student response packet';
-  const a11y=panels.access.querySelector('.accessibility-layer summary span');if(a11y&&lang()==='en')a11y.textContent='♿ Text and keyboard support';
+  const intros = {
+    explore:['Start with the featured experiment, then use the scenarios to test a prediction.','从精选实验开始，再使用情境检验预测。'],
+    understand:['Open the mechanism view and lesson sequence when you need to explain why the result changed.','需要解释结果为什么变化时，打开机制视图和课程序列。'],
+    classroom:['Collect reasoning with the worksheet or the local student response packet.','使用练习题或本地学生回答包收集推理。'],
+    access:['Use the text-state description and keyboard guidance when the visual display is not enough.','当可视显示不足时，使用文本状态说明和键盘指导。']
+  };
+  const ui = {
+    en:{copy:'Copy this experiment',copied:'Experiment link copied.',copyPrompt:'Copy this experiment URL',featuredSummary:'✨ Featured experiment',featuredPrefix:'Featured experiment',featuredQuestion:'Core question',featuredRun:'Run and watch',start:'Start featured experiment',shell:'Applet learning modes'},
+    zh:{copy:'复制此实验',copied:'实验链接已复制。',copyPrompt:'复制此实验链接',featuredSummary:'✨ 精选实验',featuredPrefix:'精选实验',featuredQuestion:'核心问题',featuredRun:'运行并观察',start:'开始精选实验',shell:'交互工具学习模式'}
+  };
+  const featuredIndex={"search-pathfinding":0,"bayes-classifier":0,"overfitting":1,"knn-classifier":4,"wumpus-world":4,"cnf-sat":2,"bayes-network":1,"hill-climbing":1,"kmeans":4,"neural-network":1,"convolution":4,"q-learning-gridworld":2};
+
+  const shell=document.createElement('section');
+  shell.className='learning-mode-shell';
+  shell.innerHTML='<div class="learning-mode-head"><div><h2 data-mode-heading></h2><p data-mode-copy></p></div><div class="learning-mode-tools"><button type="button" class="copy-experiment" data-copy-experiment></button></div></div><div class="learning-mode-tabs" role="tablist"></div><div class="experiment-status" aria-live="polite"></div>';
+  const tabs=shell.querySelector('.learning-mode-tabs');
+  const panels={};
+  Object.keys(labels).forEach(key=>{
+    const b=document.createElement('button');b.type='button';b.className='learning-mode-tab';b.role='tab';b.dataset.mode=key;b.id='mode-tab-'+key;b.setAttribute('aria-controls','mode-panel-'+key);tabs.appendChild(b);
+    const p=document.createElement('div');p.className='learning-mode-panel';p.id='mode-panel-'+key;p.role='tabpanel';p.setAttribute('aria-labelledby',b.id);p.innerHTML='<div class="mode-intro"></div>';shell.appendChild(p);panels[key]=p;
+  });
+  inner.insertBefore(shell,details[0]);
+  details.forEach(d=>{const mode=modeFor(d);if(d.matches('.scenario-gallery,.visual-explanation,.classroom-lab,.accessibility-layer,.signature-challenge'))d.classList.add('mode-wide');panels[mode].appendChild(d)});
+
+  const sig=panels.explore.querySelector('.signature-challenge');
+  if(sig){
+    panels.explore.insertBefore(sig,panels.explore.querySelector('.mode-intro').nextSibling);
+    sig.open=true;
+    const body=sig.querySelector('.signature-challenge-panel')||sig.querySelector(':scope > div');
+    if(body&&!body.querySelector('.featured-actions')){const actions=document.createElement('div');actions.className='featured-actions';actions.innerHTML='<button type="button" class="step-btn" data-start-featured></button>';body.appendChild(actions)}
+  }
   let active=new URL(location.href).searchParams.get('mode')||'explore';if(!panels[active])active='explore';
-  function setMode(mode,write=true){active=mode;Object.entries(panels).forEach(([k,p])=>p.hidden=k!==mode);shell.querySelectorAll('.learning-mode-tab').forEach(b=>{const on=b.dataset.mode===mode;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});shell.querySelector('[data-mode-heading]').textContent=labels[mode][lang()==='zh'?1:0];shell.querySelector('[data-mode-copy]').textContent=intros[mode][lang()==='zh'?1:0];panels[mode].querySelector('.mode-intro').innerHTML='<strong>'+labels[mode][lang()==='zh'?1:0]+'.</strong> '+intros[mode][lang()==='zh'?1:0];if(write){const u=new URL(location.href);u.searchParams.set('mode',mode);history.replaceState(null,'',u)}}
+  let restoring=false;
+
+  function profileScenario(){
+    const profile=window.APPLET_LEARNER_PROFILE||{};
+    const locale=lang();
+    const items=(profile[locale]&&profile[locale].scenarios)||[];
+    return items[featuredIndex[slug]??0]||items[0]||{};
+  }
+  function renderFeatured(){
+    if(!sig)return;
+    const c=ui[lang()],item=profileScenario();
+    const summary=sig.querySelector('summary span,summary');if(summary)summary.textContent=c.featuredSummary;
+    const body=sig.querySelector('.signature-challenge-panel')||sig.querySelector(':scope > div');if(!body)return;
+    let strong=body.querySelector(':scope > strong');if(!strong){strong=document.createElement('strong');body.prepend(strong)}
+    strong.textContent=item.title||c.featuredPrefix;
+    let paras=[...body.querySelectorAll(':scope > p')];
+    while(paras.length<2){const p=document.createElement('p');body.insertBefore(p,body.querySelector('.featured-actions'));paras.push(p)}
+    paras[0].innerHTML='<b>'+c.featuredQuestion+':</b> '+(item.question||'');
+    paras[1].innerHTML='<em><b>'+c.featuredRun+':</b> '+(item.run||'')+'</em>';
+    const start=body.querySelector('[data-start-featured]');if(start)start.textContent=c.start;
+  }
+  function renderModeChrome(){
+    const locale=lang(),c=ui[locale];
+    shell.setAttribute('aria-label',c.shell);
+    shell.querySelector('[data-copy-experiment]').textContent=c.copy;
+    shell.querySelectorAll('.learning-mode-tab').forEach(b=>b.textContent=labels[b.dataset.mode][locale==='zh'?1:0]);
+    const heading=shell.querySelector('[data-mode-heading]'),copy=shell.querySelector('[data-mode-copy]');
+    heading.textContent=labels[active][locale==='zh'?1:0];copy.textContent=intros[active][locale==='zh'?1:0];
+    panels[active].querySelector('.mode-intro').innerHTML='<strong>'+labels[active][locale==='zh'?1:0]+'.</strong> '+intros[active][locale==='zh'?1:0];
+    renderFeatured();
+  }
+  function setMode(mode,write=true){
+    active=mode;
+    Object.entries(panels).forEach(([k,p])=>p.hidden=k!==mode);
+    shell.querySelectorAll('.learning-mode-tab').forEach(b=>{const on=b.dataset.mode===mode;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});
+    renderModeChrome();
+    if(write){const u=new URL(location.href);u.searchParams.set('mode',mode);history.replaceState(null,'',u)}
+  }
   shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
-  function statePayload(){const out={};inner.querySelectorAll('select,input').forEach(el=>{if(!el.id||el.closest('.classroom-lab')||['button','submit'].includes(el.type))return;if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;out[el.id]=el.type==='checkbox'?el.checked:el.value});return out}
+
+  function statePayload(){
+    const out={};
+    inner.querySelectorAll('select,input').forEach(el=>{
+      if(!el.id||el.closest('.classroom-lab')||['button','submit'].includes(el.type))return;
+      if(el.type==='radio'){if(el.checked)out[el.id]=el.value;return}
+      out[el.id]=el.type==='checkbox'?el.checked:el.value;
+    });
+    return out;
+  }
   function encode(obj){return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))}
   function decode(s){try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch{return null}}
-  const status=shell.querySelector('.experiment-status');shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('state',encode(statePayload()));try{await navigator.clipboard.writeText(u.href);status.textContent=lang()==='zh'?'实验链接已复制。':'Experiment link copied.'}catch{prompt('Copy this experiment URL',u.href)}};
-  const featuredIndex={"search-pathfinding":0,"bayes-classifier":0,"overfitting":1,"knn-classifier":4,"wumpus-world":4,"cnf-sat":2,"bayes-network":1,"hill-climbing":1,"kmeans":4,"neural-network":1,"convolution":4,"q-learning-gridworld":2};shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('details:not(.signature-challenge)')?.setAttribute('open','')});
-  document.addEventListener('click',e=>{const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode','explore');history.replaceState(null,'',u)});
-  const p=new URL(location.href).searchParams;const restore=()=>{const obj=decode(p.get('state')||'');if(obj)Object.entries(obj).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});const n=Number(p.get('scenario'));if(Number.isInteger(n)){panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click()}if(p.get('featured')==='1')sig?.setAttribute('open','')};
-  function refineCards(){
-    const profile=window.APPLET_LEARNER_PROFILE||{};
-    const locale=lang()==='zh'?'zh':'en';
-    const items=(profile[locale]&&profile[locale].scenarios)||[];
-    const labels=locale==='zh'?['核心问题','运行并观察','先预测','运行后解释']:['Core question','Run and watch','Predict first','Explain afterward'];
-    panels.explore.querySelectorAll('.scenario-card').forEach((card,i)=>{
-      const item=items[i]||{};const h=card.querySelector('h3');
-      if(h&&item.title)h.textContent=(locale==='zh'?'情境 ':'Scenario ')+(i+1)+': '+item.title;
-      const metas=card.querySelectorAll('.scenario-meta');const values=[item.question,item.run,item.predict,item.explain];
-      metas.forEach((meta,j)=>{if(!values[j])return;const strong=meta.querySelector('strong');if(strong)strong.textContent=labels[j]+': ';let node=strong?strong.nextSibling:null;if(node)node.textContent=' '+values[j];else meta.appendChild(document.createTextNode(' '+values[j]));});
-    });
+  function currentExperimentUrl(){
+    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',lang());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
   }
-  setTimeout(()=>{refineCards();window.renderAppletKeyTerms?.();restore()},250);document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.()},20)));setMode(active,false);
+  window.__buildExperimentUrl=()=>currentExperimentUrl().href;
+  const status=shell.querySelector('.experiment-status');
+  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(ui[lang()].copyPrompt,u.href)}};
+
+  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','')});
+  document.addEventListener('click',e=>{const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode','explore');u.searchParams.set('lang',lang());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
+
+  let urlSyncTimer=0;
+  function scheduleUrlState(e){
+    if(restoring)return;
+    const el=e.target;if(!el||!inner.contains(el)||el.closest('.classroom-lab')||!el.matches('input,select'))return;
+    clearTimeout(urlSyncTimer);urlSyncTimer=setTimeout(()=>{const u=currentExperimentUrl();history.replaceState(null,'',u)},80);
+  }
+  document.addEventListener('input',scheduleUrlState,true);document.addEventListener('change',scheduleUrlState,true);
+
+  function applyState(obj){
+    if(!obj)return;
+    Object.entries(obj).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else if(el.type==='radio')el.checked=String(el.value)===String(value);else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});
+  }
+  function restore(){
+    const p=new URL(location.href).searchParams;restoring=true;
+    const n=Number(p.get('scenario'));if(Number.isInteger(n))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
+    applyState(decode(p.get('state')||''));
+    if(p.get('featured')==='1')sig?.setAttribute('open','');
+    restoring=false;
+  }
+  function refineCards(){
+    const profile=window.APPLET_LEARNER_PROFILE||{},locale=lang(),items=(profile[locale]&&profile[locale].scenarios)||[];
+    const labels2=locale==='zh'?['核心问题','运行并观察','先预测','运行后解释']:['Core question','Run and watch','Predict first','Explain afterward'];
+    panels.explore.querySelectorAll('.scenario-card').forEach((card,i)=>{const item=items[i]||{},h=card.querySelector('h3');if(h&&item.title)h.textContent=(locale==='zh'?'情境 ':'Scenario ')+(i+1)+': '+item.title;const metas=card.querySelectorAll('.scenario-meta'),values=[item.question,item.run,item.predict,item.explain];metas.forEach((meta,j)=>{if(!values[j])return;const strong=meta.querySelector('strong');if(strong)strong.textContent=labels2[j]+': ';let node=strong?strong.nextSibling:null;if(node)node.textContent=' '+values[j];else meta.appendChild(document.createTextNode(' '+values[j]))});const button=card.querySelector('button');if(button&&!button.textContent.startsWith('✓'))button.textContent=locale==='zh'?'应用并比较':'Apply and compare'});
+  }
+  function ensureExploreContent(){
+    const hasContent=panels.explore.querySelector('details,.scenario-card');
+    if(!hasContent){details.filter(d=>modeFor(d)==='explore').forEach(d=>panels.explore.appendChild(d))}
+  }
+  setMode(active,false);ensureExploreContent();
+  setTimeout(()=>{refineCards();window.renderAppletKeyTerms?.();restore();renderModeChrome()},250);
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',lang());history.replaceState(null,'',u)},25)));
 })();
 </script>
-</body>
+<script id="applet-translation-completion">
+(() => {
+  const exact = {"Skip to applet controls":"跳到交互控件","▸ Show teacher notes (discussion prompts + curriculum)":"▸ 展开教师说明（讨论提示与课程联系）","▾ Hide teacher notes (discussion prompts + curriculum)":"▾ 收起教师说明（讨论提示与课程联系）","idle":"空闲","(empty)":"（空）","(no actions yet)":"（尚无动作）","exploring":"探索中","RGB input":"RGB 输入","R channel":"R 通道","G channel":"G 通道","B channel":"B 通道","R out":"R 输出","G out":"G 输出","B out":"B 输出","Σ = output":"Σ = 输出"};
+  const rules = [].map(([source,target])=>[new RegExp(source),target]);
+  const currentLanguage=()=>((document.documentElement.lang||'en').startsWith('zh')?'zh':'en');
+  const excluded=node=>node.parentElement && node.parentElement.closest('script,style,noscript,[data-essay-lang="en"]');
+  const applyRule=text=>{
+    if(Object.prototype.hasOwnProperty.call(exact,text))return exact[text];
+    for(const [pattern,target] of rules){if(pattern.test(text)){pattern.lastIndex=0;return text.replace(pattern,target)}}
+    return null;
+  };
+  function translateNode(node){
+    if(excluded(node))return;
+    const raw=node.nodeValue||'',trimmed=raw.trim();if(!trimmed)return;
+    if(currentLanguage()==='en'){
+      if(node.__appletEnglish!==undefined){const start=raw.indexOf(trimmed);node.nodeValue=raw.slice(0,start)+node.__appletEnglish+raw.slice(start+trimmed.length);delete node.__appletEnglish}
+      return;
+    }
+    const translated=applyRule(trimmed);if(translated===null||translated===trimmed)return;
+    node.__appletEnglish=trimmed;const start=raw.indexOf(trimmed);node.nodeValue=raw.slice(0,start)+translated+raw.slice(start+trimmed.length);
+  }
+  function translateAttribute(el,attr){
+    const value=el.getAttribute(attr);if(!value)return;
+    const prop='__appletEnglish_'+attr;
+    if(currentLanguage()==='en'){
+      if(el[prop]!==undefined){el.setAttribute(attr,el[prop]);delete el[prop]}
+      return;
+    }
+    const translated=applyRule(value.trim());if(translated===null||translated===value.trim())return;
+    el[prop]=value;el.setAttribute(attr,translated);
+  }
+  function refresh(root=document){
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);nodes.forEach(translateNode);
+    const elements=(root.querySelectorAll?root.querySelectorAll('[title],[aria-label],[placeholder]'):[]);elements.forEach(el=>['title','aria-label','placeholder'].forEach(a=>{if(el.hasAttribute(a))translateAttribute(el,a)}));
+  }
+  let queued=false;const schedule=()=>{if(queued)return;queued=true;queueMicrotask(()=>{queued=false;refresh()})};
+  const observer=new MutationObserver(mutations=>{if(currentLanguage()!=='zh')return;for(const m of mutations){if(m.type==='characterData'||m.addedNodes.length){schedule();break}}});
+  observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+  document.querySelectorAll('button[data-lang]').forEach(button=>button.addEventListener('click',()=>setTimeout(()=>refresh(),45)));
+  refresh();
+  window.refreshAppletTranslationCompletion=refresh;
+})();
+</script></body>
 </html>

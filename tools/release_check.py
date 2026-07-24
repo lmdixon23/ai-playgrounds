@@ -10,7 +10,7 @@ EXPECTED={
 'bayes-classifier','bayes-network','cnf-sat','convolution','hill-climbing','kmeans',
 'knn-classifier','neural-network','overfitting','q-learning-gridworld','search-pathfinding','wumpus-world'}
 PUBLIC_PAGES=['index.html','teacher-pack.html','curriculum.html','student-lab.html','quality.html','release-notes.html','research-and-citation.html','404.html','tests/index.html']
-PUBLIC_DOCS=['README.md','CHANGELOG.md','CITATION.cff','codemeta.json','applets.json','ARCHITECTURE.md','CONTRIBUTING.md','SECURITY.md','LICENSE','QUALITY.md','RELEASE_NOTES.md','TEACHER_PACK.md','CURRICULUM.md','STUDENT_LAB_PACKET_TEMPLATE.md']
+PUBLIC_DOCS=['docs/LOCALIZATION.md','README.md','CHANGELOG.md','CITATION.cff','codemeta.json','applets.json','ARCHITECTURE.md','CONTRIBUTING.md','SECURITY.md','LICENSE','QUALITY.md','RELEASE_NOTES.md','TEACHER_PACK.md','CURRICULUM.md','STUDENT_LAB_PACKET_TEMPLATE.md']
 ALLOWED_ROOT_DOCS={'README.md','CHANGELOG.md','ARCHITECTURE.md','CONTRIBUTING.md','SECURITY.md','QUALITY.md','RELEASE_NOTES.md','TEACHER_PACK.md','CURRICULUM.md','STUDENT_LAB_PACKET_TEMPLATE.md'}
 PRIVATE_PATH_PREFIXES=('_local/','release-evidence/','tools/release-evidence/','research/')
 SECRET_PATTERNS=[r'AKIA[0-9A-Z]{16}',r'ghp_[A-Za-z0-9]{30,}',r'sk-[A-Za-z0-9]{20,}',r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----']
@@ -21,6 +21,13 @@ class Result:
 
 def add(out,target,check,ok,detail): out.append(Result(target,check,'PASS' if ok else 'FAIL',detail))
 def text(path): return path.read_text(encoding='utf-8',errors='replace')
+def png_size(path):
+    try:
+        raw=path.read_bytes()[:24]
+        if len(raw)<24 or raw[:8]!=b'\x89PNG\r\n\x1a\n': return None
+        return int.from_bytes(raw[16:20],'big'),int.from_bytes(raw[20:24],'big')
+    except Exception:
+        return None
 def tracked():
     try:return set(subprocess.check_output(['git','ls-files'],cwd=ROOT,text=True).splitlines())
     except:return set()
@@ -73,8 +80,18 @@ def run()->list[Result]:
             add(out,rel,f'no private path reference {prefix}',prefix not in s,'clear' if prefix not in s else 'private path reference found')
         for pat in SECRET_PATTERNS:
             add(out,rel,'secret pattern scan',re.search(pat,s) is None,'clear')
+    social=ROOT/'og-image.png'
+    social_size=png_size(social) if social.exists() else None
+    add(out,'og-image.png','canonical social image dimensions',social_size==(1200,630),f'{social_size[0]} by {social_size[1]}' if social_size else 'missing or invalid PNG')
     # Landing page
     home=text(ROOT/'index.html')
+    for needle,label in [
+        ('property="og:url"','Open Graph canonical URL'),('property="og:image:width"','Open Graph image width'),
+        ('property="og:image:height"','Open Graph image height'),('property="og:image:alt"','Open Graph image alt text'),
+        ('name="twitter:title"','Twitter title'),('name="twitter:description"','Twitter description'),
+        ('name="twitter:image"','Twitter image'),('name="twitter:image:alt"','Twitter image alt text')]:
+        add(out,'index.html',label,needle in home,'present' if needle in home else 'missing')
+    add(out,'index.html','canonical social image filename','og-image.png' in home and 'og-image-v2.png' not in home and 'og-image-v3.png' not in home,'og-image.png is the only referenced social image')
     for needle,label in [
         ('id="bfsGrid"','live BFS proof'),('id="astarGrid"','live A* proof'),('id="appletGrid"','applet catalogue'),('id="filters"','catalogue filters'),
         ('id="teach"','classroom route'),('id="why"','differentiation section'),('id="research"','research and reuse section'),
@@ -82,6 +99,10 @@ def run()->list[Result]:
         add(out,'index.html',label,needle in home,'present' if needle in home else 'missing')
     for slug in sorted(EXPECTED):
         add(out,'index.html',f'explicit route {slug}',f'playgrounds/{slug}/index.html' in home or f'${{a.slug}}/index.html' in home,'direct index route available')
+    for token,label in [("minuteUnit:'min'",'localized duration unit'),("architectureLabel:'Architecture guide'",'localized architecture label'),("footerIssue:'Report an issue'",'localized footer controls'),("ai-playgrounds-lang",'shared language preference')]:
+        add(out,'index.html',label,token in home,'present' if token in home else 'missing')
+    add(out,'index.html','language-specific internal routes',"url.searchParams.set('lang',lang)" in home,'language query is propagated')
+    add(out,'index.html','language discovery metadata','hreflang="en"' in home and 'hreflang="zh-Hans"' in home,'English and Simplified Chinese alternates present')
     curriculum=text(ROOT/'curriculum.html')
     for phrase,label in [('Course and AIMA-aligned sequence','primary course sequence'),('Quick-entry four-app sampler','sampler sequence'),('--applet-accent','cross-page applet colors'),('Why this is not the course order','sequence rationale')]:
         add(out,'curriculum.html',label,phrase in curriculum,'present' if phrase in curriculum else 'missing')
@@ -89,6 +110,11 @@ def run()->list[Result]:
     teacher=text(ROOT/'teacher-pack.html')
     for phrase,label in [('Course and AIMA-aligned applet map','course-aligned applet map'),('Quick-entry four-app sampler','clearly labeled sampler'),('--applet-accent','applet color consistency'),('Star on GitHub','restrained support call to action')]:
         add(out,'teacher-pack.html',label,phrase in teacher,'present' if phrase in teacher else 'missing')
+    for rel in ['teacher-pack.html','curriculum.html','student-lab.html','quality.html','research-and-citation.html','release-notes.html','404.html']:
+        support=text(ROOT/rel)
+        add(out,rel,'complete public localization shell','id="support-i18n-css"' in support and 'id="support-i18n-script"' in support and 'data-support-lang' in support,'English and Chinese switch present')
+        add(out,rel,'language discovery metadata','hreflang="en"' in support and 'hreflang="zh-Hans"' in support,'English and Simplified Chinese alternates present')
+        add(out,rel,'shared language preference','ai-playgrounds-lang' in support,'language choice persists across public pages')
     try:
         applet_meta={item['slug']:item for item in json.loads(text(ROOT/'applets.json'))}
     except Exception:
@@ -102,6 +128,11 @@ def run()->list[Result]:
             add(out,slug,'canonical browser title',f'<title>{canonical_html} | AI Playgrounds</title>' in h or f'<title>{canonical} | AI Playgrounds</title>' in h,canonical)
             add(out,slug,'canonical page heading',re.search(r'<h1[^>]*>'+re.escape(canonical_html)+r'</h1>',h) is not None or re.search(r'<h1[^>]*>'+re.escape(canonical)+r'</h1>',h) is not None,canonical)
         add(out,slug,'learner content profile','id="learner-content-system"' in h and 'APPLET_LEARNER_PROFILE' in h,'bilingual learner profile present')
+        en_essays=len(re.findall(r'<section\b[^>]*\bdata-essay-lang\s*=\s*["\']en["\']',h,re.I))
+        zh_essays=len(re.findall(r'<section\b[^>]*\bdata-essay-lang\s*=\s*["\']zh["\']',h,re.I))
+        add(out,slug,'full bilingual explanation',en_essays==1 and zh_essays==1 and 'id="essay-language-script"' in h,'complete English and Chinese essay surfaces')
+        fallback=re.search(r'id="scenarioGalleryCards"[^>]*>[\s\S]{0,1200}<article class="scenario-card"',h)
+        add(out,slug,'pre-rendered Explore fallback',fallback is not None,'scenario content exists before enhancement')
         add(out,slug,'learner interface styling','id="learner-interface-style"' in h,'learner-facing component style present')
         add(out,slug,'key terms before explanation',"className='key-terms'" in h and 'Key terms before the explanation' in h,'term primer present')
         add(out,slug,'standard action hierarchy','header-more' in h and 'Current settings (.json)' in h and 'Embed in LMS' in h,'Share, More, and reset hierarchy present')
@@ -112,7 +143,8 @@ def run()->list[Result]:
         if profile_match:
             try:
                 profile=json.loads(profile_match.group(1))
-                add(out,slug,'six bilingual key terms',len(profile.get('en',{}).get('terms',[]))>=6 and len(profile.get('zh',{}).get('terms',[]))>=6,f"{len(profile.get('en',{}).get('terms',[]))} EN / {len(profile.get('zh',{}).get('terms',[]))} ZH")
+                en_terms=len(profile.get('en',{}).get('terms',[])); zh_terms=len(profile.get('zh',{}).get('terms',[]))
+                add(out,slug,'concept-sized bilingual glossary',6<=en_terms<=12 and en_terms==zh_terms,f"{en_terms} EN / {zh_terms} ZH")
                 add(out,slug,'five bilingual learner scenarios',len(profile.get('en',{}).get('scenarios',[]))>=5 and len(profile.get('zh',{}).get('scenarios',[]))>=5,f"{len(profile.get('en',{}).get('scenarios',[]))} EN / {len(profile.get('zh',{}).get('scenarios',[]))} ZH")
                 big=profile.get('en',{}).get('big','')
                 add(out,slug,'purpose avoids unexplained high-risk abbreviations',not re.search(r'\b(?:TSP|SA|HC|DPLL|CNF|CPT|RL|CNN|KNN)\b',big),'plain-language purpose statement')
@@ -122,6 +154,7 @@ def run()->list[Result]:
             add(out,slug,'learner profile JSON',False,'profile block not found')
         add(out,slug,'back route','href="../../index.html"' in h,'returns to suite landing page')
         add(out,slug,'bilingual controls',h.count('data-lang=')>=2,'English and Chinese controls present')
+        add(out,slug,'language discovery metadata','hreflang="en"' in h and 'hreflang="zh-Hans"' in h,'English and Simplified Chinese alternates present')
         add(out,slug,'scenario gallery','class="scenario-gallery"' in h,'present')
         n=scenario_count(h); add(out,slug,'five or more scenarios',n>=5,f'{n} scenario definitions')
         add(out,slug,'featured experiment','class="signature-challenge"' in h,'present')
@@ -131,6 +164,12 @@ def run()->list[Result]:
         add(out,slug,'four-mode architecture','id="learning-modes-script"' in h and 'learning-mode-tabs' in h,'Explore, Understand, classroom, and access modes')
         add(out,slug,'restrained hierarchy','id="learning-modes-style"' in h and '.learning-mode-panel>details>summary{background:var(--card)!important' in h,'neutral section bars with spotlight bodies')
         add(out,slug,'shareable control state','data-copy-experiment' in h and "searchParams.set('state'" in h,'URL state serializer present')
+        state_copy_ok="searchParams.delete('scenario')" in h and "searchParams.delete('featured')" in h and "el.type==='checkbox'?el.checked:el.value" in h
+        add(out,slug,'authoritative exact copy state',state_copy_ok,'copied URLs remove scenario aliases and preserve false checkboxes')
+        restore_start=h.find("const n=Number(p.get('scenario'))")
+        restore_exact=h.find("applyState(decode(p.get('state')||''))")
+        add(out,slug,'exact state wins during restoration',restore_start>=0 and restore_exact>restore_start,'scenario preset is applied before serialized controls')
+        add(out,slug,'manual controls update URL',"document.addEventListener('input',scheduleUrlState,true)" in h and "document.addEventListener('change',scheduleUrlState,true)" in h,'input and change events synchronize exact state')
         add(out,slug,'scenario URL state',"searchParams.set('scenario'" in h,'scenario identifier written to URL')
         add(out,slug,'container query','@container' in h,'component-level responsive rule present')
         add(out,slug,'local packet formatting','markdownToPrintableHtml' in h,'semantic print renderer present')
@@ -138,6 +177,10 @@ def run()->list[Result]:
         add(out,slug,'scholarly identity','Logan M. Dixon' in h and '0009-0001-0592-462X' in h,'public author identity present')
         add(out,slug,'portfolio footer','https://lmdixon23.github.io/' in h and 'footer-portfolio' in h,'portfolio route and bilingual label present')
         add(out,slug,'modern footer course line','Made for the Introduction to AI course at Haidian Kaiwen Academy.' in h,'course line present')
+        if slug=='kmeans':
+            add(out,slug,'dynamic hint localization','function setHint(en, zh)' in h and 'function refreshHintLanguage()' in h and 'refreshHintLanguage();' in h,'current dynamic hint refreshes without reload')
+        if slug=='overfitting':
+            add(out,slug,'Ridge prerequisites introduced',all(term in h for term in ['Ridge regression (L2)','Regularization strength (λ)','vector of fitted coefficients','squared Euclidean length']),'regularization notation is introduced before use')
         inline_scripts(p,out)
     # Test suite
     tests=text(ROOT/'tests/index.html')

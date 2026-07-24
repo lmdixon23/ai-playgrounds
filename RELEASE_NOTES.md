@@ -1,6 +1,6 @@
 # Release notes
 
-## Current release
+## Current release, 2026-07-24
 
 AI Playgrounds includes twelve bilingual, offline-ready interactive demonstrations covering:
 
@@ -20,23 +20,27 @@ AI Playgrounds includes twelve bilingual, offline-ready interactive demonstratio
 
 - a focused interactive model,
 - five learner scenarios,
-- a featured comparison,
-- visual and text-based explanations,
+- a featured experiment,
+- complete English and Chinese visual and text-based explanations,
 - teacher notes,
 - model limitations,
 - keyboard guidance,
 - a printable student response packet,
-- shareable experiment settings.
+- shareable experiment settings that preserve the exact current controls.
 
 ## Teaching materials
 
-The release includes:
+The release includes complete English and Simplified Chinese public teaching surfaces:
 
 - a printable Teacher Pack,
 - a responsive Curriculum Map,
 - a one-page Student Lab Sheet,
 - course-aligned and quick-entry sequences,
 - citation and reuse information.
+
+## Reliability and instructional accuracy
+
+Explore panels include pre-rendered scenarios, dynamic text changes language immediately, and copied experiment links preserve later manual changes after a scenario is applied. The explanatory essays now introduce notation and prerequisite terms before use and narrow technical claims to their valid assumptions.
 
 ## Privacy and portability
 

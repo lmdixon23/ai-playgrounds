@@ -4,7 +4,7 @@ AI Playgrounds is designed around portable classroom use, inspectable software, 
 
 ## Built into the project
 
-- Twelve bilingual, offline-ready applets
+- Twelve fully bilingual, offline-ready applets
 - One focused concept per applet
 - Featured experiments and scenario comparisons
 - Visual mechanism explanations
@@ -13,6 +13,7 @@ AI Playgrounds is designed around portable classroom use, inspectable software, 
 - Keyboard guidance and text-state descriptions
 - Algorithmic regression tests
 - Automated browser checks across three viewport sizes
+- Dynamic localization and exact copied-state regression checks
 
 ## Privacy
 

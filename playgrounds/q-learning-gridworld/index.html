@@ -1,21 +1,22 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Q-Learning Gridworld | AI Playgrounds</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E">
-<meta name="description" content="Train an agent through trial and error. Watch rewards update action values, compare exploration settings, and see a policy emerge without a prewritten route.">
-<link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/q-learning-gridworld/">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/q-learning-gridworld/">
-<meta property="og:title" content="Q-Learning Gridworld | AI Playgrounds">
-<meta property="og:description" content="Train an agent through trial and error. Watch rewards update action values, compare exploration settings, and see a policy emerge without a prewritten route.">
-<meta property="og:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Q-Learning Gridworld | AI Playgrounds">
-<meta name="twitter:description" content="Train an agent through trial and error. Watch rewards update action values, compare exploration settings, and see a policy emerge without a prewritten route.">
-<meta name="twitter:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E" rel="icon"/>
+<meta content="Train an agent through trial and error. Watch rewards update action values, compare exploration settings, and see a policy emerge without a prewritten route." name="description"/>
+<link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/q-learning-gridworld/" rel="canonical"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/q-learning-gridworld/?lang=en" hreflang="en" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/q-learning-gridworld/?lang=zh" hreflang="zh-Hans" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/q-learning-gridworld/?lang=en" hreflang="x-default" rel="alternate"/>
+<meta content="website" property="og:type"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/q-learning-gridworld/" property="og:url"/>
+<meta content="Q-Learning Gridworld | AI Playgrounds" property="og:title"/>
+<meta content="Train an agent through trial and error. Watch rewards update action values, compare exploration settings, and see a policy emerge without a prewritten route." property="og:description"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" property="og:image"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="Q-Learning Gridworld | AI Playgrounds" name="twitter:title"/>
+<meta content="Train an agent through trial and error. Watch rewards update action values, compare exploration settings, and see a policy emerge without a prewritten route." name="twitter:description"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" name="twitter:image"/>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Q-Learning Gridworld | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/q-learning-gridworld/","description":"Train an agent through trial and error. Watch rewards update action values, compare exploration settings, and see a policy emerge without a prewritten route.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
 <style>
   :root {
@@ -500,14 +501,11 @@
   @media (max-width:900px) { .learning-deck { grid-template-columns:1fr; } .learning-deck > details { grid-column:1 !important; } }
 
 </style>
-
-
 <style id="learner-interface-style">
 /* Learner-facing terminology, compact glossary, and consistent action hierarchy. */
 .header-actions{align-items:center}.header-more{position:relative}.header-more>summary{list-style:none;cursor:pointer;user-select:none}.header-more>summary::-webkit-details-marker{display:none}.header-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:50;min-width:220px;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 16px 35px rgba(15,23,42,.18);display:grid;gap:5px}.header-more-menu button{width:100%;text-align:left;justify-content:flex-start;white-space:normal}.key-terms-panel{padding:14px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}.key-terms-intro{margin:0 0 10px;color:var(--muted)}.key-terms-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.key-term{padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:color-mix(in srgb,var(--card) 97%,var(--accent))}.key-term dt{font-weight:800;color:var(--fg);margin:0 0 3px}.key-term dd{margin:0;color:var(--muted);font-size:.84rem;line-height:1.45}.essay-primer{margin:0 0 22px;padding:15px 17px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--card) 96%,var(--accent));border-radius:10px}.essay-primer h2{margin:0 0 6px!important;font-size:1.05rem!important}.essay-primer p{margin:0 0 10px!important}.essay-primer h3{margin:12px 0 7px;font-size:.92rem}.essay-primer-terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0}.essay-primer-terms>div{padding:8px 9px;border:1px solid var(--border);border-radius:8px;background:var(--card)}.essay-primer-terms dt{font-weight:800}.essay-primer-terms dd{margin:2px 0 0;color:var(--muted);font-size:.82rem;line-height:1.4}.scenario-card .scenario-meta{line-height:1.5}.scenario-card .scenario-meta strong{display:block;margin-bottom:2px}.header-actions>.header-png,.header-actions>.header-theme,.header-actions>.header-reset,.header-more>summary{min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px}
 @media(max-width:720px){.essay-primer-terms{grid-template-columns:1fr}.header-actions{width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}.header-actions>button,.header-actions>.header-more,.header-more>summary{width:100%;justify-content:center}.header-more-menu{right:auto;left:0;max-width:min(290px,90vw)}.key-terms-grid{grid-template-columns:1fr}}
 </style>
-
 <style id="learning-modes-style">
 /* Product information architecture and restrained visual hierarchy. */
 .learning-deck{display:contents!important}.learning-mode-shell{margin-top:16px;border-top:1px solid var(--border);padding-top:15px}.learning-mode-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px}.learning-mode-head h2{margin:0;font-size:1rem;color:var(--fg)}.learning-mode-head p{margin:2px 0 0;color:var(--muted);font-size:.82rem}.learning-mode-tools{display:flex;gap:8px;flex-wrap:wrap}.learning-mode-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:5px;background:var(--soft);border:1px solid var(--border);border-radius:14px}.learning-mode-tab{min-height:42px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-weight:750;padding:8px 10px}.learning-mode-tab[aria-selected="true"]{background:var(--card);color:var(--accent);box-shadow:0 3px 12px rgba(15,23,42,.08)}.learning-mode-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px;align-items:start}.learning-mode-panel[hidden]{display:none}.learning-mode-panel>details{margin:0!important;min-width:0}.learning-mode-panel>details.mode-wide{grid-column:1/-1}.learning-mode-panel>details>summary{background:var(--card)!important;border:1px solid var(--border)!important;border-left:4px solid color-mix(in srgb,var(--accent) 62%,var(--border))!important;border-radius:10px!important;color:var(--fg)!important;font-weight:750!important;padding:10px 12px!important}.learning-mode-panel>details[open]>summary{border-color:color-mix(in srgb,var(--accent) 55%,var(--border))!important}.learning-mode-panel .scenario-gallery-panel,.learning-mode-panel .accessibility-panel,.learning-mode-panel .classroom-lab .lab-panel{background:var(--card)!important}.scenario-card,.accessibility-card{background:color-mix(in srgb,var(--card) 97%,var(--accent))!important;box-shadow:none!important}.scenario-card.applied{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 78%,var(--accent)),color-mix(in srgb,var(--card) 88%,var(--accent-2,#6366f1)))!important;border-color:var(--accent)!important;box-shadow:0 12px 28px rgba(15,23,42,.10)!important}.signature-challenge>div,.signature-challenge .signature-challenge-panel{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 80%,var(--accent)),color-mix(in srgb,var(--card) 90%,var(--accent-2,#6366f1)))!important;border:1px solid color-mix(in srgb,var(--accent) 40%,var(--border))!important}.visual-card{background:linear-gradient(180deg,color-mix(in srgb,var(--card) 92%,var(--accent)),var(--card))!important}.featured-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.scenario-card button,.featured-actions button{border:0!important;border-radius:8px!important;background:var(--accent)!important;color:#fff!important;font-weight:750!important;padding:8px 11px!important}.scenario-card button:hover,.featured-actions button:hover{filter:brightness(1.05)}.copy-experiment{font-size:.82rem}.experiment-status{color:var(--muted);font-size:.78rem;min-height:1.2em;margin-top:6px}.mode-intro{grid-column:1/-1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--muted);font-size:.86rem}.mode-intro strong{color:var(--fg)}
@@ -515,571 +513,575 @@
 .interactive-inner{container-type:inline-size;max-width:min(1320px,100%)!important}
 @media(max-width:820px){.learning-mode-head{align-items:flex-start;flex-direction:column}.learning-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-mode-panel{grid-template-columns:1fr}.learning-mode-panel>details{grid-column:1!important}.copy-experiment{width:100%}}
 </style>
-
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to applet controls</a>
-
 <header class="page-header">
-  <div class="header-utility">
-    <a class="back" href="../../index.html" data-i18n="back-link">← Back to all playgrounds</a>
-    <div class="header-prefs">
-      <button class="header-theme" id="themeToggle" aria-label="Toggle dark or light theme"
-              title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
-      <div class="lang-switch" title="Switch interface language">
-        <button data-lang="en" class="active">EN</button>
-        <button data-lang="zh">中文</button>
-      </div>
-    </div>
-  </div>
-  <div class="header-main">
-    <h1 data-i18n="title">Q-Learning Gridworld</h1>
-    <div class="header-actions">
-      <button class="header-png" id="shareLink"
-              title="Copy a URL that re-opens this exact configuration in another browser.">🔗 Share</button>
-      <button class="header-png" id="embedLink"
-              title="Copy an <iframe> snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
-      <button class="header-png" id="csvExport"
-              title="Download episode return history + the current Q-table snapshot as CSV.">📊 CSV</button>
-      <button class="header-png" id="exportPng"
-              title="Download the current grid + Q-value heatmap as a PNG.">📷 PNG</button>
-      <button class="header-reset" id="hardReset" data-i18n="reset-all"
-              title="Reset everything: clear Q-values, reset grid to default, reset all sliders.">↺ Reset all</button>
-    </div>
-  </div>
+<div class="header-utility">
+<a class="back" data-i18n="back-link" href="../../index.html">← Back to all playgrounds</a>
+<div class="header-prefs">
+<button aria-label="Toggle dark or light theme" class="header-theme" id="themeToggle" title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
+<div class="lang-switch" title="Switch interface language">
+<button class="active" data-lang="en">EN</button>
+<button data-lang="zh">中文</button>
+</div>
+</div>
+</div>
+<div class="header-main">
+<h1 data-i18n="title">Q-Learning Gridworld</h1>
+<div class="header-actions">
+<button class="header-png" id="shareLink" title="Copy a URL that re-opens this exact configuration in another browser.">🔗 Share</button>
+<button class="header-png" id="embedLink" title="Copy an &lt;iframe&gt; snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
+<button class="header-png" id="csvExport" title="Download episode return history + the current Q-table snapshot as CSV.">📊 CSV</button>
+<button class="header-png" id="exportPng" title="Download the current grid + Q-value heatmap as a PNG.">📷 PNG</button>
+<button class="header-reset" data-i18n="reset-all" id="hardReset" title="Reset everything: clear Q-values, reset grid to default, reset all sliders.">↺ Reset all</button>
+</div>
+</div>
 </header>
-
 <aside class="tldr">
-  <strong data-i18n="tldr-strong">The big idea</strong>
-  <span data-i18n="tldr-body">An agent learns to find the goal by random trial and error. Its Q-values: one number per (state, action): grow outward from the goal as reward "propagates backward" through experience.</span>
+<strong data-i18n="tldr-strong">The big idea</strong>
+<span data-i18n="tldr-body">An agent learns to find the goal by random trial and error. Its Q-values: one number per (state, action): grow outward from the goal as reward "propagates backward" through experience.</span>
 </aside>
-
-<section class="interactive" id="main" tabindex="-1" role="main">
+<section class="interactive" id="main" role="main" tabindex="-1">
 <div class="interactive-inner">
-
 <div class="bento">
-  <div class="bento-side"><!-- bento-side -->
-    <div class="bento-cell">
-
-      <div class="control-row">
-        <label data-i18n="edit-label">Click grid to:</label>
-        <div class="group" id="modeGroup">
-          <button data-mode="wall" class="active" data-i18n="m-wall" data-i18n-title="m-wall-title" title="Add an impassable wall cell. The agent bumps and stays put.">+ wall</button>
-          <button data-mode="goal" data-i18n="m-goal" data-i18n-title="m-goal-title" title="Mark the goal cell (+1 reward, ends the episode). Only one goal at a time.">+ goal (✓ +1)</button>
-          <button data-mode="pit" data-i18n="m-pit" data-i18n-title="m-pit-title" title="Add a hazard pit (−1 reward, ends the episode).">+ pit (✗ −1)</button>
-          <button data-mode="erase" data-i18n="m-erase" data-i18n-title="m-erase-title" title="Click to clear the cell back to empty.">erase</button>
-        </div>
-      </div>
-
-      <div class="control-row">
-        <label data-i18n="algo-label">Algorithm:</label>
-        <select id="algoSel" data-i18n-title="algo-sel-title" title="Q-learning is off-policy TD. SARSA is on-policy TD (uses the action it actually takes). Expected SARSA replaces the next-step max with the expected value under the policy. Monte Carlo waits until the end of the episode and uses the full return. Softmax replaces ε-greedy with a temperature-weighted action distribution.">
-          <option value="qlearn-eps" selected data-i18n="opt-qlearn-eps">Q-learning (ε-greedy)</option>
-          <option value="sarsa-eps" data-i18n="opt-sarsa-eps">SARSA (ε-greedy)</option>
-          <option value="esarsa-eps" data-i18n="opt-esarsa-eps">Expected SARSA (ε-greedy)</option>
-          <option value="mc-eps" data-i18n="opt-mc-eps">Monte Carlo (ε-greedy)</option>
-          <option value="qlearn-soft" data-i18n="opt-qlearn-soft">Q-learning (Softmax)</option>
-        </select>
-        <span class="slider-block" id="tempBlock" style="display:none">
-          <label title="Softmax temperature τ. Lower τ = greedier (concentrates on the best action). Higher τ = more random.">τ</label>
-          <input id="temp" type="range" min="0.05" max="2" step="0.05" value="0.5" aria-label="Softmax temperature (tau)">
-          <span class="val" id="tempV">0.50</span>
-        </span>
-      </div>
-
-      <div class="control-row">
-        <span class="slider-block">
-          <label data-i18n-title="alpha-title" title="α controls how quickly the agent updates Q-values toward what it just observed.">α</label>
-          <input id="alpha" type="range" min="0.01" max="1" step="0.01" value="0.1" aria-label="Learning rate (alpha)">
-          <span class="val" id="aV">0.10</span>
-        </span>
-        <span class="slider-block">
-          <label data-i18n-title="gamma-title" title="γ controls how much the agent cares about distant rewards. γ=0 is purely myopic.">γ</label>
-          <input id="gamma" type="range" min="0" max="0.99" step="0.01" value="0.9" aria-label="Discount factor (gamma)">
-          <span class="val" id="gV">0.90</span>
-        </span>
-        <span class="slider-block">
-          <label data-i18n-title="epsilon-title" title="ε is the chance of taking a random action instead of the best-known one. Without it, the agent never explores.">ε</label>
-          <input id="epsilon" type="range" min="0" max="1" step="0.01" value="0.2" aria-label="Exploration rate (epsilon)">
-          <span class="val" id="eV">0.20</span>
-        </span>
-        <span class="slider-block">
-          <label data-i18n="step-reward-label" title="A small per-step penalty pressures the agent to find SHORT paths instead of meandering ones.">step reward</label>
-          <input id="step" type="range" min="-0.5" max="0" step="0.01" value="-0.04" aria-label="Per-step reward (negative encourages short paths)">
-          <span class="val" id="srV">−0.04</span>
-        </span>
-        <span class="slider-block">
-          <label data-i18n="slip-label" data-i18n-title="slip-title"
-                 title="Slippery floor. With this probability the agent moves in a random perpendicular direction instead of the one chosen. Slip > 0 makes the world stochastic: γ &lt; 1 starts mattering, and the Bellman update averages over outcomes.">slip</label>
-          <input id="slip" type="range" min="0" max="0.5" step="0.01" value="0" aria-label="Probability the move slips perpendicular to the chosen direction">
-          <span class="val" id="slipV">0.00</span>
-        </span>
-      </div>
-
-      <div class="control-row">
-        <!-- One episode / Train / Reset-Q relocated to the unified transport bar below. -->
-        <label title="Color cells by their maximum Q-value, and show small triangles for each action's Q.">
-          <input type="checkbox" id="showQ" checked> <span data-i18n="show-q">Q-heatmap</span></label>
-        <label title="Draw a white arrow from each cell showing the agent's currently-best action.">
-          <input type="checkbox" id="showPi" checked> <span data-i18n="show-pi">Policy arrows</span></label>
-      </div>
-
-      <!-- Unified transport bar (shared playback controls; episode-granular for RL). -->
-      <div class="transport" id="transport" role="group" aria-label="Playback controls">
-        <button class="tp-btn" id="resetQBtn" data-i18n-title="restart-title"
-                title="Clear learned Q-values to zero, but keep the grid layout.">↺</button>
-        <button class="tp-btn" id="backBtn" data-i18n-title="back-title"
-                title="Step one episode backward through training.">◀❘</button>
-        <button class="tp-btn" id="runBtn" data-i18n="run-btn" aria-pressed="false"
-                title="Repeatedly run episodes and update Q-values until you pause.">▶ Train continuously</button>
-        <button class="tp-btn" id="epBtn" data-i18n="ep-btn"
-                title="Play one full episode (until goal or pit).">❘▶ One episode</button>
-        <button class="tp-btn" id="stepBtn" data-i18n="step-move"
-                title="Take one move with the current policy + ε-greedy exploration.">Step (1 move)</button>
-        <label class="tp-speed"><span data-i18n="speed-label">Speed</span>
-          <input id="speedSlider" type="range" min="0" max="100" value="50" aria-label="Training speed"
-                 data-i18n-title="speed-title" title="Higher = faster training animation. Adjustable live."></label>
-        <span class="tp-scrub" id="qlScrubGroup" style="display:inline-flex; visibility:hidden; align-items:center; gap:8px; flex:1 1 220px; min-width:150px;">
-          <span style="color:var(--accent); font-weight:600; font-size:0.82rem;" title="History">⏪</span>
-          <input type="range" id="replaySlider" min="0" max="0" value="0" step="1"
-                 aria-label="Scrub through past episodes"
-                 style="flex:1; min-width:110px;">
-          <label style="color:var(--muted); display:flex; align-items:center; gap:4px; font-size:0.8rem;"><span>ep</span>
-            <input type="number" id="qlJump" min="0" aria-label="Jump to episode" style="width:64px; padding:3px 6px; border:1px solid var(--border); border-radius:4px; font:inherit;"></label>
-          <span id="replayLabel" style="display:none"></span>
-          <button class="tp-btn" id="replayResume" data-i18n="return-live" style="padding:4px 10px; font-size:0.8rem;" disabled>Jump to latest</button>
-        </span>
-        <span class="tp-count" id="tpCount" data-i18n="tp-idle">idle</span>
-      </div>
-
-      <div class="stats-strip">
-        <div class="stat-item"><div class="label">Episodes</div><div class="val" id="epV">0</div></div>
-        <div class="stat-item"><div class="label">Total steps</div><div class="val" id="stV">0</div></div>
-        <div class="stat-item"><div class="label">Last return</div><div class="val" id="retV">-</div></div>
-        <div class="stat-item"><div class="label">Avg return (20)</div><div class="val" id="avgV">-</div></div>
-      </div>
-
-    </div><!-- /.bento-cell controls -->
-  </div><!-- /.bento-side -->
-
-  <div class="bento-main"><!-- bento-main -->
-    <div class="bento-cell">
-
-      <canvas id="cv" width="640" height="480" role="img"
-              style="width: 100%; max-width: 640px; height: auto; aspect-ratio: 640 / 480;"
-              aria-label="Q-learning gridworld. Click to edit cells; the agent shows Q-value heatmap and policy arrows."></canvas>
-
-      <div class="legend-strip">
-        <span><span class="sw" style="background:var(--goal)"></span>Goal ✓ (+1)</span>
-        <span><span class="sw" style="background:var(--pit)"></span>Pit ✗ (−1)</span>
-        <span><span class="sw" style="background:var(--wall)"></span>Wall</span>
-        <span><span class="sw" style="background:var(--agent);border-radius:50%"></span>Agent</span>
-        <span><span class="sw" style="background:#16a34a"></span>High Q</span>
-        <span><span class="sw" style="background:#7f1d1d"></span>Low Q</span>
-      </div>
-
-    </div><!-- /.bento-cell canvas -->
-
-    <div class="bento-cell">
-      <!-- Bellman backup: the exact local Q-update for the agent's last move (the highlight on the grid shows where). -->
-      <div id="bellmanPanel" style="padding:10px 14px; background:var(--soft); border:1px solid var(--border); border-radius:8px;">
-        <div style="font-size:0.82rem; color:var(--accent); font-weight:600; font-family:-apple-system,system-ui,sans-serif; margin-bottom:6px;" data-i18n="bellman-title">🔄 Bellman backup: the agent's last Q-update</div>
-        <div id="bellmanOut" style="font-family:ui-monospace,monospace; font-size:0.9rem; line-height:1.8; overflow-x:auto;"><span style="color:var(--muted);" data-i18n="bellman-empty">Step the agent (or run one episode) to see a single Q-value update: value bootstraps from the cell it lands on back into the cell it left.</span></div>
-      </div>
-    </div><!-- /.bento-cell bellman -->
-
-    <div class="bento-cell">
-      <!-- linear function approximation (bridge to deep RL).
+<div class="bento-side"><!-- bento-side -->
+<div class="bento-cell">
+<div class="control-row">
+<label data-i18n="edit-label">Click grid to:</label>
+<div class="group" id="modeGroup">
+<button class="active" data-i18n="m-wall" data-i18n-title="m-wall-title" data-mode="wall" title="Add an impassable wall cell. The agent bumps and stays put.">+ wall</button>
+<button data-i18n="m-goal" data-i18n-title="m-goal-title" data-mode="goal" title="Mark the goal cell (+1 reward, ends the episode). Only one goal at a time.">+ goal (✓ +1)</button>
+<button data-i18n="m-pit" data-i18n-title="m-pit-title" data-mode="pit" title="Add a hazard pit (−1 reward, ends the episode).">+ pit (✗ −1)</button>
+<button data-i18n="m-erase" data-i18n-title="m-erase-title" data-mode="erase" title="Click to clear the cell back to empty.">erase</button>
+</div>
+</div>
+<div class="control-row">
+<label data-i18n="algo-label">Algorithm:</label>
+<select data-i18n-title="algo-sel-title" id="algoSel" title="Q-learning is off-policy TD. SARSA is on-policy TD (uses the action it actually takes). Expected SARSA replaces the next-step max with the expected value under the policy. Monte Carlo waits until the end of the episode and uses the full return. Softmax replaces ε-greedy with a temperature-weighted action distribution.">
+<option data-i18n="opt-qlearn-eps" selected="" value="qlearn-eps">Q-learning (ε-greedy)</option>
+<option data-i18n="opt-sarsa-eps" value="sarsa-eps">SARSA (ε-greedy)</option>
+<option data-i18n="opt-esarsa-eps" value="esarsa-eps">Expected SARSA (ε-greedy)</option>
+<option data-i18n="opt-mc-eps" value="mc-eps">Monte Carlo (ε-greedy)</option>
+<option data-i18n="opt-qlearn-soft" value="qlearn-soft">Q-learning (Softmax)</option>
+</select>
+<span class="slider-block" id="tempBlock" style="display:none">
+<label title="Softmax temperature τ. Lower τ = greedier (concentrates on the best action). Higher τ = more random.">τ</label>
+<input aria-label="Softmax temperature (tau)" id="temp" max="2" min="0.05" step="0.05" type="range" value="0.5"/>
+<span class="val" id="tempV">0.50</span>
+</span>
+</div>
+<div class="control-row">
+<span class="slider-block">
+<label data-i18n-title="alpha-title" title="α controls how quickly the agent updates Q-values toward what it just observed.">α</label>
+<input aria-label="Learning rate (alpha)" id="alpha" max="1" min="0.01" step="0.01" type="range" value="0.1"/>
+<span class="val" id="aV">0.10</span>
+</span>
+<span class="slider-block">
+<label data-i18n-title="gamma-title" title="γ controls how much the agent cares about distant rewards. γ=0 is purely myopic.">γ</label>
+<input aria-label="Discount factor (gamma)" id="gamma" max="0.99" min="0" step="0.01" type="range" value="0.9"/>
+<span class="val" id="gV">0.90</span>
+</span>
+<span class="slider-block">
+<label data-i18n-title="epsilon-title" title="ε is the chance of taking a random action instead of the best-known one. Without it, the agent never explores.">ε</label>
+<input aria-label="Exploration rate (epsilon)" id="epsilon" max="1" min="0" step="0.01" type="range" value="0.2"/>
+<span class="val" id="eV">0.20</span>
+</span>
+<span class="slider-block">
+<label data-i18n="step-reward-label" title="A small per-step penalty pressures the agent to find SHORT paths instead of meandering ones.">step reward</label>
+<input aria-label="Per-step reward (negative encourages short paths)" id="step" max="0" min="-0.5" step="0.01" type="range" value="-0.04"/>
+<span class="val" id="srV">−0.04</span>
+</span>
+<span class="slider-block">
+<label data-i18n="slip-label" data-i18n-title="slip-title" title="Slippery floor. With this probability the agent moves in a random perpendicular direction instead of the one chosen. Slip &gt; 0 makes the world stochastic: γ &lt; 1 starts mattering, and the Bellman update averages over outcomes.">slip</label>
+<input aria-label="Probability the move slips perpendicular to the chosen direction" id="slip" max="0.5" min="0" step="0.01" type="range" value="0"/>
+<span class="val" id="slipV">0.00</span>
+</span>
+</div>
+<div class="control-row">
+<!-- One episode / Train / Reset-Q relocated to the unified transport bar below. -->
+<label title="Color cells by their maximum Q-value, and show small triangles for each action's Q.">
+<input checked="" id="showQ" type="checkbox"/> <span data-i18n="show-q">Q-heatmap</span></label>
+<label title="Draw a white arrow from each cell showing the agent's currently-best action.">
+<input checked="" id="showPi" type="checkbox"/> <span data-i18n="show-pi">Policy arrows</span></label>
+</div>
+<!-- Unified transport bar (shared playback controls; episode-granular for RL). -->
+<div aria-label="Playback controls" class="transport" id="transport" role="group">
+<button class="tp-btn" data-i18n-title="restart-title" id="resetQBtn" title="Clear learned Q-values to zero, but keep the grid layout.">↺</button>
+<button class="tp-btn" data-i18n-title="back-title" id="backBtn" title="Step one episode backward through training.">◀❘</button>
+<button aria-pressed="false" class="tp-btn" data-i18n="run-btn" id="runBtn" title="Repeatedly run episodes and update Q-values until you pause.">▶ Train continuously</button>
+<button class="tp-btn" data-i18n="ep-btn" id="epBtn" title="Play one full episode (until goal or pit).">❘▶ One episode</button>
+<button class="tp-btn" data-i18n="step-move" id="stepBtn" title="Take one move with the current policy + ε-greedy exploration.">Step (1 move)</button>
+<label class="tp-speed"><span data-i18n="speed-label">Speed</span>
+<input aria-label="Training speed" data-i18n-title="speed-title" id="speedSlider" max="100" min="0" title="Higher = faster training animation. Adjustable live." type="range" value="50"/></label>
+<span class="tp-scrub" id="qlScrubGroup" style="display:inline-flex; visibility:hidden; align-items:center; gap:8px; flex:1 1 220px; min-width:150px;">
+<span style="color:var(--accent); font-weight:600; font-size:0.82rem;" title="History">⏪</span>
+<input aria-label="Scrub through past episodes" id="replaySlider" max="0" min="0" step="1" style="flex:1; min-width:110px;" type="range" value="0"/>
+<label style="color:var(--muted); display:flex; align-items:center; gap:4px; font-size:0.8rem;"><span>ep</span>
+<input aria-label="Jump to episode" id="qlJump" min="0" style="width:64px; padding:3px 6px; border:1px solid var(--border); border-radius:4px; font:inherit;" type="number"/></label>
+<span id="replayLabel" style="display:none"></span>
+<button class="tp-btn" data-i18n="return-live" disabled="" id="replayResume" style="padding:4px 10px; font-size:0.8rem;">Jump to latest</button>
+</span>
+<span class="tp-count" data-i18n="tp-idle" id="tpCount">idle</span>
+</div>
+<div class="stats-strip">
+<div class="stat-item"><div class="label">Episodes</div><div class="val" id="epV">0</div></div>
+<div class="stat-item"><div class="label">Total steps</div><div class="val" id="stV">0</div></div>
+<div class="stat-item"><div class="label">Last return</div><div class="val" id="retV">-</div></div>
+<div class="stat-item"><div class="label">Avg return (20)</div><div class="val" id="avgV">-</div></div>
+</div>
+</div><!-- /.bento-cell controls -->
+</div><!-- /.bento-side -->
+<div class="bento-main"><!-- bento-main -->
+<div class="bento-cell">
+<canvas aria-label="Q-learning gridworld. Click to edit cells; the agent shows Q-value heatmap and policy arrows." height="480" id="cv" role="img" style="width: 100%; max-width: 640px; height: auto; aspect-ratio: 640 / 480;" width="640"></canvas>
+<div class="legend-strip">
+<span><span class="sw" style="background:var(--goal)"></span>Goal ✓ (+1)</span>
+<span><span class="sw" style="background:var(--pit)"></span>Pit ✗ (−1)</span>
+<span><span class="sw" style="background:var(--wall)"></span>Wall</span>
+<span><span class="sw" style="background:var(--agent);border-radius:50%"></span>Agent</span>
+<span><span class="sw" style="background:#16a34a"></span>High Q</span>
+<span><span class="sw" style="background:#7f1d1d"></span>Low Q</span>
+</div>
+</div><!-- /.bento-cell canvas -->
+<div class="bento-cell">
+<!-- Bellman backup: the exact local Q-update for the agent's last move (the highlight on the grid shows where). -->
+<div id="bellmanPanel" style="padding:10px 14px; background:var(--soft); border:1px solid var(--border); border-radius:8px;">
+<div data-i18n="bellman-title" style="font-size:0.82rem; color:var(--accent); font-weight:600; font-family:-apple-system,system-ui,sans-serif; margin-bottom:6px;">🔄 Bellman backup: the agent's last Q-update</div>
+<div id="bellmanOut" style="font-family:ui-monospace,monospace; font-size:0.9rem; line-height:1.8; overflow-x:auto;"><span data-i18n="bellman-empty" style="color:var(--muted);">Step the agent (or run one episode) to see a single Q-value update: value bootstraps from the cell it lands on back into the cell it left.</span></div>
+</div>
+</div><!-- /.bento-cell bellman -->
+<div class="bento-cell">
+<!-- linear function approximation (bridge to deep RL).
            Same gridworld, but Q(s,a) = w_a · φ(s) instead of a table. Far fewer parameters
            generalize across cells: the deep-RL insight in miniature. -->
-      <details style="margin-top:0;">
-        <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.9rem; color:var(--accent); font-weight:600;">
-          <span data-i18n="fa-summary">🧮 Linear function approximation (bridge to deep RL)</span>
-        </summary>
-        <div style="margin-top:10px; padding:12px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
-          <p style="margin:0 0 6px; color:var(--muted); font-size:0.85rem;" data-i18n="fa-intro">
+<details style="margin-top:0;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.9rem; color:var(--accent); font-weight:600;">
+<span data-i18n="fa-summary">🧮 Linear function approximation (bridge to deep RL)</span>
+</summary>
+<div style="margin-top:10px; padding:12px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+<p data-i18n="fa-intro" style="margin:0 0 6px; color:var(--muted); font-size:0.85rem;">
             Instead of a Q-table with one entry per (state, action), we approximate Q(s,a) = w_a · φ(s). For a 7×9 grid that's 252 numbers tabular vs only 36 with this 9-tile coding (4 actions × 9 tile weights). The trade-off: weights generalize across cells: fewer parameters, but the model can't represent arbitrary value functions.
           </p>
-          <p style="margin:0 0 8px; color:var(--muted); font-size:0.8rem; font-style:italic;" data-i18n="fa-update">
+<p data-i18n="fa-update" style="margin:0 0 8px; color:var(--muted); font-size:0.8rem; font-style:italic;">
             Update rule: w_a ← w_a + α · (target − Q(s,a)) · φ(s). One TD step changes ALL the active tile weights at once.
           </p>
-          <div style="display:flex; gap:10px; align-items:center; margin-bottom:8px;">
-            <label data-i18n="fa-episodes" style="font-size:0.85rem;">Episodes:</label>
-            <input id="faEpisodes" type="range" min="100" max="2000" step="100" value="500" style="width:160px;">
-            <span id="faEpisodesV" style="font-family:ui-monospace,monospace; font-size:0.85rem;">500</span>
-            <button class="step-btn" id="faRunBtn" data-i18n="fa-run">▶ Train linear FA agent</button>
-          </div>
-          <div>
-            <canvas id="faCv" width="540" height="280" style="border:1px solid var(--border); width:100%; height:auto; background:white;"></canvas>
-            <div id="faStats" style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted); margin-top:4px;">-</div>
-          </div>
-        </div>
-      </details>
-    </div><!-- /.bento-cell fa-panel -->
-
-    <div class="bento-cell">
-      <!-- Q-learning vs SARSA on the cliff-walk environment (Sutton & Barto Ch 6.5).
+<div style="display:flex; gap:10px; align-items:center; margin-bottom:8px;">
+<label data-i18n="fa-episodes" style="font-size:0.85rem;">Episodes:</label>
+<input id="faEpisodes" max="2000" min="100" step="100" style="width:160px;" type="range" value="500"/>
+<span id="faEpisodesV" style="font-family:ui-monospace,monospace; font-size:0.85rem;">500</span>
+<button class="step-btn" data-i18n="fa-run" id="faRunBtn">▶ Train linear FA agent</button>
+</div>
+<div>
+<canvas height="280" id="faCv" style="border:1px solid var(--border); width:100%; height:auto; background:white;" width="540"></canvas>
+<div id="faStats" style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted); margin-top:4px;">-</div>
+</div>
+</div>
+</details>
+</div><!-- /.bento-cell fa-panel -->
+<div class="bento-cell">
+<!-- Q-learning vs SARSA on the cliff-walk environment (Sutton & Barto Ch 6.5).
            Self-contained: runs both algorithms in parallel on identical cliff worlds and shows the
            resulting policies side-by-side. Demonstrates the "Q-learning takes the cliff edge, SARSA
            plays safe" textbook result. -->
-      <details style="margin-top:0;">
-        <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.9rem; color:var(--accent); font-weight:600;">
-          <span data-i18n="cw-summary">🆚 Compare Q-learning vs SARSA on Cliff Walk</span>
-        </summary>
-        <div style="margin-top:10px; padding:12px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
-          <p style="margin:0 0 8px; color:var(--muted); font-size:0.85rem;" data-i18n="cw-intro">
-            Sutton & Barto, Ch 6.5. Same 4×12 cliff world for both agents. Q-learning learns the optimal policy (walk along the cliff edge); SARSA learns a safer policy (walk along the top row) because it accounts for the cost of falling in due to ε-greedy exploration noise.
+<details style="margin-top:0;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.9rem; color:var(--accent); font-weight:600;">
+<span data-i18n="cw-summary">🆚 Compare Q-learning vs SARSA on Cliff Walk</span>
+</summary>
+<div style="margin-top:10px; padding:12px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+<p data-i18n="cw-intro" style="margin:0 0 8px; color:var(--muted); font-size:0.85rem;">
+            Sutton &amp; Barto, Ch 6.5. Same 4×12 cliff world for both agents. Q-learning learns the optimal policy (walk along the cliff edge); SARSA learns a safer policy (walk along the top row) because it accounts for the cost of falling in due to ε-greedy exploration noise.
           </p>
-          <div style="display:flex; gap:10px; align-items:center; margin-bottom:8px;">
-            <label data-i18n="cw-episodes" style="font-size:0.85rem;">Episodes:</label>
-            <input id="cwEpisodes" type="range" min="100" max="2000" step="100" value="500" style="width:160px;">
-            <span id="cwEpisodesV" style="font-family:ui-monospace,monospace; font-size:0.85rem;">500</span>
-            <button class="step-btn" id="cwRunBtn" data-i18n="cw-run">▶ Train both agents</button>
-          </div>
-          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:14px;">
-            <div>
-              <div style="font-family:-apple-system,system-ui,sans-serif; font-weight:600; color:#0284c7; margin-bottom:4px;">Q-learning (off-policy)</div>
-              <canvas id="cwQcv" width="384" height="160" style="border:1px solid var(--border); width:100%; height:auto; image-rendering:pixelated; background:white;"></canvas>
-              <div id="cwQstats" style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted); margin-top:4px;">-</div>
-            </div>
-            <div>
-              <div style="font-family:-apple-system,system-ui,sans-serif; font-weight:600; color:#16a34a; margin-bottom:4px;">SARSA (on-policy)</div>
-              <canvas id="cwScv" width="384" height="160" style="border:1px solid var(--border); width:100%; height:auto; image-rendering:pixelated; background:white;"></canvas>
-              <div id="cwSstats" style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted); margin-top:4px;">-</div>
-            </div>
-          </div>
-          <div style="margin-top:8px;">
-            <div style="font-family:-apple-system,system-ui,sans-serif; font-size:0.82rem; color:var(--muted); margin-bottom:4px;" data-i18n="cw-curve-label">Average reward per episode (50-episode moving window):</div>
-            <canvas id="cwCurve" width="780" height="140" style="border:1px solid var(--border); width:100%; height:auto; background:white;"></canvas>
-          </div>
-        </div>
-      </details>
-    </div><!-- /.bento-cell cw-panel -->
-
-  </div><!-- /.bento-main -->
+<div style="display:flex; gap:10px; align-items:center; margin-bottom:8px;">
+<label data-i18n="cw-episodes" style="font-size:0.85rem;">Episodes:</label>
+<input id="cwEpisodes" max="2000" min="100" step="100" style="width:160px;" type="range" value="500"/>
+<span id="cwEpisodesV" style="font-family:ui-monospace,monospace; font-size:0.85rem;">500</span>
+<button class="step-btn" data-i18n="cw-run" id="cwRunBtn">▶ Train both agents</button>
+</div>
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:14px;">
+<div>
+<div style="font-family:-apple-system,system-ui,sans-serif; font-weight:600; color:#0284c7; margin-bottom:4px;">Q-learning (off-policy)</div>
+<canvas height="160" id="cwQcv" style="border:1px solid var(--border); width:100%; height:auto; image-rendering:pixelated; background:white;" width="384"></canvas>
+<div id="cwQstats" style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted); margin-top:4px;">-</div>
+</div>
+<div>
+<div style="font-family:-apple-system,system-ui,sans-serif; font-weight:600; color:#16a34a; margin-bottom:4px;">SARSA (on-policy)</div>
+<canvas height="160" id="cwScv" style="border:1px solid var(--border); width:100%; height:auto; image-rendering:pixelated; background:white;" width="384"></canvas>
+<div id="cwSstats" style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted); margin-top:4px;">-</div>
+</div>
+</div>
+<div style="margin-top:8px;">
+<div data-i18n="cw-curve-label" style="font-family:-apple-system,system-ui,sans-serif; font-size:0.82rem; color:var(--muted); margin-bottom:4px;">Average reward per episode (50-episode moving window):</div>
+<canvas height="140" id="cwCurve" style="border:1px solid var(--border); width:100%; height:auto; background:white;" width="780"></canvas>
+</div>
+</div>
+</details>
+</div><!-- /.bento-cell cw-panel -->
+</div><!-- /.bento-main -->
 </div><!-- /.bento -->
-
-
-  <!-- Scenario gallery. Visible, reusable entry points generated from the lesson-tour scenarios. -->
-  <details class="scenario-gallery" open style="margin-top:12px;">
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span data-i18n="sg-summary">🎯 Try these scenarios first</span>
-    </summary>
-    <div class="scenario-gallery-panel">
-      <p class="scenario-gallery-intro" data-i18n="sg-intro">Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.</p>
-      <div class="scenario-card-grid" id="scenarioGalleryCards" aria-live="polite"></div>
-    </div>
-  </details>
-
-
-  <!-- Signature challenge. A one-move comparison that gives this applet a memorable first task. -->
-  <details class="signature-challenge" open style="margin-top:12px;">
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span>✨ Featured comparison</span>
-    </summary>
-    <div class="signature-challenge-panel">
-      <strong>Featured comparison</strong>
-      <p>Run a short training pass and a longer one. The grid does not receive a plan; it gradually builds value through repeated backup.</p>
-      <p><em>Compare early and later policies, then inspect which cells changed most.</em></p>
-    </div>
-  </details>
-
-  <!-- Supporting learning component. -->
-  <details class="visual-explanation" open style="margin-top:12px;">
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span data-visual-en="🧭 Visual explanation" data-visual-zh="🧭 可视化解释镜头">🧭 Visual explanation</span>
-    </summary>
-    <div class="visual-explanation-panel">
-      <p class="visual-explanation-intro" data-visual-intro></p>
-      <div class="visual-flow" data-visual-flow></div>
-      <div class="visual-watch-grid">
-        <div class="visual-snapshot">
-          <strong data-visual-en="Live state to watch" data-visual-zh="要观察的实时状态">Live state to watch</strong>
-          <pre data-visual-snapshot>No state captured yet. Run or adjust the applet first.</pre>
-        </div>
-        <div class="visual-misread">
-          <strong data-visual-en="Misread to avoid" data-visual-zh="避免的误读">Misread to avoid</strong>
-          <p data-visual-misread></p>
-        </div>
-      </div>
-    </div>
-  </details>
-
-
-  <!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
-  <details class="lesson-tour" style="margin-top:12px;">
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span data-i18n="tour-summary">📚 Lesson tour (5 steps)</span>
-    </summary>
-    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
-      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
-        <strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
-        <strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">-</strong>
-      </div>
-      <p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">-</p>
-      <div style="display:flex; gap:8px; align-items:center;">
-        <button class="step-btn secondary" id="tourPrev" data-i18n="tour-prev">← Prev</button>
-        <button class="step-btn" id="tourApply" data-i18n="tour-apply">▶ Apply this scenario</button>
-        <button class="step-btn secondary" id="tourNext" data-i18n="tour-next">Next →</button>
-      </div>
-    </div>
-  </details>
-
-  <!-- Worksheet/lab mode. 3 questions per applet with instant check. -->
-  <details class="worksheet" style="margin-top:8px;">
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span data-i18n="ws-summary">📝 Worksheet (3 questions)</span>
-    </summary>
-    <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem; line-height:1.5;">
-      <div class="ws-q" id="ws1">
-        <p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">Default grid. Set ε=0. Reset Q-values. Train continuously for ~500 episodes. Does the agent reliably reach the goal?</span></p>
-        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="0"> <span data-i18n="ws1o0">Yes: ε=0 makes it greedy, and greedy always heads straight for the highest reward.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="1"> <span data-i18n="ws1o1">Yes: 500 episodes is more than enough training time for any setting.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws1" value="2"> <span data-i18n="ws1o2">No: with ε=0 and all Q-values tied at 0, it never explores and can't discover the goal.</span></label>
-        </div>
-        <button class="step-btn" id="ws1btn" data-i18n="ws-check">Check</button>
-        <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
-      </div>
-      <div class="ws-q" id="ws2" style="margin-top:10px;">
-        <p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Set γ=0, ε=0.2. Reset Q. Train. Q-values (green color) appear:</span></p>
-        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="0"> <span data-i18n="ws2o0">Only in cells adjacent to the goal/pit: γ=0 means no future reward propagates backward.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="1"> <span data-i18n="ws2o1">Everywhere: every visited cell still accumulates value over many episodes.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws2" value="2"> <span data-i18n="ws2o2">Nowhere: γ=0 zeroes out every Q-value, so nothing turns green.</span></label>
-        </div>
-        <button class="step-btn" id="ws2btn" data-i18n="ws-check">Check</button>
-        <span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
-      </div>
-      <div class="ws-q" id="ws3" style="margin-top:10px;">
-        <p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Default grid, γ=0.9. Compare α=0.05 vs α=0.8 (same training time, slip=0). The α=0.8 Q-values evolve:</span></p>
-        <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="0"> <span data-i18n="ws3o0">More stably: a bigger α averages over more updates, smoothing out the noise.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="1"> <span data-i18n="ws3o1">Less stably: α=0.8 replaces 80% of the old Q each step, so values jump around erratically.</span></label>
-          <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input type="radio" name="ws3" value="2"> <span data-i18n="ws3o2">Identically: α only changes how fast it converges, not how smooth the path is.</span></label>
-        </div>
-        <button class="step-btn" id="ws3btn" data-i18n="ws-check">Check</button>
-        <span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
-      </div>
-    </div>
-  </details>
-
-  <!-- Student response packet. Local-only: students copy or print their own response packet; the site stores nothing on a server. -->
-  <details class="classroom-lab" style="margin-top:8px;">
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span data-lab-en="🧪 Student response packet" data-lab-zh="🧪 课堂实验模式">🧪 Student response packet</span>
-    </summary>
-    <div class="lab-panel">
-      <p class="lab-intro" data-lab-en="Predict how exploration and discounting affect learning, train the agent, then explain how value propagates from reward." data-lab-zh="先预测探索和折扣如何影响学习，再训练智能体，然后解释价值如何从奖励传播。">Predict how exploration and discounting affect learning, train the agent, then explain how value propagates from reward.</p>
-      <div class="lab-grid">
-        <div class="lab-field">
-          <label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
-          <textarea id="lab-predict" data-lab-answer="predict" data-lab-en="What happens if epsilon is 0 before the goal has been discovered?" data-lab-zh="如果还没有发现目标时 ε 为 0，会发生什么？" placeholder="What happens if epsilon is 0 before the goal has been discovered?"></textarea>
-        </div>
-        <div class="lab-field">
-          <label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
-          <textarea id="lab-observe" data-lab-answer="observe" data-lab-en="Train two settings. Record the visible Q-value pattern, reward pattern, or policy difference." data-lab-zh="训练两组设置。记录可见的 Q 值模式、奖励模式或策略差异。" placeholder="Train two settings. Record the visible Q-value pattern, reward pattern, or policy difference."></textarea>
-        </div>
-        <div class="lab-field">
-          <label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
-          <textarea id="lab-explain" data-lab-answer="explain" data-lab-en="How did gamma, epsilon, or alpha change learning in your run?" data-lab-zh="在你的运行中，γ、ε 或 α 如何改变学习？" placeholder="How did gamma, epsilon, or alpha change learning in your run?"></textarea>
-        </div>
-        <div class="lab-field">
-          <label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
-          <textarea id="lab-transfer" data-lab-answer="transfer" data-lab-en="Give a task where exploration is necessary before exploitation becomes useful." data-lab-zh="举一个任务，说明先探索后利用为什么必要。" placeholder="Give a task where exploration is necessary before exploitation becomes useful."></textarea>
-        </div>
-      </div>
-      <div class="lab-state" data-lab-state aria-live="polite">State snapshot appears here.</div>
-      <div class="lab-actions">
-        <button class="step-btn" type="button" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态">↻ Refresh state</button>
-        <button class="step-btn" type="button" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包">📋 Copy packet</button>
-        <button class="step-btn secondary" type="button" data-lab-action="print" data-lab-en="🖨 Print packet" data-lab-zh="🖨 打印实验包">🖨 Print packet</button>
-        <button class="step-btn secondary" type="button" data-lab-action="clear" data-lab-en="Clear local draft" data-lab-zh="清除本地草稿">Clear local draft</button>
-        <span class="lab-status" aria-live="polite"></span>
-      </div>
-    </div>
-  </details>
-
-
-  <!-- Supporting learning component. -->
-  <details class="accessibility-layer" open>
-    <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-      <span data-a11y-en="♿ Text and keyboard support" data-a11y-zh="♿ 无障碍和文本状态层">♿ Text and keyboard support</span>
-    </summary>
-    <div class="accessibility-panel" role="region" aria-labelledby="a11yLayerTitle">
-      <h2 id="a11yLayerTitle" class="sr-only" data-a11y-title>Text and keyboard support</h2>
-      <p class="accessibility-intro" data-a11y-intro></p>
-      <div class="accessibility-grid">
-        <section class="accessibility-card" aria-labelledby="a11yKeyboardTitle">
-          <h3 id="a11yKeyboardTitle" data-a11y-keyboard-title>Keyboard path</h3>
-          <ul>
-            <li data-a11y-keyboard-1>Use Tab and Shift+Tab to move through controls.</li>
-            <li data-a11y-keyboard-2>Use Enter or Space on buttons, and arrow keys on sliders or select controls.</li>
-            <li data-a11y-keyboard-3>The visual region is focusable and described by the state summary below.</li>
-          </ul>
-        </section>
-        <section class="accessibility-card" aria-labelledby="a11yStateTitle">
-          <h3 id="a11yStateTitle" data-a11y-state-title>Text state summary</h3>
-          <dl class="a11y-state-grid" id="a11yStateSummary" data-a11y-state-grid></dl>
-        </section>
-        <section class="accessibility-card" aria-labelledby="a11yMotionTitle">
-          <h3 id="a11yMotionTitle" data-a11y-motion-title>Reduced motion and non-visual support</h3>
-          <p data-a11y-motion-copy>Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.</p>
-        </section>
-      </div>
-      <p class="accessibility-note" data-a11y-note>Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.</p>
-      <div id="a11yLiveRegion" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
-    </div>
-  </details>
-
-
-  <div class="jump-anchor"><a href="#essay" class="jump-link">↓ Read the explanation</a></div>
+<!-- Scenario gallery. Visible, reusable entry points generated from the lesson-tour scenarios. -->
+<details class="scenario-gallery" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="sg-summary">🎯 Try these scenarios first</span>
+</summary>
+<div class="scenario-gallery-panel">
+<p class="scenario-gallery-intro" data-i18n="sg-intro">Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.</p>
+<div aria-live="polite" class="scenario-card-grid" id="scenarioGalleryCards">
+<article class="scenario-card" data-scenario-index="0">
+<h3>Scenario 1: Watch values spread backward from the goal</h3>
+<p class="scenario-meta"><strong>Core question: </strong> How can a reward influence states that are several steps away?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Use the default grid, train continuously, and watch high action values (Q-values) move backward from the goal.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict which nearby cells will gain useful values first.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain how repeated temporal-difference updates carry delayed reward information backward.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="1">
+<h3>Scenario 2: No exploration can prevent discovery</h3>
+<p class="scenario-meta"><strong>Core question: </strong> Why can choosing only the current best action stop learning before it starts?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Set the exploration rate (ε) to zero, reset the action values (Q-values), and train from an all-zero table.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict whether the agent will reliably discover the goal.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain how unseen actions cannot become valuable if they are never tried.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="2">
+<h3>Scenario 3: A zero discount factor ignores the future</h3>
+<p class="scenario-meta"><strong>Core question: </strong> What remains when only immediate reward matters?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Set the discount factor (γ) to zero, reset the action values (Q-values), and train.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict which cells will receive nonzero Q-values.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain why reward information cannot travel beyond the cells immediately beside a terminal reward.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="3">
+<h3>Scenario 4: A zero step penalty removes time pressure</h3>
+<p class="scenario-meta"><strong>Core question: </strong> Why does the agent wander when long and short successful routes earn the same return?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Set the per-step reward to zero, train, then compare with a small negative step reward.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict whether the learned policy will prefer a short route when movement is free.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain how a step cost turns route length into part of the objective.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="4">
+<h3>Scenario 5: A high learning rate reacts strongly to noisy outcomes</h3>
+<p class="scenario-meta"><strong>Core question: </strong> Why can fast updates become unstable in a stochastic world?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Set slip probability to 0.3 and learning rate (α) to 0.8, then compare the changes in action values (Q-values) with a lower learning rate.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict which setting will produce more erratic Q-value changes.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain how one surprising transition can dominate when new experience receives too much weight.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+</div>
+</div>
+</details>
+<!-- Signature challenge. A one-move comparison that gives this applet a memorable first task. -->
+<details class="signature-challenge" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span>✨ Featured comparison</span>
+</summary>
+<div class="signature-challenge-panel">
+<strong>Featured comparison</strong>
+<p>Run a short training pass and a longer one. The grid does not receive a plan; it gradually builds value through repeated backup.</p>
+<p><em>Compare early and later policies, then inspect which cells changed most.</em></p>
+</div>
+</details>
+<!-- Supporting learning component. -->
+<details class="visual-explanation" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-visual-en="🧭 Visual explanation" data-visual-zh="🧭 可视化解释镜头">🧭 Visual explanation</span>
+</summary>
+<div class="visual-explanation-panel">
+<p class="visual-explanation-intro" data-visual-intro=""></p>
+<div class="visual-flow" data-visual-flow=""></div>
+<div class="visual-watch-grid">
+<div class="visual-snapshot">
+<strong data-visual-en="Live state to watch" data-visual-zh="要观察的实时状态">Live state to watch</strong>
+<pre data-visual-snapshot="">No state captured yet. Run or adjust the applet first.</pre>
+</div>
+<div class="visual-misread">
+<strong data-visual-en="Misread to avoid" data-visual-zh="避免的误读">Misread to avoid</strong>
+<p data-visual-misread=""></p>
+</div>
+</div>
+</div>
+</details>
+<!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
+<details class="lesson-tour" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="tour-summary">📚 Lesson tour (5 steps)</span>
+</summary>
+<div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+<div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+<strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
+<strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">-</strong>
+</div>
+<p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">-</p>
+<div style="display:flex; gap:8px; align-items:center;">
+<button class="step-btn secondary" data-i18n="tour-prev" id="tourPrev">← Prev</button>
+<button class="step-btn" data-i18n="tour-apply" id="tourApply">▶ Apply this scenario</button>
+<button class="step-btn secondary" data-i18n="tour-next" id="tourNext">Next →</button>
+</div>
+</div>
+</details>
+<!-- Worksheet/lab mode. 3 questions per applet with instant check. -->
+<details class="worksheet" style="margin-top:8px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="ws-summary">📝 Worksheet (3 questions)</span>
+</summary>
+<div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem; line-height:1.5;">
+<div class="ws-q" id="ws1">
+<p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">Default grid. Set ε=0. Reset Q-values. Train continuously for ~500 episodes. Does the agent reliably reach the goal?</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="0"/> <span data-i18n="ws1o0">Yes: ε=0 makes it greedy, and greedy always heads straight for the highest reward.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="1"/> <span data-i18n="ws1o1">Yes: 500 episodes is more than enough training time for any setting.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="2"/> <span data-i18n="ws1o2">No: with ε=0 and all Q-values tied at 0, it never explores and can't discover the goal.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws1btn">Check</button>
+<span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+<div class="ws-q" id="ws2" style="margin-top:10px;">
+<p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Set γ=0, ε=0.2. Reset Q. Train. Q-values (green color) appear:</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="0"/> <span data-i18n="ws2o0">Only in cells adjacent to the goal/pit: γ=0 means no future reward propagates backward.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="1"/> <span data-i18n="ws2o1">Everywhere: every visited cell still accumulates value over many episodes.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="2"/> <span data-i18n="ws2o2">Nowhere: γ=0 zeroes out every Q-value, so nothing turns green.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws2btn">Check</button>
+<span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+<div class="ws-q" id="ws3" style="margin-top:10px;">
+<p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Default grid, γ=0.9. Compare α=0.05 vs α=0.8 (same training time, slip=0). The α=0.8 Q-values evolve:</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="0"/> <span data-i18n="ws3o0">More stably: a bigger α averages over more updates, smoothing out the noise.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="1"/> <span data-i18n="ws3o1">Less stably: α=0.8 replaces 80% of the old Q each step, so values jump around erratically.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="2"/> <span data-i18n="ws3o2">Identically: α only changes how fast it converges, not how smooth the path is.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws3btn">Check</button>
+<span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+</div>
+</details>
+<!-- Student response packet. Local-only: students copy or print their own response packet; the site stores nothing on a server. -->
+<details class="classroom-lab" style="margin-top:8px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-lab-en="🧪 Student response packet" data-lab-zh="🧪 课堂实验模式">🧪 Student response packet</span>
+</summary>
+<div class="lab-panel">
+<p class="lab-intro" data-lab-en="Predict how exploration and discounting affect learning, train the agent, then explain how value propagates from reward." data-lab-zh="先预测探索和折扣如何影响学习，再训练智能体，然后解释价值如何从奖励传播。">Predict how exploration and discounting affect learning, train the agent, then explain how value propagates from reward.</p>
+<div class="lab-grid">
+<div class="lab-field">
+<label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
+<textarea data-lab-answer="predict" data-lab-en="What happens if epsilon is 0 before the goal has been discovered?" data-lab-zh="如果还没有发现目标时 ε 为 0，会发生什么？" id="lab-predict" placeholder="What happens if epsilon is 0 before the goal has been discovered?"></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
+<textarea data-lab-answer="observe" data-lab-en="Train two settings. Record the visible Q-value pattern, reward pattern, or policy difference." data-lab-zh="训练两组设置。记录可见的 Q 值模式、奖励模式或策略差异。" id="lab-observe" placeholder="Train two settings. Record the visible Q-value pattern, reward pattern, or policy difference."></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
+<textarea data-lab-answer="explain" data-lab-en="How did gamma, epsilon, or alpha change learning in your run?" data-lab-zh="在你的运行中，γ、ε 或 α 如何改变学习？" id="lab-explain" placeholder="How did gamma, epsilon, or alpha change learning in your run?"></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
+<textarea data-lab-answer="transfer" data-lab-en="Give a task where exploration is necessary before exploitation becomes useful." data-lab-zh="举一个任务，说明先探索后利用为什么必要。" id="lab-transfer" placeholder="Give a task where exploration is necessary before exploitation becomes useful."></textarea>
+</div>
+</div>
+<div aria-live="polite" class="lab-state" data-lab-state="">State snapshot appears here.</div>
+<div class="lab-actions">
+<button class="step-btn" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态" type="button">↻ Refresh state</button>
+<button class="step-btn" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包" type="button">📋 Copy packet</button>
+<button class="step-btn secondary" data-lab-action="print" data-lab-en="🖨 Print packet" data-lab-zh="🖨 打印实验包" type="button">🖨 Print packet</button>
+<button class="step-btn secondary" data-lab-action="clear" data-lab-en="Clear local draft" data-lab-zh="清除本地草稿" type="button">Clear local draft</button>
+<span aria-live="polite" class="lab-status"></span>
+</div>
+</div>
+</details>
+<!-- Supporting learning component. -->
+<details class="accessibility-layer" open="">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-a11y-en="♿ Text and keyboard support" data-a11y-zh="♿ 无障碍和文本状态层">♿ Text and keyboard support</span>
+</summary>
+<div aria-labelledby="a11yLayerTitle" class="accessibility-panel" role="region">
+<h2 class="sr-only" data-a11y-title="" id="a11yLayerTitle">Text and keyboard support</h2>
+<p class="accessibility-intro" data-a11y-intro=""></p>
+<div class="accessibility-grid">
+<section aria-labelledby="a11yKeyboardTitle" class="accessibility-card">
+<h3 data-a11y-keyboard-title="" id="a11yKeyboardTitle">Keyboard path</h3>
+<ul>
+<li data-a11y-keyboard-1="">Use Tab and Shift+Tab to move through controls.</li>
+<li data-a11y-keyboard-2="">Use Enter or Space on buttons, and arrow keys on sliders or select controls.</li>
+<li data-a11y-keyboard-3="">The visual region is focusable and described by the state summary below.</li>
+</ul>
+</section>
+<section aria-labelledby="a11yStateTitle" class="accessibility-card">
+<h3 data-a11y-state-title="" id="a11yStateTitle">Text state summary</h3>
+<dl class="a11y-state-grid" data-a11y-state-grid="" id="a11yStateSummary"></dl>
+</section>
+<section aria-labelledby="a11yMotionTitle" class="accessibility-card">
+<h3 data-a11y-motion-title="" id="a11yMotionTitle">Reduced motion and non-visual support</h3>
+<p data-a11y-motion-copy="">Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.</p>
+</section>
+</div>
+<p class="accessibility-note" data-a11y-note="">Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.</p>
+<div aria-atomic="true" aria-live="polite" class="sr-only" id="a11yLiveRegion" role="status"></div>
+</div>
+</details>
+<div class="jump-anchor"><a class="jump-link" href="#essay">↓ Read the explanation</a></div>
 </div>
 </section>
-
 <article class="essay" id="essay">
-
-  <p class="lede">
-    Reinforcement learning answers a question that supervised learning can't:
-    <em>how does an agent learn to act when there's no teacher to tell it the right answer?</em>
-    Q-learning's answer is simple and powerful: try things, see what reward you get, and remember.
+<section data-essay-lang="en">
+<p class="lede">
+    Reinforcement learning studies how an agent improves behavior through interaction rather than
+    receiving the correct action for every situation. In this gridworld, actions produce immediate
+    rewards and new states. Q-learning uses those experiences to estimate which action is valuable
+    from each state.
   </p>
-
-  <h2>The Q-table</h2>
-
-  <p>
-    The agent maintains a number <code>Q(state, action)</code> for every cell of the grid and
-    every action it might take from that cell. This number estimates "if I take this action from
-    this state and then play optimally forever after, how much total reward will I collect?"
-    At the start, every Q-value is zero: the agent knows nothing.
+<h2>State-action values and return</h2>
+<p>
+<code>Q(s,a)</code> estimates the discounted return obtained after taking action <code>a</code>
+    in state <code>s</code> and then following a specified policy. Tabular Q-learning is designed to
+    estimate the optimal action-value function <code>Q*</code> under standard assumptions. The return
+    combines immediate reward with later rewards, discounted by powers of <code>γ</code>.
   </p>
-
-  <h2>The Bellman update</h2>
-
-  <p>
-    Each time the agent moves, it observes the reward and the cell it landed in. It then nudges
-    the Q-value of the action it just took toward what it just learned:
+<h2>The temporal-difference update</h2>
+<p>
+    For a nonterminal transition from <code>s</code> to <code>s'</code> with reward <code>r</code>,
+    Q-learning applies
   </p>
-
-  <p>
-    <code>Q(s, a) ← Q(s, a) + α [ r + γ · max<sub>a'</sub> Q(s', a') − Q(s, a) ]</code>
+<p><code>Q(s,a) ← Q(s,a) + α[r + γ max<sub>a'</sub>Q(s',a') − Q(s,a)]</code>.</p>
+<p>
+    The bracketed term is the temporal-difference error. The learning rate <code>α</code> controls
+    update size. The discount factor <code>γ</code> controls the weight of estimated future return.
+    At a terminal state there is no future action value, so the target is the terminal reward alone.
   </p>
-
-  <p>
-    The bracketed quantity is the <em>temporal-difference error</em>: the difference between
-    what the agent expected (<code>Q(s, a)</code>) and what it actually saw (the reward plus the
-    discounted best value of the next state). α controls how much the agent moves toward the
-    new estimate; γ controls how much it cares about that "best value of the next state" versus
-    just the immediate reward.
-  </p>
-
-  <div class="aha">
-    The Q-values literally spread outward from the goal. Watch the green color expand cell by
-    cell as the agent stumbles upon the goal a few times: each visit nudges the Q-value of the
-    cell just outside, which on the next visit nudges the cell outside <em>that</em>, and so on.
-    That's "reward propagating backward through experience."
+<div class="aha">
+    Reward information propagates backward through repeated backups. A state several steps from the
+    goal gains value only after experience has connected it to valuable successor states.
   </div>
-
-  <h2>The algorithm family</h2>
-
-  <p>
-    Q-learning is one member of a family of tabular value-based methods. The algorithm dropdown
-    above lets you compare four of them on the same gridworld. They share the same Q-table and
-    the same overall loop; they differ in what goes into the bracketed TD target:
+<h2>Related algorithms in the selector</h2>
+<ul>
+<li><strong>Q-learning:</strong> uses the maximum next-state value in its target. It is off-policy
+      because behavior can be exploratory while the target evaluates a greedy next action.</li>
+<li><strong>SARSA:</strong> uses the value of the next action actually selected by the behavior
+      policy. It is on-policy and therefore incorporates the risk created by continued exploration.</li>
+<li><strong>Expected SARSA:</strong> averages next-action values under the current policy instead
+      of sampling only one next action.</li>
+<li><strong>First-visit Monte Carlo control:</strong> waits for an episode to end and updates from
+      sampled returns without bootstrapping from a next-state estimate.</li>
+<li><strong>Softmax exploration:</strong> converts action values into a temperature-controlled
+      probability distribution rather than using an epsilon-greedy random branch.</li>
+</ul>
+<h2>Exploration, discounting, and step cost</h2>
+<p>
+    With epsilon-greedy behavior, the agent selects a random action with probability <code>ε</code>
+    and otherwise selects a currently greedy action. Setting <code>ε = 0</code> can prevent reliable
+    discovery when initial tie-breaking and early experience favor an unhelpful route. Too much
+    exploration can also prevent behavior from settling.
   </p>
-
-  <ul>
-    <li><strong>Q-learning</strong> uses <code>r + γ · max<sub>a'</sub> Q(s', a')</code> -
-      always the best possible next action. <em>Off-policy</em>: the policy used to act (ε-greedy)
-      is different from the policy used to evaluate (greedy). Bold, optimistic, sometimes overestimates.</li>
-    <li><strong>SARSA</strong> uses <code>r + γ · Q(s', a')</code>, where <code>a'</code> is the
-      action the agent actually picks next (using ε-greedy). <em>On-policy</em>: the policy used
-      to act is the same one being evaluated. Tends to be more cautious near cliffs because it
-      accounts for the chance of taking a risky exploration step.</li>
-    <li><strong>Expected SARSA</strong> uses <code>r + γ · Σ<sub>a'</sub> π(a'|s') · Q(s', a')</code> -
-      the expected next-state value under the current policy. A smoother on-policy alternative
-      to SARSA; lower variance because it averages over all possible next actions instead of just
-      one sampled one.</li>
-    <li><strong>Monte Carlo (first-visit control)</strong> waits until the end of an episode, then
-      updates each visited (s, a) toward the full return <code>G<sub>t</sub></code> from that point
-      forward. No bootstrapping at all: pure samples. The "Step" button is disabled in MC mode
-      because MC updates only happen at episode end.</li>
-  </ul>
-
-  <p>
-    The fifth option, <strong>Q-learning (Softmax)</strong>, switches the exploration strategy
-    from ε-greedy to a temperature-weighted action distribution: each action is picked with
-    probability proportional to <code>exp(Q(s, a) / τ)</code>. Lower τ = greedier; higher τ = more
-    random. Unlike ε-greedy (which explores uniformly when it explores), Softmax preferentially
-    explores actions that <em>look</em> promising, which can speed up learning in some
-    environments and slow it down in others.
+<p>
+    Setting <code>γ = 0</code> removes delayed value from the target, so only immediate rewards are
+    learned. A negative per-step reward makes shorter successful paths more valuable. With zero step
+    cost, multiple successful routes can have equal return, so the learned policy may be indifferent
+    among paths of different lengths.
   </p>
-
-  <div class="aha">
-    On the default gridworld with a pit, SARSA learns a path that stays a few cells away from the
-    pit; Q-learning learns the shortest path even if it walks right next to the pit. Why? SARSA
-    accounts for the chance the agent will randomly fall in during exploration; Q-learning assumes
-    perfect greedy execution and doesn't. This is the canonical "Cliff-walking" insight from
-    Sutton &amp; Barto Ch 6.
+<h2>Risk and the cliff comparison</h2>
+<p>
+    In a stochastic or persistently exploratory environment, SARSA can prefer a safer route because
+    its target includes the actions the behavior policy may actually take. Q-learning evaluates the
+    greedy next action and may favor a shorter route near danger. This distinction is most clearly
+    studied in the dedicated cliff-walking comparison; it is not a guarantee that every pit layout
+    will produce the same two paths.
+  </p>
+<h2>What this model leaves out</h2>
+<p>
+    Convergence results for tabular Q-learning require conditions such as sufficient exploration,
+    suitable learning-rate schedules, and a stationary finite Markov decision process. Deep RL
+    replaces the table with function approximation and introduces replay buffers, target networks,
+    optimization instability, partial observability, and much larger state spaces. The applet keeps
+    the state and update visible so those later complications have a clear reference point.
+  </p>
+<div class="for-teachers">
+<h3>For teachers</h3>
+<p><strong>Curriculum:</strong> States, actions, rewards, discounted return, Q-values,
+      temporal-difference learning, on-policy versus off-policy learning, exploration, and terminal transitions.</p>
+<p><strong>Pre-exploration prompts:</strong></p>
+<ul>
+<li>How can a reward at the goal influence an action several steps away?</li>
+<li>What is lost if an agent never tries an action that currently looks worse?</li>
+<li>How should a terminal transition differ from an ordinary transition?</li>
+</ul>
+<p><strong>Post-exploration prompts:</strong></p>
+<ul>
+<li>Train from a zero table and trace the first nonzero values backward from a terminal reward.</li>
+<li>Compare <code>ε = 0</code> with moderate exploration over several resets, not just one run.</li>
+<li>Set <code>γ = 0</code>. Which states can acquire nonzero values and why?</li>
+<li>Use slip and a high learning rate. Separate stochastic transition noise from update size.</li>
+<li>Compare Q-learning and SARSA in the cliff panel and explain the policy each target evaluates.</li>
+</ul>
+<p><strong>Misconceptions to test:</strong> Q-values are a prewritten plan; terminal states
+      bootstrap from themselves; more exploration is always better; one finite run establishes algorithmic convergence.</p>
+</div>
+</section>
+<section data-essay-lang="zh" hidden="" lang="zh">
+<p class="lede">
+    强化学习研究智能体如何通过交互改进行为，而不是在每种情形下都获得正确动作。在这个网格世界中，动作会产生即时奖励和新状态。Q 学习利用这些经验估计在每个状态下哪个动作更有价值。
+  </p>
+<h2>状态动作价值与回报</h2>
+<p>
+<code>Q(s,a)</code> 估计在状态 <code>s</code> 采取动作 <code>a</code> 后，再遵循某一策略所获得的折扣回报。表格型 Q 学习在标准假设下用于估计最优动作价值函数 <code>Q*</code>。回报把即时奖励与后续奖励组合起来，后续奖励按 <code>γ</code> 的幂进行折扣。
+  </p>
+<h2>时序差分更新</h2>
+<p>
+    对于从 <code>s</code> 转移到非终止状态 <code>s'</code> 并获得奖励 <code>r</code> 的经验，Q 学习执行
+  </p>
+<p><code>Q(s,a) ← Q(s,a) + α[r + γ max<sub>a'</sub>Q(s',a') − Q(s,a)]</code>。</p>
+<p>
+    方括号中的量是时序差分误差。学习率 <code>α</code> 控制更新幅度，折扣因子 <code>γ</code> 控制估计未来回报的权重。到达终止状态后不存在未来动作价值，因此目标只包含终止奖励。
+  </p>
+<div class="aha">
+    奖励信息通过反复回传向后传播。距离目标多步的状态，只有在经验把它连接到有价值的后继状态后才会获得价值。
   </div>
-
-  <h2>Exploration vs. exploitation</h2>
-
-  <p>
-    If the agent always took the best-known action, it would never discover that other actions
-    might be better. That's <em>exploitation only</em>. If it always took random actions, it
-    would never get good at anything. That's <em>exploration only</em>. Q-learning's standard
-    fix is the <strong>ε-greedy</strong> policy: with probability ε take a random action, otherwise
-    take the best one known so far. Watch what happens when you slide ε all the way to 0: the
-    agent gets stuck in whatever wrong path it happened to find first.
+<h2>选择器中的相关算法</h2>
+<ul>
+<li><strong>Q 学习：</strong>目标使用下一状态的最大动作价值。行为可以探索，而目标评估贪心下一动作，因此属于离策略方法。</li>
+<li><strong>SARSA：</strong>使用行为策略实际选择的下一动作价值。它属于同策略方法，因此会把持续探索造成的风险纳入目标。</li>
+<li><strong>Expected SARSA：</strong>按照当前策略对全部下一动作价值求平均，而不是只抽样一个下一动作。</li>
+<li><strong>首次访问蒙特卡洛控制：</strong>等待回合结束，再根据抽样回报更新，不从下一状态估计进行自举。</li>
+<li><strong>Softmax 探索：</strong>把动作价值转换为受温度控制的概率分布，而不是使用 epsilon-greedy 的随机分支。</li>
+</ul>
+<h2>探索、折扣与步进成本</h2>
+<p>
+    在 epsilon-greedy 行为中，智能体以概率 <code>ε</code> 随机选择动作，否则选择当前贪心动作。把 <code>ε = 0</code> 可能使发现过程不可靠，因为初始平局处理和早期经验可能偏向无效路线。探索过多也会使行为难以稳定。
   </p>
-
-  <h2>The role of the step penalty</h2>
-
-  <p>
-    Without a small per-step penalty, the agent has no reason to find a <em>short</em> path -
-    just any path that eventually reaches the goal. Slide step reward to 0 and watch the agent
-    learn meandering, beautiful, useless routes. The −0.04 default is borrowed from Russell &amp;
-    Norvig's textbook gridworld and is a real engineering knob in production RL.
+<p>
+    把 <code>γ = 0</code> 会从目标中移除延迟价值，因此只学习即时奖励。负的每步奖励会让更短的成功路径具有更高价值。步进成本为零时，多条成功路线可能拥有相同回报，所以学习到的策略可能对不同长度路径没有偏好。
   </p>
-
-  <h2>What this simplifies</h2>
-
-  <p>
-    Real RL uses neural networks (deep Q-learning, DQN) when the state space is too big to fit
-    in a table: chess has more states than atoms in the observable universe. Real RL also has
-    to handle partial observability, continuous actions, and credit assignment over hundreds of
-    steps. But the heart is exactly what you see here: a Bellman update, propagating signal
-    backward through experience.
+<h2>风险与悬崖比较</h2>
+<p>
+    在随机环境或持续探索环境中，SARSA 的目标包含行为策略实际可能采取的动作，因此可能偏好更安全路线。Q 学习评估贪心下一动作，可能偏好靠近危险的较短路线。这种差异在专门的悬崖行走比较中最清楚，并不保证每一种陷阱布局都会产生相同的两条路线。
   </p>
-
-  <div class="for-teachers">
-    <h3>For teachers</h3>
-    <p><strong>Curriculum:</strong> Reinforcement Learning &amp; Decision-Making.
-       Learning objectives: state-action values; the Bellman update; on-policy vs ε-greedy exploration;
-       how delayed rewards propagate backward through a value function.</p>
-    <p><strong>Pre-exploration prompts:</strong></p>
-    <ul>
-      <li>How would you teach a dog a trick using only treats: no words?</li>
-      <li>If the goal is far away and every step costs a tiny bit, how do you decide which way to go?</li>
-      <li>What's the difference between "always trying the best-known action" and "sometimes trying something new"?</li>
-    </ul>
-    <p><strong>Post-exploration prompts:</strong></p>
-    <ul>
-      <li>Run "Train continuously" with defaults. Watch the green spread out from the goal. What does that show?</li>
-      <li>Set ε = 0 and reset. Train. Does the agent ever find the goal? Why or why not?</li>
-      <li>Set γ = 0 and train. What happens to the heatmap far from the goal? Why?</li>
-      <li>Set step reward = 0 and train. What changes about the paths the agent learns?</li>
-      <li>Add a pit between the agent and the goal. Watch the Q-values around it. How does the agent learn to avoid it?</li>
-    </ul>
-    <p><strong>Common misconceptions defeated:</strong>
-       "RL agents have a plan" (no: they have a value table that implicitly defines a plan);
-       "more exploration is always better" (no: too much ε prevents the policy from improving);
-       "the agent sees the whole grid" (in this demo it does, but in real RL the agent only sees its own state).</p>
-  </div>
-
+<h2>这个模型省略了什么</h2>
+<p>
+    表格型 Q 学习的收敛结果需要充分探索、合适的学习率方案以及平稳有限马尔可夫决策过程等条件。深度强化学习用函数近似取代表格，并引入经验回放、目标网络、优化不稳定、部分可观测和更大的状态空间。本工具让状态和更新保持可见，为后续复杂情况提供清晰参照。
+  </p>
+<div class="for-teachers">
+<h3>教师指导</h3>
+<p><strong>课程目标：</strong>状态、动作、奖励、折扣回报、Q 值、时序差分学习、同策略与离策略学习、探索和终止转移。</p>
+<p><strong>探索前问题：</strong></p>
+<ul>
+<li>目标处的奖励如何影响相隔多步的动作？</li>
+<li>如果智能体从不尝试当前看起来更差的动作，会失去什么？</li>
+<li>终止转移与普通转移应有何不同？</li>
+</ul>
+<p><strong>探索后问题：</strong></p>
+<ul>
+<li>从全零表开始训练，追踪第一批非零价值如何从终止奖励向后传播。</li>
+<li>在多次重置中比较 <code>ε = 0</code> 与适度探索，不要只看一次运行。</li>
+<li>把 <code>γ = 0</code>。哪些状态能获得非零价值，为什么？</li>
+<li>加入滑移并使用较高学习率。区分随机转移噪声与更新幅度。</li>
+<li>在悬崖面板中比较 Q 学习与 SARSA，并解释每个目标评估的是哪一种策略。</li>
+</ul>
+<p><strong>需要检验的误解：</strong>Q 值是预先写好的计划；终止状态会从自身自举；探索越多越好；一次有限运行能够证明算法收敛。</p>
+</div>
+</section>
 </article>
-
 <script>
 (() => {
   // ===== bilingual + reduced motion + hard reset =====
@@ -1284,7 +1286,7 @@
     });
     document.querySelectorAll('.lang-switch button').forEach(b =>
       b.classList.toggle('active', b.dataset.lang === lang));
-    try { localStorage.setItem('lang', lang); } catch (_) {}
+    try { localStorage.setItem('ai-playgrounds-lang', lang); localStorage.setItem('lang', lang); } catch (_) {}
   }
   document.querySelectorAll('.lang-switch button').forEach(b =>
     b.addEventListener('click', () => {
@@ -1296,7 +1298,7 @@
       try { if (typeof renderScenarioGallery === 'function') renderScenarioGallery(); } catch (_) {}
     }));
   let initialLang = 'en';
-  try { initialLang = localStorage.getItem('lang') || 'en'; } catch (_) {}
+  try { initialLang = new URLSearchParams(location.search).get('lang') || localStorage.getItem('ai-playgrounds-lang') || localStorage.getItem('lang') || 'en'; } catch (_) {}
   setLang(initialLang);
 
   function setTheme(t) {
@@ -2393,13 +2395,11 @@
   });
 })();
 </script>
-
 <footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
-    <p style="margin:0 0 6px;"><a href="#top" data-i18n="footer-top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
-    <p style="margin:0;"><span data-i18n="footer-course">Made for the Introduction to AI course at Haidian Kaiwen Academy.</span></p>
-    <p style="margin:6px 0 0;">© <span data-current-year>2026</span> Logan M. Dixon · <a href="https://lmdixon23.github.io/" data-i18n="footer-portfolio" style="color:var(--accent,#0891b2);">Portfolio</a> · <a href="../../index.html" data-i18n="footer-project" style="color:var(--accent,#0891b2);">AI Playgrounds</a> · <a href="https://github.com/lmdixon23/ai-playgrounds" data-i18n="footer-source" style="color:var(--accent,#0891b2);">Source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-i18n="footer-issue" style="color:var(--accent,#0891b2);">Report an issue</a> · <a href="https://orcid.org/0009-0001-0592-462X" rel="me" style="color:var(--accent,#0891b2);">ORCID</a></p>
-  </footer>
-
+<p style="margin:0 0 6px;"><a data-i18n="footer-top" href="#top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
+<p style="margin:0;"><span data-i18n="footer-course">Made for the Introduction to AI course at Haidian Kaiwen Academy.</span></p>
+<p style="margin:6px 0 0;">© <span data-current-year="">2026</span> Logan M. Dixon · <a data-i18n="footer-portfolio" href="https://lmdixon23.github.io/" style="color:var(--accent,#0891b2);">Portfolio</a> · <a data-i18n="footer-project" href="../../index.html" style="color:var(--accent,#0891b2);">AI Playgrounds</a> · <a data-i18n="footer-source" href="https://github.com/lmdixon23/ai-playgrounds" style="color:var(--accent,#0891b2);">Source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a data-i18n="footer-issue" href="https://github.com/lmdixon23/ai-playgrounds/issues" style="color:var(--accent,#0891b2);">Report an issue</a> · <a href="https://orcid.org/0009-0001-0592-462X" rel="me" style="color:var(--accent,#0891b2);">ORCID</a></p>
+</footer>
 <script>
 (function() {
   const LAB_CONFIG = {"slug": "q-learning-gridworld", "title": "Q-learning lab packet", "zhTitle": "Q 学习实验包", "fields": [{"label": "Algorithm", "selector": "#algoSel", "kind": "selected"}, {"label": "Alpha", "selector": "#alpha", "kind": "value"}, {"label": "Gamma", "selector": "#gamma", "kind": "value"}, {"label": "Epsilon", "selector": "#epsilon", "kind": "value"}, {"label": "Temperature", "selector": "#temp", "kind": "value"}, {"label": "Step reward", "selector": "#step", "kind": "value"}, {"label": "Slip", "selector": "#slip", "kind": "value"}, {"label": "FA episodes", "selector": "#faEpisodesV", "kind": "text"}, {"label": "Cliff Q stats", "selector": "#cwQstats", "kind": "text"}, {"label": "Cliff SARSA stats", "selector": "#cwSstats", "kind": "text"}]};
@@ -2521,8 +2521,6 @@
   loadDraft(); applyLabLang(); refreshState();
 })();
 </script>
-
-
 <script>
 (function() {
   const VISUAL_CONFIG = {"intro":"Q-learning turns trial-and-error into a table of action values. Watch reward, discounting, exploration, and updates shape which action looks best from each state.","zhIntro":"Q 学习把试错转化为动作价值表。观察奖励、折扣、探索和更新如何塑造每个状态下看起来最好的动作。","misread":"A greedy-looking policy may be premature if exploration is too low or learning has not stabilized.","zhMisread":"如果探索太低或学习尚未稳定，看起来贪心的策略可能还太早。","steps":[{"label":"Reward signal","zhLabel":"奖励信号","text":"Terminal reward, step cost, and slip define what experience teaches the agent.","zhText":"终点奖励、步进成本和滑移定义经验会教给智能体什么。","selector":"#step","kind":"value","liveLabel":"Step reward","zhLiveLabel":"步进奖励"},{"label":"Backup rule","zhLabel":"回传规则","text":"Alpha controls update size, while gamma controls how far future rewards matter.","zhText":"alpha 控制更新幅度，gamma 控制未来奖励的重要程度。","selector":"#gamma","kind":"value","liveLabel":"Gamma","zhLiveLabel":"Gamma"},{"label":"Exploration pressure","zhLabel":"探索压力","text":"Epsilon or temperature decides how often the agent tries actions that are not currently best.","zhText":"epsilon 或温度决定智能体多久尝试当前不是最优的动作。","selector":"#epsilon","kind":"value","liveLabel":"Epsilon","zhLiveLabel":"Epsilon"},{"label":"Policy evidence","zhLabel":"策略证据","text":"The visible arrows or Q statistics show which action the learned values currently favor.","zhText":"可见箭头或 Q 统计显示学习到的价值当前偏向哪个动作。","selector":"#cwQstats","kind":"text","liveLabel":"Q stats","zhLiveLabel":"Q 统计"}],"fields":[{"label":"Algorithm","zhLabel":"算法","selector":"#algoSel","kind":"selected"},{"label":"Alpha","zhLabel":"Alpha","selector":"#alpha","kind":"value"},{"label":"Gamma","zhLabel":"Gamma","selector":"#gamma","kind":"value"},{"label":"Epsilon","zhLabel":"Epsilon","selector":"#epsilon","kind":"value"},{"label":"Q stats","zhLabel":"Q 统计","selector":"#cwQstats","kind":"text"}]};
@@ -2582,9 +2580,8 @@
   renderVisualExplanation();
 })();
 </script>
-
 <!-- Privacy-friendly analytics: GoatCounter, cookieless. -->
-  <script>
+<script>
 (function () {
   const analyticsAllowedHost = location.hostname === 'lmdixon23.github.io';
   const params = new URLSearchParams(location.search);
@@ -2597,7 +2594,6 @@
   document.head.appendChild(s);
 })();
 </script>
-
 <script>
 (function() {
   const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "Algorithm", "zhLabel": "算法", "selector": "#algoSel", "kind": "selected"}, {"label": "Alpha", "zhLabel": "Alpha", "selector": "#alpha", "kind": "value"}, {"label": "Gamma", "zhLabel": "Gamma", "selector": "#gamma", "kind": "value"}, {"label": "Epsilon", "zhLabel": "Epsilon", "selector": "#epsilon", "kind": "value"}, {"label": "Q stats", "zhLabel": "Q 统计", "selector": "#cwQstats", "kind": "text"}]};
@@ -2694,17 +2690,14 @@
   window.renderAccessibilityLayer = renderAccessibilityLayer;
 })();
 </script>
-
 <script>
 (function () {
   document.querySelectorAll('[data-current-year]').forEach(el => { el.textContent = new Date().getFullYear(); });
 })();
 </script>
-
-
 <script id="learner-content-system">
 (() => {
-  const profile = {"slug":"q-learning-gridworld","en":{"title":"Q-Learning Gridworld","big":"Train an agent through trial and error. Watch rewards update action values, compare exploration settings, and see a policy emerge without a prewritten route.","primer":"Reinforcement learning connects actions to delayed consequences. The symbols are compact, so learn each setting’s name before interpreting the value updates.","terms":[{"term":"Reinforcement learning (RL)","definition":"Learning actions from rewards and penalties received through interaction."},{"term":"Q-value","definition":"An estimate of the long-term return from taking one action in one state."},{"term":"Learning rate (α)","definition":"How strongly a new experience changes the current Q-value."},{"term":"Discount factor (γ)","definition":"How much future rewards matter compared with immediate rewards."},{"term":"Exploration rate (ε)","definition":"How often the agent tries a random action instead of its current best action."},{"term":"Temporal-difference update (TD update)","definition":"A step that compares the current estimate with reward plus an estimate of the next state."}],"scenarios":[{"title":"Watch values spread backward from the goal","question":"How can a reward influence states that are several steps away?","run":"Use the default grid, train continuously, and watch high action values (Q-values) move backward from the goal.","predict":"Predict which nearby cells will gain useful values first.","explain":"Explain how repeated temporal-difference updates carry delayed reward information backward."},{"title":"No exploration can prevent discovery","question":"Why can choosing only the current best action stop learning before it starts?","run":"Set the exploration rate (ε) to zero, reset the action values (Q-values), and train from an all-zero table.","predict":"Predict whether the agent will reliably discover the goal.","explain":"Explain how unseen actions cannot become valuable if they are never tried."},{"title":"A zero discount factor ignores the future","question":"What remains when only immediate reward matters?","run":"Set the discount factor (γ) to zero, reset the action values (Q-values), and train.","predict":"Predict which cells will receive nonzero Q-values.","explain":"Explain why reward information cannot travel beyond the cells immediately beside a terminal reward."},{"title":"A zero step penalty removes time pressure","question":"Why does the agent wander when long and short successful routes earn the same return?","run":"Set the per-step reward to zero, train, then compare with a small negative step reward.","predict":"Predict whether the learned policy will prefer a short route when movement is free.","explain":"Explain how a step cost turns route length into part of the objective."},{"title":"A high learning rate reacts strongly to noisy outcomes","question":"Why can fast updates become unstable in a stochastic world?","run":"Set slip probability to 0.3 and learning rate (α) to 0.8, then compare the changes in action values (Q-values) with a lower learning rate.","predict":"Predict which setting will produce more erratic Q-value changes.","explain":"Explain how one surprising transition can dominate when new experience receives too much weight."}]},"zh":{"title":"Q 学习网格世界","big":"让智能体通过试错训练。观察奖励如何更新动作价值，比较探索设置，并看到策略在没有预设路线时形成。","primer":"强化学习把动作与延迟后果联系起来。符号很简洁，因此解释价值更新前，先学习每个设置的名称。","terms":[{"term":"强化学习（RL）","definition":"通过交互获得的奖励和惩罚来学习动作。"},{"term":"Q 值","definition":"在某状态采取某动作后长期回报的估计。"},{"term":"学习率（α）","definition":"一次新经验改变当前 Q 值的程度。"},{"term":"折扣因子（γ）","definition":"未来奖励相对于即时奖励的重要程度。"},{"term":"探索率（ε）","definition":"智能体尝试随机动作而不是当前最佳动作的频率。"},{"term":"时序差分更新（TD 更新）","definition":"把当前估计与奖励加下一状态估计进行比较的更新步骤。"}],"scenarios":[{"title":"观察价值从目标向后传播","question":"奖励如何影响相隔多步的状态？","run":"使用默认网格连续训练，观察高动作价值（Q 值）如何从目标向后传播。","predict":"预测哪些附近格子会最先获得有用价值。","explain":"解释重复的时序差分更新如何把延迟奖励信息向后传递。"},{"title":"没有探索会阻止发现","question":"为什么只选择当前最佳动作可能让学习在开始前就停止？","run":"把探索率（ε）设为零，重置动作价值（Q 值），并从全零表开始训练。","predict":"预测智能体是否会可靠发现目标。","explain":"解释从未尝试的动作为什么无法被发现为有价值。"},{"title":"折扣因子为零会忽略未来","question":"只关心即时奖励时会留下什么？","run":"把折扣因子（γ）设为零，重置动作价值（Q 值），然后训练。","predict":"预测哪些格子会得到非零 Q 值。","explain":"解释奖励信息为什么无法传播到终点奖励旁边之外。"},{"title":"步长惩罚为零会消除时间压力","question":"为什么长短成功路线回报相同时，智能体会绕路？","run":"把每步奖励设为 0，训练后再与小负步长奖励比较。","predict":"预测移动免费时，策略是否会偏好短路线。","explain":"解释步长成本如何让路线长度成为目标的一部分。"},{"title":"高学习率对噪声结果反应过强","question":"随机世界中，快速更新为什么可能不稳定？","run":"把滑移概率设为 0.3、学习率（α）设为 0.8，再与较低学习率下的动作价值（Q 值）变化比较。","predict":"预测哪个设置会产生更不稳定的 Q 值变化。","explain":"解释新经验权重过大时，一次意外转移如何主导更新。"}]}};
+  const profile = {"slug":"q-learning-gridworld","en":{"title":"Q-Learning Gridworld","big":"Train an agent through trial and error. Watch rewards update action values, compare exploration settings, and see a policy emerge without a prewritten route.","primer":"Reinforcement learning connects actions to delayed consequences. The symbols are compact, so learn each setting’s name before interpreting the value updates.","terms":[{"term":"Reinforcement learning (RL)","definition":"Learning actions from rewards and penalties received through interaction."},{"term":"Q-value","definition":"An estimate of the long-term return from taking one action in one state."},{"term":"Learning rate (α)","definition":"How strongly a new experience changes the current Q-value."},{"term":"Discount factor (γ)","definition":"How much future rewards matter compared with immediate rewards."},{"term":"Exploration rate (ε)","definition":"How often the agent tries a random action instead of its current best action."},{"term":"Temporal-difference update (TD update)","definition":"A step that compares the current estimate with reward plus an estimate of the next state."},{"term":"State","definition":"The situation the agent currently occupies, represented here by a grid cell."},{"term":"Action","definition":"A move the agent can choose from a state."},{"term":"Reward","definition":"The immediate numerical feedback received after an action."}],"scenarios":[{"title":"Watch values spread backward from the goal","question":"How can a reward influence states that are several steps away?","run":"Use the default grid, train continuously, and watch high action values (Q-values) move backward from the goal.","predict":"Predict which nearby cells will gain useful values first.","explain":"Explain how repeated temporal-difference updates carry delayed reward information backward."},{"title":"No exploration can prevent discovery","question":"Why can choosing only the current best action stop learning before it starts?","run":"Set the exploration rate (ε) to zero, reset the action values (Q-values), and train from an all-zero table.","predict":"Predict whether the agent will reliably discover the goal.","explain":"Explain how unseen actions cannot become valuable if they are never tried."},{"title":"A zero discount factor ignores the future","question":"What remains when only immediate reward matters?","run":"Set the discount factor (γ) to zero, reset the action values (Q-values), and train.","predict":"Predict which cells will receive nonzero Q-values.","explain":"Explain why reward information cannot travel beyond the cells immediately beside a terminal reward."},{"title":"A zero step penalty removes time pressure","question":"Why does the agent wander when long and short successful routes earn the same return?","run":"Set the per-step reward to zero, train, then compare with a small negative step reward.","predict":"Predict whether the learned policy will prefer a short route when movement is free.","explain":"Explain how a step cost turns route length into part of the objective."},{"title":"A high learning rate reacts strongly to noisy outcomes","question":"Why can fast updates become unstable in a stochastic world?","run":"Set slip probability to 0.3 and learning rate (α) to 0.8, then compare the changes in action values (Q-values) with a lower learning rate.","predict":"Predict which setting will produce more erratic Q-value changes.","explain":"Explain how one surprising transition can dominate when new experience receives too much weight."}]},"zh":{"title":"Q 学习网格世界","big":"让智能体通过试错训练。观察奖励如何更新动作价值，比较探索设置，并看到策略在没有预设路线时形成。","primer":"强化学习把动作与延迟后果联系起来。符号很简洁，因此解释价值更新前，先学习每个设置的名称。","terms":[{"term":"强化学习（RL）","definition":"通过交互获得的奖励和惩罚来学习动作。"},{"term":"Q 值","definition":"在某状态采取某动作后长期回报的估计。"},{"term":"学习率（α）","definition":"一次新经验改变当前 Q 值的程度。"},{"term":"折扣因子（γ）","definition":"未来奖励相对于即时奖励的重要程度。"},{"term":"探索率（ε）","definition":"智能体尝试随机动作而不是当前最佳动作的频率。"},{"term":"时序差分更新（TD 更新）","definition":"把当前估计与奖励加下一状态估计进行比较的更新步骤。"},{"term":"状态","definition":"智能体当前所处的情形，在本工具中由一个网格单元表示。"},{"term":"动作","definition":"智能体在某个状态下可以选择的移动。"},{"term":"奖励","definition":"执行动作后立即收到的数值反馈。"}],"scenarios":[{"title":"观察价值从目标向后传播","question":"奖励如何影响相隔多步的状态？","run":"使用默认网格连续训练，观察高动作价值（Q 值）如何从目标向后传播。","predict":"预测哪些附近格子会最先获得有用价值。","explain":"解释重复的时序差分更新如何把延迟奖励信息向后传递。"},{"title":"没有探索会阻止发现","question":"为什么只选择当前最佳动作可能让学习在开始前就停止？","run":"把探索率（ε）设为零，重置动作价值（Q 值），并从全零表开始训练。","predict":"预测智能体是否会可靠发现目标。","explain":"解释从未尝试的动作为什么无法被发现为有价值。"},{"title":"折扣因子为零会忽略未来","question":"只关心即时奖励时会留下什么？","run":"把折扣因子（γ）设为零，重置动作价值（Q 值），然后训练。","predict":"预测哪些格子会得到非零 Q 值。","explain":"解释奖励信息为什么无法传播到终点奖励旁边之外。"},{"title":"步长惩罚为零会消除时间压力","question":"为什么长短成功路线回报相同时，智能体会绕路？","run":"把每步奖励设为 0，训练后再与小负步长奖励比较。","predict":"预测移动免费时，策略是否会偏好短路线。","explain":"解释步长成本如何让路线长度成为目标的一部分。"},{"title":"高学习率对噪声结果反应过强","question":"随机世界中，快速更新为什么可能不稳定？","run":"把滑移概率设为 0.3、学习率（α）设为 0.8，再与较低学习率下的动作价值（Q 值）变化比较。","predict":"预测哪个设置会产生更不稳定的 Q 值变化。","explain":"解释新经验权重过大时，一次意外转移如何主导更新。"}]}};
   window.APPLET_LEARNER_PROFILE = profile;
   const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
   const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;
@@ -2745,7 +2738,7 @@
     if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
     jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
     actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
-    window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
+    window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';if(share){share.textContent=zh?'🔗 分享':'🔗 Share';share.title=zh?'复制可在另一浏览器中重新打开当前设置的链接。':'Copy a link that reopens the current settings in another browser.';}summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
     window.refreshAppletToolbar();
     document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
   }
@@ -2770,16 +2763,23 @@
   document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(window.refreshLearnerContent,20)));
 })();
 </script>
-
+<script id="essay-language-script">
+(() => {
+  window.refreshEssayLanguage=()=>{const zh=(document.documentElement.lang||'en').startsWith('zh');document.querySelectorAll('[data-essay-lang]').forEach(el=>{el.hidden=(el.dataset.essayLang==='zh')!==zh})};
+  window.refreshEssayLanguage();
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(window.refreshEssayLanguage,30)));
+})();
+</script>
 <script id="learning-modes-script">
 (() => {
-  const slug = location.pathname.split('/').filter(Boolean).slice(-2,-1)[0] || 'q-learning-gridworld';
+  const slug = location.pathname.split('/').filter(Boolean).slice(-2,-1)[0] || 'applet';
   const inner = document.querySelector('.interactive-inner');
   if (!inner || inner.querySelector('.learning-mode-shell')) return;
-  const oldDeck = inner.querySelector(':scope > .learning-deck');
+  const oldDeck = [...inner.children].find(el => el.classList && el.classList.contains('learning-deck'));
   if (oldDeck) { [...oldDeck.children].forEach(el => inner.insertBefore(el, oldDeck)); oldDeck.remove(); }
-  const details = [...inner.querySelectorAll(':scope > details')];
+  const details = [...inner.children].filter(el => el.tagName === 'DETAILS');
   if (!details.length) return;
+
   const modeFor = d => {
     if (d.matches('.visual-explanation,.lesson-tour,.key-terms')) return 'understand';
     if (d.matches('.worksheet,.classroom-lab')) return 'classroom';
@@ -2788,39 +2788,173 @@
   };
   const lang = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
   const labels = {explore:['Explore','探索'],understand:['Understand','理解'],classroom:['Use in class','课堂使用'],access:['Text and keyboard','文本与键盘']};
-  const intros = {explore:['Start with the featured experiment, then use the scenarios to test a prediction.','从精选实验开始，再使用情境检验预测。'],understand:['Open the mechanism view and lesson sequence when you need to explain why the result changed.','需要解释结果为什么变化时，打开机制视图和课程序列。'],classroom:['Collect reasoning with the worksheet or the local student response packet.','使用练习题或本地学生回答包收集推理。'],access:['Use the text-state description and keyboard guidance when the visual display is not enough.','当可视显示不足时，使用文本状态说明和键盘指导。']};
-  const shell=document.createElement('section');shell.className='learning-mode-shell';shell.setAttribute('aria-label','Applet learning modes');
-  shell.innerHTML='<div class="learning-mode-head"><div><h2 data-mode-heading></h2><p data-mode-copy></p></div><div class="learning-mode-tools"><button type="button" class="copy-experiment" data-copy-experiment>Copy this experiment</button></div></div><div class="learning-mode-tabs" role="tablist"></div><div class="experiment-status" aria-live="polite"></div>';
-  const tabs=shell.querySelector('.learning-mode-tabs');const panels={};
-  Object.keys(labels).forEach((key,i)=>{const b=document.createElement('button');b.type='button';b.className='learning-mode-tab';b.role='tab';b.dataset.mode=key;b.id='mode-tab-'+key;b.setAttribute('aria-controls','mode-panel-'+key);tabs.appendChild(b);const p=document.createElement('div');p.className='learning-mode-panel';p.id='mode-panel-'+key;p.role='tabpanel';p.setAttribute('aria-labelledby',b.id);p.innerHTML='<div class="mode-intro"></div>';shell.appendChild(p);panels[key]=p});
-  inner.insertBefore(shell,details[0]);details.forEach(d=>{const mode=modeFor(d);if(d.matches('.scenario-gallery,.visual-explanation,.classroom-lab,.accessibility-layer,.signature-challenge'))d.classList.add('mode-wide');panels[mode].appendChild(d)});
-  const sig=panels.explore.querySelector('.signature-challenge');if(sig){panels.explore.insertBefore(sig,panels.explore.querySelector('.mode-intro').nextSibling);sig.open=true;const summary=sig.querySelector('summary span,summary');if(summary&&lang()==='en')summary.textContent='✨ Featured experiment';const body=sig.querySelector('.signature-challenge-panel')||sig.querySelector(':scope > div');if(body&&!body.querySelector('.featured-actions')){const actions=document.createElement('div');actions.className='featured-actions';actions.innerHTML='<button type="button" class="step-btn" data-start-featured>Start featured experiment</button>';body.appendChild(actions)}}
-  const lab=panels.classroom.querySelector('.classroom-lab summary span');if(lab&&lang()==='en')lab.textContent='🧪 Student response packet';
-  const a11y=panels.access.querySelector('.accessibility-layer summary span');if(a11y&&lang()==='en')a11y.textContent='♿ Text and keyboard support';
+  const intros = {
+    explore:['Start with the featured experiment, then use the scenarios to test a prediction.','从精选实验开始，再使用情境检验预测。'],
+    understand:['Open the mechanism view and lesson sequence when you need to explain why the result changed.','需要解释结果为什么变化时，打开机制视图和课程序列。'],
+    classroom:['Collect reasoning with the worksheet or the local student response packet.','使用练习题或本地学生回答包收集推理。'],
+    access:['Use the text-state description and keyboard guidance when the visual display is not enough.','当可视显示不足时，使用文本状态说明和键盘指导。']
+  };
+  const ui = {
+    en:{copy:'Copy this experiment',copied:'Experiment link copied.',copyPrompt:'Copy this experiment URL',featuredSummary:'✨ Featured experiment',featuredPrefix:'Featured experiment',featuredQuestion:'Core question',featuredRun:'Run and watch',start:'Start featured experiment',shell:'Applet learning modes'},
+    zh:{copy:'复制此实验',copied:'实验链接已复制。',copyPrompt:'复制此实验链接',featuredSummary:'✨ 精选实验',featuredPrefix:'精选实验',featuredQuestion:'核心问题',featuredRun:'运行并观察',start:'开始精选实验',shell:'交互工具学习模式'}
+  };
+  const featuredIndex={"search-pathfinding":0,"bayes-classifier":0,"overfitting":1,"knn-classifier":4,"wumpus-world":4,"cnf-sat":2,"bayes-network":1,"hill-climbing":1,"kmeans":4,"neural-network":1,"convolution":4,"q-learning-gridworld":2};
+
+  const shell=document.createElement('section');
+  shell.className='learning-mode-shell';
+  shell.innerHTML='<div class="learning-mode-head"><div><h2 data-mode-heading></h2><p data-mode-copy></p></div><div class="learning-mode-tools"><button type="button" class="copy-experiment" data-copy-experiment></button></div></div><div class="learning-mode-tabs" role="tablist"></div><div class="experiment-status" aria-live="polite"></div>';
+  const tabs=shell.querySelector('.learning-mode-tabs');
+  const panels={};
+  Object.keys(labels).forEach(key=>{
+    const b=document.createElement('button');b.type='button';b.className='learning-mode-tab';b.role='tab';b.dataset.mode=key;b.id='mode-tab-'+key;b.setAttribute('aria-controls','mode-panel-'+key);tabs.appendChild(b);
+    const p=document.createElement('div');p.className='learning-mode-panel';p.id='mode-panel-'+key;p.role='tabpanel';p.setAttribute('aria-labelledby',b.id);p.innerHTML='<div class="mode-intro"></div>';shell.appendChild(p);panels[key]=p;
+  });
+  inner.insertBefore(shell,details[0]);
+  details.forEach(d=>{const mode=modeFor(d);if(d.matches('.scenario-gallery,.visual-explanation,.classroom-lab,.accessibility-layer,.signature-challenge'))d.classList.add('mode-wide');panels[mode].appendChild(d)});
+
+  const sig=panels.explore.querySelector('.signature-challenge');
+  if(sig){
+    panels.explore.insertBefore(sig,panels.explore.querySelector('.mode-intro').nextSibling);
+    sig.open=true;
+    const body=sig.querySelector('.signature-challenge-panel')||sig.querySelector(':scope > div');
+    if(body&&!body.querySelector('.featured-actions')){const actions=document.createElement('div');actions.className='featured-actions';actions.innerHTML='<button type="button" class="step-btn" data-start-featured></button>';body.appendChild(actions)}
+  }
   let active=new URL(location.href).searchParams.get('mode')||'explore';if(!panels[active])active='explore';
-  function setMode(mode,write=true){active=mode;Object.entries(panels).forEach(([k,p])=>p.hidden=k!==mode);shell.querySelectorAll('.learning-mode-tab').forEach(b=>{const on=b.dataset.mode===mode;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});shell.querySelector('[data-mode-heading]').textContent=labels[mode][lang()==='zh'?1:0];shell.querySelector('[data-mode-copy]').textContent=intros[mode][lang()==='zh'?1:0];panels[mode].querySelector('.mode-intro').innerHTML='<strong>'+labels[mode][lang()==='zh'?1:0]+'.</strong> '+intros[mode][lang()==='zh'?1:0];if(write){const u=new URL(location.href);u.searchParams.set('mode',mode);history.replaceState(null,'',u)}}
+  let restoring=false;
+
+  function profileScenario(){
+    const profile=window.APPLET_LEARNER_PROFILE||{};
+    const locale=lang();
+    const items=(profile[locale]&&profile[locale].scenarios)||[];
+    return items[featuredIndex[slug]??0]||items[0]||{};
+  }
+  function renderFeatured(){
+    if(!sig)return;
+    const c=ui[lang()],item=profileScenario();
+    const summary=sig.querySelector('summary span,summary');if(summary)summary.textContent=c.featuredSummary;
+    const body=sig.querySelector('.signature-challenge-panel')||sig.querySelector(':scope > div');if(!body)return;
+    let strong=body.querySelector(':scope > strong');if(!strong){strong=document.createElement('strong');body.prepend(strong)}
+    strong.textContent=item.title||c.featuredPrefix;
+    let paras=[...body.querySelectorAll(':scope > p')];
+    while(paras.length<2){const p=document.createElement('p');body.insertBefore(p,body.querySelector('.featured-actions'));paras.push(p)}
+    paras[0].innerHTML='<b>'+c.featuredQuestion+':</b> '+(item.question||'');
+    paras[1].innerHTML='<em><b>'+c.featuredRun+':</b> '+(item.run||'')+'</em>';
+    const start=body.querySelector('[data-start-featured]');if(start)start.textContent=c.start;
+  }
+  function renderModeChrome(){
+    const locale=lang(),c=ui[locale];
+    shell.setAttribute('aria-label',c.shell);
+    shell.querySelector('[data-copy-experiment]').textContent=c.copy;
+    shell.querySelectorAll('.learning-mode-tab').forEach(b=>b.textContent=labels[b.dataset.mode][locale==='zh'?1:0]);
+    const heading=shell.querySelector('[data-mode-heading]'),copy=shell.querySelector('[data-mode-copy]');
+    heading.textContent=labels[active][locale==='zh'?1:0];copy.textContent=intros[active][locale==='zh'?1:0];
+    panels[active].querySelector('.mode-intro').innerHTML='<strong>'+labels[active][locale==='zh'?1:0]+'.</strong> '+intros[active][locale==='zh'?1:0];
+    renderFeatured();
+  }
+  function setMode(mode,write=true){
+    active=mode;
+    Object.entries(panels).forEach(([k,p])=>p.hidden=k!==mode);
+    shell.querySelectorAll('.learning-mode-tab').forEach(b=>{const on=b.dataset.mode===mode;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});
+    renderModeChrome();
+    if(write){const u=new URL(location.href);u.searchParams.set('mode',mode);history.replaceState(null,'',u)}
+  }
   shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
-  function statePayload(){const out={};inner.querySelectorAll('select,input').forEach(el=>{if(!el.id||el.closest('.classroom-lab')||['button','submit'].includes(el.type))return;if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;out[el.id]=el.type==='checkbox'?el.checked:el.value});return out}
+
+  function statePayload(){
+    const out={};
+    inner.querySelectorAll('select,input').forEach(el=>{
+      if(!el.id||el.closest('.classroom-lab')||['button','submit'].includes(el.type))return;
+      if(el.type==='radio'){if(el.checked)out[el.id]=el.value;return}
+      out[el.id]=el.type==='checkbox'?el.checked:el.value;
+    });
+    return out;
+  }
   function encode(obj){return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))}
   function decode(s){try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch{return null}}
-  const status=shell.querySelector('.experiment-status');shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('state',encode(statePayload()));try{await navigator.clipboard.writeText(u.href);status.textContent=lang()==='zh'?'实验链接已复制。':'Experiment link copied.'}catch{prompt('Copy this experiment URL',u.href)}};
-  const featuredIndex={"search-pathfinding":0,"bayes-classifier":0,"overfitting":1,"knn-classifier":4,"wumpus-world":4,"cnf-sat":2,"bayes-network":1,"hill-climbing":1,"kmeans":4,"neural-network":1,"convolution":4,"q-learning-gridworld":2};shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('details:not(.signature-challenge)')?.setAttribute('open','')});
-  document.addEventListener('click',e=>{const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode','explore');history.replaceState(null,'',u)});
-  const p=new URL(location.href).searchParams;const restore=()=>{const obj=decode(p.get('state')||'');if(obj)Object.entries(obj).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});const n=Number(p.get('scenario'));if(Number.isInteger(n)){panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click()}if(p.get('featured')==='1')sig?.setAttribute('open','')};
-  function refineCards(){
-    const profile=window.APPLET_LEARNER_PROFILE||{};
-    const locale=lang()==='zh'?'zh':'en';
-    const items=(profile[locale]&&profile[locale].scenarios)||[];
-    const labels=locale==='zh'?['核心问题','运行并观察','先预测','运行后解释']:['Core question','Run and watch','Predict first','Explain afterward'];
-    panels.explore.querySelectorAll('.scenario-card').forEach((card,i)=>{
-      const item=items[i]||{};const h=card.querySelector('h3');
-      if(h&&item.title)h.textContent=(locale==='zh'?'情境 ':'Scenario ')+(i+1)+': '+item.title;
-      const metas=card.querySelectorAll('.scenario-meta');const values=[item.question,item.run,item.predict,item.explain];
-      metas.forEach((meta,j)=>{if(!values[j])return;const strong=meta.querySelector('strong');if(strong)strong.textContent=labels[j]+': ';let node=strong?strong.nextSibling:null;if(node)node.textContent=' '+values[j];else meta.appendChild(document.createTextNode(' '+values[j]));});
-    });
+  function currentExperimentUrl(){
+    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',lang());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
   }
-  setTimeout(()=>{refineCards();window.renderAppletKeyTerms?.();restore()},250);document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.()},20)));setMode(active,false);
+  window.__buildExperimentUrl=()=>currentExperimentUrl().href;
+  const status=shell.querySelector('.experiment-status');
+  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(ui[lang()].copyPrompt,u.href)}};
+
+  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','')});
+  document.addEventListener('click',e=>{const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode','explore');u.searchParams.set('lang',lang());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
+
+  let urlSyncTimer=0;
+  function scheduleUrlState(e){
+    if(restoring)return;
+    const el=e.target;if(!el||!inner.contains(el)||el.closest('.classroom-lab')||!el.matches('input,select'))return;
+    clearTimeout(urlSyncTimer);urlSyncTimer=setTimeout(()=>{const u=currentExperimentUrl();history.replaceState(null,'',u)},80);
+  }
+  document.addEventListener('input',scheduleUrlState,true);document.addEventListener('change',scheduleUrlState,true);
+
+  function applyState(obj){
+    if(!obj)return;
+    Object.entries(obj).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else if(el.type==='radio')el.checked=String(el.value)===String(value);else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});
+  }
+  function restore(){
+    const p=new URL(location.href).searchParams;restoring=true;
+    const n=Number(p.get('scenario'));if(Number.isInteger(n))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
+    applyState(decode(p.get('state')||''));
+    if(p.get('featured')==='1')sig?.setAttribute('open','');
+    restoring=false;
+  }
+  function refineCards(){
+    const profile=window.APPLET_LEARNER_PROFILE||{},locale=lang(),items=(profile[locale]&&profile[locale].scenarios)||[];
+    const labels2=locale==='zh'?['核心问题','运行并观察','先预测','运行后解释']:['Core question','Run and watch','Predict first','Explain afterward'];
+    panels.explore.querySelectorAll('.scenario-card').forEach((card,i)=>{const item=items[i]||{},h=card.querySelector('h3');if(h&&item.title)h.textContent=(locale==='zh'?'情境 ':'Scenario ')+(i+1)+': '+item.title;const metas=card.querySelectorAll('.scenario-meta'),values=[item.question,item.run,item.predict,item.explain];metas.forEach((meta,j)=>{if(!values[j])return;const strong=meta.querySelector('strong');if(strong)strong.textContent=labels2[j]+': ';let node=strong?strong.nextSibling:null;if(node)node.textContent=' '+values[j];else meta.appendChild(document.createTextNode(' '+values[j]))});const button=card.querySelector('button');if(button&&!button.textContent.startsWith('✓'))button.textContent=locale==='zh'?'应用并比较':'Apply and compare'});
+  }
+  function ensureExploreContent(){
+    const hasContent=panels.explore.querySelector('details,.scenario-card');
+    if(!hasContent){details.filter(d=>modeFor(d)==='explore').forEach(d=>panels.explore.appendChild(d))}
+  }
+  setMode(active,false);ensureExploreContent();
+  setTimeout(()=>{refineCards();window.renderAppletKeyTerms?.();restore();renderModeChrome()},250);
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',lang());history.replaceState(null,'',u)},25)));
 })();
 </script>
-</body>
+<script id="applet-translation-completion">
+(() => {
+  const exact = {"Skip to applet controls":"跳到交互控件","▸ Show teacher notes (discussion prompts + curriculum)":"▸ 展开教师说明（讨论提示与课程联系）","▾ Hide teacher notes (discussion prompts + curriculum)":"▾ 收起教师说明（讨论提示与课程联系）","idle":"空闲","(empty)":"（空）","(no actions yet)":"（尚无动作）","exploring":"探索中","slip":"滑移率","Episodes":"回合数","Total steps":"总步数","Last return":"最近回报","Avg return (20)":"平均回报（20）","Goal ✓ (+1)":"目标 ✓（+1）","Pit ✗ (−1)":"陷阱 ✗（−1）","Wall":"墙","Agent":"智能体","High Q":"高 Q 值","Low Q":"低 Q 值","Q-learning (off-policy)":"Q-learning（离策略）","SARSA (on-policy)":"SARSA（同策略）"};
+  const rules = [].map(([source,target])=>[new RegExp(source),target]);
+  const currentLanguage=()=>((document.documentElement.lang||'en').startsWith('zh')?'zh':'en');
+  const excluded=node=>node.parentElement && node.parentElement.closest('script,style,noscript,[data-essay-lang="en"]');
+  const applyRule=text=>{
+    if(Object.prototype.hasOwnProperty.call(exact,text))return exact[text];
+    for(const [pattern,target] of rules){if(pattern.test(text)){pattern.lastIndex=0;return text.replace(pattern,target)}}
+    return null;
+  };
+  function translateNode(node){
+    if(excluded(node))return;
+    const raw=node.nodeValue||'',trimmed=raw.trim();if(!trimmed)return;
+    if(currentLanguage()==='en'){
+      if(node.__appletEnglish!==undefined){const start=raw.indexOf(trimmed);node.nodeValue=raw.slice(0,start)+node.__appletEnglish+raw.slice(start+trimmed.length);delete node.__appletEnglish}
+      return;
+    }
+    const translated=applyRule(trimmed);if(translated===null||translated===trimmed)return;
+    node.__appletEnglish=trimmed;const start=raw.indexOf(trimmed);node.nodeValue=raw.slice(0,start)+translated+raw.slice(start+trimmed.length);
+  }
+  function translateAttribute(el,attr){
+    const value=el.getAttribute(attr);if(!value)return;
+    const prop='__appletEnglish_'+attr;
+    if(currentLanguage()==='en'){
+      if(el[prop]!==undefined){el.setAttribute(attr,el[prop]);delete el[prop]}
+      return;
+    }
+    const translated=applyRule(value.trim());if(translated===null||translated===value.trim())return;
+    el[prop]=value;el.setAttribute(attr,translated);
+  }
+  function refresh(root=document){
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);nodes.forEach(translateNode);
+    const elements=(root.querySelectorAll?root.querySelectorAll('[title],[aria-label],[placeholder]'):[]);elements.forEach(el=>['title','aria-label','placeholder'].forEach(a=>{if(el.hasAttribute(a))translateAttribute(el,a)}));
+  }
+  let queued=false;const schedule=()=>{if(queued)return;queued=true;queueMicrotask(()=>{queued=false;refresh()})};
+  const observer=new MutationObserver(mutations=>{if(currentLanguage()!=='zh')return;for(const m of mutations){if(m.type==='characterData'||m.addedNodes.length){schedule();break}}});
+  observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+  document.querySelectorAll('button[data-lang]').forEach(button=>button.addEventListener('click',()=>setTimeout(()=>refresh(),45)));
+  refresh();
+  window.refreshAppletTranslationCompletion=refresh;
+})();
+</script></body>
 </html>

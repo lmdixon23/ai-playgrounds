@@ -15,9 +15,9 @@ Each applet contains:
 
 1. the primary interactive model,
 2. Explore, Understand, Use in class, and Text and keyboard modes,
-3. English and Chinese interface strings,
+3. complete English and Chinese interface, explanation, scenario, and accessibility strings,
 4. local response-packet tools,
-5. shareable URL state,
+5. shareable URL state whose exact serialized controls override scenario presets,
 6. optional analytics restricted to the canonical hosted site.
 
 No applet requires a framework, account, backend, package manager, model download, or remote runtime asset.
@@ -33,3 +33,7 @@ Each applet has one categorical accent defined in `applets.json`. Color supports
 ## Browser support
 
 The public site is designed for current desktop and mobile browsers. Each applet can also be opened directly from the local filesystem.
+
+## Localization boundary
+
+Public learner and educator content is translated completely. Stable machine and source literals, including URLs, filenames, identifiers, formulas, licenses, names, and standard acronyms, remain unchanged while their visible labels and explanations are localized. See `docs/LOCALIZATION.md`.
