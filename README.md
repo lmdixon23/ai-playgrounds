@@ -32,6 +32,18 @@ Open `index.html`, or open any file under `playgrounds/<slug>/index.html`.
 
 No server, account, package manager, or build step is required.
 
+## Verification
+
+The repository uses three complementary verification layers:
+
+```bash
+python tools/release_check.py
+python tools/run_algorithm_tests.py
+python tools/browser_qa.py --no-screenshots
+```
+
+The algorithm gate requires all 45 regression cases to pass with no skipped cases. The browser matrix checks every public page at mobile, tablet, and desktop viewports. GitHub Actions runs all three layers on pushes and pull requests.
+
 ## Teaching materials
 
 - [Teacher Pack](teacher-pack.html)
