@@ -74,8 +74,8 @@ def collect_results(page: Any) -> dict[str, Any]:
             const summary = document.querySelector("#summary");
             const rows = [...document.querySelectorAll("#output .case")];
 
-            const passed = rows.filter(row => row.classList.contains("pass"));
-            const failed = rows.filter(row => row.classList.contains("fail"));
+            const passed = rows.filter(row => row.querySelector(".pass"));
+            const failed = rows.filter(row => row.querySelector(".fail"));
             const skipped = rows.filter(row => row.classList.contains("skipped"));
 
             return {
@@ -91,8 +91,8 @@ def collect_results(page: Any) -> dict[str, Any]:
                     group => ({
                         name: (group.querySelector("h2")?.textContent || "").trim(),
                         total: group.querySelectorAll(".case").length,
-                        passed: group.querySelectorAll(".case.pass").length,
-                        failed: group.querySelectorAll(".case.fail").length,
+                        passed: group.querySelectorAll(".case .pass").length,
+                        failed: group.querySelectorAll(".case .fail").length,
                         skipped: group.querySelectorAll(".case.skipped").length,
                     })
                 ),
@@ -160,6 +160,7 @@ def run(expected_total: int, allow_skips: bool) -> dict[str, Any]:
 
     passed_gate = (
         results["total"] == expected_total
+        and results["passed"] + results["skipped"] == expected_total
         and results["failed"] == 0
         and (allow_skips or results["skipped"] == 0)
         and "all-pass" in results["summary_classes"]
