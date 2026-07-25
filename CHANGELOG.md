@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.0 - 2026-07-25
+
+### Verified public release
+
+- Established a deterministic minimal GitHub Pages deployment boundary.
+- Added standalone Verify and Deploy status badges.
+- Required all 45 browser-based algorithm regression tests in continuous integration.
+- Added fail-closed counting for passed, failed, and skipped algorithm cases.
+- Added automated consistency checks for citation and release metadata.
+- Published consistent citation and CodeMeta release metadata.
+
 ## 2026-07-24
 
 ### State reliability

@@ -8,6 +8,8 @@ Twelve bilingual, offline-ready interactives for foundational artificial intelli
 
 **Live site:** https://lmdixon23.github.io/ai-playgrounds/
 
+**Current release:** [v1.0.0](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.0.0)
+
 ## Why this project exists
 
 Foundational AI concepts are dynamic. A search frontier expands, evidence changes a posterior probability, a model begins to overfit, or value propagates through repeated experience.

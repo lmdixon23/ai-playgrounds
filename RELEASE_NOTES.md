@@ -1,6 +1,6 @@
 # Release notes
 
-## Current release, 2026-07-24
+## v1.0.0, 2026-07-25
 
 AI Playgrounds includes twelve bilingual, offline-ready interactive demonstrations covering:
 
@@ -45,6 +45,12 @@ Explore panels include pre-rendered scenarios, dynamic text changes language imm
 ## Privacy and portability
 
 The applets require no account, backend, database, package manager, or build step. Student responses remain local unless the learner copies or prints them.
+
+## Release integrity
+
+- GitHub Pages deploys a deterministic public artifact containing only intentionally published files.
+- GitHub Actions requires the static release checks, all 45 algorithm regression tests, the release-metadata check, and the full browser and responsive QA matrix.
+- The annotated release tag identifies the exact verified source revision.
 
 ## Scope
 
