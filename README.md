@@ -9,12 +9,15 @@
 [![Verify](https://github.com/lmdixon23/ai-playgrounds/actions/workflows/verify.yml/badge.svg?branch=main&event=push)](https://github.com/lmdixon23/ai-playgrounds/actions/workflows/verify.yml)
 [![Deploy](https://github.com/lmdixon23/ai-playgrounds/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/lmdixon23/ai-playgrounds/actions/workflows/deploy-pages.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21854217.svg)](https://doi.org/10.5281/zenodo.21854217)
 
 Twelve bilingual, offline-ready interactives for foundational artificial intelligence. The suite covers search, logic, probability, machine learning, neural networks, computer vision, and reinforcement learning.
 
 **Live site:** https://lmdixon23.github.io/ai-playgrounds/
 
 **Current release:** [v1.0.1](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.0.1)
+
+**Archived release DOI:** [10.5281/zenodo.21854217](https://doi.org/10.5281/zenodo.21854217) · **All versions DOI:** [10.5281/zenodo.21854216](https://doi.org/10.5281/zenodo.21854216)
 
 ## Why this project exists
 
