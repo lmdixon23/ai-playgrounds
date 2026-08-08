@@ -1,0 +1,41 @@
+name: Publish release evidence
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to attach evidence to
+        required: true
+        default: v1.0.1
+
+permissions:
+  contents: write
+
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install browser QA dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Build evidence bundle
+        run: python scripts/build_release_evidence.py --tag "${{ inputs.tag }}"
+      - name: Retain workflow artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ai-playgrounds-${{ inputs.tag }}-evidence
+          path: release-evidence/${{ inputs.tag }}
+          retention-days: 90
+      - name: Attach durable evidence to existing GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ inputs.tag }}" release-evidence/${{ inputs.tag }}.zip release-evidence/${{ inputs.tag }}/SHA256SUMS --clobber

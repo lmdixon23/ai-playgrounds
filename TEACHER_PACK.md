@@ -111,7 +111,7 @@ A complete student response should include:
 
 AI Playgrounds has no backend and no student account system. student response packet stores draft text only in the local browser. Students decide whether to copy or print their own response. The site does not collect student names, student IDs, grades, submissions, or classroom rosters.
 
-The public GitHub Pages site may load privacy-light analytics on the canonical host to estimate uptake. Classroom users can add `?noanalytics=1` to the URL to disable analytics for that session.
+The canonical GitHub Pages site may send privacy-minimized aggregate pixel requests to estimate public interest. The wrapper honors Global Privacy Control and Do Not Track; classroom users can add `?analytics=off` or use the persistent opt-out control. Downloaded/offline copies send no project analytics.
 
 ## Accessibility and inclusion notes
 

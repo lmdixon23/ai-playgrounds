@@ -1,5 +1,11 @@
 # AI Playgrounds
 
+<!-- launch-hardening-v1.0.1 -->
+> **Start in five minutes:** open the live site, choose one applet, make a prediction, change one variable, and explain the trace. The suite contains 12 bilingual, offline-ready applets with 45 deterministic algorithm checks. [Live suite](https://lmdixon23.github.io/ai-playgrounds/) · [Educator guide](docs/EDUCATOR_ADOPTION_GUIDE.md) · [Release status](docs/RESEARCH_COMPANION_STATUS.md) · [Analytics and privacy](docs/ANALYTICS_AND_PRIVACY.md)
+
+**Evidence boundary:** release checks establish bounded software behaviour and deployment integrity; they do not establish learning gains, classroom adoption, or accessibility conformance.
+
+
 [![Verify](https://github.com/lmdixon23/ai-playgrounds/actions/workflows/verify.yml/badge.svg?branch=main&event=push)](https://github.com/lmdixon23/ai-playgrounds/actions/workflows/verify.yml)
 [![Deploy](https://github.com/lmdixon23/ai-playgrounds/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/lmdixon23/ai-playgrounds/actions/workflows/deploy-pages.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -8,7 +14,7 @@ Twelve bilingual, offline-ready interactives for foundational artificial intelli
 
 **Live site:** https://lmdixon23.github.io/ai-playgrounds/
 
-**Current release:** [v1.0.0](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.0.0)
+**Current release:** [v1.0.1](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.0.1)
 
 ## Why this project exists
 
@@ -70,3 +76,7 @@ Built by Logan M. Dixon
 - [ORCID](https://orcid.org/0009-0001-0592-462X)
 - [GitHub repository](https://github.com/lmdixon23/ai-playgrounds)
 - [Releases](https://github.com/lmdixon23/ai-playgrounds/releases)
+
+## Contributing
+
+Start with the [bounded contributor on-ramp](docs/CONTRIBUTOR_ONRAMP.md). Educator feedback, translation review, accessibility observations, deterministic edge cases, and small lesson activities are preferred over unscoped feature requests.

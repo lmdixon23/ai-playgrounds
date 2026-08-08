@@ -1,5 +1,20 @@
 # Release notes
 
+## v1.0.1, 2026-08-08
+
+### Launch hardening
+
+- Added a bilingual five-minute start path and dedicated educator/reviewer routes.
+- Standardized privacy-minimized aggregate analytics across public pages without loading third-party JavaScript.
+- Analytics run only on the canonical GitHub Pages host, honor GPC/DNT and explicit opt-out, exclude URL query strings from page paths, and send no experiment values or learner responses.
+- Added durable release-evidence tooling, educator adoption guidance, classroom-pilot guidance, contribution templates, and launch materials.
+- Synchronized the active Paper 7 source with the final v1.0.0 verification record while retaining historical pre-release records as provenance.
+- Fixed the print-packet JavaScript regression introduced during the initial launch-hardening pass.
+
+### Verification boundary
+
+Software checks establish implementation and release integrity only. They do not establish learning gains, classroom adoption, or accessibility conformance.
+
 ## v1.0.0, 2026-07-25
 
 AI Playgrounds includes twelve bilingual, offline-ready interactive demonstrations covering:

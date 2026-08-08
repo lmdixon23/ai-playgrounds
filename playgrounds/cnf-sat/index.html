@@ -2271,7 +2271,7 @@ P</textarea>
     const w = window.open('', '_blank');
     if (!w) { setStatus('Popup blocked. Copy the packet instead.', '弹窗被拦截。请改用复制实验包。'); return; }
     const rendered = markdownToPrintableHtml(packet());
-    const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
+    const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
     w.document.open();
     w.document.write(html);
     w.document.close();
@@ -2353,19 +2353,7 @@ P</textarea>
 })();
 </script>
 <!-- Privacy-friendly analytics: GoatCounter, cookieless. -->
-<script>
-(function () {
-  const analyticsAllowedHost = location.hostname === 'lmdixon23.github.io';
-  const params = new URLSearchParams(location.search);
-  const analyticsDisabled = params.has('noanalytics') || params.get('analytics') === '0' || navigator.doNotTrack === '1';
-  if (!analyticsAllowedHost || analyticsDisabled) return;
-  const s = document.createElement('script');
-  s.async = true;
-  s.src = 'https://gc.zgo.at/count.js';
-  s.dataset.goatcounter = 'https://lmdixon23.goatcounter.com/count';
-  document.head.appendChild(s);
-})();
-</script>
+
 <script>
 (function() {
   const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "Input", "zhLabel": "输入", "selector": "#input", "kind": "value"}, {"label": "CNF stage", "zhLabel": "CNF 阶段", "selector": "#cnfCount", "kind": "text"}, {"label": "SAT output", "zhLabel": "SAT 输出", "selector": "#satOut", "kind": "text"}, {"label": "DPLL step", "zhLabel": "DPLL 步骤", "selector": "#dpllCount", "kind": "text"}, {"label": "Resolution output", "zhLabel": "归结输出", "selector": "#resolveOut", "kind": "text"}]};
@@ -2728,5 +2716,84 @@ P</textarea>
   refresh();
   window.refreshAppletTranslationCompletion=refresh;
 })();
-</script></body>
+</script>
+<!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
+<script>
+(function () {
+  'use strict';
+  var CANONICAL_HOST = 'lmdixon23.github.io';
+  var ENDPOINT = 'https://lmdixon23.goatcounter.com/count';
+  var PAGE_KIND = "applet";
+  var PAGE_SLUG = "cnf-sat";
+  var SOURCE_ALLOWLIST = new Set(['hn','linkedin','csta','sigcse','oercommons','merlot','reddit','bluesky','mastodon','devto','hashnode','github','email','school','portfolio','resume','zenodo','jose']);
+  var liveImages = [];
+
+  function storageGet(storage, key) { try { return storage.getItem(key); } catch (_) { return null; } }
+  function storageSet(storage, key, value) { try { storage.setItem(key, value); } catch (_) {} }
+  function privacySignal() {
+    return navigator.globalPrivacyControl === true || navigator.doNotTrack === '1' ||
+      navigator.doNotTrack === 'yes' || window.doNotTrack === '1';
+  }
+  function clean(value) {
+    return String(value || '').toLowerCase().replace(/[^a-z0-9._/-]+/g, '-').replace(/-+/g, '-').slice(0, 80);
+  }
+
+  var params = new URLSearchParams(location.search);
+  var optedOut = params.get('analytics') === 'off' || storageGet(localStorage, 'ai-playgrounds-analytics') === 'off';
+  var enabled = location.hostname === CANONICAL_HOST && !privacySignal() && !optedOut;
+
+  function send(path) {
+    if (!enabled) return;
+    var img = new Image(1, 1);
+    img.referrerPolicy = 'no-referrer';
+    img.onload = img.onerror = function () {
+      var i = liveImages.indexOf(img);
+      if (i >= 0) liveImages.splice(i, 1);
+    };
+    img.src = ENDPOINT + '?p=' + encodeURIComponent(path);
+    liveImages.push(img);
+  }
+
+  window.aiPlaygroundsAnalytics = {
+    enabled: enabled,
+    optOut: function () { storageSet(localStorage, 'ai-playgrounds-analytics', 'off'); location.reload(); },
+    optIn: function () { storageSet(localStorage, 'ai-playgrounds-analytics', 'on'); location.reload(); },
+    count: function (path) { send('/event/' + clean(path)); }
+  };
+
+  document.addEventListener('click', function (event) {
+    var out = event.target.closest('#analytics-opt-out');
+    var inn = event.target.closest('#analytics-opt-in');
+    if (out) { event.preventDefault(); window.aiPlaygroundsAnalytics.optOut(); return; }
+    if (inn) { event.preventDefault(); window.aiPlaygroundsAnalytics.optIn(); return; }
+    if (!enabled) return;
+
+    var link = event.target.closest('a[href]');
+    if (link) {
+      var href = link.getAttribute('href') || '';
+      var app = href.match(/playgrounds\/([^/?#]+)\/?/i);
+      if (app) send('/event/launch/' + clean(app[1]));
+      else if (/\.(pdf|zip|md|docx?|pptx?|csv)(?:[?#]|$)/i.test(href)) send('/event/resource/' + clean((href.split('/').pop() || 'download').split(/[?#]/)[0]));
+      else if (/github\.com\/lmdixon23\/ai-playgrounds/i.test(href)) send('/event/outbound/github');
+    }
+
+    if (PAGE_KIND === 'applet') {
+      var control = event.target.closest('main button, main [role="button"], .workspace button, .controls button');
+      if (control && !control.closest('header, nav, footer, .toolbar')) {
+        var key = 'ai-playgrounds-engaged-' + PAGE_SLUG;
+        if (storageGet(sessionStorage, key) !== '1') {
+          storageSet(sessionStorage, key, '1');
+          send('/event/engaged/' + clean(PAGE_SLUG));
+        }
+      }
+    }
+  }, true);
+
+  if (!enabled) return;
+  send(location.pathname || '/ai-playgrounds/');
+  var source = clean(params.get('ap_src'));
+  if (SOURCE_ALLOWLIST.has(source)) send('/event/campaign/' + source);
+})();
+</script>
+</body>
 </html>
