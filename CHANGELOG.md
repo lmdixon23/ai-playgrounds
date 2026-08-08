@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.0.1] - 2026-08-08
+
+### Added
+- A three-audience, five-minute onboarding path on the landing page.
+- A documented, privacy-preserving aggregate analytics layer with DNT/GPC and local opt-out.
+- Allow-listed campaign attribution and first-substantive-interaction events without experiment values or learner identifiers.
+- Durable exact-tag evidence, uptake-reporting definitions, educator adoption guidance, classroom-pilot protocol, and launch materials.
+- Educator classroom-feedback issue template and a reproducible public-metrics snapshot utility.
+
+### Changed
+- Standardized analytics coverage across the landing page, applets, and resource pages.
+- Extended release-evidence retention and added a manual release-evidence publishing workflow.
+- Synchronized Paper 7 with the final v1.0.0 verification record.
+
+### Fixed
+- Removed the stale pre-release 27-pass/2-fail/4-skip narrative from the research companion.
+- Added a constrained-environment validation wrapper and clearer separation between software assurance and educational efficacy.
+
+
 ## 1.0.0 - 2026-07-25
 
 ### Verified public release
