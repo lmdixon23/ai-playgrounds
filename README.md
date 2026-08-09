@@ -63,6 +63,12 @@ The algorithm gate requires all 45 regression cases to pass with no skipped case
 - [How the project works](quality.html)
 - [Research and citation](research-and-citation.html)
 
+## Research status
+
+AI Playgrounds v1.0.1 is the released and archived software artifact. The GitHub Release and Zenodo DOI identify the software, its release evidence, and its reproducibility record.
+
+A separate design-and-tools research manuscript about the suite is still in preparation. It is not part of the v1.0.1 GitHub Release or the Zenodo software deposit, and publication of the software should not be read as publication of that manuscript.
+
 ## Reuse and citation
 
 The project is released under the MIT License.
