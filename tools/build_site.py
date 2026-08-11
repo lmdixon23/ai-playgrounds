@@ -21,6 +21,7 @@ ROOT_PUBLIC_FILES = (
     "student-lab.html",
     "teacher-pack.html",
     "og-image.png",
+    "media/AI_Playgrounds_Demo_15s.mp4",
     "robots.txt",
     "sitemap.xml",
     # Deliberately public files linked from the live application.
