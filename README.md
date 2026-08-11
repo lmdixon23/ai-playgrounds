@@ -21,9 +21,9 @@ Twelve bilingual, offline-ready interactives for foundational artificial intelli
 
 ### 15-second demo
 
-[![AI Playgrounds demo preview](og-image.png)](https://lmdixon23.github.io/ai-playgrounds/media/AI_Playgrounds_Demo_15s.mp4)
+[![AI Playgrounds demo showing the interactive suite in use](media/AI_Playgrounds_Demo_15s.gif)](https://lmdixon23.github.io/ai-playgrounds/media/AI_Playgrounds_Demo_15s.mp4)
 
-**[▶ Play the 15-second demo](https://lmdixon23.github.io/ai-playgrounds/media/AI_Playgrounds_Demo_15s.mp4)**
+**[▶ Open the full-resolution demo](https://lmdixon23.github.io/ai-playgrounds/media/AI_Playgrounds_Demo_15s.mp4)**
 
 ## Why this project exists
 
