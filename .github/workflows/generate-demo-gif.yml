@@ -1,0 +1,45 @@
+name: Generate demo GIF
+
+on:
+  push:
+    paths:
+      - '.github/workflows/generate-demo-gif.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Ensure ffmpeg is available
+        run: |
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y ffmpeg
+          fi
+
+      - name: Generate looping GIF
+        run: |
+          ffmpeg -y -i media/AI_Playgrounds_Demo_15s.mp4 \
+            -vf "fps=8,scale=560:315:flags=lanczos,split[s0][s1];[s0]palettegen=max_colors=128[p];[s1][p]paletteuse=dither=bayer:bayer_scale=5" \
+            -loop 0 media/AI_Playgrounds_Demo_15s.gif
+          test -s media/AI_Playgrounds_Demo_15s.gif
+          ls -lh media/AI_Playgrounds_Demo_15s.gif
+
+      - name: Commit generated GIF
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add media/AI_Playgrounds_Demo_15s.gif
+          if git diff --cached --quiet; then
+            echo "GIF already up to date"
+          else
+            git commit -m "docs: add looping demo preview"
+            git push origin HEAD:main
+          fi
