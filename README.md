@@ -19,6 +19,12 @@ Twelve bilingual, offline-ready interactives for foundational artificial intelli
 
 **Archived release DOI:** [10.5281/zenodo.21854217](https://doi.org/10.5281/zenodo.21854217) · **All versions DOI:** [10.5281/zenodo.21854216](https://doi.org/10.5281/zenodo.21854216)
 
+### 15-second demo
+
+[![Watch the AI Playgrounds 15-second demo](og-image.png)](media/AI_Playgrounds_Demo_15s.mp4)
+
+**[Watch the 15-second demo](media/AI_Playgrounds_Demo_15s.mp4)**
+
 ## Why this project exists
 
 Foundational AI concepts are dynamic. A search frontier expands, evidence changes a posterior probability, a model begins to overfit, or value propagates through repeated experience.
