@@ -798,11 +798,11 @@
 </div>
 <div class="lab-field">
 <label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
-<textarea data-lab-answer="observe" data-lab-en="Compare train and validation MSE for a low, medium, and high polynomial degree." data-lab-zh="比较低、中、高三个多项式次数的训练 MSE 和测试 MSE。" id="lab-observe" placeholder="Compare train and validation MSE for a low, medium, and high polynomial degree."></textarea>
+<textarea data-lab-answer="observe" data-lab-en="Compare train and validation MSE for a low, medium, and high polynomial degree." data-lab-zh="比较低、中、高三个多项式次数的训练 MSE 和验证 MSE。" id="lab-observe" placeholder="Compare train and validation MSE for a low, medium, and high polynomial degree."></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
-<textarea data-lab-answer="explain" data-lab-en="Why can training MSE improve while validation MSE gets worse?" data-lab-zh="为什么训练 MSE 可以变好，而测试 MSE 变差？" id="lab-explain" placeholder="Why can training MSE improve while validation MSE gets worse?"></textarea>
+<textarea data-lab-answer="explain" data-lab-en="Why can training MSE improve while validation MSE gets worse?" data-lab-zh="为什么训练 MSE 可以变好，而验证 MSE 变差？" id="lab-explain" placeholder="Why can training MSE improve while validation MSE gets worse?"></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
@@ -956,7 +956,7 @@
   </p>
 <h2>为什么新数据误差可能存在最佳区间</h2>
 <p>
-    过于简单的模型可能遗漏稳定结构，从而产生较高偏差。过于灵活的模型可能对当前样本及其噪声反应过强，从而产生较高方差。在许多有限且含噪的问题中，验证误差或验证误差会随着复杂度先下降再上升。由此形成的 U 形曲线是有用的教学模式，并不是每个数据集都必须遵守的定律。
+    过于简单的模型可能遗漏稳定结构，从而产生较高偏差。过于灵活的模型可能对当前样本及其噪声反应过强，从而产生较高方差。在许多有限且含噪的问题中，验证误差可能随着复杂度先下降再上升。由此形成的 U 形曲线是有用的教学模式，并不是每个数据集都必须遵守的定律。
   </p>
 <div class="aha">
     训练误差回答模型对已知样本拟合得多紧密。泛化误差回答模型对来自相关总体的新样本预测得多好。模型选择应依据第二个问题，并使用没有参与确定拟合系数的数据。
@@ -1063,18 +1063,18 @@
       // lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
       'tour0name': 'Underfit (degree 1, sine truth)',
       'tour0desc': "Polynomial of degree 1 trying to fit a sine. Train AND validation error are both high: this is high bias. The model literally can't bend enough.",
-      'tour1name': 'Sweet spot (degree 5)',
-      'tour1desc': 'Same truth, degree 5. Train and test are both low and close together. This is the bias-variance balance point we always want.',
+      'tour1name': 'One useful setting on this sample (degree 5)',
+      'tour1desc': 'Same generated setting, degree 5. Training and validation error happen to be low and fairly close here. Treat this as one useful sample outcome, not a universal optimal degree.',
       'tour2name': 'Severe overfit (degree 20, n=20)',
       'tour2desc': 'Degree 20 with only 20 training points. Train error → 0 (the curve passes through every dot). Validation error can rise sharply. Classic overfitting.',
-      'tour3name': 'Ridge fixes the overfit',
-      'tour3desc': 'Still degree 20, but now λ=0.5. The penalty shrinks the wild high-order coefficients. Validation error drops dramatically without changing the model class.',
+      'tour3name': 'Ridge can reduce this overfit',
+      'tour3desc': 'Still degree 20, but now λ=0.5. In this generated sample the penalty shrinks extreme high-order coefficients and can lower validation error without changing the polynomial degree.',
       'tour4name': 'More data can reduce variance',
       'tour4desc': 'Degree 20, λ=0, but n=100 instead of 20. With more data, even a high-capacity model can\'t memorize: it has to generalize. Use the CV curve toggle.',
       // worksheet answer-feedback (ws{n}ok / ws{n}no) ---
       'ws1ok': 'Correct. A degree-20 polynomial has 21 free parameters; with only 20 training points, it has enough freedom to literally pass through every dot. Train MSE ≈ 0.',
       'ws1no': "Try 'zero' or 'near zero'. 21 free coefficients can fit 20 arbitrary points exactly: degrees of freedom math.",
-      'ws2ok': 'Yes. Train ≈ 0, test explodes: that gap IS overfitting. The wild oscillations needed to pass through every train point miss the test points completely.',
+      'ws2ok': 'Yes. Training error can approach zero while repeatedly viewed validation error rises sharply; that generalization gap is evidence of overfitting in this sample.',
       'ws2no': "Hint: zero train error + held-out validation error are very different. Try 'much higher'.",
       'ws3ok': 'Correct. Ridge (L2) penalty λ‖w‖² shrinks large coefficients. The degree-20 polynomial still has 21 params, but they are now small: the curve is forced to be smooth and generalizes much better.',
       'ws3no': "Try 'down'. λ penalizes large weights, killing the high-frequency wiggles that overfit.",
@@ -1118,7 +1118,7 @@
       'show-cv-title': '在误差图中加入 k 折交叉验证曲线。这是实际中选择正则化强度的标准方法。',
       'fit-h3': '训练数据上的拟合',
       'err-h3': '均方误差 vs 多项式次数(当前 λ 与数据集)',
-      'train-mse': '训练 MSE', 'test-mse': '测试 MSE(留出集)',
+      'train-mse': '训练 MSE', 'test-mse': '验证 MSE（反复查看的留出集）',
       'jump-link': '↓ 阅读说明',
       'tour-summary': '📚 课程导览(5 步)',
       'tour-step': '步骤',
@@ -1137,15 +1137,15 @@
       'ws-check': '核对',
       'ws-pick': '请先选择一个答案。',
       'ws1q': '设 degree=20、n=20、λ=0、正弦真值。训练 MSE 大约是:',
-      'ws2q': '与 Q1 相同的设置。测试 MSE(相对训练 MSE)是:',
-      'ws3q': '保持 degree=20。现在把 λ 从 0 提高到 0.5。测试 MSE 会:',
+      'ws2q': '与 Q1 相同的设置。验证 MSE（相对训练 MSE）是:',
+      'ws3q': '保持 degree=20。现在把 λ 从 0 提高到 0.5。验证 MSE 会:',
       // --- MCQ: 练习题选项(ws{n}o{i})---
       'ws1o0': '接近零--21 个自由系数可以穿过全部 20 个训练点。',
       'ws1o1': '很高--20 次曲线太过摆动,无法拟合训练点。',
-      'ws1o2': '与测试 MSE 大致相同--训练误差和验证误差总是一致。',
+      'ws1o2': '与验证 MSE 大致相同--训练误差和验证误差总是一致。',
       'ws2o0': '更低--完美拟合训练点也会拟合未见过的点。',
-      'ws2o1': '大致相同--训练 MSE 是测试 MSE 的可靠估计。',
-      'ws2o2': '高得多--为击中每个训练点而产生的剧烈摆动完全错过了测试点。',
+      'ws2o1': '大致相同--训练 MSE 是验证 MSE 的可靠估计。',
+      'ws2o2': '高得多--为击中每个训练点而产生的剧烈摆动可能在验证点上表现很差。',
       'ws3o0': '上升--对权重的任何惩罚只会损害准确率。',
       'ws3o1': '下降--缩小系数会平滑曲线,改善泛化。',
       'ws3o2': '保持不变--λ 改变权重,但不改变验证误差。',
@@ -1156,14 +1156,14 @@
       'tour1desc': '同样的真值,5 次。训练和测试都很低且彼此接近。这正是我们一直想要的偏差-方差平衡点。',
       'tour2name': '严重过拟合(20 次,n=20)',
       'tour2desc': '20 次多项式而只有 20 个训练点。训练误差 → 0(曲线穿过每一个点)。验证误差暴涨。典型的过拟合。',
-      'tour3name': '岭回归修复过拟合',
-      'tour3desc': '仍是 20 次,但现在 λ=0.5。惩罚项把剧烈的高次系数缩小。验证误差大幅下降,而模型类别没有改变。',
-      'tour4name': '更多数据同样能修复',
-      'tour4desc': '20 次,λ=0,但 n=100 而非 20。数据更多时,即使高容量模型也无法死记硬背--它必须泛化。可打开 CV 曲线开关。',
+      'tour3name': '岭回归在这个示例中可缓解过拟合',
+      'tour3desc': '仍是 20 次，但现在 λ=0.5。在这个生成样本中，惩罚项会缩小极端高次系数，并可能降低验证误差，而多项式次数并未改变。',
+      'tour4name': '更多数据在这个示例中可降低方差',
+      'tour4desc': '20 次、λ=0，但 n=100 而非 20。在这个生成样本中，更多数据会约束这个高容量拟合并可能改善泛化；更多数据本身并不能保证任何模型都会泛化。',
       // 练习题答案反馈(ws{n}ok / ws{n}no)---
       'ws1ok': '正确。20 次多项式有 21 个自由参数;只有 20 个训练点时,它有足够的自由度精确穿过每一个点。训练 MSE ≈ 0。',
       'ws1no': '试试"zero"或"near zero"。21 个自由系数可以精确拟合 20 个任意点--自由度的数学。',
-      'ws2ok': '对。训练 ≈ 0,测试暴涨--这个差距就是过拟合。为穿过每个训练点所需的剧烈振荡完全错过了测试点。',
+      'ws2ok': '对。在这个样本中，训练误差可以接近 0，而反复查看的验证误差明显升高；这种泛化差距是过拟合的证据。',
       'ws2no': '提示:零训练误差和留出验证误差差别很大。试试"much higher"。',
       'ws3ok': '正确。岭回归(L2)惩罚 λ‖w‖² 缩小大系数。20 次多项式仍有 21 个参数,但现在它们都很小--曲线被迫平滑,泛化得好得多。',
       'ws3no': '试试"down"。λ 惩罚大权重,扼杀那些造成过拟合的高频摆动。',
@@ -1171,11 +1171,11 @@
       'deg-slider-title': '模型容量。次数越高,摆动空间越大,越容易过拟合。',
       'lam-slider-title': '正则化强度。岭回归在损失中加入 λ‖w‖²;套索加入 λ‖w‖₁。设 λ=0 关闭正则化。',
       'n-slider-title': '训练集规模。数据越多,越难过拟合。',
-      'sig-slider-title': '每个训练点的高斯噪声标准差。σ=0 时无法过拟合。',
+      'sig-slider-title': '每个训练点的高斯噪声标准差。σ=0 只移除了这里注入的随机噪声；有限样本、模型错配或反复调参仍可能产生较差泛化。',
       'truth-sel-title': '模型试图从带噪样本中恢复的"真实"函数。',
       'resample-title': '在真实函数周围重新采样新的随机噪声。',
       'lc-summary': '📈 学习曲线(固定阶数,改变 n)',
-      'lc-hint': '固定当前的阶数、λ、正则化和噪声;让 n 从 5 变到 n_最大值。对每个 n,重新采样 n 个训练点并计算训练和测试 MSE。绘制两条曲线。诊断:训练≈测试且都很高 → 欠拟合(需要更高容量);训练低 + 测试高(有缺口)→ 过拟合(更多数据或正则化);两者都收敛到低值 → 良好。',
+      'lc-hint': '固定当前的阶数、λ、正则化和噪声;让 n 从 5 变到 n_最大值。对每个 n，重新采样 n 个训练点并计算训练和验证 MSE。绘制两条曲线。诊断:训练≈测试且都很高 → 欠拟合(需要更高容量);训练低 + 验证高(有缺口)→ 过拟合(更多数据或正则化);两者都收敛到低值 → 良好。',
       'lc-nmax-label': 'n_最大值:', 'lc-trials-label': '平均次数:',
       'lc-run': '▶ 运行学习曲线',
       'lc-empty': '(点击"运行学习曲线")',
@@ -1628,14 +1628,14 @@
     { name: 'Underfit (degree 1, sine truth)',
       description: "Polynomial of degree 1 trying to fit a sine. Train AND validation error are both high: this is high bias. The model literally can't bend enough.",
       apply: () => { $('truthSel').value = 'sin'; $('deg').value = 1; $('lam').value = 0; $('n').value = 20; $('sig').value = 0.2; regenData(); render(); } },
-    { name: 'Sweet spot (degree 5)',
-      description: "Same truth, degree 5. Train and test are both low and close together. This is the bias-variance balance point we always want.",
+    { name: 'One useful setting on this sample (degree 5)',
+      description: "Same generated setting, degree 5. Training and validation error happen to be low and fairly close here. Treat this as one useful sample outcome, not a universal optimal degree.",
       apply: () => { $('truthSel').value = 'sin'; $('deg').value = 5; $('lam').value = 0; $('n').value = 20; $('sig').value = 0.2; regenData(); render(); } },
     { name: 'Severe overfit (degree 20, n=20)',
       description: "Degree 20 with only 20 training points. Train error → 0 (the curve passes through every dot). Validation error can rise sharply. Classic overfitting.",
       apply: () => { $('truthSel').value = 'sin'; $('deg').value = 20; $('lam').value = 0; $('n').value = 20; $('sig').value = 0.2; regenData(); render(); } },
-    { name: 'Ridge fixes the overfit',
-      description: "Still degree 20, but now λ=0.5. The penalty shrinks the wild high-order coefficients. Validation error drops dramatically without changing the model class.",
+    { name: 'Ridge can reduce this overfit',
+      description: "Still degree 20, but now λ=0.5. In this generated sample the penalty shrinks extreme high-order coefficients and can lower validation error without changing the polynomial degree.",
       apply: () => { $('truthSel').value = 'sin'; $('deg').value = 20; $('lam').value = 0.5; $('n').value = 20; $('sig').value = 0.2; regenData(); render(); } },
     { name: 'More data can reduce variance',
       description: "Degree 20, λ=0, but n=100 instead of 20. With more data, this particular high-capacity fit is more constrained and may generalize better. More data does not force every model to generalize. Use CV curve toggle.",
@@ -1732,7 +1732,7 @@
       ok:  ['ws1ok', "Correct. A degree-20 polynomial has 21 free parameters; with only 20 training points, it has enough freedom to literally pass through every dot. Train MSE ≈ 0."],
       no:  ['ws1no', "Try 'zero' or 'near zero'. 21 free coefficients can fit 20 arbitrary points exactly: degrees of freedom math."] },
     { correct: 2,
-      ok:  ['ws2ok', "Yes. Train ≈ 0, test explodes: that gap IS overfitting. The wild oscillations needed to pass through every train point miss the test points completely."],
+      ok:  ['ws2ok', "Yes. Training error can approach zero while repeatedly viewed validation error rises sharply; that generalization gap is evidence of overfitting in this sample."],
       no:  ['ws2no', "Hint: zero train error + held-out validation error are very different. Try 'much higher'."] },
     { correct: 1,
       ok:  ['ws3ok', "Correct. Ridge (L2) penalty λ‖w‖² shrinks large coefficients. The degree-20 polynomial still has 21 params, but they are now small: the curve is forced to be smooth and generalizes much better."],
@@ -2089,7 +2089,7 @@
 </script>
 <script>
 (function() {
-  const VISUAL_CONFIG = {"intro":"The visual target is the generalization gap: training error can fall while validation error rises when the model follows noise instead of structure.","zhIntro":"可视化目标是泛化差距：当模型追随噪声而不是结构时，训练误差可能下降，但验证误差上升。","misread":"A curve that passes close to every training point is not necessarily the best model.","zhMisread":"穿过几乎所有训练点的曲线不一定是最好的模型。","steps":[{"label":"Data signal","zhLabel":"数据信号","text":"Sample size and noise decide how clearly the underlying pattern appears.","zhText":"样本量和噪声决定底层模式有多清楚。","selector":"#n","kind":"value","liveLabel":"Samples","zhLiveLabel":"样本"},{"label":"Model capacity","zhLabel":"模型容量","text":"Degree controls how much the curve can bend to fit details.","zhText":"次数控制曲线可以弯曲到什么程度以拟合细节。","selector":"#degV","kind":"text","liveLabel":"Degree","zhLiveLabel":"次数"},{"label":"Regularization brake","zhLabel":"正则化刹车","text":"Regularization penalizes overly flexible curves and can reduce validation error.","zhText":"正则化惩罚过于灵活的曲线，并可能降低验证误差。","selector":"#regSel","kind":"selected","liveLabel":"Reg","zhLiveLabel":"正则化"},{"label":"Generalization check","zhLabel":"泛化检查","text":"Compare train MSE and validation MSE to see whether fitting improved prediction.","zhText":"比较训练 MSE 和测试 MSE，观察拟合是否真的改善预测。","selector":"#testMse","kind":"text","liveLabel":"Validation MSE","zhLiveLabel":"测试 MSE"}],"fields":[{"label":"Degree","zhLabel":"次数","selector":"#degV","kind":"text"},{"label":"Regularization","zhLabel":"正则化","selector":"#regSel","kind":"selected"},{"label":"Sample size","zhLabel":"样本量","selector":"#n","kind":"value"},{"label":"Train MSE","zhLabel":"训练 MSE","selector":"#trainMse","kind":"text"},{"label":"Validation MSE","zhLabel":"测试 MSE","selector":"#testMse","kind":"text"}]};
+  const VISUAL_CONFIG = {"intro":"The visual target is the generalization gap: training error can fall while validation error rises when the model follows noise instead of structure.","zhIntro":"可视化目标是泛化差距：当模型追随噪声而不是结构时，训练误差可能下降，但验证误差上升。","misread":"A curve that passes close to every training point is not necessarily the best model.","zhMisread":"穿过几乎所有训练点的曲线不一定是最好的模型。","steps":[{"label":"Data signal","zhLabel":"数据信号","text":"Sample size and noise decide how clearly the underlying pattern appears.","zhText":"样本量和噪声决定底层模式有多清楚。","selector":"#n","kind":"value","liveLabel":"Samples","zhLiveLabel":"样本"},{"label":"Model capacity","zhLabel":"模型容量","text":"Degree controls how much the curve can bend to fit details.","zhText":"次数控制曲线可以弯曲到什么程度以拟合细节。","selector":"#degV","kind":"text","liveLabel":"Degree","zhLiveLabel":"次数"},{"label":"Regularization brake","zhLabel":"正则化刹车","text":"Regularization penalizes overly flexible curves and can reduce validation error.","zhText":"正则化惩罚过于灵活的曲线，并可能降低验证误差。","selector":"#regSel","kind":"selected","liveLabel":"Reg","zhLiveLabel":"正则化"},{"label":"Generalization check","zhLabel":"泛化检查","text":"Compare train MSE and validation MSE to see whether fitting improved prediction.","zhText":"比较训练 MSE 和验证 MSE，观察拟合是否真的改善对未用于拟合的数据的预测。","selector":"#testMse","kind":"text","liveLabel":"Validation MSE","zhLiveLabel":"验证 MSE"}],"fields":[{"label":"Degree","zhLabel":"次数","selector":"#degV","kind":"text"},{"label":"Regularization","zhLabel":"正则化","selector":"#regSel","kind":"selected"},{"label":"Sample size","zhLabel":"样本量","selector":"#n","kind":"value"},{"label":"Train MSE","zhLabel":"训练 MSE","selector":"#trainMse","kind":"text"},{"label":"Validation MSE","zhLabel":"验证 MSE","selector":"#testMse","kind":"text"}]};
   const root = document.querySelector('.visual-explanation');
   if (!root) return;
   const flow = root.querySelector('[data-visual-flow]');

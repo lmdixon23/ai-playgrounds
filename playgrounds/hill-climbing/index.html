@@ -1043,8 +1043,8 @@
       'tour4desc': "Landscape with 5 minima. Try Simple HC first: observe what minimum it reaches. Switch to Tabu Search: it forbids recently-visited states, often escaping past nearby minima to find better ones.",
       // Worksheet answer-feedback strings (English fallback passed inline at each call site).
       'ws1ok': "Correct. Best-improvement HC is greedy: it stops at any local optimum. Different starting tours can converge to different local optima. This is the central limitation of pure HC.",
-      'ws1no': "Try 'no'. HC stops at the first local optimum it reaches: different random restarts hit different local optima.",
-      'ws2ok': "Right. Random-restart HC takes the BEST result across many independent climbs. With enough restarts, you sample multiple basins of attraction and the global best becomes likely.",
+      'ws1no': "Try 'no'. HC stops at the first local optimum it reaches; different random restarts can land in different local optima.",
+      'ws2ok': "Right. Random-restart HC keeps the best result across independent climbs. More restarts sample more basins and can increase the chance of finding a better solution, but no finite run certifies the global optimum.",
       'ws2no': "Try 'better'. Random restarts sample multiple local optima: the best one wins.",
       'ws3ok': "Correct. SA acceptance prob = exp(-Δ/T). As T→0, exp(-Δ/T) → 0 for any worsening Δ, so the algorithm only accepts improvements: pure greedy hill-climbing. Early on (large T), it accepts almost anything.",
       'ws3no': "Try 'greedier'. Low T means the Boltzmann acceptance probability for worse moves approaches zero: SA degenerates to greedy HC at T=0.",
@@ -1118,9 +1118,9 @@
       'ws3o2': '更贪心--当 T→0 时,接受更差移动的概率趋于零,于是退化为贪心爬山。',
       // 课程导览的场景名称与描述(0 起始;英文回退保留在 LESSON_TOUR 内联)。
       'tour0name': '最佳改进爬山在 TSP 上卡住',
-      'tour0desc': 'TSP,12 个城市,最佳改进。点击运行。它迅速改进,然后在一个明显不是最短路线的局部最优处停滞。贪心 ≠ 最优。',
+      'tour0desc': 'TSP,12 个城市,最佳改进。点击运行。它迅速改进,然后在一个局部最优处停滞。与其他起点比较时，有些运行可能得到更低代价；停止只说明当前移动规则找不到更好的邻居。',
       'tour1name': '随机重启采样其他吸引域',
-      'tour1desc': '同一个 TSP,随机重启。当爬升停滞时,跳到一个全新的起点。经过足够多次重启后,历史最佳代价远低于任何单次爬升。便宜且有效。',
+      'tour1desc': '同一个 TSP,随机重启。一次爬升停滞后，从新的随机起点开始独立爬升。增加重启会采样更多吸引域，历史最佳代价可能改善，但任何有限次数的重启都不能证明全局最优。',
       'tour2name': '模拟退火:T₀=10,冷却率=0.995',
       'tour2desc': 'TSP 配模拟退火。前期的迭代会接受更差的移动(逃出谷底)。随着 T 冷却,行为变得贪心。关键在于"慢冷却"--试试冷却率 0.999 对比 0.95。',
       'tour3name': 'N 皇后:最佳改进撞上平台',
@@ -1128,9 +1128,9 @@
       'tour4name': '二维景观:禁忌搜索对比简单爬山',
       'tour4desc': '有 5 个极小值的景观。先试简单爬山--观察它到达哪个极小值。再切换到禁忌搜索--它禁止最近访问过的状态,常能越过附近的极小值找到更好的解。',
       // 练习题答案反馈(英文回退在各调用处内联传入)。
-      'ws1ok': '正确。最佳改进爬山是贪心的:它会在任何局部最优处停下。不同的起始路线会收敛到不同的局部最优。这是纯爬山法的核心局限。',
-      'ws1no': '试试"no"。爬山法在到达的第一个局部最优处就停下--不同的随机重启会撞上不同的局部最优。',
-      'ws2ok': '对。随机重启爬山会从多次独立爬升中取最佳结果。重启足够多次,你就采样到多个吸引域,全局最优变得很可能出现。',
+      'ws1ok': '正确。最佳改进爬山是贪心的:它会在任何局部最优处停下。不同的起始路线可能收敛到不同的局部最优。这是纯爬山法的核心局限。',
+      'ws1no': '试试"no"。爬山法在到达的第一个局部最优处就停下--不同的随机重启可能落入不同的局部最优。',
+      'ws2ok': '对。随机重启爬山会从多次独立爬升中取最佳结果。增加独立重启会采样更多吸引域，并可能提高找到更好解的机会；任何有限次数的重启都不能证明已经找到全局最优。',
       'ws2no': '试试"better"。随机重启会采样多个局部最优--其中最好的那个获胜。',
       'ws3ok': '正确。模拟退火的接受概率 = exp(-Δ/T)。当 T→0 时,对任何变差的 Δ,exp(-Δ/T) → 0,因此算法只接受改进--纯贪心爬山。前期(T 较大)它几乎接受任何移动。',
       'ws3no': '试试"greedier"。低 T 意味着对更差移动的玻尔兹曼接受概率趋近于零--在 T=0 时模拟退火退化为贪心爬山。',
@@ -1241,11 +1241,11 @@
   const HELP = {
     simple: 'Simple HC: at each step, pick the FIRST improving neighbor you find. Fast but myopic.',
     steepest: 'Best-improvement: examine all neighbors, take the best improving one. Stops at any local optimum.',
-    stochastic: 'Stochastic HC: pick a random IMPROVING neighbor proportionally to how much it improves. Avoids ties.',
+    stochastic: 'Stochastic HC: choose among improving neighbors probabilistically, weighted by improvement size. Randomness changes the trajectory but does not guarantee escape from a local optimum.',
     firstchoice: 'First-choice HC: generate random neighbors until one improves. Useful when neighbor count is huge.',
     restart: 'Random restart: run best-improvement hill climbing from many random starts and keep the best result found. More restarts sample more basins, but any finite run can still miss the global optimum.',
     sa: 'Simulated annealing: accept worsening moves with probability exp(-ΔE/T). Cool T over time.',
-    tabu: 'Tabu search: always move to the best neighbor: even if worse: but keep a short memory of recent states to forbid cycling back. Memory is the only thing pulling it out of local optima.',
+    tabu: 'Tabu search: move to the best admissible neighbor even when it is worse, while short-term memory discourages immediate cycling back. Both the willingness to worsen and the tabu memory can help the search leave a local optimum.',
     ga: 'Genetic algorithm: population-based. Each "step" = one generation. Tournament-select parents, crossover, mutate, elite-preserve top 2. The reported state is the best-of-generation. Diverges from all other algorithms here in that the search is parallel across many individuals.',
   };
   $('algoSel').addEventListener('change', e => $('algoHelp').textContent = HELP[e.target.value]);
@@ -2091,9 +2091,9 @@
   const WORKSHEET = [
     { correct: 1,
       ok:  ['ws1ok', "Correct. Best-improvement HC is greedy: it stops at any local optimum. Different starting tours can converge to different local optima. This is the central limitation of pure HC."],
-      no:  ['ws1no', "Try 'no'. HC stops at the first local optimum it reaches: different random restarts hit different local optima."] },
+      no:  ['ws1no', "Try 'no'. HC stops at the first local optimum it reaches; different random restarts can land in different local optima."] },
     { correct: 0,
-      ok:  ['ws2ok', "Right. Random-restart HC takes the BEST result across many independent climbs. With enough restarts, you sample multiple basins of attraction and the global best becomes likely."],
+      ok:  ['ws2ok', "Right. Random-restart HC keeps the best result across independent climbs. More restarts sample more basins and can increase the chance of finding a better solution, but no finite run certifies the global optimum."],
       no:  ['ws2no', "Try 'better'. Random restarts sample multiple local optima: the best one wins."] },
     { correct: 2,
       ok:  ['ws3ok', "Correct. SA acceptance prob = exp(-Δ/T). As T→0, exp(-Δ/T) → 0 for any worsening Δ, so the algorithm only accepts improvements: pure greedy hill-climbing. Early on (large T), it accepts almost anything."],

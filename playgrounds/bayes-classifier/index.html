@@ -615,8 +615,8 @@
 <div class="sequential-box" style="margin-top:12px; padding:12px 16px; background:var(--soft); border:1px solid var(--border); border-radius:8px;">
 <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
 <strong data-i18n="seq-strong" style="color:var(--accent);">Run a second test:</strong>
-<span data-i18n="seq-explain" style="color:var(--muted); font-size:0.9rem;">The posterior from the first test becomes the prior for the second. Watch P(sick) update twice.</span>
-<button class="step-btn" data-i18n="seq-pos-btn" data-i18n-title="seq-pos-title" id="seqPosBtn" title="Set the prior to P(sick | positive), then re-test. A second positive should push the posterior even higher.">
+<span data-i18n="seq-explain" style="color:var(--muted); font-size:0.9rem;">For this idealized chain, assume the second result is conditionally independent of the first given the true condition and has the same sensitivity/specificity. Then the first posterior becomes the second prior.</span>
+<button class="step-btn" data-i18n="seq-pos-btn" data-i18n-title="seq-pos-title" id="seqPosBtn" title="Under the stated conditional-independence assumption, set the prior to P(sick | positive) and apply a second positive result.">
             ✓ Test came back POSITIVE
           </button>
 <button class="step-btn secondary" data-i18n="seq-neg-btn" data-i18n-title="seq-neg-title" id="seqNegBtn" title="Set the prior to P(sick | negative). A second negative should drop the posterior even lower.">
@@ -1031,11 +1031,11 @@
       'lr-hint': 'LR⁺ > 10 = strong positive evidence. LR⁻ < 0.1 = strong negative evidence. Multiply prior odds by the likelihood ratio to obtain posterior odds. This is one standard odds form of Bayes rule.',
       'tree-summary': '🌳 Show probability tree (alternative representation)',
       'seq-strong': 'Run a second test:',
-      'seq-explain': 'The posterior from the first test becomes the prior for the second. Watch P(sick) update twice.',
+      'seq-explain': 'For this idealized chain, assume the second result is conditionally independent of the first given the true condition and has the same sensitivity/specificity. Then the first posterior becomes the second prior.',
       'seq-pos-btn': '✓ Test came back POSITIVE',
       'seq-neg-btn': '✗ Test came back NEGATIVE',
       'seq-reset-btn': '↺ Reset chain',
-      'seq-pos-title': 'Set the prior to P(sick | positive), then re-test. A second positive should push the posterior even higher.',
+      'seq-pos-title': 'Under the stated conditional-independence assumption, set the prior to P(sick | positive) and apply a second positive result.',
       'seq-neg-title': 'Set the prior to P(sick | negative). A second negative should drop the posterior even lower.',
       'seq-reset-title': 'Discard the chained prior and reset to the scenario default.',
       'tour-summary': '📚 Lesson tour (5 steps)',
@@ -1113,11 +1113,11 @@
       'lr-hint': 'LR⁺ > 10 = 强阳性证据。LR⁻ < 0.1 = 强阴性证据。先验几率乘以似然比可得到后验几率，这是贝叶斯规则的一种标准几率形式。',
       'tree-summary': '🌳 显示概率树(替代表示)',
       'seq-strong': '再做一次检测:',
-      'seq-explain': '第一次检测的后验成为第二次的先验。观察 P(患病) 更新两次。',
+      'seq-explain': '在这个理想化序列中，假设给定真实情况后第二次结果与第一次结果条件独立，并具有相同灵敏度与特异度；此时第一次后验才可作为第二次先验。',
       'seq-pos-btn': '✓ 检测结果为阳性',
       'seq-neg-btn': '✗ 检测结果为阴性',
       'seq-reset-btn': '↺ 重置序列',
-      'seq-pos-title': '把先验设为 P(患病 | 阳性),再做一次检测。第二次阳性应该把后验推得更高。',
+      'seq-pos-title': '在上述条件独立假设下，把先验设为 P(患病 | 阳性)，再应用第二次阳性结果。',
       'seq-neg-title': '把先验设为 P(患病 | 阴性)。第二次阴性应该把后验降得更低。',
       'seq-reset-title': '丢弃序列先验,恢复到场景默认值。',
       'tour-summary': '📚 课程导览(5 步)',
@@ -1894,7 +1894,7 @@
 </script>
 <script>
 (function() {
-  const VISUAL_CONFIG = {"intro":"Read the display as population first, test second, posterior last. The visual point is to compare true positives with false positives, not only to notice that a positive test sounds alarming.","zhIntro":"先看总体，再看测试，最后看后验概率。关键是比较真阳性和假阳性，而不只是觉得阳性结果很吓人。","misread":"A test with high sensitivity and specificity can still produce many false alarms when the prior probability is low.","zhMisread":"当前概率很低时，即使测试很准确，也可能产生很多假警报。","steps":[{"label":"Base rate","zhLabel":"基础概率","text":"The prior decides how many actual cases exist before any test result is observed.","zhText":"先验概率决定在观察测试结果之前真实病例有多少。","selector":"#priorV","kind":"text","liveLabel":"Prior","zhLiveLabel":"先验"},{"label":"Test filter","zhLabel":"测试过滤器","text":"Sensitivity keeps true cases. Specificity removes non-cases. Both operate on unequal groups.","zhText":"敏感度保留真实病例，特异度排除非病例。两者作用在大小不同的群体上。","selector":"#sensV","kind":"text","liveLabel":"Sensitivity","zhLiveLabel":"敏感度"},{"label":"Evidence mix","zhLabel":"证据混合","text":"A positive group contains both true positives and false positives; the ratio matters.","zhText":"阳性群体同时包含真阳性和假阳性，比例才是关键。","selector":"#specV","kind":"text","liveLabel":"Specificity","zhLiveLabel":"特异度"},{"label":"Posterior update","zhLabel":"后验更新","text":"The posterior is the updated probability after the evidence has been combined with the prior.","zhText":"后验概率是在证据与先验结合之后得到的更新概率。","selector":"#posteriorPos","kind":"text","liveLabel":"After +","zhLiveLabel":"阳性后"}],"fields":[{"label":"Prior","zhLabel":"先验","selector":"#priorV","kind":"text"},{"label":"Sensitivity","zhLabel":"敏感度","selector":"#sensV","kind":"text"},{"label":"Specificity","zhLabel":"特异度","selector":"#specV","kind":"text"},{"label":"Posterior after positive","zhLabel":"阳性后的后验","selector":"#posteriorPos","kind":"text"},{"label":"Posterior after negative","zhLabel":"阴性后的后验","selector":"#posteriorNeg","kind":"text"}]};
+  const VISUAL_CONFIG = {"intro":"Read the display as population first, test second, posterior last. The visual point is to compare true positives with false positives, not only to notice that a positive test sounds alarming.","zhIntro":"先看总体，再看测试，最后看后验概率。关键是比较真阳性和假阳性，而不只是觉得阳性结果很吓人。","misread":"A test with high sensitivity and specificity can still produce many false alarms when the prior probability is low.","zhMisread":"先验概率很低时，即使灵敏度和特异度都很高，也可能产生很多假阳性。","steps":[{"label":"Base rate","zhLabel":"基础概率","text":"The prior decides how many actual cases exist before any test result is observed.","zhText":"先验概率决定在观察测试结果之前真实病例有多少。","selector":"#priorV","kind":"text","liveLabel":"Prior","zhLiveLabel":"先验"},{"label":"Test filter","zhLabel":"测试过滤器","text":"Sensitivity keeps true cases. Specificity removes non-cases. Both operate on unequal groups.","zhText":"敏感度保留真实病例，特异度排除非病例。两者作用在大小不同的群体上。","selector":"#sensV","kind":"text","liveLabel":"Sensitivity","zhLiveLabel":"敏感度"},{"label":"Evidence mix","zhLabel":"证据混合","text":"A positive group contains both true positives and false positives; the ratio matters.","zhText":"阳性群体同时包含真阳性和假阳性，比例才是关键。","selector":"#specV","kind":"text","liveLabel":"Specificity","zhLiveLabel":"特异度"},{"label":"Posterior update","zhLabel":"后验更新","text":"The posterior is the updated probability after the evidence has been combined with the prior.","zhText":"后验概率是在证据与先验结合之后得到的更新概率。","selector":"#posteriorPos","kind":"text","liveLabel":"After +","zhLiveLabel":"阳性后"}],"fields":[{"label":"Prior","zhLabel":"先验","selector":"#priorV","kind":"text"},{"label":"Sensitivity","zhLabel":"敏感度","selector":"#sensV","kind":"text"},{"label":"Specificity","zhLabel":"特异度","selector":"#specV","kind":"text"},{"label":"Posterior after positive","zhLabel":"阳性后的后验","selector":"#posteriorPos","kind":"text"},{"label":"Posterior after negative","zhLabel":"阴性后的后验","selector":"#posteriorNeg","kind":"text"}]};
   const root = document.querySelector('.visual-explanation');
   if (!root) return;
   const flow = root.querySelector('[data-visual-flow]');

@@ -162,3 +162,10 @@ R1:
 ## R1 limits
 
 R1 corrects the major semantics and implements one guided challenge in KNN. It does not yet implement mechanism-specific guided challenges in all twelve applets. That is the next architectural stage after the R1 corrections pass software, browser, and pedagogical-contract regression.
+
+
+## R1.1 remote-diff audit follow-up
+
+The first R1 automated contract gate passed 145 checks, but an independent review of the actual draft-PR diff found residual duplicate claims in secondary tours, worksheets, Chinese strings, accessibility summaries, and optimizer/tooltips. R1.1 therefore treats duplicate learner-facing surfaces as part of the same conceptual contract rather than accepting a corrected headline while contradictory fallback copy remains.
+
+The follow-up specifically closes: KNN universal sweet-spot wording; finite-run hill-climbing guarantees; simplified Wumpus strategy identity; repeated-test Bayes assumptions; Bayesian-network conditioning wording; validation-vs-test terminology in all overfitting surfaces; full-batch gradient-descent naming; Chinese K-means true-k claims; Chinese convolution/cross-correlation parity; and setup-specific exploration/time-preference wording in Q-learning.

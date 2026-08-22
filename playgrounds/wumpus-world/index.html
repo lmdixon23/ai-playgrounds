@@ -558,7 +558,7 @@
 <div class="bento-cell cell-controls">
 <div class="control-row">
 <label data-i18n="strategy-label">Agent strategy:</label>
-<select id="strategySel" title="Pure logic = current default (stop when stuck). AIMA-inspired hybrid = textbook agent (shoot + gamble + climb home). Probabilistic = Ch 13.6 (rank gambles by pit probability).">
+<select id="strategySel" title="Pure logic = conservative baseline (stop when stuck). AIMA-inspired hybrid = simplified shoot / heuristic-risk / climb policy. Probabilistic = simplified possible-world pit-risk ranking under this applet's explicit prior assumptions.">
 <option data-i18n="strat-logic" selected="" value="logic">Pure logic (stop when stuck)</option>
 <option data-i18n="strat-hybrid" value="hybrid">AIMA-inspired hybrid (shoot + gamble + climb home)</option>
 <option data-i18n="strat-prob" value="prob">Probabilistic (lowest pit-probability)</option>
@@ -1049,9 +1049,9 @@
       'tour0name': 'Pure logic: safe inference only',
       'tour0desc': "Default 'Pure logic' strategy on a fresh world. The agent only enters cells it can PROVE are safe from percepts (breeze/stench). When uncertain, it stops. Often climbs out without gold: that's the point.",
       'tour1name': 'AIMA-inspired hybrid: shoot + gamble + climb out',
-      'tour1desc': "Switch to 'AIMA-inspired hybrid'. This agent uses the arrow on inferred wumpus locations, and when stuck will gamble on a low-probability cell. Heuristic risk-taking under this applet's simplified assumptions: sometimes it succeeds and sometimes it dies.",
+      'tour1desc': "Switch to 'AIMA-inspired hybrid'. This agent uses the arrow on inferred Wumpus locations and, when no proven-safe frontier remains, may take a heuristic risk on an unresolved admissible cell. This heuristic fallback is not a probability-ranked safety guarantee.",
       'tour2name': 'Probabilistic: rank by pit-probability',
-      'tour2desc': "'Probabilistic' agent (AIMA Ch 13.6). When forced to gamble, it estimates P(pit) per frontier cell and picks the lowest. The difference from hybrid is informed risk vs. naive risk.",
+      'tour2desc': "The AIMA-inspired probabilistic strategy estimates pit risk over frontier cells under this applet's stated prior assumptions and chooses the lowest estimated risk. The hybrid uses a simpler heuristic fallback; neither rule proves the selected cell safe.",
       'tour3name': 'Reveal world + read the reasoning log',
       'tour3desc': "Turn ON 'Reveal hidden world' (teacher view). Now you can see the hidden ground truth versus what this simplified inference system has derived. Step slowly and watch the reasoning log fill in: 'Breeze at (1,2), so a pit is in {(1,3), (2,2)}'.",
       // worksheet answer-feedback (ws{n}ok / ws{n}no) ---
@@ -1139,11 +1139,11 @@
       'tour0name': '纯逻辑:只做安全推理',
       'tour0desc': '在全新世界上使用默认的"纯逻辑"策略。智能体只进入能从感知(微风/臭味)中证明为安全的方格。当无法确定时,它就停下。常常空手爬出--这正是要点。',
       'tour1name': 'AIMA 启发的混合:射箭 + 冒险 + 爬出',
-      'tour1desc': '切换到"AIMA 启发的混合"。这个智能体会朝推断出的 Wumpus 位置射箭,卡住时会在低概率方格上冒险。这是冒险型的策略--有时赢得很多,有时送命。',
+      'tour1desc': '切换到“AIMA 启发的混合”。这个智能体会朝推断出的 Wumpus 位置射箭；当没有已证明安全的前沿时，它可能按启发式规则选择一个尚未解决但可选的方格冒险。这个回退规则不是按概率排序的安全保证。',
       'tour2name': '概率:按陷阱概率排序',
-      'tour2desc': '"概率"智能体(AIMA 第 13.6 节)。被迫冒险时,它对每个前沿方格估计 P(陷阱),选概率最低的。与混合策略的区别在于:有依据的冒险 对比 盲目的冒险。',
+      'tour2desc': 'AIMA 启发的概率策略在本工具明确的先验假设下估计前沿方格的陷阱风险，并选择估计风险最低者。混合策略使用更简单的启发式回退；两者都不能证明所选方格安全。',
       'tour3name': '显示真实世界 + 阅读推理日志',
-      'tour3desc': '打开"显示隐藏的真实世界"(教师视角)。现在你能看到智能体本应知道什么与它实际知道什么的对比。慢慢单步,看推理日志逐步填充:"在 (1,2) 感到微风,所以陷阱位于 {(1,3), (2,2)}"。',
+      'tour3desc': '打开“显示隐藏的真实世界”(教师视角)。现在你能比较隐藏真相与这个简化推理系统目前实际推出的结论。慢慢单步,看推理日志逐步填充:"在 (1,2) 感到微风,所以陷阱位于 {(1,3), (2,2)}"。',
       // 练习题答案反馈(ws{n}ok / ws{n}no)---
       'ws1ok': '正确。纯逻辑只移动到能从感知中证明为安全的方格。许多世界会迫使智能体冒险(金子只能经由无法证明安全的方格到达)。在那些世界里纯逻辑智能体空手爬出--这就是它的局限。',
       'ws1no': '试试"no"。有时金子只能经由智能体无法证明安全的方格到达。在那些世界里纯逻辑会空手爬出。',
@@ -2254,10 +2254,10 @@
       description: "Default 'Pure logic' strategy on a fresh world. The agent only enters cells it can PROVE are safe from percepts (breeze/stench). When uncertain, it stops. Often climbs out without gold: that's the point.",
       apply: () => { $('strategySel').value = 'logic'; $('strategySel').dispatchEvent(new Event('change')); $('hardReset').click(); } },
     { name: 'AIMA-inspired hybrid: shoot + gamble + climb out',
-      description: "Switch to 'AIMA-inspired hybrid'. This agent uses the arrow on inferred wumpus locations, and when stuck will gamble on a low-probability cell. Heuristic risk-taking under this applet's simplified assumptions: sometimes it succeeds and sometimes it dies.",
+      description: "Switch to 'AIMA-inspired hybrid'. This agent uses the arrow on inferred Wumpus locations and, when no proven-safe frontier remains, may take a heuristic risk on an unresolved admissible cell. This heuristic fallback is not a probability-ranked safety guarantee.",
       apply: () => { $('strategySel').value = 'hybrid'; $('strategySel').dispatchEvent(new Event('change')); $('hardReset').click(); } },
     { name: 'Probabilistic: rank by pit-probability',
-      description: "'Probabilistic' agent (AIMA Ch 13.6). When forced to gamble, it estimates P(pit) per frontier cell and picks the lowest. The difference from hybrid is informed risk vs. naive risk.",
+      description: "The AIMA-inspired probabilistic strategy estimates pit risk over frontier cells under this applet's stated prior assumptions and chooses the lowest estimated risk. The hybrid uses a simpler heuristic fallback; neither rule proves the selected cell safe.",
       apply: () => { $('strategySel').value = 'prob'; $('strategySel').dispatchEvent(new Event('change')); $('hardReset').click(); } },
     { name: 'Reveal world + read the reasoning log',
       description: "Turn ON 'Reveal hidden world' (teacher view). Now you can see the hidden ground truth versus what this simplified inference system has derived. Step slowly and watch the reasoning log fill in: 'Breeze at (1,2), so a pit is in {(1,3), (2,2)}'.",

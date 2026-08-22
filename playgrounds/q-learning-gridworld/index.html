@@ -830,7 +830,7 @@
 <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="0"/> <span data-i18n="ws1o0">Yes: ε=0 makes it greedy, and greedy always heads straight for the highest reward.</span></label>
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="1"/> <span data-i18n="ws1o1">Yes: 500 episodes is more than enough training time for any setting.</span></label>
-<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="2"/> <span data-i18n="ws1o2">No: with ε=0 and all Q-values tied at 0, it never explores and can't discover the goal.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="2"/> <span data-i18n="ws1o2">Not reliably: with ε=0, zero-initialized Q-values, and deterministic greedy tie-breaking in this applet, some actions can remain untried and the goal may not be discovered.</span></label>
 </div>
 <button class="step-btn" data-i18n="ws-check" id="ws1btn">Check</button>
 <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
@@ -1048,10 +1048,10 @@
 </ul>
 <h2>探索、折扣与步进成本</h2>
 <p>
-    在 epsilon-greedy 行为中，智能体以概率 <code>ε</code> 随机选择动作，否则选择当前贪心动作。把 <code>ε = 0</code> 可能使发现过程不可靠，因为初始平局处理和早期经验可能偏向无效路线。探索过多也会使行为难以稳定。
+    在 epsilon-greedy 行为中，智能体以概率 <code>ε</code> 随机选择动作，否则选择当前贪心动作。在本工具的全零初始化和确定性平局处理下，<code>ε = 0</code> 可能让部分动作一直未被尝试，从而使发现过程不可靠；其他探索或平局处理机制可能表现不同。探索过多也会使行为难以稳定。
   </p>
 <p>
-    把 <code>γ = 0</code> 会从目标中移除延迟价值，因此只学习即时奖励。负的每步奖励会让更短的成功路径具有更高价值。步进成本为零时，多条成功路线可能拥有相同回报，所以学习到的策略可能对不同长度路径没有偏好。
+    把 <code>γ = 0</code> 会从目标中移除延迟价值，因此只学习即时奖励。负的每步奖励会直接惩罚额外动作；同时，当 <code>γ&lt;1</code> 时，较晚收到的终点奖励也会被更强地折扣。因此即使步进奖励为 0，折扣本身仍可能让更早到达更有价值。
   </p>
 <h2>风险与悬崖比较</h2>
 <p>
@@ -1144,7 +1144,7 @@
       // MCQ option text (bilingual; English inline span is the fallback).
       'ws1o0': 'Yes: ε=0 makes it greedy, and greedy always heads straight for the highest reward.',
       'ws1o1': 'Yes: 500 episodes is more than enough training time for any setting.',
-      'ws1o2': "No: with ε=0 and all Q-values tied at 0, it never explores and can't discover the goal.",
+      'ws1o2': "Not reliably: with ε=0, zero-initialized Q-values, and deterministic greedy tie-breaking in this applet, some actions can remain untried and the goal may not be discovered.",
       'ws2o0': 'Only actions with direct nonzero transition rewards differ from the immediate-reward baseline; delayed terminal value does not propagate backward.',
       'ws2o1': 'Everywhere: every visited cell still accumulates value over many episodes.',
       'ws2o2': 'Nowhere: γ=0 zeroes out every Q-value, so nothing turns green.',
@@ -1154,8 +1154,8 @@
       // Lesson-tour scenario names + descriptions (0-based; English fallback kept inline in LESSON_TOUR).
       'tour0name': 'Default: train continuously and watch value spread',
       'tour0desc': "Start with the default grid. Set α=0.1, γ=0.9, ε=0.2. Click Train continuously. Watch high-Q values (green) propagate backward from the goal. The agent has no plan: only Q-values.",
-      'tour1name': 'ε=0: no exploration → never finds goal',
-      'tour1desc': "Same grid, ε=0. Reset Q-values. Train. The agent picks the 'best' known action: but every Q is 0, so it ties. With no random tie-breaking and no exploration, it can't discover the goal. Exploration is mandatory.",
+      'tour1name': 'ε=0 with deterministic ties can block discovery',
+      'tour1desc': "Same grid, ε=0. Reset Q-values. In this implementation all Q-values begin tied at 0 and greedy ties use a fixed action order, so some actions may never be tried and the goal may not be discovered. Other exploration or tie-breaking mechanisms could behave differently.",
       'tour2name': 'γ=0: pure greed, ignores future',
       'tour2desc': "γ=0 means only the immediate transition reward enters the target. Reset Q and train. Delayed terminal values do not propagate backward; any state-action pair with a direct nonzero transition reward can still learn a nonzero value.",
       'tour3name': 'step reward and gamma: two sources of time preference',
@@ -1163,8 +1163,8 @@
       'tour4name': 'High α with slip=0.3: unstable updates',
       'tour4desc': "Stochastic world (slip=0.3) with α=0.8. Reset Q. Train. The high learning rate makes the Q-values jump erratically: TD updates over-react to noisy single-step outcomes. Drop α to 0.05 and rerun for comparison.",
       // Worksheet answer-feedback strings (English fallback passed inline at each call site).
-      'ws1ok': "Correct. With ε=0 the agent always picks the 'greedy' action: but at start all Q-values are 0 (tied), and the policy picks a fixed default direction. The agent wanders deterministically and may never stumble onto the goal. Exploration is mandatory in RL.",
-      'ws1no': "Try 'no'. ε=0 means no exploration. With all Q-values starting at 0, the agent can't discover the goal: it never tries unfamiliar actions.",
+      'ws1ok': "Correct for this setup. With ε=0, zero-initialized Q-values, and deterministic greedy tie-breaking, the policy can keep choosing the same tied actions and fail to discover alternatives. This demonstrates one exploration failure mode, not a theorem that every RL method requires epsilon-greedy exploration.",
+      'ws1no': "Try 'not reliably'. In this zero-initialized, deterministic-tie setup, ε=0 can leave actions untried and prevent reliable discovery of the goal.",
       'ws2ok': "Correct. With γ=0, delayed reward does not enter the target. State-action pairs that directly receive a nonzero reward can still learn nonzero Q-values; there is no backward propagation of later terminal value.",
       'ws2no': "Focus on immediate transition rewards. With γ=0, delayed terminal value cannot propagate backward, although directly rewarded transitions can still change Q.",
       'ws3ok': "Correct. α=0.8 means each TD update REPLACES 80% of the old Q with the new (noisy) target. Q-values jump around erratically. α=0.05 averages many updates smoothly. Trade-off: high α = fast learning + instability; low α = slow + smooth.",
@@ -1237,8 +1237,8 @@
       // MCQ 选项文本(双语;英文内联 span 作为回退)。
       'ws1o0': '能--ε=0 让它变得贪心,而贪心总会径直奔向最高的奖励。',
       'ws1o1': '能--对任何设置来说,500 个回合的训练时间都绰绰有余。',
-      'ws1o2': '不能--ε=0 且所有 Q 值都并列为 0 时,它从不探索,无法发现终点。',
-      'ws2o0': '只出现在与终点/陷阱相邻的格子--γ=0 意味着没有未来奖励向后传播。',
+      'ws1o2': '不能可靠保证--在本工具中，ε=0、Q 值全零初始化且贪心平局按固定顺序处理时，部分动作可能一直未被尝试，目标也可能无法发现。',
+      'ws2o0': '只由当前动作直接得到的即时转移奖励决定--γ=0 时延迟的后继价值不会向后传播；若普通步进奖励非零，它也会直接影响当前 Q 更新。',
       'ws2o1': '到处都有--经过许多回合,每个访问过的格子都会累积价值。',
       'ws2o2': '哪里都没有--γ=0 把每个 Q 值都归零,所以什么都不会变绿。',
       'ws3o0': '更稳定--更大的 α 会对更多次更新求平均,把噪声平滑掉。',
@@ -1247,16 +1247,16 @@
       // 课程导览的场景名称与描述(0 起始;英文回退保留在 LESSON_TOUR 内联)。
       'tour0name': '默认:持续训练,观察价值扩散',
       'tour0desc': '从默认网格开始。设 α=0.1、γ=0.9、ε=0.2。点击"持续训练"。观察高 Q 值(绿色)从终点向后传播。智能体没有计划--只有 Q 值。',
-      'tour1name': 'ε=0:没有探索 → 永远找不到终点',
-      'tour1desc': '同一网格,ε=0。重置 Q 值。训练。智能体总是选"最佳"已知动作--但每个 Q 都是 0,因此并列。没有随机打破并列,也没有探索,它无法发现终点。探索是必需的。',
+      'tour1name': 'ε=0 加确定性平局处理可能阻止发现',
+      'tour1desc': '同一网格，ε=0。重置 Q 值。本实现中所有 Q 值从 0 并列开始，贪心平局按固定动作顺序处理，因此某些动作可能一直不被尝试，目标也可能无法发现。其他探索或随机平局机制可能表现不同。',
       'tour2name': 'γ=0:纯粹贪婪,忽视未来',
-      'tour2desc': 'γ=0 意味着"只有即时奖励才重要"。重置 Q。训练。只有与终点/陷阱相邻的格子的 Q 值才变为非零。其余保持为 0--没有时间信用的传播。',
-      'tour3name': '每步奖励 = 0:没有时间压力',
-      'tour3desc': '每步奖励 = 0。智能体最终会找到终点,但会乱走--每条路径的回报都一样。当每步奖励 = −0.04 时,较短的路径得分更高,策略会收敛到一条直接路线。',
+      'tour2desc': 'γ=0 意味着目标中只保留即时转移奖励。重置 Q 后，任何直接获得非零奖励的状态动作都可以学到非零 Q 值；延迟的后继价值不会向后传播。',
+      'tour3name': '步进奖励与折扣：两种时间偏好来源',
+      'tour3desc': '把每步奖励设为 0，并在这个有限回合网格中比较 γ=0.9 与 γ=1。γ<1 时较晚的终点奖励仍会被折扣，所以更早到达仍可能更有价值；负步进奖励又增加一项独立的额外动作成本。',
       'tour4name': '高 α 加 slip=0.3:不稳定的更新',
       'tour4desc': '随机世界(slip=0.3)加上 α=0.8。重置 Q。训练。过高的学习率使 Q 值剧烈跳动--TD 更新对带噪声的单步结果反应过度。把 α 降到 0.05 再跑一次作对比。',
       // 练习题答案反馈(英文回退在各调用处内联传入)。
-      'ws1ok': '正确。当 ε=0 时,智能体总是选"贪心"动作--但一开始所有 Q 值都是 0(并列),策略会选一个固定的默认方向。智能体确定性地乱走,可能永远碰不到终点。在强化学习中探索是必需的。',
+      'ws1ok': '正确。当 ε=0 时,智能体总是选"贪心"动作--但一开始所有 Q 值都是 0(并列),策略会选一个固定的默认方向。智能体确定性地乱走,可能永远碰不到终点。在本工具的全零初始化与确定性平局设置下，这展示了缺少探索时可能出现的一种发现失败。',
       'ws1no': '试试"no"。ε=0 意味着没有探索。所有 Q 值都从 0 开始,智能体无法发现终点--它从不尝试陌生的动作。',
       'ws2ok': '正确。γ=0 意味着"所有未来奖励都不值钱"。只有动作直接导向 +1 或 −1 奖励的格子才有非零 Q。其余保持为 0--价值不会在状态空间中向后传播。',
       'ws2no': '试试"only adjacent to goal/pit"。γ=0 抹掉了时间信用分配--只有距离终止奖励一步的格子才有非零 Q。',
@@ -1270,7 +1270,7 @@
       'algo-sel-title': 'Q-学习是离策略 TD。SARSA 是在线策略 TD(使用实际采取的动作)。期望 SARSA 用策略下的期望值代替下一步的最大值。蒙特卡洛等到回合结束使用完整回报。Softmax 用温度加权动作分布代替 ε-贪心。',
       'alpha-title': 'α 控制智能体把 Q 值更新到刚观察到的目标的速度。',
       'gamma-title': 'γ 控制智能体多在意远期奖励。γ=0 完全短视。',
-      'epsilon-title': 'ε 是采取随机动作而非已知最佳动作的概率。没有它,智能体永远不会探索。',
+      'epsilon-title': 'ε 是 epsilon-greedy 策略采取随机动作而非当前贪心动作的概率。设为 0 会关闭这种探索机制，但其他策略仍可用其他方式探索或随机打破平局。',
     },
   };
   function setLang(lang) {
@@ -2244,8 +2244,8 @@
     { name: 'Default: train continuously and watch value spread',
       description: "Start with the default grid. Set α=0.1, γ=0.9, ε=0.2. Click Train continuously. Watch high-Q values (green) propagate backward from the goal. The agent has no plan: only Q-values.",
       apply: () => { setParam('alpha', 0.1); setParam('gamma', 0.9); setParam('epsilon', 0.2); setParam('step', -0.04); $('resetQBtn').click(); } },
-    { name: 'ε=0: no exploration → never finds goal',
-      description: "Same grid, ε=0. Reset Q-values. Train. The agent picks the 'best' known action: but every Q is 0, so it ties. With no random tie-breaking and no exploration, it can't discover the goal. Exploration is mandatory.",
+    { name: 'ε=0 with deterministic ties can block discovery',
+      description: "Same grid, ε=0. Reset Q-values. In this implementation all Q-values begin tied at 0 and greedy ties use a fixed action order, so some actions may never be tried and the goal may not be discovered. Other exploration or tie-breaking mechanisms could behave differently.",
       apply: () => { setParam('alpha', 0.1); setParam('gamma', 0.9); setParam('epsilon', 0); setParam('step', -0.04); $('resetQBtn').click(); } },
     { name: 'γ=0: pure greed, ignores future',
       description: "γ=0 means only the immediate transition reward enters the target. Reset Q and train. Delayed terminal values do not propagate backward; any state-action pair with a direct nonzero transition reward can still learn a nonzero value.",
@@ -2345,11 +2345,11 @@
   // existing bilingual feedback keys, with an English inline fallback via wsMsg.
   const WORKSHEET = [
     { correct: 2,
-      ok:  ['ws1ok', "Correct. With ε=0 the agent always picks the 'greedy' action: but at start all Q-values are 0 (tied), and the policy picks a fixed default direction. The agent wanders deterministically and may never stumble onto the goal. Exploration is mandatory in RL."],
-      no:  ['ws1no', "Try 'no'. ε=0 means no exploration. With all Q-values starting at 0, the agent can't discover the goal: it never tries unfamiliar actions."] },
+      ok:  ['ws1ok', "Correct for this setup. With ε=0, zero-initialized Q-values, and deterministic greedy tie-breaking, the policy can keep choosing the same tied actions and fail to discover alternatives. This demonstrates one exploration failure mode, not a theorem that every RL method requires epsilon-greedy exploration."],
+      no:  ['ws1no', "Try 'not reliably'. In this zero-initialized, deterministic-tie setup, ε=0 can leave actions untried and prevent reliable discovery of the goal."] },
     { correct: 0,
-      ok:  ['ws2ok', "Correct. γ=0 means 'all future reward is worth zero'. Only cells where action leads directly to a +1 or −1 reward get non-zero Q. The rest stay at 0: no propagation of value backward through state space."],
-      no:  ['ws2no', "Try 'only adjacent to goal/pit'. γ=0 kills temporal credit assignment: only the cells one step from terminal rewards get non-zero Q."] },
+      ok:  ['ws2ok', "Correct. With γ=0, only the immediate transition reward enters the target. Any state-action pair that directly receives a nonzero reward, including an ordinary nonzero step reward, can learn a nonzero value; delayed successor value does not propagate backward."],
+      no:  ['ws2no', "Focus on immediate transition rewards. With γ=0 there is no bootstrap from later successor value, but any directly nonzero reward can affect the current state-action pair."] },
     { correct: 1,
       ok:  ['ws3ok', "Correct. α=0.8 means each TD update REPLACES 80% of the old Q with the new (noisy) target. Q-values jump around erratically. α=0.05 averages many updates smoothly. Trade-off: high α = fast learning + instability; low α = slow + smooth."],
       no:  ['ws3no', "Try 'less stable'. High α makes Q-updates over-react to noisy single-step targets: instability is the cost of fast learning."] },
