@@ -607,7 +607,7 @@
 </span>
 <div data-i18n="lr-hint" style="color:var(--muted); font-size:0.78rem; margin-top:4px;">
           LR⁺ &gt; 10 = strong positive evidence. LR⁻ &lt; 0.1 = strong negative evidence.
-          Multiply the prior odds by the LR to get posterior odds (the way doctors actually compute Bayes).
+          Multiply prior odds by the likelihood ratio to obtain posterior odds. This is one standard odds form of Bayes rule.
         </div>
 </div>
 <!-- Sequential updating. The first posterior becomes the second prior: the
@@ -674,7 +674,7 @@
 <div aria-live="polite" class="scenario-card-grid" id="scenarioGalleryCards">
 <article class="scenario-card" data-scenario-index="0">
 <h3>Scenario 1: A rare condition with a strong test</h3>
-<p class="scenario-meta"><strong>Core question: </strong> Why can a 99 percent accurate test produce only about a 50 percent posterior probability?</p>
+<p class="scenario-meta"><strong>Core question: </strong> Why can a test with 99 percent sensitivity and 99 percent specificity produce only about a 50 percent posterior probability?</p>
 <p class="scenario-meta"><strong>Run and watch: </strong> Use a 1 percent base rate with 99 percent sensitivity and 99 percent specificity, then inspect the people counts after a positive result.</p>
 <p class="scenario-meta"><strong>Predict first: </strong> Before applying, estimate the posterior probability and identify which group will create most positive results.</p>
 <p class="scenario-meta"><strong>Explain afterward: </strong> Explain how the large healthy population creates enough false positives to compete with true positives.</p>
@@ -697,11 +697,11 @@
 <button class="step-btn" type="button">Apply and compare</button>
 </article>
 <article class="scenario-card" data-scenario-index="3">
-<h3>Scenario 4: A second independent positive result</h3>
-<p class="scenario-meta"><strong>Core question: </strong> Why can repeated evidence change belief more strongly than one result?</p>
-<p class="scenario-meta"><strong>Run and watch: </strong> Start with the rare-condition scenario, apply one positive result, then use the positive-test button again.</p>
+<h3>Scenario 4: A second positive under a conditional-independence assumption</h3>
+<p class="scenario-meta"><strong>Core question: </strong> Why can conditionally independent repeated evidence change belief more strongly than one result?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Start with the rare-condition scenario, apply one positive result, then use the positive-test button again under the applet's conditional-independence assumption.</p>
 <p class="scenario-meta"><strong>Predict first: </strong> Predict whether the second positive adds the same number of percentage points as the first.</p>
-<p class="scenario-meta"><strong>Explain afterward: </strong> Explain how the first posterior becomes the prior for the second update.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain how the first posterior becomes the prior for the second update, and why shared measurement errors would violate the simple multiplication.</p>
 <button class="step-btn" type="button">Apply and compare</button>
 </article>
 <article class="scenario-card" data-scenario-index="4">
@@ -722,7 +722,7 @@
 </summary>
 <div class="signature-challenge-panel">
 <strong>Featured comparison</strong>
-<p>Change the base rate before touching test accuracy. A strong test can still produce a surprising posterior when the condition is rare.</p>
+<p>Change the base rate before changing sensitivity or specificity. A strong test can still produce a surprising posterior when the condition is rare.</p>
 <p><em>Run one scenario with a rare condition and one with a common condition, then compare posterior probability.</em></p>
 </div>
 </details>
@@ -808,7 +808,7 @@
 <span data-lab-en="🧪 Student response packet" data-lab-zh="🧪 课堂实验模式">🧪 Student response packet</span>
 </summary>
 <div class="lab-panel">
-<p class="lab-intro" data-lab-en="Predict how a positive result changes belief, adjust the prior and test accuracy, then explain the base-rate effect." data-lab-zh="先预测阳性结果如何改变相信程度，再调整先验和检测准确率，然后解释基率效应。">Predict how a positive result changes belief, adjust the prior and test accuracy, then explain the base-rate effect.</p>
+<p class="lab-intro" data-lab-en="Predict how a positive result changes belief, adjust the prior and test characteristics, then explain the base-rate effect." data-lab-zh="先预测阳性结果如何改变相信程度，再调整先验、灵敏度和特异度，然后解释基率效应。">Predict how a positive result changes belief, adjust the prior and test characteristics, then explain the base-rate effect.</p>
 <div class="lab-grid">
 <div class="lab-field">
 <label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
@@ -816,7 +816,7 @@
 </div>
 <div class="lab-field">
 <label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
-<textarea data-lab-answer="observe" data-lab-en="Change the prior and accuracy. Record one setting where a positive test still leaves low disease probability." data-lab-zh="改变先验和准确率。记录一个阳性测试后患病概率仍较低的设置。" id="lab-observe" placeholder="Change the prior and accuracy. Record one setting where a positive test still leaves low disease probability."></textarea>
+<textarea data-lab-answer="observe" data-lab-en="Change the prior, sensitivity, and specificity. Record one setting where a positive test still leaves low disease probability." data-lab-zh="改变先验、灵敏度和特异度。记录一个阳性测试后患病概率仍较低的设置。" id="lab-observe" placeholder="Change the prior, sensitivity, and specificity. Record one setting where a positive test still leaves low disease probability."></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
@@ -1028,7 +1028,7 @@
       'lr-strong': 'Likelihood ratios:',
       'lr-plus-def': 'sensitivity ÷ (1 − specificity)',
       'lr-minus-def': '(1 − sensitivity) ÷ specificity',
-      'lr-hint': 'LR⁺ > 10 = strong positive evidence. LR⁻ < 0.1 = strong negative evidence. Multiply the prior odds by the LR to get posterior odds (the way doctors actually compute Bayes).',
+      'lr-hint': 'LR⁺ > 10 = strong positive evidence. LR⁻ < 0.1 = strong negative evidence. Multiply prior odds by the likelihood ratio to obtain posterior odds. This is one standard odds form of Bayes rule.',
       'tree-summary': '🌳 Show probability tree (alternative representation)',
       'seq-strong': 'Run a second test:',
       'seq-explain': 'The posterior from the first test becomes the prior for the second. Watch P(sick) update twice.',
@@ -1075,15 +1075,15 @@
       'tour2name': 'Higher prior flips the conclusion',
       'tour2desc': "Prior raised to 20% (high-risk population). Same 99/95 test. Posterior given positive jumps to ~83%. Same test, completely different clinical meaning.",
       'tour3name': 'Sequential testing: retest after positive',
-      'tour3desc': "1% prior, 99/99 test. Run one positive test (posterior ~50%), then click 'Test came back POSITIVE' to chain. The second positive pushes posterior >99%. This is why doctors retest.",
+      'tour3desc': "1% prior, 99/99 test. Run one positive test (posterior ~50%), then click 'Test came back POSITIVE' to chain. The second positive pushes posterior >99%. This multiplication is valid only when the repeated result is conditionally independent given the true condition; repeated tests can share systematic errors.",
       'tour4name': 'Spam filter: same math, different stakes',
       'tour4desc': "Switch to spam scenario. The math is identical to disease testing: but the cost of a false positive (real email in spam folder) vs. false negative (spam in inbox) is very different. Discuss.",
       // worksheet answer-feedback (ws{n}ok / ws{n}no) ---
       'ws1ok': "Correct (~50%). Of 100 actual sick people, 99 test positive. Of 9,900 healthy people, 99 test positive. So 99/198 ≈ 50% of positives are real. The 'base rate fallacy' is intuitively expecting ~99%.",
-      'ws1no': "Try 50%. Most people guess 99% because the test is '99% accurate': but the prior dominates. Of 10,000 people, only 100 are sick and ~99 false positives come from healthy.",
+      'ws1no': "Try 50%. Most people guess 99% because the test has 99% sensitivity and 99% specificity: but the prior dominates. Of 10,000 people, only 100 are sick and ~99 false positives come from healthy.",
       'ws2ok': "Correct. With prior=20%, posterior given positive jumps from ~50% to ~96%. Same test, completely different clinical meaning: context matters.",
       'ws2no': "Try 'up'. Higher prior means more true positives relative to false positives, so the posterior rises.",
-      'ws3ok': "Correct. After one positive, posterior ≈ 50% (now your prior). Re-testing with 99/99 test and a 50% prior gives posterior ≈ 99%. This is why doctors retest: independent evidence multiplies.",
+      'ws3ok': "Correct. After one positive, posterior ≈ 50% (now your prior). Re-testing with 99/99 test and a 50% prior gives posterior ≈ 99%. This multiplication is valid only under conditional independence given the true condition; repeated tests can share systematic errors.",
       'ws3no': "Try 99%. The first positive raised P(sick) to ~50%, which becomes the prior for test #2. The second positive then multiplies LR ≈ 99 on those odds.",
       // tooltip translations for main scenario + sliders.
       'scen-disease-title': 'Medical screening: detect a rare disease in the population.',
@@ -1098,7 +1098,7 @@
       'footer-top': '↑ 返回顶部', 'footer-course': '为海淀凯文学校《人工智能导论》课程制作。', 'footer-portfolio': '作品集', 'footer-project': 'AI Playgrounds', 'footer-source': '源代码', 'footer-issue': '反馈问题',
       'reset-all': '↺ 全部重置', 'scenario-label': '场景:',
       'tldr-strong': '核心思想',
-      'tldr-body': '对一种发病率为 1% 的疾病做"准确率 99%"的检测,阳性结果大部分时候反而是错的。贝叶斯规则不过是在数人群。',
+      'tldr-body': '对一种发病率为 1% 的疾病做灵敏度和特异度都为 99% 的检测,阳性结果大部分时候反而是错的。贝叶斯规则不过是在数人群。',
       'scen-disease': '疾病检测', 'scen-spam': '垃圾邮件过滤',
       'prior-help': '该情况在人群中有多普遍?',
       'sens-help': '灵敏度:患病时,检测正确报告的比例。',
@@ -1110,7 +1110,7 @@
       'lr-strong': '似然比:',
       'lr-plus-def': '灵敏度 ÷ (1 − 特异度)',
       'lr-minus-def': '(1 − 灵敏度) ÷ 特异度',
-      'lr-hint': 'LR⁺ > 10 = 强阳性证据。LR⁻ < 0.1 = 强阴性证据。先验几率乘以 LR 得到后验几率(医生实际计算贝叶斯的方式)。',
+      'lr-hint': 'LR⁺ > 10 = 强阳性证据。LR⁻ < 0.1 = 强阴性证据。先验几率乘以似然比可得到后验几率，这是贝叶斯规则的一种标准几率形式。',
       'tree-summary': '🌳 显示概率树(替代表示)',
       'seq-strong': '再做一次检测:',
       'seq-explain': '第一次检测的后验成为第二次的先验。观察 P(患病) 更新两次。',
@@ -1150,22 +1150,22 @@
       'ws3o1': '约 50%--重复同一种检测只会得到同样的结果。',
       'ws3o2': '约 90%--两次阳性会累加,但永远到不了接近确定。',
       // 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
-      'tour0name': '基率谬误(先验 1%,准确率 99%)',
+      'tour0name': '基率谬误(先验 1%,灵敏度/特异度 99%)',
       'tour0desc': '最经典的例子。疾病发病率为百分之一。检测的灵敏度 99%、特异度 99%。阳性下的后验 ≈ 50%--大多数人会猜超过 95%。先验起主导作用。',
       'tour1name': '罕见事件,不完美的特异度',
       'tour1desc': '同样 1% 先验、灵敏度 99%,但特异度降到 95%。后验骤降到约 17%。在罕见疾病上,主导后验的是特异度而非灵敏度。',
       'tour2name': '更高的先验改变结论',
       'tour2desc': '先验提高到 20%(高危人群)。同样的 99/95 检测。阳性下的后验跃升到约 83%。同一个检测,临床意义完全不同。',
       'tour3name': '序列检测:阳性后再测',
-      'tour3desc': '1% 先验,99/99 检测。先做一次阳性检测(后验 ~50%),再点击"检测结果为阳性"进行链式更新。第二次阳性把后验推到 99% 以上。这正是医生复检的原因。',
+      'tour3desc': '1% 先验,99/99 检测。先做一次阳性检测(后验 ~50%),再点击"检测结果为阳性"进行链式更新。第二次阳性把后验推到 99% 以上。只有在给定真实状况后两次结果条件独立时，这种相乘才成立；重复检测可能共享系统误差。',
       'tour4name': '垃圾邮件过滤:数学相同,代价不同',
       'tour4desc': '切换到垃圾邮件场景。其数学与疾病检测完全相同--但假阳性(正常邮件进入垃圾箱)与假阴性(垃圾邮件进入收件箱)的代价非常不同。讨论一下。',
       // 练习题答案反馈(ws{n}ok / ws{n}no)---
       'ws1ok': '正确(约 50%)。在 100 个真正患病的人中,99 个检测呈阳性。在 9,900 个健康的人中,也有 99 个检测呈阳性。所以阳性者中只有 99/198 ≈ 50% 是真患病。"基率谬误"就是直觉地以为是约 99%。',
-      'ws1no': "试试 50%。大多数人会猜 99%,因为检测“准确率 99%”--但先验起主导作用。在 10,000 人中只有 100 人患病,而健康人群会产生约 99 个假阳性。",
+      'ws1no': "试试 50%。大多数人会猜 99%,因为灵敏度和特异度都为 99%--但先验起主导作用。在 10,000 人中只有 100 人患病,而健康人群会产生约 99 个假阳性。",
       'ws2ok': '正确。当先验=20% 时,阳性下的后验从约 50% 跃升到约 96%。同一个检测,临床意义完全不同--背景很重要。',
       'ws2no': "试试 'up'。先验越高,真阳性相对假阳性就越多,因此后验上升。",
-      'ws3ok': '正确。一次阳性之后,后验 ≈ 50%(成为新的先验)。用 99/99 检测和 50% 的先验再测一次,后验 ≈ 99%。这正是医生复检的原因--独立证据会相乘。',
+      'ws3ok': '正确。一次阳性之后,后验 ≈ 50%(成为新的先验)。用 99/99 检测和 50% 的先验再测一次,后验 ≈ 99%。只有在给定真实状况后结果条件独立时，证据几率才可这样相乘；重复检测可能共享系统误差。',
       'ws3no': '试试 99%。第一次阳性把 P(患病) 提高到约 50%,这成为第二次检测的先验。第二次阳性再在该几率上乘以 LR ≈ 99。',
       // 主要场景与滑块的提示翻译。
       'scen-disease-title': '医学筛查:在人群中检测一种罕见疾病。',
@@ -1623,7 +1623,7 @@
       description: "Prior raised to 20% (high-risk population). Same 99/95 test. Posterior given positive jumps to ~83%. Same test, completely different clinical meaning.",
       apply: () => applyBayesScenario('disease', 20, 99, 95) },
     { name: 'Sequential testing: retest after positive',
-      description: "1% prior, 99/99 test. Run one positive test (posterior ~50%), then click 'Test came back POSITIVE' to chain. The second positive pushes posterior >99%. This is why doctors retest.",
+      description: "1% prior, 99/99 test. Run one positive test (posterior ~50%), then click 'Test came back POSITIVE' to chain. The second positive pushes posterior >99%. This multiplication is valid only when the repeated result is conditionally independent given the true condition; repeated tests can share systematic errors.",
       apply: () => applyBayesScenario('disease', 1, 99, 99, 'pos') },
     { name: 'Spam filter: same math, different stakes',
       description: "Switch to spam scenario. The math is identical to disease testing: but the cost of a false positive (real email in spam folder) vs. false negative (spam in inbox) is very different. Discuss.",
@@ -1718,12 +1718,12 @@
   const WORKSHEET = [
     { correct: 1,
       ok:  ['ws1ok', "Correct (~50%). Of 100 actual sick people, 99 test positive. Of 9,900 healthy people, 99 test positive. So 99/198 ≈ 50% of positives are real. The 'base rate fallacy' is intuitively expecting ~99%."],
-      no:  ['ws1no', "Try 50%. Most people guess 99% because the test is '99% accurate': but the prior dominates. Of 10,000 people, only 100 are sick and ~99 false positives come from healthy."] },
+      no:  ['ws1no', "Try 50%. Most people guess 99% because the test has 99% sensitivity and 99% specificity: but the prior dominates. Of 10,000 people, only 100 are sick and ~99 false positives come from healthy."] },
     { correct: 2,
       ok:  ['ws2ok', "Correct. With prior=20%, posterior given positive jumps from ~50% to ~96%. Same test, completely different clinical meaning: context matters."],
       no:  ['ws2no', "Try 'up'. Higher prior means more true positives relative to false positives, so the posterior rises."] },
     { correct: 0,
-      ok:  ['ws3ok', "Correct. After one positive, posterior ≈ 50% (now your prior). Re-testing with 99/99 test and a 50% prior gives posterior ≈ 99%. This is why doctors retest: independent evidence multiplies."],
+      ok:  ['ws3ok', "Correct. After one positive, posterior ≈ 50% (now your prior). Re-testing with 99/99 test and a 50% prior gives posterior ≈ 99%. This multiplication is valid only under conditional independence given the true condition; repeated tests can share systematic errors."],
       no:  ['ws3no', "Try 99%. The first positive raised P(sick) to ~50%, which becomes the prior for test #2. The second positive then multiplies LR ≈ 99 on those odds."] },
   ];
   WORKSHEET.forEach((q, i) => {
@@ -1894,7 +1894,7 @@
 </script>
 <script>
 (function() {
-  const VISUAL_CONFIG = {"intro":"Read the display as population first, test second, posterior last. The visual point is to compare true positives with false positives, not only to notice that a positive test sounds alarming.","zhIntro":"先看总体，再看测试，最后看后验概率。关键是比较真阳性和假阳性，而不只是觉得阳性结果很吓人。","misread":"A highly accurate test can still produce many false alarms when the prior probability is low.","zhMisread":"当前概率很低时，即使测试很准确，也可能产生很多假警报。","steps":[{"label":"Base rate","zhLabel":"基础概率","text":"The prior decides how many actual cases exist before any test result is observed.","zhText":"先验概率决定在观察测试结果之前真实病例有多少。","selector":"#priorV","kind":"text","liveLabel":"Prior","zhLiveLabel":"先验"},{"label":"Test filter","zhLabel":"测试过滤器","text":"Sensitivity keeps true cases. Specificity removes non-cases. Both operate on unequal groups.","zhText":"敏感度保留真实病例，特异度排除非病例。两者作用在大小不同的群体上。","selector":"#sensV","kind":"text","liveLabel":"Sensitivity","zhLiveLabel":"敏感度"},{"label":"Evidence mix","zhLabel":"证据混合","text":"A positive group contains both true positives and false positives; the ratio matters.","zhText":"阳性群体同时包含真阳性和假阳性，比例才是关键。","selector":"#specV","kind":"text","liveLabel":"Specificity","zhLiveLabel":"特异度"},{"label":"Posterior update","zhLabel":"后验更新","text":"The posterior is the updated probability after the evidence has been combined with the prior.","zhText":"后验概率是在证据与先验结合之后得到的更新概率。","selector":"#posteriorPos","kind":"text","liveLabel":"After +","zhLiveLabel":"阳性后"}],"fields":[{"label":"Prior","zhLabel":"先验","selector":"#priorV","kind":"text"},{"label":"Sensitivity","zhLabel":"敏感度","selector":"#sensV","kind":"text"},{"label":"Specificity","zhLabel":"特异度","selector":"#specV","kind":"text"},{"label":"Posterior after positive","zhLabel":"阳性后的后验","selector":"#posteriorPos","kind":"text"},{"label":"Posterior after negative","zhLabel":"阴性后的后验","selector":"#posteriorNeg","kind":"text"}]};
+  const VISUAL_CONFIG = {"intro":"Read the display as population first, test second, posterior last. The visual point is to compare true positives with false positives, not only to notice that a positive test sounds alarming.","zhIntro":"先看总体，再看测试，最后看后验概率。关键是比较真阳性和假阳性，而不只是觉得阳性结果很吓人。","misread":"A test with high sensitivity and specificity can still produce many false alarms when the prior probability is low.","zhMisread":"当前概率很低时，即使测试很准确，也可能产生很多假警报。","steps":[{"label":"Base rate","zhLabel":"基础概率","text":"The prior decides how many actual cases exist before any test result is observed.","zhText":"先验概率决定在观察测试结果之前真实病例有多少。","selector":"#priorV","kind":"text","liveLabel":"Prior","zhLiveLabel":"先验"},{"label":"Test filter","zhLabel":"测试过滤器","text":"Sensitivity keeps true cases. Specificity removes non-cases. Both operate on unequal groups.","zhText":"敏感度保留真实病例，特异度排除非病例。两者作用在大小不同的群体上。","selector":"#sensV","kind":"text","liveLabel":"Sensitivity","zhLiveLabel":"敏感度"},{"label":"Evidence mix","zhLabel":"证据混合","text":"A positive group contains both true positives and false positives; the ratio matters.","zhText":"阳性群体同时包含真阳性和假阳性，比例才是关键。","selector":"#specV","kind":"text","liveLabel":"Specificity","zhLiveLabel":"特异度"},{"label":"Posterior update","zhLabel":"后验更新","text":"The posterior is the updated probability after the evidence has been combined with the prior.","zhText":"后验概率是在证据与先验结合之后得到的更新概率。","selector":"#posteriorPos","kind":"text","liveLabel":"After +","zhLiveLabel":"阳性后"}],"fields":[{"label":"Prior","zhLabel":"先验","selector":"#priorV","kind":"text"},{"label":"Sensitivity","zhLabel":"敏感度","selector":"#sensV","kind":"text"},{"label":"Specificity","zhLabel":"特异度","selector":"#specV","kind":"text"},{"label":"Posterior after positive","zhLabel":"阳性后的后验","selector":"#posteriorPos","kind":"text"},{"label":"Posterior after negative","zhLabel":"阴性后的后验","selector":"#posteriorNeg","kind":"text"}]};
   const root = document.querySelector('.visual-explanation');
   if (!root) return;
   const flow = root.querySelector('[data-visual-flow]');
@@ -2056,7 +2056,7 @@
 </script>
 <script id="learner-content-system">
 (() => {
-  const profile = {"slug":"bayes-classifier","en":{"title":"Bayes Rule Playground","big":"Change the base rate and test quality, then watch a positive result update the probability of the condition. The same test can mean something very different in rare and common populations.","primer":"Bayes’ rule combines what was plausible before the evidence with how strongly the evidence favors each possibility. The terms below keep those two ideas separate.","terms":[{"term":"Prior probability (base rate)","definition":"The probability of the condition before the new test result."},{"term":"Sensitivity","definition":"Among people who truly have the condition, the proportion who test positive."},{"term":"Specificity","definition":"Among people who do not have the condition, the proportion who test negative."},{"term":"Posterior probability","definition":"The updated probability after the evidence is included."},{"term":"False positive","definition":"A positive result for someone who does not have the condition."},{"term":"Likelihood ratio (LR)","definition":"A multiplier that summarizes how strongly a result changes the odds."},{"term":"Prevalence","definition":"The proportion of the population that has the condition; in this applet it is the prior probability."},{"term":"Confusion matrix","definition":"A table that counts true positives, false positives, true negatives, and false negatives."}],"scenarios":[{"title":"A rare condition with a strong test","question":"Why can a 99 percent accurate test produce only about a 50 percent posterior probability?","run":"Use a 1 percent base rate with 99 percent sensitivity and 99 percent specificity, then inspect the people counts after a positive result.","predict":"Before applying, estimate the posterior probability and identify which group will create most positive results.","explain":"Explain how the large healthy population creates enough false positives to compete with true positives."},{"title":"A small loss of specificity has a large effect","question":"Why does specificity matter so much when the condition is rare?","run":"Keep the 1 percent base rate and 99 percent sensitivity, but lower specificity to 95 percent.","predict":"Predict whether the posterior will fall slightly or dramatically.","explain":"Use the false-positive count to explain the size of the change."},{"title":"A higher base rate changes the meaning of the same test","question":"How can the same test result mean something different in a higher-risk population?","run":"Raise the prior probability to 20 percent while keeping the test settings fixed.","predict":"Predict how much the posterior will increase before you apply the scenario.","explain":"Explain why changing the population changes the interpretation even though the test did not change."},{"title":"A second independent positive result","question":"Why can repeated evidence change belief more strongly than one result?","run":"Start with the rare-condition scenario, apply one positive result, then use the positive-test button again.","predict":"Predict whether the second positive adds the same number of percentage points as the first.","explain":"Explain how the first posterior becomes the prior for the second update."},{"title":"A spam filter uses the same mathematics","question":"What changes when false positives and false negatives have different consequences?","run":"Switch to the spam-filter context and compare a common event with the rare-condition case.","predict":"Predict which error type will be more costly for a real inbox.","explain":"Separate the probability calculation from the decision about which error matters more."}]},"zh":{"title":"贝叶斯定理演练场","big":"改变基率和检测质量，观察阳性结果如何更新患病概率。同一种检测在罕见与常见人群中可能具有完全不同的含义。","primer":"贝叶斯定理把证据出现前的可能性与证据支持各个结果的强度结合起来。下面的术语帮助你区分这两部分。","terms":[{"term":"先验概率（基率）","definition":"在看到新检测结果之前，某种情况发生的概率。"},{"term":"灵敏度","definition":"在真正患有该情况的人中，检测为阳性的比例。"},{"term":"特异度","definition":"在没有该情况的人中，检测为阴性的比例。"},{"term":"后验概率","definition":"加入证据后更新得到的概率。"},{"term":"假阳性","definition":"没有该情况的人却得到阳性结果。"},{"term":"似然比（LR）","definition":"概括一个结果会把几率改变多少的乘数。"},{"term":"患病率","definition":"总体中具有该情况的比例；在本工具中，它就是先验概率。"},{"term":"混淆矩阵","definition":"统计真正例、假正例、真负例和假负例的表格。"}],"scenarios":[{"title":"罕见情况与强检测","question":"为什么 99% 准确的检测可能只得到约 50% 的后验概率？","run":"设置 1% 基率、99% 灵敏度和 99% 特异度，再查看阳性结果后的人员数量。","predict":"应用前估计后验概率，并判断哪一组会产生大多数阳性结果。","explain":"解释庞大的健康人群如何产生足够多的假阳性，与真阳性数量接近。"},{"title":"特异度的小幅下降会产生大影响","question":"为什么情况罕见时，特异度特别重要？","run":"保持 1% 基率和 99% 灵敏度，把特异度降到 95%。","predict":"预测后验概率会轻微下降还是大幅下降。","explain":"用假阳性数量解释变化幅度。"},{"title":"更高基率改变同一检测的含义","question":"为什么同一检测在高风险人群中含义不同？","run":"把先验概率提高到 20%，其他检测设置保持不变。","predict":"应用前预测后验概率会上升多少。","explain":"解释为什么人群变化会改变解释，即使检测本身没有变化。"},{"title":"第二次独立阳性结果","question":"为什么重复证据比一次结果更能改变信念？","run":"从罕见情况开始，应用一次阳性结果，再次点击阳性检测按钮。","predict":"预测第二次阳性增加的百分点是否与第一次相同。","explain":"解释第一次后验如何成为第二次更新的先验。"},{"title":"垃圾邮件过滤器使用相同数学","question":"当假阳性和假阴性的后果不同时，什么发生变化？","run":"切换到垃圾邮件场景，并与罕见情况比较。","predict":"预测真实收件箱中哪种错误代价更高。","explain":"把概率计算与判断哪种错误更重要区分开。"}]}};
+  const profile = {"slug":"bayes-classifier","en":{"title":"Bayes Rule Playground","big":"Change the base rate and test quality, then watch a positive result update the probability of the condition. The same test can mean something very different in rare and common populations.","primer":"Bayes’ rule combines what was plausible before the evidence with how strongly the evidence favors each possibility. The terms below keep those two ideas separate.","terms":[{"term":"Prior probability (base rate)","definition":"The probability of the condition before the new test result."},{"term":"Sensitivity","definition":"Among people who truly have the condition, the proportion who test positive."},{"term":"Specificity","definition":"Among people who do not have the condition, the proportion who test negative."},{"term":"Posterior probability","definition":"The updated probability after the evidence is included."},{"term":"False positive","definition":"A positive result for someone who does not have the condition."},{"term":"Likelihood ratio (LR)","definition":"A multiplier that summarizes how strongly a result changes the odds."},{"term":"Prevalence","definition":"The proportion of the population that has the condition; in this applet it is the prior probability."},{"term":"Confusion matrix","definition":"A table that counts true positives, false positives, true negatives, and false negatives."}],"scenarios":[{"title":"A rare condition with a strong test","question":"Why can a test with 99 percent sensitivity and 99 percent specificity produce only about a 50 percent posterior probability?","run":"Use a 1 percent base rate with 99 percent sensitivity and 99 percent specificity, then inspect the people counts after a positive result.","predict":"Before applying, estimate the posterior probability and identify which group will create most positive results.","explain":"Explain how the large healthy population creates enough false positives to compete with true positives."},{"title":"A small loss of specificity has a large effect","question":"Why does specificity matter so much when the condition is rare?","run":"Keep the 1 percent base rate and 99 percent sensitivity, but lower specificity to 95 percent.","predict":"Predict whether the posterior will fall slightly or dramatically.","explain":"Use the false-positive count to explain the size of the change."},{"title":"A higher base rate changes the meaning of the same test","question":"How can the same test result mean something different in a higher-risk population?","run":"Raise the prior probability to 20 percent while keeping the test settings fixed.","predict":"Predict how much the posterior will increase before you apply the scenario.","explain":"Explain why changing the population changes the interpretation even though the test did not change."},{"title":"A second positive under a conditional-independence assumption","question":"Why can conditionally independent repeated evidence change belief more strongly than one result?","run":"Start with the rare-condition scenario, apply one positive result, then use the positive-test button again under the applet's conditional-independence assumption.","predict":"Predict whether the second positive adds the same number of percentage points as the first.","explain":"Explain how the first posterior becomes the prior for the second update, and why shared measurement errors would violate the simple multiplication."},{"title":"A spam filter uses the same mathematics","question":"What changes when false positives and false negatives have different consequences?","run":"Switch to the spam-filter context and compare a common event with the rare-condition case.","predict":"Predict which error type will be more costly for a real inbox.","explain":"Separate the probability calculation from the decision about which error matters more."}]},"zh":{"title":"贝叶斯定理演练场","big":"改变基率和检测质量，观察阳性结果如何更新患病概率。同一种检测在罕见与常见人群中可能具有完全不同的含义。","primer":"贝叶斯定理把证据出现前的可能性与证据支持各个结果的强度结合起来。下面的术语帮助你区分这两部分。","terms":[{"term":"先验概率（基率）","definition":"在看到新检测结果之前，某种情况发生的概率。"},{"term":"灵敏度","definition":"在真正患有该情况的人中，检测为阳性的比例。"},{"term":"特异度","definition":"在没有该情况的人中，检测为阴性的比例。"},{"term":"后验概率","definition":"加入证据后更新得到的概率。"},{"term":"假阳性","definition":"没有该情况的人却得到阳性结果。"},{"term":"似然比（LR）","definition":"概括一个结果会把几率改变多少的乘数。"},{"term":"患病率","definition":"总体中具有该情况的比例；在本工具中，它就是先验概率。"},{"term":"混淆矩阵","definition":"统计真正例、假正例、真负例和假负例的表格。"}],"scenarios":[{"title":"罕见情况与强检测","question":"为什么灵敏度和特异度都为 99% 的检测可能只得到约 50% 的后验概率？","run":"设置 1% 基率、99% 灵敏度和 99% 特异度，再查看阳性结果后的人员数量。","predict":"应用前估计后验概率，并判断哪一组会产生大多数阳性结果。","explain":"解释庞大的健康人群如何产生足够多的假阳性，与真阳性数量接近。"},{"title":"特异度的小幅下降会产生大影响","question":"为什么情况罕见时，特异度特别重要？","run":"保持 1% 基率和 99% 灵敏度，把特异度降到 95%。","predict":"预测后验概率会轻微下降还是大幅下降。","explain":"用假阳性数量解释变化幅度。"},{"title":"更高基率改变同一检测的含义","question":"为什么同一检测在高风险人群中含义不同？","run":"把先验概率提高到 20%，其他检测设置保持不变。","predict":"应用前预测后验概率会上升多少。","explain":"解释为什么人群变化会改变解释，即使检测本身没有变化。"},{"title":"条件独立假设下的第二次阳性","question":"为什么条件独立的重复证据比一次结果更能改变信念？","run":"从罕见情况开始，应用一次阳性结果，再在本工具的条件独立假设下再次点击阳性检测按钮。","predict":"预测第二次阳性增加的百分点是否与第一次相同。","explain":"解释第一次后验如何成为第二次更新的先验，以及共享测量误差为什么会破坏这种简单相乘。"},{"title":"垃圾邮件过滤器使用相同数学","question":"当假阳性和假阴性的后果不同时，什么发生变化？","run":"切换到垃圾邮件场景，并与罕见情况比较。","predict":"预测真实收件箱中哪种错误代价更高。","explain":"把概率计算与判断哪种错误更重要区分开。"}]}};
   window.APPLET_LEARNER_PROFILE = profile;
   const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
   const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;

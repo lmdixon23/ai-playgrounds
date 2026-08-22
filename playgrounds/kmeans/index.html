@@ -653,7 +653,7 @@
 <div class="control-row">
 <label data-i18n="dataset-label">Dataset:</label>
 <div class="group" id="datasetGroup">
-<button class="active" data-d="gaussian" data-i18n="d-gaussian" data-i18n-title="d-gaussian-title" title="Three roughly round blobs. K-means works perfectly here when k=3.">Gaussian mixture</button>
+<button class="active" data-d="gaussian" data-i18n="d-gaussian" data-i18n-title="d-gaussian-title" title="Three roughly round blobs. This synthetic example is well matched to Euclidean k-means when k=3, but one successful run does not establish a universal grouping.">Gaussian mixture</button>
 <button data-d="uniform" data-i18n="d-uniform" data-i18n-title="d-uniform-title" title="Uniform random points. Tests how k-means behaves with no real cluster structure.">Uniform points</button>
 <button data-d="packed" data-i18n="d-packed" data-i18n-title="d-packed-title" title="Six tightly packed circles. Try the farthest point init with k=6.">Packed circles</button>
 <button data-d="smiley" data-i18n="d-smiley" data-i18n-title="d-smiley-title" title="A smiley face. The mouth is a curved arc: k-means cannot find it as a single cluster.">Smiley face</button>
@@ -720,7 +720,7 @@
 </div>
 <div id="silhPerCluster" style="margin-top:6px; display:flex; gap:14px; flex-wrap:wrap; font-family:ui-monospace,monospace; font-size:0.82rem;"></div>
 <p data-i18n="silh-hint" style="margin:6px 0 0; color:var(--muted); font-size:0.78rem; font-style:italic;">
-      Silhouette compares each point's distance to its own cluster vs. the nearest other cluster. To choose k, run with several k values and pick the one with the highest mean silhouette.
+      Silhouette compares each point's distance to its own cluster vs. the nearest other cluster. Use silhouette as one piece of evidence when comparing candidate k values. Also inspect stability, initialization sensitivity, domain meaning, and model-data mismatch; the largest score is not proof of a uniquely true k.
     </p>
 </div>
 </div><!-- /.bento-cell (controls + diagnostics) -->
@@ -798,7 +798,7 @@
 <button class="step-btn" type="button">Apply and compare</button>
 </article>
 <article class="scenario-card" data-scenario-index="2">
-<h3>Scenario 3: A curved smile does not match round clusters</h3>
+<h3>Scenario 3: A curved smile does not match compact, roughly convex regions under squared Euclidean distance</h3>
 <p class="scenario-meta"><strong>Core question: </strong> What happens when the shape of the data violates the model’s assumptions?</p>
 <p class="scenario-meta"><strong>Run and watch: </strong> Use the smiley-face data with k set to three and inspect how the curved mouth is split.</p>
 <p class="scenario-meta"><strong>Predict first: </strong> Predict which parts of the shape will be grouped unnaturally.</p>
@@ -815,7 +815,7 @@
 </article>
 <article class="scenario-card" data-scenario-index="4">
 <h3>Scenario 5: Use silhouette score to compare k values</h3>
-<p class="scenario-meta"><strong>Core question: </strong> Why can lower inertia alone not select the best number of clusters?</p>
+<p class="scenario-meta"><strong>Core question: </strong> Why can lower inertia alone not select the most defensible candidate number of clusters for this purpose?</p>
 <p class="scenario-meta"><strong>Run and watch: </strong> Run the same data with k equal to two, three, and four, then compare silhouette scores.</p>
 <p class="scenario-meta"><strong>Predict first: </strong> Predict which k will balance within-cluster closeness and between-cluster separation.</p>
 <p class="scenario-meta"><strong>Explain afterward: </strong> Explain why inertia always falls as more centers are added, while silhouette can reveal over-splitting.</p>
@@ -890,7 +890,7 @@
 <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
 </div>
 <div class="ws-q" id="ws2" style="margin-top:10px;">
-<p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Gaussians dataset (3 true clusters). Compared to k=3, setting k=6 makes the inertia go:</span></p>
+<p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Synthetic Gaussian data generated from 3 groups. Compared to k=3, setting k=6 makes the inertia go:</span></p>
 <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="0"/> <span data-i18n="ws2o0">Up: extra centroids split real clusters and add distance.</span></label>
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="1"/> <span data-i18n="ws2o1">Down: more centroids means every point is closer to its nearest one.</span></label>
@@ -903,7 +903,7 @@
 <p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Use the silhouette score on the Gaussians dataset. Try k=2, k=3, k=4. Which k has the HIGHEST silhouette?</span></p>
 <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="0"/> <span data-i18n="ws3o0">k=2: fewer clusters always means a higher silhouette.</span></label>
-<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="1"/> <span data-i18n="ws3o1">k=3: the silhouette peaks at the true number of clusters.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="1"/> <span data-i18n="ws3o1">For this generated sample, k=3 corresponds to the three generating groups and has the highest observed silhouette among the tested values.</span></label>
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="2"/> <span data-i18n="ws3o2">k=4: more clusters always means a higher silhouette.</span></label>
 </div>
 <button class="step-btn" data-i18n="ws-check" id="ws3btn">Check</button>
@@ -1125,7 +1125,7 @@
 <li>用多个 <code>k</code> 运行笑脸数据。改变 <code>k</code> 为什么不能修复形状假设？</li>
 <li>提高 <code>k</code> 时比较惯性和轮廓系数。两个指标为什么表现不同？</li>
 </ul>
-<p><strong>需要检验的误解：</strong>K 均值会发现正确聚类数；收敛证明全局最优；惯性越低模型一定越好；K-means++ 保证最终最优。</p>
+<p><strong>需要检验的误解：</strong>K 均值会发现唯一真实的聚类数；收敛证明全局最优；惯性越低模型一定越好；K-means++ 保证最终最优。</p>
 </div>
 </section>
 </article>
@@ -1166,7 +1166,7 @@
       'inertia-hint': "Inertia is the total squared distance from each point to its assigned centroid. K-means is guaranteed to never increase it. When it flattens, you've converged.",
       'silh-label': '📊 Silhouette score:',
       'silh-range': '(range: −1 bad … 0 overlapping … 1 well-separated)',
-      'silh-hint': "Silhouette compares each point's distance to its own cluster vs. the nearest other cluster. To choose k, run with several k values and pick the one with the highest mean silhouette.",
+      'silh-hint': "Silhouette compares each point's distance to its own cluster vs. the nearest other cluster. Use silhouette as one piece of evidence when comparing candidate k values. Also inspect stability, initialization sensitivity, domain meaning, and model-data mismatch; the largest score is not proof of a uniquely true k.",
       'tour-summary': '📚 Lesson tour (5 steps)',
       'tour-step': 'Step',
       'tour-prev': '← Prev', 'tour-next': 'Next →', 'tour-apply': '▶ Apply this scenario',
@@ -1185,7 +1185,7 @@
       'ws-pick': 'Pick an answer first.',
       // worksheet question prompts (data-i18n spans) ---
       'ws1q': 'Load the smiley face dataset with k=3. Run to convergence. Does k-means recover the two eyes and the curved smile as three clusters?',
-      'ws2q': 'Gaussians dataset (3 true clusters). Compared to k=3, setting k=6 makes the inertia go:',
+      'ws2q': 'Synthetic Gaussian data generated from 3 groups. Compared to k=3, setting k=6 makes the inertia go:',
       'ws3q': 'Use the silhouette score on the Gaussians dataset. Try k=2, k=3, k=4. Which k has the HIGHEST silhouette?',
       // --- MCQ: worksheet option labels (ws{n}o{i}) ---
       'ws1o0': 'Yes: it finds the two eyes, and the curved smile becomes one banana-shaped cluster.',
@@ -1195,28 +1195,28 @@
       'ws2o1': 'Down: more centroids means every point is closer to its nearest one.',
       'ws2o2': 'Stays the same: there are only 3 real clusters, so the extra centroids do nothing.',
       'ws3o0': 'k=2: fewer clusters always means a higher silhouette.',
-      'ws3o1': 'k=3: the silhouette peaks at the true number of clusters.',
+      'ws3o1': 'For this generated sample, k=3 corresponds to the three generating groups and has the highest observed silhouette among the tested values.',
       'ws3o2': 'k=4: more clusters always means a higher silhouette.',
       // lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
       'tour0name': 'Easy: 3 Gaussians, k=3',
-      'tour0desc': 'Three well-separated Gaussian blobs. With k=3 and any reasonable init, K-means converges to the true clusters in a few iterations.',
+      'tour0desc': 'Three well-separated Gaussian blobs generated from three groups. With k=3, many initializations recover a grouping aligned with those generators, but convergence still does not prove global optimality or a uniquely true partition.',
       'tour1name': 'Bad init: all centroids in one corner',
       'tour1desc': '"I\'ll Choose" init: click the corner four times to place centroids there. K-means now has to escape the bad start. Often it doesn\'t: multiple runs from different inits is standard practice.',
       'tour2name': 'Wrong k: smiley face',
-      'tour2desc': 'Smiley face dataset with k=3. K-means tries to fit three round clusters, but the mouth is a curved arc: no single "Gaussian" can capture it. This is the algorithm hitting its inductive bias.',
+      'tour2desc': 'Smiley face dataset with k=3. K-means tries to fit three compact, roughly convex regions under squared Euclidean distance, but the mouth is a curved arc: no single centroid with Euclidean Voronoi assignment can represent it as one curved cluster. This is the algorithm hitting its inductive bias.',
       'tour3name': 'k-means++ vs Random init',
       'tour3desc': 'Packed circles with k=6. Random init often misses some clusters; k-means++ spreads initial centroids apart probabilistically and usually finds all six. Re-run a few times to see the variance.',
       'tour4name': 'Use silhouette to pick k',
-      'tour4desc': 'Same Gaussians dataset. Try k=2, k=3, k=4 and check the silhouette score after each. The highest score wins. (Around 0.5+ = clear separation; below 0.25 = overlapping or wrong k.)',
+      'tour4desc': 'Same Gaussians dataset. Try k=2, k=3, k=4 and check the silhouette score after each. Compare the scores as evidence for this sample, then check stability and domain meaning. A higher score is not proof of a universally correct k, and fixed thresholds are context-dependent.',
       // worksheet answer-feedback (ws{n}ok / ws{n}no) ---
-      'ws1ok': 'Correct. K-means assumes round (convex) clusters. The smile is a curved arc: no Gaussian-shaped centroid can capture it. This is the inductive bias of k-means.',
+      'ws1ok': 'Correct. K-means assumes round (convex) clusters. The smile is a curved arc: a centroid is only a point, and straight Voronoi partitions around centroids cannot preserve the curved mouth as one cluster. This is the inductive bias of k-means.',
       'ws1no': 'Hint: the smile is a long curved arc. K-means can only carve the plane with straight Voronoi boundaries around point centroids.',
       'ws2ok': "Correct. Inertia (within-cluster SSE) is monotonically non-increasing in k: more centroids means points are always closer to their nearest one. That's why you can't pick k by minimizing inertia alone.",
       'ws2no': "Hint: more centroids = points are always closer to the nearest one. Try 'down'.",
-      'ws3ok': 'Correct. With 3 well-separated Gaussian clusters, silhouette peaks at the true k. Unlike inertia, silhouette CAN identify the right k because it balances cohesion (within-cluster distance) vs. separation (between-cluster distance).',
-      'ws3no': "Try k=3. Silhouette peaks at the true number of clusters because over-clustering forces points into 'wrong' neighbors.",
+      'ws3ok': 'Correct. With 3 well-separated Gaussian clusters, k=3 has the highest silhouette among the tested values for this generated sample and aligns with its three generating groups. Silhouette balances cohesion and separation, but it does not generally identify one uniquely true k.',
+      'ws3no': "Try k=3. For this generated sample, try k=3 and compare the observed score with k=2 and k=4. Treat the result as evidence for these data, not a universal truth about k.",
       // tooltip translations for main controls.
-      'd-gaussian-title': 'Three roughly round blobs. K-means works perfectly here when k=3.',
+      'd-gaussian-title': 'Three roughly round blobs. This synthetic example is well matched to Euclidean k-means when k=3, but one successful run does not establish a universal grouping.',
       'd-uniform-title': 'Uniform random points. Tests how k-means behaves with no real cluster structure.',
       'd-packed-title': 'Six tightly packed circles. Try the farthest point init with k=6.',
       'd-smiley-title': 'A smiley face. The mouth is a curved arc: k-means cannot find it as a single cluster.',
@@ -1285,7 +1285,7 @@
       'ws-pick': '请先选择一个答案。',
       // 练习题题干(data-i18n span)---
       'ws1q': '加载笑脸数据集,设 k=3,运行至收敛。k-means 能把两只眼睛和弯曲的笑嘴恢复成三个簇吗?',
-      'ws2q': '高斯数据集(3 个真实簇)。与 k=3 相比,把 k 设为 6 会让惯性:',
+      'ws2q': '高斯数据集(3 个生成群组)。与 k=3 相比,把 k 设为 6 会让惯性:',
       'ws3q': '在高斯数据集上使用轮廓系数。试 k=2、k=3、k=4。哪个 k 的轮廓系数最高?',
       // --- MCQ: 练习题选项标签(ws{n}o{i})---
       'ws1o0': '能--它找到两只眼睛,而弯曲的笑嘴会变成一个香蕉形的簇。',
@@ -1293,9 +1293,9 @@
       'ws1o2': '能--k-means 一旦收敛,总能恢复出真实的形状。',
       'ws2o0': '上升--多出的质心会把真实的簇拆开,增加距离。',
       'ws2o1': '下降--质心越多,每个点离最近的质心总是更近。',
-      'ws2o2': '不变--只有 3 个真实簇,所以多出的质心不起作用。',
+      'ws2o2': '不变--只有 3 个生成群组,所以多出的质心不起作用。',
       'ws3o0': 'k=2--簇越少,轮廓系数总是越高。',
-      'ws3o1': 'k=3--轮廓系数在真实簇数处达到峰值。',
+      'ws3o1': 'k=3--轮廓系数在生成群组数处达到峰值。',
       'ws3o2': 'k=4--簇越多,轮廓系数总是越高。',
       // 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
       'tour0name': '简单:3 个高斯,k=3',
@@ -1314,10 +1314,10 @@
       'ws2ok': '正确。惯性(类内平方和)随 k 单调不增--质心越多,点离最近的质心总是更近。所以你不能仅靠最小化惯性来选 k。',
       'ws2no': '提示:质心越多 = 点离最近的质心总是更近。试试"down"。',
       'ws3ok': '正确。对 3 个分得很开的高斯簇,轮廓系数在真实 k 处达到峰值。与惯性不同,轮廓系数能识别正确的 k,因为它兼顾了内聚度(类内距离)与分离度(类间距离)。',
-      'ws3no': '再试试 k=3。轮廓系数在真实簇数处达到峰值,因为过度聚类会把点硬塞进"错误"的邻居里。',
+      'ws3no': '再试试 k=3。轮廓系数在生成群组数处达到峰值,因为过度聚类会把点硬塞进"错误"的邻居里。',
       // 主要控件的提示翻译。
       'd-gaussian-title': '三团大致圆形的高斯分布。当 k=3 时,k-means 完美适用。',
-      'd-uniform-title': '均匀随机点。测试 k-means 在无真实簇结构下的表现。',
+      'd-uniform-title': '均匀随机点。测试 k-means 在无生成群组结构下的表现。',
       'd-packed-title': '六个紧密排列的圆。试试 k=6 配合"最远点"初始化。',
       'd-smiley-title': '笑脸。嘴是曲线弧--k-means 无法将其识别为一个簇。',
       'd-pimpled-title': '笑脸加噪点。测试对离群点的鲁棒性。',
@@ -2411,19 +2411,19 @@
   // Lesson tour: ordered K-means scenarios.
   const LESSON_TOUR = [
     { name: 'Easy: 3 Gaussians, k=3',
-      description: 'Three well-separated Gaussian blobs. With k=3 and any reasonable init, K-means converges to the true clusters in a few iterations.',
+      description: 'Three well-separated Gaussian blobs generated from three groups. With k=3, many initializations recover a grouping aligned with those generators, but convergence still does not prove global optimality or a uniquely true partition.',
       apply: () => { initStrategy = 'random'; $('kInput').value = 3; loadDataset('gaussian'); render(); } },
     { name: 'Bad init: all centroids in one corner',
       description: '"I\'ll Choose" init: click the corner four times to place centroids there. K-means now has to escape the bad start. Often it doesn\'t: multiple runs from different inits is standard practice.',
       apply: () => { initStrategy = 'choose'; $('kInput').value = 3; loadDataset('gaussian'); setHint('Now click the corner of the canvas 3 times to place centroids in a bad starting position.', '现在在画布角落点击 3 次，把质心放在较差的起始位置。'); render(); } },
     { name: 'Wrong k: smiley face',
-      description: 'Smiley face dataset with k=3. K-means tries to fit three round clusters, but the mouth is a curved arc: no single "Gaussian" can capture it. This is the algorithm hitting its inductive bias.',
+      description: 'Smiley face dataset with k=3. K-means tries to fit three compact, roughly convex regions under squared Euclidean distance, but the mouth is a curved arc: no single centroid with Euclidean Voronoi assignment can represent it as one curved cluster. This is the algorithm hitting its inductive bias.',
       apply: () => { initStrategy = 'random'; $('kInput').value = 3; loadDataset('smiley'); render(); } },
     { name: 'k-means++ vs Random init',
       description: 'Packed circles with k=6. Random init often misses some clusters; k-means++ spreads initial centroids apart probabilistically and usually finds all six. Re-run a few times to see the variance.',
       apply: () => { initStrategy = 'kpp'; $('kInput').value = 6; loadDataset('packed'); render(); } },
     { name: 'Use silhouette to pick k',
-      description: 'Same Gaussians dataset. Try k=2, k=3, k=4 and check the silhouette score after each. The highest score wins. (Around 0.5+ = clear separation; below 0.25 = overlapping or wrong k.)',
+      description: 'Same Gaussians dataset. Try k=2, k=3, k=4 and check the silhouette score after each. Compare the scores as evidence for this sample, then check stability and domain meaning. A higher score is not proof of a universally correct k, and fixed thresholds are context-dependent.',
       apply: () => { initStrategy = 'random'; $('kInput').value = 3; loadDataset('gaussian'); render(); setHint('Now press "Place centroids", then "Reassign Points" and "Update Centroids" twice. Watch the silhouette score box. Try k=2 and k=4 too.', '现在点击“放置质心”，再依次点击“重新分配点”和“更新质心”两次。观察轮廓系数框，也试试 k=2 和 k=4。'); } },
   ];
   let tourIdx = 0;
@@ -2526,14 +2526,14 @@
   // existing bilingual feedback keys, with an English inline fallback via wsMsg.
   const WORKSHEET = [
     { correct: 1,
-      ok:  ['ws1ok', "Correct. K-means assumes round (convex) clusters. The smile is a curved arc: no Gaussian-shaped centroid can capture it. This is the inductive bias of k-means."],
+      ok:  ['ws1ok', "Correct. K-means assumes round (convex) clusters. The smile is a curved arc: a centroid is only a point, and straight Voronoi partitions around centroids cannot preserve the curved mouth as one cluster. This is the inductive bias of k-means."],
       no:  ['ws1no', "Hint: the smile is a long curved arc. K-means can only carve the plane with straight Voronoi boundaries around point centroids."] },
     { correct: 1,
       ok:  ['ws2ok', "Correct. Inertia (within-cluster SSE) is monotonically non-increasing in k: more centroids means points are always closer to their nearest one. That's why you can't pick k by minimizing inertia alone."],
       no:  ['ws2no', "Hint: more centroids = points are always closer to the nearest one. Try 'down'."] },
     { correct: 1,
-      ok:  ['ws3ok', "Correct. With 3 well-separated Gaussian clusters, silhouette peaks at the true k. Unlike inertia, silhouette CAN identify the right k because it balances cohesion (within-cluster distance) vs. separation (between-cluster distance)."],
-      no:  ['ws3no', "Try k=3. Silhouette peaks at the true number of clusters because over-clustering forces points into 'wrong' neighbors."] },
+      ok:  ['ws3ok', "Correct. With 3 well-separated Gaussian clusters, k=3 has the highest silhouette among the tested values for this generated sample and aligns with its three generating groups. Silhouette balances cohesion and separation, but it does not generally identify one uniquely true k."],
+      no:  ['ws3no', "Try k=3. For this generated sample, try k=3 and compare the observed score with k=2 and k=4. Treat the result as evidence for these data, not a universal truth about k."] },
   ];
   WORKSHEET.forEach((q, i) => {
     const n = i + 1;
@@ -2869,7 +2869,7 @@
 </script>
 <script id="learner-content-system">
 (() => {
-  const profile = {"slug":"kmeans","en":{"title":"K-Means Clustering","big":"Choose the number of clusters, assign each point to its nearest center, and move the centers. Repeat until assignments stop changing.","primer":"K-means alternates between two simple steps. The difficulty comes from choosing k, choosing starting centers, and deciding whether round clusters fit the data.","terms":[{"term":"k","definition":"The number of clusters the algorithm is required to create."},{"term":"Centroid","definition":"The mean location of all points currently assigned to one cluster."},{"term":"Assignment step","definition":"Assign every point to the nearest centroid."},{"term":"Update step","definition":"Move each centroid to the mean of its assigned points."},{"term":"Inertia or within-cluster sum of squares (SSE)","definition":"The total squared distance from points to their assigned centroids."},{"term":"Silhouette score","definition":"A measure comparing how close a point is to its own cluster versus other clusters."},{"term":"Initialization","definition":"The method used to choose the starting centroid positions."},{"term":"Convergence","definition":"The point at which assignments and centroid positions stop changing."},{"term":"k-means++","definition":"An initialization method that spreads starting centroids apart using distance-weighted sampling."}],"scenarios":[{"title":"Three compact groups with k equal to three","question":"What does the algorithm look like when its assumptions match the data?","run":"Use three well-separated point groups with k set to three and run assignment and update steps.","predict":"Predict how many iterations will be needed before the centers stop moving.","explain":"Explain why compact, round groups are an easy case for k-means."},{"title":"Poor starting centers can trap the result","question":"Why can the same data produce different final clusters?","run":"Place all starting centroids in one corner, run the algorithm, then compare with spread-out initialization.","predict":"Predict whether the centers will always recover the visually obvious groups.","explain":"Explain how initialization changes the path of later assignment and update steps."},{"title":"A curved smile does not match round clusters","question":"What happens when the shape of the data violates the model’s assumptions?","run":"Use the smiley-face data with k set to three and inspect how the curved mouth is split.","predict":"Predict which parts of the shape will be grouped unnaturally.","explain":"Explain why distance to a centroid favors compact, roughly round regions."},{"title":"K-means++ spreads the starting centers","question":"How does a smarter initialization reduce repeated poor runs?","run":"Use six packed circles, compare random initialization with k-means++, and repeat both several times.","predict":"Predict which method will more often place a center in every visible group.","explain":"Explain why spreading initial centers improves coverage without guaranteeing perfection."},{"title":"Use silhouette score to compare k values","question":"Why can lower inertia alone not select the best number of clusters?","run":"Run the same data with k equal to two, three, and four, then compare silhouette scores.","predict":"Predict which k will balance within-cluster closeness and between-cluster separation.","explain":"Explain why inertia always falls as more centers are added, while silhouette can reveal over-splitting."}]},"zh":{"title":"K 均值聚类","big":"选择聚类数量，把每个点分配给最近中心，再移动中心。重复这些步骤，直到分配不再变化。","primer":"K 均值在两个简单步骤之间交替。困难在于选择 k、选择起始中心，以及判断圆形聚类是否适合数据。","terms":[{"term":"k","definition":"算法必须创建的聚类数量。"},{"term":"质心","definition":"当前分配到一个聚类的所有点的平均位置。"},{"term":"分配步骤","definition":"把每个点分配给最近质心。"},{"term":"更新步骤","definition":"把每个质心移动到其所属点的平均位置。"},{"term":"惯性或簇内平方和（SSE）","definition":"所有点到其所属质心的平方距离总和。"},{"term":"轮廓系数","definition":"比较一个点接近自身聚类与其他聚类程度的指标。"},{"term":"初始化","definition":"选择初始质心位置的方法。"},{"term":"收敛","definition":"簇分配和质心位置不再变化的状态。"},{"term":"k-means++","definition":"一种按距离加权抽样、使初始质心彼此分散的初始化方法。"}],"scenarios":[{"title":"三个紧密群组与 k=3","question":"当算法假设与数据匹配时，会是什么样？","run":"使用三个分离良好的点群，把 k 设为 3，并运行分配和更新步骤。","predict":"预测质心停止移动前需要多少次迭代。","explain":"解释为什么紧密、近似圆形的群组是 K 均值的简单情况。"},{"title":"较差起始中心会限制结果","question":"为什么同一数据可能产生不同最终聚类？","run":"把所有起始质心放在一个角落，运行算法，再与分散初始化比较。","predict":"预测质心是否总能恢复视觉上明显的群组。","explain":"解释初始化如何改变之后的分配和更新路径。"},{"title":"弯曲笑脸不符合圆形聚类","question":"数据形状违反模型假设时会怎样？","run":"使用笑脸数据并把 k 设为 3，观察弯曲嘴巴如何被切分。","predict":"预测哪些部分会被不自然地分组。","explain":"解释到质心的距离为什么偏好紧密、近似圆形的区域。"},{"title":"K-means++ 分散起始中心","question":"更聪明的初始化如何减少差结果？","run":"使用六个紧密圆群，比较随机初始化与 K-means++，并多次重复。","predict":"预测哪种方法更常在每个可见群组中放置一个中心。","explain":"解释分散起始中心为什么能改善覆盖，却不能保证完美。"},{"title":"用轮廓系数比较 k","question":"为什么只降低惯性不能选择最佳聚类数？","run":"在同一数据上运行 k=2、3、4，并比较轮廓系数。","predict":"预测哪个 k 能平衡簇内接近与簇间分离。","explain":"解释为什么增加中心总会降低惯性，而轮廓系数能显示过度切分。"}]}};
+  const profile = {"slug":"kmeans","en":{"title":"K-Means Clustering","big":"Choose the number of clusters, assign each point to its nearest center, and move the centers. Repeat until assignments stop changing.","primer":"K-means alternates between two simple steps. The difficulty comes from choosing k, choosing starting centers, and deciding whether compact, roughly convex regions under squared Euclidean distance fit the data.","terms":[{"term":"k","definition":"The number of clusters the algorithm is required to create."},{"term":"Centroid","definition":"The mean location of all points currently assigned to one cluster."},{"term":"Assignment step","definition":"Assign every point to the nearest centroid."},{"term":"Update step","definition":"Move each centroid to the mean of its assigned points."},{"term":"Inertia or within-cluster sum of squares (SSE)","definition":"The total squared distance from points to their assigned centroids."},{"term":"Silhouette score","definition":"A measure comparing how close a point is to its own cluster versus other clusters."},{"term":"Initialization","definition":"The method used to choose the starting centroid positions."},{"term":"Convergence","definition":"The point at which assignments and centroid positions stop changing."},{"term":"k-means++","definition":"An initialization method that spreads starting centroids apart using distance-weighted sampling."}],"scenarios":[{"title":"Three compact groups with k equal to three","question":"What does the algorithm look like when its assumptions match the data?","run":"Use three well-separated point groups with k set to three and run assignment and update steps.","predict":"Predict how many iterations will be needed before the centers stop moving.","explain":"Explain why compact, round groups are an easy case for k-means."},{"title":"Poor starting centers can trap the result","question":"Why can the same data produce different final clusters?","run":"Place all starting centroids in one corner, run the algorithm, then compare with spread-out initialization.","predict":"Predict whether the centers will always recover the visually obvious groups.","explain":"Explain how initialization changes the path of later assignment and update steps."},{"title":"A curved smile does not match compact, roughly convex regions under squared Euclidean distance","question":"What happens when the shape of the data violates the model’s assumptions?","run":"Use the smiley-face data with k set to three and inspect how the curved mouth is split.","predict":"Predict which parts of the shape will be grouped unnaturally.","explain":"Explain why distance to a centroid favors compact, roughly round regions."},{"title":"K-means++ spreads the starting centers","question":"How does a smarter initialization reduce repeated poor runs?","run":"Use six packed circles, compare random initialization with k-means++, and repeat both several times.","predict":"Predict which method will more often place a center in every visible group.","explain":"Explain why spreading initial centers improves coverage without guaranteeing perfection."},{"title":"Use silhouette score to compare k values","question":"Why can lower inertia alone not select the most defensible candidate number of clusters for this purpose?","run":"Run the same data with k equal to two, three, and four, then compare silhouette scores.","predict":"Predict which k will balance within-cluster closeness and between-cluster separation.","explain":"Explain why inertia always falls as more centers are added, while silhouette can reveal over-splitting."}]},"zh":{"title":"K 均值聚类","big":"选择聚类数量，把每个点分配给最近中心，再移动中心。重复这些步骤，直到分配不再变化。","primer":"K 均值在两个简单步骤之间交替。困难在于选择 k、选择起始中心，以及判断圆形聚类是否适合数据。","terms":[{"term":"k","definition":"算法必须创建的聚类数量。"},{"term":"质心","definition":"当前分配到一个聚类的所有点的平均位置。"},{"term":"分配步骤","definition":"把每个点分配给最近质心。"},{"term":"更新步骤","definition":"把每个质心移动到其所属点的平均位置。"},{"term":"惯性或簇内平方和（SSE）","definition":"所有点到其所属质心的平方距离总和。"},{"term":"轮廓系数","definition":"比较一个点接近自身聚类与其他聚类程度的指标。"},{"term":"初始化","definition":"选择初始质心位置的方法。"},{"term":"收敛","definition":"簇分配和质心位置不再变化的状态。"},{"term":"k-means++","definition":"一种按距离加权抽样、使初始质心彼此分散的初始化方法。"}],"scenarios":[{"title":"三个紧密群组与 k=3","question":"当算法假设与数据匹配时，会是什么样？","run":"使用三个分离良好的点群，把 k 设为 3，并运行分配和更新步骤。","predict":"预测质心停止移动前需要多少次迭代。","explain":"解释为什么紧密、近似圆形的群组是 K 均值的简单情况。"},{"title":"较差起始中心会限制结果","question":"为什么同一数据可能产生不同最终聚类？","run":"把所有起始质心放在一个角落，运行算法，再与分散初始化比较。","predict":"预测质心是否总能恢复视觉上明显的群组。","explain":"解释初始化如何改变之后的分配和更新路径。"},{"title":"弯曲笑脸不符合圆形聚类","question":"数据形状违反模型假设时会怎样？","run":"使用笑脸数据并把 k 设为 3，观察弯曲嘴巴如何被切分。","predict":"预测哪些部分会被不自然地分组。","explain":"解释到质心的距离为什么偏好紧密、近似圆形的区域。"},{"title":"K-means++ 分散起始中心","question":"更聪明的初始化如何减少差结果？","run":"使用六个紧密圆群，比较随机初始化与 K-means++，并多次重复。","predict":"预测哪种方法更常在每个可见群组中放置一个中心。","explain":"解释分散起始中心为什么能改善覆盖，却不能保证完美。"},{"title":"用轮廓系数比较 k","question":"为什么只降低惯性不能选择最佳聚类数？","run":"在同一数据上运行 k=2、3、4，并比较轮廓系数。","predict":"预测哪个 k 能平衡簇内接近与簇间分离。","explain":"解释为什么增加中心总会降低惯性，而轮廓系数能显示过度切分。"}]}};
   window.APPLET_LEARNER_PROFILE = profile;
   const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
   const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;

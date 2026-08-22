@@ -6,18 +6,18 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>K-Nearest Neighbors | AI Playgrounds</title>
 <link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E" rel="icon"/>
-<meta content="Classify a new point by asking nearby labeled points to vote. Change k, distance, and vote weighting to see how the decision boundary responds." name="description"/>
+<meta content="Classify a query by defining which labeled points count as nearest, then letting those selected neighbors vote. Change k, the closeness rule, feature scaling, and the voting rule to see how the result changes." name="description"/>
 <link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/" rel="canonical"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/?lang=en" hreflang="en" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/?lang=zh" hreflang="zh-Hans" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/?lang=en" hreflang="x-default" rel="alternate"/>
 <meta content="website" property="og:type"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/" property="og:url"/>
 <meta content="K-Nearest Neighbors | AI Playgrounds" property="og:title"/>
-<meta content="Classify a new point by asking nearby labeled points to vote. Change k, distance, and vote weighting to see how the decision boundary responds." property="og:description"/>
+<meta content="Classify a query by defining which labeled points count as nearest, then letting those selected neighbors vote. Change k, the closeness rule, feature scaling, and the voting rule to see how the result changes." property="og:description"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" property="og:image"/>
 <meta content="summary_large_image" name="twitter:card"/>
 <meta content="K-Nearest Neighbors | AI Playgrounds" name="twitter:title"/>
-<meta content="Classify a new point by asking nearby labeled points to vote. Change k, distance, and vote weighting to see how the decision boundary responds." name="twitter:description"/>
+<meta content="Classify a query by defining which labeled points count as nearest, then letting those selected neighbors vote. Change k, the closeness rule, feature scaling, and the voting rule to see how the result changes." name="twitter:description"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" name="twitter:image"/>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"K-Nearest Neighbors | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/","description":"Classify a new point by asking nearby labeled points to vote. Change k, distance, and vote weighting to see how the decision boundary responds.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"K-Nearest Neighbors | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/","description":"Classify a query by defining which labeled points count as nearest, then letting those selected neighbors vote. Change k, the closeness rule, feature scaling, and the voting rule to see how the result changes.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
 <style>
   :root {
     --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #be123c;
@@ -154,6 +154,19 @@
   .tldr { background: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), var(--accent); }
   .tldr strong { color: #fff; }
 
+
+  /* Guided challenge: commit a mechanism prediction before revealing KNN output. */
+  .guided-challenge { margin-top:12px; }
+  .guided-panel { margin-top:8px; padding:14px; background:var(--card); border:1px solid var(--border); border-radius:8px; }
+  .guided-panel p { margin:0 0 10px; }
+  .guided-actions { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:8px 0; }
+  .guided-actions button { padding:7px 12px; border:1px solid var(--border); border-radius:6px; background:var(--card); color:var(--fg); cursor:pointer; font:inherit; }
+  .guided-actions button.primary { background:var(--accent); color:#fff; border-color:var(--accent); font-weight:700; }
+  .guided-actions button:disabled { opacity:.45; cursor:not-allowed; }
+  .guided-class button[aria-pressed="true"] { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .guided-status, .guided-result { padding:8px 10px; border-radius:6px; background:var(--soft); color:var(--fg); font-size:.86rem; }
+  .guided-result { margin-top:8px; border-left:4px solid var(--accent); }
+  .guided-key { font-size:.78rem; color:var(--muted); }
 
   /* Student response packet: local-only assignment packet across the applet family. */
   .classroom-lab .lab-panel { margin-top:8px; padding:14px; background:var(--card); border:1px solid var(--border); border-radius:8px; }
@@ -521,7 +534,7 @@
 </header>
 <aside class="tldr">
 <strong data-i18n="tldr-strong">The big idea</strong>
-<span data-i18n="tldr-body">KNN classifies a new point by majority vote of its k closest training points. The hyperparameter k controls how wiggly the decision boundary is: and how much it overfits.</span>
+<span data-i18n="tldr-body">KNN first defines which training points count as nearest under the selected distance rule and feature scaling. Then k selects the voters, and the voting rule determines how strongly they count.</span>
 </aside>
 <section class="interactive" id="main" role="main" tabindex="-1">
 <div class="interactive-inner">
@@ -537,17 +550,17 @@
 <label data-i18n="k-label">k:</label>
 <input aria-label="Number of neighbors (k)" aria-valuetext="k equals 5" data-i18n-title="k-slider-title" id="k" max="25" min="1" title="Number of neighbors to consult. k=1 hugs every point; large k smooths everything into one prediction." type="range" value="5"/>
 <span class="kval" id="kV">5</span>
-<label data-i18n="metric-label" style="margin-left:12px;">Distance:</label>
-<select data-i18n-title="metric-title" id="metricSel" title="Euclidean (L²) = straight-line distance. Manhattan (L¹) = sum of |dx|+|dy|: sharp diamond boundaries. Chebyshev (L∞) = max(|dx|,|dy|): square neighborhoods.">
+<label data-i18n="metric-label" style="margin-left:12px;">Closeness rule:</label>
+<select data-i18n-title="metric-title" id="metricSel" title="This rule determines which points count as nearest. Euclidean uses straight-line distance; Manhattan sums horizontal and vertical differences; Chebyshev uses the largest coordinate difference. Their equal-distance contours are circles, diamonds, and axis-aligned squares. These contour shapes are not the same thing as the final class decision boundary.">
 <option data-i18n="m-euclidean" selected="" value="euclidean">Euclidean (L²)</option>
 <option data-i18n="m-manhattan" value="manhattan">Manhattan (L¹)</option>
 <option data-i18n="m-chebyshev" value="chebyshev">Chebyshev (L∞)</option>
 </select>
 <!-- weighting toggle. -->
-<label data-i18n="weight-label" style="margin-left:12px;">Weighting:</label>
-<select data-i18n-title="weight-title" id="weightSel" title="Uniform: each of the k neighbors gets 1 vote. Distance: each vote is scaled by 1/(distance+ε), so closer points matter more: ties evaporate.">
+<label data-i18n="weight-label" style="margin-left:12px;">Voting rule:</label>
+<select data-i18n-title="weight-title" id="weightSel" title="This setting acts only after the k neighbors have been selected. Equal voting gives each selected neighbor one vote. Closeness-weighted voting gives nearer selected neighbors more influence.">
 <option data-i18n="w-uniform" selected="" value="uniform">Uniform (1 vote each)</option>
-<option data-i18n="w-distance" value="distance">By distance (1/d)</option>
+<option data-i18n="w-distance" value="distance">Closer neighbors count more (1/d)</option>
 </select>
 </div>
 <!-- per-axis scaling. Pedagogically demonstrates why standardization matters. -->
@@ -588,16 +601,38 @@
 <span data-i18n="legend-hint" style="color:var(--muted)">Hover anywhere to see how k neighbors vote.</span>
 </div>
 </div><!-- /.bento-cell canvas -->
+<details class="guided-challenge" id="knnGuided">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="guided-summary">🧭 Guided challenge: predict before reveal</span>
+</summary>
+<div class="guided-panel">
+<p data-i18n="guided-intro">Choose a query point, select exactly k training points you predict will count as nearest, and predict the class. Lock the prediction before revealing the model's selected neighbors and vote.</p>
+<div class="guided-actions">
+<button class="primary" data-i18n="guided-start" id="guidedStart" type="button">Start challenge</button>
+<button data-i18n="guided-reset" id="guidedReset" type="button">Reset challenge</button>
+<span class="guided-key" data-i18n="guided-key">In challenge mode, click the canvas to place the query; click training points to select predicted neighbors.</span>
+</div>
+<div aria-live="polite" class="guided-status" id="guidedStatus">Challenge inactive.</div>
+<div class="guided-actions guided-class">
+<span data-i18n="guided-class-label">Predicted class:</span>
+<button aria-pressed="false" data-guided-class="A" type="button">A</button>
+<button aria-pressed="false" data-guided-class="B" type="button">B</button>
+<button data-i18n="guided-lock" disabled="" id="guidedLock" type="button">Lock prediction</button>
+<button class="primary" data-i18n="guided-reveal" disabled="" id="guidedReveal" type="button">Reveal actual neighbors</button>
+</div>
+<div aria-live="polite" class="guided-result" hidden="" id="guidedResult"></div>
+</div>
+</details>
 <div class="bento-cell">
 <!-- k-fold cross-validation. Run f-fold CV across a range of k values
            and chart accuracy vs k. This is THE standard way to pick k in practice. -->
 <details class="cv-panel" style="margin-top:0;">
 <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
-<span data-i18n="cv-summary">🔢 k-fold cross-validation (find the best k)</span>
+<span data-i18n="cv-summary">🔢 k-fold cross-validation (compare candidate k values)</span>
 </summary>
 <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem;">
 <p data-i18n="cv-hint" style="margin:0 0 8px; color:var(--muted); font-size:0.82rem;">
-            Splits the training points into f equal folds. For each k in 1..30, trains on f−1 folds and validates on the held-out fold; averages accuracy across all f rotations. The k with highest CV accuracy is the right pick: NOT the k that fits the training data best (that's always k=1).
+            Splits the current sample into f folds. For each candidate k, it trains on f−1 folds and validates on the remaining fold, then averages across rotations. The highest score is evidence for this sample and fold scheme, not a universally correct k; stability, class balance, the metric, scaling, and domain costs still matter.
           </p>
 <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
 <label data-i18n="cv-folds-label">Folds (f):</label>
@@ -646,7 +681,7 @@
 <p class="scenario-meta"><strong>Core question: </strong> How can the same points count as near under one metric and far under another?</p>
 <p class="scenario-meta"><strong>Run and watch: </strong> Keep the moon data fixed and switch among Euclidean, Manhattan, and Chebyshev distance.</p>
 <p class="scenario-meta"><strong>Predict first: </strong> Predict how the neighborhood shape will change for each rule.</p>
-<p class="scenario-meta"><strong>Explain afterward: </strong> Connect circular, diamond, and square neighborhoods to the changing boundary.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain how circle, diamond, and square equal-distance contours can change the selected neighbors without becoming the class boundary themselves.</p>
 <button class="step-btn" type="button">Apply and compare</button>
 </article>
 <article class="scenario-card" data-scenario-index="3">
@@ -744,11 +779,11 @@
 <span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
 </div>
 <div class="ws-q" id="ws3" style="margin-top:10px;">
-<p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Switch distance metric to Manhattan. The boundaries between classes are now made of:</span></p>
+<p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Switch the closeness rule to Manhattan. Which statement is mathematically accurate?</span></p>
 <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="0"/> <span data-i18n="ws3o0">Smooth curves: Manhattan distance rounds the corners off.</span></label>
-<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="1"/> <span data-i18n="ws3o1">Straight, axis-aligned segments: Manhattan's diamond contours meet at 45°.</span></label>
-<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="2"/> <span data-i18n="ws3o2">Perfect circles: every distance metric gives circular boundaries.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="0"/> <span data-i18n="ws3o0">Manhattan equal-distance contours are circles, and the class boundary must therefore be circular.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="1"/> <span data-i18n="ws3o1">Manhattan equal-distance contours are diamonds with diagonal sides; the KNN class boundary may change, but it is not generally the same shape as one contour.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="2"/> <span data-i18n="ws3o2">The class boundary must be an axis-aligned square because Chebyshev neighborhoods are square.</span></label>
 </div>
 <button class="step-btn" data-i18n="ws-check" id="ws3btn">Check</button>
 <span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
@@ -826,7 +861,7 @@
 <article class="essay" id="essay">
 <section data-essay-lang="en">
 <p class="lede">
-    K-nearest neighbors, or KNN, classifies a query by finding the <code>k</code> closest labeled
+    K-nearest neighbors, or KNN, classifies a query by first defining closeness through a distance rule and feature representation, then finding the <code>k</code> nearest labeled
     training points and combining their votes. It is a <strong>lazy learner</strong>: fitting mainly
     means storing the examples, while most computation happens when a prediction is requested.
   </p>
@@ -886,9 +921,7 @@
 <li>Compare uniform and distance-weighted voting near a boundary.</li>
 <li>Use noisy overlap. Which errors come from model choice, and which come from ambiguous data?</li>
 </ul>
-<p><strong>Misconceptions to test:</strong> KNN has no hyperparameters; larger <code>k</code>
-      is always safer; tree indexes guarantee <code>O(log n)</code> queries; all KNN boundaries are
-      ordinary Voronoi boundaries.</p>
+<p><strong>Misconceptions to test:</strong> KNN has no hyperparameters; larger <code>k</code> is always safer; nearest means whichever point looks closest on the screen; changing the distance rule changes only the displayed number, not which neighbors are selected; distance weighting selects a different neighbor set; tree indexes guarantee <code>O(log n)</code> queries; all KNN boundaries are ordinary Voronoi boundaries.</p>
 </div>
 </section>
 <section data-essay-lang="zh" hidden="" lang="zh">
@@ -948,6 +981,12 @@
       'title': 'K-Nearest Neighbors', 'back-link': '← Back to all playgrounds',
       'footer-top': '↑ Back to top', 'footer-course': 'Made for the Introduction to AI course at Haidian Kaiwen Academy.', 'footer-portfolio': 'Portfolio', 'footer-project': 'AI Playgrounds', 'footer-source': 'Source', 'footer-issue': 'Report an issue',
       'reset-all': '↺ Reset all',
+      'guided-summary': '🧭 Guided challenge: predict before reveal',
+      'guided-intro': "Choose a query point, select exactly k training points you predict will count as nearest, and predict the class. Lock the prediction before revealing the model's selected neighbors and vote.",
+      'guided-start': 'Start challenge', 'guided-reset': 'Reset challenge',
+      'guided-key': 'In challenge mode, click the canvas to place the query; click training points to select predicted neighbors.',
+      'guided-class-label': 'Predicted class:', 'guided-lock': 'Lock prediction',
+      'guided-reveal': 'Reveal actual neighbors',
       'click-adds': 'Click adds:', 'k-label': 'k:', 'dataset-label': 'Dataset:',
       'embed-title': 'Copy an <iframe> snippet you can paste into an LMS (Canvas, Moodle, Schoology) or any HTML page. The embed strips the header and essay so only the interactive area shows.',
       'csv-title': 'Download the training points as a CSV file (x, y, class). Open in Excel/Sheets for follow-up homework.',
@@ -964,17 +1003,17 @@
       'ws2o0': 'Smoother: averaging 25 neighbors washes out individual noise.',
       'ws2o1': 'Wigglier: more neighbors create a more complex boundary.',
       'ws2o2': 'Unchanged: k does not affect the shape of the boundary.',
-      'ws3q': 'Switch distance metric to Manhattan. The boundaries between classes are now made of:',
-      'ws3o0': 'Smooth curves: Manhattan distance rounds the corners off.',
-      'ws3o1': "Straight, axis-aligned segments: Manhattan's diamond contours meet at 45°.",
-      'ws3o2': 'Perfect circles: every distance metric gives circular boundaries.',
+      'ws3q': 'Switch the closeness rule to Manhattan. Which statement is mathematically accurate?',
+      'ws3o0': 'Manhattan equal-distance contours are circles, and the class boundary must therefore be circular.',
+      'ws3o1': "Manhattan equal-distance contours are diamonds with diagonal sides; the KNN class boundary may change, but it is not generally the same shape as one contour.",
+      'ws3o2': 'The class boundary must be an axis-aligned square because Chebyshev neighborhoods are square.',
       // lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
       'tour0name': 'Two blobs, k=5',
       'tour0desc': 'The easy case. Two well-separated Gaussian blobs. With k=5 and Euclidean distance, the boundary is a near-straight line between the clusters.',
       'tour1name': 'k=1 vs k=25 (bias-variance)',
       'tour1desc': 'Two-moons dataset. k=1 perfectly fits training points but the boundary is jagged. k=25 over-smooths and misclassifies the moon tips. The middle of the k-range is the bias-variance sweet spot.',
       'tour2name': 'Distance metric matters',
-      'tour2desc': 'Same moons dataset. Switch the metric from Euclidean (round) to Manhattan (diamond) to Chebyshev (square). Each produces a visibly distinct boundary shape: the "neighborhood" definition changes everything.',
+      'tour2desc': 'Same moons dataset. Switch among Euclidean, Manhattan, and Chebyshev. Their circle, diamond, and square equal-distance contours change which samples rank as nearest, which can alter the class boundary without making the boundary itself a circle, diamond, or square.',
       'tour3name': 'Why standardize? (axis scale)',
       'tour3desc': 'Spiral dataset. Drag the X-axis scale slider up to 3×: watch the boundary tilt. KNN is sensitive to which feature has the larger magnitude. Real ML pipelines normalize features first (z-score or min-max).',
       'tour4name': 'Uniform votes vs distance weighting',
@@ -984,8 +1023,8 @@
       'ws1no': "Hint: k=1 just copies the label of the single nearest training point: it doesn't average over the neighborhood.",
       'ws2ok': 'Right. Higher k = more votes averaged = smoother boundary. This is bias-variance: lower variance, but higher bias if k is too large.',
       'ws2no': "Try 'smoother'. Averaging 25 neighbors washes out individual noise; k=1's wiggle disappears.",
-      'ws3ok': "Yes. Manhattan distance contours are diamonds (rotated squares), so equidistant lines run at 45°: boundaries look 'stepped' / axis-aligned compared to Euclidean's circles.",
-      'ws3no': "Hint: Manhattan = |Δx| + |Δy|. The unit ball is a diamond, so boundaries are straight, axis-aligned segments: not curves or circles.",
+      'ws3ok': "Correct. Manhattan equal-distance contours are diamonds whose sides are diagonal to the coordinate axes. Those contours change neighbor rankings, but the resulting KNN class boundary is not generally identical to one diamond.",
+      'ws3no': "Hint: Manhattan = |Δx| + |Δy|. Its unit ball is a diamond, but do not confuse a metric ball with the classifier's full decision boundary.",
       // tooltip translations for the main controls.
       'class-a-title': 'Future clicks on the canvas add Class A points (blue circles).',
       'class-b-title': 'Future clicks on the canvas add Class B points (orange triangles).',
@@ -996,8 +1035,8 @@
       'ds-spiral-title': "Interlocking spirals. Tests the decision-boundary's ability to bend.",
       'ds-noise-title': 'Two heavily overlapping clusters. There is no good boundary: what does k do?',
       'clear-title': 'Remove all training points. Click the canvas to add new ones.',
-      'cv-summary': '🔢 k-fold cross-validation (find the best k)',
-      'cv-hint': 'Splits the training points into f equal folds. For each k in 1..30, trains on f−1 folds and validates on the held-out fold; averages accuracy across all f rotations. The k with highest CV accuracy is the right pick: NOT the k that fits the training data best (that\'s always k=1).',
+      'cv-summary': '🔢 k-fold cross-validation (compare candidate k values)',
+      'cv-hint': 'Splits the current sample into f folds. For each candidate k, it trains on f−1 folds and validates on the remaining fold, then averages across rotations. The highest score is evidence for this sample and fold scheme, not a universally correct k.',
       'cv-folds-label': 'Folds (f):', 'cv-kmax-label': 'k_max:',
       'cv-run': '▶ Run CV',
       'cv-empty': '(click "Run CV": needs at least 10 training points)',
@@ -1013,17 +1052,17 @@
       'sg-teacher-label': 'Teacher use',
       'sg-teacher-text': 'Use as a 2–3 minute predict → run → explain prompt.',
       'sg-apply': 'Apply and compare',
-      'metric-label': 'Distance:',
+      'metric-label': 'Closeness rule:',
       'm-euclidean': 'Euclidean (L²)', 'm-manhattan': 'Manhattan (L¹)', 'm-chebyshev': 'Chebyshev (L∞)',
-      'metric-title': 'Euclidean = straight-line. Manhattan = sum of |dx|+|dy|: sharp diamond boundaries. Chebyshev = max(|dx|,|dy|): square neighborhoods.',
-      'weight-label': 'Weighting:',
+      'metric-title': 'This rule determines which points count as nearest. Euclidean uses straight-line distance; Manhattan sums horizontal and vertical differences; Chebyshev uses the largest coordinate difference. Their equal-distance contours are circles, diamonds, and axis-aligned squares, not guaranteed class-boundary shapes.',
+      'weight-label': 'Voting rule:',
       'w-uniform': 'Uniform (1 vote each)',
-      'w-distance': 'By distance (1/d)',
-      'weight-title': 'Uniform: each of the k neighbors gets 1 vote. Distance: each vote is scaled by 1/(distance+ε), so closer points matter more: ties evaporate.',
+      'w-distance': 'Closer neighbors count more (1/d)',
+      'weight-title': 'This acts after neighbor selection. Equal voting gives each selected neighbor one vote; closeness-weighted voting gives nearer selected neighbors more influence.',
       'scale-label': 'X-axis scale:',
       'scale-hint': '< 1 shrinks X (Y dominates). > 1 stretches X (X dominates). Watch the boundary tilt.',
       'tldr-strong': 'The big idea',
-      'tldr-body': 'KNN classifies a new point by majority vote of its k closest training points. The hyperparameter k controls how wiggly the decision boundary is: and how much it overfits.',
+      'tldr-body': 'KNN first defines which training points count as nearest under the selected distance rule and feature scaling. Then k selects the voters, and the voting rule determines how strongly they count.',
       'class-a': 'Class A (○ blue)', 'class-b': 'Class B (△ orange)',
       'ds-blobs': 'Two blobs', 'ds-moons': 'Two moons', 'ds-spiral': 'Spiral',
       'ds-noise': 'Noisy overlap', 'clear-btn': 'Clear',
@@ -1039,6 +1078,12 @@
       'title': 'K-近邻可视化', 'back-link': '← 返回所有演示',
       'footer-top': '↑ 返回顶部', 'footer-course': '为海淀凯文学校《人工智能导论》课程制作。', 'footer-portfolio': '作品集', 'footer-project': 'AI Playgrounds', 'footer-source': '源代码', 'footer-issue': '反馈问题',
       'reset-all': '↺ 全部重置',
+      'guided-summary': '🧭 引导挑战：先预测，再揭示',
+      'guided-intro': '选择一个查询点，选出你预测会成为最近邻的恰好 k 个训练点，并预测类别。先锁定预测，再揭示模型实际选中的邻居和投票结果。',
+      'guided-start': '开始挑战', 'guided-reset': '重置挑战',
+      'guided-key': '挑战模式中，点击画布放置查询点；点击训练点选择你预测的邻居。',
+      'guided-class-label': '预测类别：', 'guided-lock': '锁定预测',
+      'guided-reveal': '揭示实际邻居',
       'click-adds': '点击添加:', 'k-label': 'k:', 'dataset-label': '数据集:',
       'embed-title': '复制可粘贴到 LMS(Canvas、Moodle、Schoology)或任意网页的 <iframe> 代码。嵌入模式会去掉页头和说明,只显示交互区。',
       'csv-title': '把训练点导出为 CSV 文件(x, y, 类别)。可在 Excel/Sheets 中打开做后续作业。',
@@ -1055,17 +1100,17 @@
       'ws2o0': '更平滑--对 25 个邻居取平均会抹平个别噪声。',
       'ws2o1': '更曲折--邻居越多,边界越复杂。',
       'ws2o2': '不变--k 不影响边界的形状。',
-      'ws3q': '把距离度量切换为曼哈顿。此时各类之间的边界是由什么构成的:',
-      'ws3o0': '光滑曲线--曼哈顿距离会把拐角磨圆。',
-      'ws3o1': '笔直、轴对齐的线段--曼哈顿的菱形等距线在 45° 处相交。',
-      'ws3o2': '正圆--任何距离度量都会给出圆形边界。',
+      'ws3q': '把接近规则切换为曼哈顿。下面哪一项在数学上正确？',
+      'ws3o0': '曼哈顿等距轮廓是圆形，所以分类边界必然是圆形。',
+      'ws3o1': '曼哈顿等距轮廓是边与坐标轴成斜角的菱形；KNN 分类边界可能改变，但通常不等同于某一个菱形轮廓。',
+      'ws3o2': '切比雪夫邻域是方形，所以分类边界必然是轴对齐方形。',
       // 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
       'tour0name': '两团数据,k=5',
       'tour0desc': '最简单的情况。两团分离良好的高斯数据。当 k=5 且使用欧几里得距离时,边界是两簇之间近乎笔直的一条线。',
       'tour1name': 'k=1 对比 k=25(偏差-方差)',
       'tour1desc': '双月数据集。k=1 完美拟合训练点,但边界参差不齐。k=25 过度平滑,把月牙的尖端判错。k 取值居中处才是偏差-方差的最佳平衡点。',
       'tour2name': '距离度量很重要',
-      'tour2desc': '同一双月数据集。把度量从欧几里得(圆形)切换到曼哈顿(菱形)再到切比雪夫(方形)。每种都会产生明显不同的边界形状--"邻域"的定义改变了一切。',
+      'tour2desc': '同一双月数据集。在欧几里得、曼哈顿和切比雪夫之间切换。圆形、菱形和方形等距轮廓会改变哪些样本被排为最近，因此可能改变分类边界，但边界本身不必是圆、菱形或方形。',
       'tour3name': '为何要标准化?(坐标轴尺度)',
       'tour3desc': '螺旋数据集。把 X 轴尺度滑块拉到 3×--观察边界倾斜。KNN 对哪个特征数值更大很敏感。真实的机器学习流程会先对特征做归一化(z-score 或 min-max)。',
       // 练习题答案反馈(ws{n}ok / ws{n}no)---
@@ -1073,8 +1118,8 @@
       'ws1no': '提示:k=1 只是照搬唯一最近训练点的标签--它不会对邻域取平均。',
       'ws2ok': '对。k 越大 = 平均的票数越多 = 边界越平滑。这就是偏差-方差:方差更低,但 k 过大时偏差更高。',
       'ws2no': '试试"smoother"。对 25 个邻居取平均会抹平个别噪声;k=1 的抖动随之消失。',
-      'ws3ok': '没错。曼哈顿距离的等距线是菱形(旋转的正方形),因此等距线沿 45° 方向--与欧几里得的圆形相比,边界看起来呈"阶梯状"/轴对齐。',
-      'ws3no': '提示:曼哈顿 = |Δx| + |Δy|。其单位球是菱形,所以边界是笔直、轴对齐的线段--既不是曲线也不是圆。',
+      'ws3ok': '正确。曼哈顿等距轮廓是菱形，其边相对坐标轴呈斜向。它会改变邻居排序，但完整的 KNN 分类边界通常不等同于某一个菱形。',
+      'ws3no': '提示：曼哈顿 = |Δx| + |Δy|。它的单位球是菱形，但距离球与分类器的完整决策边界不是同一个对象。',
       // 主要控件的提示翻译。
       'class-a-title': '后续点击画布将添加 A 类点(蓝色圆圈)。',
       'class-b-title': '后续点击画布将添加 B 类点(橙色三角形)。',
@@ -1085,8 +1130,8 @@
       'ds-spiral-title': '交错的双螺旋。测试决策边界的弯曲能力。',
       'ds-noise-title': '两个严重重叠的簇。没有好的边界--看看 k 的影响。',
       'clear-title': '移除所有训练点。点击画布添加新点。',
-      'cv-summary': '🔢 k 折交叉验证(找最佳 k)',
-      'cv-hint': '把训练点等分为 f 折。对每个 k(1..30),在 f−1 折上训练、在剩下的一折上验证;对全部 f 次轮换求平均准确率。CV 准确率最高的 k 才是正确选择--而不是训练拟合最好的 k(那永远是 k=1)。',
+      'cv-summary': '🔢 k 折交叉验证(比较候选 k)',
+      'cv-hint': '把当前样本分成 f 折。对每个候选 k，在 f−1 折上训练、在剩余一折上验证，再对轮换结果求平均。最高分只是在当前样本和分折方式下的证据，不是普遍正确的 k。',
       'cv-folds-label': '折数 (f):', 'cv-kmax-label': 'k_最大值:',
       'cv-run': '▶ 运行 CV',
       'cv-empty': '(点击"运行 CV"--需要至少 10 个训练点)',
@@ -1102,17 +1147,17 @@
       'sg-teacher-label': '教师用法',
       'sg-teacher-text': '用作 2–3 分钟的“预测 → 运行 → 解释”活动。',
       'sg-apply': '应用场景',
-      'metric-label': '距离:',
+      'metric-label': '接近规则:',
       'm-euclidean': '欧几里得 (L²)', 'm-manhattan': '曼哈顿 (L¹)', 'm-chebyshev': '切比雪夫 (L∞)',
-      'metric-title': '欧几里得 = 直线距离。曼哈顿 = |dx|+|dy| 之和--产生菱形边界。切比雪夫 = max(|dx|,|dy|)--产生方形邻域。',
-      'weight-label': '加权:',
+      'metric-title': '此规则决定哪些点算最近。欧几里得使用直线距离，曼哈顿把水平和垂直差相加，切比雪夫使用最大坐标差。它们的等距轮廓分别是圆、菱形和轴对齐方形，但这些轮廓不等同于最终分类边界。',
+      'weight-label': '投票规则:',
       'w-uniform': '均匀(每点 1 票)',
-      'w-distance': '按距离 (1/d)',
-      'weight-title': '均匀:k 个邻居各 1 票。距离:每票按 1/(距离+ε) 加权,近邻贡献更大--平票消失。',
+      'w-distance': '近邻权重更大 (1/d)',
+      'weight-title': '此设置在选出 k 个邻居后才起作用。等权投票让每个选中邻居各投一票；接近加权让更近的选中邻居影响更大。',
       'scale-label': 'X 轴尺度:',
       'scale-hint': '< 1 缩小 X(Y 主导)。> 1 拉伸 X(X 主导)。观察边界倾斜。',
       'tldr-strong': '核心思想',
-      'tldr-body': 'K-近邻通过查找新数据点最近的 k 个训练点并进行多数投票来分类。超参数 k 控制决策边界的波动程度--以及过拟合的程度。',
+      'tldr-body': 'K-近邻先依据所选距离规则和特征缩放定义哪些训练点算最近，再由 k 选出投票者，并由投票规则决定它们各自的影响。',
       'class-a': 'A 类 (○ 蓝色)', 'class-b': 'B 类 (△ 橙色)',
       'ds-blobs': '两团数据', 'ds-moons': '双月数据', 'ds-spiral': '螺旋数据',
       'ds-noise': '噪声重叠', 'clear-btn': '清空',
@@ -1148,6 +1193,7 @@
       // there is no temporal-dead-zone risk (unlike calling it from inside setLang).
       try { if (typeof renderTour === 'function') renderTour(); } catch (_) {}
       try { if (typeof renderScenarioGallery === 'function') renderScenarioGallery(); } catch (_) {}
+      try { if (typeof updateGuidedUI === 'function') updateGuidedUI(); } catch (_) {}
     }));
   let initialLang = 'en';
   try { initialLang = new URLSearchParams(location.search).get('lang') || localStorage.getItem('ai-playgrounds-lang') || localStorage.getItem('lang') || 'en'; } catch (_) {}
@@ -1235,6 +1281,54 @@
   let points = [];
   let addClass = 'A';
   let hover = null;
+  const guided = {
+    active: false, locked: false, revealed: false, query: null,
+    predictedNeighbors: new Set(), predictedClass: null, actual: null,
+  };
+  function guidedLang() { return (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en'; }
+  function guidedText(en, zh) { return guidedLang() === 'zh' ? zh : en; }
+  function guidedNeed() { return Math.min(+$('k').value, points.length); }
+  function updateGuidedUI() {
+    const status = $('guidedStatus'), lock = $('guidedLock'), reveal = $('guidedReveal'), result = $('guidedResult');
+    if (!status) return;
+    document.querySelectorAll('[data-guided-class]').forEach(b => b.setAttribute('aria-pressed', String(guided.predictedClass === b.dataset.guidedClass)));
+    if (!guided.active) {
+      status.textContent = guidedText('Challenge inactive.', '挑战未启动。');
+    } else if (!guided.query) {
+      status.textContent = guidedText('Step 1: click the canvas to place the query point.', '第 1 步：点击画布放置查询点。');
+    } else if (!guided.locked) {
+      status.textContent = guidedText(
+        `Step 2: select ${guidedNeed()} predicted neighbors (${guided.predictedNeighbors.size}/${guidedNeed()}) and choose class A or B.`,
+        `第 2 步：选择 ${guidedNeed()} 个预测邻居（${guided.predictedNeighbors.size}/${guidedNeed()}），并选择 A 类或 B 类。`);
+    } else if (!guided.revealed) {
+      status.textContent = guidedText('Prediction locked. Reveal when ready.', '预测已锁定。准备好后揭示。');
+    } else {
+      status.textContent = guidedText('Actual mechanism revealed.', '已揭示实际机制。');
+    }
+    lock.disabled = !(guided.active && guided.query && !guided.locked && guided.predictedClass && guided.predictedNeighbors.size === guidedNeed());
+    reveal.disabled = !(guided.active && guided.locked && !guided.revealed);
+    result.hidden = !guided.revealed;
+  }
+  function resetGuided() {
+    guided.active = false; guided.locked = false; guided.revealed = false; guided.query = null;
+    guided.predictedNeighbors.clear(); guided.predictedClass = null; guided.actual = null;
+    if ($('guidedResult')) $('guidedResult').textContent = '';
+    updateGuidedUI(); render();
+  }
+  function startGuided() {
+    guided.active = true; guided.locked = false; guided.revealed = false; guided.query = null;
+    guided.predictedNeighbors.clear(); guided.predictedClass = null; guided.actual = null;
+    if ($('knnGuided')) $('knnGuided').open = true;
+    if ($('guidedResult')) $('guidedResult').textContent = '';
+    updateGuidedUI(); render();
+  }
+  function handleGuidedNeighbor(idx) {
+    if (!guided.active || !guided.query || guided.locked) return;
+    if (guided.predictedNeighbors.has(idx)) guided.predictedNeighbors.delete(idx);
+    else if (guided.predictedNeighbors.size < guidedNeed()) guided.predictedNeighbors.add(idx);
+    updateGuidedUI(); render();
+  }
+
 
   document.querySelectorAll('.mode-tabs button').forEach(b => {
     b.addEventListener('click', () => {
@@ -1245,6 +1339,14 @@
   });
   cv.addEventListener('click', e => {
     const {x, y} = canvasCoords(e);
+    if (guided.active) {
+      if (guided.locked) return;
+      guided.query = {x, y};
+      guided.predictedNeighbors.clear();
+      guided.revealed = false; guided.actual = null;
+      updateGuidedUI(); render();
+      return;
+    }
     points.push({x, y, c: addClass});
     render();
   });
@@ -1286,7 +1388,7 @@
   function distSq(a, b) { return distMetric(a, b); }
   function knnPredict(p, k) {
     if (!points.length) return null;
-    const sorted = points.map(q => ({...q, d: distSq(p, q)}))
+    const sorted = points.map((q, idx) => ({...q, _idx: idx, d: distSq(p, q)}))
                           .sort((a, b) => a.d - b.d)
                           .slice(0, Math.min(k, points.length));
     // distance-weighted voting. Uses distActual() (proper metric, not squared)
@@ -1343,6 +1445,27 @@
       const color = p.c === 'A' ? getCSS('--classA') : getCSS('--classB');
       drawClassPoint(ctx, p.x, p.y, p.c, color, 'white');
     }
+    if (guided.active && guided.query) {
+      const actualIds = new Set(guided.revealed && guided.actual ? guided.actual.neighbors.map(n => n._idx) : []);
+      points.forEach((p, idx) => {
+        if (!guided.predictedNeighbors.has(idx) && !actualIds.has(idx)) return;
+        ctx.save();
+        ctx.beginPath(); ctx.arc(p.x, p.y, 11, 0, Math.PI * 2);
+        ctx.lineWidth = actualIds.has(idx) ? 4 : 3;
+        ctx.strokeStyle = actualIds.has(idx) ? '#16a34a' : '#7c3aed';
+        if (guided.predictedNeighbors.has(idx) && !actualIds.has(idx)) ctx.setLineDash([4, 3]);
+        ctx.stroke(); ctx.restore();
+      });
+      ctx.save();
+      ctx.beginPath(); ctx.arc(guided.query.x, guided.query.y, 9, 0, Math.PI * 2);
+      ctx.strokeStyle = guided.revealed && guided.actual
+        ? (guided.actual.label === 'A' ? getCSS('--classA') : getCSS('--classB'))
+        : '#111827';
+      ctx.lineWidth = 3; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(guided.query.x - 12, guided.query.y); ctx.lineTo(guided.query.x + 12, guided.query.y);
+      ctx.moveTo(guided.query.x, guided.query.y - 12); ctx.lineTo(guided.query.x, guided.query.y + 12); ctx.stroke();
+      ctx.restore();
+    }
     // D3/SVG hybrid: rebuild a11y overlay (one tabbable hit-target per training point).
     updateOverlay();
   }
@@ -1368,8 +1491,13 @@
         el.style.transition = 'cx 150ms ease, cy 150ms ease';
         const t = document.createElementNS(NS, 'title');
         el.appendChild(t);
+        el.addEventListener('click', ev => { ev.stopPropagation(); handleGuidedNeighbor(+el.dataset.pointIndex); });
+        el.addEventListener('keydown', ev => {
+          if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); handleGuidedNeighbor(+el.dataset.pointIndex); }
+        });
         svg.appendChild(el);
       }
+      el.dataset.pointIndex = String(idx);
       el.setAttribute('cx', p.x); el.setAttribute('cy', p.y);
       el.setAttribute('aria-label',
         `Training point ${idx + 1}: class ${p.c} at coordinates ${Math.round(p.x)}, ${Math.round(p.y)}.`);
@@ -1435,6 +1563,37 @@
   $('showBoundary').addEventListener('change', render);
   $('showNeighbors').addEventListener('change', render);
 
+  $('guidedStart').addEventListener('click', startGuided);
+  $('guidedReset').addEventListener('click', resetGuided);
+  document.querySelectorAll('[data-guided-class]').forEach(b => b.addEventListener('click', () => {
+    if (!guided.active || guided.locked) return;
+    guided.predictedClass = b.dataset.guidedClass;
+    updateGuidedUI();
+  }));
+  $('guidedLock').addEventListener('click', () => {
+    if ($('guidedLock').disabled) return;
+    guided.locked = true; updateGuidedUI(); render();
+  });
+  $('guidedReveal').addEventListener('click', () => {
+    if ($('guidedReveal').disabled) return;
+    guided.actual = knnPredict(guided.query, +$('k').value);
+    guided.revealed = true;
+    const actualIds = new Set(guided.actual.neighbors.map(n => n._idx));
+    const overlap = [...guided.predictedNeighbors].filter(i => actualIds.has(i)).length;
+    const classMatch = guided.predictedClass === guided.actual.label;
+    $('guidedResult').textContent = guidedText(
+      `You identified ${overlap}/${guidedNeed()} actual neighbors. Predicted class ${guided.predictedClass}; actual class ${guided.actual.label}${classMatch ? ' (matched)' : ' (did not match)'}. Compare which point rankings changed under the current closeness rule and scaling.`,
+      `你选中了 ${overlap}/${guidedNeed()} 个实际邻居。预测类别为 ${guided.predictedClass}，实际类别为 ${guided.actual.label}${classMatch ? '（一致）' : '（不一致）'}。比较在当前接近规则和缩放下，哪些点的距离排序与你预期不同。`);
+    updateGuidedUI(); render();
+  });
+  ['k', 'metricSel', 'weightSel', 'xScale'].forEach(id => $(id).addEventListener('change', () => {
+    if (guided.active) resetGuided();
+  }));
+  ['loadBlobs', 'loadMoons', 'loadSpiral', 'loadNoise', 'clearBtn'].forEach(id => $(id).addEventListener('click', () => {
+    if (guided.active) resetGuided();
+  }));
+  updateGuidedUI();
+
   // hard reset to defaults.
   $('hardReset').addEventListener('click', () => {
     document.querySelectorAll('.mode-tabs button').forEach(x =>
@@ -1444,7 +1603,8 @@
     $('weightSel').value = 'uniform';
     $('xScale').value = 1; $('xScaleV').textContent = '1.0×';
     $('showBoundary').checked = true; $('showNeighbors').checked = true;
-    genMoons(); render();
+    guided.active = false; guided.locked = false; guided.revealed = false; guided.query = null; guided.predictedNeighbors.clear(); guided.predictedClass = null; guided.actual = null;
+    genMoons(); updateGuidedUI(); render();
   });
 
   // touch support: synthesize mouse events from touch events for tablet use.
@@ -1534,7 +1694,7 @@
       description: 'Two-moons dataset. k=1 perfectly fits training points but the boundary is jagged. k=25 over-smooths and misclassifies the moon tips. The middle of the k-range is the bias-variance sweet spot.',
       apply: () => { $('k').value = 1; $('kV').textContent = 1; $('metricSel').value = 'euclidean'; currentDataset = 'moons'; genMoons(); render(); } },
     { name: 'Distance metric matters',
-      description: 'Same moons dataset. Switch the metric from Euclidean (round) to Manhattan (diamond) to Chebyshev (square). Each produces a visibly distinct boundary shape: the "neighborhood" definition changes everything.',
+      description: 'Same moons dataset. Switch among Euclidean, Manhattan, and Chebyshev. Their circle, diamond, and square equal-distance contours change which samples rank as nearest, which can alter the class boundary without making the boundary itself a circle, diamond, or square.',
       apply: () => { $('k').value = 5; $('kV').textContent = 5; $('metricSel').value = 'manhattan'; currentDataset = 'moons'; genMoons(); render(); } },
     { name: 'Why standardize? (axis scale)',
       description: 'Spiral dataset. Drag the X-axis scale slider up to 3×: watch the boundary tilt. KNN is sensitive to which feature has the larger magnitude. Real ML pipelines normalize features first (z-score or min-max).',
@@ -1635,8 +1795,8 @@
       ok:  ['ws2ok', "Right. Higher k = more votes averaged = smoother boundary. This is bias-variance: lower variance, but higher bias if k is too large."],
       no:  ['ws2no', "Try 'smoother'. Averaging 25 neighbors washes out individual noise; k=1's wiggle disappears."] },
     { correct: 1,
-      ok:  ['ws3ok', "Yes. Manhattan distance contours are diamonds (rotated squares), so equidistant lines run at 45°: boundaries look 'stepped' / axis-aligned compared to Euclidean's circles."],
-      no:  ['ws3no', "Hint: Manhattan = |Δx| + |Δy|. The unit ball is a diamond, so boundaries are straight, axis-aligned segments: not curves or circles."] },
+      ok:  ['ws3ok', "Correct. Manhattan equal-distance contours are diamonds whose sides are diagonal to the coordinate axes. Those contours change neighbor rankings, but the resulting KNN class boundary is not generally identical to one diamond."],
+      no:  ['ws3no', "Hint: Manhattan = |Δx| + |Δy|. Its unit ball is a diamond, but do not confuse a metric ball with the classifier's full decision boundary."] },
   ];
   WORKSHEET.forEach((q, i) => {
     const n = i + 1;
@@ -2092,7 +2252,7 @@
 </script>
 <script id="learner-content-system">
 (() => {
-  const profile = {"slug":"knn-classifier","en":{"title":"K-Nearest Neighbors","big":"Classify a new point by asking nearby labeled points to vote. Change k, distance, and vote weighting to see how the decision boundary responds.","primer":"K-nearest neighbors stores examples instead of learning an equation. Its behavior depends on which points count as nearby and how their votes are combined.","terms":[{"term":"K-nearest neighbors (KNN)","definition":"A classifier that uses the labels of the k closest training points."},{"term":"Query point","definition":"The new point whose class the algorithm must predict."},{"term":"Distance metric","definition":"The rule used to measure how far apart two points are."},{"term":"Uniform voting","definition":"Every selected neighbor receives one equal vote."},{"term":"Distance weighting","definition":"Closer neighbors receive more influence than farther neighbors."},{"term":"Standardization","definition":"Rescale features so one large numerical scale does not dominate distance."},{"term":"k","definition":"The number of nearby labeled examples allowed to vote."},{"term":"Decision boundary","definition":"The region where the predicted class changes from one label to another."}],"scenarios":[{"title":"Two separated groups with k equal to five","question":"What does voting look like when the classes are clearly separated?","run":"Use the two-blob data, set k to five, and move the query point across the gap.","predict":"Predict where the vote will switch from one class to the other.","explain":"Use the highlighted neighbors to explain the nearly straight boundary."},{"title":"Small and large k make different errors","question":"Why can both one neighbor and twenty-five neighbors be poor choices?","run":"Use the two-moons data and compare k equal to one with k equal to twenty-five.","predict":"Predict which setting will create a jagged boundary and which will smooth away useful structure.","explain":"Explain the tradeoff between sensitivity to noise and excessive smoothing."},{"title":"The distance rule changes the neighborhood","question":"How can the same points count as near under one metric and far under another?","run":"Keep the moon data fixed and switch among Euclidean, Manhattan, and Chebyshev distance.","predict":"Predict how the neighborhood shape will change for each rule.","explain":"Connect circular, diamond, and square neighborhoods to the changing boundary."},{"title":"Feature scale can distort distance","question":"Why can a larger numerical scale make one feature dominate the vote?","run":"Use the spiral data and increase the horizontal-axis scale without moving the points.","predict":"Predict which direction the boundary will stretch or tilt.","explain":"Explain why standardization is needed before comparing distances across features."},{"title":"Distance weighting changes a noisy vote","question":"When should a close neighbor count more than a distant neighbor?","run":"Use the noisy-overlap data with k equal to nine and compare uniform voting with distance weighting.","predict":"Predict where the class boundary will move near isolated points.","explain":"Explain how weighting reduces the influence of distant neighbors without removing them."}]},"zh":{"title":"K 最近邻","big":"让附近已有标签的点投票，为新点分类。改变 k、距离和投票权重，观察决策边界如何响应。","primer":"K 最近邻保存示例，而不是学习一个方程。它的行为取决于哪些点算“附近”，以及如何合并它们的投票。","terms":[{"term":"K 最近邻（KNN）","definition":"使用距离最近的 k 个训练点标签进行分类的算法。"},{"term":"查询点","definition":"算法需要预测类别的新点。"},{"term":"距离度量","definition":"衡量两个点相距多远的规则。"},{"term":"等权投票","definition":"每个被选邻居获得相同的一票。"},{"term":"距离加权","definition":"较近邻居比较远邻居拥有更大影响。"},{"term":"标准化","definition":"重新缩放特征，避免数值范围较大的特征主导距离。"},{"term":"k","definition":"参与投票的最近已标注样本数量。"},{"term":"决策边界","definition":"预测类别从一个标签变化到另一个标签的区域。"}],"scenarios":[{"title":"两个分离群组与 k=5","question":"类别清楚分开时，投票会怎样？","run":"使用两个点群数据，把 k 设为 5，并让查询点穿过间隙。","predict":"预测投票会在哪里从一个类别切换到另一个类别。","explain":"用高亮邻居解释近似直线的边界。"},{"title":"较小和较大的 k 会犯不同错误","question":"为什么一个邻居和二十五个邻居都可能是差选择？","run":"使用双月数据，比较 k=1 与 k=25。","predict":"预测哪个设置产生锯齿边界，哪个会过度平滑有用结构。","explain":"解释对噪声过敏与过度平滑之间的取舍。"},{"title":"距离规则改变邻域","question":"为什么同一批点在一种度量下近，在另一种度量下远？","run":"保持月形数据不变，在欧氏、曼哈顿和切比雪夫距离之间切换。","predict":"预测每种规则下邻域形状如何变化。","explain":"把圆形、菱形和方形邻域与边界变化联系起来。"},{"title":"特征尺度会扭曲距离","question":"为什么较大的数值范围会让一个特征主导投票？","run":"使用螺旋数据，在不移动点的情况下增大横轴尺度。","predict":"预测边界会向哪个方向拉伸或倾斜。","explain":"解释比较不同特征距离前为什么需要标准化。"},{"title":"距离加权改变有噪声投票","question":"什么时候近邻应该比远邻更重要？","run":"使用有噪声重叠数据，把 k 设为 9，比较等权投票与距离加权。","predict":"预测孤立点附近的类别边界会移动到哪里。","explain":"解释加权如何减少远邻影响而不完全删除它们。"}]}};
+  const profile = {"slug":"knn-classifier","en":{"title":"K-Nearest Neighbors","big":"Classify a query by defining which labeled points count as nearest, then letting those selected neighbors vote. Change k, the closeness rule, feature scaling, and the voting rule to see how the result changes.","primer":"K-nearest neighbors stores examples instead of learning an equation. Its behavior depends on which points count as nearby and how their votes are combined.","terms":[{"term":"K-nearest neighbors (KNN)","definition":"A classifier that uses the labels of the k closest training points."},{"term":"Query point","definition":"The new point whose class the algorithm must predict."},{"term":"Distance metric","definition":"The rule used to measure how far apart two points are."},{"term":"Uniform voting","definition":"Every selected neighbor receives one equal vote."},{"term":"Distance weighting","definition":"Closer neighbors receive more influence than farther neighbors."},{"term":"Standardization","definition":"Rescale features so one large numerical scale does not dominate distance."},{"term":"k","definition":"The number of nearby labeled examples allowed to vote."},{"term":"Decision boundary","definition":"The region where the predicted class changes from one label to another."}],"scenarios":[{"title":"Two separated groups with k equal to five","question":"What does voting look like when the classes are clearly separated?","run":"Use the two-blob data, set k to five, and move the query point across the gap.","predict":"Predict where the vote will switch from one class to the other.","explain":"Use the highlighted neighbors to explain the nearly straight boundary."},{"title":"Small and large k make different errors","question":"Why can both one neighbor and twenty-five neighbors be poor choices?","run":"Use the two-moons data and compare k equal to one with k equal to twenty-five.","predict":"Predict which setting will create a jagged boundary and which will smooth away useful structure.","explain":"Explain the tradeoff between sensitivity to noise and excessive smoothing."},{"title":"The distance rule changes the neighborhood","question":"How can the same points count as near under one metric and far under another?","run":"Keep the moon data fixed and switch among Euclidean, Manhattan, and Chebyshev distance.","predict":"Predict how the neighborhood shape will change for each rule.","explain":"Explain how circle, diamond, and square equal-distance contours can change the selected neighbors without becoming the class boundary themselves."},{"title":"Feature scale can distort distance","question":"Why can a larger numerical scale make one feature dominate the vote?","run":"Use the spiral data and increase the horizontal-axis scale without moving the points.","predict":"Predict which direction the boundary will stretch or tilt.","explain":"Explain why standardization is needed before comparing distances across features."},{"title":"Distance weighting changes a noisy vote","question":"When should a close neighbor count more than a distant neighbor?","run":"Use the noisy-overlap data with k equal to nine and compare uniform voting with distance weighting.","predict":"Predict where the class boundary will move near isolated points.","explain":"Explain how weighting reduces the influence of distant neighbors without removing them."}]},"zh":{"title":"K 最近邻","big":"先用距离规则和特征缩放定义哪些已标注点算最近，再让选中的邻居投票。改变 k、接近规则、缩放和投票规则，观察结果如何变化。","primer":"K 最近邻保存示例，而不是学习一个方程。它的行为取决于哪些点算“附近”，以及如何合并它们的投票。","terms":[{"term":"K 最近邻（KNN）","definition":"使用距离最近的 k 个训练点标签进行分类的算法。"},{"term":"查询点","definition":"算法需要预测类别的新点。"},{"term":"距离度量","definition":"衡量两个点相距多远的规则。"},{"term":"等权投票","definition":"每个被选邻居获得相同的一票。"},{"term":"距离加权","definition":"较近邻居比较远邻居拥有更大影响。"},{"term":"标准化","definition":"重新缩放特征，避免数值范围较大的特征主导距离。"},{"term":"k","definition":"参与投票的最近已标注样本数量。"},{"term":"决策边界","definition":"预测类别从一个标签变化到另一个标签的区域。"}],"scenarios":[{"title":"两个分离群组与 k=5","question":"类别清楚分开时，投票会怎样？","run":"使用两个点群数据，把 k 设为 5，并让查询点穿过间隙。","predict":"预测投票会在哪里从一个类别切换到另一个类别。","explain":"用高亮邻居解释近似直线的边界。"},{"title":"较小和较大的 k 会犯不同错误","question":"为什么一个邻居和二十五个邻居都可能是差选择？","run":"使用双月数据，比较 k=1 与 k=25。","predict":"预测哪个设置产生锯齿边界，哪个会过度平滑有用结构。","explain":"解释对噪声过敏与过度平滑之间的取舍。"},{"title":"距离规则改变邻域","question":"为什么同一批点在一种度量下近，在另一种度量下远？","run":"保持月形数据不变，在欧氏、曼哈顿和切比雪夫距离之间切换。","predict":"预测每种规则下邻域形状如何变化。","explain":"解释圆形、菱形和方形等距轮廓如何改变被选中的邻居，同时不要把轮廓本身当成分类边界。"},{"title":"特征尺度会扭曲距离","question":"为什么较大的数值范围会让一个特征主导投票？","run":"使用螺旋数据，在不移动点的情况下增大横轴尺度。","predict":"预测边界会向哪个方向拉伸或倾斜。","explain":"解释比较不同特征距离前为什么需要标准化。"},{"title":"距离加权改变有噪声投票","question":"什么时候近邻应该比远邻更重要？","run":"使用有噪声重叠数据，把 k 设为 9，比较等权投票与距离加权。","predict":"预测孤立点附近的类别边界会移动到哪里。","explain":"解释加权如何减少远邻影响而不完全删除它们。"}]}};
   window.APPLET_LEARNER_PROFILE = profile;
   const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
   const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;

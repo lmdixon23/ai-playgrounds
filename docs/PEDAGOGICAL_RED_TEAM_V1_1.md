@@ -1,169 +1,164 @@
-# AI Playgrounds v1.1 Pedagogical Red Team
+# AI Playgrounds v1.1 Pedagogical Red-Team Inventory
 
-Status: implementation inventory for the v1.1 development line
+## Purpose
 
-Base audited commit: `19d9a22aef9f537c01866964afbf8d1755c8a3c0`
+This record distinguishes software correctness from instructional correctness. The existing deterministic and browser tests establish bounded software behavior. They do not establish that a learner will form the intended concept from the interface.
 
-## Evidence boundary
+The red-team question used here is:
 
-The existing release checks establish bounded software behavior and deployment integrity. They do not establish that the learner-facing wording, visual encoding, or interaction sequence produces the intended mental model. This audit therefore treats conceptual precision and epistemic sequencing as separate release obligations.
+> What false mental model could a reasonable learner construct from the wording, visualization, control sequence, or feedback?
 
-The immediate trigger was external educator feedback on the KNN playground. The reviewer observed that a learner could manipulate `k`, see the result, and construct a convincing explanation afterward without having predicted the mechanism. The reviewer also noted that learners may read nearest as visually closest even though the selected neighbors depend on the distance metric and feature representation.
+The inventory began with external educator feedback on the K-nearest-neighbors applet. That feedback identified a suite-wide problem: a written prediction prompt does not prevent a learner from seeing the result first and producing a plausible explanation afterward.
 
-## Shared suite-level finding
+## Release boundary
 
-All twelve playgrounds use a predict, run, explain sequence in their scenarios and student response packet. In the current release, prediction is normally an instruction or text field rather than an enforced software state. A learner can therefore reveal the outcome before committing a prediction.
+- v1.0.1 remains immutable.
+- This work belongs to v1.1 development.
+- Paper 7 is not changed by this patch.
+- English and existing Chinese wording are corrected together where the same conceptual defect appears.
+- Vietnamese and Spanish localization is deferred until the corrected source concepts are stable.
 
-The v1.1 line separates two modes:
+## Severity classes
 
-1. Explore mode preserves immediate manipulation.
-2. Guided Challenge mode will require a committed, mechanism-specific prediction before reveal.
+- P0: mathematically false, epistemically misleading, or internally contradictory.
+- P1: technically imprecise wording likely to create a wrong novice model.
+- P2: useful refinement that improves explanation but does not change the core claim.
 
-Guided Challenge is a later implementation stage. This first hardening stage corrects mathematical claims, terminology, and contradictory short-form explanations before those strings are translated or embedded into a new interaction system.
-
-## Severity scale
-
-- P0: mathematically false, epistemically unsupported, or directly contradictory to another maintained explanation.
-- P1: materially misleading simplification or terminology likely to create an incorrect learner model.
-- P2: useful clarification that does not currently overturn the central lesson.
-
-## Findings and required corrections
+## Findings and R1 resolution
 
 ### K-nearest neighbors
 
-Severity: P0 and P1
+Risk: nearest may be interpreted as visually closest. Distance metric and distance weighting may be conflated. Metric-ball shapes may be confused with the classifier decision boundary. Cross-validation may be treated as producing the uniquely correct k.
 
-- Nearest is not intrinsic. It depends on the representation, feature scaling, and selected distance metric.
-- Equal-distance contours are not the same object as a KNN class decision boundary.
-- The Manhattan worksheet currently mixes diamond contours with axis-aligned class-boundary language.
-- Distance metric and distance weighting are different operations: the metric selects neighbors; weighting changes the votes after selection.
-- Guided Challenge must ask learners to predict selected neighbors before predicting the class.
+R1:
+
+- renames the control concepts to closeness rule and voting rule;
+- states that the closeness rule and scaling determine which points count as nearest;
+- distinguishes equal-distance contours from the full class decision boundary;
+- corrects Manhattan geometry wording;
+- weakens cross-validation from a universal selector to evidence for a sample and fold scheme;
+- adds a guided prediction-before-reveal challenge that asks for the query point, predicted neighbor set, and predicted class before showing the actual mechanism.
 
 ### Search and pathfinding
 
-Severity: P1
+Risk: reaching the goal first in one animation may be interpreted as generally faster. BFS edge-count optimality may be confused with weighted least-cost optimality.
 
-- Reaching a goal after fewer expansions on one neighbor ordering is not the same claim as being faster in general.
-- BFS shortest-path guarantees require unweighted or uniform-cost edges when path quality is measured by edge count.
-- A heuristic can reduce work on a particular instance; the wording must not guarantee fewer expansions in every visualization.
+R1:
+
+- uses expansion counts for fixed-instance comparisons;
+- states that one trace is not a general runtime ranking;
+- defines BFS layers by number of edges from the start;
+- qualifies weighted A-star behavior as a possible focus gain with lost optimality guarantee.
 
 ### Hill climbing and simulated annealing
 
-Severity: P0
+Risk: steepest-ascent is confusing in a cost-minimization display. Random restart may be read as guaranteeing a global optimum after enough finite attempts.
 
-- A cost-minimizing implementation should not be presented as steepest ascent without defining a negated fitness objective.
-- Finite random restarts do not certify a global optimum.
-- Tabu memory is not the only mechanism that permits movement away from a local optimum; accepting a best available worsening move also matters.
-- Stochastic hill climbing introduces randomized choice; it does not simply avoid ties.
+R1:
+
+- uses best-improvement for the cost-minimization rule;
+- explains the naming choice;
+- states that more restarts sample more basins but a finite run can still miss the global optimum;
+- changes deterministic claims about different starts to possibility claims.
 
 ### Wumpus World
 
-Severity: P0
+Risk: expected-value rankings are asserted without a distribution over worlds and utility model. The teacher view may imply that the simplified inference engine derives everything a complete agent should know. A probabilistic estimate may appear assumption-free.
 
-- Comparative expected-value claims require a specified world distribution, prior, utility model, and action policy.
-- A wider score distribution does not establish higher expected value.
-- The applet is AIMA-inspired and simplified; it should not imply exact textbook identity where behavior differs.
-- Teacher view compares ground truth with conclusions produced by this inference engine, not everything a logically complete agent should know.
+R1:
+
+- renames the hybrid strategy as AIMA-inspired;
+- removes the unrelated Sutton attribution;
+- removes unsupported expected-value ranking;
+- states the explicit per-cell prior used by the frontier calculation;
+- distinguishes hidden ground truth from conclusions produced by this simplified inference system.
 
 ### CNF and SAT
 
-Severity: P0 and P1
+Risk: XOR itself may be learned as contradictory. Direct distribution may be mistaken for the only practical conversion route. Exhaustive enumeration and DPLL may be conflated.
 
-- XOR is not inherently contradictory. The maintained example is unsatisfiable because a particular collection of XOR-style and truth constraints conflicts.
-- The applet should keep exhaustive model enumeration distinct from DPLL branch pruning.
-- Direct equivalent CNF expansion and compact equisatisfiable encodings must remain conceptually distinct.
+R1:
+
+- names the example as conflicting XOR constraints;
+- labels exhaustive enumeration as a reference check and DPLL as a separate pruning trace;
+- explains logically equivalent direct rewrites versus compact equisatisfiable encodings with auxiliary variables.
 
 ### Bayes rule
 
-Severity: P0
+Risk: 99 percent sensitivity and specificity are collapsed into 99 percent accuracy. A repeated-test example is generalized into a medical-practice claim and hides the conditional-independence assumption.
 
-- Sensitivity and specificity must not be collapsed into the word accuracy in the central base-rate example.
-- A chained second test can be treated as new evidence only under an explicit conditional-independence assumption.
-- The classroom example must not generalize the idealized repeated-test calculation into a blanket claim about medical retesting.
+R1:
+
+- names sensitivity and specificity directly;
+- makes conditional independence explicit for repeated updates;
+- states that repeated tests can share systematic errors;
+- removes generalized claims about why doctors retest.
 
 ### Bayesian networks
 
-Severity: P0 and P1
+Risk: sibling reports may be called independent without naming the conditioning variable. Code comments conflate active-trail rules on a DAG with moralization.
 
-- JohnCalls and MaryCalls are not simply independent. In the standard alarm network they are conditionally independent given Alarm.
-- Conditional independence must always name or represent the conditioning set.
-- The implementation comment must not conflate active-trail or Bayes-ball traversal on a DAG with moralization.
+R1:
+
+- states that the two reports are conditionally independent given the alarm;
+- defines conditional independence relative to a conditioning set;
+- corrects the implementation comment to active-trail, Bayes-ball-style rules on the DAG.
 
 ### Overfitting
 
-Severity: P0 and P1
+Risk: repeatedly inspected comparison data are called a held-out test set even while used to choose degree and regularization. The interface directly claims that zero noise makes overfitting impossible and that more data fixes it.
 
-- A repeatedly inspected holdout used to select degree or regularization functions as validation data, not as a final untouched test set.
-- The applet must reserve test-set terminology for a final evaluation after choices are fixed.
-- Fixed statements about a useful degree, regularization effect, or additional data are properties of the current generated setting rather than universal laws.
+R1:
+
+- calls the repeatedly viewed set validation data;
+- retains the separate need for a final untouched test set;
+- removes the false zero-noise claim;
+- qualifies more-data and degree-five outcomes as setting-dependent rather than universal.
 
 ### Neural networks
 
-Severity: P1
+Risk: layers with biases are described as linear maps rather than affine maps. XOR is described as requiring a nonlinear model without restricting the claim to the original features. Capacity and successful optimization may be conflated.
 
-- With biases, stacked linear-activation layers compose to one affine transformation, not one linear map.
-- XOR requires a nonlinear representation in the original feature space; engineered nonlinear features can also make it linearly separable.
-- The applet uses full-batch gradients. The optimizer label and primer must not teach that the data path is stochastic gradient descent.
-- Representational capacity and optimization success must remain separate claims.
+R1:
+
+- uses affine map when biases are included;
+- scopes XOR nonseparability to the original x-y representation;
+- notes that engineered nonlinear features can also change separability;
+- separates representational capacity from whether optimization finds suitable parameters.
 
 ### K-means
 
-Severity: P0
+Risk: the nuanced essay says there is no universally correct k, but short-form UI says the highest silhouette identifies the true or right k. A centroid is described as Gaussian-shaped.
 
-- Silhouette is diagnostic evidence, not a proof of a true or correct `k`.
-- Synthetic Gaussian components are generating groups, not an ontologically unique clustering.
-- K-means uses point centroids and squared Euclidean distance; centroid is not synonymous with Gaussian-shaped cluster.
-- K-means++ improves initialization probabilities but does not guarantee the final optimum.
+R1:
+
+- treats silhouette as one piece of evidence;
+- describes k=3 as matching three generating groups in one synthetic sample;
+- removes true-k and right-k language;
+- states that a centroid is a point and that Euclidean Voronoi partitions cannot preserve a curved arc as one cluster.
 
 ### Convolution
 
-Severity: P1
+Risk: CNN-style cross-correlation is introduced as mathematical convolution without early qualification. Max pooling may be read as maximum magnitude. A larger receptive field may be equated with detecting a larger object.
 
-- The implemented CNN-style operation is cross-correlation because the kernel is not flipped.
-- Max pooling retains the numerically largest activation, not the largest magnitude unless the preceding representation makes those equivalent.
-- A larger theoretical receptive field means one output can depend on a larger input region; it does not alone establish detection of a larger object or pattern.
-- The output is one feature-map response, not everything the CNN sees.
+R1:
+
+- states that the unflipped operation is mathematically cross-correlation;
+- defines max pooling as retaining the numerically largest value;
+- distinguishes receptive-field dependence from feature detection;
+- replaces the phrase What the CNN sees with one feature-map response.
 
 ### Q-learning
 
-Severity: P0
+Risk: the app claims that zero step reward removes time pressure while gamma remains below one. This is mathematically false because later terminal reward is discounted more strongly. The gamma-zero explanation is also too narrow when immediate nonterminal rewards exist.
 
-- With `gamma < 1`, a delayed terminal reward is discounted even when the ordinary step reward is zero. Zero step penalty therefore does not remove all time preference.
-- With `gamma = 0`, updates retain immediate rewards. Ordinary step penalties can affect many state-action pairs, not only actions next to terminal states.
-- With deterministic tie-breaking and zero-initialized values, `epsilon = 0` can leave actions untried; the wording should not present a universal theorem about all exploration mechanisms.
+R1:
 
-## R1 implementation scope
+- allows gamma equal to one for the bounded episodic comparison;
+- states that step costs and discounting are separate sources of time preference;
+- rewrites the scenario to compare gamma 0.9 and gamma 1;
+- states that gamma zero blocks delayed value propagation while direct transition rewards can still change Q-values.
 
-This hardening stage:
+## R1 limits
 
-1. Corrects the P0 and P1 learner-facing claims above in English and Simplified Chinese.
-2. Aligns short-form scenario, worksheet, tour, tooltip, and profile language with the more careful long-form explanations.
-3. Adds a deterministic pedagogical-claim checker so known prohibited formulations cannot silently return.
-4. Records the Guided Challenge prediction targets for the next stage.
-5. Does not alter the immutable v1.0.1 tag or archived release.
-6. Does not yet add Vietnamese or Spanish. Localization begins only after the English and Chinese conceptual source strings are frozen.
-
-## R2 Guided Challenge targets
-
-- Search: predict the next frontier expansion.
-- Hill climbing: predict the accepted neighboring state and acceptance reason.
-- Wumpus: classify squares as proven safe, proven dangerous, or unresolved.
-- SAT: predict unit propagation, branch survival, or contradiction.
-- Bayes: predict true-positive and false-positive counts before posterior reveal.
-- Bayesian network: predict update direction and active dependence paths.
-- Overfitting: predict training and validation error movement.
-- Neural network: predict representational or decision-boundary change.
-- KNN: predict selected neighbors, then predicted class.
-- K-means: predict assignments, then centroid movement.
-- Convolution: predict one output-cell value before revealing the sum.
-- Q-learning: predict action, TD target, and update direction.
-
-## R3 localization gate
-
-After R1 and R2 pass:
-
-- Replace the two-button language switch with a native select control.
-- Support `en`, `zh-Hans`, `vi`, and `es`.
-- Translate controls, scenarios, state descriptions, teacher guidance, student packets, errors, and dynamic messages.
-- Require terminology review by a Vietnamese ICT educator and a Spanish-language CS or AI educator.
-- Expand browser and state-transition QA across all four language states.
+R1 corrects the major semantics and implements one guided challenge in KNN. It does not yet implement mechanism-specific guided challenges in all twelve applets. That is the next architectural stage after the R1 corrections pass software, browser, and pedagogical-contract regression.

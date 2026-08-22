@@ -6,18 +6,18 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Overfitting Explorer | AI Playgrounds</title>
 <link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E" rel="icon"/>
-<meta content="Increase model complexity and compare performance on training data with performance on new test data. Find the point where a better fit becomes a worse model." name="description"/>
+<meta content="Increase model complexity and compare performance on training data with performance on repeatedly viewed validation data. Find the point where a better fit becomes a worse model." name="description"/>
 <link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/overfitting/" rel="canonical"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/overfitting/?lang=en" hreflang="en" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/overfitting/?lang=zh" hreflang="zh-Hans" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/overfitting/?lang=en" hreflang="x-default" rel="alternate"/>
 <meta content="website" property="og:type"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/overfitting/" property="og:url"/>
 <meta content="Overfitting Explorer | AI Playgrounds" property="og:title"/>
-<meta content="Increase model complexity and compare performance on training data with performance on new test data. Find the point where a better fit becomes a worse model." property="og:description"/>
+<meta content="Increase model complexity and compare performance on training data with performance on repeatedly viewed validation data. Find the point where a better fit becomes a worse model." property="og:description"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" property="og:image"/>
 <meta content="summary_large_image" name="twitter:card"/>
 <meta content="Overfitting Explorer | AI Playgrounds" name="twitter:title"/>
-<meta content="Increase model complexity and compare performance on training data with performance on new test data. Find the point where a better fit becomes a worse model." name="twitter:description"/>
+<meta content="Increase model complexity and compare performance on training data with performance on repeatedly viewed validation data. Find the point where a better fit becomes a worse model." name="twitter:description"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" name="twitter:image"/>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Overfitting Explorer | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/overfitting/","description":"Increase model complexity and compare performance on training data with performance on new test data. Find the point where a better fit becomes a worse model.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Overfitting Explorer | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/overfitting/","description":"Increase model complexity and compare performance on training data with performance on repeatedly viewed validation data. Find the point where a better fit becomes a worse model.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
 <style>
   :root {
     --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #047857;
@@ -517,7 +517,7 @@
 <div class="header-actions">
 <button class="header-png" id="shareLink" title="Copy a URL that re-opens this truth / degree / n / noise / λ in another browser.">🔗 Share</button>
 <button class="header-png" id="embedLink" title="Copy an &lt;iframe&gt; snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
-<button class="header-png" id="csvExport" title="Download train + test datasets and the per-degree MSE table as CSV.">📊 CSV</button>
+<button class="header-png" id="csvExport" title="Download training + validation datasets and the per-degree MSE table as CSV.">📊 CSV</button>
 <button class="header-png" id="exportPng" title="Download the fit canvas as a PNG.">📷 PNG</button>
 <button class="header-reset" data-i18n="reset-all" id="hardReset" title="Reset everything: sin truth, n=20 points, σ=0.2 noise, degree 3, λ=0.">↺ Reset all</button>
 </div>
@@ -525,7 +525,7 @@
 </header>
 <aside class="tldr">
 <strong data-i18n="tldr-strong">The big idea</strong>
-<span data-i18n="tldr-body">Slide degree from 1 → 20. Train error drops to zero. Test error explodes. That gap is overfitting, and the U-shape is the bias-variance trade-off.</span>
+<span data-i18n="tldr-body">Slide degree from 1 → 20. Train error drops to zero. Validation error can rise sharply. That gap is overfitting, and the U-shape is the bias-variance trade-off.</span>
 </aside>
 <section class="interactive" id="main" role="main" tabindex="-1">
 <div class="interactive-inner">
@@ -539,7 +539,7 @@
 <span class="val" id="degV">3</span>
 </div>
 <input aria-label="Polynomial degree" data-i18n-title="deg-slider-title" id="deg" max="20" min="1" title="Model capacity. Higher degree = more wiggle room = easier to overfit." type="range" value="3"/>
-<div class="help" data-i18n="deg-help">More wiggle room. Watch test error rise after the sweet spot.</div>
+<div class="help" data-i18n="deg-help">More wiggle room. Watch validation error change after the useful region in this generated sample.</div>
 </div>
 <div class="slider-field">
 <div class="row">
@@ -560,16 +560,16 @@
 <span class="lbl" data-i18n="n-label">Train points (n)</span>
 <span class="val" id="nV">20</span>
 </div>
-<input aria-label="Number of training samples" data-i18n-title="n-slider-title" id="n" max="100" min="5" title="Size of the training set. More data = harder to overfit." type="range" value="20"/>
-<div class="help" data-i18n="n-help">More data tames overfitting at the same degree.</div>
+<input aria-label="Number of training samples" data-i18n-title="n-slider-title" id="n" max="100" min="5" title="Size of the training set. More data often constrains a flexible fit, but does not guarantee generalization." type="range" value="20"/>
+<div class="help" data-i18n="n-help">More data can reduce variance at the same degree, but does not guarantee good generalization.</div>
 </div>
 <div class="slider-field">
 <div class="row">
 <span class="lbl" data-i18n="sig-label">Noise σ</span>
 <span class="val" id="sigV">0.20</span>
 </div>
-<input aria-label="Noise standard deviation (sigma)" data-i18n-title="sig-slider-title" id="sig" max="1" min="0" step="0.01" title="Std-dev of Gaussian noise added to each train point. σ=0 makes overfitting impossible." type="range" value="0.2"/>
-<div class="help" data-i18n="sig-help">Set σ=0 and overfitting can't happen. Why?</div>
+<input aria-label="Noise standard deviation (sigma)" data-i18n-title="sig-slider-title" id="sig" max="1" min="0" step="0.01" title="Standard deviation of Gaussian noise added to each training point. Setting σ=0 removes observation noise, but finite samples and model mismatch can still produce poor generalization." type="range" value="0.2"/>
+<div class="help" data-i18n="sig-help">Set σ=0. Does the train-validation gap disappear for every target and degree?</div>
 </div>
 </div>
 <div class="control-row">
@@ -582,9 +582,9 @@
 </select>
 <button class="step-btn" data-i18n="resample-btn" data-i18n-title="resample-title" id="resampleBtn" title="Re-draw new random noise around the true function.">↻ Resample noise</button>
 <!-- train/test/CV visibility toggles. -->
-<label data-i18n-title="show-test-title" style="margin-left:12px;" title="Show the held-out test points as open circles on the fit chart. Watch them stay near the truth while train points are perfectly fit on the high-degree polynomial.">
-<input id="showTest" type="checkbox"/> <span data-i18n="show-test">Show test points</span></label>
-<label data-i18n-title="show-cv-title" title="Add a k-fold cross-validation curve to the error chart. This is what's used in practice to pick the regularization sweet spot.">
+<label data-i18n-title="show-test-title" style="margin-left:12px;" title="Show the validation points as open circles on the fit chart. Watch them stay near the truth while train points are perfectly fit on the high-degree polynomial.">
+<input id="showTest" type="checkbox"/> <span data-i18n="show-test">Show validation points</span></label>
+<label data-i18n-title="show-cv-title" title="Add a k-fold cross-validation curve to the error chart. Cross-validation is one tool for comparing candidate settings. A final untouched test set is still needed after model selection.">
 <input id="showCv" type="checkbox"/> <span data-i18n="show-cv">Add 5-fold CV curve</span></label>
 </div>
 <div class="err-row">
@@ -593,7 +593,7 @@
 <div class="num" id="trainMse">-</div>
 </div>
 <div class="err-card test">
-<div class="lbl" data-i18n="test-mse">Test MSE (held out)</div>
+<div class="lbl" data-i18n="test-mse">Validation MSE (repeatedly viewed)</div>
 <div class="num" id="testMse">-</div>
 </div>
 </div>
@@ -613,12 +613,12 @@
 </div>
 <div class="canvas-card">
 <h3 data-i18n="err-h3">MSE vs degree (this λ, this dataset)</h3>
-<canvas aria-label="Train versus test MSE plotted against polynomial degree." height="280" id="errCv" role="img" style="width: 100%; max-width: 420px; height: auto; aspect-ratio: 420 / 280;" width="420"></canvas>
+<canvas aria-label="Training versus validation MSE plotted against polynomial degree." height="280" id="errCv" role="img" style="width: 100%; max-width: 420px; height: auto; aspect-ratio: 420 / 280;" width="420"></canvas>
 </div>
 </div>
 </div><!-- /.bento-cell charts -->
 <div class="bento-cell">
-<!-- Learning curves. Fix degree+λ, vary n; chart train/test MSE vs n.
+<!-- Learning curves. Fix degree+λ, vary n; chart train/validation MSE vs n.
            Diagnoses bias vs variance vs need-more-data. -->
 <details class="lc-panel" style="margin-top:0;">
 <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
@@ -626,7 +626,7 @@
 </summary>
 <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem;">
 <p data-i18n="lc-hint" style="margin:0 0 8px; color:var(--muted); font-size:0.82rem;">
-            Fixes the current degree, λ, regularizer, and noise; varies n from 5 → n_max. For each n, draws a fresh sample of n training points and computes train and test MSE. Plots both curves. Diagnostic: if train ≈ test and both high → underfitting (more capacity); if train low + test high (gap) → overfitting (more data or regularization); if both converging low → good.
+            Fixes the current degree, λ, regularizer, and noise; varies n from 5 → n_max. For each n, draws a fresh sample of n training points and computes train and validation MSE. Plots both curves. Diagnostic: if train ≈ test and both high → underfitting (more capacity); if train low + test high (gap) → overfitting (more data or regularization); if both converging low → good.
           </p>
 <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
 <label data-i18n="lc-nmax-label">n_max:</label>
@@ -656,7 +656,7 @@
 <div aria-live="polite" class="scenario-card-grid" id="scenarioGalleryCards">
 <article class="scenario-card" data-scenario-index="0">
 <h3>Scenario 1: A straight line underfits a curved pattern</h3>
-<p class="scenario-meta"><strong>Core question: </strong> How can both training and test error remain high?</p>
+<p class="scenario-meta"><strong>Core question: </strong> How can both training and validation error remain high?</p>
 <p class="scenario-meta"><strong>Run and watch: </strong> Fit a degree-one polynomial to the sine-shaped data and compare both errors.</p>
 <p class="scenario-meta"><strong>Predict first: </strong> Predict whether collecting more training time alone can make a straight line bend.</p>
 <p class="scenario-meta"><strong>Explain afterward: </strong> Explain why the model lacks the flexibility to represent the main pattern.</p>
@@ -665,7 +665,7 @@
 <article class="scenario-card" data-scenario-index="1">
 <h3>Scenario 2: A moderate-complexity model reaches the useful region</h3>
 <p class="scenario-meta"><strong>Core question: </strong> What does a good balance between fit and generalization look like?</p>
-<p class="scenario-meta"><strong>Run and watch: </strong> Use degree five and compare the distance between training and test error.</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Use degree five in this generated setting and compare the training and validation errors. Treat degree five as one observed candidate, not a universal sweet spot.</p>
 <p class="scenario-meta"><strong>Predict first: </strong> Predict whether the two errors should be identical or simply both low.</p>
 <p class="scenario-meta"><strong>Explain afterward: </strong> Explain why a small gap can remain even when the model generalizes well.</p>
 <button class="step-btn" type="button">Apply and compare</button>
@@ -681,16 +681,16 @@
 <article class="scenario-card" data-scenario-index="3">
 <h3>Scenario 4: Regularization restrains a flexible model</h3>
 <p class="scenario-meta"><strong>Core question: </strong> How can the same model class generalize better without reducing its degree?</p>
-<p class="scenario-meta"><strong>Run and watch: </strong> Keep degree twenty, increase regularization, and compare the curve and test error.</p>
-<p class="scenario-meta"><strong>Predict first: </strong> Predict whether the training error must rise slightly for the test error to fall.</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Keep degree twenty, increase regularization, and compare the curve and validation error.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict whether the training error must rise slightly for the validation error to fall.</p>
 <p class="scenario-meta"><strong>Explain afterward: </strong> Explain how shrinking extreme coefficients reduces unnecessary oscillation.</p>
 <button class="step-btn" type="button">Apply and compare</button>
 </article>
 <article class="scenario-card" data-scenario-index="4">
-<h3>Scenario 5: More data makes memorization harder</h3>
+<h3>Scenario 5: More data can constrain memorization</h3>
 <p class="scenario-meta"><strong>Core question: </strong> Why can a complex model behave better when it sees more examples?</p>
 <p class="scenario-meta"><strong>Run and watch: </strong> Keep degree twenty with no regularization, then increase the training-sample size.</p>
-<p class="scenario-meta"><strong>Predict first: </strong> Predict whether the gap between training and test error will widen or narrow.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict whether the gap between training and validation error will widen or narrow.</p>
 <p class="scenario-meta"><strong>Explain afterward: </strong> Explain how more observations constrain the curve between points.</p>
 <button class="step-btn" type="button">Apply and compare</button>
 </article>
@@ -704,8 +704,8 @@
 </summary>
 <div class="signature-challenge-panel">
 <strong>Featured comparison</strong>
-<p>Push model complexity until training error looks great, then check test error. The best-looking fit is often the least useful model.</p>
-<p><em>Increase complexity, then compare training error, test error, and the visible curve.</em></p>
+<p>Push model complexity until training error looks great, then check validation error. The best-looking fit is often the least useful model.</p>
+<p><em>Increase complexity, then compare training error, validation error, and the visible curve.</em></p>
 </div>
 </details>
 <!-- Supporting learning component. -->
@@ -757,27 +757,27 @@
 <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="0"/> <span data-i18n="ws1o0">Near zero: 21 free coefficients can pass through all 20 training points.</span></label>
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="1"/> <span data-i18n="ws1o1">High: a degree-20 curve is too wiggly to fit the training points.</span></label>
-<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="2"/> <span data-i18n="ws1o2">About the same as the test MSE: train and test error always match.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="2"/> <span data-i18n="ws1o2">About the same as the validation MSE: train and validation error always match.</span></label>
 </div>
 <button class="step-btn" data-i18n="ws-check" id="ws1btn">Check</button>
 <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
 </div>
 <div class="ws-q" id="ws2" style="margin-top:10px;">
-<p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Same settings as Q1. The test MSE (vs train MSE) is:</span></p>
+<p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Same settings as Q1. The validation MSE (vs train MSE) is:</span></p>
 <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="0"/> <span data-i18n="ws2o0">Lower: fitting the training points perfectly also fits unseen points.</span></label>
-<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="1"/> <span data-i18n="ws2o1">About the same: train MSE is a reliable estimate of test MSE.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="1"/> <span data-i18n="ws2o1">About the same: train MSE is a reliable estimate of validation MSE.</span></label>
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="2"/> <span data-i18n="ws2o2">Much higher: the wild wiggles that hit every train point miss the test points.</span></label>
 </div>
 <button class="step-btn" data-i18n="ws-check" id="ws2btn">Check</button>
 <span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
 </div>
 <div class="ws-q" id="ws3" style="margin-top:10px;">
-<p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Keep degree=20. Now raise λ from 0 to 0.5. Test MSE goes:</span></p>
+<p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Keep degree=20. Now raise λ from 0 to 0.5. Validation MSE goes:</span></p>
 <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="0"/> <span data-i18n="ws3o0">Up: any penalty on the weights can only hurt accuracy.</span></label>
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="1"/> <span data-i18n="ws3o1">Down: shrinking the coefficients smooths the curve and improves generalization.</span></label>
-<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="2"/> <span data-i18n="ws3o2">Stays the same: λ changes the weights but not the test error.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="2"/> <span data-i18n="ws3o2">Stays the same: λ changes the weights but not the validation error.</span></label>
 </div>
 <button class="step-btn" data-i18n="ws-check" id="ws3btn">Check</button>
 <span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
@@ -790,7 +790,7 @@
 <span data-lab-en="🧪 Student response packet" data-lab-zh="🧪 课堂实验模式">🧪 Student response packet</span>
 </summary>
 <div class="lab-panel">
-<p class="lab-intro" data-lab-en="Predict which model will fit training data best, compare train and test error, then explain why generalization can fail." data-lab-zh="先预测哪个模型最能拟合训练数据，再比较训练误差和测试误差，然后解释泛化为什么会失败。">Predict which model will fit training data best, compare train and test error, then explain why generalization can fail.</p>
+<p class="lab-intro" data-lab-en="Predict which model will fit training data best, compare train and validation error, then explain why generalization can fail." data-lab-zh="先预测哪个模型最能拟合训练数据，再比较训练误差和验证误差，然后解释泛化为什么会失败。">Predict which model will fit training data best, compare train and validation error, then explain why generalization can fail.</p>
 <div class="lab-grid">
 <div class="lab-field">
 <label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
@@ -798,11 +798,11 @@
 </div>
 <div class="lab-field">
 <label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
-<textarea data-lab-answer="observe" data-lab-en="Compare train and test MSE for a low, medium, and high polynomial degree." data-lab-zh="比较低、中、高三个多项式次数的训练 MSE 和测试 MSE。" id="lab-observe" placeholder="Compare train and test MSE for a low, medium, and high polynomial degree."></textarea>
+<textarea data-lab-answer="observe" data-lab-en="Compare train and validation MSE for a low, medium, and high polynomial degree." data-lab-zh="比较低、中、高三个多项式次数的训练 MSE 和测试 MSE。" id="lab-observe" placeholder="Compare train and validation MSE for a low, medium, and high polynomial degree."></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
-<textarea data-lab-answer="explain" data-lab-en="Why can training MSE improve while test MSE gets worse?" data-lab-zh="为什么训练 MSE 可以变好，而测试 MSE 变差？" id="lab-explain" placeholder="Why can training MSE improve while test MSE gets worse?"></textarea>
+<textarea data-lab-answer="explain" data-lab-en="Why can training MSE improve while validation MSE gets worse?" data-lab-zh="为什么训练 MSE 可以变好，而测试 MSE 变差？" id="lab-explain" placeholder="Why can training MSE improve while validation MSE gets worse?"></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
@@ -906,7 +906,7 @@
 <h2>What happens when noise is zero</h2>
 <p>
     Setting <code>σ = 0</code> removes the random vertical noise added to sampled points. It often
-    narrows the gap between training and test error, but it does not make overfitting mathematically
+    narrows the gap between training and validation error, but it does not make overfitting mathematically
     impossible. A flexible polynomial can still behave poorly between a small number of samples,
     and a polynomial may approximate a discontinuous target such as a step function badly near the
     discontinuity. Noise is one important source of overfitting, not its complete definition.
@@ -915,7 +915,7 @@
 <p>
     In a full workflow, a validation set or cross-validation is used to choose degree and
     regularization. A final held-out test set is then used once to estimate performance after those
-    choices are fixed. Other forms of regularization include L1 penalties, early stopping, dropout,
+    choices are fixed. Because this applet lets the learner repeatedly inspect the same comparison set while changing model settings, that displayed set functions as validation data, not as an untouched final test set. Other forms of regularization include L1 penalties, early stopping, dropout,
     weight decay, and data augmentation. Modern models can also show more complicated behavior than
     a single U-shaped curve, so the applet should be read as a controlled introduction to
     generalization rather than a universal performance law.
@@ -956,7 +956,7 @@
   </p>
 <h2>为什么新数据误差可能存在最佳区间</h2>
 <p>
-    过于简单的模型可能遗漏稳定结构，从而产生较高偏差。过于灵活的模型可能对当前样本及其噪声反应过强，从而产生较高方差。在许多有限且含噪的问题中，测试误差或验证误差会随着复杂度先下降再上升。由此形成的 U 形曲线是有用的教学模式，并不是每个数据集都必须遵守的定律。
+    过于简单的模型可能遗漏稳定结构，从而产生较高偏差。过于灵活的模型可能对当前样本及其噪声反应过强，从而产生较高方差。在许多有限且含噪的问题中，验证误差或验证误差会随着复杂度先下降再上升。由此形成的 U 形曲线是有用的教学模式，并不是每个数据集都必须遵守的定律。
   </p>
 <div class="aha">
     训练误差回答模型对已知样本拟合得多紧密。泛化误差回答模型对来自相关总体的新样本预测得多好。模型选择应依据第二个问题，并使用没有参与确定拟合系数的数据。
@@ -970,7 +970,7 @@
   </p>
 <h2>噪声为零时会发生什么</h2>
 <p>
-    把 <code>σ = 0</code> 会移除添加到样本点上的随机纵向噪声。这通常会缩小训练误差与测试误差之间的差距，但并不会从数学上使过拟合不可能发生。灵活的多项式仍可能在少量样本点之间表现很差；对于阶跃函数等不连续目标，多项式也可能在不连续点附近产生较差近似。噪声是过拟合的重要来源之一，并不是过拟合的完整定义。
+    把 <code>σ = 0</code> 会移除添加到样本点上的随机纵向噪声。这通常会缩小训练误差与验证误差之间的差距，但并不会从数学上使过拟合不可能发生。灵活的多项式仍可能在少量样本点之间表现很差；对于阶跃函数等不连续目标，多项式也可能在不连续点附近产生较差近似。噪声是过拟合的重要来源之一，并不是过拟合的完整定义。
   </p>
 <h2>验证、测试与其他简化</h2>
 <p>
@@ -1007,29 +1007,29 @@
       'footer-top': '↑ Back to top', 'footer-course': 'Made for the Introduction to AI course at Haidian Kaiwen Academy.', 'footer-portfolio': 'Portfolio', 'footer-project': 'AI Playgrounds', 'footer-source': 'Source', 'footer-issue': 'Report an issue',
       'reset-all': '↺ Reset all', 'truth-label': 'True function:',
       'tldr-strong': 'The big idea',
-      'tldr-body': 'Slide degree from 1 → 20. Train error drops to zero. Test error explodes. That gap is overfitting, and the U-shape is the bias-variance trade-off.',
+      'tldr-body': 'Slide degree from 1 → 20. Train error drops to zero. Validation error can rise sharply. That gap is overfitting, and the U-shape is the bias-variance trade-off.',
       'deg-label': 'Polynomial degree',
-      'deg-help': 'More wiggle room. Watch test error rise after the sweet spot.',
+      'deg-help': 'More wiggle room. Watch validation error change after the useful region in this generated sample.',
       'lam-label': 'Reg. λ',
       'lam-help': 'Penalty on large weights. Tames high-degree wiggle.',
       'reg-ridge': 'Ridge (L2)', 'reg-lasso': 'Lasso (L1)',
       'reg-title': 'Ridge (L2): shrinks all weights smoothly. Lasso (L1): drives some weights exactly to zero: automatic feature selection. Toggle to compare.',
       'n-label': 'Train points (n)',
-      'n-help': 'More data tames overfitting at the same degree.',
+      'n-help': 'More data can reduce variance at the same degree, but does not guarantee good generalization.',
       'sig-label': 'Noise σ',
-      'sig-help': "Set σ=0 and overfitting can't happen. Why?",
+      'sig-help': "Set σ=0. Does the train-validation gap disappear for every target and degree?",
       'opt-sin': 'sin(2πx): smooth periodic',
       'opt-cubic': '3x³ − x: smooth polynomial',
       'opt-step': 'step at x=0.5: discontinuous',
       'opt-linear': '1.5x: degree 1 is enough',
       'resample-btn': '↻ Resample noise',
-      'show-test': 'Show test points',
-      'show-test-title': 'Show the held-out test points as open circles on the fit chart. Watch them stay near the truth while train points are perfectly fit on the high-degree polynomial.',
+      'show-test': 'Show validation points',
+      'show-test-title': 'Show the validation points as open circles on the fit chart. Watch them stay near the truth while train points are perfectly fit on the high-degree polynomial.',
       'show-cv': 'Add 5-fold CV curve',
-      'show-cv-title': "Add a k-fold cross-validation curve to the error chart. This is what's used in practice to pick the regularization sweet spot.",
+      'show-cv-title': "Add a k-fold cross-validation curve to the error chart. Cross-validation is one tool for comparing candidate settings. A final untouched test set is still needed after model selection.",
       'fit-h3': 'Fit on training data',
       'err-h3': 'MSE vs degree (this λ, this dataset)',
-      'train-mse': 'Train MSE', 'test-mse': 'Test MSE (held out)',
+      'train-mse': 'Train MSE', 'test-mse': 'Validation MSE (repeatedly viewed)',
       'jump-link': '↓ Read the explanation',
       'tour-summary': '📚 Lesson tour (5 steps)',
       'tour-step': 'Step',
@@ -1048,45 +1048,45 @@
       'ws-check': 'Check',
       'ws-pick': 'Pick an answer first.',
       'ws1q': 'Set degree=20, n=20, λ=0, sine truth. The train MSE is approximately:',
-      'ws2q': 'Same settings as Q1. The test MSE (vs train MSE) is:',
-      'ws3q': 'Keep degree=20. Now raise λ from 0 to 0.5. Test MSE goes:',
+      'ws2q': 'Same settings as Q1. The validation MSE (vs train MSE) is:',
+      'ws3q': 'Keep degree=20. Now raise λ from 0 to 0.5. Validation MSE goes:',
       // --- MCQ: worksheet option labels (ws{n}o{i}) ---
       'ws1o0': 'Near zero: 21 free coefficients can pass through all 20 training points.',
       'ws1o1': 'High: a degree-20 curve is too wiggly to fit the training points.',
-      'ws1o2': 'About the same as the test MSE: train and test error always match.',
+      'ws1o2': 'About the same as the validation MSE: train and validation error always match.',
       'ws2o0': 'Lower: fitting the training points perfectly also fits unseen points.',
-      'ws2o1': 'About the same: train MSE is a reliable estimate of test MSE.',
+      'ws2o1': 'About the same: train MSE is a reliable estimate of validation MSE.',
       'ws2o2': 'Much higher: the wild wiggles that hit every train point miss the test points.',
       'ws3o0': 'Up: any penalty on the weights can only hurt accuracy.',
       'ws3o1': 'Down: shrinking the coefficients smooths the curve and improves generalization.',
-      'ws3o2': 'Stays the same: λ changes the weights but not the test error.',
+      'ws3o2': 'Stays the same: λ changes the weights but not the validation error.',
       // lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
       'tour0name': 'Underfit (degree 1, sine truth)',
-      'tour0desc': "Polynomial of degree 1 trying to fit a sine. Train AND test error are both high: this is high bias. The model literally can't bend enough.",
+      'tour0desc': "Polynomial of degree 1 trying to fit a sine. Train AND validation error are both high: this is high bias. The model literally can't bend enough.",
       'tour1name': 'Sweet spot (degree 5)',
       'tour1desc': 'Same truth, degree 5. Train and test are both low and close together. This is the bias-variance balance point we always want.',
       'tour2name': 'Severe overfit (degree 20, n=20)',
-      'tour2desc': 'Degree 20 with only 20 training points. Train error → 0 (the curve passes through every dot). Test error explodes. Classic overfitting.',
+      'tour2desc': 'Degree 20 with only 20 training points. Train error → 0 (the curve passes through every dot). Validation error can rise sharply. Classic overfitting.',
       'tour3name': 'Ridge fixes the overfit',
-      'tour3desc': 'Still degree 20, but now λ=0.5. The penalty shrinks the wild high-order coefficients. Test error drops dramatically without changing the model class.',
-      'tour4name': 'More data also fixes it',
+      'tour3desc': 'Still degree 20, but now λ=0.5. The penalty shrinks the wild high-order coefficients. Validation error drops dramatically without changing the model class.',
+      'tour4name': 'More data can reduce variance',
       'tour4desc': 'Degree 20, λ=0, but n=100 instead of 20. With more data, even a high-capacity model can\'t memorize: it has to generalize. Use the CV curve toggle.',
       // worksheet answer-feedback (ws{n}ok / ws{n}no) ---
       'ws1ok': 'Correct. A degree-20 polynomial has 21 free parameters; with only 20 training points, it has enough freedom to literally pass through every dot. Train MSE ≈ 0.',
       'ws1no': "Try 'zero' or 'near zero'. 21 free coefficients can fit 20 arbitrary points exactly: degrees of freedom math.",
       'ws2ok': 'Yes. Train ≈ 0, test explodes: that gap IS overfitting. The wild oscillations needed to pass through every train point miss the test points completely.',
-      'ws2no': "Hint: zero train error + held-out test error are very different. Try 'much higher'.",
+      'ws2no': "Hint: zero train error + held-out validation error are very different. Try 'much higher'.",
       'ws3ok': 'Correct. Ridge (L2) penalty λ‖w‖² shrinks large coefficients. The degree-20 polynomial still has 21 params, but they are now small: the curve is forced to be smooth and generalizes much better.',
       'ws3no': "Try 'down'. λ penalizes large weights, killing the high-frequency wiggles that overfit.",
       // tooltip translations for main sliders + selectors.
       'deg-slider-title': 'Model capacity. Higher degree = more wiggle room = easier to overfit.',
       'lam-slider-title': 'Regularization strength. With Ridge, adds λ‖w‖² to the loss; with Lasso, adds λ‖w‖₁. Set λ=0 to disable.',
-      'n-slider-title': 'Size of the training set. More data = harder to overfit.',
-      'sig-slider-title': 'Std-dev of Gaussian noise added to each train point. σ=0 makes overfitting impossible.',
+      'n-slider-title': 'Size of the training set. More data often constrains a flexible fit, but does not guarantee generalization.',
+      'sig-slider-title': 'Standard deviation of Gaussian noise added to each training point. Setting σ=0 removes observation noise, but finite samples and model mismatch can still produce poor generalization.',
       'truth-sel-title': "The 'real' function the model is trying to recover from noisy samples.",
       'resample-title': 'Re-draw new random noise around the true function.',
       'lc-summary': '📈 Learning curves (vary n at fixed degree)',
-      'lc-hint': 'Fixes the current degree, λ, regularizer, and noise; varies n from 5 → n_max. For each n, draws a fresh sample of n training points and computes train and test MSE. Plots both curves. Diagnostic: if train ≈ test and both high → underfitting (more capacity); if train low + test high (gap) → overfitting (more data or regularization); if both converging low → good.',
+      'lc-hint': 'Fixes the current degree, λ, regularizer, and noise; varies n from 5 → n_max. For each n, draws a fresh sample of n training points and computes train and validation MSE. Plots both curves. Diagnostic: if train ≈ test and both high → underfitting (more capacity); if train low + test high (gap) → overfitting (more data or regularization); if both converging low → good.',
       'lc-nmax-label': 'n_max:', 'lc-trials-label': 'Avg over runs:',
       'lc-run': '▶ Run learning curves',
       'lc-empty': '(click "Run learning curves")',
@@ -1096,9 +1096,9 @@
       'footer-top': '↑ 返回顶部', 'footer-course': '为海淀凯文学校《人工智能导论》课程制作。', 'footer-portfolio': '作品集', 'footer-project': 'AI Playgrounds', 'footer-source': '源代码', 'footer-issue': '反馈问题',
       'reset-all': '↺ 全部重置', 'truth-label': '真实函数:',
       'tldr-strong': '核心思想',
-      'tldr-body': '将多项式次数从 1 拉到 20。训练误差降到零,测试误差却暴涨。这个差距就是过拟合,U 形曲线就是偏差-方差权衡。',
+      'tldr-body': '将多项式次数从 1 拉到 20。训练误差降到零,验证误差却暴涨。这个差距就是过拟合,U 形曲线就是偏差-方差权衡。',
       'deg-label': '多项式次数',
-      'deg-help': '次数越高越能拟合。注意:过了"甜点"之后测试误差会上升。',
+      'deg-help': '次数越高越能拟合。注意:过了"甜点"之后验证误差会上升。',
       'lam-label': '正则化 λ',
       'lam-help': '对大权重的惩罚。能驯服高次项的剧烈摆动。',
       'reg-ridge': '岭回归 (L2)', 'reg-lasso': '套索 (L1)',
@@ -1142,29 +1142,29 @@
       // --- MCQ: 练习题选项(ws{n}o{i})---
       'ws1o0': '接近零--21 个自由系数可以穿过全部 20 个训练点。',
       'ws1o1': '很高--20 次曲线太过摆动,无法拟合训练点。',
-      'ws1o2': '与测试 MSE 大致相同--训练误差和测试误差总是一致。',
+      'ws1o2': '与测试 MSE 大致相同--训练误差和验证误差总是一致。',
       'ws2o0': '更低--完美拟合训练点也会拟合未见过的点。',
       'ws2o1': '大致相同--训练 MSE 是测试 MSE 的可靠估计。',
       'ws2o2': '高得多--为击中每个训练点而产生的剧烈摆动完全错过了测试点。',
       'ws3o0': '上升--对权重的任何惩罚只会损害准确率。',
       'ws3o1': '下降--缩小系数会平滑曲线,改善泛化。',
-      'ws3o2': '保持不变--λ 改变权重,但不改变测试误差。',
+      'ws3o2': '保持不变--λ 改变权重,但不改变验证误差。',
       // 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
       'tour0name': '欠拟合(1 次,正弦真值)',
-      'tour0desc': '用 1 次多项式去拟合正弦。训练误差和测试误差都很高--这是高偏差。模型根本弯不够。',
+      'tour0desc': '用 1 次多项式去拟合正弦。训练误差和验证误差都很高--这是高偏差。模型根本弯不够。',
       'tour1name': '甜点区(5 次)',
       'tour1desc': '同样的真值,5 次。训练和测试都很低且彼此接近。这正是我们一直想要的偏差-方差平衡点。',
       'tour2name': '严重过拟合(20 次,n=20)',
-      'tour2desc': '20 次多项式而只有 20 个训练点。训练误差 → 0(曲线穿过每一个点)。测试误差暴涨。典型的过拟合。',
+      'tour2desc': '20 次多项式而只有 20 个训练点。训练误差 → 0(曲线穿过每一个点)。验证误差暴涨。典型的过拟合。',
       'tour3name': '岭回归修复过拟合',
-      'tour3desc': '仍是 20 次,但现在 λ=0.5。惩罚项把剧烈的高次系数缩小。测试误差大幅下降,而模型类别没有改变。',
+      'tour3desc': '仍是 20 次,但现在 λ=0.5。惩罚项把剧烈的高次系数缩小。验证误差大幅下降,而模型类别没有改变。',
       'tour4name': '更多数据同样能修复',
       'tour4desc': '20 次,λ=0,但 n=100 而非 20。数据更多时,即使高容量模型也无法死记硬背--它必须泛化。可打开 CV 曲线开关。',
       // 练习题答案反馈(ws{n}ok / ws{n}no)---
       'ws1ok': '正确。20 次多项式有 21 个自由参数;只有 20 个训练点时,它有足够的自由度精确穿过每一个点。训练 MSE ≈ 0。',
       'ws1no': '试试"zero"或"near zero"。21 个自由系数可以精确拟合 20 个任意点--自由度的数学。',
       'ws2ok': '对。训练 ≈ 0,测试暴涨--这个差距就是过拟合。为穿过每个训练点所需的剧烈振荡完全错过了测试点。',
-      'ws2no': '提示:零训练误差和留出测试误差差别很大。试试"much higher"。',
+      'ws2no': '提示:零训练误差和留出验证误差差别很大。试试"much higher"。',
       'ws3ok': '正确。岭回归(L2)惩罚 λ‖w‖² 缩小大系数。20 次多项式仍有 21 个参数,但现在它们都很小--曲线被迫平滑,泛化得好得多。',
       'ws3no': '试试"down"。λ 惩罚大权重,扼杀那些造成过拟合的高频摆动。',
       // 主要滑块和选择器的提示翻译。
@@ -1585,7 +1585,7 @@
       ctx.fillText(d, tx - 4, H - pad + 14);
     }
     ctx.fillStyle = getCSS('--train'); ctx.fillText('- train MSE', W - 100, pad + 12);
-    ctx.fillStyle = getCSS('--test'); ctx.fillText('- test MSE', W - 100, pad + 26);
+    ctx.fillStyle = getCSS('--test'); ctx.fillText('- validation MSE', W - 100, pad + 26);
   }
 
   function getCSS(v) {
@@ -1626,19 +1626,19 @@
   // Lesson tour. Five canonical scenarios for an in-class walkthrough.
   const LESSON_TOUR = [
     { name: 'Underfit (degree 1, sine truth)',
-      description: "Polynomial of degree 1 trying to fit a sine. Train AND test error are both high: this is high bias. The model literally can't bend enough.",
+      description: "Polynomial of degree 1 trying to fit a sine. Train AND validation error are both high: this is high bias. The model literally can't bend enough.",
       apply: () => { $('truthSel').value = 'sin'; $('deg').value = 1; $('lam').value = 0; $('n').value = 20; $('sig').value = 0.2; regenData(); render(); } },
     { name: 'Sweet spot (degree 5)',
       description: "Same truth, degree 5. Train and test are both low and close together. This is the bias-variance balance point we always want.",
       apply: () => { $('truthSel').value = 'sin'; $('deg').value = 5; $('lam').value = 0; $('n').value = 20; $('sig').value = 0.2; regenData(); render(); } },
     { name: 'Severe overfit (degree 20, n=20)',
-      description: "Degree 20 with only 20 training points. Train error → 0 (the curve passes through every dot). Test error explodes. Classic overfitting.",
+      description: "Degree 20 with only 20 training points. Train error → 0 (the curve passes through every dot). Validation error can rise sharply. Classic overfitting.",
       apply: () => { $('truthSel').value = 'sin'; $('deg').value = 20; $('lam').value = 0; $('n').value = 20; $('sig').value = 0.2; regenData(); render(); } },
     { name: 'Ridge fixes the overfit',
-      description: "Still degree 20, but now λ=0.5. The penalty shrinks the wild high-order coefficients. Test error drops dramatically without changing the model class.",
+      description: "Still degree 20, but now λ=0.5. The penalty shrinks the wild high-order coefficients. Validation error drops dramatically without changing the model class.",
       apply: () => { $('truthSel').value = 'sin'; $('deg').value = 20; $('lam').value = 0.5; $('n').value = 20; $('sig').value = 0.2; regenData(); render(); } },
-    { name: 'More data also fixes it',
-      description: "Degree 20, λ=0, but n=100 instead of 20. With more data, even a high-capacity model can't memorize: it has to generalize. Use CV curve toggle.",
+    { name: 'More data can reduce variance',
+      description: "Degree 20, λ=0, but n=100 instead of 20. With more data, this particular high-capacity fit is more constrained and may generalize better. More data does not force every model to generalize. Use CV curve toggle.",
       apply: () => { $('truthSel').value = 'sin'; $('deg').value = 20; $('lam').value = 0; $('n').value = 100; $('sig').value = 0.2; $('showCv').checked = true; regenData(); render(); } },
   ];
   let tourIdx = 0;
@@ -1733,7 +1733,7 @@
       no:  ['ws1no', "Try 'zero' or 'near zero'. 21 free coefficients can fit 20 arbitrary points exactly: degrees of freedom math."] },
     { correct: 2,
       ok:  ['ws2ok', "Yes. Train ≈ 0, test explodes: that gap IS overfitting. The wild oscillations needed to pass through every train point miss the test points completely."],
-      no:  ['ws2no', "Hint: zero train error + held-out test error are very different. Try 'much higher'."] },
+      no:  ['ws2no', "Hint: zero train error + held-out validation error are very different. Try 'much higher'."] },
     { correct: 1,
       ok:  ['ws3ok', "Correct. Ridge (L2) penalty λ‖w‖² shrinks large coefficients. The degree-20 polynomial still has 21 params, but they are now small: the curve is forced to be smooth and generalizes much better."],
       no:  ['ws3no', "Try 'down'. λ penalizes large weights, killing the high-frequency wiggles that overfit."] },
@@ -1757,7 +1757,7 @@
 
   // Learning curves. Holds degree, λ, regularizer, truth, sigma constant;
   // sweeps n from 5 to n_max. For each n, runs `trials` independent samples and
-  // averages the train + test MSE. The shape of the two curves diagnoses the model:
+  // averages the train + validation MSE. The shape of the two curves diagnoses the model:
   //   • Both high, train ≈ test  → underfitting; raise capacity (degree) or features.
   //   • Train low + test high (large gap)  → overfitting; more data, more reg, or less capacity.
   //   • Both converging to a low plateau  → well-fit.
@@ -1774,7 +1774,7 @@
     const ns = [];
     for (let n = 5; n <= nMax; n += Math.max(2, Math.floor(n * 0.15))) ns.push(n);
     if (ns[ns.length - 1] !== nMax) ns.push(nMax);
-    // Pre-build a single fixed test set so test MSE comparisons across n are apples-to-apples.
+    // Pre-build a single fixed test set so validation MSE comparisons across n are apples-to-apples.
     const fixedTest = [];
     for (let i = 0; i < 200; i++) {
       const x = i / 199;
@@ -1811,7 +1811,7 @@
     }
     $('lcStats').innerHTML =
       `<span>Final n=${nMax}: train MSE=<strong>${finalTrain.toFixed(3)}</strong>, ` +
-      `test MSE=<strong>${finalTest.toFixed(3)}</strong>, gap=<strong>${gap.toFixed(3)}</strong>. ` +
+      `validation MSE=<strong>${finalTest.toFixed(3)}</strong>, gap=<strong>${gap.toFixed(3)}</strong>. ` +
       `<em style="color:var(--accent);">${diagnosis}</em></span>`;
   }
   function drawLearningCurves(ns, trainMse, testMse) {
@@ -1871,7 +1871,7 @@
     ctx.fillStyle = '#0284c7'; ctx.fillRect(pad.l + innerW + 8, pad.t + 6, 12, 2);
     ctx.fillText('train MSE', pad.l + innerW + 24, pad.t + 10);
     ctx.fillStyle = '#dc2626'; ctx.fillRect(pad.l + innerW + 8, pad.t + 22, 12, 2);
-    ctx.fillText('test MSE',  pad.l + innerW + 24, pad.t + 26);
+    ctx.fillText('validation MSE',  pad.l + innerW + 24, pad.t + 26);
     // Axis labels.
     ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#cbd5e1' : '#334155';
     ctx.fillText('n (training set size)', W / 2 - 50, H - 1);
@@ -1915,12 +1915,12 @@
     } catch (_) { prompt('Copy this URL:', url); }
   });
 
-  // CSV export: train + test datasets and per-degree MSE table.
+  // CSV export: train + validation datasets and per-degree MSE table.
   document.getElementById('csvExport').addEventListener('click', () => {
     const lam = +$('lam').value;
     const lines = ['# Overfitting export', '# Section 1: train data', 'x,y'];
     for (const d of trainData) lines.push(`${d.x.toFixed(4)},${d.y.toFixed(4)}`);
-    lines.push('', '# Section 2: test data (held out)', 'x,y');
+    lines.push('', '# Section 2: validation data (repeatedly inspected in this applet)', 'x,y');
     for (const d of testData) lines.push(`${d.x.toFixed(4)},${d.y.toFixed(4)}`);
     lines.push('', `# Section 3: MSE table (lambda = ${lam})`, 'degree,train_mse,test_mse');
     for (let d = 1; d <= 20; d++) {
@@ -1968,7 +1968,7 @@
 </footer>
 <script>
 (function() {
-  const LAB_CONFIG = {"slug": "overfitting", "title": "Overfitting lab packet", "zhTitle": "过拟合实验包", "fields": [{"label": "Degree", "selector": "#degV", "kind": "text"}, {"label": "Regularization", "selector": "#regSel", "kind": "selected"}, {"label": "Lambda", "selector": "#lam", "kind": "value"}, {"label": "Sample size", "selector": "#n", "kind": "value"}, {"label": "Noise", "selector": "#sig", "kind": "value"}, {"label": "True function", "selector": "#truthSel", "kind": "selected"}, {"label": "Train MSE", "selector": "#trainMse", "kind": "text"}, {"label": "Test MSE", "selector": "#testMse", "kind": "text"}]};
+  const LAB_CONFIG = {"slug": "overfitting", "title": "Overfitting lab packet", "zhTitle": "过拟合实验包", "fields": [{"label": "Degree", "selector": "#degV", "kind": "text"}, {"label": "Regularization", "selector": "#regSel", "kind": "selected"}, {"label": "Lambda", "selector": "#lam", "kind": "value"}, {"label": "Sample size", "selector": "#n", "kind": "value"}, {"label": "Noise", "selector": "#sig", "kind": "value"}, {"label": "True function", "selector": "#truthSel", "kind": "selected"}, {"label": "Train MSE", "selector": "#trainMse", "kind": "text"}, {"label": "Validation MSE", "selector": "#testMse", "kind": "text"}]};
   const root = document.querySelector('.classroom-lab');
   if (!root) return;
   const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;
@@ -2089,7 +2089,7 @@
 </script>
 <script>
 (function() {
-  const VISUAL_CONFIG = {"intro":"The visual target is the generalization gap: training error can fall while test error rises when the model follows noise instead of structure.","zhIntro":"可视化目标是泛化差距：当模型追随噪声而不是结构时，训练误差可能下降，但测试误差上升。","misread":"A curve that passes close to every training point is not necessarily the best model.","zhMisread":"穿过几乎所有训练点的曲线不一定是最好的模型。","steps":[{"label":"Data signal","zhLabel":"数据信号","text":"Sample size and noise decide how clearly the underlying pattern appears.","zhText":"样本量和噪声决定底层模式有多清楚。","selector":"#n","kind":"value","liveLabel":"Samples","zhLiveLabel":"样本"},{"label":"Model capacity","zhLabel":"模型容量","text":"Degree controls how much the curve can bend to fit details.","zhText":"次数控制曲线可以弯曲到什么程度以拟合细节。","selector":"#degV","kind":"text","liveLabel":"Degree","zhLiveLabel":"次数"},{"label":"Regularization brake","zhLabel":"正则化刹车","text":"Regularization penalizes overly flexible curves and can reduce test error.","zhText":"正则化惩罚过于灵活的曲线，并可能降低测试误差。","selector":"#regSel","kind":"selected","liveLabel":"Reg","zhLiveLabel":"正则化"},{"label":"Generalization check","zhLabel":"泛化检查","text":"Compare train MSE and test MSE to see whether fitting improved prediction.","zhText":"比较训练 MSE 和测试 MSE，观察拟合是否真的改善预测。","selector":"#testMse","kind":"text","liveLabel":"Test MSE","zhLiveLabel":"测试 MSE"}],"fields":[{"label":"Degree","zhLabel":"次数","selector":"#degV","kind":"text"},{"label":"Regularization","zhLabel":"正则化","selector":"#regSel","kind":"selected"},{"label":"Sample size","zhLabel":"样本量","selector":"#n","kind":"value"},{"label":"Train MSE","zhLabel":"训练 MSE","selector":"#trainMse","kind":"text"},{"label":"Test MSE","zhLabel":"测试 MSE","selector":"#testMse","kind":"text"}]};
+  const VISUAL_CONFIG = {"intro":"The visual target is the generalization gap: training error can fall while validation error rises when the model follows noise instead of structure.","zhIntro":"可视化目标是泛化差距：当模型追随噪声而不是结构时，训练误差可能下降，但验证误差上升。","misread":"A curve that passes close to every training point is not necessarily the best model.","zhMisread":"穿过几乎所有训练点的曲线不一定是最好的模型。","steps":[{"label":"Data signal","zhLabel":"数据信号","text":"Sample size and noise decide how clearly the underlying pattern appears.","zhText":"样本量和噪声决定底层模式有多清楚。","selector":"#n","kind":"value","liveLabel":"Samples","zhLiveLabel":"样本"},{"label":"Model capacity","zhLabel":"模型容量","text":"Degree controls how much the curve can bend to fit details.","zhText":"次数控制曲线可以弯曲到什么程度以拟合细节。","selector":"#degV","kind":"text","liveLabel":"Degree","zhLiveLabel":"次数"},{"label":"Regularization brake","zhLabel":"正则化刹车","text":"Regularization penalizes overly flexible curves and can reduce validation error.","zhText":"正则化惩罚过于灵活的曲线，并可能降低验证误差。","selector":"#regSel","kind":"selected","liveLabel":"Reg","zhLiveLabel":"正则化"},{"label":"Generalization check","zhLabel":"泛化检查","text":"Compare train MSE and validation MSE to see whether fitting improved prediction.","zhText":"比较训练 MSE 和测试 MSE，观察拟合是否真的改善预测。","selector":"#testMse","kind":"text","liveLabel":"Validation MSE","zhLiveLabel":"测试 MSE"}],"fields":[{"label":"Degree","zhLabel":"次数","selector":"#degV","kind":"text"},{"label":"Regularization","zhLabel":"正则化","selector":"#regSel","kind":"selected"},{"label":"Sample size","zhLabel":"样本量","selector":"#n","kind":"value"},{"label":"Train MSE","zhLabel":"训练 MSE","selector":"#trainMse","kind":"text"},{"label":"Validation MSE","zhLabel":"测试 MSE","selector":"#testMse","kind":"text"}]};
   const root = document.querySelector('.visual-explanation');
   if (!root) return;
   const flow = root.querySelector('[data-visual-flow]');
@@ -2150,7 +2150,7 @@
 
 <script>
 (function() {
-  const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "Degree", "zhLabel": "次数", "selector": "#degV", "kind": "text"}, {"label": "Regularization", "zhLabel": "正则化", "selector": "#regSel", "kind": "selected"}, {"label": "Sample size", "zhLabel": "样本量", "selector": "#n", "kind": "value"}, {"label": "Train MSE", "zhLabel": "训练 MSE", "selector": "#trainMse", "kind": "text"}, {"label": "Test MSE", "zhLabel": "测试 MSE", "selector": "#testMse", "kind": "text"}]};
+  const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "Degree", "zhLabel": "次数", "selector": "#degV", "kind": "text"}, {"label": "Regularization", "zhLabel": "正则化", "selector": "#regSel", "kind": "selected"}, {"label": "Sample size", "zhLabel": "样本量", "selector": "#n", "kind": "value"}, {"label": "Train MSE", "zhLabel": "训练 MSE", "selector": "#trainMse", "kind": "text"}, {"label": "Validation MSE", "zhLabel": "测试 MSE", "selector": "#testMse", "kind": "text"}]};
   const layer = document.querySelector('.accessibility-layer');
   if (!layer) return;
   const intro = layer.querySelector('[data-a11y-intro]');
@@ -2251,7 +2251,7 @@
 </script>
 <script id="learner-content-system">
 (() => {
-  const profile = {"slug":"overfitting","en":{"title":"Overfitting Explorer","big":"Increase model complexity and compare performance on training data with performance on new test data. Find the point where a better fit becomes a worse model.","primer":"A model should learn the underlying pattern, not every accidental detail in its training sample. The terms below separate fitting the known data from generalizing to new data.","terms":[{"term":"Training data","definition":"Examples used to fit the model."},{"term":"Test data","definition":"Separate examples used to estimate performance on new cases."},{"term":"Model complexity","definition":"How flexible the model is when fitting patterns."},{"term":"Underfitting","definition":"The model is too simple to capture the main pattern."},{"term":"Overfitting","definition":"The model fits training details that do not generalize to new data."},{"term":"Regularization","definition":"A penalty or constraint that discourages unnecessarily complex fits."},{"term":"Mean squared error (MSE)","definition":"The average squared difference between predictions and target values."},{"term":"Coefficient","definition":"A learned multiplier on one polynomial term."},{"term":"Ridge regression (L2)","definition":"A fitting method that adds a squared-coefficient penalty to discourage extreme weights."},{"term":"Regularization strength (λ)","definition":"A nonnegative value that controls how strongly the penalty affects fitting."}],"scenarios":[{"title":"A straight line underfits a curved pattern","question":"How can both training and test error remain high?","run":"Fit a degree-one polynomial to the sine-shaped data and compare both errors.","predict":"Predict whether collecting more training time alone can make a straight line bend.","explain":"Explain why the model lacks the flexibility to represent the main pattern."},{"title":"A moderate-complexity model reaches the useful region","question":"What does a good balance between fit and generalization look like?","run":"Use degree five and compare the distance between training and test error.","predict":"Predict whether the two errors should be identical or simply both low.","explain":"Explain why a small gap can remain even when the model generalizes well."},{"title":"A high-degree model memorizes a small sample","question":"Why can zero training error accompany poor test performance?","run":"Use degree twenty with only twenty training points and inspect the curve between samples.","predict":"Predict which error will continue falling and which may rise.","explain":"Explain how the flexible curve follows noise that does not repeat in new data."},{"title":"Regularization restrains a flexible model","question":"How can the same model class generalize better without reducing its degree?","run":"Keep degree twenty, increase regularization, and compare the curve and test error.","predict":"Predict whether the training error must rise slightly for the test error to fall.","explain":"Explain how shrinking extreme coefficients reduces unnecessary oscillation."},{"title":"More data makes memorization harder","question":"Why can a complex model behave better when it sees more examples?","run":"Keep degree twenty with no regularization, then increase the training-sample size.","predict":"Predict whether the gap between training and test error will widen or narrow.","explain":"Explain how more observations constrain the curve between points."}]},"zh":{"title":"过拟合探索器","big":"提高模型复杂度，并比较训练数据与新测试数据上的表现。找到拟合更好却模型更差的转折点。","primer":"模型应该学习底层规律，而不是训练样本中的每个偶然细节。下面的术语区分拟合已知数据与推广到新数据。","terms":[{"term":"训练数据","definition":"用于拟合模型的示例。"},{"term":"测试数据","definition":"用于估计模型在新情况上表现的独立示例。"},{"term":"模型复杂度","definition":"模型拟合模式时的灵活程度。"},{"term":"欠拟合","definition":"模型过于简单，无法捕捉主要规律。"},{"term":"过拟合","definition":"模型拟合了无法推广到新数据的训练细节。"},{"term":"正则化","definition":"抑制不必要复杂拟合的惩罚或约束。"},{"term":"均方误差（MSE）","definition":"预测值与目标值之差的平方的平均值。"},{"term":"系数","definition":"多项式中某一项前面学习得到的乘数。"},{"term":"岭回归（L2）","definition":"在拟合目标中加入系数平方惩罚，以抑制极端权重的方法。"},{"term":"正则化强度（λ）","definition":"控制惩罚对拟合影响程度的非负数值。"}],"scenarios":[{"title":"直线对弯曲规律欠拟合","question":"为什么训练误差和测试误差都可能很高？","run":"用一次多项式拟合正弦形数据并比较两种误差。","predict":"预测仅增加训练时间能否让直线弯曲。","explain":"解释模型为什么缺乏表示主要规律的灵活性。"},{"title":"中等复杂度进入有效区域","question":"拟合与推广之间的良好平衡是什么样？","run":"使用五次多项式并比较训练误差与测试误差的距离。","predict":"预测两种误差应完全相同，还是只需都较低。","explain":"解释模型推广良好时为什么仍可能存在小差距。"},{"title":"高次模型记住小样本","question":"为什么训练误差为零时，测试表现仍可能很差？","run":"使用二十次多项式和二十个训练点，观察样本之间的曲线。","predict":"预测哪个误差会继续下降，哪个可能上升。","explain":"解释灵活曲线如何跟随不会在新数据中重复的噪声。"},{"title":"正则化约束灵活模型","question":"不降低次数，如何让同一模型类别推广更好？","run":"保持二十次多项式，提高正则化，并比较曲线和测试误差。","predict":"预测测试误差下降时，训练误差是否需要略微上升。","explain":"解释缩小极端系数如何减少不必要振荡。"},{"title":"更多数据让记忆更困难","question":"复杂模型看到更多示例后为什么可能表现更好？","run":"保持二十次且无正则化，然后增加训练样本数量。","predict":"预测训练与测试误差的差距会扩大还是缩小。","explain":"解释更多观察如何约束样本点之间的曲线。"}]}};
+  const profile = {"slug":"overfitting","en":{"title":"Overfitting Explorer","big":"Increase model complexity and compare performance on training data with performance on repeatedly viewed validation data. Find the point where a better fit becomes a worse model.","primer":"A model should learn the underlying pattern, not every accidental detail in its training sample. The terms below separate fitting the known data from generalizing to new data.","terms":[{"term":"Training data","definition":"Examples used to fit the model."},{"term":"Validation data","definition":"Separate examples used to estimate performance on new cases."},{"term":"Model complexity","definition":"How flexible the model is when fitting patterns."},{"term":"Underfitting","definition":"The model is too simple to capture the main pattern."},{"term":"Overfitting","definition":"The model fits training details that do not generalize to new data."},{"term":"Regularization","definition":"A penalty or constraint that discourages unnecessarily complex fits."},{"term":"Mean squared error (MSE)","definition":"The average squared difference between predictions and target values."},{"term":"Coefficient","definition":"A learned multiplier on one polynomial term."},{"term":"Ridge regression (L2)","definition":"A fitting method that adds a squared-coefficient penalty to discourage extreme weights."},{"term":"Regularization strength (λ)","definition":"A nonnegative value that controls how strongly the penalty affects fitting."}],"scenarios":[{"title":"A straight line underfits a curved pattern","question":"How can both training and validation error remain high?","run":"Fit a degree-one polynomial to the sine-shaped data and compare both errors.","predict":"Predict whether collecting more training time alone can make a straight line bend.","explain":"Explain why the model lacks the flexibility to represent the main pattern."},{"title":"A moderate-complexity model reaches the useful region","question":"What does a good balance between fit and generalization look like?","run":"Use degree five in this generated setting and compare the training and validation errors. Treat degree five as one observed candidate, not a universal sweet spot.","predict":"Predict whether the two errors should be identical or simply both low.","explain":"Explain why a small gap can remain even when the model generalizes well."},{"title":"A high-degree model memorizes a small sample","question":"Why can zero training error accompany poor test performance?","run":"Use degree twenty with only twenty training points and inspect the curve between samples.","predict":"Predict which error will continue falling and which may rise.","explain":"Explain how the flexible curve follows noise that does not repeat in new data."},{"title":"Regularization restrains a flexible model","question":"How can the same model class generalize better without reducing its degree?","run":"Keep degree twenty, increase regularization, and compare the curve and validation error.","predict":"Predict whether the training error must rise slightly for the validation error to fall.","explain":"Explain how shrinking extreme coefficients reduces unnecessary oscillation."},{"title":"More data can constrain memorization","question":"Why can a complex model behave better when it sees more examples?","run":"Keep degree twenty with no regularization, then increase the training-sample size.","predict":"Predict whether the gap between training and validation error will widen or narrow.","explain":"Explain how more observations constrain the curve between points."}]},"zh":{"title":"过拟合探索器","big":"提高模型复杂度，并比较训练数据与反复查看的验证数据上的表现。找到拟合更好却模型更差的转折点。","primer":"模型应该学习底层规律，而不是训练样本中的每个偶然细节。下面的术语区分拟合已知数据与推广到新数据。","terms":[{"term":"训练数据","definition":"用于拟合模型的示例。"},{"term":"验证数据","definition":"用于估计模型在新情况上表现的独立示例。"},{"term":"模型复杂度","definition":"模型拟合模式时的灵活程度。"},{"term":"欠拟合","definition":"模型过于简单，无法捕捉主要规律。"},{"term":"过拟合","definition":"模型拟合了无法推广到新数据的训练细节。"},{"term":"正则化","definition":"抑制不必要复杂拟合的惩罚或约束。"},{"term":"均方误差（MSE）","definition":"预测值与目标值之差的平方的平均值。"},{"term":"系数","definition":"多项式中某一项前面学习得到的乘数。"},{"term":"岭回归（L2）","definition":"在拟合目标中加入系数平方惩罚，以抑制极端权重的方法。"},{"term":"正则化强度（λ）","definition":"控制惩罚对拟合影响程度的非负数值。"}],"scenarios":[{"title":"直线对弯曲规律欠拟合","question":"为什么训练误差和验证误差都可能很高？","run":"用一次多项式拟合正弦形数据并比较两种误差。","predict":"预测仅增加训练时间能否让直线弯曲。","explain":"解释模型为什么缺乏表示主要规律的灵活性。"},{"title":"中等复杂度进入有效区域","question":"拟合与推广之间的良好平衡是什么样？","run":"使用五次多项式并比较训练误差与验证误差的距离。","predict":"预测两种误差应完全相同，还是只需都较低。","explain":"解释模型推广良好时为什么仍可能存在小差距。"},{"title":"高次模型记住小样本","question":"为什么训练误差为零时，测试表现仍可能很差？","run":"使用二十次多项式和二十个训练点，观察样本之间的曲线。","predict":"预测哪个误差会继续下降，哪个可能上升。","explain":"解释灵活曲线如何跟随不会在新数据中重复的噪声。"},{"title":"正则化约束灵活模型","question":"不降低次数，如何让同一模型类别推广更好？","run":"保持二十次多项式，提高正则化，并比较曲线和验证误差。","predict":"预测验证误差下降时，训练误差是否需要略微上升。","explain":"解释缩小极端系数如何减少不必要振荡。"},{"title":"更多数据可以约束记忆","question":"复杂模型看到更多示例后为什么可能表现更好？","run":"保持二十次且无正则化，然后增加训练样本数量。","predict":"预测训练与验证误差的差距会扩大还是缩小。","explain":"解释更多观察如何约束样本点之间的曲线。"}]}};
   window.APPLET_LEARNER_PROFILE = profile;
   const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
   const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;

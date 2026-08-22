@@ -603,12 +603,12 @@ P</textarea>
 </div>
 </div>
 <div class="control-row">
-<button class="step-btn primary" data-i18n="convert-btn" data-i18n-title="convert-btn-title" id="convertBtn" title="Parse, convert to CNF, brute-force every assignment.">▶ Convert + check SAT</button>
+<button class="step-btn primary" data-i18n="convert-btn" data-i18n-title="convert-btn-title" id="convertBtn" title="Parse and convert to CNF, then show exhaustive enumeration and a separate DPLL pruning trace.">▶ Convert + check SAT</button>
 <span data-i18n="examples-label" style="color:var(--muted); font-size:0.82rem; margin-left:8px;">Examples:</span>
 <button class="step-btn" data-i18n="ex-mp" data-i18n-title="ex-mp-title" id="ex1" title="Modus ponens: P→Q, P, conclude Q.">Modus ponens</button>
 <button class="step-btn" data-i18n="ex-wumpus" data-i18n-title="ex-wumpus-title" id="ex2" title="The Wumpus pit rule from AIMA 7.4.">Wumpus pit rule</button>
 <button class="step-btn" data-i18n="ex-color" data-i18n-title="ex-color-title" id="ex3" title="3-coloring a triangle. SAT problem from graph theory.">3-coloring</button>
-<button class="step-btn" data-i18n="ex-xor" data-i18n-title="ex-xor-title" id="ex4" title="A trio that pairwise differs but you try to assert all three true. UNSAT.">XOR UNSAT</button>
+<button class="step-btn" data-i18n="ex-xor" data-i18n-title="ex-xor-title" id="ex4" title="A trio that pairwise differs but you try to assert all three true. UNSAT.">Conflicting XOR (UNSAT)</button>
 <button class="step-btn" data-i18n="ex-demorgan" data-i18n-title="ex-demorgan-title" id="ex5" title="De Morgan's law as a tautology: every row is a model.">De Morgan</button>
 </div>
 <div class="panel">
@@ -641,8 +641,8 @@ P</textarea>
 </details>
 </div>
 <div class="panel">
-<h3 data-i18n="step3-h3">3. Satisfiability</h3>
-<div class="sub"><span data-i18n="step3-sub">Brute-force enumeration of all 2</span><sup>n</sup><span data-i18n="step3-sub2"> assignments (cap n = 12).</span></div>
+<h3 data-i18n="step3-h3">3. Satisfiability: exhaustive reference check</h3>
+<div class="sub"><span data-i18n="step3-sub">Exhaustive enumeration of all 2</span><sup>n</sup><span data-i18n="step3-sub2"> assignments (cap n = 12).</span></div>
 <div id="satOut"></div>
 <div class="player" id="dpllPlayer">
 <div aria-label="DPLL search playback" class="transport" id="dpllTransport" role="group">
@@ -707,9 +707,9 @@ P</textarea>
 <button class="step-btn" type="button">Apply and compare</button>
 </article>
 <article class="scenario-card" data-scenario-index="3">
-<h3>Scenario 4: Exclusive OR creates a contradiction</h3>
+<h3>Scenario 4: Conflicting XOR constraints create a contradiction</h3>
 <p class="scenario-meta"><strong>Core question: </strong> How can individually reasonable constraints become impossible together?</p>
-<p class="scenario-meta"><strong>Run and watch: </strong> Load the exclusive-OR (XOR) contradiction and inspect why every truth-table row fails.</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Load the conflicting XOR constraint set and inspect why every truth-table row fails.</p>
 <p class="scenario-meta"><strong>Predict first: </strong> Predict whether changing one clause could make the formula satisfiable.</p>
 <p class="scenario-meta"><strong>Explain afterward: </strong> Identify the exact set of requirements that cannot all be true at once.</p>
 <button class="step-btn" type="button">Apply and compare</button>
@@ -791,7 +791,7 @@ P</textarea>
 <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
 </div>
 <div class="ws-q" id="ws2" style="margin-top:10px;">
-<p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Load the XOR UNSAT example. How many satisfying assignments?</span></p>
+<p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Load the Conflicting XOR (UNSAT) example. How many satisfying assignments?</span></p>
 <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="0"/> <span data-i18n="ws2o0">1: there is always at least one satisfying assignment.</span></label>
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="1"/> <span data-i18n="ws2o1">3: the satisfying rows are the ones with an odd number of trues.</span></label>
@@ -901,6 +901,9 @@ P</textarea>
     solver. CNF gives algorithms such as DPLL and CDCL a regular structure for unit propagation,
     conflict analysis, and efficient watched-literal updates.
   </p>
+<p>
+    This applet deliberately shows a direct <strong>logically equivalent</strong> rewrite so each transformation can be inspected. Production SAT pipelines often introduce auxiliary variables with a Tseitin-style encoding. That produces a compact CNF that is <strong>equisatisfiable</strong> with the original formula, meaning both are satisfiable or unsatisfiable together, even though they are not identical under every assignment to the added variables.
+  </p>
 <h2>The five-step equivalent rewrite</h2>
 <ol>
 <li><strong>Eliminate equivalence:</strong> <code>A ↔ B</code> becomes <code>(A → B) ∧ (B → A)</code>.</li>
@@ -972,6 +975,9 @@ P</textarea>
 <p>
     基于子句的 SAT 求解器在 CNF 或等价的子句表示上运行。更高层建模系统可以接受更丰富的语法，再把它编译成子句后调用核心求解器。CNF 为 DPLL 和 CDCL 等算法提供规则结构，便于执行单元传播、冲突分析和高效的监视文字更新。
   </p>
+<p>
+    本工具故意展示直接的<strong>逻辑等价</strong>改写，让每一步都可以检查。实际 SAT 流程常用 Tseitin 式编码引入辅助变量，以得到更紧凑的 CNF。这样的 CNF 与原公式是<strong>等可满足</strong>的，也就是二者会一起可满足或一起不可满足，但对新增变量的每一种赋值并不要求逻辑完全等价。
+  </p>
 <h2>五步等价改写</h2>
 <ol>
 <li><strong>消去等价：</strong><code>A ↔ B</code> 改写为 <code>(A → B) ∧ (B → A)</code>。</li>
@@ -1039,14 +1045,14 @@ P</textarea>
       'syn-comment': 'at line start = comment',
       'examples-label': 'Examples:',
       'ex-mp': 'Modus ponens', 'ex-wumpus': 'Wumpus pit rule',
-      'ex-color': '3-coloring', 'ex-xor': 'XOR UNSAT', 'ex-demorgan': 'De Morgan',
+      'ex-color': '3-coloring', 'ex-xor': 'Conflicting XOR (UNSAT)', 'ex-demorgan': 'De Morgan',
       'step1-h3': '1. Parsed input',
       'step1-sub': 'Your sentences as parsed by the engine. Errors flagged here.',
       'step2-h3': '2. Conjunctive Normal Form (step by step)',
       'step2-sub': 'Standard rewrite pipeline: eliminate ↔, eliminate →, push ¬ in (De Morgan), distribute ∨ over ∧.',
       'cnf-showall': 'Show all five stages at once',
-      'step3-h3': '3. Satisfiability',
-      'step3-sub': 'Brute-force enumeration of all 2',
+      'step3-h3': '3. Satisfiability: exhaustive reference check',
+      'step3-sub': 'Exhaustive enumeration of all 2',
       'step3-sub2': ' assignments (cap n = 12).',
       'step4-h3': '4. Entailment by resolution',
       'step4-sub': 'To prove KB ⊨ α, add ¬α to the knowledge base and apply the resolution rule until you derive the empty clause (contradiction) or stop. AIMA Ch 7.5.',
@@ -1075,7 +1081,7 @@ P</textarea>
       'ws1o0': '0: the clauses contradict each other, so nothing satisfies them.',
       'ws1o1': '1: forcing P=T and Q=T leaves exactly one satisfying row.',
       'ws1o2': '4: all four truth-table rows for two variables satisfy it.',
-      'ws2q': 'Load the XOR UNSAT example. How many satisfying assignments?',
+      'ws2q': 'Load the Conflicting XOR (UNSAT) example. How many satisfying assignments?',
       'ws2o0': '1: there is always at least one satisfying assignment.',
       'ws2o1': '3: the satisfying rows are the ones with an odd number of trues.',
       'ws2o2': '0: UNSAT means no assignment satisfies every clause.',
@@ -1090,7 +1096,7 @@ P</textarea>
       'tour1desc': "B11 ↔ (P12 ∨ P21). Watch the rewrite pipeline: ↔ becomes two implications, → becomes ∨, ¬ distributes, then ∨ distributes over ∧. The single sentence expands into multiple clauses.",
       'tour2name': '3-coloring a triangle (SAT)',
       'tour2desc': "Three nodes, three colors, edges form a triangle. SAT enumeration finds the 6 valid colorings (3! permutations). This is graph coloring as propositional logic.",
-      'tour3name': 'XOR triangle (UNSAT)',
+      'tour3name': 'Conflicting XOR constraints (UNSAT)',
       'tour3desc': "Each pair must differ AND all three must be true. No assignment satisfies all clauses. SAT returns UNSAT: every row of the truth table fails.",
       'tour4name': 'Prove by resolution refutation',
       'tour4desc': "Use the modus-ponens KB, query Q. The prover negates Q (adds ¬Q), resolves with P→Q and P, derives the empty clause. KB ⊨ Q is proved. Try changing the query to R (should fail).",
@@ -1102,7 +1108,7 @@ P</textarea>
       'ws3ok': "Right. Negate Q (¬Q), add to KB, resolve with P→Q to get ¬P, then resolve ¬P with the fact P to get the empty clause. KB ⊨ Q is proved.",
       'ws3no': "Try 'yes'. Q follows from {P→Q, P} by modus ponens, which resolution can derive: ¬Q + (¬P∨Q) → ¬P, then ¬P + P → empty clause.",
       // tooltip translations for main button + example buttons.
-      'convert-btn-title': 'Parse, convert to CNF, brute-force every assignment.',
+      'convert-btn-title': 'Parse and convert to CNF, then show exhaustive enumeration and a separate DPLL pruning trace.',
       'ex-mp-title': 'Modus ponens: P→Q, P, conclude Q.',
       'ex-wumpus-title': 'The Wumpus pit rule from AIMA 7.4.',
       'ex-color-title': '3-coloring a triangle. SAT problem from graph theory.',
@@ -2023,7 +2029,7 @@ P</textarea>
     { name: '3-coloring a triangle (SAT)',
       description: "Three nodes, three colors, edges form a triangle. SAT enumeration finds the 6 valid colorings (3! permutations). This is graph coloring as propositional logic.",
       apply: () => { $('input').value = EX.ex3; run(); } },
-    { name: 'XOR triangle (UNSAT)',
+    { name: 'Conflicting XOR constraints (UNSAT)',
       description: "Each pair must differ AND all three must be true. No assignment satisfies all clauses. SAT returns UNSAT: every row of the truth table fails.",
       apply: () => { $('input').value = EX.ex4; run(); } },
     { name: 'Prove by resolution refutation',
@@ -2457,7 +2463,7 @@ P</textarea>
 </script>
 <script id="learner-content-system">
 (() => {
-  const profile = {"slug":"cnf-sat","en":{"title":"CNF and SAT Builder","big":"Rewrite propositional logic into a standard clause form, test whether any assignment makes the formula true, and watch a solver remove impossible branches.","primer":"Logic solvers work best when every formula has a predictable structure. The terms below separate the formula format, the decision question, and the search procedure.","terms":[{"term":"Proposition","definition":"A statement that is either true or false."},{"term":"Conjunctive normal form (CNF)","definition":"An AND of clauses, where each clause is an OR of literals."},{"term":"Satisfiability (SAT)","definition":"The question of whether at least one truth assignment makes every clause true."},{"term":"Unsatisfiable (UNSAT)","definition":"No truth assignment makes the full formula true."},{"term":"DPLL algorithm","definition":"The Davis–Putnam–Logemann–Loveland search procedure, which uses logical consequences to prune branches."},{"term":"Unit propagation","definition":"If a clause has one possible literal left, that literal must be true."},{"term":"Literal","definition":"A proposition variable or its negation, such as A or ¬A."},{"term":"Clause","definition":"An OR of one or more literals."},{"term":"Truth assignment","definition":"A choice of true or false for every proposition variable."}],"scenarios":[{"title":"Modus ponens: a satisfiable formula","question":"How can a conclusion be forced even when several truth assignments are possible?","run":"Load the modus-ponens example, convert it to conjunctive normal form (CNF), and inspect the satisfying assignments.","predict":"Predict which variable must be true in every model.","explain":"Explain how the premises eliminate any assignment where the conclusion is false."},{"title":"A biconditional becomes several CNF clauses","question":"Why can one compact sentence expand into several standardized clauses?","run":"Load the Wumpus breeze rule and step through the rewrite from a biconditional to conjunctive normal form (CNF).","predict":"Predict which rewrite step will create the largest increase in clauses.","explain":"Explain why the longer form is easier for a general solver to process."},{"title":"Graph coloring as a satisfiability problem","question":"How can a color-choice problem become true-or-false variables?","run":"Load the triangle three-coloring example and inspect the valid assignments.","predict":"Predict how many colorings remain after adjacent nodes are forced to differ.","explain":"Connect each valid assignment to one legal coloring of the triangle."},{"title":"Exclusive OR creates a contradiction","question":"How can individually reasonable constraints become impossible together?","run":"Load the exclusive-OR (XOR) contradiction and inspect why every truth-table row fails.","predict":"Predict whether changing one clause could make the formula satisfiable.","explain":"Identify the exact set of requirements that cannot all be true at once."},{"title":"Resolution proves a query by contradiction","question":"How can proving that the opposite is impossible establish a conclusion?","run":"Use the modus-ponens knowledge base, negate the query, and run resolution until the empty clause appears.","predict":"Predict what the empty clause means before running the proof.","explain":"Explain why deriving a contradiction shows that the original query follows from the knowledge base."}]},"zh":{"title":"CNF 与 SAT 构建器","big":"把命题逻辑改写为合取范式（CNF），检查它是否可满足（SAT），并观察求解器如何排除不可能分支。","primer":"逻辑求解器在公式结构统一时最容易工作。下面的术语区分公式格式、判断问题和搜索过程。","terms":[{"term":"命题","definition":"一个取值为真或假的陈述。"},{"term":"合取范式（CNF）","definition":"多个子句的“与”，每个子句是多个文字的“或”。"},{"term":"可满足性（SAT）","definition":"是否至少存在一种真值赋值使所有子句为真。"},{"term":"不可满足（UNSAT）","definition":"不存在任何真值赋值能使整个公式为真。"},{"term":"DPLL 算法","definition":"Davis–Putnam–Logemann–Loveland 搜索过程，利用逻辑后果剪枝。"},{"term":"单元传播","definition":"当一个子句只剩一个可能文字时，该文字必须为真。"},{"term":"文字","definition":"一个命题变量或它的否定，例如 A 或 ¬A。"},{"term":"子句","definition":"由一个或多个文字通过“或”连接而成的表达式。"},{"term":"真值赋值","definition":"为每个命题变量选择真或假。"}],"scenarios":[{"title":"肯定前件：一个可满足公式","question":"即使存在多个真值赋值，结论如何仍被强制为真？","run":"加载肯定前件示例，转换为合取范式（CNF），并检查可满足赋值。","predict":"预测哪个变量在每个模型中都必须为真。","explain":"解释前提如何排除结论为假的任何赋值。"},{"title":"双条件变成多个 CNF 子句","question":"为什么一个简短句子会展开成多个标准子句？","run":"载入 Wumpus 微风规则，逐步观察双条件命题如何改写为合取范式（CNF）。","predict":"预测哪个改写步骤会使子句数量增加最多。","explain":"解释更长的形式为什么更容易被通用求解器处理。"},{"title":"把图着色变成可满足性问题","question":"颜色选择问题如何变成真假变量？","run":"加载三角形三着色示例并检查有效赋值。","predict":"预测相邻节点必须不同后还剩多少种着色。","explain":"把每个有效赋值与一种合法三角形着色对应起来。"},{"title":"异或约束产生矛盾","question":"为什么单独看似合理的约束放在一起会不可能？","run":"加载异或（XOR）矛盾并检查每个真值表行为什么失败。","predict":"预测改变一个子句是否能使公式可满足。","explain":"指出哪些要求无法同时为真。"},{"title":"归结通过矛盾证明查询","question":"为什么证明反面不可能可以建立结论？","run":"使用肯定前件知识库，否定查询，并运行归结直到出现空子句。","predict":"运行前预测空子句表示什么。","explain":"解释推导出矛盾为什么说明原查询由知识库蕴含。"}]}};
+  const profile = {"slug":"cnf-sat","en":{"title":"CNF and SAT Builder","big":"Rewrite propositional logic into a standard clause form, test whether any assignment makes the formula true, and watch a solver remove impossible branches.","primer":"Logic solvers work best when every formula has a predictable structure. The terms below separate the formula format, the decision question, and the search procedure.","terms":[{"term":"Proposition","definition":"A statement that is either true or false."},{"term":"Conjunctive normal form (CNF)","definition":"An AND of clauses, where each clause is an OR of literals."},{"term":"Satisfiability (SAT)","definition":"The question of whether at least one truth assignment makes every clause true."},{"term":"Unsatisfiable (UNSAT)","definition":"No truth assignment makes the full formula true."},{"term":"DPLL algorithm","definition":"The Davis–Putnam–Logemann–Loveland search procedure, which uses logical consequences to prune branches."},{"term":"Unit propagation","definition":"If a clause has one possible literal left, that literal must be true."},{"term":"Literal","definition":"A proposition variable or its negation, such as A or ¬A."},{"term":"Clause","definition":"An OR of one or more literals."},{"term":"Truth assignment","definition":"A choice of true or false for every proposition variable."}],"scenarios":[{"title":"Modus ponens: a satisfiable formula","question":"How can a conclusion be forced even when several truth assignments are possible?","run":"Load the modus-ponens example, convert it to conjunctive normal form (CNF), and inspect the satisfying assignments.","predict":"Predict which variable must be true in every model.","explain":"Explain how the premises eliminate any assignment where the conclusion is false."},{"title":"A biconditional becomes several CNF clauses","question":"Why can one compact sentence expand into several standardized clauses?","run":"Load the Wumpus breeze rule and step through the rewrite from a biconditional to conjunctive normal form (CNF).","predict":"Predict which rewrite step will create the largest increase in clauses.","explain":"Explain why the longer form is easier for a general solver to process."},{"title":"Graph coloring as a satisfiability problem","question":"How can a color-choice problem become true-or-false variables?","run":"Load the triangle three-coloring example and inspect the valid assignments.","predict":"Predict how many colorings remain after adjacent nodes are forced to differ.","explain":"Connect each valid assignment to one legal coloring of the triangle."},{"title":"Conflicting XOR constraints create a contradiction","question":"How can individually reasonable constraints become impossible together?","run":"Load the conflicting XOR constraint set and inspect why every truth-table row fails.","predict":"Predict whether changing one clause could make the formula satisfiable.","explain":"Identify the exact set of requirements that cannot all be true at once."},{"title":"Resolution proves a query by contradiction","question":"How can proving that the opposite is impossible establish a conclusion?","run":"Use the modus-ponens knowledge base, negate the query, and run resolution until the empty clause appears.","predict":"Predict what the empty clause means before running the proof.","explain":"Explain why deriving a contradiction shows that the original query follows from the knowledge base."}]},"zh":{"title":"CNF 与 SAT 构建器","big":"把命题逻辑改写为合取范式（CNF），检查它是否可满足（SAT），并观察求解器如何排除不可能分支。","primer":"逻辑求解器在公式结构统一时最容易工作。下面的术语区分公式格式、判断问题和搜索过程。","terms":[{"term":"命题","definition":"一个取值为真或假的陈述。"},{"term":"合取范式（CNF）","definition":"多个子句的“与”，每个子句是多个文字的“或”。"},{"term":"可满足性（SAT）","definition":"是否至少存在一种真值赋值使所有子句为真。"},{"term":"不可满足（UNSAT）","definition":"不存在任何真值赋值能使整个公式为真。"},{"term":"DPLL 算法","definition":"Davis–Putnam–Logemann–Loveland 搜索过程，利用逻辑后果剪枝。"},{"term":"单元传播","definition":"当一个子句只剩一个可能文字时，该文字必须为真。"},{"term":"文字","definition":"一个命题变量或它的否定，例如 A 或 ¬A。"},{"term":"子句","definition":"由一个或多个文字通过“或”连接而成的表达式。"},{"term":"真值赋值","definition":"为每个命题变量选择真或假。"}],"scenarios":[{"title":"肯定前件：一个可满足公式","question":"即使存在多个真值赋值，结论如何仍被强制为真？","run":"加载肯定前件示例，转换为合取范式（CNF），并检查可满足赋值。","predict":"预测哪个变量在每个模型中都必须为真。","explain":"解释前提如何排除结论为假的任何赋值。"},{"title":"双条件变成多个 CNF 子句","question":"为什么一个简短句子会展开成多个标准子句？","run":"载入 Wumpus 微风规则，逐步观察双条件命题如何改写为合取范式（CNF）。","predict":"预测哪个改写步骤会使子句数量增加最多。","explain":"解释更长的形式为什么更容易被通用求解器处理。"},{"title":"把图着色变成可满足性问题","question":"颜色选择问题如何变成真假变量？","run":"加载三角形三着色示例并检查有效赋值。","predict":"预测相邻节点必须不同后还剩多少种着色。","explain":"把每个有效赋值与一种合法三角形着色对应起来。"},{"title":"相互冲突的异或约束产生矛盾","question":"为什么单独看似合理的约束放在一起会不可能？","run":"加载相互冲突的异或约束集合并检查每个真值表行为什么失败。","predict":"预测改变一个子句是否能使公式可满足。","explain":"指出哪些要求无法同时为真。"},{"title":"归结通过矛盾证明查询","question":"为什么证明反面不可能可以建立结论？","run":"使用肯定前件知识库，否定查询，并运行归结直到出现空子句。","predict":"运行前预测空子句表示什么。","explain":"解释推导出矛盾为什么说明原查询由知识库蕴含。"}]}};
   window.APPLET_LEARNER_PROFILE = profile;
   const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
   const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;
