@@ -536,7 +536,7 @@
 </header>
 <aside class="tldr">
 <strong data-i18n="tldr-strong">The big idea</strong>
-<span data-i18n="tldr-body">Layers stacked with non-linear activations can carve any decision boundary. Remove the non-linearity and the whole network collapses into a single line.</span>
+<span data-i18n="tldr-body">Nonlinear activations let this network represent curved boundaries that a purely affine stack cannot. With linear activations, the full network remains one affine map.</span>
 </aside>
 <section class="interactive" id="main" role="main" tabindex="-1">
 <div class="interactive-inner">
@@ -552,7 +552,7 @@
 <option data-i18n="opt-blobs" value="blobs">Two blobs (linearly separable)</option>
 </select>
 <label data-i18n="act-label">Activation:</label>
-<select data-i18n-title="act-sel-title" id="act" title="Non-linearity applied after each hidden layer. 'linear' collapses depth into a single line.">
+<select data-i18n-title="act-sel-title" id="act" title="Non-linearity applied after each hidden layer. 'linear' keeps the full network affine, so added depth cannot create a curved boundary by itself.">
 <option value="tanh">tanh</option>
 <option selected="" value="relu">ReLU</option>
 <option value="sigmoid">sigmoid</option>
@@ -571,20 +571,20 @@
 <span class="val" id="h2V">4</span>
 </span>
 <span class="slider-block">
-<label data-i18n="lr-label" data-i18n-title="lr-title" title="SGD step size. Too small = glacial; too large = unstable.">Learning rate</label>
+<label data-i18n="lr-label" data-i18n-title="lr-title" title="Full-batch gradient-descent step size. Too small = slow; too large = unstable.">Learning rate</label>
 <input aria-label="Learning rate" id="lr" max="0.3" min="0.001" step="0.001" type="range" value="0.03"/>
 <span class="val" id="lrV">0.030</span>
 </span>
 <label data-i18n="opt-label" style="margin-left:6px;">Optimizer:</label>
-<select data-i18n-title="opt-title" id="optSel" title="SGD: plain gradient descent (w ← w − lr·g). Momentum: accumulates a velocity buffer (v ← βv − lr·g; w ← w + v): smooths noisy gradients and accelerates through ravines. Adam: combines momentum (1st moment) with adaptive per-parameter learning rates (2nd moment).">
-<option data-i18n="opt-sgd" selected="" value="sgd">SGD</option>
+<select data-i18n-title="opt-title" id="optSel" title="Gradient descent here uses the full training set for each gradient. Momentum adds a velocity buffer; Adam adds moment estimates and adaptive per-parameter scaling. The data path remains full-batch in this applet.">
+<option data-i18n="opt-sgd" selected="" value="sgd">Gradient descent (full-batch)</option>
 <option data-i18n="opt-momentum" value="momentum">Momentum (β=0.9)</option>
 <option data-i18n="opt-adam" value="adam">Adam (β₁=0.9, β₂=0.999)</option>
 </select>
 <!-- Train / Reset relocated to the unified transport bar below. -->
-<!-- train/test toggle. Test set = held-out 20% of generated data. -->
-<label data-i18n-title="show-test-title" style="margin-left:10px;" title="Show test-loss curve on the loss chart and mark test points on the decision-boundary chart. Test = held-out 20% never used for gradients.">
-<input id="showTestLoss" type="checkbox"/> <span data-i18n="show-test-label">Show test loss/points</span></label>
+<!-- train/validation toggle. The repeatedly viewable 20% split is not used for gradients, but functions as validation data rather than an untouched final test set. -->
+<label data-i18n-title="show-test-title" style="margin-left:10px;" title="Show validation-loss curve on the loss chart and mark validation points on the decision-boundary chart. This held-out 20% is never used for gradients, but because it is repeatedly viewable while settings change, treat it as validation data rather than a final untouched test set.">
+<input id="showTestLoss" type="checkbox"/> <span data-i18n="show-test-label">Show validation loss/points</span></label>
 </div>
 <!-- Unified transport bar (shared playback controls + inline history scrubber). -->
 <div aria-label="Playback controls" class="transport" id="transport" role="group">
@@ -723,17 +723,17 @@
 <button class="step-btn" type="button">Apply and compare</button>
 </article>
 <article class="scenario-card" data-scenario-index="3">
-<h3>Scenario 4: Several linear layers still collapse to one linear map</h3>
+<h3>Scenario 4: Several linear-activation layers still compose to one affine map</h3>
 <p class="scenario-meta"><strong>Core question: </strong> Why does adding depth fail when every activation is linear?</p>
 <p class="scenario-meta"><strong>Run and watch: </strong> Use two hidden layers but set the activation to linear, then train on the moon data.</p>
 <p class="scenario-meta"><strong>Predict first: </strong> Predict whether the extra parameters will create a curved boundary.</p>
-<p class="scenario-meta"><strong>Explain afterward: </strong> Explain why composing linear transformations still produces one linear transformation.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain why composing layers of the form Wx+b with linear activations still produces one affine transformation.</p>
 <button class="step-btn" type="button">Apply and compare</button>
 </article>
 <article class="scenario-card" data-scenario-index="4">
-<h3>Scenario 5: Exclusive OR requires a nonlinear representation</h3>
+<h3>Scenario 5: XOR requires a nonlinear representation in the original x-y features</h3>
 <p class="scenario-meta"><strong>Core question: </strong> Why can opposite corners belong to the same class while a straight line still fails?</p>
-<p class="scenario-meta"><strong>Run and watch: </strong> Use the exclusive-OR (XOR) data with nonlinear hidden layers and train.</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Use the exclusive-OR (XOR) data in the original x-y coordinates with nonlinear hidden layers and train. Then compare with an engineered nonlinear input feature.</p>
 <p class="scenario-meta"><strong>Predict first: </strong> Predict how many separate regions the decision boundary must create.</p>
 <p class="scenario-meta"><strong>Explain afterward: </strong> Explain how the hidden representation rearranges the points into a separable pattern.</p>
 <button class="step-btn" type="button">Apply and compare</button>
@@ -821,7 +821,7 @@
 <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="0"/> <span data-i18n="ws3o0">More: two extra layers give the network strictly more expressive power.</span></label>
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="1"/> <span data-i18n="ws3o1">Less: stacking layers shrinks the number of usable parameters.</span></label>
-<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="2"/> <span data-i18n="ws3o2">The same: stacked linear layers collapse into a single linear map.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="2"/> <span data-i18n="ws3o2">The same: stacked linear-activation layers compose into a single affine map.</span></label>
 </div>
 <button class="step-btn" data-i18n="ws-check" id="ws3btn">Check</button>
 <span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
@@ -1039,23 +1039,23 @@
       'footer-top': '↑ Back to top', 'footer-course': 'Made for the Introduction to AI course at Haidian Kaiwen Academy.', 'footer-portfolio': 'Portfolio', 'footer-project': 'AI Playgrounds', 'footer-source': 'Source', 'footer-issue': 'Report an issue',
       'reset-all': '↺ Reset all', 'dataset-label': 'Dataset:', 'act-label': 'Activation:',
       'tldr-strong': 'The big idea',
-      'tldr-body': 'Layers stacked with non-linear activations can carve any decision boundary. Remove the non-linearity and the whole network collapses into a single line.',
+      'tldr-body': 'Nonlinear hidden layers can represent curved and piecewise decision boundaries. With linear activations, layers of the form Wx+b still compose to one affine map, so depth alone cannot create a curved boundary.',
       'opt-moons': 'Two moons (non-linear, curved)',
       'opt-circles': 'Concentric circles (radial)',
       'opt-xor': 'XOR (canonical non-linearity test)',
       'opt-blobs': 'Two blobs (linearly separable)',
       'opt-linear': 'linear (no non-linearity)',
       'h1-label': 'Hidden 1', 'h2-label': 'Hidden 2', 'lr-label': 'Learning rate',
-      'opt-label': 'Optimizer:', 'opt-sgd': 'SGD',
+      'opt-label': 'Optimizer:', 'opt-sgd': 'Gradient descent (full-batch)',
       'opt-momentum': 'Momentum (β=0.9)', 'opt-adam': 'Adam (β₁=0.9, β₂=0.999)',
-      'opt-title': 'SGD: plain gradient descent (w ← w − lr·g). Momentum: accumulates a velocity buffer (v ← βv − lr·g; w ← w + v): smooths noisy gradients and accelerates through ravines. Adam: combines momentum (1st moment) with adaptive per-parameter learning rates (2nd moment).',
+      'opt-title': 'Each update uses the full training set. Plain gradient descent applies w ← w − lr·g; Momentum adds a velocity buffer; Adam adds moment estimates and adaptive scaling. These optimizer formulas do not make the data path stochastic in this applet.',
       'train-btn': '▶ Train / pause', 'reset-btn': 'Reset weights',
       'step-btn': '❘▶ Step', 'speed-label': 'Speed',
       'restart-title': 'Re-initialize weights randomly; rebuild architecture from current settings.',
       'back-title': 'Step one training frame backward (review).',
       'tp-idle': 'idle',
       'history-label': '⏪ History', 'goto-label': 'epoch', 'return-live': 'Jump to latest',
-      'show-test-label': 'Show test loss/points',
+      'show-test-label': 'Show validation loss/points',
       'show-test-title': 'Show test-loss curve on the loss chart and mark test points (open shapes) on the decision-boundary chart. Test = held-out 20% never used for gradients.',
       'inside-summary': '🧠 Inside the network (weights + per-neuron activation maps)',
       'weights-hint': 'Each row is a layer; each square is one weight. Blue = positive, red = negative; brightness = magnitude.',
@@ -1094,31 +1094,31 @@
       'ws2o2': 'NaN: ReLU units always die and stop the network from learning.',
       'ws3o0': 'More: two extra layers give the network strictly more expressive power.',
       'ws3o1': 'Less: stacking layers shrinks the number of usable parameters.',
-      'ws3o2': 'The same: stacked linear layers collapse into a single linear map.',
+      'ws3o2': 'The same: stacked linear-activation layers compose into a single affine map.',
       // lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
       'tour0name': 'Linear can split linearly-separable data',
       'tour0desc': "Blobs dataset (two clouds), no hidden layer (h1=0, h2=0), linear activation. The network is just logistic regression: and that's enough. Watch the loss drop fast.",
-      'tour1name': 'Moons: linear fails, network needs depth',
-      'tour1desc': 'Switch to moons. Same linear setup. Loss plateaus around 0.3+: no straight line can separate them. The model lacks the capacity. This is the canonical pitch for hidden layers.',
+      'tour1name': 'Moons: raw linear features need a nonlinear representation',
+      'tour1desc': 'Switch to moons. Same affine setup. Loss plateaus above zero because the raw x-y classes are not linearly separable. A nonlinear hidden representation or engineered nonlinear feature is needed to bend the boundary.',
       'tour2name': 'Add ReLU + one hidden layer → moons solved',
       'tour2desc': 'Moons, one hidden layer of 6 ReLU units. Network now bends. Loss drops to near zero. The non-linearity, not just depth, is what bought you the curve.',
       'tour3name': 'Stack with linear activation collapses',
-      'tour3desc': 'Moons, h1=6 h2=4, but activation = linear. Two linear layers compose to ONE linear layer: math says so. Loss plateaus again. Depth without non-linearity is wasted parameters.',
+      'tour3desc': 'Moons, h1=6 h2=4, but activation = linear. Because each layer includes a bias, the stack still composes to one affine map. Added depth alone cannot bend the boundary.',
       'tour4name': 'XOR: the textbook non-linear task',
-      'tour4desc': 'XOR dataset: opposite corners are the same class. Provably unsolvable by any linear model since Minsky 1969. With ReLU + 2 hidden layers, train and watch the decision boundary become 4 wedges.',
+      'tour4desc': 'XOR dataset: opposite corners are the same class. Not linearly separable in the original x-y coordinates. A nonlinear hidden representation or an engineered nonlinear feature can make the classes separable. With ReLU + 2 hidden layers, train and watch the decision boundary become 4 wedges.',
       // worksheet answer-feedback (ws{n}ok / ws{n}no) ---
       'ws1ok': 'Correct (~0.3+). A linear model is just logistic regression: it can only draw straight lines. The moons are nonlinearly separable, so the best a linear classifier can do is misclassify some: loss plateaus around 0.3.',
       'ws1no': "Try 0.3. With h1=0 + linear activation, the model is logistic regression, which can't curve. Loss plateaus well above zero.",
       'ws2ok': 'Right. h1=6 ReLU is just enough capacity to bend the boundary into the moon shape. Loss drops to near zero (or actual zero if data is fully separable). Non-linearity is the unlock: depth alone with linear activation would not help.',
-      'ws2no': 'Try 0 (near zero). ReLU + a hidden layer gives the network enough capacity to learn the curved boundary.',
-      'ws3ok': 'Correct. Two linear layers compose to ONE linear layer: math: A·(B·x) = (A·B)·x. Stacking depth without non-linearity is mathematically equivalent to a single layer, just with more parameters wastefully reparameterizing it.',
-      'ws3no': "Try 'same'. f(x) = W₂(W₁x) = (W₂W₁)x: composition of linear maps is linear. Depth alone gains nothing.",
+      'ws2no': 'Try 0 (near zero). ReLU plus a hidden layer gives the network enough representational capacity for a curved boundary, but optimization still has to find suitable parameters.',
+      'ws3ok': 'Correct. With biases included, W₂(W₁x+b₁)+b₂ = (W₂W₁)x+(W₂b₁+b₂), so a stack with linear activations is still one affine map. Added depth changes the parameterization but does not create a curved boundary.',
+      'ws3no': "Try 'same'. f(x) = W₂(W₁x+b₁)+b₂ = (W₂W₁)x+(W₂b₁+b₂): composition of affine maps is affine. Without a nonlinear activation or engineered nonlinear feature, depth alone does not bend the decision boundary.",
       // tooltip translations for main selectors + slider labels.
-      'dataset-sel-title': 'Test problem. XOR forces non-linearity; blobs work with a single line.',
-      'act-sel-title': "Non-linearity applied after each hidden layer. 'linear' collapses depth into a single line.",
+      'dataset-sel-title': 'Test problem. XOR is not linearly separable in the raw x-y coordinates; a nonlinear hidden representation or engineered nonlinear feature can change that. Blobs work with one affine boundary.',
+      'act-sel-title': "Non-linearity applied after each hidden layer. 'linear' keeps the full network affine, so added depth cannot create a curved boundary by itself.",
       'h1-title': 'Number of neurons in the first hidden layer. 0 = no hidden layer.',
       'h2-title': 'Number of neurons in the second hidden layer. 0 = no second hidden layer.',
-      'lr-title': 'SGD step size. Too small = glacial; too large = unstable.',
+      'lr-title': 'Full-batch gradient-descent step size. Too small = slow; too large = unstable.',
       // engineered input-feature toggles (TF-Playground style).
       'feat-label': 'Input features:',
       'feat-label-title': 'Extra engineered inputs fed alongside x and y. They let a small network bend or close its boundary without more hidden neurons. Toggling resets the network.',
@@ -1143,24 +1143,24 @@
       'footer-top': '↑ 返回顶部', 'footer-course': '为海淀凯文学校《人工智能导论》课程制作。', 'footer-portfolio': '作品集', 'footer-project': 'AI Playgrounds', 'footer-source': '源代码', 'footer-issue': '反馈问题',
       'reset-all': '↺ 全部重置', 'dataset-label': '数据集:', 'act-label': '激活函数:',
       'tldr-strong': '核心思想',
-      'tldr-body': '带非线性激活函数的层堆叠起来可以刻出任意决策边界。去掉非线性,整个网络就会塌缩成一条直线。',
+      'tldr-body': '非线性激活让这个网络能够表示纯仿射层堆叠无法表示的弯曲边界。若所有激活都为线性,整个网络仍只是一个仿射映射。',
       'opt-moons': '双月(非线性,弯曲)',
       'opt-circles': '同心圆(径向)',
       'opt-xor': '异或(经典非线性测试)',
       'opt-blobs': '两团(线性可分)',
       'opt-linear': '线性(无非线性)',
       'h1-label': '隐层 1', 'h2-label': '隐层 2', 'lr-label': '学习率',
-      'opt-label': '优化器:', 'opt-sgd': 'SGD',
+      'opt-label': '优化器:', 'opt-sgd': '全批量梯度下降',
       'opt-momentum': '动量 (β=0.9)', 'opt-adam': 'Adam (β₁=0.9, β₂=0.999)',
-      'opt-title': 'SGD:朴素梯度下降(w ← w − lr·g)。动量:累积速度缓冲(v ← βv − lr·g;w ← w + v)--平滑噪声梯度并在峡谷中加速。Adam:把动量(一阶矩)与每参数自适应学习率(二阶矩)结合。',
+      'opt-title': '本工具每次更新都使用完整训练集。普通梯度下降执行 w ← w − lr·g；动量加入速度缓冲；Adam 加入矩估计与自适应缩放。这些优化器并不会把本工具的数据路径变成随机梯度下降。',
       'train-btn': '▶ 训练 / 暂停', 'reset-btn': '重置权重',
       'step-btn': '❘▶ 单步', 'speed-label': '速度',
       'restart-title': '随机重新初始化权重;按当前设置重建网络结构。',
       'back-title': '后退一个训练帧(回看)。',
       'tp-idle': '空闲',
       'history-label': '⏪ 历史', 'goto-label': '回合', 'return-live': '跳到最新',
-      'show-test-label': '显示测试损失/点',
-      'show-test-title': '在损失图上显示测试损失曲线,并在决策边界图上以空心形状标注测试点。测试集 = 留出的 20%,从不用于梯度更新。',
+      'show-test-label': '显示验证损失/点',
+      'show-test-title': '显示验证损失曲线并以空心形状标注验证点。这 20% 留出数据不参与梯度更新,但因为调参时可以反复查看,应把它视为验证数据而不是最终未触碰的测试集。',
       'inside-summary': '🧠 网络内部(权重 + 每个神经元的激活图)',
       'weights-hint': '每行是一层,每个方块是一个权重。蓝 = 正,红 = 负;亮度 = 绝对值大小。',
       'acts-hint': '每个缩略图显示一个隐藏神经元在 2D 输入平面上的激活--也就是这个神经元学会了"对什么开火"。',
@@ -1198,31 +1198,31 @@
       'ws2o2': 'NaN--ReLU 单元总会"死亡",使网络无法学习。',
       'ws3o0': '更多--两个额外的层让网络拥有严格更强的表达能力。',
       'ws3o1': '更少--堆叠层会减少可用参数的数量。',
-      'ws3o2': '相同--堆叠的线性层会塌缩成一个线性映射。',
+      'ws3o2': '相同--带偏置的线性激活层堆叠后仍组合成一个仿射映射。',
       // 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
       'tour0name': '线性模型可以分开线性可分的数据',
       'tour0desc': '两团数据集(两片点云),无隐藏层(h1=0、h2=0),线性激活。此时网络就是逻辑回归--而这已经够了。观察损失迅速下降。',
-      'tour1name': '双月:线性失败,网络需要深度',
-      'tour1desc': '切换到双月。相同的线性设置。损失在 0.3 上下停滞--没有直线能把它们分开。模型缺乏容量。这正是引入隐藏层的经典理由。',
+      'tour1name': '双月:原始线性特征需要非线性表示',
+      'tour1desc': '切换到双月。相同的仿射设置。由于原始 x-y 类别并非线性可分,损失会停在零以上。要弯曲边界,需要非线性隐藏表示或工程化非线性特征。',
       'tour2name': '加入 ReLU + 一个隐藏层 → 双月被解决',
       'tour2desc': '双月,一个含 6 个 ReLU 单元的隐藏层。网络现在会弯曲了。损失降到接近零。让你得到曲线的是非线性,而不只是深度。',
       'tour3name': '用线性激活堆叠会塌缩',
-      'tour3desc': '双月,h1=6、h2=4,但激活函数=线性。两个线性层复合成一个线性层--数学如此。损失再次停滞。没有非线性的深度只是浪费参数。',
+      'tour3desc': '双月,h1=6、h2=4,但激活函数=线性。由于每层都含偏置,整个堆叠仍组合为一个仿射映射;仅增加深度不能弯曲决策边界。',
       'tour4name': '异或--教科书式的非线性任务',
-      'tour4desc': '异或数据集:对角的两个角属于同一类。自 Minsky 1969 起就被证明任何线性模型都无法解决。用 ReLU + 2 个隐藏层,训练并观察决策边界变成 4 个楔形区域。',
+      'tour4desc': '异或数据集:对角的两个角属于同一类。在原始 x-y 坐标中它并非线性可分;非线性隐藏表示或工程化非线性特征可以使类别可分。用 ReLU + 2 个隐藏层训练并观察边界变化。',
       // 练习题答案反馈(ws{n}ok / ws{n}no)---
       'ws1ok': '正确(约 0.3 以上)。线性模型就是逻辑回归--只能画直线。双月是非线性可分的,所以线性分类器最多只能错分一部分--损失停滞在 0.3 上下。',
       'ws1no': '试试 0.3。当 h1=0 且激活为线性时,模型是逻辑回归,无法弯曲。损失会停滞在远高于零处。',
       'ws2ok': '对。h1=6 的 ReLU 恰好提供了足够的容量,把边界弯成双月形状。损失降到接近零(若数据完全可分则为真正的零)。非线性才是关键--只有深度而激活为线性是没用的。',
       'ws2no': '试试 0(接近零)。ReLU + 一个隐藏层给了网络足够的容量来学习弯曲的边界。',
-      'ws3ok': '正确。两个线性层复合成一个线性层--数学上:A·(B·x) = (A·B)·x。没有非线性的深度堆叠在数学上等价于单层,只是用更多参数做了多余的重新参数化。',
-      'ws3no': '试试"same"。f(x) = W₂(W₁x) = (W₂W₁)x--线性映射的复合仍是线性。仅有深度毫无收益。',
+      'ws3ok': '正确。计入偏置后,W₂(W₁x+b₁)+b₂ = (W₂W₁)x+(W₂b₁+b₂),所以线性激活层的堆叠仍只是一个仿射映射;增加深度本身不会产生弯曲边界。',
+      'ws3no': '试试"same"。f(x) = W₂(W₁x+b₁)+b₂ = (W₂W₁)x+(W₂b₁+b₂),所以线性激活层的复合仍是仿射映射;仅有深度不会弯曲边界。',
       // 主要选择器与滑块的提示翻译。
-      'dataset-sel-title': '测试问题。异或要求非线性;双团数据用一条直线即可。',
-      'act-sel-title': '每个隐层之后施加的非线性。"线性"会让深度坍塌为一条直线。',
+      'dataset-sel-title': '测试问题。在原始 x-y 坐标中,异或并非线性可分;非线性隐藏表示或工程化非线性特征可以改变这一点。双团数据可用一个仿射边界分开。',
+      'act-sel-title': '每个隐层之后施加的非线性。使用线性激活时，带偏置的各层整体仍是仿射映射，因此深度本身不能弯曲决策边界。',
       'h1-title': '第一个隐层的神经元数量。0 = 无隐层。',
       'h2-title': '第二个隐层的神经元数量。0 = 无第二隐层。',
-      'lr-title': 'SGD 步长。太小 = 缓慢;太大 = 不稳定。',
+      'lr-title': '全批量梯度下降步长。太小会很慢，太大可能不稳定。',
       // 工程化输入特征开关(TF-Playground 风格)。
       'feat-label': '输入特征:',
       'feat-label-title': '在 x、y 之外额外喂入的工程化特征。它们让小网络无需增加隐藏神经元也能弯曲或闭合决策边界。切换会重置网络。',
@@ -2204,10 +2204,10 @@
       description: "Moons, one hidden layer of 6 ReLU units. Network now bends. Loss drops to near zero. The non-linearity, not just depth, is what bought you the curve.",
       apply: () => applyNN('moons', 'relu', 6, 0, 0.03) },
     { name: 'Stack with linear activation collapses',
-      description: "Moons, h1=6 h2=4, but activation = linear. Two linear layers compose to ONE linear layer: math says so. Loss plateaus again. Depth without non-linearity is wasted parameters.",
+      description: "Moons, h1=6 h2=4, but activation = linear. With linear activations, two affine layers compose to one affine map. Loss plateaus again. Depth without non-linearity is wasted parameters.",
       apply: () => applyNN('moons', 'linear', 6, 4, 0.03) },
     { name: 'XOR: the textbook non-linear task',
-      description: "XOR dataset: opposite corners are the same class. Provably unsolvable by any linear model since Minsky 1969. With ReLU + 2 hidden layers, train and watch decision boundary become 4 wedges.",
+      description: "XOR dataset: opposite corners are the same class. Not linearly separable in the original x-y coordinates. A nonlinear hidden representation or an engineered nonlinear feature can make the classes separable. With ReLU + 2 hidden layers, train and watch decision boundary become 4 wedges.",
       apply: () => applyNN('xor', 'relu', 6, 4, 0.05) },
   ];
   let tourIdx = 0;
@@ -2302,10 +2302,10 @@
       no:  ['ws1no', "Try 0.3. With h1=0 + linear activation, the model is logistic regression, which can't curve. Loss plateaus well above zero."] },
     { correct: 0,
       ok:  ['ws2ok', "Right. h1=6 ReLU is just enough capacity to bend the boundary into the moon shape. Loss drops to near zero (or actual zero if data is fully separable). Non-linearity is the unlock: depth alone with linear activation would not help."],
-      no:  ['ws2no', "Try 0 (near zero). ReLU + a hidden layer gives the network enough capacity to learn the curved boundary."] },
+      no:  ['ws2no', "Try 0 (near zero). ReLU plus a hidden layer gives the network enough representational capacity for a curved boundary, but optimization still has to find suitable parameters."] },
     { correct: 2,
-      ok:  ['ws3ok', "Correct. Two linear layers compose to ONE linear layer: math: A·(B·x) = (A·B)·x. Stacking depth without non-linearity is mathematically equivalent to a single layer, just with more parameters wastefully reparameterizing it."],
-      no:  ['ws3no', "Try 'same'. f(x) = W₂(W₁x) = (W₂W₁)x: composition of linear maps is linear. Depth alone gains nothing."] },
+      ok:  ['ws3ok', "Correct. With linear activations and biases, W₂(W₁x+b₁)+b₂ = (W₂W₁)x+(W₂b₁+b₂), so the composition is still affine. Depth without a nonlinear activation does not create a curved boundary."],
+      no:  ['ws3no', "Try 'same'. f(x) = W₂(W₁x+b₁)+b₂ = (W₂W₁)x+(W₂b₁+b₂): composition of affine maps is affine. Without a nonlinear activation or engineered nonlinear feature, depth alone does not bend the decision boundary."] },
   ];
   WORKSHEET.forEach((q, i) => {
     const n = i + 1;
@@ -2645,7 +2645,7 @@
 </script>
 <script id="learner-content-system">
 (() => {
-  const profile = {"slug":"neural-network","en":{"title":"Tiny Neural Network","big":"Train a small classifier and watch its decision boundary change. Compare linear layers with nonlinear activation functions to see what added depth can and cannot represent.","primer":"A neural network transforms inputs in stages. A hidden layer helps only when its activation function introduces a nonlinear change.","terms":[{"term":"Input feature","definition":"A measured value supplied to the network."},{"term":"Hidden layer","definition":"An intermediate set of units that transforms the input before the final prediction."},{"term":"Activation function","definition":"A transformation applied to a unit’s weighted input; a nonlinear activation lets the network bend a boundary."},{"term":"Rectified linear unit (ReLU)","definition":"An activation that keeps positive values and replaces negative values with zero."},{"term":"Loss","definition":"A number measuring how far the predictions are from the target labels."},{"term":"Stochastic gradient descent (SGD)","definition":"An optimization method that repeatedly changes weights to reduce loss."},{"term":"Weight","definition":"A learned multiplier that controls how strongly one signal affects the next unit."},{"term":"Bias","definition":"A learned offset added before an activation function."},{"term":"Epoch","definition":"One complete pass through the training examples."}],"scenarios":[{"title":"A linear model is enough for separated blobs","question":"When is a straight decision boundary all the model needs?","run":"Use the two-blob data with no hidden layer and a linear activation, then train.","predict":"Predict whether adding hidden units would meaningfully improve this easy dataset.","explain":"Explain why a simple linear separator already matches the geometry."},{"title":"A linear model cannot separate two moons","question":"What pattern cannot be divided by one straight line?","run":"Switch to the two-moons data while keeping the network linear.","predict":"Predict where the loss will stop and which regions will remain misclassified.","explain":"Use the curved class shapes to explain the limit of a linear boundary."},{"title":"A ReLU hidden layer bends the boundary","question":"What changes when the hidden layer uses a nonlinear activation?","run":"Use one hidden layer with rectified linear unit (ReLU) activation on the moon data and train again.","predict":"Predict whether the boundary will remain straight or form several connected segments.","explain":"Explain how nonlinear hidden units create a representation the output layer can separate."},{"title":"Several linear layers still collapse to one linear map","question":"Why does adding depth fail when every activation is linear?","run":"Use two hidden layers but set the activation to linear, then train on the moon data.","predict":"Predict whether the extra parameters will create a curved boundary.","explain":"Explain why composing linear transformations still produces one linear transformation."},{"title":"Exclusive OR requires a nonlinear representation","question":"Why can opposite corners belong to the same class while a straight line still fails?","run":"Use the exclusive-OR (XOR) data with nonlinear hidden layers and train.","predict":"Predict how many separate regions the decision boundary must create.","explain":"Explain how the hidden representation rearranges the points into a separable pattern."}]},"zh":{"title":"微型神经网络","big":"训练一个小型分类器并观察决策边界变化。比较线性层与非线性激活函数，理解增加深度能表示什么、不能表示什么。","primer":"神经网络分阶段转换输入。只有当激活函数引入非线性变化时，隐藏层才会提供新的表示能力。","terms":[{"term":"输入特征","definition":"提供给网络的测量数值。"},{"term":"隐藏层","definition":"在最终预测前转换输入的中间单元层。"},{"term":"激活函数","definition":"应用于单元加权输入的变换；非线性激活能让网络弯曲边界。"},{"term":"修正线性单元（ReLU）","definition":"保留正值并把负值变为零的激活函数。"},{"term":"损失","definition":"衡量预测与目标标签相差多远的数值。"},{"term":"随机梯度下降（SGD）","definition":"反复调整权重以降低损失的优化方法。"},{"term":"权重","definition":"学习得到的乘数，用来控制一个信号对下一单元的影响强度。"},{"term":"偏置","definition":"在激活函数之前加入的学习得到的偏移量。"},{"term":"训练轮次","definition":"对全部训练样本完成一次完整遍历。"}],"scenarios":[{"title":"分离点群只需要线性模型","question":"什么时候一条直线决策边界已经足够？","run":"使用两个点群数据，不设置隐藏层并选择线性激活，然后训练。","predict":"预测增加隐藏单元是否会明显改善这个简单数据。","explain":"解释为什么简单线性分隔已经符合数据几何。"},{"title":"线性模型无法分开双月","question":"什么模式无法被一条直线分开？","run":"切换到双月数据，同时保持网络为线性。","predict":"预测损失会停在哪里，以及哪些区域仍会分类错误。","explain":"用弯曲类别形状解释线性边界的限制。"},{"title":"ReLU 隐藏层弯曲边界","question":"隐藏层使用非线性激活后，什么会改变？","run":"在双月数据上使用一个带修正线性单元（ReLU）激活的隐藏层并再次训练。","predict":"预测边界会保持直线还是形成多个相连线段。","explain":"解释非线性隐藏单元如何创建输出层可以分开的表示。"},{"title":"多个线性层仍等价于一个线性映射","question":"为什么所有激活都线性时，增加深度仍失败？","run":"使用两个隐藏层，但把激活设为线性，并在双月数据上训练。","predict":"预测额外参数是否会产生弯曲边界。","explain":"解释线性变换的组合为什么仍是一个线性变换。"},{"title":"异或需要非线性表示","question":"为什么对角角点可属于同一类，而一条直线仍无法分开？","run":"使用异或（XOR）数据和非线性隐藏层进行训练。","predict":"预测决策边界需要创建多少个分离区域。","explain":"解释隐藏表示如何重新组织点，使它们可以被分开。"}]}};
+  const profile = {"slug":"neural-network","en":{"title":"Tiny Neural Network","big":"Train a small classifier and watch its decision boundary change. Compare linear layers with nonlinear activation functions to see what added depth can and cannot represent.","primer":"A neural network transforms inputs in stages. A hidden layer helps only when its activation function introduces a nonlinear change.","terms":[{"term":"Input feature","definition":"A measured value supplied to the network."},{"term":"Hidden layer","definition":"An intermediate set of units that transforms the input before the final prediction."},{"term":"Activation function","definition":"A transformation applied to a unit’s weighted input; a nonlinear activation lets the network bend a boundary."},{"term":"Rectified linear unit (ReLU)","definition":"An activation that keeps positive values and replaces negative values with zero."},{"term":"Loss","definition":"A number measuring how far the predictions are from the target labels."},{"term":"Full-batch gradient descent","definition":"An optimization method that computes each update from the entire training set; this is the data path used by this applet."},{"term":"Weight","definition":"A learned multiplier that controls how strongly one signal affects the next unit."},{"term":"Bias","definition":"A learned offset added before an activation function."},{"term":"Epoch","definition":"One complete pass through the training examples."}],"scenarios":[{"title":"A linear model is enough for separated blobs","question":"When is a straight decision boundary all the model needs?","run":"Use the two-blob data with no hidden layer and a linear activation, then train.","predict":"Predict whether adding hidden units would meaningfully improve this easy dataset.","explain":"Explain why a simple linear separator already matches the geometry."},{"title":"A linear model cannot separate two moons","question":"What pattern cannot be divided by one straight line?","run":"Switch to the two-moons data while keeping the network linear.","predict":"Predict where the loss will stop and which regions will remain misclassified.","explain":"Use the curved class shapes to explain the limit of a linear boundary."},{"title":"A ReLU hidden layer bends the boundary","question":"What changes when the hidden layer uses a nonlinear activation?","run":"Use one hidden layer with rectified linear unit (ReLU) activation on the moon data and train again.","predict":"Predict whether the boundary will remain straight or form several connected segments.","explain":"Explain how nonlinear hidden units create a representation the output layer can separate."},{"title":"Several linear-activation layers still compose to one affine map","question":"Why does adding depth fail when every activation is linear?","run":"Use two hidden layers but set the activation to linear, then train on the moon data.","predict":"Predict whether the extra parameters will create a curved boundary.","explain":"Explain why composing layers of the form Wx+b with linear activations still produces one affine transformation."},{"title":"XOR requires a nonlinear representation in the original x-y features","question":"Why can opposite corners belong to the same class while a straight line still fails?","run":"Use the exclusive-OR (XOR) data in the original x-y coordinates with nonlinear hidden layers and train. Then compare with an engineered nonlinear input feature.","predict":"Predict how many separate regions the decision boundary must create.","explain":"Explain how the hidden representation rearranges the points into a separable pattern."}]},"zh":{"title":"微型神经网络","big":"训练一个小型分类器并观察决策边界变化。比较线性层与非线性激活函数，理解增加深度能表示什么、不能表示什么。","primer":"神经网络分阶段转换输入。只有当激活函数引入非线性变化时，隐藏层才会提供新的表示能力。","terms":[{"term":"输入特征","definition":"提供给网络的测量数值。"},{"term":"隐藏层","definition":"在最终预测前转换输入的中间单元层。"},{"term":"激活函数","definition":"应用于单元加权输入的变换；非线性激活能让网络弯曲边界。"},{"term":"修正线性单元（ReLU）","definition":"保留正值并把负值变为零的激活函数。"},{"term":"损失","definition":"衡量预测与目标标签相差多远的数值。"},{"term":"全批量梯度下降","definition":"每次更新都用完整训练集计算梯度；本工具采用这种数据路径。"},{"term":"权重","definition":"学习得到的乘数，用来控制一个信号对下一单元的影响强度。"},{"term":"偏置","definition":"在激活函数之前加入的学习得到的偏移量。"},{"term":"训练轮次","definition":"对全部训练样本完成一次完整遍历。"}],"scenarios":[{"title":"分离点群只需要线性模型","question":"什么时候一条直线决策边界已经足够？","run":"使用两个点群数据，不设置隐藏层并选择线性激活，然后训练。","predict":"预测增加隐藏单元是否会明显改善这个简单数据。","explain":"解释为什么简单线性分隔已经符合数据几何。"},{"title":"线性模型无法分开双月","question":"什么模式无法被一条直线分开？","run":"切换到双月数据，同时保持网络为线性。","predict":"预测损失会停在哪里，以及哪些区域仍会分类错误。","explain":"用弯曲类别形状解释线性边界的限制。"},{"title":"ReLU 隐藏层弯曲边界","question":"隐藏层使用非线性激活后，什么会改变？","run":"在双月数据上使用一个带修正线性单元（ReLU）激活的隐藏层并再次训练。","predict":"预测边界会保持直线还是形成多个相连线段。","explain":"解释非线性隐藏单元如何创建输出层可以分开的表示。"},{"title":"多个线性激活层仍组合为一个仿射映射","question":"为什么所有激活都线性时，增加深度仍失败？","run":"使用两个隐藏层，但把激活设为线性，并在双月数据上训练。","predict":"预测额外参数是否会产生弯曲边界。","explain":"解释带偏置的 Wx+b 层在使用线性激活时为什么仍组合成一个仿射变换。"},{"title":"在原始 x-y 特征中，异或需要非线性表示","question":"为什么对角角点可属于同一类，而一条直线仍无法分开？","run":"使用异或（XOR）数据和非线性隐藏层进行训练。","predict":"预测决策边界需要创建多少个分离区域。","explain":"解释隐藏表示如何重新组织点，使它们可以被分开。"}]}};
   window.APPLET_LEARNER_PROFILE = profile;
   const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
   const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;

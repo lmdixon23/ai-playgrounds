@@ -529,7 +529,7 @@
 <button class="header-png" id="embedLink" title="Copy an &lt;iframe&gt; snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
 <button class="header-png" id="csvExport" title="Download cost history (per iteration) + algorithm + problem + final state as CSV.">📊 CSV</button>
 <button class="header-png" id="exportPng" title="Download the current state visualization as a PNG.">📷 PNG</button>
-<button class="header-reset" data-i18n="reset-all" id="hardReset" title="Reset everything to defaults: TSP, steepest-ascent, T₀=10, cooling=0.995.">↺ Reset all</button>
+<button class="header-reset" data-i18n="reset-all" id="hardReset" title="Reset everything to defaults: TSP, best-improvement, T₀=10, cooling=0.995.">↺ Reset all</button>
 </div>
 </div>
 </header>
@@ -554,7 +554,7 @@
 <label data-i18n="algo-label">Algorithm:</label>
 <select data-i18n-title="algo-sel-title" id="algoSel" title="Which local-search variant to run.">
 <option data-i18n="opt-simple" value="simple">Simple HC (first improvement)</option>
-<option data-i18n="opt-steepest" selected="" value="steepest">Steepest-ascent HC</option>
+<option data-i18n="opt-steepest" selected="" value="steepest">Best-improvement HC</option>
 <option data-i18n="opt-stochastic" value="stochastic">Stochastic HC</option>
 <option data-i18n="opt-firstchoice" value="firstchoice">First-choice HC</option>
 <option data-i18n="opt-restart" value="restart">Random-restart HC</option>
@@ -571,7 +571,7 @@
 <span id="gaMutV" style="font-family:ui-monospace,monospace; color:var(--accent); font-weight:700;">0.10</span>
 </span>
 </div>
-<div class="algo-help" id="algoHelp">Steepest-ascent: examine all neighbors, take the best improving one. Stops at any local optimum.</div>
+<div class="algo-help" id="algoHelp">Best-improvement: examine all neighbors, take the best improving one. Stops at any local optimum.</div>
 <!-- control-row: SA sliders -->
 <div class="control-row">
 <span class="slider-block">
@@ -641,13 +641,13 @@
 <article class="scenario-card" data-scenario-index="0">
 <h3>Scenario 1: Hill climbing gets stuck on a traveling-salesperson tour</h3>
 <p class="scenario-meta"><strong>Core question: </strong> Why can rapid improvement stop before the shortest tour is found?</p>
-<p class="scenario-meta"><strong>Run and watch: </strong> Use the traveling salesperson problem (TSP) with steepest-ascent hill climbing and run until the cost stops changing.</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Use the traveling salesperson problem (TSP) with best-improvement hill climbing and run until the cost stops changing.</p>
 <p class="scenario-meta"><strong>Predict first: </strong> Predict whether every random start will finish with the same tour cost.</p>
 <p class="scenario-meta"><strong>Explain afterward: </strong> Explain why no better nearby tour does not mean no better tour exists anywhere.</p>
 <button class="step-btn" type="button">Apply and compare</button>
 </article>
 <article class="scenario-card" data-scenario-index="1">
-<h3>Scenario 2: Random restarts search more than one basin</h3>
+<h3>Scenario 2: Random restarts sample more than one basin</h3>
 <p class="scenario-meta"><strong>Core question: </strong> How can repeating a greedy search improve the final result?</p>
 <p class="scenario-meta"><strong>Run and watch: </strong> Keep the traveling salesperson problem (TSP) fixed, switch to random-restart hill climbing, and compare the best-ever cost across restarts.</p>
 <p class="scenario-meta"><strong>Predict first: </strong> Predict whether each restart will improve the result or only some restarts will help.</p>
@@ -665,7 +665,7 @@
 <article class="scenario-card" data-scenario-index="3">
 <h3>Scenario 4: Eight queens can stall on a plateau</h3>
 <p class="scenario-meta"><strong>Core question: </strong> Why can a search stop changing even when the score is not optimal?</p>
-<p class="scenario-meta"><strong>Run and watch: </strong> Use the eight-queens problem with steepest-ascent hill climbing and watch the conflict count.</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Use the eight-queens problem with best-improvement hill climbing and watch the conflict count.</p>
 <p class="scenario-meta"><strong>Predict first: </strong> Predict whether a flat score means every neighboring board is identical.</p>
 <p class="scenario-meta"><strong>Explain afterward: </strong> Explain how many equal-cost neighbors create a plateau without giving the algorithm a preferred direction.</p>
 <button class="step-btn" type="button">Apply and compare</button>
@@ -737,10 +737,10 @@
 </summary>
 <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem; line-height:1.5;">
 <div class="ws-q" id="ws1">
-<p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">TSP, steepest-ascent HC. Run to convergence several times from different restarts. Does it always find the SAME (global-optimum) solution?</span></p>
+<p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">TSP, best-improvement HC. Run to convergence several times from different restarts. Does it always find the SAME (global-optimum) solution?</span></p>
 <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="0"/> <span data-i18n="ws1o0">Yes: steepest-ascent always climbs to the single best tour, no matter where it starts.</span></label>
-<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="1"/> <span data-i18n="ws1o1">No: it's greedy and stops at a local optimum, so different starts land on different tours.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="0"/> <span data-i18n="ws1o0">Yes: best-improvement always climbs to the single best tour, no matter where it starts.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="1"/> <span data-i18n="ws1o1">No: it's greedy and stops at a local optimum, so different starts can land on different local optima.</span></label>
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="2"/> <span data-i18n="ws1o2">Yes: once the cost stops dropping, that's a proof the tour is globally optimal.</span></label>
 </div>
 <button class="step-btn" data-i18n="ws-check" id="ws1btn">Check</button>
@@ -863,6 +863,7 @@
     evidence that the current solution is globally optimal.
   </div>
 <h2>Two escape mechanisms</h2>
+<p><strong>Naming note:</strong> because these examples minimize cost, the applet uses <em>best-improvement</em> rather than the potentially confusing phrase steepest-ascent. At each step it selects the neighboring state with the largest cost reduction.</p>
 <p>
 <strong>Random restart</strong> runs a local search from several independently chosen starts and
     keeps the best result. It does not repair one trapped trajectory; it samples additional basins of attraction.
@@ -916,7 +917,7 @@
   </p>
 <h2>邻域与接受规则</h2>
 <p>
-<strong>邻域</strong>是通过一次允许移动可以到达的状态集合，<strong>目标函数</strong>为每个状态评分。简单爬山法接受改进邻居；最陡上升会评估生成的全部邻居并选择最佳改进；随机与首选变体采用不同的邻域抽样方式。随机重启在停滞后改变起点，模拟退火则可以接受更差移动。
+<strong>邻域</strong>是通过一次允许移动可以到达的状态集合，<strong>目标函数</strong>为每个状态评分。简单爬山法接受改进邻居；最佳改进会评估生成的全部邻居并选择最佳改进；随机与首选变体采用不同的邻域抽样方式。随机重启在停滞后改变起点，模拟退火则可以接受更差移动。
   </p>
 <h2>为什么贪心搜索会卡住</h2>
 <p>
@@ -953,7 +954,7 @@
 </ul>
 <p><strong>探索后问题：</strong></p>
 <ul>
-<li>从多个起点运行最陡上升。哪些差异来自算法，哪些来自起始状态？</li>
+<li>从多个起点运行最佳改进。哪些差异来自算法，哪些来自起始状态？</li>
 <li>比较随机重启与一次长爬升。随机重启抽样了哪些额外区域？</li>
 <li>比较快速和慢速冷却，统计早期与后期接受的更差移动。</li>
 <li>在八皇后中找到一个平台。即使没有邻居更好，同分邻居为什么仍可能重要？</li>
@@ -984,7 +985,7 @@
       'opt-queens': 'N-queens (n=8, minimize attacks)',
       'opt-landscape': '2D function landscape (5 minima)',
       'opt-simple': 'Simple HC (first improvement)',
-      'opt-steepest': 'Steepest-ascent HC',
+      'opt-steepest': 'Best-improvement HC',
       'opt-stochastic': 'Stochastic HC',
       'opt-firstchoice': 'First-choice HC',
       'opt-restart': 'Random-restart HC',
@@ -1016,12 +1017,12 @@
       'ws-check': 'Check',
       'ws-pick': 'Pick an answer first.',
       // Worksheet question prompts (bilingual; English inline span is the fallback).
-      'ws1q': 'TSP, steepest-ascent HC. Run to convergence several times from different restarts. Does it always find the SAME (global-optimum) solution?',
+      'ws1q': 'TSP, best-improvement HC. Run to convergence several times from different restarts. Does it always find the SAME (global-optimum) solution?',
       'ws2q': 'Same TSP. Switch to random-restart HC. After several minutes, "best ever" cost is:',
       'ws3q': 'Simulated annealing. As temperature T cools toward zero, the algorithm behavior becomes:',
       // MCQ option text (bilingual; English inline span is the fallback).
-      'ws1o0': 'Yes: steepest-ascent always climbs to the single best tour, no matter where it starts.',
-      'ws1o1': "No: it's greedy and stops at a local optimum, so different starts land on different tours.",
+      'ws1o0': 'Yes: best-improvement always climbs to the single best tour, no matter where it starts.',
+      'ws1o1': "No: it's greedy and stops at a local optimum, so different starts can land on different local optima.",
       'ws1o2': "Yes: once the cost stops dropping, that's a proof the tour is globally optimal.",
       'ws2o0': 'Better (lower): restarts sample many local optima and keep the best one found.',
       'ws2o1': 'Worse (higher): restarting throws away progress, so it never improves on a single climb.',
@@ -1030,23 +1031,23 @@
       'ws3o1': 'Unchanged: temperature only affects speed, not which moves get accepted.',
       'ws3o2': 'Greedier: as T→0 the chance of accepting a worse move goes to zero, so it degenerates to greedy HC.',
       // Lesson-tour scenario names + descriptions (0-based; English fallback kept inline in LESSON_TOUR).
-      'tour0name': 'Steepest-ascent on TSP gets stuck',
-      'tour0desc': "TSP, 12 cities, steepest-ascent. Press Run. It improves rapidly, then plateaus at a local optimum that's clearly not the shortest tour. Greedy ≠ optimal.",
-      'tour1name': 'Random-restart escapes local optima',
-      'tour1desc': "Same TSP, random-restart. When the climb plateaus, jumps to a fresh start. After enough restarts, the best-ever cost is much lower than any single climb. Cheap and effective.",
+      'tour0name': 'Best-improvement on TSP gets stuck',
+      'tour0desc': "TSP, 12 cities, best-improvement. Press Run. It may improve rapidly and then plateau at a local optimum. Compare several starts or a known reference before judging global quality; greedy does not imply optimal.",
+      'tour1name': 'Random restart samples other basins',
+      'tour1desc': "Same TSP, random-restart. When the climb plateaus, jumps to a fresh start. Additional restarts can improve the best-ever cost by sampling other basins, but no finite number of restarts guarantees the global optimum.",
       'tour2name': 'Simulated annealing: T₀=10, cool=0.995',
       'tour2desc': "TSP with SA. Early iterations accept worse moves (escape valleys). As T cools, behavior becomes greedy. The watchword is 'slow cooling': try cool=0.999 vs 0.95 and compare.",
-      'tour3name': 'N-queens: steepest hits a plateau',
-      'tour3desc': "8-queens, steepest-ascent. Often finds a 0-conflict solution; often gets stuck on a plateau (many neighbors with the same cost). Watch the cost flatline.",
+      'tour3name': 'N-queens: best-improvement hits a plateau',
+      'tour3desc': "8-queens, best-improvement. Often finds a 0-conflict solution; often gets stuck on a plateau (many neighbors with the same cost). Watch the cost flatline.",
       'tour4name': '2D landscape: tabu vs simple HC',
       'tour4desc': "Landscape with 5 minima. Try Simple HC first: observe what minimum it reaches. Switch to Tabu Search: it forbids recently-visited states, often escaping past nearby minima to find better ones.",
       // Worksheet answer-feedback strings (English fallback passed inline at each call site).
-      'ws1ok': "Correct. Steepest-ascent HC is greedy: it stops at any local optimum. Different starting tours converge to different local optima. This is the central limitation of pure HC.",
-      'ws1no': "Try 'no'. HC stops at the first local optimum it reaches: different random restarts hit different local optima.",
-      'ws2ok': "Right. Random-restart HC takes the BEST result across many independent climbs. With enough restarts, you sample multiple basins of attraction and the global best becomes likely.",
+      'ws1ok': "Correct. Best-improvement HC is greedy: it stops at any local optimum. Different starting tours can converge to different local optima. This is the central limitation of pure HC.",
+      'ws1no': "Try 'no'. HC stops at the first local optimum it reaches; different random restarts can land in different local optima.",
+      'ws2ok': "Right. Random-restart HC keeps the best result across independent climbs. More restarts sample more basins and can increase the chance of finding a better solution, but no finite run certifies the global optimum.",
       'ws2no': "Try 'better'. Random restarts sample multiple local optima: the best one wins.",
-      'ws3ok': "Correct. SA acceptance prob = exp(-Δ/T). As T→0, exp(-Δ/T) → 0 for any worsening Δ, so the algorithm only accepts improvements: pure greedy hill-climbing. Early on (large T), it accepts almost anything.",
-      'ws3no': "Try 'greedier'. Low T means the Boltzmann acceptance probability for worse moves approaches zero: SA degenerates to greedy HC at T=0.",
+      'ws3ok': "Correct. For a worsening move with Δ>0, SA acceptance probability exp(-Δ/T) approaches 0 as T→0. The search therefore approaches greedy non-worsening local search; equal-cost moves depend on the implementation's acceptance rule.",
+      'ws3no': "Try 'greedier'. As T approaches zero, acceptance of worsening moves approaches zero. In this implementation the search approaches greedy non-worsening local search rather than becoming random.",
       // tooltip translations for main selectors + slider labels.
       'prob-sel-title': 'The optimization target. Each problem has its own neighbor function.',
       'algo-sel-title': 'Which local-search variant to run.',
@@ -1070,7 +1071,7 @@
       'opt-queens': 'N 皇后(n=8,尽量减少互相攻击)',
       'opt-landscape': '二维函数景观(5 个极小值)',
       'opt-simple': '简单爬山(首次改进)',
-      'opt-steepest': '最陡上升爬山',
+      'opt-steepest': '最佳改进爬山',
       'opt-stochastic': '随机爬山',
       'opt-firstchoice': '首选爬山',
       'opt-restart': '随机重启爬山',
@@ -1102,12 +1103,12 @@
       'ws-check': '核对',
       'ws-pick': '请先选择一个答案。',
       // 练习题题干(双语;英文内联 span 作为回退)。
-      'ws1q': 'TSP,最陡上升爬山。从不同的重启多次运行至收敛。它每次都能找到相同的(全局最优)解吗?',
+      'ws1q': 'TSP,最佳改进爬山。从不同的重启多次运行至收敛。它每次都能找到相同的(全局最优)解吗?',
       'ws2q': '同一个 TSP。改用随机重启爬山。几分钟后,"历史最佳"代价是:',
       'ws3q': '模拟退火。当温度 T 冷却趋近于零时,算法的行为会变得:',
       // MCQ 选项文本(双语;英文内联 span 作为回退)。
-      'ws1o0': '能--无论从哪里出发,最陡上升总能爬到那个唯一的最优路线。',
-      'ws1o1': '不能--它是贪心的,会停在某个局部最优,所以不同起点会落到不同的路线。',
+      'ws1o0': '能--无论从哪里出发,最佳改进总能爬到那个唯一的最优路线。',
+      'ws1o1': '不能--它是贪心的,会停在某个局部最优,所以不同起点可能落到不同的路线。',
       'ws1o2': '能--一旦代价不再下降,就证明该路线是全局最优的。',
       'ws2o0': '更好(更低)--重启会采样许多局部最优,并保留找到的最佳结果。',
       'ws2o1': '更差(更高)--重启会丢掉已有进展,所以不可能优于单次爬升。',
@@ -1116,23 +1117,23 @@
       'ws3o1': '不变--温度只影响速度,而不影响哪些移动会被接受。',
       'ws3o2': '更贪心--当 T→0 时,接受更差移动的概率趋于零,于是退化为贪心爬山。',
       // 课程导览的场景名称与描述(0 起始;英文回退保留在 LESSON_TOUR 内联)。
-      'tour0name': '最陡上升爬山在 TSP 上卡住',
-      'tour0desc': 'TSP,12 个城市,最陡上升。点击运行。它迅速改进,然后在一个明显不是最短路线的局部最优处停滞。贪心 ≠ 最优。',
-      'tour1name': '随机重启逃出局部最优',
-      'tour1desc': '同一个 TSP,随机重启。当爬升停滞时,跳到一个全新的起点。经过足够多次重启后,历史最佳代价远低于任何单次爬升。便宜且有效。',
+      'tour0name': '最佳改进爬山在 TSP 上卡住',
+      'tour0desc': 'TSP,12 个城市,最佳改进。点击运行。它迅速改进,然后在一个局部最优处停滞。与其他起点比较时，有些运行可能得到更低代价；停止只说明当前移动规则找不到更好的邻居。',
+      'tour1name': '随机重启采样其他吸引域',
+      'tour1desc': '同一个 TSP,随机重启。一次爬升停滞后，从新的随机起点开始独立爬升。增加重启会采样更多吸引域，历史最佳代价可能改善，但任何有限次数的重启都不能证明全局最优。',
       'tour2name': '模拟退火:T₀=10,冷却率=0.995',
       'tour2desc': 'TSP 配模拟退火。前期的迭代会接受更差的移动(逃出谷底)。随着 T 冷却,行为变得贪心。关键在于"慢冷却"--试试冷却率 0.999 对比 0.95。',
-      'tour3name': 'N 皇后:最陡上升撞上平台',
-      'tour3desc': '8 皇后,最陡上升。常能找到 0 冲突的解;也常卡在一个平台上(许多邻居代价相同)。观察代价曲线变平。',
+      'tour3name': 'N 皇后:最佳改进撞上平台',
+      'tour3desc': '8 皇后,最佳改进。常能找到 0 冲突的解;也常卡在一个平台上(许多邻居代价相同)。观察代价曲线变平。',
       'tour4name': '二维景观:禁忌搜索对比简单爬山',
       'tour4desc': '有 5 个极小值的景观。先试简单爬山--观察它到达哪个极小值。再切换到禁忌搜索--它禁止最近访问过的状态,常能越过附近的极小值找到更好的解。',
       // 练习题答案反馈(英文回退在各调用处内联传入)。
-      'ws1ok': '正确。最陡上升爬山是贪心的:它会在任何局部最优处停下。不同的起始路线会收敛到不同的局部最优。这是纯爬山法的核心局限。',
-      'ws1no': '试试"no"。爬山法在到达的第一个局部最优处就停下--不同的随机重启会撞上不同的局部最优。',
-      'ws2ok': '对。随机重启爬山会从多次独立爬升中取最佳结果。重启足够多次,你就采样到多个吸引域,全局最优变得很可能出现。',
+      'ws1ok': '正确。最佳改进爬山是贪心的:它会在任何局部最优处停下。不同的起始路线可能收敛到不同的局部最优。这是纯爬山法的核心局限。',
+      'ws1no': '试试"no"。爬山法在到达的第一个局部最优处就停下--不同的随机重启可能落入不同的局部最优。',
+      'ws2ok': '对。随机重启爬山会从多次独立爬升中取最佳结果。增加独立重启会采样更多吸引域，并可能提高找到更好解的机会；任何有限次数的重启都不能证明已经找到全局最优。',
       'ws2no': '试试"better"。随机重启会采样多个局部最优--其中最好的那个获胜。',
-      'ws3ok': '正确。模拟退火的接受概率 = exp(-Δ/T)。当 T→0 时,对任何变差的 Δ,exp(-Δ/T) → 0,因此算法只接受改进--纯贪心爬山。前期(T 较大)它几乎接受任何移动。',
-      'ws3no': '试试"greedier"。低 T 意味着对更差移动的玻尔兹曼接受概率趋近于零--在 T=0 时模拟退火退化为贪心爬山。',
+      'ws3ok': '正确。对变差移动 Δ>0,模拟退火的接受概率 exp(-Δ/T) 在 T→0 时趋近于 0。因此搜索会接近贪心的非变差局部搜索;等代价移动是否接受取决于具体实现。',
+      'ws3no': '试试"greedier"。当 T 接近 0 时,接受变差移动的概率接近 0;在本实现中,搜索会接近贪心的非变差局部搜索。',
       // 主要选择器与滑块的提示翻译。
       'prob-sel-title': '优化目标。每个问题有自己的邻居函数。',
       'algo-sel-title': '要运行的局部搜索算法。',
@@ -1239,12 +1240,12 @@
 
   const HELP = {
     simple: 'Simple HC: at each step, pick the FIRST improving neighbor you find. Fast but myopic.',
-    steepest: 'Steepest-ascent: examine all neighbors, take the best improving one. Stops at any local optimum.',
-    stochastic: 'Stochastic HC: pick a random IMPROVING neighbor proportionally to how much it improves. Avoids ties.',
+    steepest: 'Best-improvement: examine all neighbors, take the best improving one. Stops at any local optimum.',
+    stochastic: 'Stochastic HC: choose among improving neighbors probabilistically, weighted by improvement size. Randomness changes the trajectory but does not guarantee escape from a local optimum.',
     firstchoice: 'First-choice HC: generate random neighbors until one improves. Useful when neighbor count is huge.',
-    restart: 'Random-restart: run steepest-ascent; when stuck, restart from random. Eventually finds the global optimum.',
+    restart: 'Random restart: run best-improvement hill climbing from many random starts and keep the best result found. More restarts sample more basins, but any finite run can still miss the global optimum.',
     sa: 'Simulated annealing: accept worsening moves with probability exp(-ΔE/T). Cool T over time.',
-    tabu: 'Tabu search: always move to the best neighbor: even if worse: but keep a short memory of recent states to forbid cycling back. Memory is the only thing pulling it out of local optima.',
+    tabu: 'Tabu search: move to the best admissible neighbor even when it is worse, while short-term memory discourages immediate cycling back. Both the willingness to worsen and the tabu memory can help the search leave a local optimum.',
     ga: 'Genetic algorithm: population-based. Each "step" = one generation. Tournament-select parents, crossover, mutate, elite-preserve top 2. The reported state is the best-of-generation. Diverges from all other algorithms here in that the search is parallel across many individuals.',
   };
   $('algoSel').addEventListener('change', e => $('algoHelp').textContent = HELP[e.target.value]);
@@ -1985,17 +1986,17 @@
     if (cool != null) { $('cool').value = cool; $('cool').dispatchEvent(new Event('input')); }
   }
   const LESSON_TOUR = [
-    { name: 'Steepest-ascent on TSP gets stuck',
-      description: "TSP, 12 cities, steepest-ascent. Press Run. It improves rapidly, then plateaus at a local optimum that's clearly not the shortest tour. Greedy ≠ optimal.",
+    { name: 'Best-improvement on TSP gets stuck',
+      description: "TSP, 12 cities, best-improvement. Press Run. It may improve rapidly and then plateau at a local optimum. Compare several starts or a known reference before judging global quality; greedy does not imply optimal.",
       apply: () => applyConfig('tsp', 'steepest') },
-    { name: 'Random-restart escapes local optima',
-      description: "Same TSP, random-restart. When the climb plateaus, jumps to a fresh start. After enough restarts, the best-ever cost is much lower than any single climb. Cheap and effective.",
+    { name: 'Random restart samples other basins',
+      description: "Same TSP, random-restart. When the climb plateaus, jumps to a fresh start. Additional restarts can improve the best-ever cost by sampling other basins, but no finite number of restarts guarantees the global optimum.",
       apply: () => applyConfig('tsp', 'restart') },
     { name: 'Simulated annealing: T₀=10, cool=0.995',
       description: "TSP with SA. Early iterations accept worse moves (escape valleys). As T cools, behavior becomes greedy. The watchword is 'slow cooling': try cool=0.999 vs 0.95 and compare.",
       apply: () => applyConfig('tsp', 'sa', 10, 0.995) },
     { name: 'N-Queens: steepest hits a plateau',
-      description: "8-queens, steepest-ascent. Often finds a 0-conflict solution; often gets stuck on a plateau (many neighbors with the same cost). Watch the cost flatline.",
+      description: "8-queens, best-improvement. Often finds a 0-conflict solution; often gets stuck on a plateau (many neighbors with the same cost). Watch the cost flatline.",
       apply: () => applyConfig('queens', 'steepest') },
     { name: '2D landscape: tabu vs simple HC',
       description: "Landscape with 5 minima. Try Simple HC first: observe what minimum it reaches. Switch to Tabu Search: it forbids recently-visited states, often escaping past nearby minima to find better ones.",
@@ -2089,13 +2090,13 @@
   // existing bilingual feedback keys, with an English inline fallback via wsMsg.
   const WORKSHEET = [
     { correct: 1,
-      ok:  ['ws1ok', "Correct. Steepest-ascent HC is greedy: it stops at any local optimum. Different starting tours converge to different local optima. This is the central limitation of pure HC."],
-      no:  ['ws1no', "Try 'no'. HC stops at the first local optimum it reaches: different random restarts hit different local optima."] },
+      ok:  ['ws1ok', "Correct. Best-improvement HC is greedy: it stops at any local optimum. Different starting tours can converge to different local optima. This is the central limitation of pure HC."],
+      no:  ['ws1no', "Try 'no'. HC stops at the first local optimum it reaches; different random restarts can land in different local optima."] },
     { correct: 0,
-      ok:  ['ws2ok', "Right. Random-restart HC takes the BEST result across many independent climbs. With enough restarts, you sample multiple basins of attraction and the global best becomes likely."],
+      ok:  ['ws2ok', "Right. Random-restart HC keeps the best result across independent climbs. More restarts sample more basins and can increase the chance of finding a better solution, but no finite run certifies the global optimum."],
       no:  ['ws2no', "Try 'better'. Random restarts sample multiple local optima: the best one wins."] },
     { correct: 2,
-      ok:  ['ws3ok', "Correct. SA acceptance prob = exp(-Δ/T). As T→0, exp(-Δ/T) → 0 for any worsening Δ, so the algorithm only accepts improvements: pure greedy hill-climbing. Early on (large T), it accepts almost anything."],
+      ok:  ['ws3ok', "Correct. SA acceptance prob = exp(-Δ/T). As T→0, exp(-Δ/T) → 0 for any worsening Δ, so the algorithm approaches greedy non-worsening local search. Early on (large T), it accepts almost anything."],
       no:  ['ws3no', "Try 'greedier'. Low T means the Boltzmann acceptance probability for worse moves approaches zero: SA degenerates to greedy HC at T=0."] },
   ];
   WORKSHEET.forEach((q, i) => {
@@ -2441,7 +2442,7 @@
 </script>
 <script id="learner-content-system">
 (() => {
-  const profile = {"slug":"hill-climbing","en":{"title":"Hill Climbing and Simulated Annealing","big":"Compare local-search algorithms that improve one candidate at a time. Hill climbing accepts only better moves; simulated annealing can temporarily accept worse moves to escape a local optimum.","primer":"Local search does not build a path through every possibility. It keeps one current candidate and changes it. Learn the problem, move, and escape terms before comparing algorithms.","terms":[{"term":"Traveling salesperson problem (TSP)","definition":"Find the shortest tour that visits every city once and returns to the start."},{"term":"Hill climbing","definition":"Move to a better neighboring solution and stop when no neighbor improves the score."},{"term":"Simulated annealing (SA)","definition":"Sometimes accept a worse move early, then become more selective as temperature falls."},{"term":"Local optimum","definition":"A solution better than all nearby alternatives but not necessarily best overall."},{"term":"Temperature","definition":"A simulated-annealing setting that controls willingness to accept worse moves."},{"term":"Cooling rate","definition":"How quickly the temperature decreases during simulated annealing."},{"term":"Objective function","definition":"The numerical score the algorithm tries to improve."},{"term":"Neighborhood","definition":"The set of candidate states reachable by one allowed move."}],"scenarios":[{"title":"Hill climbing gets stuck on a traveling-salesperson tour","question":"Why can rapid improvement stop before the shortest tour is found?","run":"Use the traveling salesperson problem (TSP) with steepest-ascent hill climbing and run until the cost stops changing.","predict":"Predict whether every random start will finish with the same tour cost.","explain":"Explain why no better nearby tour does not mean no better tour exists anywhere."},{"title":"Random restarts search more than one basin","question":"How can repeating a greedy search improve the final result?","run":"Keep the traveling salesperson problem (TSP) fixed, switch to random-restart hill climbing, and compare the best-ever cost across restarts.","predict":"Predict whether each restart will improve the result or only some restarts will help.","explain":"Explain how new starting points expose regions that one climb could never reach."},{"title":"Simulated annealing accepts some worse moves","question":"How can a temporary loss create a better final result?","run":"Run simulated annealing (SA) with starting temperature 10 and cooling rate 0.995, then compare slower and faster cooling.","predict":"Predict which cooling rate will preserve the ability to escape for longer.","explain":"Use accepted worse moves and final cost to explain the exploration-versus-greediness tradeoff."},{"title":"Eight queens can stall on a plateau","question":"Why can a search stop changing even when the score is not optimal?","run":"Use the eight-queens problem with steepest-ascent hill climbing and watch the conflict count.","predict":"Predict whether a flat score means every neighboring board is identical.","explain":"Explain how many equal-cost neighbors create a plateau without giving the algorithm a preferred direction."},{"title":"Tabu search remembers recent states","question":"How can short-term memory prevent an immediate return to the same local region?","run":"Run simple hill climbing on the two-dimensional landscape, then run tabu search from the same start.","predict":"Predict which algorithm is more likely to leave the first local minimum.","explain":"Explain how forbidding recently visited states changes the available moves."}]},"zh":{"title":"爬山法与模拟退火","big":"比较一次改进一个候选解的局部搜索算法。爬山法只接受更好的移动；模拟退火可以暂时接受更差的移动，以逃离局部最优。","primer":"局部搜索不会建立穿过所有可能性的路径。它保留一个当前候选解并不断修改。比较算法前，先熟悉问题、移动和逃逸术语。","terms":[{"term":"旅行商问题（TSP）","definition":"寻找访问每个城市一次并返回起点的最短回路。"},{"term":"爬山法","definition":"移动到更好的邻居解；当没有邻居能改进分数时停止。"},{"term":"模拟退火（SA）","definition":"前期有时接受更差移动，温度下降后逐渐变得更严格。"},{"term":"局部最优","definition":"比所有附近方案更好，但不一定是全局最好的方案。"},{"term":"温度","definition":"控制模拟退火接受更差移动意愿的设置。"},{"term":"冷却率","definition":"模拟退火过程中温度下降的速度。"},{"term":"目标函数","definition":"算法试图改进的数值评分。"},{"term":"邻域","definition":"通过一次允许的移动可以到达的候选状态集合。"}],"scenarios":[{"title":"爬山法会卡在旅行商路线中","question":"为什么快速改进会在找到最短路线前停止？","run":"在旅行商问题（TSP）中使用最陡上升爬山法，运行到成本不再变化。","predict":"预测每个随机起点是否都会得到相同路线成本。","explain":"解释附近没有更好路线为什么不代表全局没有更好路线。"},{"title":"随机重启搜索多个区域","question":"重复一次贪心搜索为什么能改进最终结果？","run":"保持旅行商问题（TSP）不变，切换到随机重启爬山法，比较多次重启的历史最佳成本。","predict":"预测每次重启都会改进，还是只有部分重启有帮助。","explain":"解释新起点如何暴露单次爬升永远无法到达的区域。"},{"title":"模拟退火接受一些更差移动","question":"暂时变差为什么可能得到更好的最终结果？","run":"用起始温度 10、冷却率 0.995 运行模拟退火（SA），再比较更慢和更快冷却。","predict":"预测哪种冷却率会更久保持逃逸能力。","explain":"用接受的更差移动和最终成本解释探索与贪心之间的取舍。"},{"title":"八皇后会停在平台上","question":"为什么分数不是最优时，搜索仍可能停止变化？","run":"在八皇后问题中运行最陡上升爬山法并观察冲突数量。","predict":"预测平坦分数是否表示每个邻居棋盘都完全相同。","explain":"解释许多等成本邻居如何形成平台，却不给算法明确方向。"},{"title":"禁忌搜索记住最近状态","question":"短期记忆如何避免立即返回同一局部区域？","run":"在二维景观上先运行简单爬山法，再从同一起点运行禁忌搜索。","predict":"预测哪种算法更可能离开第一个局部最小值。","explain":"解释禁止最近访问状态如何改变可用移动。"}]}};
+  const profile = {"slug":"hill-climbing","en":{"title":"Hill Climbing and Simulated Annealing","big":"Compare local-search algorithms that improve one candidate at a time. Hill climbing accepts only better moves; simulated annealing can temporarily accept worse moves to escape a local optimum.","primer":"Local search does not build a path through every possibility. It keeps one current candidate and changes it. Learn the problem, move, and escape terms before comparing algorithms.","terms":[{"term":"Traveling salesperson problem (TSP)","definition":"Find the shortest tour that visits every city once and returns to the start."},{"term":"Hill climbing","definition":"Move to a better neighboring solution and stop when no neighbor improves the score."},{"term":"Simulated annealing (SA)","definition":"Sometimes accept a worse move early, then become more selective as temperature falls."},{"term":"Local optimum","definition":"A solution better than all nearby alternatives but not necessarily best overall."},{"term":"Temperature","definition":"A simulated-annealing setting that controls willingness to accept worse moves."},{"term":"Cooling rate","definition":"How quickly the temperature decreases during simulated annealing."},{"term":"Objective function","definition":"The numerical score the algorithm tries to improve."},{"term":"Neighborhood","definition":"The set of candidate states reachable by one allowed move."}],"scenarios":[{"title":"Hill climbing gets stuck on a traveling-salesperson tour","question":"Why can rapid improvement stop before the shortest tour is found?","run":"Use the traveling salesperson problem (TSP) with best-improvement hill climbing and run until the cost stops changing.","predict":"Predict whether every random start will finish with the same tour cost.","explain":"Explain why no better nearby tour does not mean no better tour exists anywhere."},{"title":"Random restarts sample more than one basin","question":"How can repeating a greedy search improve the final result?","run":"Keep the traveling salesperson problem (TSP) fixed, switch to random-restart hill climbing, and compare the best-ever cost across restarts.","predict":"Predict whether each restart will improve the result or only some restarts will help.","explain":"Explain how new starting points expose regions that one climb could never reach."},{"title":"Simulated annealing accepts some worse moves","question":"How can a temporary loss create a better final result?","run":"Run simulated annealing (SA) with starting temperature 10 and cooling rate 0.995, then compare slower and faster cooling.","predict":"Predict which cooling rate will preserve the ability to escape for longer.","explain":"Use accepted worse moves and final cost to explain the exploration-versus-greediness tradeoff."},{"title":"Eight queens can stall on a plateau","question":"Why can a search stop changing even when the score is not optimal?","run":"Use the eight-queens problem with best-improvement hill climbing and watch the conflict count.","predict":"Predict whether a flat score means every neighboring board is identical.","explain":"Explain how many equal-cost neighbors create a plateau without giving the algorithm a preferred direction."},{"title":"Tabu search remembers recent states","question":"How can short-term memory prevent an immediate return to the same local region?","run":"Run simple hill climbing on the two-dimensional landscape, then run tabu search from the same start.","predict":"Predict which algorithm is more likely to leave the first local minimum.","explain":"Explain how forbidding recently visited states changes the available moves."}]},"zh":{"title":"爬山法与模拟退火","big":"比较一次改进一个候选解的局部搜索算法。爬山法只接受更好的移动；模拟退火可以暂时接受更差的移动，以逃离局部最优。","primer":"局部搜索不会建立穿过所有可能性的路径。它保留一个当前候选解并不断修改。比较算法前，先熟悉问题、移动和逃逸术语。","terms":[{"term":"旅行商问题（TSP）","definition":"寻找访问每个城市一次并返回起点的最短回路。"},{"term":"爬山法","definition":"移动到更好的邻居解；当没有邻居能改进分数时停止。"},{"term":"模拟退火（SA）","definition":"前期有时接受更差移动，温度下降后逐渐变得更严格。"},{"term":"局部最优","definition":"比所有附近方案更好，但不一定是全局最好的方案。"},{"term":"温度","definition":"控制模拟退火接受更差移动意愿的设置。"},{"term":"冷却率","definition":"模拟退火过程中温度下降的速度。"},{"term":"目标函数","definition":"算法试图改进的数值评分。"},{"term":"邻域","definition":"通过一次允许的移动可以到达的候选状态集合。"}],"scenarios":[{"title":"爬山法会卡在旅行商路线中","question":"为什么快速改进会在找到最短路线前停止？","run":"在旅行商问题（TSP）中使用最佳改进爬山法，运行到成本不再变化。","predict":"预测每个随机起点是否都会得到相同路线成本。","explain":"解释附近没有更好路线为什么不代表全局没有更好路线。"},{"title":"随机重启采样多个区域","question":"重复一次贪心搜索为什么能改进最终结果？","run":"保持旅行商问题（TSP）不变，切换到随机重启爬山法，比较多次重启的历史最佳成本。","predict":"预测每次重启都会改进，还是只有部分重启有帮助。","explain":"解释新起点如何暴露单次爬升永远无法到达的区域。"},{"title":"模拟退火接受一些更差移动","question":"暂时变差为什么可能得到更好的最终结果？","run":"用起始温度 10、冷却率 0.995 运行模拟退火（SA），再比较更慢和更快冷却。","predict":"预测哪种冷却率会更久保持逃逸能力。","explain":"用接受的更差移动和最终成本解释探索与贪心之间的取舍。"},{"title":"八皇后会停在平台上","question":"为什么分数不是最优时，搜索仍可能停止变化？","run":"在八皇后问题中运行最佳改进爬山法并观察冲突数量。","predict":"预测平坦分数是否表示每个邻居棋盘都完全相同。","explain":"解释许多等成本邻居如何形成平台，却不给算法明确方向。"},{"title":"禁忌搜索记住最近状态","question":"短期记忆如何避免立即返回同一局部区域？","run":"在二维景观上先运行简单爬山法，再从同一起点运行禁忌搜索。","predict":"预测哪种算法更可能离开第一个局部最小值。","explain":"解释禁止最近访问状态如何改变可用移动。"}]}};
   window.APPLET_LEARNER_PROFILE = profile;
   const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
   const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;
@@ -2660,7 +2661,7 @@
 </script>
 <script id="applet-translation-completion">
 (() => {
-  const exact = {"Skip to applet controls":"跳到交互控件","▸ Show teacher notes (discussion prompts + curriculum)":"▸ 展开教师说明（讨论提示与课程联系）","▾ Hide teacher notes (discussion prompts + curriculum)":"▾ 收起教师说明（讨论提示与课程联系）","idle":"空闲","(empty)":"（空）","(no actions yet)":"（尚无动作）","exploring":"探索中","Steepest-ascent: examine all neighbors, take the best improving one. Stops at any local optimum.":"最陡上升：检查所有邻居，选择改进最大的一个。在任意局部最优处停止。"};
+  const exact = {"Skip to applet controls":"跳到交互控件","▸ Show teacher notes (discussion prompts + curriculum)":"▸ 展开教师说明（讨论提示与课程联系）","▾ Hide teacher notes (discussion prompts + curriculum)":"▾ 收起教师说明（讨论提示与课程联系）","idle":"空闲","(empty)":"（空）","(no actions yet)":"（尚无动作）","exploring":"探索中","Best-improvement: examine all neighbors, take the best improving one. Stops at any local optimum.":"最佳改进：检查所有邻居，选择改进最大的一个。在任意局部最优处停止。"};
   const rules = [].map(([source,target])=>[new RegExp(source),target]);
   const currentLanguage=()=>((document.documentElement.lang||'en').startsWith('zh')?'zh':'en');
   const excluded=node=>node.parentElement && node.parentElement.closest('script,style,noscript,[data-essay-lang="en"]');
