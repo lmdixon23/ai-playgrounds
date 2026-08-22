@@ -542,7 +542,7 @@
 </header>
 <aside class="tldr">
 <strong data-i18n="tldr-strong">The big idea</strong>
-<span data-i18n="tldr-body">A "99% accurate" test for a 1%-rare disease is wrong most of the time when it says positive. Bayes' rule is just counting groups of people.</span>
+<span data-i18n="tldr-body">With a 1% base rate, 99% sensitivity and 95% specificity can still make most positive results false positives. Bayes' rule combines the base rate with the test characteristics.</span>
 </aside>
 <section class="interactive" id="main" role="main" tabindex="-1">
 <div class="interactive-inner">
@@ -619,7 +619,7 @@
 <button class="step-btn" data-i18n="seq-pos-btn" data-i18n-title="seq-pos-title" id="seqPosBtn" title="Under the stated conditional-independence assumption, set the prior to P(sick | positive) and apply a second positive result.">
             ✓ Test came back POSITIVE
           </button>
-<button class="step-btn secondary" data-i18n="seq-neg-btn" data-i18n-title="seq-neg-title" id="seqNegBtn" title="Set the prior to P(sick | negative). A second negative should drop the posterior even lower.">
+<button class="step-btn secondary" data-i18n="seq-neg-btn" data-i18n-title="seq-neg-title" id="seqNegBtn" title="Under the stated conditional-independence assumption, set the prior to P(sick | negative) and apply a second negative result.">
             ✗ Test came back NEGATIVE
           </button>
 <button class="step-btn secondary" data-i18n="seq-reset-btn" data-i18n-title="seq-reset-title" id="seqResetBtn" title="Discard the chained prior and reset to the scenario default.">↺ Reset chain</button>
@@ -791,7 +791,7 @@
 <span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
 </div>
 <div class="ws-q" id="ws3" style="margin-top:10px;">
-<p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Back to prior=1%, sens=99%, spec=99%. After ONE positive (posterior ≈ 50%), click "Test came back POSITIVE" to retest. After the SECOND positive, P(disease) is closest to:</span></p>
+<p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Under the stated conditional-independence assumption, return to prior=1%, sens=99%, spec=99%. After ONE positive (posterior ≈ 50%), click "Test came back POSITIVE" to retest. After the SECOND positive, P(disease) is closest to:</span></p>
 <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="0"/> <span data-i18n="ws3o0">~99%: the second positive updates from the new ~50% prior and multiplies the odds.</span></label>
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="1"/> <span data-i18n="ws3o1">~50%: a repeat of the same test just gives the same result again.</span></label>
@@ -1016,7 +1016,7 @@
       'footer-top': '↑ Back to top', 'footer-course': 'Made for the Introduction to AI course at Haidian Kaiwen Academy.', 'footer-portfolio': 'Portfolio', 'footer-project': 'AI Playgrounds', 'footer-source': 'Source', 'footer-issue': 'Report an issue',
       'reset-all': '↺ Reset all', 'scenario-label': 'Scenario:',
       'tldr-strong': 'The big idea',
-      'tldr-body': 'A "99% accurate" test for a 1%-rare disease is wrong most of the time when it says positive. Bayes\' rule is just counting groups of people.',
+      'tldr-body': 'With a 1% base rate, 99% sensitivity and 95% specificity can still make most positive results false positives. Bayes\' rule combines the base rate with the test characteristics.',
       'scen-disease': 'Disease test', 'scen-spam': 'Spam filter',
       'prior-help': 'How common is the condition in the population?',
       'sens-help': 'Sensitivity: when sick, % the test correctly says so.',
@@ -1036,7 +1036,7 @@
       'seq-neg-btn': '✗ Test came back NEGATIVE',
       'seq-reset-btn': '↺ Reset chain',
       'seq-pos-title': 'Under the stated conditional-independence assumption, set the prior to P(sick | positive) and apply a second positive result.',
-      'seq-neg-title': 'Set the prior to P(sick | negative). A second negative should drop the posterior even lower.',
+      'seq-neg-title': 'Under the stated conditional-independence assumption, set the prior to P(sick | negative) and apply a second negative result.',
       'seq-reset-title': 'Discard the chained prior and reset to the scenario default.',
       'tour-summary': '📚 Lesson tour (5 steps)',
       'tour-step': 'Step',
@@ -1063,12 +1063,12 @@
       'ws2o0': 'Down: a higher prior leaves less room for the posterior to rise.',
       'ws2o1': "Same: the test's accuracy is unchanged, so the result is unchanged.",
       'ws2o2': 'Up: a higher prior means more true positives relative to false positives.',
-      'ws3q': 'Back to prior=1%, sens=99%, spec=99%. After ONE positive (posterior ≈ 50%), click "Test came back POSITIVE" to retest. After the SECOND positive, P(disease) is closest to:',
+      'ws3q': 'Under the stated conditional-independence assumption, return to prior=1%, sens=99%, spec=99%. After ONE positive (posterior ≈ 50%), click "Test came back POSITIVE" to retest. After the SECOND positive, P(disease) is closest to:',
       'ws3o0': '~99%: the second positive updates from the new ~50% prior and multiplies the odds.',
       'ws3o1': '~50%: a repeat of the same test just gives the same result again.',
       'ws3o2': '~90%: two positives add up but never get near certainty.',
       // lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
-      'tour0name': 'Base rate fallacy (1% prior, 99% accurate)',
+      'tour0name': 'Base rate fallacy (1% prior, 99% sensitivity/specificity)',
       'tour0desc': "The classic. Disease affects 1 in 100. Test is 99% sensitive and 99% specific. Posterior given positive ≈ 50%: most people guess >95%. The prior dominates.",
       'tour1name': 'Rare event, imperfect specificity',
       'tour1desc': "Same 1% prior, sensitivity 99%, but specificity drops to 95%. Posterior crashes to ~17%. Specificity, not sensitivity, controls posterior on rare conditions.",
@@ -1084,7 +1084,7 @@
       'ws2ok': "Correct. With prior=20%, posterior given positive jumps from ~50% to ~96%. Same test, completely different clinical meaning: context matters.",
       'ws2no': "Try 'up'. Higher prior means more true positives relative to false positives, so the posterior rises.",
       'ws3ok': "Correct. After one positive, posterior ≈ 50% (now your prior). Re-testing with 99/99 test and a 50% prior gives posterior ≈ 99%. This multiplication is valid only under conditional independence given the true condition; repeated tests can share systematic errors.",
-      'ws3no': "Try 99%. The first positive raised P(sick) to ~50%, which becomes the prior for test #2. The second positive then multiplies LR ≈ 99 on those odds.",
+      'ws3no': "Try 99%. Under the stated conditional-independence assumption, the first positive raises P(sick) to ~50%, which becomes the prior for test #2; the second positive then multiplies those odds by LR ≈ 99.",
       // tooltip translations for main scenario + sliders.
       'scen-disease-title': 'Medical screening: detect a rare disease in the population.',
       'scen-spam-title': 'Email filter: flag spam messages. Same math, different stakes.',
@@ -1098,7 +1098,7 @@
       'footer-top': '↑ 返回顶部', 'footer-course': '为海淀凯文学校《人工智能导论》课程制作。', 'footer-portfolio': '作品集', 'footer-project': 'AI Playgrounds', 'footer-source': '源代码', 'footer-issue': '反馈问题',
       'reset-all': '↺ 全部重置', 'scenario-label': '场景:',
       'tldr-strong': '核心思想',
-      'tldr-body': '对一种发病率为 1% 的疾病做灵敏度和特异度都为 99% 的检测,阳性结果大部分时候反而是错的。贝叶斯规则不过是在数人群。',
+      'tldr-body': '对于基率为 1% 的情况,即使灵敏度为 99%、特异度为 95%,多数阳性仍可能是假阳性。贝叶斯规则把基率与检测特征结合起来更新概率。',
       'scen-disease': '疾病检测', 'scen-spam': '垃圾邮件过滤',
       'prior-help': '该情况在人群中有多普遍?',
       'sens-help': '灵敏度:患病时,检测正确报告的比例。',
@@ -1118,7 +1118,7 @@
       'seq-neg-btn': '✗ 检测结果为阴性',
       'seq-reset-btn': '↺ 重置序列',
       'seq-pos-title': '在上述条件独立假设下，把先验设为 P(患病 | 阳性)，再应用第二次阳性结果。',
-      'seq-neg-title': '把先验设为 P(患病 | 阴性)。第二次阴性应该把后验降得更低。',
+      'seq-neg-title': '在上述条件独立假设下,把先验设为 P(患病 | 阴性),再应用第二次阴性结果。',
       'seq-reset-title': '丢弃序列先验,恢复到场景默认值。',
       'tour-summary': '📚 课程导览(5 步)',
       'tour-step': '步骤',
@@ -1145,7 +1145,7 @@
       'ws2o0': '下降--先验更高,后验上升的空间反而更小。',
       'ws2o1': '不变--检测的准确率没变,所以结果也不变。',
       'ws2o2': '上升--先验更高意味着真阳性相对于假阳性更多。',
-      'ws3q': '回到先验=1%、灵敏度=99%、特异度=99%。在第一次阳性(后验 ≈ 50%)之后,点击"检测结果为阳性"再测一次。第二次阳性之后,P(患病) 最接近:',
+      'ws3q': '在本工具的条件独立假设下,回到先验=1%、灵敏度=99%、特异度=99%。在第一次阳性(后验 ≈ 50%)之后,点击"检测结果为阳性"再测一次。第二次阳性之后,P(患病) 最接近:',
       'ws3o0': '约 99%--第二次阳性以新的约 50% 先验为起点,再次相乘提高几率。',
       'ws3o1': '约 50%--重复同一种检测只会得到同样的结果。',
       'ws3o2': '约 90%--两次阳性会累加,但永远到不了接近确定。',
@@ -1153,7 +1153,7 @@
       'tour0name': '基率谬误(先验 1%,灵敏度/特异度 99%)',
       'tour0desc': '最经典的例子。疾病发病率为百分之一。检测的灵敏度 99%、特异度 99%。阳性下的后验 ≈ 50%--大多数人会猜超过 95%。先验起主导作用。',
       'tour1name': '罕见事件,不完美的特异度',
-      'tour1desc': '同样 1% 先验、灵敏度 99%,但特异度降到 95%。后验骤降到约 17%。在罕见疾病上,主导后验的是特异度而非灵敏度。',
+      'tour1desc': '同样 1% 先验、灵敏度 99%,但特异度降到 95%。后验降到约 17%。先验如此低时,庞大的健康人群使假阳性率在这个设置中特别有影响。',
       'tour2name': '更高的先验改变结论',
       'tour2desc': '先验提高到 20%(高危人群)。同样的 99/95 检测。阳性下的后验跃升到约 83%。同一个检测,临床意义完全不同。',
       'tour3name': '序列检测:阳性后再测',
@@ -1166,7 +1166,7 @@
       'ws2ok': '正确。当先验=20% 时,阳性下的后验从约 50% 跃升到约 96%。同一个检测,临床意义完全不同--背景很重要。',
       'ws2no': "试试 'up'。先验越高,真阳性相对假阳性就越多,因此后验上升。",
       'ws3ok': '正确。一次阳性之后,后验 ≈ 50%(成为新的先验)。用 99/99 检测和 50% 的先验再测一次,后验 ≈ 99%。只有在给定真实状况后结果条件独立时，证据几率才可这样相乘；重复检测可能共享系统误差。',
-      'ws3no': '试试 99%。第一次阳性把 P(患病) 提高到约 50%,这成为第二次检测的先验。第二次阳性再在该几率上乘以 LR ≈ 99。',
+      'ws3no': '试试 99%。在上述条件独立假设下,第一次阳性把 P(患病) 提高到约 50%,这成为第二次检测的先验;第二次阳性再把该几率乘以 LR ≈ 99。',
       // 主要场景与滑块的提示翻译。
       'scen-disease-title': '医学筛查:在人群中检测一种罕见疾病。',
       'scen-spam-title': '邮件过滤:标记垃圾邮件。数学相同,但代价不同。',
@@ -1613,7 +1613,7 @@
 
   // Lesson tour. Five canonical scenarios for an in-class walkthrough.
   const LESSON_TOUR = [
-    { name: 'Base rate fallacy (1% prior, 99% accurate)',
+    { name: 'Base rate fallacy (1% prior, 99% sensitivity/specificity)',
       description: "The classic. Disease affects 1 in 100. Test is 99% sensitive and 99% specific. Posterior given positive ≈ 50%: most people guess >95%. The prior dominates.",
       apply: () => applyBayesScenario('disease', 1, 99, 99) },
     { name: 'Rare event, imperfect specificity',

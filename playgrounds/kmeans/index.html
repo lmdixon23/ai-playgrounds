@@ -667,7 +667,7 @@
 <button data-i="choose" data-i18n="i-choose" data-i18n-title="i-choose-title" title="Click anywhere on the canvas to place centroids yourself. Best for spotting bad-init failures.">I'll choose</button>
 <button class="active" data-i="random" data-i18n="i-random" data-i18n-title="i-random-title" title="Pick k random data points as initial centroids. Simple but often poor.">Randomly</button>
 <button data-i="farthest" data-i18n="i-farthest" data-i18n-title="i-farthest-title" title="Pick centroids spread far apart from each other. Usually much better than random.">Farthest point</button>
-<button data-i="kpp" data-i18n="i-kpp" data-i18n-title="i-kpp-title" title="k-means++: probabilistic farthest point. Pick first uniformly, then each subsequent centroid with probability ∝ D(x)² where D(x) is distance to nearest existing centroid. This is what scikit-learn does by default.">k-means++</button>
+<button data-i="kpp" data-i18n="i-kpp" data-i18n-title="i-kpp-title" title="k-means++: probabilistic farthest point. Pick first uniformly, then each subsequent centroid with probability ∝ D(x)² where D(x) is distance to nearest existing centroid. The scikit-learn default initialization uses a greedy k-means++ variant with multiple candidate trials.">k-means++</button>
 </div>
 <label data-i18n="k-label">k =</label>
 <input data-i18n-title="k-input-title" id="kInput" max="8" min="1" title="Number of clusters to find. K-means needs this in advance: there's no rule for choosing it." type="number" value="3"/>
@@ -757,7 +757,7 @@
 </summary>
 <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem;">
 <p data-i18n="gmm-hint" style="margin:0 0 8px; color:var(--muted); font-size:0.82rem;">
-        K-means is hard-EM with σ → 0: each point belongs entirely to one cluster. GMM relaxes this: each point has a soft "responsibility" γᵢₖ for each cluster, and clusters have variances (size). Run GMM EM starting from the current k-means centroids and see how the soft fit differs.
+        K-means can be viewed as a limiting hard-assignment case of a spherical Gaussian mixture with shared variance tending toward zero. GMM relaxes this: each point has a soft "responsibility" γᵢₖ for each cluster, and clusters have variances (size). Run GMM EM starting from the current k-means centroids and see how the soft fit differs.
       </p>
 <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
 <button class="step-btn" data-i18n="gmm-step" id="gmmStepBtn">One EM step</button>
@@ -1185,7 +1185,7 @@
       'ws-pick': 'Pick an answer first.',
       // worksheet question prompts (data-i18n spans) ---
       'ws1q': 'Load the smiley face dataset with k=3. Run to convergence. Does k-means recover the two eyes and the curved smile as three clusters?',
-      'ws2q': 'Synthetic Gaussian data generated from 3 groups. Compared to k=3, setting k=6 makes the inertia go:',
+      'ws2q': 'For the same synthetic Gaussian data, how does the best achievable within-cluster SSE behave as k increases from 3 to 6?',
       'ws3q': 'Use the silhouette score on the Gaussians dataset. Try k=2, k=3, k=4. Which k has the HIGHEST silhouette?',
       // --- MCQ: worksheet option labels (ws{n}o{i}) ---
       'ws1o0': 'Yes: it finds the two eyes, and the curved smile becomes one banana-shaped cluster.',
@@ -1206,13 +1206,13 @@
       'tour2desc': 'Smiley face dataset with k=3. K-means tries to fit three compact, roughly convex regions under squared Euclidean distance, but the mouth is a curved arc: no single centroid with Euclidean Voronoi assignment can represent it as one curved cluster. This is the algorithm hitting its inductive bias.',
       'tour3name': 'k-means++ vs Random init',
       'tour3desc': 'Packed circles with k=6. Random init often misses some clusters; k-means++ spreads initial centroids apart probabilistically and usually finds all six. Re-run a few times to see the variance.',
-      'tour4name': 'Use silhouette to pick k',
+      'tour4name': 'Use silhouette as evidence about k',
       'tour4desc': 'Same Gaussians dataset. Try k=2, k=3, k=4 and check the silhouette score after each. Compare the scores as evidence for this sample, then check stability and domain meaning. A higher score is not proof of a universally correct k, and fixed thresholds are context-dependent.',
       // worksheet answer-feedback (ws{n}ok / ws{n}no) ---
-      'ws1ok': 'Correct. K-means assumes round (convex) clusters. The smile is a curved arc: a centroid is only a point, and straight Voronoi partitions around centroids cannot preserve the curved mouth as one cluster. This is the inductive bias of k-means.',
+      'ws1ok': 'Correct. Squared-Euclidean k-means favors compact, roughly convex groups separated by straight Voronoi boundaries. The smile is a curved arc, so one point centroid cannot preserve the mouth as one natural curved cluster.',
       'ws1no': 'Hint: the smile is a long curved arc. K-means can only carve the plane with straight Voronoi boundaries around point centroids.',
-      'ws2ok': "Correct. Inertia (within-cluster SSE) is monotonically non-increasing in k: more centroids means points are always closer to their nearest one. That's why you can't pick k by minimizing inertia alone.",
-      'ws2no': "Hint: more centroids = points are always closer to the nearest one. Try 'down'.",
+      'ws2ok': "Correct for the objective optimum. The minimum achievable within-cluster SSE cannot increase when k increases because an extra centroid can always be left unused or duplicate an existing solution. A particular k-means run can still land in a worse local optimum because initialization matters.",
+      'ws2no': "Think about the best achievable objective: adding a centroid cannot make the optimum SSE worse, although a particular heuristic run can still converge to a poorer local solution.",
       'ws3ok': 'Correct. With 3 well-separated Gaussian clusters, k=3 has the highest silhouette among the tested values for this generated sample and aligns with its three generating groups. Silhouette balances cohesion and separation, but it does not generally identify one uniquely true k.',
       'ws3no': "Try k=3. For this generated sample, try k=3 and compare the observed score with k=2 and k=4. Treat the result as evidence for these data, not a universal truth about k.",
       // tooltip translations for main controls.
@@ -1224,16 +1224,16 @@
       'd-custom-title': 'Empty canvas: click to add your own data points.',
       'i-choose-title': "Click anywhere on the canvas to place centroids yourself. Best for spotting bad-init failures.",
       'i-random-title': 'Pick k random data points as initial centroids. Simple but often poor.',
-      'i-farthest-title': 'Pick centroids spread far apart from each other. Usually much better than random.',
-      'i-kpp-title': 'k-means++: probabilistic farthest point. Pick first uniformly, then each subsequent centroid with probability ∝ D(x)² where D(x) is distance to nearest existing centroid. This is what scikit-learn does by default.',
-      'k-input-title': "Number of clusters to find. K-means needs this in advance: there's no rule for choosing it.",
+      'i-farthest-title': 'Pick centroids spread far apart from each other. This can improve coverage over random initialization on some datasets; compare runs rather than assuming it is always better.',
+      'i-kpp-title': 'k-means++ seeds centers using probabilities proportional to D(x)². This is closely related to the scikit-learn default initialization; scikit-learn uses a greedy multi-trial variant of k-means++.',
+      'k-input-title': 'Number of clusters to fit. K-means requires k in advance; diagnostics such as silhouette, stability, external information, and domain goals can inform the choice but do not uniquely determine it.',
       'place-title': 'Place k centroids using the chosen initialization strategy.',
       'reassign-title': 'Assign every point to the cluster of its nearest centroid.',
       'update-title': 'Move each centroid to the mean of the points currently assigned to it.',
       'run-title': 'Repeat Reassign + Update until the centroids stop moving.',
       'reset-title': 'Clear centroids and cluster assignments. Keeps the current dataset.',
       'gmm-summary': '🎲 GMM (soft EM: see k-means as a special case)',
-      'gmm-hint': 'K-means is hard-EM with σ → 0: each point belongs entirely to one cluster. GMM relaxes this: each point has a soft "responsibility" γᵢₖ for each cluster, and clusters have variances (size). Run GMM EM starting from the current k-means centroids and see how the soft fit differs.',
+      'gmm-hint': 'K-means can be viewed as a limiting hard-assignment case of a spherical Gaussian mixture model as the shared variance shrinks. GMM keeps soft responsibilities γᵢₖ and explicit variance parameters. Run EM from the current k-means centroids and compare the soft fit.',
       'gmm-step': 'One EM step', 'gmm-run': '▶ Run 20 EM steps',
       'gmm-clear': 'Clear GMM', 'gmm-show': 'Show ellipses (1σ, 2σ)',
       'gmm-empty': '(place centroids first, then click "One EM step")',
@@ -1285,36 +1285,36 @@
       'ws-pick': '请先选择一个答案。',
       // 练习题题干(data-i18n span)---
       'ws1q': '加载笑脸数据集,设 k=3,运行至收敛。k-means 能把两只眼睛和弯曲的笑嘴恢复成三个簇吗?',
-      'ws2q': '高斯数据集(3 个生成群组)。与 k=3 相比,把 k 设为 6 会让惯性:',
+      'ws2q': '对同一组合成高斯数据,当 k 从 3 增加到 6 时,理论上可达到的最小类内平方和会怎样变化?',
       'ws3q': '在高斯数据集上使用轮廓系数。试 k=2、k=3、k=4。哪个 k 的轮廓系数最高?',
       // --- MCQ: 练习题选项标签(ws{n}o{i})---
       'ws1o0': '能--它找到两只眼睛,而弯曲的笑嘴会变成一个香蕉形的簇。',
-      'ws1o1': '不能--笑嘴是一条曲线弧,而 k-means 只能切分出圆形、直边的区域。',
+      'ws1o1': '不能--笑嘴是一条曲线弧,而平方欧氏 k-means 更适合紧凑、近似凸的群组,并用直线 Voronoi 边界切分平面。',
       'ws1o2': '能--k-means 一旦收敛就证明找到了唯一真实的聚类。',
       'ws2o0': '上升--多出的质心会把真实的簇拆开,增加距离。',
       'ws2o1': '下降--质心越多,每个点离最近的质心总是更近。',
       'ws2o2': '不变--只有 3 个生成群组,所以多出的质心不起作用。',
       'ws3o0': 'k=2--簇越少,轮廓系数总是越高。',
-      'ws3o1': 'k=3--轮廓系数在生成群组数处达到峰值。',
+      'ws3o1': '在这个生成样本和所测试的 k 值中,k=3 与三个生成群组一致,且观察到的轮廓系数最高。',
       'ws3o2': 'k=4--簇越多,轮廓系数总是越高。',
       // 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
       'tour0name': '简单:3 个高斯,k=3',
-      'tour0desc': '三团彼此分得很开的高斯数据。当 k=3 且初始化合理时,k-means 几次迭代就收敛到真实的簇。',
+      'tour0desc': '三团彼此分得很开的合成高斯生成群组。k=3 时,许多初始化会得到与这三个生成群组一致的划分,但收敛并不能证明全局最优或唯一真实划分。',
       'tour1name': '糟糕初始化:所有质心挤在一角',
       'tour1desc': '使用"自己选"初始化--在角落点击四次把质心都放在那里。现在 k-means 必须摆脱糟糕的起点。它常常做不到--用不同初始化多跑几次是标准做法。',
       'tour2name': '错误的 k:笑脸',
       'tour2desc': '笑脸数据集,k=3。k-means 试图拟合三个圆形簇,但嘴是一条曲线弧--单个质心及其欧氏距离分区无法表示这条长弯曲结构。这是算法碰到了它的归纳偏置。',
       'tour3name': 'k-means++ 对比随机初始化',
       'tour3desc': '紧密圆圈,k=6。随机初始化常会漏掉一些簇;k-means++ 以概率方式把初始质心分散开,通常能找到全部六个。多跑几次看看波动。',
-      'tour4name': '用轮廓系数选 k',
+      'tour4name': '把轮廓系数作为 k 的证据',
       'tour4desc': '同一个高斯数据集。试 k=2、k=3、k=4,每次之后查看轮廓系数。在这个合成高斯示例中比较这些分数，并把它们当作证据而不是证明；不同数据与目标可能支持不同 k。',
       // 练习题答案反馈(ws{n}ok / ws{n}no)---
-      'ws1ok': '正确。k-means 假设簇是圆形(凸)的。笑嘴是一条曲线弧--质心只是一个点；按平方欧氏距离形成的质心分区无法把这条长弯曲结构保留为一个自然簇。这正是 k-means 的归纳偏置。',
+      'ws1ok': '正确。平方欧氏 k-means 偏好紧凑、近似凸的群组。笑嘴是一条曲线弧;质心只是一个点,直线 Voronoi 分区无法把这条长弯曲结构保留为一个自然簇。',
       'ws1no': '提示:笑嘴是一条长长的曲线弧。k-means 只能用围绕点质心的直线 Voronoi 边界来切分平面。',
-      'ws2ok': '正确。惯性(类内平方和)随 k 单调不增--质心越多,点离最近的质心总是更近。所以你不能仅靠最小化惯性来选 k。',
-      'ws2no': '提示:质心越多 = 点离最近的质心总是更近。试试"down"。',
+      'ws2ok': '对目标函数的最优值而言是这样。增加 k 后,可达到的最小类内平方和不会增大,因为新增质心至少可以不改善原解;但一次具体的 k-means 运行仍可能因初始化而停在较差的局部最优。',
+      'ws2no': '考虑理论上可达到的最佳目标值:增加一个质心不会让最优类内平方和变差,但一次具体的启发式运行仍可能收敛到较差的局部解。',
       'ws3ok': '正确。在这个具有 3 个生成群组的合成高斯样本中，k=3 的轮廓系数较高，并与生成过程相符。轮廓系数兼顾内聚度与分离度，但不能证明存在唯一真实或正确的 k。',
-      'ws3no': '再试试 k=3。轮廓系数在生成群组数处达到峰值,因为过度聚类会把点硬塞进"错误"的邻居里。',
+      'ws3no': '再比较 k=3。在这个生成样本和所测试的 k 值中,k=3 的轮廓系数最高;把它视为这些数据的证据,而不是普适的真实 k 规则。',
       // 主要控件的提示翻译。
       'd-gaussian-title': '三团大致紧凑的合成高斯生成群组。k=3 与这里的生成过程相符，但这只是一个有利示例，不代表 k-means 普遍“完美适用”。',
       'd-uniform-title': '均匀随机点。测试 k-means 在无生成群组结构下的表现。',
@@ -1324,16 +1324,16 @@
       'd-custom-title': '空白画布--点击添加你自己的数据点。',
       'i-choose-title': '在画布上任意点击放置质心。适合演示糟糕初始化的失败。',
       'i-random-title': '随机选 k 个数据点作为初始质心。简单但常常效果差。',
-      'i-farthest-title': '挑选彼此相距最远的质心。通常远好于随机初始化。',
-      'i-kpp-title': 'k-means++:概率版"最远点"。先均匀选第一个,之后每个质心按距最近已选质心的距离平方比例选择。这是 scikit-learn 的默认值。',
-      'k-input-title': '要找的簇数。K-means 需要事先指定 k--并没有公式可以选。',
+      'i-farthest-title': '挑选彼此相距较远的质心。在某些数据上能比随机初始化覆盖得更好,但应通过多次运行比较,而不是假定它总是更优。',
+      'i-kpp-title': 'k-means++ 按与最近已选质心的距离平方 D(x)² 来随机播种中心。这与 scikit-learn 的默认初始化密切相关;scikit-learn 使用的是带多次候选尝试的贪心 k-means++ 变体。',
+      'k-input-title': '要拟合的簇数。K-means 需要事先指定 k;轮廓系数、稳定性、外部信息和领域目标都可提供证据,但不能唯一决定 k。',
       'place-title': '按所选的初始化策略放置 k 个质心。',
       'reassign-title': '把每个点分配给最近质心所在的簇。',
       'update-title': '把每个质心移到当前分配给它的点的均值。',
       'run-title': '反复执行"重新分配 + 更新质心",直到质心不再移动。',
       'reset-title': '清除质心与簇分配。保留当前数据集。',
       'gmm-summary': '🎲 GMM(软 EM -- 把 k-means 看作特殊情形)',
-      'gmm-hint': 'k-means 是 σ → 0 时的硬 EM:每个点完全属于一个簇。GMM 放宽这一点--每个点对每个簇有软"责任度" γᵢₖ,簇有方差(大小)。从当前 k-means 质心开始运行 GMM EM,看看软拟合的差异。',
+      'gmm-hint': 'K-means 可视为共享球形方差趋小时高斯混合模型的一种极限硬分配情形。GMM 保留软责任度 γᵢₖ 和显式方差参数。可从当前 k-means 质心开始运行 EM 并比较软拟合。',
       'gmm-step': '一步 EM', 'gmm-run': '▶ 运行 20 步 EM',
       'gmm-clear': '清除 GMM', 'gmm-show': '显示椭圆 (1σ, 2σ)',
       'gmm-empty': '(先放置质心,再点击"一步 EM")',

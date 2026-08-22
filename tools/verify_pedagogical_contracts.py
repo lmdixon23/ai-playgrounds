@@ -51,6 +51,10 @@ FORBIDDEN={
  'q_learning':['every path has the same return','no time pressure','removes time pressure','Exploration is mandatory','never finds goal','it never explores and can\'t discover the goal','没有时间压力','永远找不到终点','探索是必需的','它从不探索,无法发现终点','只出现在与终点/陷阱相邻的格子'],
 }
 
+# FINAL_REMOTE_AUDIT_CONTRACTS_V1_1
+FINAL_REMOTE_REQUIRED={'knn': ['weighted totals can still tie', 'When does feature scaling matter?'], 'search': ['without implying a general runtime speedup'], 'hill': ['greedy non-worsening local search'], 'wumpus': ['不能直接比较两者的期望收益'], 'bayes': ['99% sensitivity and 95% specificity', 'Under the stated conditional-independence assumption'], 'bayes_network': ['has no remaining uncertainty under this conditioning set'], 'overfitting': ['does not guarantee good generalization', '显示验证点'], 'neural': ['Show validation loss/points', '整个网络仍只是一个仿射映射'], 'kmeans': ['best achievable within-cluster SSE', '不能唯一决定 k'], 'convolution': ['pooling is not the only source of translation robustness', '任务损失中联合学习许多滤波器'], 'q_learning': ['γ=0: immediate rewards only', '不只限于终点或陷阱附近']}
+FINAL_REMOTE_FORBIDDEN={'knn': ['ties disappear', '不再出现平票', 'Why standardize? (axis scale)', '为何要标准化?(坐标轴尺度)'], 'search': ['faster focus can break'], 'hill': ['N-queens: steepest hits a plateau', 'only accepts improvements: pure greedy hill-climbing', '因此算法只接受改进--纯贪心爬山'], 'wumpus': ['方差是换取更高期望收益所付出的代价', '方差低、期望收益也低'], 'bayes': ['A "99% accurate" test for a 1%-rare disease', 'Base rate fallacy (1% prior, 99% accurate)', '灵敏度和特异度都为 99% 的检测,阳性结果大部分时候反而是错的', 'This is why doctors retest', '这正是医生复检的原因'], 'bayes_network': ['conditioning on a variable makes it independent of everything else'], 'overfitting': ['miss the test points', 'it has to generalize', '甜点区(5 次)', '数据越多,越难过拟合', '把 σ 设为 0,过拟合就不会发生', '训练和测试都很低且彼此接近'], 'neural': ['can carve any decision boundary', 'collapses into a single line', 'Moons: linear fails, network needs depth', 'Two linear layers compose to ONE linear layer', '显示测试损失/点', '自 Minsky 1969 起就被证明任何线性模型都无法解决'], 'kmeans': ['收敛到真实的簇', '轮廓系数在生成群组数处达到峰值', 'k-means 假设簇是圆形(凸)', 'This is what scikit-learn does by default', 'K-means is hard-EM with σ → 0'], 'convolution': ['translation tolerance comes from here', '平移容忍性正源于此', '这近似一个角点检测器', 'exactly how a CNN learns its filters during training', '这正是 CNN 在训练中学习其过滤器的方式'], 'q_learning': ['Without it, the agent never explores.', '它从不尝试陌生的动作', '只有动作直接导向 +1 或 −1 奖励的格子才有非零 Q', 'γ=0: pure greed, ignores future', 'γ=0:纯粹贪婪,忽视未来']}
+
 class IdParser(HTMLParser):
     def __init__(self): super().__init__(); self.ids=[]
     def handle_starttag(self,tag,attrs):
@@ -68,6 +72,12 @@ def main()->int:
         for phrase in FORBIDDEN.get(slug,[]):
             ok=phrase not in text; checks.append({'applet':slug,'kind':'forbidden','phrase':phrase,'pass':ok})
             if not ok:failures.append(f'{slug}: forbidden phrase remains: {phrase}')
+        for phrase in FINAL_REMOTE_REQUIRED.get(slug,[]):
+            ok=phrase in text; checks.append({'applet':slug,'kind':'final-remote-required','phrase':phrase,'pass':ok})
+            if not ok:failures.append(f'{slug}: missing final remote-audit phrase: {phrase}')
+        for phrase in FINAL_REMOTE_FORBIDDEN.get(slug,[]):
+            ok=phrase not in text; checks.append({'applet':slug,'kind':'final-remote-forbidden','phrase':phrase,'pass':ok})
+            if not ok:failures.append(f'{slug}: final remote-audit forbidden phrase remains: {phrase}')
         for shared in ['Predict first','Explain afterward','Misconceptions to test']+([] if slug=='overfitting' else ['What this model leaves out']):
             ok=shared in text; checks.append({'applet':slug,'kind':'shared-learning-contract','phrase':shared,'pass':ok})
             if not ok:failures.append(f'{slug}: shared learning contract missing: {shared}')

@@ -583,7 +583,7 @@
 <span class="val" id="gV">0.90</span>
 </span>
 <span class="slider-block">
-<label data-i18n-title="epsilon-title" title="ε is the chance of taking a random action instead of the best-known one. Without it, the agent never explores.">ε</label>
+<label data-i18n-title="epsilon-title" title="ε is the chance of taking a random action instead of the best-known one. Setting ε=0 disables this epsilon-greedy exploration mechanism; other policies can explore or randomize ties in other ways.">ε</label>
 <input aria-label="Exploration rate (epsilon)" id="epsilon" max="1" min="0" step="0.01" type="range" value="0.2"/>
 <span class="val" id="eV">0.20</span>
 </span>
@@ -1117,7 +1117,7 @@
       'fa-episodes': 'Episodes:',
       'fa-run': '▶ Train linear FA agent',
       'cw-summary': '🆚 Compare Q-learning vs SARSA on Cliff Walk',
-      'cw-intro': 'Sutton & Barto, Ch 6.5. Same 4×12 cliff world for both agents. Q-learning learns the optimal policy (walk along the cliff edge); SARSA learns a safer policy (walk along the top row) because it accounts for the cost of falling in due to ε-greedy exploration noise.',
+      'cw-intro': 'Sutton & Barto, Ch 6.5. In this standard 4×12 cliff-walk configuration, Q-learning typically learns a greedy route close to the cliff, while on-policy SARSA often favors a safer route under ongoing ε-greedy behavior. The observed routes depend on the behavior policy and training settings.',
       'cw-episodes': 'Episodes:',
       'cw-run': '▶ Train both agents',
       'cw-curve-label': 'Average reward per episode (50-episode moving window):',
@@ -1156,7 +1156,7 @@
       'tour0desc': "Start with the default grid. Set α=0.1, γ=0.9, ε=0.2. Click Train continuously. Watch high-Q values (green) propagate backward from the goal. The agent has no plan: only Q-values.",
       'tour1name': 'ε=0 with deterministic ties can block discovery',
       'tour1desc': "Same grid, ε=0. Reset Q-values. In this implementation all Q-values begin tied at 0 and greedy ties use a fixed action order, so some actions may never be tried and the goal may not be discovered. Other exploration or tie-breaking mechanisms could behave differently.",
-      'tour2name': 'γ=0: pure greed, ignores future',
+      'tour2name': 'γ=0: immediate rewards only',
       'tour2desc': "γ=0 means only the immediate transition reward enters the target. Reset Q and train. Delayed terminal values do not propagate backward; any state-action pair with a direct nonzero transition reward can still learn a nonzero value.",
       'tour3name': 'step reward and gamma: two sources of time preference',
       'tour3desc': "Set step reward to 0 and compare gamma=0.9 with gamma=1. With gamma below 1, later terminal reward is still discounted, so earlier arrival can remain preferable. A negative step reward adds a separate direct cost for every extra action.",
@@ -1177,7 +1177,7 @@
       'algo-sel-title': 'Q-learning is off-policy TD. SARSA is on-policy TD (uses the action it actually takes). Expected SARSA replaces the next-step max with the expected value under the policy. Monte Carlo waits until the end of the episode and uses the full return. Softmax replaces ε-greedy with a temperature-weighted action distribution.',
       'alpha-title': 'α controls how quickly the agent updates Q-values toward what it just observed.',
       'gamma-title': 'γ controls how much the agent cares about distant rewards. γ=0 is purely myopic.',
-      'epsilon-title': 'ε is the chance of taking a random action instead of the best-known one. Without it, the agent never explores.',
+      'epsilon-title': 'ε is the chance that this epsilon-greedy policy takes a random action instead of the current greedy action. Setting ε=0 disables this exploration mechanism, but other policies can explore or randomize ties in other ways.',
     },
     zh: {
       'title': 'Q-学习可视化', 'back-link': '← 返回所有演示',
@@ -1210,7 +1210,7 @@
       'fa-episodes': '回合数:',
       'fa-run': '▶ 训练线性函数近似智能体',
       'cw-summary': '🆚 在悬崖行走环境比较 Q-学习 vs SARSA',
-      'cw-intro': 'Sutton & Barto 第 6.5 节。两个智能体在相同的 4×12 悬崖世界。Q-学习收敛到最优策略(沿悬崖边走);SARSA 学到更安全的策略(沿顶行走),因为它把 ε-贪心探索导致的跌落代价计入回报。',
+      'cw-intro': 'Sutton & Barto 第 6.5 节。在这个标准 4×12 悬崖行走设置中,Q-学习通常学到贴近悬崖的贪心路线,而在线策略 SARSA 在持续 ε-贪心行为下往往偏向更安全的路线。具体路线仍取决于行为策略和训练设置。',
       'cw-episodes': '回合数:',
       'cw-run': '▶ 训练两个智能体',
       'cw-curve-label': '每回合平均奖励(50 回合移动平均):',
@@ -1249,7 +1249,7 @@
       'tour0desc': '从默认网格开始。设 α=0.1、γ=0.9、ε=0.2。点击"持续训练"。观察高 Q 值(绿色)从终点向后传播。智能体没有计划--只有 Q 值。',
       'tour1name': 'ε=0 加确定性平局处理可能阻止发现',
       'tour1desc': '同一网格，ε=0。重置 Q 值。本实现中所有 Q 值从 0 并列开始，贪心平局按固定动作顺序处理，因此某些动作可能一直不被尝试，目标也可能无法发现。其他探索或随机平局机制可能表现不同。',
-      'tour2name': 'γ=0:纯粹贪婪,忽视未来',
+      'tour2name': 'γ=0:只看即时奖励',
       'tour2desc': 'γ=0 意味着目标中只保留即时转移奖励。重置 Q 后，任何直接获得非零奖励的状态动作都可以学到非零 Q 值；延迟的后继价值不会向后传播。',
       'tour3name': '步进奖励与折扣：两种时间偏好来源',
       'tour3desc': '把每步奖励设为 0，并在这个有限回合网格中比较 γ=0.9 与 γ=1。γ<1 时较晚的终点奖励仍会被折扣，所以更早到达仍可能更有价值；负步进奖励又增加一项独立的额外动作成本。',
@@ -1257,9 +1257,9 @@
       'tour4desc': '随机世界(slip=0.3)加上 α=0.8。重置 Q。训练。过高的学习率使 Q 值剧烈跳动--TD 更新对带噪声的单步结果反应过度。把 α 降到 0.05 再跑一次作对比。',
       // 练习题答案反馈(英文回退在各调用处内联传入)。
       'ws1ok': '正确。当 ε=0 时,智能体总是选"贪心"动作--但一开始所有 Q 值都是 0(并列),策略会选一个固定的默认方向。智能体确定性地乱走,可能永远碰不到终点。在本工具的全零初始化与确定性平局设置下，这展示了缺少探索时可能出现的一种发现失败。',
-      'ws1no': '试试"no"。ε=0 意味着没有探索。所有 Q 值都从 0 开始,智能体无法发现终点--它从不尝试陌生的动作。',
-      'ws2ok': '正确。γ=0 意味着"所有未来奖励都不值钱"。只有动作直接导向 +1 或 −1 奖励的格子才有非零 Q。其余保持为 0--价值不会在状态空间中向后传播。',
-      'ws2no': '试试"only adjacent to goal/pit"。γ=0 抹掉了时间信用分配--只有距离终止奖励一步的格子才有非零 Q。',
+      'ws1no': '试试"不能可靠保证"。在本工具的全零初始化和确定性贪心平局处理中,ε=0 可能让某些动作一直未被尝试,从而无法可靠发现目标;这不是所有强化学习策略的普遍结论。',
+      'ws2ok': '正确。γ=0 时目标中只保留即时转移奖励。任何直接得到非零奖励的状态-动作对都可以学到非零 Q,包括非零的普通步进奖励;延迟的后继价值不会向后传播。',
+      'ws2no': '关注即时转移奖励。γ=0 会去掉后继价值的回传,但任何当前动作直接得到的非零奖励都能影响该状态-动作对,并不只限于终点或陷阱附近。',
       'ws3ok': '正确。α=0.8 意味着每次 TD 更新会用新的(带噪声的)目标替换掉旧 Q 的 80%。Q 值剧烈跳动。α=0.05 则平滑地平均许多次更新。权衡:高 α = 学习快但不稳定;低 α = 慢但平滑。',
       'ws3no': '试试"less stable"。高 α 使 Q 更新对带噪声的单步目标反应过度--不稳定是快速学习的代价。',
       // 编辑模式、主选择器与希腊字母滑块的提示翻译。
@@ -2247,7 +2247,7 @@
     { name: 'ε=0 with deterministic ties can block discovery',
       description: "Same grid, ε=0. Reset Q-values. In this implementation all Q-values begin tied at 0 and greedy ties use a fixed action order, so some actions may never be tried and the goal may not be discovered. Other exploration or tie-breaking mechanisms could behave differently.",
       apply: () => { setParam('alpha', 0.1); setParam('gamma', 0.9); setParam('epsilon', 0); setParam('step', -0.04); $('resetQBtn').click(); } },
-    { name: 'γ=0: pure greed, ignores future',
+    { name: 'γ=0: immediate rewards only',
       description: "γ=0 means only the immediate transition reward enters the target. Reset Q and train. Delayed terminal values do not propagate backward; any state-action pair with a direct nonzero transition reward can still learn a nonzero value.",
       apply: () => { setParam('alpha', 0.1); setParam('gamma', 0); setParam('epsilon', 0.2); setParam('step', -0.04); $('resetQBtn').click(); } },
     { name: 'step reward and gamma: two sources of time preference',

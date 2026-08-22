@@ -626,7 +626,7 @@
 </summary>
 <div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem;">
 <p data-i18n="lc-hint" style="margin:0 0 8px; color:var(--muted); font-size:0.82rem;">
-            Fixes the current degree, λ, regularizer, and noise; varies n from 5 → n_max. For each n, draws a fresh sample of n training points and computes train and validation MSE. Plots both curves. Diagnostic: if train ≈ test and both high → underfitting (more capacity); if train low + test high (gap) → overfitting (more data or regularization); if both converging low → good.
+            Fixes the current degree, λ, regularizer, and noise; varies n from 5 → n_max. For each n, draws a fresh sample of n training points and computes train and validation MSE. Plots both curves. Diagnostic: if train ≈ validation and both high → possible underfitting; if train low + validation high (gap) → possible overfitting; if both converge low → better evidence of generalization on this validation sample.
           </p>
 <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
 <label data-i18n="lc-nmax-label">n_max:</label>
@@ -767,7 +767,7 @@
 <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="0"/> <span data-i18n="ws2o0">Lower: fitting the training points perfectly also fits unseen points.</span></label>
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="1"/> <span data-i18n="ws2o1">About the same: train MSE is a reliable estimate of validation MSE.</span></label>
-<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="2"/> <span data-i18n="ws2o2">Much higher: the wild wiggles that hit every train point miss the test points.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="2"/> <span data-i18n="ws2o2">Much higher: the wild wiggles that hit every train point can miss the validation points.</span></label>
 </div>
 <button class="step-btn" data-i18n="ws-check" id="ws2btn">Check</button>
 <span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
@@ -1024,7 +1024,7 @@
       'opt-linear': '1.5x: degree 1 is enough',
       'resample-btn': '↻ Resample noise',
       'show-test': 'Show validation points',
-      'show-test-title': 'Show the validation points as open circles on the fit chart. Watch them stay near the truth while train points are perfectly fit on the high-degree polynomial.',
+      'show-test-title': 'Show validation points as open circles on the fit chart. Compare them with the training fit; a near-perfect training fit does not guarantee that validation points stay near the underlying function.',
       'show-cv': 'Add 5-fold CV curve',
       'show-cv-title': "Add a k-fold cross-validation curve to the error chart. Cross-validation is one tool for comparing candidate settings. A final untouched test set is still needed after model selection.",
       'fit-h3': 'Fit on training data',
@@ -1056,7 +1056,7 @@
       'ws1o2': 'About the same as the validation MSE: train and validation error always match.',
       'ws2o0': 'Lower: fitting the training points perfectly also fits unseen points.',
       'ws2o1': 'About the same: train MSE is a reliable estimate of validation MSE.',
-      'ws2o2': 'Much higher: the wild wiggles that hit every train point miss the test points.',
+      'ws2o2': 'Much higher: the wild wiggles that hit every train point can fit the repeatedly viewed validation points poorly.',
       'ws3o0': 'Up: any penalty on the weights can only hurt accuracy.',
       'ws3o1': 'Down: shrinking the coefficients smooths the curve and improves generalization.',
       'ws3o2': 'Stays the same: λ changes the weights but not the validation error.',
@@ -1070,14 +1070,14 @@
       'tour3name': 'Ridge can reduce this overfit',
       'tour3desc': 'Still degree 20, but now λ=0.5. In this generated sample the penalty shrinks extreme high-order coefficients and can lower validation error without changing the polynomial degree.',
       'tour4name': 'More data can reduce variance',
-      'tour4desc': 'Degree 20, λ=0, but n=100 instead of 20. With more data, even a high-capacity model can\'t memorize: it has to generalize. Use the CV curve toggle.',
+      'tour4desc': 'Degree 20, λ=0, but n=100 instead of 20. In this generated sample, more data constrains the flexible fit and may reduce validation error, but it does not guarantee good generalization. Use the CV curve toggle.',
       // worksheet answer-feedback (ws{n}ok / ws{n}no) ---
       'ws1ok': 'Correct. A degree-20 polynomial has 21 free parameters; with only 20 training points, it has enough freedom to literally pass through every dot. Train MSE ≈ 0.',
       'ws1no': "Try 'zero' or 'near zero'. 21 free coefficients can fit 20 arbitrary points exactly: degrees of freedom math.",
       'ws2ok': 'Yes. Training error can approach zero while repeatedly viewed validation error rises sharply; that generalization gap is evidence of overfitting in this sample.',
       'ws2no': "Hint: zero train error + held-out validation error are very different. Try 'much higher'.",
-      'ws3ok': 'Correct. Ridge (L2) penalty λ‖w‖² shrinks large coefficients. The degree-20 polynomial still has 21 params, but they are now small: the curve is forced to be smooth and generalizes much better.',
-      'ws3no': "Try 'down'. λ penalizes large weights, killing the high-frequency wiggles that overfit.",
+      'ws3ok': 'Correct for this generated sample. The Ridge (L2) penalty λ‖w‖² shrinks large coefficients, suppresses extreme oscillation, and here lowers validation error without changing the polynomial degree.',
+      'ws3no': "Try 'down' for this sample. Penalizing large weights can suppress extreme high-order oscillation that contributes to the train-validation gap.",
       // tooltip translations for main sliders + selectors.
       'deg-slider-title': 'Model capacity. Higher degree = more wiggle room = easier to overfit.',
       'lam-slider-title': 'Regularization strength. With Ridge, adds λ‖w‖² to the loss; with Lasso, adds λ‖w‖₁. Set λ=0 to disable.',
@@ -1086,7 +1086,7 @@
       'truth-sel-title': "The 'real' function the model is trying to recover from noisy samples.",
       'resample-title': 'Re-draw new random noise around the true function.',
       'lc-summary': '📈 Learning curves (vary n at fixed degree)',
-      'lc-hint': 'Fixes the current degree, λ, regularizer, and noise; varies n from 5 → n_max. For each n, draws a fresh sample of n training points and computes train and validation MSE. Plots both curves. Diagnostic: if train ≈ test and both high → underfitting (more capacity); if train low + test high (gap) → overfitting (more data or regularization); if both converging low → good.',
+      'lc-hint': 'Fixes the current degree, λ, regularizer, and noise; varies n from 5 → n_max. For each n, draws a fresh sample of n training points and computes train and validation MSE. Plots both curves. Diagnostic: if train ≈ validation and both high → possible underfitting; if train low + validation high (gap) → possible overfitting; if both converge low → better evidence of generalization on this validation sample.',
       'lc-nmax-label': 'n_max:', 'lc-trials-label': 'Avg over runs:',
       'lc-run': '▶ Run learning curves',
       'lc-empty': '(click "Run learning curves")',
@@ -1098,24 +1098,24 @@
       'tldr-strong': '核心思想',
       'tldr-body': '将多项式次数从 1 拉到 20。训练误差降到零,验证误差却暴涨。这个差距就是过拟合,U 形曲线就是偏差-方差权衡。',
       'deg-label': '多项式次数',
-      'deg-help': '次数越高越能拟合。注意:过了"甜点"之后验证误差会上升。',
+      'deg-help': '次数越高,模型越灵活。这个生成样本中,验证误差可能在某个范围后上升,但不存在普适的"甜点"次数。',
       'lam-label': '正则化 λ',
       'lam-help': '对大权重的惩罚。能驯服高次项的剧烈摆动。',
       'reg-ridge': '岭回归 (L2)', 'reg-lasso': '套索 (L1)',
       'reg-title': '岭回归(L2):平滑地缩小所有权重。套索(L1):把部分权重精确推到零--自动特征选择。切换比较。',
       'n-label': '训练点数 (n)',
-      'n-help': '相同次数下,数据越多越难过拟合。',
+      'n-help': '在相同次数下,更多数据常会约束灵活拟合并降低方差,但不保证泛化良好。',
       'sig-label': '噪声 σ',
-      'sig-help': '把 σ 设为 0,过拟合就不会发生。为什么?',
+      'sig-help': '把 σ 设为 0。训练-验证差距会在所有目标函数和次数下都消失吗?',
       'opt-sin': 'sin(2πx): 平滑周期函数',
       'opt-cubic': '3x³ − x: 平滑多项式',
       'opt-step': 'x=0.5 处阶跃: 不连续',
       'opt-linear': '1.5x: 一次就够',
       'resample-btn': '↻ 重新采样噪声',
-      'show-test': '显示测试点',
-      'show-test-title': '在拟合图上以空心圆显示留出的测试点。观察高次多项式上训练点被完美拟合时,测试点仍偏离真实曲线。',
+      'show-test': '显示验证点',
+      'show-test-title': '在拟合图上以空心圆显示验证点。比较它们与训练拟合;训练误差很低并不能保证验证点贴近真实函数。',
       'show-cv': '加入 5 折 CV 曲线',
-      'show-cv-title': '在误差图中加入 k 折交叉验证曲线。这是实际中选择正则化强度的标准方法。',
+      'show-cv-title': '在误差图中加入 k 折交叉验证曲线。交叉验证可用于比较候选设置;模型选择完成后仍需要最终未触碰的测试集。',
       'fit-h3': '训练数据上的拟合',
       'err-h3': '均方误差 vs 多项式次数(当前 λ 与数据集)',
       'train-mse': '训练 MSE', 'test-mse': '验证 MSE（反复查看的留出集）',
@@ -1152,8 +1152,8 @@
       // 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
       'tour0name': '欠拟合(1 次,正弦真值)',
       'tour0desc': '用 1 次多项式去拟合正弦。训练误差和验证误差都很高--这是高偏差。模型根本弯不够。',
-      'tour1name': '甜点区(5 次)',
-      'tour1desc': '同样的真值,5 次。训练和测试都很低且彼此接近。这正是我们一直想要的偏差-方差平衡点。',
+      'tour1name': '这个样本中的一个有用设置(5 次)',
+      'tour1desc': '同样的生成设置,5 次。这里训练误差和验证误差恰好都较低且彼此接近;把它看作这个样本的一个有用结果,而不是普适最优次数。',
       'tour2name': '严重过拟合(20 次,n=20)',
       'tour2desc': '20 次多项式而只有 20 个训练点。训练误差 → 0(曲线穿过每一个点)。验证误差暴涨。典型的过拟合。',
       'tour3name': '岭回归在这个示例中可缓解过拟合',
@@ -1170,12 +1170,12 @@
       // 主要滑块和选择器的提示翻译。
       'deg-slider-title': '模型容量。次数越高,摆动空间越大,越容易过拟合。',
       'lam-slider-title': '正则化强度。岭回归在损失中加入 λ‖w‖²;套索加入 λ‖w‖₁。设 λ=0 关闭正则化。',
-      'n-slider-title': '训练集规模。数据越多,越难过拟合。',
+      'n-slider-title': '训练集规模。更多数据通常会约束灵活拟合,但不能保证良好泛化。',
       'sig-slider-title': '每个训练点的高斯噪声标准差。σ=0 只移除了这里注入的随机噪声；有限样本、模型错配或反复调参仍可能产生较差泛化。',
       'truth-sel-title': '模型试图从带噪样本中恢复的"真实"函数。',
       'resample-title': '在真实函数周围重新采样新的随机噪声。',
       'lc-summary': '📈 学习曲线(固定阶数,改变 n)',
-      'lc-hint': '固定当前的阶数、λ、正则化和噪声;让 n 从 5 变到 n_最大值。对每个 n，重新采样 n 个训练点并计算训练和验证 MSE。绘制两条曲线。诊断:训练≈测试且都很高 → 欠拟合(需要更高容量);训练低 + 验证高(有缺口)→ 过拟合(更多数据或正则化);两者都收敛到低值 → 良好。',
+      'lc-hint': '固定当前的阶数、λ、正则化和噪声;让 n 从 5 变到 n_最大值。对每个 n，重新采样 n 个训练点并计算训练和验证 MSE。绘制两条曲线。诊断:训练≈验证且都很高 → 可能欠拟合;训练低 + 验证高(有缺口)→ 可能过拟合;两者都收敛到低值 → 对这个验证样本的泛化证据更好。',
       'lc-nmax-label': 'n_最大值:', 'lc-trials-label': '平均次数:',
       'lc-run': '▶ 运行学习曲线',
       'lc-empty': '(点击"运行学习曲线")',

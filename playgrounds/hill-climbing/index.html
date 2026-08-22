@@ -1037,7 +1037,7 @@
       'tour1desc': "Same TSP, random-restart. When the climb plateaus, jumps to a fresh start. Additional restarts can improve the best-ever cost by sampling other basins, but no finite number of restarts guarantees the global optimum.",
       'tour2name': 'Simulated annealing: T₀=10, cool=0.995',
       'tour2desc': "TSP with SA. Early iterations accept worse moves (escape valleys). As T cools, behavior becomes greedy. The watchword is 'slow cooling': try cool=0.999 vs 0.95 and compare.",
-      'tour3name': 'N-queens: steepest hits a plateau',
+      'tour3name': 'N-queens: best-improvement hits a plateau',
       'tour3desc': "8-queens, best-improvement. Often finds a 0-conflict solution; often gets stuck on a plateau (many neighbors with the same cost). Watch the cost flatline.",
       'tour4name': '2D landscape: tabu vs simple HC',
       'tour4desc': "Landscape with 5 minima. Try Simple HC first: observe what minimum it reaches. Switch to Tabu Search: it forbids recently-visited states, often escaping past nearby minima to find better ones.",
@@ -1046,8 +1046,8 @@
       'ws1no': "Try 'no'. HC stops at the first local optimum it reaches; different random restarts can land in different local optima.",
       'ws2ok': "Right. Random-restart HC keeps the best result across independent climbs. More restarts sample more basins and can increase the chance of finding a better solution, but no finite run certifies the global optimum.",
       'ws2no': "Try 'better'. Random restarts sample multiple local optima: the best one wins.",
-      'ws3ok': "Correct. SA acceptance prob = exp(-Δ/T). As T→0, exp(-Δ/T) → 0 for any worsening Δ, so the algorithm only accepts improvements: pure greedy hill-climbing. Early on (large T), it accepts almost anything.",
-      'ws3no': "Try 'greedier'. Low T means the Boltzmann acceptance probability for worse moves approaches zero: SA degenerates to greedy HC at T=0.",
+      'ws3ok': "Correct. For a worsening move with Δ>0, SA acceptance probability exp(-Δ/T) approaches 0 as T→0. The search therefore approaches greedy non-worsening local search; equal-cost moves depend on the implementation's acceptance rule.",
+      'ws3no': "Try 'greedier'. As T approaches zero, acceptance of worsening moves approaches zero. In this implementation the search approaches greedy non-worsening local search rather than becoming random.",
       // tooltip translations for main selectors + slider labels.
       'prob-sel-title': 'The optimization target. Each problem has its own neighbor function.',
       'algo-sel-title': 'Which local-search variant to run.',
@@ -1108,7 +1108,7 @@
       'ws3q': '模拟退火。当温度 T 冷却趋近于零时,算法的行为会变得:',
       // MCQ 选项文本(双语;英文内联 span 作为回退)。
       'ws1o0': '能--无论从哪里出发,最佳改进总能爬到那个唯一的最优路线。',
-      'ws1o1': '不能--它是贪心的,会停在某个局部最优,所以不同起点会落到不同的路线。',
+      'ws1o1': '不能--它是贪心的,会停在某个局部最优,所以不同起点可能落到不同的路线。',
       'ws1o2': '能--一旦代价不再下降,就证明该路线是全局最优的。',
       'ws2o0': '更好(更低)--重启会采样许多局部最优,并保留找到的最佳结果。',
       'ws2o1': '更差(更高)--重启会丢掉已有进展,所以不可能优于单次爬升。',
@@ -1132,8 +1132,8 @@
       'ws1no': '试试"no"。爬山法在到达的第一个局部最优处就停下--不同的随机重启可能落入不同的局部最优。',
       'ws2ok': '对。随机重启爬山会从多次独立爬升中取最佳结果。增加独立重启会采样更多吸引域，并可能提高找到更好解的机会；任何有限次数的重启都不能证明已经找到全局最优。',
       'ws2no': '试试"better"。随机重启会采样多个局部最优--其中最好的那个获胜。',
-      'ws3ok': '正确。模拟退火的接受概率 = exp(-Δ/T)。当 T→0 时,对任何变差的 Δ,exp(-Δ/T) → 0,因此算法只接受改进--纯贪心爬山。前期(T 较大)它几乎接受任何移动。',
-      'ws3no': '试试"greedier"。低 T 意味着对更差移动的玻尔兹曼接受概率趋近于零--在 T=0 时模拟退火退化为贪心爬山。',
+      'ws3ok': '正确。对变差移动 Δ>0,模拟退火的接受概率 exp(-Δ/T) 在 T→0 时趋近于 0。因此搜索会接近贪心的非变差局部搜索;等代价移动是否接受取决于具体实现。',
+      'ws3no': '试试"greedier"。当 T 接近 0 时,接受变差移动的概率接近 0;在本实现中,搜索会接近贪心的非变差局部搜索。',
       // 主要选择器与滑块的提示翻译。
       'prob-sel-title': '优化目标。每个问题有自己的邻居函数。',
       'algo-sel-title': '要运行的局部搜索算法。',
@@ -2096,7 +2096,7 @@
       ok:  ['ws2ok', "Right. Random-restart HC keeps the best result across independent climbs. More restarts sample more basins and can increase the chance of finding a better solution, but no finite run certifies the global optimum."],
       no:  ['ws2no', "Try 'better'. Random restarts sample multiple local optima: the best one wins."] },
     { correct: 2,
-      ok:  ['ws3ok', "Correct. SA acceptance prob = exp(-Δ/T). As T→0, exp(-Δ/T) → 0 for any worsening Δ, so the algorithm only accepts improvements: pure greedy hill-climbing. Early on (large T), it accepts almost anything."],
+      ok:  ['ws3ok', "Correct. SA acceptance prob = exp(-Δ/T). As T→0, exp(-Δ/T) → 0 for any worsening Δ, so the algorithm approaches greedy non-worsening local search. Early on (large T), it accepts almost anything."],
       no:  ['ws3no', "Try 'greedier'. Low T means the Boltzmann acceptance probability for worse moves approaches zero: SA degenerates to greedy HC at T=0."] },
   ];
   WORKSHEET.forEach((q, i) => {

@@ -1851,7 +1851,7 @@
   function dseparated(x, y, evidenceSet) {
     if (x === y) return { sep: false, reason: 'X and Y are the same variable: trivially not independent.' };
     if (evidenceSet.has(x) || evidenceSet.has(y)) {
-      return { sep: true, reason: `${x === '' ? '' : x} (or Y) is itself in the evidence set: conditioning on a variable makes it independent of everything else (it's deterministic).` };
+      return { sep: true, reason: `${x === '' ? '' : x} (or Y) is itself observed in the evidence set, so that queried variable has no remaining uncertainty under this conditioning set.` };
     }
     // Precompute the nodes that are ancestors of an observed node. A collider becomes active when it or one of its descendants is observed.
     const observedAndAncestors = new Set();
