@@ -151,7 +151,7 @@
         if (node.nodeType === Node.TEXT_NODE && originalText.has(node)) node.nodeValue = originalText.get(node);
         else if (node.nodeType === Node.ELEMENT_NODE && originalAttrs.has(node)) {
           const state = originalAttrs.get(node);
-          Object.entries(state).forEach(([a, v]) => root.setAttribute(a, v));
+          Object.entries(state).forEach(([a, v]) => node.setAttribute(a, v));
         }
       }
     } finally { applying = false; }
@@ -161,29 +161,22 @@
     return document.querySelector(`.lang-switch button[data-lang="${locale}"]`);
   }
 
+  function nativeLocale() {
+    const active = document.querySelector('.lang-switch button[data-lang].active');
+    return normalizeLocale((active && active.dataset.lang) || document.documentElement.lang || 'en');
+  }
+
   function clickNative(locale) {
+    locale = normalizeLocale(locale);
     const btn = nativeButton(locale);
     if (!btn) return false;
-    const hardReset = document.querySelector('#hardReset');
-    const hardResetClick = hardReset && typeof hardReset.click === 'function' ? hardReset.click : null;
+    // Do not re-run native language handlers when the applet is already in the
+    // requested language. On initial page load a redundant EN click can race with
+    // Guided Challenge setup and reset/rebuild applet state after the challenge
+    // has begun.
+    if (nativeLocale() === locale) return true;
     nativeLanguageClick = true;
-    try {
-      // Some legacy language handlers call hardReset.click() synchronously while
-      // refreshing their translated surface. R4 uses those handlers only as an
-      // internal EN/ZH rendering bridge, so suppress that internal reset at the
-      // call site before any click event can be dispatched. The original method
-      // is restored immediately; user-initiated resets are unaffected.
-      if (hardReset && hardResetClick) {
-        hardReset.click = function () {
-          if (nativeLanguageClick) return;
-          return hardResetClick.call(this);
-        };
-      }
-      btn.click();
-    } finally {
-      if (hardReset && hardResetClick) hardReset.click = hardResetClick;
-      nativeLanguageClick = false;
-    }
+    try { btn.click(); } finally { nativeLanguageClick = false; }
     return true;
   }
 
@@ -242,7 +235,7 @@
       const base = clipboard.writeText.bind(clipboard);
       const wrapped = text => base(current === 'vi' || current === 'es' ? translateString(String(text), current) : text);
       wrapped.__r4Wrapped = true;
-      navigator.clipboard.writeText = wrapped;
+      clipboard.writeText = wrapped;
     } catch (_) {}
   }
 
@@ -348,10 +341,11 @@
     wrapTr();
     patchClipboard();
     observer.observe(document.body, { subtree:true, childList:true, characterData:true, attributes:true, attributeFilter:['title','aria-label','placeholder'] });
-    // Secondary guard for legacy handlers that dispatch a reset event directly
-    // rather than calling the element's click() method. The clickNative() call-site
-    // guard above prevents the normal path before dispatch; this capture guard
-    // covers direct dispatch while R4 is bridging locales.
+    // Legacy language handlers in some applets rebuild or reset the experiment as
+    // part of their EN/ZH switch. R4 invokes those buttons only as an internal
+    // rendering bridge; locale changes must not mutate learner/challenge state.
+    // A synchronous hard-reset click dispatched by that bridge is therefore
+    // suppressed in capture phase. Normal user reset clicks are unaffected.
     document.addEventListener('click', event => {
       if (!nativeLanguageClick) return;
       const target = event.target;
