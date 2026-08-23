@@ -55,6 +55,16 @@ def collect_sources(slug):
     if errors: raise RuntimeError(f'{slug}: page errors: {errors}')
     return {norm(x) for x in rows if translatable(norm(x))}, title, description
 
+def pattern_covers(source, rows):
+    for row in rows or []:
+        flags=0
+        if 'i' in str(row.get('flags','')): flags |= re.I
+        try:
+            if re.search(str(row.get('source','')), source, flags): return True
+        except re.error:
+            continue
+    return False
+
 def load_locale(slug):
     path=ROOT/'assets'/'locales'/f'{slug}-r4.js'
     if not path.is_file(): raise RuntimeError(f'missing locale file: {path}')
@@ -70,7 +80,8 @@ def main():
     if data.get('ready') is not True: failures.append('ready flag is not true')
     for locale in ('vi','es'):
         strings=((data.get(locale) or {}).get('strings') or {})
-        missing=sorted(sources-set(strings))
+        patterns=(data.get(locale) or {}).get('patterns') or []
+        missing=sorted(source for source in sources if source not in strings and not pattern_covers(source,patterns))
         extras=sorted(set(strings)-sources)
         if missing: failures.append(f'{locale}: {len(missing)} missing source translations; first={missing[:12]}')
         meta=(data.get('meta') or {}).get(locale) or {}

@@ -439,7 +439,43 @@
       "🧪 Student response packet": "🧪 Gói phản hồi của học sinh",
       "🧭 Visual explanation": "🧭 Giải thích trực quan"
     },
-    "patterns": []
+    "patterns": [
+      {
+        "source": "Exact inference by enumeration: computed in ([0-9.]+) ms\\\\.",
+        "target": "Suy luận chính xác bằng phép liệt kê: tính trong $1 ms.",
+        "flags": "g"
+      },
+      {
+        "source": "^Network: Burglary \\\\(AIMA, 5 vars\\\\)",
+        "target": "Mạng: Burglary (AIMA, 5 biến)",
+        "flags": "g"
+      },
+      {
+        "source": "Inference metadata:",
+        "target": "Siêu dữ liệu suy luận:",
+        "flags": "g"
+      },
+      {
+        "source": "Posteriors:",
+        "target": "Xác suất hậu nghiệm:",
+        "flags": "g"
+      },
+      {
+        "source": "D-separation result:",
+        "target": "Kết quả d-separation:",
+        "flags": "g"
+      },
+      {
+        "source": "D-separation:",
+        "target": "D-separation:",
+        "flags": "g"
+      },
+      {
+        "source": "State summary updated:",
+        "target": "Tóm tắt trạng thái đã cập nhật:",
+        "flags": "g"
+      }
+    ]
   },
   "es": {
     "strings": {
@@ -862,7 +898,43 @@
       "🧪 Student response packet": "🧪 Paquete de respuesta para estudiantes",
       "🧭 Visual explanation": "🧭 Explicación visual"
     },
-    "patterns": []
+    "patterns": [
+      {
+        "source": "Exact inference by enumeration: computed in ([0-9.]+) ms\\\\.",
+        "target": "Inferencia exacta por enumeración: calculada en $1 ms.",
+        "flags": "g"
+      },
+      {
+        "source": "^Network: Burglary \\\\(AIMA, 5 vars\\\\)",
+        "target": "Red: Burglary (AIMA, 5 variables)",
+        "flags": "g"
+      },
+      {
+        "source": "Inference metadata:",
+        "target": "Metadatos de inferencia:",
+        "flags": "g"
+      },
+      {
+        "source": "Posteriors:",
+        "target": "Posteriores:",
+        "flags": "g"
+      },
+      {
+        "source": "D-separation result:",
+        "target": "Resultado de d-separación:",
+        "flags": "g"
+      },
+      {
+        "source": "D-separation:",
+        "target": "D-separación:",
+        "flags": "g"
+      },
+      {
+        "source": "State summary updated:",
+        "target": "Resumen de estado actualizado:",
+        "flags": "g"
+      }
+    ]
   }
 };
 })();

@@ -436,7 +436,48 @@
       "🧪 Student response packet": "🧪 Gói phản hồi của học sinh",
       "🧭 Visual explanation": "🧭 Giải thích trực quan"
     },
-    "patterns": []
+    "patterns": [
+      {
+        "source": "Problem: Traveling salesman \\\\(12 cities\\\\)",
+        "target": "Bài toán: Người bán hàng du lịch (12 thành phố)",
+        "flags": "g"
+      },
+      {
+        "source": "Algorithm: Best-improvement HC",
+        "target": "Thuật toán: leo đồi cải thiện tốt nhất",
+        "flags": "g"
+      },
+      {
+        "source": "Iteration: ([0-9]+)",
+        "target": "Lần lặp: $1",
+        "flags": "g"
+      },
+      {
+        "source": "Current cost: ([-+0-9.]+)",
+        "target": "Chi phí hiện tại: $1",
+        "flags": "g"
+      },
+      {
+        "source": "Best cost: ([-+0-9.]+)",
+        "target": "Chi phí tốt nhất: $1",
+        "flags": "g"
+      },
+      {
+        "source": "Temperature: ([^ ;]+)",
+        "target": "Nhiệt độ: $1",
+        "flags": "g"
+      },
+      {
+        "source": "Acceptance: ([0-9]+/[0-9]+)",
+        "target": "Chấp nhận: $1",
+        "flags": "g"
+      },
+      {
+        "source": "State summary updated:",
+        "target": "Tóm tắt trạng thái đã cập nhật:",
+        "flags": "g"
+      }
+    ]
   },
   "es": {
     "strings": {
@@ -856,7 +897,48 @@
       "🧪 Student response packet": "🧪 Paquete de respuesta para estudiantes",
       "🧭 Visual explanation": "🧭 Explicación visual"
     },
-    "patterns": []
+    "patterns": [
+      {
+        "source": "Problem: Traveling salesman \\\\(12 cities\\\\)",
+        "target": "Problema: viajante de comercio (12 ciudades)",
+        "flags": "g"
+      },
+      {
+        "source": "Algorithm: Best-improvement HC",
+        "target": "Algoritmo: ascenso de colina de mejor mejora",
+        "flags": "g"
+      },
+      {
+        "source": "Iteration: ([0-9]+)",
+        "target": "Iteración: $1",
+        "flags": "g"
+      },
+      {
+        "source": "Current cost: ([-+0-9.]+)",
+        "target": "Coste actual: $1",
+        "flags": "g"
+      },
+      {
+        "source": "Best cost: ([-+0-9.]+)",
+        "target": "Mejor coste: $1",
+        "flags": "g"
+      },
+      {
+        "source": "Temperature: ([^ ;]+)",
+        "target": "Temperatura: $1",
+        "flags": "g"
+      },
+      {
+        "source": "Acceptance: ([0-9]+/[0-9]+)",
+        "target": "Aceptación: $1",
+        "flags": "g"
+      },
+      {
+        "source": "State summary updated:",
+        "target": "Resumen de estado actualizado:",
+        "flags": "g"
+      }
+    ]
   }
 };
 })();

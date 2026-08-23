@@ -508,7 +508,13 @@
       "🧭 Guided challenge: predict before reveal": "🧭 Thử thách có hướng dẫn: dự đoán trước khi lộ diện",
       "🧭 Visual explanation": "🧭 Giải thích trực quan"
     },
-    "patterns": []
+    "patterns": [
+      {
+        "source": "^Training point ([0-9]+): class ([AB]) at coordinates ([0-9]+), ([0-9]+)\\\\.$",
+        "target": "Điểm huấn luyện $1: lớp $2 tại tọa độ $3, $4.",
+        "flags": "g"
+      }
+    ]
   },
   "es": {
     "strings": {
@@ -1000,7 +1006,13 @@
       "🧭 Guided challenge: predict before reveal": "🧭 Desafío guiado: predecir antes de revelar",
       "🧭 Visual explanation": "🧭 Explicación visual"
     },
-    "patterns": []
+    "patterns": [
+      {
+        "source": "^Training point ([0-9]+): class ([AB]) at coordinates ([0-9]+), ([0-9]+)\\\\.$",
+        "target": "Punto de entrenamiento $1: clase $2 en las coordenadas $3, $4.",
+        "flags": "g"
+      }
+    ]
   }
 };
 })();

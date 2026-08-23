@@ -427,7 +427,13 @@
       "🧪 Student response packet": "🧪 Gói phản hồi của học sinh",
       "🧭 Visual explanation": "🧭 Giải thích trực quan"
     },
-    "patterns": []
+    "patterns": [
+      {
+        "source": "^\\\\(([0-9]+),([0-9]+)\\\\): -no breeze, -no stench$",
+        "target": "($1,$2): không có gió, không có mùi hôi",
+        "flags": "g"
+      }
+    ]
   },
   "es": {
     "strings": {
@@ -838,7 +844,13 @@
       "🧪 Student response packet": "🧪 Paquete de respuesta para estudiantes",
       "🧭 Visual explanation": "🧭 Explicación visual"
     },
-    "patterns": []
+    "patterns": [
+      {
+        "source": "^\\\\(([0-9]+),([0-9]+)\\\\): -no breeze, -no stench$",
+        "target": "($1,$2): sin brisa, sin hedor",
+        "flags": "g"
+      }
+    ]
   }
 };
 })();

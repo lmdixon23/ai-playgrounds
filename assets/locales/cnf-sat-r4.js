@@ -438,7 +438,13 @@
       "🧪 Student response packet": "🧪 Gói phản hồi của học sinh",
       "🧭 Visual explanation": "🧭 Giải thích trực quan"
     },
-    "patterns": []
+    "patterns": [
+      {
+        "source": "^Modus ponens KB\\\\. In the query box, type <code>Q</code> and click \"Prove by resolution\"\\\\. Does it succeed \\\\(empty clause derived\\\\)\\\\?$",
+        "target": "Cơ sở tri thức modus ponens. Trong ô truy vấn, nhập <code>Q</code> rồi nhấp Chứng minh bằng phân giải. Có thành công không, tức là có suy ra mệnh đề rỗng không?",
+        "flags": "g"
+      }
+    ]
   },
   "es": {
     "strings": {
@@ -860,7 +866,13 @@
       "🧪 Student response packet": "🧪 Paquete de respuesta para estudiantes",
       "🧭 Visual explanation": "🧭 Explicación visual"
     },
-    "patterns": []
+    "patterns": [
+      {
+        "source": "^Modus ponens KB\\\\. In the query box, type <code>Q</code> and click \"Prove by resolution\"\\\\. Does it succeed \\\\(empty clause derived\\\\)\\\\?$",
+        "target": "Base de conocimiento de modus ponens. En el cuadro de consulta, escribe <code>Q</code> y pulsa Probar por resolución. ¿Tiene éxito, es decir, se deriva la cláusula vacía?",
+        "flags": "g"
+      }
+    ]
   }
 };
 })();

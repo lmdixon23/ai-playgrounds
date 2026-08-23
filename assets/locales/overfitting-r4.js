@@ -491,7 +491,13 @@
       "🧪 Student response packet": "🧪 Gói phản hồi của học sinh",
       "🧭 Visual explanation": "🧭 Giải thích trực quan"
     },
-    "patterns": []
+    "patterns": [
+      {
+        "source": "^\\\\(([-+0-9.]+), ([-+0-9.]+)\\\\) residual=([-+0-9.]+)$",
+        "target": "($1, $2) phần dư=$3",
+        "flags": "g"
+      }
+    ]
   },
   "es": {
     "strings": {
@@ -966,7 +972,13 @@
       "🧪 Student response packet": "🧪 Paquete de respuesta para estudiantes",
       "🧭 Visual explanation": "🧭 Explicación visual"
     },
-    "patterns": []
+    "patterns": [
+      {
+        "source": "^\\\\(([-+0-9.]+), ([-+0-9.]+)\\\\) residual=([-+0-9.]+)$",
+        "target": "($1, $2) residuo=$3",
+        "flags": "g"
+      }
+    ]
   }
 };
 })();
