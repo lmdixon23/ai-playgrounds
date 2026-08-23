@@ -4,7 +4,7 @@ import json,pathlib,shutil
 from datetime import datetime,timezone
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 OUT=ROOT/'release-evidence'/'r4-localization-browser-qa.json'
-SLUGS='''+repr(SLUGS)+'''
+SLUGS=['bayes-classifier','bayes-network','cnf-sat','convolution','hill-climbing','kmeans','knn-classifier','neural-network','overfitting','q-learning-gridworld','search-pathfinding','wumpus-world']
 def launch(p):
  args=['--no-sandbox','--disable-dev-shm-usage'];m=pathlib.Path(p.chromium.executable_path)
  if m.exists():return p.chromium.launch(headless=True,args=args)
