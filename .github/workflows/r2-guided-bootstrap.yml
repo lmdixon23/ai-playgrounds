@@ -33,8 +33,8 @@ jobs:
         run: |
           set -euo pipefail
           cd .r2-bootstrap
-          gzip -dc canonical_guided_challenges_block.js.gz > guided_challenges_block.js
-          gzip -dc canonical_guided_challenge_qa.py.gz > guided_challenge_qa.py
+          cat canonical_js.b64.part* | tr -d '[:space:]' | base64 --decode | gzip -dc > guided_challenges_block.js
+          cat canonical_qa.b64.part* | tr -d '[:space:]' | base64 --decode | gzip -dc > guided_challenge_qa.py
           sha256sum -c MANIFEST_SHA256.txt
           python -m py_compile apply_r2.py verify_guided_challenges.py guided_challenge_qa.py
           node --check guided_challenges_block.js
