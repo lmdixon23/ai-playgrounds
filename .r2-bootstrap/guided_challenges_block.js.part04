@@ -1,10 +1,13 @@
 State, {once:false});
   }
 
-  function preserveFieldDataWhileRerendering() {
+  function preserveFieldDataWhileRerendering(snapshot = null) {
     if (!config) return;
-    const values = {};
-    genericFieldElements().forEach(el => values[el.dataset.guidedField] = el.value);
+    const committed = lockedPrediction && ['locked','revealed','compared'].includes(state);
+    const values = committed ? {...lockedPrediction} : (snapshot ? {...snapshot} : {});
+    if (!committed && !snapshot) {
+      genericFieldElements().forEach(el => values[el.dataset.guidedField] = el.value);
+    }
     renderFields();
     genericFieldElements().forEach(el => {
       if (Object.prototype.hasOwnProperty.call(values, el.dataset.guidedField)) el.value = values[el.dataset.guidedField];
@@ -12,7 +15,7 @@ State, {once:false});
     });
   }
 
-  function renderCopy() {
+  function renderCopy(fieldSnapshot = null) {
     q('.suite-guided-mode-label').textContent = c().modeLabel + ':';
     modeExplore.textContent = c().explore; modeGuided.textContent = c().guided;
     resetBtn.textContent = c().reset; beginBtn.textContent = c().begin; lockBtn.textContent = c().lock;
@@ -25,7 +28,7 @@ State, {once:false});
       q('.suite-guided-title').textContent = config[lang()].title;
       q('.suite-guided-prompt').textContent = transferRound ? config[lang()].transfer : config[lang()].prompt;
       q('.suite-guided-transfer-prompt').textContent = config[lang()].transfer;
-      preserveFieldDataWhileRerendering();
+      preserveFieldDataWhileRerendering(fieldSnapshot);
     } else {
       q('.suite-guided-title').textContent = lang() === 'zh' ? 'KNN 邻居预测挑战' : 'KNN neighbor prediction challenge';
       q('.suite-guided-prompt').textContent = lang() === 'zh'
