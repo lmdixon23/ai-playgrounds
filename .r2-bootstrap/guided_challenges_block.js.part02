@@ -1,4 +1,4 @@
-      actual: ['#a11yStateSummary'],
+ actual: ['#a11yStateSummary'],
       en: {
         title: 'Predict train versus validation movement',
         prompt: 'Before the high-capacity fit is revealed, predict what happens to training error and repeatedly viewed validation error relative to a lower-capacity fit.',
@@ -62,30 +62,30 @@
       },
       zh: {
         title: '预测一个输出单元的计算',
-        prompt: '在揭示输出之前，预测一个代表性输出单元的数值，并说明哪些输入值和卷积核权重参与这次乘加。',
+        prompt: '在揭示输出之前，预测一个代表性输出单元的值，并说明哪些输入值和卷积核权重参与了乘加。',
         transfer: '迁移情境：切换到边缘卷积核，再预测响应的符号和大小如何变化。'
       },
       fields: [
         {key:'value', type:'number', en:'Predicted output-cell value', zh:'预测输出单元数值'},
-        {key:'products', type:'textarea', en:'Which products contribute?', zh:'哪些乘积会贡献到结果？'}
+        {key:'products', type:'textarea', en:'Which products contribute?', zh:'哪些乘积项会参与？'}
       ]
     },
     'q-learning-gridworld': {
       scenario: 2, transferScenario: 3, action: '#stepBtn', actionClicks: 1,
-      mask: ['.bento-main'], actual: ['#a11yStateSummary', '#status', '#episodeV'],
+      mask: ['.bento-main'], actual: ['#a11yStateSummary', '#status', '#tpCount'],
       en: {
         title: 'Predict the TD update',
-        prompt: 'Before one transition is revealed, predict the selected action, the immediate reward or TD target you expect, and whether the selected Q value should move up, down, or stay about the same.',
-        transfer: 'Changed case: introduce time preference and predict how the target changes when future reward matters.'
+        prompt: 'Before one transition is revealed, predict the selected action, the TD target or its direction, and whether the current Q value should move up, down, or stay about the same.',
+        transfer: 'Changed case: restore a nonzero discount and predict how delayed value begins to propagate.'
       },
       zh: {
         title: '预测 TD 更新',
-        prompt: '在揭示一次转移之前，预测会选择哪个动作、预期即时奖励或 TD 目标，并判断对应 Q 值应上升、下降还是大致不变。',
-        transfer: '迁移情境：加入时间偏好，再预测未来奖励参与后目标值如何变化。'
+        prompt: '在揭示一次转移之前，预测会选择哪个动作、TD 目标或其方向，以及当前 Q 值应上升、下降还是大致不变。',
+        transfer: '迁移情境：恢复非零折扣，再预测延迟价值如何开始向后传播。'
       },
       fields: [
         {key:'action', type:'text', en:'Predicted action', zh:'预测动作'},
-        {key:'target', type:'text', en:'Predicted immediate reward or TD target', zh:'预测即时奖励或 TD 目标'},
+        {key:'target', type:'text', en:'Predicted TD target or immediate reward', zh:'预测 TD 目标或即时奖励'},
         {key:'direction', type:'select', en:'Predicted Q update direction', zh:'预测 Q 值更新方向', options:[['up','Up','上升'],['down','Down','下降'],['same','About the same','大致不变']]}
       ]
     }
@@ -93,28 +93,26 @@
 
   const COMMON = {
     en: {
-      modeLabel:'Activity mode', explore:'Explore', guided:'Guided Challenge', begin:'Prepare challenge', lock:'Lock prediction', reveal:'Reveal mechanism', compare:'Compare', explain:'Explain the discrepancy', transfer:'Try a changed case', reset:'Reset challenge', prediction:'Locked prediction', actual:'Revealed mechanism', hidden:'Result hidden until the prediction is locked.',
+      explore:'Explore', guided:'Guided Challenge', modeLabel:'Learning mode',
+      begin:'Prepare challenge', lock:'Lock prediction', reveal:'Reveal mechanism', compare:'Compare', reset:'Reset challenge',
+      explain:'Explain the discrepancy', transfer:'Try changed case', prediction:'Your locked prediction', actual:'Revealed applet state',
+      hidden:'The relevant result is hidden until you lock a prediction and reveal it.',
       states:{
-        inactive:'Challenge inactive. Explore mode is unrestricted.',
-        'awaiting-prediction':'Prediction required before reveal.',
-        'prediction-complete-unlocked':'Prediction complete. Lock it before reveal.',
-        locked:'Prediction locked and immutable. The mechanism can now be revealed.',
-        revealed:'Mechanism revealed. Compare your prediction with the actual state.',
-        compared:'Comparison complete. Explain the discrepancy before transfer.',
+        inactive:'Challenge inactive. Prepare a challenge when you are ready.',
+        'awaiting-prediction':'Enter the required mechanism prediction before locking.',
+        'prediction-complete-unlocked':'Prediction complete. Lock it before the result can be revealed.',
+        locked:'Prediction locked and immutable. The underlying applet step has run while the result remains hidden.',
+        revealed:'Mechanism revealed. Compare the locked prediction with the actual applet state.',
+        compared:'Comparison recorded. Explain any discrepancy before trying the transfer case.',
         reset:'Challenge reset.'
       }
     },
     zh: {
-      modeLabel:'活动模式', explore:'探索', guided:'引导挑战', begin:'准备挑战', lock:'锁定预测', reveal:'揭示机制', compare:'比较', explain:'解释差异', transfer:'尝试变化后的情境', reset:'重置挑战', prediction:'已锁定预测', actual:'已揭示机制', hidden:'结果会保持隐藏，直到预测被锁定。',
+      explore:'自由探索', guided:'引导挑战', modeLabel:'学习模式',
+      begin:'准备挑战', lock:'锁定预测', reveal:'揭示机制', compare:'比较', reset:'重置挑战',
+      explain:'解释预测与结果的差异', transfer:'尝试变化后的情境', prediction:'已锁定的预测', actual:'揭示后的工具状态',
+      hidden:'相关结果会保持隐藏，直到你锁定预测并主动揭示。',
       states:{
-        inactive:'挑战未启动。探索模式不受限制。',
-        'awaiting-prediction':'必须先完成预测，才能揭示结果。',
-        'prediction-complete-unlocked':'预测已完成。请先锁定，再揭示。',
-        locked:'预测已锁定且不可修改。现在可以揭示机制。',
-        revealed:'机制已揭示。比较预测与实际状态。',
-        compared:'比较完成。先解释差异，再进行迁移。',
-        reset:'挑战已重置。'
-      }
-    }
-  };
-
+        inactive:'挑战未启动。准备好后开始。',
+        'awaiting-prediction':'请先完成所需的机制预测，再锁定答案。',
+        'prediction-complete-unlocked':'预测已完整。先锁定预测，之后才能揭示结果。',
