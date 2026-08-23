@@ -21,13 +21,17 @@ def state(page): return page.evaluate('() => window.__suiteGuidedChallenge?.stat
 def history(page): return page.evaluate('() => window.__suiteGuidedChallenge?.history() || []')
 
 def switch_applet_locale(page, code, timeout=7000):
-    has_r4=page.evaluate("() => !!window.__r4Localization && window.__r4Localization.ready()")
-    if has_r4:
-        page.evaluate("(code) => window.__r4Localization.setLocale(code, {immediate:true})", code)
-    else:
+    # EN/ZH remain the applet's native languages. Exercise those through the same
+    # buttons a learner uses, even when R4 is present. VI/ES use the R4 overlay API
+    # and are independently covered by r4_localization_qa.py.
+    if code in ('en','zh'):
         button=page.locator(f'button[data-lang="{code}"]')
         if not button.count(): raise RuntimeError(f'language control missing: {code}')
         button.first.click(force=True)
+    else:
+        has_r4=page.evaluate("() => !!window.__r4Localization && window.__r4Localization.ready()")
+        if not has_r4: raise RuntimeError(f'R4 localization runtime unavailable for locale: {code}')
+        page.evaluate("(code) => window.__r4Localization.setLocale(code, {immediate:true})", code)
     if code=='zh':
         page.wait_for_function("() => (document.documentElement.lang || '').toLowerCase().startsWith('zh')",timeout=timeout)
     else:
@@ -101,21 +105,12 @@ def check_generic(page,slug,checks):
     checks.append(('reset_returns_inactive_and_records_reset',state(page)=='inactive' and 'reset' in hist,{'history':hist}))
 
 def dispatch_knn_query_click(page,x_fraction=0.53,y_fraction=0.47):
-    """Exercise KNN's production canvas click handler without hit-test flakiness.
-
-    The transparent SVG accessibility overlay deliberately receives pointer input for
-    training-point selection. A physical mouse click can therefore land on an overlay
-    point when generated data happen to cover the chosen coordinate. Dispatching the
-    bubbling MouseEvent directly to the canvas preserves the production click listener
-    and its client-coordinate conversion while making query placement deterministic.
-    """
+    """Exercise KNN's production canvas click handler without hit-test flakiness."""
     page.locator('#cv').evaluate(
         """(cv, pos) => {
           const rect = cv.getBoundingClientRect();
           const event = new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            view: window,
+            bubbles: true, cancelable: true, view: window,
             clientX: rect.left + rect.width * pos.x,
             clientY: rect.top + rect.height * pos.y
           });
@@ -172,8 +167,7 @@ def main()->int:
                 page_errors=[]; console_errors=[]
                 page.on('pageerror',lambda exc,arr=page_errors: arr.append(str(exc)))
                 page.on('console',lambda msg,arr=console_errors: arr.append(msg.text) if msg.type=='error' else None)
-                checks=[]
-                t0=time.perf_counter()
+                checks=[]; t0=time.perf_counter()
                 try:
                     page.goto((ROOT/'playgrounds'/slug/'index.html').resolve().as_uri(),wait_until='domcontentloaded',timeout=10000)
                     page.wait_for_function('() => !!window.__suiteGuidedChallenge',timeout=5000)
