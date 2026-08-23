@@ -1,0 +1,97 @@
+name: R4 locale bridge repair
+
+on:
+  push:
+    branches:
+      - automation/r4-generated-candidate
+    paths:
+      - '.github/workflows/_r4-locale-bridge-repair.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  repair-test-publish:
+    if: github.event.head_commit.message == 'Run fail-closed R4 locale bridge repair'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Bind exact repair parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "2b73379697709c93cf9bb9117b521355e6788796"
+          python -m py_compile tools/_r4_locale_bridge_fix.py
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Apply bounded locale bridge repair
+        run: |
+          set -euo pipefail
+          python tools/_r4_locale_bridge_fix.py
+          node --check assets/localization-r4.js
+          git diff --check
+
+      - name: Install browser QA dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Run complete R4 stack
+        run: |
+          set -euo pipefail
+          python tools/release_check.py
+          python tools/verify_pedagogical_contracts.py
+          python tools/verify_guided_challenges.py
+          python tools/guided_challenge_qa.py
+          python tools/verify_zh_parity.py
+          python tools/zh_parity_qa.py
+          python tools/verify_r4_localization.py
+          python tools/r4_localization_qa.py
+          python tools/check_release_metadata.py
+          python tools/build_site.py
+          python tools/run_algorithm_tests.py
+          python tools/browser_qa.py --no-screenshots
+          echo 'R4_COMPLETE_STACK=PASS'
+
+      - name: Remove temporary repair infrastructure
+        run: |
+          set -euo pipefail
+          rm tools/_r4_locale_bridge_fix.py
+          rm .github/workflows/_r4-locale-bridge-repair.yml
+          git diff --check
+
+      - name: Commit exact tested repair
+        run: |
+          set -euo pipefail
+          git add -- assets/localization-r4.js tools/_r4_locale_bridge_fix.py .github/workflows/_r4-locale-bridge-repair.yml
+          staged="$(git diff --cached --name-only | sort)"
+          expected=$'.github/workflows/_r4-locale-bridge-repair.yml\nassets/localization-r4.js\ntools/_r4_locale_bridge_fix.py'
+          test "$staged" = "$expected"
+          git diff --cached --check
+          git config user.name 'Logan M. Dixon'
+          git config user.email '178442787+lmdixon23@users.noreply.github.com'
+          git commit -m 'Make R4 native locale bridge idempotent'
+          git push origin HEAD:refs/heads/automation/r4-generated-candidate
+          echo "R4_TESTED_HEAD=$(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
+          echo 'FINAL_R4_LOCALE_BRIDGE_REPAIR=PASS' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: r4-locale-bridge-repair-${{ github.run_id }}
+          path: release-evidence/
+          if-no-files-found: ignore
+          retention-days: 90
