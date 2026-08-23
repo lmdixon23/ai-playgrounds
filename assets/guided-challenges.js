@@ -122,7 +122,7 @@
           ['up','Increase','上升'], ['down','Decrease','下降'], ['same','About the same','大致不变']
         ]},
         {key:'dependence', type:'select', en:'Predicted dependence status', zh:'预测依赖状态', options:[
-          ['independent','Conditionally independent','条件独立'], ['dependent','Dependent','相关'], ['uncertain','Not enough information yet','信息不足']
+          ['independent','Conditionally independent','条件独立'], ['dependent','Dependent','条件依赖'], ['uncertain','Not enough information yet','信息不足']
         ]}
       ]
     },
@@ -241,7 +241,7 @@
     zh: {
       explore:'自由探索', guided:'引导挑战', modeLabel:'学习模式',
       begin:'准备挑战', lock:'锁定预测', reveal:'揭示机制', compare:'比较', reset:'重置挑战',
-      explain:'解释预测与结果的差异', transfer:'尝试变化后的情境', prediction:'已锁定的预测', actual:'揭示后的工具状态',
+      explain:'解释预测与结果的差异', transfer:'尝试变化后的情境', prediction:'已锁定的预测', actual:'揭示后的 applet 状态',
       before:'隐藏步骤之前', after:'隐藏步骤之后', actionUnavailable:'准备好的工具步骤当前不可用。请重置挑战，不要揭示伪造结果。',
       hidden:'相关结果会保持隐藏，直到你锁定预测并主动揭示。',
       states:{
