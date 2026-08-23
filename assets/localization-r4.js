@@ -6,6 +6,13 @@
   const LOCALE_KEY = 'ai-playgrounds-locale4';
   const slug = location.pathname.split('/').filter(Boolean).slice(-2, -1)[0] || 'applet';
   const rootData = window.__AI_PLAYGROUNDS_R4_LOCALES || {};
+  rootData.common = rootData.common || {};
+  rootData.common.vi = Object.assign({
+    '✓ Applied; compare the result': '✓ Đã áp dụng; hãy so sánh kết quả',
+  }, rootData.common.vi || {});
+  rootData.common.es = Object.assign({
+    '✓ Applied; compare the result': '✓ Aplicado; compara el resultado',
+  }, rootData.common.es || {});
   const data = rootData[slug] || null;
 
   // R4 stays invisible until the applet-specific VI/ES catalog is complete.
