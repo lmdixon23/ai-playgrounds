@@ -72,7 +72,7 @@ def main()->int:
 
     doc=ROOT/'docs'/'GUIDED_CHALLENGE_ARCHITECTURE.md'
     doc_text=doc.read_text(encoding='utf-8-sig') if doc.is_file() else ''
-    for phrase in ['Prompt -> Commit prediction -> Reveal mechanism -> Compare -> Explain -> Transfer','suite-wide R2','prediction-complete-unlocked']:
+    for phrase in ['Prompt -> Commit prediction -> Reveal mechanism -> Compare -> Explain -> Transfer','R2 suite-wide implementation','prediction-complete-unlocked']:
         ok=phrase in doc_text; checks.append({'kind':'architecture-doc','phrase':phrase,'pass':ok})
         if not ok: failures.append(f'architecture doc missing {phrase}')
 
