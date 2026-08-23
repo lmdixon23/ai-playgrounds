@@ -24,11 +24,27 @@
   resetBtn.addEventListener('click', () => resetChallenge(true));
 
   document.querySelectorAll('button[data-lang]').forEach(button => button.addEventListener('click', () => {
+    const stateBeforeLanguageChange = state;
+    const predictionBeforeLanguageChange = lockedPrediction ? JSON.parse(JSON.stringify(lockedPrediction)) : null;
+    const liveFieldSnapshot = {};
+    genericFieldElements().forEach(el => liveFieldSnapshot[el.dataset.guidedField] = el.value);
     setTimeout(() => {
-      const values = {};
-      genericFieldElements().forEach(el => values[el.dataset.guidedField] = el.value);
-      renderCopy();
-      genericFieldElements().forEach(el => { if (Object.prototype.hasOwnProperty.call(values, el.dataset.guidedField)) el.value = values[el.dataset.guidedField]; });
+      state = stateBeforeLanguageChange;
+      shell.dataset.guidedState = stateBeforeLanguageChange;
+      if (predictionBeforeLanguageChange) lockedPrediction = predictionBeforeLanguageChange;
+      renderCopy(predictionBeforeLanguageChange || liveFieldSnapshot);
+      if (stateBeforeLanguageChange === 'locked') {
+        lockBtn.disabled = true; revealBtn.disabled = false; compareBtn.disabled = true;
+      } else if (stateBeforeLanguageChange === 'revealed') {
+        lockBtn.disabled = true; revealBtn.disabled = true; compareBtn.disabled = false;
+      } else if (stateBeforeLanguageChange === 'compared') {
+        lockBtn.disabled = true; revealBtn.disabled = true; compareBtn.disabled = true;
+      } else if (stateBeforeLanguageChange === 'prediction-complete-unlocked') {
+        lockBtn.disabled = false; revealBtn.disabled = true; compareBtn.disabled = true;
+      } else if (stateBeforeLanguageChange === 'awaiting-prediction') {
+        updatePredictionState();
+      }
+      q('.suite-guided-status').textContent = c().states[state] || state;
       if (slug === 'knn-classifier') inferKnnState();
     }, 60);
   }));
