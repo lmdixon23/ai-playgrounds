@@ -1,0 +1,120 @@
+      actual: ['#a11yStateSummary'],
+      en: {
+        title: 'Predict train versus validation movement',
+        prompt: 'Before the high-capacity fit is revealed, predict what happens to training error and repeatedly viewed validation error relative to a lower-capacity fit.',
+        transfer: 'Changed case: add regularization and predict which error changes most.'
+      },
+      zh: {
+        title: '预测训练误差与验证误差的变化',
+        prompt: '在揭示高容量拟合之前，预测与较低容量拟合相比，训练误差和反复查看的验证误差会怎样变化。',
+        transfer: '迁移情境：加入正则化，再预测哪一种误差变化最大。'
+      },
+      fields: [
+        {key:'train', type:'select', en:'Training error', zh:'训练误差', options:[['down','Lower','更低'],['up','Higher','更高'],['same','About the same','大致不变']]},
+        {key:'validation', type:'select', en:'Validation error', zh:'验证误差', options:[['down','Lower','更低'],['up','Higher','更高'],['same','About the same','大致不变']]}
+      ]
+    },
+    'neural-network': {
+      scenario: 1, transferScenario: 2, action: '#stepBtn', actionClicks: 12,
+      mask: ['.bento-main'], actual: ['#a11yStateSummary', '#lossV', '#accV'],
+      en: {
+        title: 'Predict the representational change',
+        prompt: 'Before training frames are revealed, predict whether the prepared architecture is restricted to an affine boundary or can represent a curved boundary, and explain which feature or activation makes the difference.',
+        transfer: 'Changed case: add a nonlinear hidden representation and predict how the boundary family changes.'
+      },
+      zh: {
+        title: '预测表示能力的变化',
+        prompt: '在揭示训练过程之前，预测当前结构是否只能形成仿射边界，还是能够表示弯曲边界，并说明是哪种特征或激活函数造成差异。',
+        transfer: '迁移情境：加入非线性隐藏表示，再预测边界族会怎样变化。'
+      },
+      fields: [
+        {key:'boundary', type:'select', en:'Predicted boundary family', zh:'预测边界类型', options:[
+          ['affine','Affine only','仅仿射'], ['curved','Can become curved','可以弯曲'], ['uncertain','Unsure','不确定']
+        ]},
+        {key:'why', type:'textarea', en:'Mechanism: activation or engineered feature', zh:'机制：激活函数或工程化特征'}
+      ]
+    },
+    'kmeans': {
+      scenario: 4, transferScenario: 1, action: '#stepBtn', actionClicks: 2,
+      mask: ['.bento-main'], actual: ['#a11yStateSummary', '#sseV', '#silV', '#iterV'],
+      en: {
+        title: 'Predict assignment and centroid movement',
+        prompt: 'Before the next assignment/update cycle is revealed, predict which cluster a representative point will join and the direction its centroid should move.',
+        transfer: 'Changed case: use a poor initialization and predict how the first update differs.'
+      },
+      zh: {
+        title: '预测分配与质心移动',
+        prompt: '在揭示下一轮分配与更新之前，预测一个代表性点会加入哪个簇，以及对应质心应向哪个方向移动。',
+        transfer: '迁移情境：改用较差的初始化，再预测第一次更新有何不同。'
+      },
+      fields: [
+        {key:'assignment', type:'text', en:'Predicted cluster assignment', zh:'预测簇分配'},
+        {key:'movement', type:'text', en:'Predicted centroid movement', zh:'预测质心移动方向'}
+      ]
+    },
+    'convolution': {
+      scenario: 0, transferScenario: 1,
+      mask: ['.canvas-pair'], actual: ['#a11yStateSummary', '#szOut', '#windowMath', '#hiSum'],
+      en: {
+        title: 'Predict one output-cell calculation',
+        prompt: 'Before the output is revealed, predict the value of a representative output cell and explain which input values and kernel weights contribute to its multiply-and-sum.',
+        transfer: 'Changed case: switch to an edge kernel and predict how the sign and magnitude of the response change.'
+      },
+      zh: {
+        title: '预测一个输出单元的计算',
+        prompt: '在揭示输出之前，预测一个代表性输出单元的数值，并说明哪些输入值和卷积核权重参与这次乘加。',
+        transfer: '迁移情境：切换到边缘卷积核，再预测响应的符号和大小如何变化。'
+      },
+      fields: [
+        {key:'value', type:'number', en:'Predicted output-cell value', zh:'预测输出单元数值'},
+        {key:'products', type:'textarea', en:'Which products contribute?', zh:'哪些乘积会贡献到结果？'}
+      ]
+    },
+    'q-learning-gridworld': {
+      scenario: 2, transferScenario: 3, action: '#stepBtn', actionClicks: 1,
+      mask: ['.bento-main'], actual: ['#a11yStateSummary', '#status', '#episodeV'],
+      en: {
+        title: 'Predict the TD update',
+        prompt: 'Before one transition is revealed, predict the selected action, the immediate reward or TD target you expect, and whether the selected Q value should move up, down, or stay about the same.',
+        transfer: 'Changed case: introduce time preference and predict how the target changes when future reward matters.'
+      },
+      zh: {
+        title: '预测 TD 更新',
+        prompt: '在揭示一次转移之前，预测会选择哪个动作、预期即时奖励或 TD 目标，并判断对应 Q 值应上升、下降还是大致不变。',
+        transfer: '迁移情境：加入时间偏好，再预测未来奖励参与后目标值如何变化。'
+      },
+      fields: [
+        {key:'action', type:'text', en:'Predicted action', zh:'预测动作'},
+        {key:'target', type:'text', en:'Predicted immediate reward or TD target', zh:'预测即时奖励或 TD 目标'},
+        {key:'direction', type:'select', en:'Predicted Q update direction', zh:'预测 Q 值更新方向', options:[['up','Up','上升'],['down','Down','下降'],['same','About the same','大致不变']]}
+      ]
+    }
+  };
+
+  const COMMON = {
+    en: {
+      modeLabel:'Activity mode', explore:'Explore', guided:'Guided Challenge', begin:'Prepare challenge', lock:'Lock prediction', reveal:'Reveal mechanism', compare:'Compare', explain:'Explain the discrepancy', transfer:'Try a changed case', reset:'Reset challenge', prediction:'Locked prediction', actual:'Revealed mechanism', hidden:'Result hidden until the prediction is locked.',
+      states:{
+        inactive:'Challenge inactive. Explore mode is unrestricted.',
+        'awaiting-prediction':'Prediction required before reveal.',
+        'prediction-complete-unlocked':'Prediction complete. Lock it before reveal.',
+        locked:'Prediction locked and immutable. The mechanism can now be revealed.',
+        revealed:'Mechanism revealed. Compare your prediction with the actual state.',
+        compared:'Comparison complete. Explain the discrepancy before transfer.',
+        reset:'Challenge reset.'
+      }
+    },
+    zh: {
+      modeLabel:'活动模式', explore:'探索', guided:'引导挑战', begin:'准备挑战', lock:'锁定预测', reveal:'揭示机制', compare:'比较', explain:'解释差异', transfer:'尝试变化后的情境', reset:'重置挑战', prediction:'已锁定预测', actual:'已揭示机制', hidden:'结果会保持隐藏，直到预测被锁定。',
+      states:{
+        inactive:'挑战未启动。探索模式不受限制。',
+        'awaiting-prediction':'必须先完成预测，才能揭示结果。',
+        'prediction-complete-unlocked':'预测已完成。请先锁定，再揭示。',
+        locked:'预测已锁定且不可修改。现在可以揭示机制。',
+        revealed:'机制已揭示。比较预测与实际状态。',
+        compared:'比较完成。先解释差异，再进行迁移。',
+        reset:'挑战已重置。'
+      }
+    }
+  };
+
