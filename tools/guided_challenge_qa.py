@@ -77,13 +77,37 @@ def check_generic(page,slug,checks):
     hist=history(page)
     checks.append(('reset_returns_inactive_and_records_reset',state(page)=='inactive' and 'reset' in hist,{'history':hist}))
 
+def dispatch_knn_query_click(page,x_fraction=0.53,y_fraction=0.47):
+    """Exercise KNN's production canvas click handler without hit-test flakiness.
+
+    The transparent SVG accessibility overlay deliberately receives pointer input for
+    training-point selection. A physical mouse click can therefore land on an overlay
+    point when generated data happen to cover the chosen coordinate. Dispatching the
+    bubbling MouseEvent directly to the canvas preserves the production click listener
+    and its client-coordinate conversion while making query placement deterministic.
+    """
+    page.locator('#cv').evaluate(
+        """(cv, pos) => {
+          const rect = cv.getBoundingClientRect();
+          const event = new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+            clientX: rect.left + rect.width * pos.x,
+            clientY: rect.top + rect.height * pos.y
+          });
+          cv.dispatchEvent(event);
+        }""",
+        {'x':x_fraction,'y':y_fraction},
+    )
+
 def check_knn(page,checks):
     page.locator('[data-suite-mode="guided"]').click()
     page.locator('#guidedStart').click(); wait_state(page,'awaiting-prediction')
     checks.append(('reveal_disabled_before_lock',page.locator('#guidedReveal').is_disabled(),{}))
     canvas=page.locator('#cv'); box=canvas.bounding_box()
     if not box: raise RuntimeError('KNN canvas has no bounding box')
-    canvas.click(position={'x':box['width']*0.53,'y':box['height']*0.47})
+    dispatch_knn_query_click(page)
     page.wait_for_timeout(100)
     k=int(page.locator('#k').input_value())
     pts=page.locator('#cvOverlay circle[data-role="point"]')
