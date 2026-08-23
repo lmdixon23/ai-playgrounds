@@ -512,6 +512,10 @@
 
   function runDeferredAction() {
     if (!config || !config.action) return true;
+    if (slug === 'wumpus-world' && typeof window.__wumpusGuidedStep === 'function') {
+      internalMutation = true;
+      try { return !!window.__wumpusGuidedStep(); } finally { internalMutation = false; }
+    }
     const btn = document.querySelector(config.action);
     if (!btn) return false;
     const frozenRecord = frozen.find(item => item.el === btn);

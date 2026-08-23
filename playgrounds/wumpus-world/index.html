@@ -1979,6 +1979,12 @@
     }
   }
 
+  window.__wumpusGuidedStep = () => {
+    const before = stepCount;
+    actOne();
+    return stepCount > before;
+  };
+
   $('stepBtn').addEventListener('click', () => {
     if (replayMode) {
       // While scrubbed back, ❘▶ walks forward through history; resume live once caught up.

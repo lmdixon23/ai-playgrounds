@@ -74,7 +74,8 @@ def main()->int:
       "scenario: 0, transferScenario: 2, action: '#stepBtn'","scenario: 2, transferScenario: 3,","scenario: 0, transferScenario: 3, action: '#stepBtn'",
       "scenario: 2, transferScenario: 1, action: '#stepBtn'","mask: ['.cell-maps', '.cell-analysis']","mask: ['#grid', '.stats-strip']",'concealOnPrepare: true','beforeActionSnapshot','const frozenRecord = frozen.find(item => item.el === btn);',
       'function prepareChallengeContext(isTransfer = false)',"dispatchCanvasClick(document.querySelector('#output'),0.5,0.5)",
-      'JohnCalls and MaryCalls are conditionally independent given Alarm','contract: () => config ?','setTimeout(renderKnnCopy,80)'
+      'JohnCalls and MaryCalls are conditionally independent given Alarm','contract: () => config ?','setTimeout(renderKnnCopy,80)',
+      "slug === 'wumpus-world' && typeof window.__wumpusGuidedStep === 'function'"
     ]
     for token in freeze_required:
       ok=token in js;checks.append({'kind':'english-freeze-contract','token':token,'pass':ok})
@@ -90,6 +91,10 @@ def main()->int:
     ok='"label": "Validation MSE", "zhLabel": "验证 MSE", "selector": "#testMse"' in overfit
     checks.append({'kind':'english-freeze-zh-parity','pass':ok})
     if not ok:failures.append('Overfitting Chinese accessibility label still says test MSE')
+    wumpus=(ROOT/'playgrounds/wumpus-world/index.html').read_text(encoding='utf-8-sig')
+    ok='window.__wumpusGuidedStep = () =>' in wumpus and 'const before = stepCount;' in wumpus and 'return stepCount > before;' in wumpus
+    checks.append({'kind':'wumpus-guided-production-step-api','pass':ok})
+    if not ok:failures.append('Wumpus Guided step API does not route through the production actOne transition')
     doc=ROOT/'docs/GUIDED_CHALLENGE_ARCHITECTURE.md';dt=doc.read_text(encoding='utf-8-sig') if doc.is_file() else ''
     for phrase in ['Prompt -> Commit prediction -> Reveal mechanism -> Compare -> Explain -> Transfer','R2 suite-wide implementation','prediction-complete-unlocked','shared external assets','R2 English freeze hardening']:
         ok=phrase in dt;checks.append({'kind':'architecture-doc','phrase':phrase,'pass':ok})
