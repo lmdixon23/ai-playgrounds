@@ -72,7 +72,7 @@ def main()->int:
         if not ok:failures.append(f'missing state mechanism {token}')
     freeze_required=[
       "scenario: 0, transferScenario: 2, action: '#stepBtn'","scenario: 2, transferScenario: 3,","scenario: 0, transferScenario: 3, action: '#stepBtn'",
-      "mask: ['.cell-maps', '.cell-analysis']","mask: ['#grid', '.stats-strip']",'concealOnPrepare: true','beforeActionSnapshot','const frozenRecord = frozen.find(item => item.el === btn);',
+      "scenario: 2, transferScenario: 1, action: '#stepBtn'","mask: ['.cell-maps', '.cell-analysis']","mask: ['#grid', '.stats-strip']",'concealOnPrepare: true','beforeActionSnapshot','const frozenRecord = frozen.find(item => item.el === btn);',
       'function prepareChallengeContext(isTransfer = false)',"dispatchCanvasClick(document.querySelector('#output'),0.5,0.5)",
       'JohnCalls and MaryCalls are conditionally independent given Alarm','contract: () => config ?','setTimeout(renderKnnCopy,80)'
     ]

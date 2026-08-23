@@ -425,7 +425,8 @@
       "🖨 Print packet": "🖨 In gói",
       "🖼 Image (.png)": "🖼 Hình ảnh (.png)",
       "🧪 Student response packet": "🧪 Gói phản hồi của học sinh",
-      "🧭 Visual explanation": "🧭 Giải thích trực quan"
+      "🧭 Visual explanation": "🧭 Giải thích trực quan",
+      "Changed case: switch to the AIMA-inspired hybrid heuristic and reconsider the same frontier evidence without probability ranking.": "Tình huống thay đổi: chuyển sang chiến lược lai lấy cảm hứng từ AIMA và xem xét lại cùng loại bằng chứng biên mà không xếp hạng theo xác suất."
     },
     "patterns": [
       {
@@ -842,7 +843,8 @@
       "🖨 Print packet": "🖨 Imprimir paquete",
       "🖼 Image (.png)": "🖼 Imagen (.png)",
       "🧪 Student response packet": "🧪 Paquete de respuesta para estudiantes",
-      "🧭 Visual explanation": "🧭 Explicación visual"
+      "🧭 Visual explanation": "🧭 Explicación visual",
+      "Changed case: switch to the AIMA-inspired hybrid heuristic and reconsider the same frontier evidence without probability ranking.": "Caso modificado: cambia a la heurística híbrida inspirada en AIMA y vuelve a considerar la misma evidencia de frontera sin ordenarla por probabilidad."
     },
     "patterns": [
       {
