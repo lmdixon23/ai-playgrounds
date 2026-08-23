@@ -21,7 +21,7 @@ def state(page): return page.evaluate('() => window.__suiteGuidedChallenge?.stat
 def history(page): return page.evaluate('() => window.__suiteGuidedChallenge?.history() || []')
 
 def wait_state(page,want,timeout=5000):
-    page.wait_for_function('(want) => window.__suiteGuidedChallenge && window.__suiteGuidedChallenge.state() === want',want,timeout=timeout)
+    page.wait_for_function('(want) => window.__suiteGuidedChallenge && window.__suiteGuidedChallenge.state() === want',arg=want,timeout=timeout)
 
 def fill_generic(page):
     fields=page.locator('[data-guided-field]')
