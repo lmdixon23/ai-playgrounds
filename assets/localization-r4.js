@@ -330,6 +330,19 @@
     wrapTr();
     patchClipboard();
     observer.observe(document.body, { subtree:true, childList:true, characterData:true, attributes:true, attributeFilter:['title','aria-label','placeholder'] });
+    // Legacy language handlers in some applets rebuild or reset the experiment as
+    // part of their EN/ZH switch. R4 invokes those buttons only as an internal
+    // rendering bridge; locale changes must not mutate learner/challenge state.
+    // A synchronous hard-reset click dispatched by that bridge is therefore
+    // suppressed in capture phase. Normal user reset clicks are unaffected.
+    document.addEventListener('click', event => {
+      if (!nativeLanguageClick) return;
+      const target = event.target;
+      if (target && target.closest && target.closest('#hardReset')) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    }, true);
     document.querySelectorAll('.lang-switch button[data-lang]').forEach(button => {
       button.addEventListener('click', () => {
         if (nativeLanguageClick) return;
