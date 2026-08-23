@@ -1,0 +1,144 @@
+State, {once:false});
+  }
+
+  function preserveFieldDataWhileRerendering() {
+    if (!config) return;
+    const values = {};
+    genericFieldElements().forEach(el => values[el.dataset.guidedField] = el.value);
+    renderFields();
+    genericFieldElements().forEach(el => {
+      if (Object.prototype.hasOwnProperty.call(values, el.dataset.guidedField)) el.value = values[el.dataset.guidedField];
+      el.disabled = state === 'locked' || state === 'revealed' || state === 'compared';
+    });
+  }
+
+  function renderCopy() {
+    q('.suite-guided-mode-label').textContent = c().modeLabel + ':';
+    modeExplore.textContent = c().explore; modeGuided.textContent = c().guided;
+    resetBtn.textContent = c().reset; beginBtn.textContent = c().begin; lockBtn.textContent = c().lock;
+    revealBtn.textContent = c().reveal; compareBtn.textContent = c().compare; transferBtn.textContent = c().transfer;
+    q('.suite-guided-prediction-label').textContent = c().prediction;
+    q('.suite-guided-actual-label').textContent = c().actual;
+    q('.suite-guided-explain-label').textContent = c().explain;
+    q('.suite-guided-hidden-note').textContent = c().hidden;
+    if (config) {
+      q('.suite-guided-title').textContent = config[lang()].title;
+      q('.suite-guided-prompt').textContent = transferRound ? config[lang()].transfer : config[lang()].prompt;
+      q('.suite-guided-transfer-prompt').textContent = config[lang()].transfer;
+      preserveFieldDataWhileRerendering();
+    } else {
+      q('.suite-guided-title').textContent = lang() === 'zh' ? 'KNN 邻居预测挑战' : 'KNN neighbor prediction challenge';
+      q('.suite-guided-prompt').textContent = lang() === 'zh'
+        ? '使用原生 KNN 挑战：先放置查询点，再选择恰好 k 个预测邻居和预测类别，然后锁定并揭示。'
+        : 'Use the native KNN challenge: place a query, select exactly k predicted neighbors and a class, then lock before reveal.';
+      q('.suite-guided-transfer-prompt').textContent = lang() === 'zh'
+        ? '迁移：改变距离规则后重新预测邻居。'
+        : 'Transfer: change the closeness rule and predict the neighbors again.';
+    }
+    q('.suite-guided-status').textContent = c().states[state] || state;
+  }
+
+  function setMode(next) {
+    mode = next;
+    modeExplore.setAttribute('aria-pressed', String(next === 'explore'));
+    modeGuided.setAttribute('aria-pressed', String(next === 'guided'));
+    panel.hidden = next !== 'guided';
+    if (learningShell) learningShell.hidden = next === 'guided';
+    document.body.classList.toggle('suite-guided-mode-active', next === 'guided');
+    if (next === 'explore') resetChallenge(false);
+    renderCopy();
+  }
+
+  function queryAllUnique(selectors) {
+    const out = [];
+    (selectors || []).forEach(sel => document.querySelectorAll(sel).forEach(el => { if (!out.includes(el)) out.push(el); }));
+    return out;
+  }
+
+  function concealOutputs() {
+    restoreOutputs();
+    let targets = queryAllUnique(config && config.mask ? config.mask : ['.bento-main']);
+    if (!targets.length) targets = Array.from(inner.querySelectorAll('canvas'));
+    targets.forEach(el => {
+      concealed.push({el, visibility:el.style.visibility, aria:el.getAttribute('aria-hidden')});
+      el.style.visibility = 'hidden'; el.setAttribute('aria-hidden','true'); el.dataset.guidedConcealed = '1';
+    });
+    q('.suite-guided-hidden-note').hidden = false;
+  }
+
+  function restoreOutputs() {
+    while (concealed.length) {
+      const item = concealed.pop(); item.el.style.visibility = item.visibility;
+      if (item.aria == null) item.el.removeAttribute('aria-hidden'); else item.el.setAttribute('aria-hidden', item.aria);
+      delete item.el.dataset.guidedConcealed;
+    }
+    q('.suite-guided-hidden-note').hidden = true;
+  }
+
+  function freezeExploreControls() {
+    unfreezeExploreControls();
+    inner.querySelectorAll('button,input,select,textarea').forEach(el => {
+      if (shell.contains(el)) return;
+      if (!('disabled' in el)) return;
+      frozen.push({el, disabled:el.disabled}); el.disabled = true;
+    });
+    if (slug !== 'knn-classifier') inner.querySelectorAll('canvas').forEach(el => {
+      frozen.push({el, pointer:el.style.pointerEvents, canvas:true}); el.style.pointerEvents = 'none';
+    });
+  }
+
+  function unfreezeExploreControls() {
+    while (frozen.length) {
+      const item = frozen.pop();
+      if (item.canvas) item.el.style.pointerEvents = item.pointer; else item.el.disabled = item.disabled;
+    }
+  }
+
+  function applyScenario(index) {
+    if (!Number.isInteger(index)) return;
+    const btn = document.querySelector(`.scenario-card[data-scenario-index="${index}"] button`);
+    if (!btn) return;
+    internalMutation = true;
+    try { btn.click(); } finally { internalMutation = false; }
+  }
+
+  function runDeferredAction() {
+    if (!config || !config.action) return;
+    const btn = document.querySelector(config.action);
+    if (!btn) return;
+    internalMutation = true;
+    try {
+      const n = Math.max(1, Number(config.actionClicks || 1));
+      for (let i = 0; i < n; i += 1) {
+        if (btn.disabled) btn.dispatchEvent(new MouseEvent('click', {bubbles:true, cancelable:true, view:window}));
+        else btn.click();
+      }
+    } finally { internalMutation = false; }
+  }
+
+  function actualText() {
+    try { if (typeof window.renderAccessibilityLayer === 'function') window.renderAccessibilityLayer({announce:false}); } catch (_) {}
+    const selectors = (config && config.actual) || ['#a11yStateSummary'];
+    const parts = [];
+    selectors.forEach(sel => {
+      const el = document.querySelector(sel); if (!el) return;
+      const txt = String(el.innerText || el.textContent || el.value || '').replace(/\s+/g,' ').trim();
+      if (txt && !parts.includes(txt)) parts.push(txt);
+    });
+    if (!parts.length) {
+      const a11y = document.querySelector('#a11yStateSummary');
+      if (a11y) parts.push(String(a11y.innerText || a11y.textContent || '').replace(/\s+/g,' ').trim());
+    }
+    return parts.join('\n').slice(0, 1800) || (lang() === 'zh' ? '请查看已揭示的可视结果。' : 'Inspect the revealed visual result.');
+  }
+
+  function clearGenericSurface() {
+    lockedPrediction = null; actualSnapshot = ''; transferRound = false;
+    q('.suite-guided-comparison').hidden = true;
+    q('.suite-guided-explain-wrap').hidden = true;
+    q('.suite-guided-transfer-wrap').hidden = true;
+    q('.suite-guided-prediction').textContent = '';
+    q('.suite-guided-actual').textContent = '';
+    explain.value = '';
+    transferBtn.disabled = true;
+    lockBtn.disabled = true; revealBtn.disabled = true; compareBtn.disabled 
