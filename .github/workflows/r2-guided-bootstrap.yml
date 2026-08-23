@@ -1,0 +1,126 @@
+name: R2 guided challenge bootstrap
+
+on:
+  push:
+    branches: [automation/r2-guided-challenges-bootstrap]
+    paths:
+      - '.r2-bootstrap/**'
+      - '.github/workflows/r2-guided-bootstrap.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-test-push:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout bootstrap branch
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Authenticate bootstrap payload
+        run: |
+          set -euo pipefail
+          cd .r2-bootstrap
+          sha256sum -c JS_PARTS_SHA256.txt
+          cat guided_challenges_block.js.part* > guided_challenges_block.js
+          sha256sum -c MANIFEST_SHA256.txt
+          python -m py_compile apply_r2.py verify_guided_challenges.py guided_challenge_qa.py
+          node --check guided_challenges_block.js
+          echo "R2_BOOTSTRAP_PAYLOAD=PASS"
+
+      - name: Install browser QA dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Clone exact R2 target branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git clone --no-tags --single-branch --branch feature/v1.1.0-guided-challenges-r2 "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" /tmp/r2repo
+          test "$(git -C /tmp/r2repo rev-parse HEAD)" = "08dff4671ff1f887d2956dbfa449bde3c0abf3e8"
+          test -z "$(git -C /tmp/r2repo status --porcelain)"
+
+      - name: Apply suite-wide Guided Challenge architecture
+        run: |
+          set -euo pipefail
+          python .r2-bootstrap/apply_r2.py --repo /tmp/r2repo --payload "$GITHUB_WORKSPACE/.r2-bootstrap" --report /tmp/r2-report.json
+          python - <<'PY'
+          import json
+          expected={
+            '.github/workflows/verify.yml','docs/GUIDED_CHALLENGE_ARCHITECTURE.md','tools/browser_qa.py',
+            'tools/verify_guided_challenges.py','tools/guided_challenge_qa.py',
+            'playgrounds/bayes-classifier/index.html','playgrounds/bayes-network/index.html','playgrounds/cnf-sat/index.html',
+            'playgrounds/convolution/index.html','playgrounds/hill-climbing/index.html','playgrounds/kmeans/index.html',
+            'playgrounds/knn-classifier/index.html','playgrounds/neural-network/index.html','playgrounds/overfitting/index.html',
+            'playgrounds/q-learning-gridworld/index.html','playgrounds/search-pathfinding/index.html','playgrounds/wumpus-world/index.html'
+          }
+          report=json.load(open('/tmp/r2-report.json',encoding='utf-8'))
+          got=set(report['changed_files'])
+          assert got==expected,(sorted(expected-got),sorted(got-expected))
+          print('R2_APPLY_BOUNDARY=PASS files=17')
+          PY
+          git -C /tmp/r2repo diff --check
+
+      - name: Run pedagogical contracts
+        run: python tools/verify_pedagogical_contracts.py
+        working-directory: /tmp/r2repo
+
+      - name: Run Guided Challenge static contracts
+        run: python tools/verify_guided_challenges.py
+        working-directory: /tmp/r2repo
+
+      - name: Run release checks
+        run: python tools/release_check.py
+        working-directory: /tmp/r2repo
+
+      - name: Check release metadata
+        run: python tools/check_release_metadata.py
+        working-directory: /tmp/r2repo
+
+      - name: Verify deployment boundary
+        run: python tools/build_site.py
+        working-directory: /tmp/r2repo
+
+      - name: Run 45 algorithm tests
+        run: python tools/run_algorithm_tests.py
+        working-directory: /tmp/r2repo
+
+      - name: Run 12 Guided Challenge browser state cases
+        run: python tools/guided_challenge_qa.py
+        working-directory: /tmp/r2repo
+
+      - name: Run full browser QA
+        run: python tools/browser_qa.py --no-screenshots
+        working-directory: /tmp/r2repo
+
+      - name: Commit and fast-forward R2 branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git -C /tmp/r2repo diff --check
+          remote_sha="$(git ls-remote "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" refs/heads/feature/v1.1.0-guided-challenges-r2 | cut -f1)"
+          test "$remote_sha" = "08dff4671ff1f887d2956dbfa449bde3c0abf3e8"
+          git -C /tmp/r2repo config user.name 'Logan M. Dixon'
+          git -C /tmp/r2repo config user.email '178442787+lmdixon23@users.noreply.github.com'
+          git -C /tmp/r2repo add -- .github/workflows/verify.yml docs/GUIDED_CHALLENGE_ARCHITECTURE.md tools/browser_qa.py tools/verify_guided_challenges.py tools/guided_challenge_qa.py playgrounds/*/index.html
+          git -C /tmp/r2repo commit -m 'Implement suite-wide Guided Challenge state architecture'
+          new_sha="$(git -C /tmp/r2repo rev-parse HEAD)"
+          test "$(git -C /tmp/r2repo rev-parse HEAD^)" = "08dff4671ff1f887d2956dbfa449bde3c0abf3e8"
+          git -C /tmp/r2repo push origin HEAD:refs/heads/feature/v1.1.0-guided-challenges-r2
+          echo "R2_HEAD=$new_sha" >> "$GITHUB_STEP_SUMMARY"
+          echo "FINAL_R2_GUIDED_CHALLENGE_BOOTSTRAP=PASS" >> "$GITHUB_STEP_SUMMARY"
