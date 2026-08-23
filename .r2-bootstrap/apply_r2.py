@@ -34,8 +34,10 @@ def main()->int:
     for slug in APPLETS:
         p=root/'playgrounds'/slug/'index.html'; text=read(p)
         if START in text or END in text: raise RuntimeError(f'{slug}: R2 guided block already present')
-        if '</body>' not in text: raise RuntimeError(f'{slug}: missing </body>')
-        text=text.replace('</body>',block+'</body>',1);write(p,text);ops.append(str(p.relative_to(root)))
+        body_close=text.rfind('</body>')
+        if body_close < 0: raise RuntimeError(f'{slug}: missing document </body>')
+        text=text[:body_close]+block+text[body_close:]
+        write(p,text);ops.append(str(p.relative_to(root)))
 
     doc=root/'docs/GUIDED_CHALLENGE_ARCHITECTURE.md'; text=read(doc)
     section='''
