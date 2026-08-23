@@ -145,13 +145,16 @@ jobs:
             'playgrounds/knn-classifier/index.html','playgrounds/neural-network/index.html','playgrounds/overfitting/index.html',
             'playgrounds/q-learning-gridworld/index.html','playgrounds/search-pathfinding/index.html','playgrounds/wumpus-world/index.html'
           }
-          got=set(filter(None,subprocess.check_output(['git','-C','/tmp/r2repo','diff','--name-only','HEAD'],text=True).splitlines()))
+          tracked=set(filter(None,subprocess.check_output(['git','-C','/tmp/r2repo','diff','--name-only','HEAD'],text=True).splitlines()))
+          untracked=set(filter(None,subprocess.check_output(['git','-C','/tmp/r2repo','ls-files','--others','--exclude-standard'],text=True).splitlines()))
+          got=tracked|untracked
           assert got==expected,(sorted(expected-got),sorted(got-expected))
           print('R2_PUBLISH_BOUNDARY=PASS files=19')
           PY
           git -C /tmp/r2repo config user.name 'Logan M. Dixon'
           git -C /tmp/r2repo config user.email '178442787+lmdixon23@users.noreply.github.com'
           git -C /tmp/r2repo add -- docs/GUIDED_CHALLENGE_ARCHITECTURE.md tools/browser_qa.py tools/build_site.py tools/verify_guided_challenges.py tools/guided_challenge_qa.py assets/guided-challenges.css assets/guided-challenges.js playgrounds/*/index.html
+          git -C /tmp/r2repo diff --cached --check
           git -C /tmp/r2repo commit -m 'Implement suite-wide Guided Challenge state architecture'
           new_sha="$(git -C /tmp/r2repo rev-parse HEAD)"
           test "$(git -C /tmp/r2repo rev-parse HEAD^)" = "08dff4671ff1f887d2956dbfa449bde3c0abf3e8"
