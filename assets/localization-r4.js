@@ -16,6 +16,11 @@
   let nativeLanguageClick = false;
   const originalText = new WeakMap();
   const originalAttrs = new WeakMap();
+  // MutationObserver callbacks are asynchronous, so a simple `applying` boolean
+  // cannot distinguish our own translated writes from later applet updates.
+  // Remember the exact values written by the localization layer instead.
+  const lastAppliedText = new WeakMap();
+  const lastAppliedAttrs = new WeakMap();
   const ordered = { vi: null, es: null };
 
   function normalizeLocale(value) {
@@ -92,6 +97,7 @@
     const source = textSource(node);
     const translated = translateString(source);
     if (translated !== live) {
+      lastAppliedText.set(node, translated);
       applying = true;
       node.nodeValue = translated;
       applying = false;
@@ -108,6 +114,9 @@
       const source = Object.prototype.hasOwnProperty.call(state, attr) ? state[attr] : live;
       const translated = translateString(source);
       if (translated !== live) {
+        const applied = lastAppliedAttrs.get(el) || {};
+        applied[attr] = translated;
+        lastAppliedAttrs.set(el, applied);
         applying = true;
         el.setAttribute(attr, translated);
         applying = false;
@@ -283,17 +292,35 @@
   }
 
   const observer = new MutationObserver(mutations => {
-    if (applying || (current !== 'vi' && current !== 'es')) return;
+    if (applying) return;
     for (const mutation of mutations) {
       if (mutation.type === 'characterData') {
-        originalText.set(mutation.target, mutation.target.nodeValue || '');
-        translateTextNode(mutation.target);
+        const live = mutation.target.nodeValue || '';
+        if (lastAppliedText.get(mutation.target) === live) {
+          lastAppliedText.delete(mutation.target);
+          continue;
+        }
+        // Applet-authored dynamic state is always a new source value, including
+        // while English or Chinese is active. This is what prevents a later locale
+        // switch from restoring stale page-load state.
+        originalText.set(mutation.target, live);
+        if (current === 'vi' || current === 'es') translateTextNode(mutation.target);
       } else if (mutation.type === 'attributes') {
+        const attr = mutation.attributeName;
+        const live = mutation.target.getAttribute(attr) || '';
+        const applied = lastAppliedAttrs.get(mutation.target) || {};
+        if (applied[attr] === live) {
+          delete applied[attr];
+          lastAppliedAttrs.set(mutation.target, applied);
+          continue;
+        }
         const state = attrState(mutation.target);
-        state[mutation.attributeName] = mutation.target.getAttribute(mutation.attributeName) || '';
-        translateAttributes(mutation.target);
+        state[attr] = live;
+        if (current === 'vi' || current === 'es') translateAttributes(mutation.target);
       } else {
-        mutation.addedNodes.forEach(node => translateTree(node));
+        mutation.addedNodes.forEach(node => {
+          if (current === 'vi' || current === 'es') translateTree(node);
+        });
       }
     }
   });

@@ -13,6 +13,9 @@ for slug in SLUGS:
  proc=subprocess.run([sys.executable,str(ROOT/'tools'/'verify_r4_locale_catalog.py'),'--slug',slug],text=True,capture_output=True)
  print(proc.stdout,end='');print(proc.stderr,end='',file=sys.stderr)
  if proc.returncode:fails.append(f'{slug}: exact rendered-source catalog verification failed')
+rt=(ROOT/'assets'/'localization-r4.js').read_text(encoding='utf-8')
+for token in ('const lastAppliedText = new WeakMap();','const lastAppliedAttrs = new WeakMap();',"if (lastAppliedText.get(mutation.target) === live)","originalText.set(mutation.target, live);"):
+ if token not in rt:fails.append('runtime source-state invariant missing: '+token)
 for f in fails:print('FAIL: '+f,file=sys.stderr)
 print(json.dumps({'harness':'tools/verify_r4_localization.py','applets':12,'failed':len(fails),'pass':not fails},indent=2))
 raise SystemExit(0 if not fails else 1)
