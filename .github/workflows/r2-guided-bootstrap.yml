@@ -33,17 +33,8 @@ jobs:
         run: |
           set -euo pipefail
           cd .r2-bootstrap
-          python - <<'PY'
-          from pathlib import Path
-          chunks=[]
-          for i in range(1,7):
-              p=Path(f'guided_challenges_block.js.part{i:02d}')
-              b=p.read_bytes()
-              if i in (1,2) and b.endswith(b'\n'):
-                  b=b[:-1]
-              chunks.append(b)
-          Path('guided_challenges_block.js').write_bytes(b''.join(chunks))
-          PY
+          gzip -dc canonical_guided_challenges_block.js.gz > guided_challenges_block.js
+          gzip -dc canonical_guided_challenge_qa.py.gz > guided_challenge_qa.py
           sha256sum -c MANIFEST_SHA256.txt
           python -m py_compile apply_r2.py verify_guided_challenges.py guided_challenge_qa.py
           node --check guided_challenges_block.js
