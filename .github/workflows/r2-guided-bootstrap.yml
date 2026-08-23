@@ -29,6 +29,7 @@ jobs:
           node-version: '22'
 
       - name: Authenticate bootstrap payload
+        id: auth
         run: |
           set -euo pipefail
           cd .r2-bootstrap
@@ -40,12 +41,14 @@ jobs:
           echo "R2_BOOTSTRAP_PAYLOAD=PASS"
 
       - name: Install browser QA dependencies
+        id: install
         run: |
           python -m pip install --upgrade pip
           python -m pip install playwright
           python -m playwright install --with-deps chromium
 
       - name: Clone exact R2 target branch
+        id: clone
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -55,6 +58,7 @@ jobs:
           test -z "$(git -C /tmp/r2repo status --porcelain)"
 
       - name: Apply suite-wide Guided Challenge architecture
+        id: apply
         run: |
           set -euo pipefail
           python .r2-bootstrap/apply_r2.py --repo /tmp/r2repo --payload "$GITHUB_WORKSPACE/.r2-bootstrap" --report /tmp/r2-report.json
@@ -76,38 +80,47 @@ jobs:
           git -C /tmp/r2repo diff --check
 
       - name: Run pedagogical contracts
+        id: pedagogical
         run: python tools/verify_pedagogical_contracts.py
         working-directory: /tmp/r2repo
 
       - name: Run Guided Challenge static contracts
+        id: static
         run: python tools/verify_guided_challenges.py
         working-directory: /tmp/r2repo
 
       - name: Run release checks
+        id: release
         run: python tools/release_check.py
         working-directory: /tmp/r2repo
 
       - name: Check release metadata
+        id: metadata
         run: python tools/check_release_metadata.py
         working-directory: /tmp/r2repo
 
       - name: Verify deployment boundary
+        id: build
         run: python tools/build_site.py
         working-directory: /tmp/r2repo
 
       - name: Run 45 algorithm tests
+        id: algorithms
         run: python tools/run_algorithm_tests.py
         working-directory: /tmp/r2repo
 
       - name: Run 12 Guided Challenge browser state cases
+        id: guidedqa
         run: python tools/guided_challenge_qa.py
         working-directory: /tmp/r2repo
 
       - name: Run full browser QA
+        id: browserqa
         run: python tools/browser_qa.py --no-screenshots
         working-directory: /tmp/r2repo
 
       - name: Commit and fast-forward R2 branch
+        id: push
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -124,3 +137,52 @@ jobs:
           git -C /tmp/r2repo push origin HEAD:refs/heads/feature/v1.1.0-guided-challenges-r2
           echo "R2_HEAD=$new_sha" >> "$GITHUB_STEP_SUMMARY"
           echo "FINAL_R2_GUIDED_CHALLENGE_BOOTSTRAP=PASS" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish gate status
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JOB_STATUS: ${{ job.status }}
+          AUTH_OUTCOME: ${{ steps.auth.outcome }}
+          INSTALL_OUTCOME: ${{ steps.install.outcome }}
+          CLONE_OUTCOME: ${{ steps.clone.outcome }}
+          APPLY_OUTCOME: ${{ steps.apply.outcome }}
+          PEDAGOGICAL_OUTCOME: ${{ steps.pedagogical.outcome }}
+          STATIC_OUTCOME: ${{ steps.static.outcome }}
+          RELEASE_OUTCOME: ${{ steps.release.outcome }}
+          METADATA_OUTCOME: ${{ steps.metadata.outcome }}
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
+          ALGORITHMS_OUTCOME: ${{ steps.algorithms.outcome }}
+          GUIDED_QA_OUTCOME: ${{ steps.guidedqa.outcome }}
+          BROWSER_QA_OUTCOME: ${{ steps.browserqa.outcome }}
+          PUSH_OUTCOME: ${{ steps.push.outcome }}
+        run: |
+          set -euo pipefail
+          git fetch origin automation/r2-guided-challenges-status
+          git worktree add /tmp/r2status origin/automation/r2-guided-challenges-status
+          r2_head="$(git ls-remote "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" refs/heads/feature/v1.1.0-guided-challenges-r2 | cut -f1)"
+          cat > /tmp/r2status/R2_BOOTSTRAP_STATUS.txt <<EOF
+          run_id=${GITHUB_RUN_ID}
+          run_attempt=${GITHUB_RUN_ATTEMPT}
+          source_sha=${GITHUB_SHA}
+          job_status=${JOB_STATUS}
+          auth=${AUTH_OUTCOME}
+          install=${INSTALL_OUTCOME}
+          clone=${CLONE_OUTCOME}
+          apply=${APPLY_OUTCOME}
+          pedagogical=${PEDAGOGICAL_OUTCOME}
+          guided_static=${STATIC_OUTCOME}
+          release=${RELEASE_OUTCOME}
+          metadata=${METADATA_OUTCOME}
+          build=${BUILD_OUTCOME}
+          algorithms=${ALGORITHMS_OUTCOME}
+          guided_qa=${GUIDED_QA_OUTCOME}
+          browser_qa=${BROWSER_QA_OUTCOME}
+          push=${PUSH_OUTCOME}
+          r2_head=${r2_head}
+          EOF
+          git -C /tmp/r2status config user.name 'Logan M. Dixon'
+          git -C /tmp/r2status config user.email '178442787+lmdixon23@users.noreply.github.com'
+          git -C /tmp/r2status add R2_BOOTSTRAP_STATUS.txt
+          git -C /tmp/r2status commit -m "Record R2 bootstrap status ${GITHUB_RUN_ID}"
+          git -C /tmp/r2status push origin HEAD:refs/heads/automation/r2-guided-challenges-status
