@@ -1,45 +1,182 @@
-name: R2 guided challenge bootstrap
+name: R2 final English freeze
 
 on:
   push:
     branches: [automation/r2-guided-challenges-bootstrap]
     paths:
-      - '.r2-bootstrap/**'
       - '.github/workflows/r2-guided-bootstrap.yml'
 
 permissions:
   contents: write
 
 jobs:
-  build-test-push:
+  freeze:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - name: Checkout bootstrap branch
-        uses: actions/checkout@v6
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.13'
-
-      - name: Set up Node
-        uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: '22'
 
-      - name: Authenticate bootstrap payload
-        id: auth
+      - name: Apply English freeze directly to exact R2 head
+        id: patch
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          cd .r2-bootstrap
-          cat guided_challenges_block.js.part* > guided_challenges_block.js
-          python -m py_compile apply_r2.py verify_guided_challenges.py guided_challenge_qa.py
-          node --check guided_challenges_block.js
-          grep -F 'assets/guided-challenges.js' apply_r2.py
-          grep -F 'shared-js-syntax' verify_guided_challenges.py
-          grep -F 'window.__suiteGuidedChallenge' guided_challenges_block.js
-          echo "R2_BOOTSTRAP_PAYLOAD=PASS"
+          rm -rf /tmp/r2
+          git clone --no-tags --single-branch --branch feature/v1.1.0-guided-challenges-r2 "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" /tmp/r2
+          test "$(git -C /tmp/r2 rev-parse HEAD)" = "d4531b1be37c23bfdf82d6dcc60b3016d1f5d08a"
+          test -z "$(git -C /tmp/r2 status --porcelain)"
+
+          curl -fsSL "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/c175f2d4989640c88587b49fa3d602996ba87920/.github/workflows/r2-english-freeze.yml" -o /tmp/frozen-freeze.yml
+          python - <<'PY'
+          from pathlib import Path
+          wf=Path('/tmp/frozen-freeze.yml').read_text(encoding='utf-8')
+          marker="          python - <<'PY'\n"
+          start=wf.index(marker)+len(marker)
+          end=wf.index("\n          PY\n",start)
+          raw=wf[start:end]
+          prefix=' '*10
+          code='\n'.join(line[len(prefix):] if line.startswith(prefix) else line for line in raw.splitlines())
+          compile(code,'frozen-r2-freeze','exec')
+          exec(compile(code,'frozen-r2-freeze','exec'),{'__name__':'__main__'})
+          PY
+
+          python - <<'PY'
+          from pathlib import Path
+          root=Path('/tmp/r2')
+          slugs=['bayes-classifier','bayes-network','cnf-sat','convolution','hill-climbing','kmeans','knn-classifier','neural-network','overfitting','q-learning-gridworld','search-pathfinding','wumpus-world']
+          def rd(rel): return (root/rel).read_text(encoding='utf-8-sig')
+          def wr(rel,s): (root/rel).write_text(s,encoding='utf-8',newline='\n')
+          def one(s,old,new,label):
+              n=s.count(old)
+              if n!=1: raise RuntimeError(f'{label}: expected 1, found {n}')
+              return s.replace(old,new,1)
+
+          rel='tools/verify_guided_challenges.py'; s=rd(rel)
+          for old,new,label in [
+              ('Predicted cluster assignment','Predicted cluster for Point 1','kmeans assignment verifier'),
+              ('Predicted centroid movement','Approximate updated position of Centroid 1','kmeans centroid verifier'),
+              ('Predicted output-cell value','Predicted center output-cell value','convolution output verifier')]:
+              s=one(s,old,new,label)
+          wr(rel,s)
+
+          rel='assets/guided-challenges.js'; s=rd(rel)
+          s=one(s,"      mask: ['.bento-main'], actual: ['#a11yStateSummary', '#tpCount', '.stage-caption', '.stage-metric'],","      mask: ['#grid', '.stats-strip'], actual: ['#a11yStateSummary', '#tpCount', '.stage-caption', '.stage-metric'],",'search result mask')
+          old="""  function runDeferredAction() {
+    if (!config || !config.action) return true;
+    const btn = document.querySelector(config.action);
+    if (!btn) return false;
+    internalMutation = true;
+    try {
+      const n = Math.max(1, Number(config.actionClicks || 1));
+      for (let i = 0; i < n; i += 1) { if (btn.disabled) return false; btn.click(); }
+      return true;
+    } finally { internalMutation = false; }
+  }
+"""
+          new="""  function runDeferredAction() {
+    if (!config || !config.action) return true;
+    const btn = document.querySelector(config.action);
+    if (!btn) return false;
+    const frozenRecord = frozen.find(item => item.el === btn);
+    if (frozenRecord && frozenRecord.disabled) return false;
+    const restoreDisabled = btn.disabled;
+    internalMutation = true;
+    try {
+      const n = Math.max(1, Number(config.actionClicks || 1));
+      for (let i = 0; i < n; i += 1) {
+        btn.disabled = false;
+        btn.click();
+        if (i < n - 1 && btn.disabled) return false;
+      }
+      return true;
+    } finally {
+      btn.disabled = restoreDisabled;
+      internalMutation = false;
+    }
+  }
+"""
+          s=one(s,old,new,'production deferred-action path')
+          wr(rel,s)
+
+          rel='tools/verify_guided_challenges.py'; s=rd(rel)
+          s=one(s,"'if (btn.disabled) return false;'","'const frozenRecord = frozen.find(item => item.el === btn);'",'deferred-action verifier token')
+          token="\"mask: ['.cell-maps', '.cell-analysis']\""
+          if s.count(token)!=1: raise RuntimeError(f'search-mask verifier anchor: expected 1, found {s.count(token)}')
+          s=s.replace(token,token+",\"mask: ['#grid', '.stats-strip']\"",1)
+          wr(rel,s)
+
+          rel='tools/guided_challenge_qa.py'; s=rd(rel)
+          old="""    checks.append(('transfer_requires_new_prediction',bool(cleared),{}))
+    checks.append(('transfer_reconceals_actual',page.locator('[data-guided-concealed=\"1\"]').count()>=1,{}))
+"""
+          new="""    checks.append(('transfer_requires_new_prediction',bool(cleared),{}))
+    transfer_concealed=page.locator('[data-guided-concealed=\"1\"]').count()
+    transfer_should_conceal=bool(contract.get('concealOnPrepare')) or not bool(contract.get('action'))
+    checks.append(('transfer_concealment_timing_matches_challenge_type',transfer_concealed>=1 if transfer_should_conceal else transfer_concealed==0,{'concealed':transfer_concealed,'should_conceal':transfer_should_conceal}))
+"""
+          s=one(s,old,new,'transfer concealment QA')
+          wr(rel,s)
+
+          for slug in slugs:
+              rel=f'playgrounds/{slug}/index.html'; s=rd(rel)
+              s=one(s,'let restoring=false;','let restoring=true;',f'{slug} pre-restore suppression')
+              wr(rel,s)
+
+          rel='playgrounds/hill-climbing/index.html'; s=rd(rel)
+          old="""    const idx = parseInt(document.getElementById('replaySlider').value, 10);
+    if (trajectory.length === 0) return;
+"""
+          new="""    let idx = parseInt(document.getElementById('replaySlider').value, 10);
+    if (trajectory.length === 0 || Number.isNaN(idx)) return;
+    idx = Math.max(0, Math.min(trajectory.length - 1, idx));
+    if (trajectory[idx] == null) return;
+    document.getElementById('replaySlider').value = idx;
+"""
+          s=one(s,old,new,'hill replay restore guard')
+          wr(rel,s)
+
+          rel='tools/verify_guided_challenges.py'; s=rd(rel)
+          anchor="        source=js if slug!='knn-classifier' else js+'\\n'+text\n"
+          insert="""        restore_ok='let restoring=true;' in text and 'let restoring=false;' not in text
+        checks.append({'kind':'pre-restore-url-write-suppression','applet':slug,'pass':restore_ok})
+        if not restore_ok:failures.append(f'{slug}: learning-mode URL writes are not suppressed before deferred restore')
+"""+anchor
+          s=one(s,anchor,insert,'suite restore verifier')
+          anchor="    overfit=(ROOT/'playgrounds/overfitting/index.html').read_text(encoding='utf-8-sig')\n"
+          insert="""    hill=(ROOT/'playgrounds/hill-climbing/index.html').read_text(encoding='utf-8-sig')
+    hill_guard='Number.isNaN(idx)' in hill and 'Math.min(trajectory.length - 1, idx)' in hill and 'trajectory[idx] == null' in hill
+    checks.append({'kind':'hill-replay-restore-guard','pass':hill_guard})
+    if not hill_guard:failures.append('Hill replay restoration does not clamp and validate transient trajectory indices')
+"""+anchor
+          s=one(s,anchor,insert,'hill restore verifier')
+          wr(rel,s)
+
+          rel='docs/GUIDED_CHALLENGE_ARCHITECTURE.md'; s=rd(rel)
+          anchor='- Challenge responses remain ephemeral and are not added to URLs, localStorage, sessionStorage, analytics, or the student response packet.\n'
+          addition=anchor+'- Learning-mode URL writes remain suppressed until the deferred URL-state restore completes, preventing challenge input from overwriting pending shared-state restoration.\n- Replay history is treated as transient state; Hill validates restored replay indices against the trajectory currently available before rendering.\n'
+          s=one(s,anchor,addition,'restore-race architecture note')
+          wr(rel,s)
+          print('R2_ENGLISH_FREEZE_DIRECT_PATCH=PASS')
+          PY
+
+          node --check /tmp/r2/assets/guided-challenges.js
+          python -m py_compile /tmp/r2/tools/verify_guided_challenges.py /tmp/r2/tools/guided_challenge_qa.py
+          python - <<'PY'
+          import subprocess
+          slugs=['bayes-classifier','bayes-network','cnf-sat','convolution','hill-climbing','kmeans','knn-classifier','neural-network','overfitting','q-learning-gridworld','search-pathfinding','wumpus-world']
+          expected={'assets/guided-challenges.js','docs/GUIDED_CHALLENGE_ARCHITECTURE.md','tools/verify_guided_challenges.py','tools/guided_challenge_qa.py'} | {f'playgrounds/{slug}/index.html' for slug in slugs}
+          got=set(filter(None,subprocess.check_output(['git','-C','/tmp/r2','diff','--name-only','HEAD'],text=True).splitlines()))
+          assert got==expected,(sorted(expected-got),sorted(got-expected))
+          print('R2_ENGLISH_FREEZE_DIRECT_BOUNDARY=PASS files=16')
+          PY
+          git -C /tmp/r2 diff --check
 
       - name: Install browser QA dependencies
         id: install
@@ -48,165 +185,56 @@ jobs:
           python -m pip install playwright
           python -m playwright install --with-deps chromium
 
-      - name: Clone exact R2 target branch
-        id: clone
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Run final English-freeze validation stack
+        id: tests
+        working-directory: /tmp/r2
         run: |
           set -euo pipefail
-          git clone --no-tags --single-branch --branch feature/v1.1.0-guided-challenges-r2 "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" /tmp/r2repo
-          test "$(git -C /tmp/r2repo rev-parse HEAD)" = "08dff4671ff1f887d2956dbfa449bde3c0abf3e8"
-          test -z "$(git -C /tmp/r2repo status --porcelain)"
+          python tools/verify_pedagogical_contracts.py
+          python tools/verify_guided_challenges.py
+          python tools/release_check.py
+          python tools/check_release_metadata.py
+          python tools/build_site.py
+          python tools/run_algorithm_tests.py
+          python tools/guided_challenge_qa.py
+          python tools/browser_qa.py --no-screenshots
+          echo R2_ENGLISH_FREEZE_DIRECT_VALIDATION=PASS
 
-      - name: Apply suite-wide Guided Challenge architecture
-        id: apply
-        run: |
-          set -euo pipefail
-          python .r2-bootstrap/apply_r2.py --repo /tmp/r2repo --payload "$GITHUB_WORKSPACE/.r2-bootstrap" --report /tmp/r2-report.json
-          python - <<'PY'
-          import json
-          expected={
-            '.github/workflows/verify.yml','docs/GUIDED_CHALLENGE_ARCHITECTURE.md','tools/browser_qa.py','tools/build_site.py',
-            'tools/verify_guided_challenges.py','tools/guided_challenge_qa.py',
-            'assets/guided-challenges.css','assets/guided-challenges.js',
-            'playgrounds/bayes-classifier/index.html','playgrounds/bayes-network/index.html','playgrounds/cnf-sat/index.html',
-            'playgrounds/convolution/index.html','playgrounds/hill-climbing/index.html','playgrounds/kmeans/index.html',
-            'playgrounds/knn-classifier/index.html','playgrounds/neural-network/index.html','playgrounds/overfitting/index.html',
-            'playgrounds/q-learning-gridworld/index.html','playgrounds/search-pathfinding/index.html','playgrounds/wumpus-world/index.html'
-          }
-          report=json.load(open('/tmp/r2-report.json',encoding='utf-8'))
-          got=set(report['changed_files'])
-          assert got==expected,(sorted(expected-got),sorted(got-expected))
-          print('R2_APPLY_BOUNDARY=PASS files=20')
-          PY
-          git -C /tmp/r2repo diff --check
-
-      - name: Run pedagogical contracts
-        id: pedagogical
-        run: python tools/verify_pedagogical_contracts.py
-        working-directory: /tmp/r2repo
-
-      - name: Run Guided Challenge static contracts
-        id: static
-        run: python tools/verify_guided_challenges.py
-        working-directory: /tmp/r2repo
-
-      - name: Run release checks
-        id: release
-        run: python tools/release_check.py
-        working-directory: /tmp/r2repo
-
-      - name: Check release metadata
-        id: metadata
-        run: python tools/check_release_metadata.py
-        working-directory: /tmp/r2repo
-
-      - name: Verify deployment boundary
-        id: build
-        run: python tools/build_site.py
-        working-directory: /tmp/r2repo
-
-      - name: Run 45 algorithm tests
-        id: algorithms
-        run: python tools/run_algorithm_tests.py
-        working-directory: /tmp/r2repo
-
-      - name: Run 12 Guided Challenge browser state cases
-        id: guidedqa
-        run: python tools/guided_challenge_qa.py
-        working-directory: /tmp/r2repo
-
-      - name: Run full browser QA
-        id: browserqa
-        run: python tools/browser_qa.py --no-screenshots
-        working-directory: /tmp/r2repo
-
-      - name: Commit and fast-forward R2 content branch
+      - name: Commit and fast-forward exact R2 branch
         id: push
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          git -C /tmp/r2repo diff --check
-          remote_sha="$(git ls-remote "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" refs/heads/feature/v1.1.0-guided-challenges-r2 | cut -f1)"
-          test "$remote_sha" = "08dff4671ff1f887d2956dbfa449bde3c0abf3e8"
-          # The Actions token cannot update workflow files. The workflow edit was present
-          # throughout the full validation stack above; restore only that one file before
-          # the content commit, then add it through the GitHub connector afterward.
-          git -C /tmp/r2repo restore --source=HEAD -- .github/workflows/verify.yml
-          python - <<'PY'
-          import subprocess
-          expected={
-            'docs/GUIDED_CHALLENGE_ARCHITECTURE.md','tools/browser_qa.py','tools/build_site.py',
-            'tools/verify_guided_challenges.py','tools/guided_challenge_qa.py',
-            'assets/guided-challenges.css','assets/guided-challenges.js',
-            'playgrounds/bayes-classifier/index.html','playgrounds/bayes-network/index.html','playgrounds/cnf-sat/index.html',
-            'playgrounds/convolution/index.html','playgrounds/hill-climbing/index.html','playgrounds/kmeans/index.html',
-            'playgrounds/knn-classifier/index.html','playgrounds/neural-network/index.html','playgrounds/overfitting/index.html',
-            'playgrounds/q-learning-gridworld/index.html','playgrounds/search-pathfinding/index.html','playgrounds/wumpus-world/index.html'
-          }
-          tracked=set(filter(None,subprocess.check_output(['git','-C','/tmp/r2repo','diff','--name-only','HEAD'],text=True).splitlines()))
-          untracked=set(filter(None,subprocess.check_output(['git','-C','/tmp/r2repo','ls-files','--others','--exclude-standard'],text=True).splitlines()))
-          got=tracked|untracked
-          assert got==expected,(sorted(expected-got),sorted(got-expected))
-          print('R2_PUBLISH_BOUNDARY=PASS files=19')
-          PY
-          git -C /tmp/r2repo config user.name 'Logan M. Dixon'
-          git -C /tmp/r2repo config user.email '178442787+lmdixon23@users.noreply.github.com'
-          git -C /tmp/r2repo add -- docs/GUIDED_CHALLENGE_ARCHITECTURE.md tools/browser_qa.py tools/build_site.py tools/verify_guided_challenges.py tools/guided_challenge_qa.py assets/guided-challenges.css assets/guided-challenges.js playgrounds/*/index.html
-          git -C /tmp/r2repo diff --cached --check
-          git -C /tmp/r2repo commit -m 'Implement suite-wide Guided Challenge state architecture'
-          new_sha="$(git -C /tmp/r2repo rev-parse HEAD)"
-          test "$(git -C /tmp/r2repo rev-parse HEAD^)" = "08dff4671ff1f887d2956dbfa449bde3c0abf3e8"
-          git -C /tmp/r2repo push origin HEAD:refs/heads/feature/v1.1.0-guided-challenges-r2
-          echo "R2_HEAD=$new_sha" >> "$GITHUB_STEP_SUMMARY"
-          echo "FINAL_R2_GUIDED_CHALLENGE_CONTENT_BOOTSTRAP=PASS" >> "$GITHUB_STEP_SUMMARY"
+          remote="$(git ls-remote "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" refs/heads/feature/v1.1.0-guided-challenges-r2 | cut -f1)"
+          test "$remote" = "d4531b1be37c23bfdf82d6dcc60b3016d1f5d08a"
+          git -C /tmp/r2 config user.name 'Logan M. Dixon'
+          git -C /tmp/r2 config user.email '178442787+lmdixon23@users.noreply.github.com'
+          git -C /tmp/r2 add assets/guided-challenges.js docs/GUIDED_CHALLENGE_ARCHITECTURE.md tools/verify_guided_challenges.py tools/guided_challenge_qa.py playgrounds/*/index.html
+          git -C /tmp/r2 diff --cached --check
+          git -C /tmp/r2 commit -m 'Freeze Guided Challenge mechanism alignment'
+          sha="$(git -C /tmp/r2 rev-parse HEAD)"
+          test "$(git -C /tmp/r2 rev-parse HEAD^)" = "d4531b1be37c23bfdf82d6dcc60b3016d1f5d08a"
+          git -C /tmp/r2 push origin HEAD:refs/heads/feature/v1.1.0-guided-challenges-r2
+          echo "freeze_head=$sha" >> "$GITHUB_OUTPUT"
 
-      - name: Publish gate status
+      - name: Publish final English-freeze receipt
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
-          JOB_STATUS: ${{ job.status }}
-          AUTH_OUTCOME: ${{ steps.auth.outcome }}
-          INSTALL_OUTCOME: ${{ steps.install.outcome }}
-          CLONE_OUTCOME: ${{ steps.clone.outcome }}
-          APPLY_OUTCOME: ${{ steps.apply.outcome }}
-          PEDAGOGICAL_OUTCOME: ${{ steps.pedagogical.outcome }}
-          STATIC_OUTCOME: ${{ steps.static.outcome }}
-          RELEASE_OUTCOME: ${{ steps.release.outcome }}
-          METADATA_OUTCOME: ${{ steps.metadata.outcome }}
-          BUILD_OUTCOME: ${{ steps.build.outcome }}
-          ALGORITHMS_OUTCOME: ${{ steps.algorithms.outcome }}
-          GUIDED_QA_OUTCOME: ${{ steps.guidedqa.outcome }}
-          BROWSER_QA_OUTCOME: ${{ steps.browserqa.outcome }}
-          PUSH_OUTCOME: ${{ steps.push.outcome }}
+          PATCH: ${{ steps.patch.outcome }}
+          INSTALL: ${{ steps.install.outcome }}
+          TESTS: ${{ steps.tests.outcome }}
+          PUSH: ${{ steps.push.outcome }}
         run: |
           set -euo pipefail
-          git fetch origin automation/r2-guided-challenges-status
-          git worktree add /tmp/r2status origin/automation/r2-guided-challenges-status
-          r2_head="$(git ls-remote "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" refs/heads/feature/v1.1.0-guided-challenges-r2 | cut -f1)"
-          cat > /tmp/r2status/R2_BOOTSTRAP_STATUS.txt <<EOF
-          run_id=${GITHUB_RUN_ID}
-          run_attempt=${GITHUB_RUN_ATTEMPT}
-          source_sha=${GITHUB_SHA}
-          job_status=${JOB_STATUS}
-          auth=${AUTH_OUTCOME}
-          install=${INSTALL_OUTCOME}
-          clone=${CLONE_OUTCOME}
-          apply=${APPLY_OUTCOME}
-          pedagogical=${PEDAGOGICAL_OUTCOME}
-          guided_static=${STATIC_OUTCOME}
-          release=${RELEASE_OUTCOME}
-          metadata=${METADATA_OUTCOME}
-          build=${BUILD_OUTCOME}
-          algorithms=${ALGORITHMS_OUTCOME}
-          guided_qa=${GUIDED_QA_OUTCOME}
-          browser_qa=${BROWSER_QA_OUTCOME}
-          push=${PUSH_OUTCOME}
-          r2_head=${r2_head}
-          EOF
-          git -C /tmp/r2status config user.name 'Logan M. Dixon'
-          git -C /tmp/r2status config user.email '178442787+lmdixon23@users.noreply.github.com'
-          git -C /tmp/r2status add R2_BOOTSTRAP_STATUS.txt
-          git -C /tmp/r2status commit -m "Record R2 bootstrap status ${GITHUB_RUN_ID}"
-          git -C /tmp/r2status push origin HEAD:refs/heads/automation/r2-guided-challenges-status
+          rm -rf /tmp/status
+          git fetch origin automation/r2-english-freeze-status
+          git worktree add /tmp/status origin/automation/r2-english-freeze-status
+          head="$(git ls-remote "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" refs/heads/feature/v1.1.0-guided-challenges-r2 | cut -f1)"
+          printf 'run_id=%s\npatch=%s\ninstall=%s\ntests=%s\npush=%s\nr2_head=%s\n' "$GITHUB_RUN_ID" "$PATCH" "$INSTALL" "$TESTS" "$PUSH" "$head" > /tmp/status/R2_ENGLISH_FREEZE_STATUS.txt
+          git -C /tmp/status config user.name 'Logan M. Dixon'
+          git -C /tmp/status config user.email '178442787+lmdixon23@users.noreply.github.com'
+          git -C /tmp/status add R2_ENGLISH_FREEZE_STATUS.txt
+          git -C /tmp/status commit -m "Record established-runner R2 English freeze status ${GITHUB_RUN_ID}"
+          git -C /tmp/status push origin HEAD:refs/heads/automation/r2-english-freeze-status
