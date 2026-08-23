@@ -20,6 +20,20 @@ def launch(p):
 def state(page): return page.evaluate('() => window.__suiteGuidedChallenge?.state() || null')
 def history(page): return page.evaluate('() => window.__suiteGuidedChallenge?.history() || []')
 
+def switch_applet_locale(page, code, timeout=7000):
+    has_r4=page.evaluate("() => !!window.__r4Localization && window.__r4Localization.ready()")
+    if has_r4:
+        page.evaluate("(code) => window.__r4Localization.setLocale(code, {immediate:true})", code)
+    else:
+        button=page.locator(f'button[data-lang="{code}"]')
+        if not button.count(): raise RuntimeError(f'language control missing: {code}')
+        button.first.click(force=True)
+    if code=='zh':
+        page.wait_for_function("() => (document.documentElement.lang || '').toLowerCase().startsWith('zh')",timeout=timeout)
+    else:
+        page.wait_for_function("(code) => (document.documentElement.lang || '').toLowerCase().startsWith(code)",arg=code,timeout=timeout)
+    page.wait_for_timeout(100)
+
 def wait_state(page,want,timeout=5000):
     page.wait_for_function('(want) => window.__suiteGuidedChallenge && window.__suiteGuidedChallenge.state() === want',arg=want,timeout=timeout)
 
@@ -57,13 +71,10 @@ def check_generic(page,slug,checks):
     checks.append(('reveal_enabled_after_lock',not page.locator('.suite-guided-reveal').is_disabled(),{}))
     if contract.get('action'):
         n=page.locator('[data-guided-concealed="1"]').count(); checks.append(('step_result_concealed_after_lock',n>=1,{'concealed':n}))
-    zh=page.locator('button[data-lang="zh"]')
-    en=page.locator('button[data-lang="en"]')
-    if zh.count() and en.count():
-        zh.first.click(); page.wait_for_timeout(100)
-        values_zh=page.locator('[data-guided-field]').evaluate_all('(els)=>els.map(e=>e.value)')
-        checks.append(('language_switch_preserves_locked_prediction',values_zh==values_before and state(page)=='locked',{'before':values_before,'after':values_zh}))
-        en.first.click(); page.wait_for_timeout(80)
+    switch_applet_locale(page,'zh')
+    values_zh=page.locator('[data-guided-field]').evaluate_all('(els)=>els.map(e=>e.value)')
+    checks.append(('language_switch_preserves_locked_prediction',values_zh==values_before and state(page)=='locked',{'before':values_before,'after':values_zh}))
+    switch_applet_locale(page,'en')
     page.locator('.suite-guided-reveal').click()
     wait_state(page,'revealed')
     actual=page.locator('.suite-guided-actual').inner_text().strip()
@@ -129,13 +140,11 @@ def check_knn(page,checks):
     page.wait_for_timeout(80)
     wait_state(page,'prediction-complete-unlocked')
     checks.append(('knn_exact_neighbor_prediction_complete',not page.locator('#guidedLock').is_disabled(),{'k':k}))
-    zh=page.locator('button[data-lang="zh"]'); en=page.locator('button[data-lang="en"]')
-    if zh.count() and en.count():
-        zh.first.click();page.wait_for_timeout(100)
-        checks.append(('language_switch_preserves_knn_prediction',state(page)=='prediction-complete-unlocked' and not page.locator('#guidedLock').is_disabled(),{}))
-        checks.append(('knn_extension_translates_to_chinese',page.locator('.suite-guided-knn-compare').inner_text().strip()=='比较',{'label':page.locator('.suite-guided-knn-compare').inner_text().strip()}))
-        en.first.click();page.wait_for_timeout(100)
-        checks.append(('knn_extension_returns_to_english',page.locator('.suite-guided-knn-compare').inner_text().strip()=='Compare',{'label':page.locator('.suite-guided-knn-compare').inner_text().strip()}))
+    switch_applet_locale(page,'zh')
+    checks.append(('language_switch_preserves_knn_prediction',state(page)=='prediction-complete-unlocked' and not page.locator('#guidedLock').is_disabled(),{}))
+    checks.append(('knn_extension_translates_to_chinese',page.locator('.suite-guided-knn-compare').inner_text().strip()=='比较',{'label':page.locator('.suite-guided-knn-compare').inner_text().strip()}))
+    switch_applet_locale(page,'en')
+    checks.append(('knn_extension_returns_to_english',page.locator('.suite-guided-knn-compare').inner_text().strip()=='Compare',{'label':page.locator('.suite-guided-knn-compare').inner_text().strip()}))
     page.locator('#guidedLock').click(); wait_state(page,'locked')
     checks.append(('knn_reveal_enabled_after_lock',not page.locator('#guidedReveal').is_disabled(),{}))
     page.locator('#guidedReveal').click(); wait_state(page,'revealed')

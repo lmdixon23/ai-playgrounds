@@ -20,6 +20,20 @@ def launch(p):
 def has_cjk(text): return bool(CJK.search(text or ''))
 def mode_text(text): return (text or '').strip().rstrip(':：').strip()
 
+def switch_applet_locale(page, code, timeout=7000):
+    has_r4=page.evaluate("() => !!window.__r4Localization && window.__r4Localization.ready()")
+    if has_r4:
+        page.evaluate("(code) => window.__r4Localization.setLocale(code, {immediate:true})", code)
+    else:
+        button=page.locator(f'button[data-lang="{code}"]')
+        if not button.count(): raise RuntimeError(f'language control missing: {code}')
+        button.first.click(force=True)
+    if code=='zh':
+        page.wait_for_function("() => (document.documentElement.lang || '').toLowerCase().startsWith('zh')",timeout=timeout)
+    else:
+        page.wait_for_function("(code) => (document.documentElement.lang || '').toLowerCase().startsWith(code)",arg=code,timeout=timeout)
+    page.wait_for_timeout(100)
+
 def main():
     from playwright.sync_api import sync_playwright
     cases=[]; failures=[]
@@ -34,11 +48,7 @@ def main():
                 try:
                     page.goto((ROOT/'playgrounds'/slug/'index.html').resolve().as_uri(),wait_until='domcontentloaded',timeout=12000)
                     page.wait_for_function('() => !!window.__suiteGuidedChallenge',timeout=7000)
-                    zh=page.locator('button[data-lang="zh"]'); en=page.locator('button[data-lang="en"]')
-                    if not zh.count() or not en.count(): raise RuntimeError('language-switch buttons missing')
-                    zh.first.click()
-                    page.wait_for_function("() => (document.documentElement.lang || '').toLowerCase().startsWith('zh')",timeout=7000)
-                    page.wait_for_timeout(120)
+                    switch_applet_locale(page,'zh')
                     h1=page.locator('h1').first.inner_text().strip()
                     checks.append(('zh_h1_visible',has_cjk(h1),{'h1':h1}))
                     mode_label=page.locator('.suite-guided-mode-label').inner_text().strip()
@@ -56,9 +66,7 @@ def main():
                         forbidden=['Prepare challenge','Lock prediction','Reveal mechanism','Try changed case']
                         panel=page.locator('.suite-guided-panel').inner_text()
                         checks.append(('no_guided_english_fallback_in_zh',not any(x in panel for x in forbidden),{'found':[x for x in forbidden if x in panel]}))
-                    en.first.click()
-                    page.wait_for_function("() => (document.documentElement.lang || '').toLowerCase().startsWith('en')",timeout=7000)
-                    page.wait_for_timeout(100)
+                    switch_applet_locale(page,'en')
                     english_mode=page.locator('.suite-guided-mode-label').inner_text().strip()
                     checks.append(('returns_to_english',mode_text(english_mode)=='Learning mode',{'mode':english_mode}))
                 except Exception as exc:

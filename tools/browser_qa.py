@@ -196,6 +196,22 @@ def document_lang(page: Any) -> str:
     return page.locator("html").get_attribute("lang") or ""
 
 
+def switch_applet_locale(page: Any, code: str, timeout: int = 7000) -> None:
+    has_r4 = page.evaluate("() => !!window.__r4Localization && window.__r4Localization.ready()")
+    if has_r4:
+        page.evaluate("(code) => window.__r4Localization.setLocale(code, {immediate:true})", code)
+    else:
+        button = page.locator(f"button[data-lang='{code}']")
+        if not button.count():
+            raise RuntimeError(f"language control missing: {code}")
+        button.first.click(force=True)
+    if code == "zh":
+        page.wait_for_function("() => (document.documentElement.lang || '').toLowerCase().startsWith('zh')", timeout=timeout)
+    else:
+        page.wait_for_function("(code) => (document.documentElement.lang || '').toLowerCase().startsWith(code)", arg=code, timeout=timeout)
+    page.wait_for_timeout(100)
+
+
 def check_applet_extended(page: Any, checks: List[Dict[str, Any]], slug: str) -> None:
     visible_cards = page.locator(".learning-mode-panel:not([hidden]) .scenario-card")
     visible_height = 0
@@ -208,11 +224,9 @@ def check_applet_extended(page: Any, checks: List[Dict[str, Any]], slug: str) ->
     checks.append({"name": "bilingual_full_explanation", "pass": page.locator("[data-essay-lang='en']").count() == 1 and page.locator("[data-essay-lang='zh']").count() == 1, "detail": {"en": page.locator("[data-essay-lang='en']").count(), "zh": page.locator("[data-essay-lang='zh']").count()}})
 
     hint_en = page.locator("#hint").inner_text() if slug == "kmeans" and page.locator("#hint").count() else ""
-    zh = page.locator("button[data-lang='zh']")
-    en = page.locator("button[data-lang='en']")
-    if zh.count() and en.count():
-        zh.first.click(timeout=1500)
-        page.wait_for_timeout(140)
+    has_applet_language = page.locator("button[data-lang='zh']").count() and page.locator("button[data-lang='en']").count()
+    if has_applet_language:
+        switch_applet_locale(page, "zh")
         shell_text = page.locator(".learning-mode-shell").inner_text() if page.locator(".learning-mode-shell").count() else ""
         share_text = page.locator("#shareLink").inner_text() if page.locator("#shareLink").count() else ""
         checks.append({"name": "applet_zh_shared_chrome", "pass": "分享" in share_text and "复制此实验" in shell_text and "精选实验" in shell_text, "detail": {"share": share_text, "excerpt": shell_text[:260]}})
@@ -220,8 +234,7 @@ def check_applet_extended(page: Any, checks: List[Dict[str, Any]], slug: str) ->
         if slug == "kmeans" and page.locator("#hint").count():
             hint_zh = page.locator("#hint").inner_text()
             checks.append({"name": "kmeans_dynamic_hint_translates_immediately", "pass": hint_zh != hint_en and ("现在选择" in hint_zh or "选择初始化" in hint_zh), "detail": {"en": hint_en, "zh": hint_zh}})
-        en.first.click(timeout=1500)
-        page.wait_for_timeout(100)
+        switch_applet_locale(page, "en")
         if slug == "kmeans" and page.locator("#hint").count():
             checks.append({"name": "kmeans_dynamic_hint_returns_to_english", "pass": page.locator("#hint").inner_text() == hint_en, "detail": {"expected": hint_en, "actual": page.locator("#hint").inner_text()}})
 
