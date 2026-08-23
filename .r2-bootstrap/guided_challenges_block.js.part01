@@ -1,0 +1,129 @@
+(function () {
+  'use strict';
+
+  const slug = location.pathname.split('/').filter(Boolean).slice(-2, -1)[0] || '';
+  const CONFIGS = {
+    'search-pathfinding': {
+      scenario: 0, transferScenario: 1, action: '#stepBtn', actionClicks: 1,
+      mask: ['.bento-main'], actual: ['#a11yStateSummary', '#tpCount', '.stage-caption', '.stage-metric'],
+      en: {
+        title: 'Predict the next frontier move',
+        prompt: 'Before one search step is revealed, predict which frontier state will be expanded next and explain the ordering rule that makes it next.',
+        transfer: 'Changed case: compare the next expansion under a different search scenario or heuristic.'
+      },
+      zh: {
+        title: '预测下一次前沿展开',
+        prompt: '在揭示一次搜索步骤之前，预测接下来会展开哪个前沿状态，并说明为什么当前排序规则会选中它。',
+        transfer: '迁移情境：换一个搜索场景或启发式，再预测下一次展开。'
+      },
+      fields: [
+        {key:'frontier', type:'text', en:'Next frontier state or coordinate', zh:'下一个前沿状态或坐标'},
+        {key:'rule', type:'textarea', en:'Why is it next?', zh:'为什么它会被选中？'}
+      ]
+    },
+    'hill-climbing': {
+      scenario: 1, transferScenario: 2, action: '#stepBtn', actionClicks: 1,
+      mask: ['.bento-main'], actual: ['#a11yStateSummary', '#tpCount', '#status'],
+      en: {
+        title: 'Predict the accepted candidate',
+        prompt: 'Before the next local-search step is revealed, predict which candidate will be accepted and identify the comparison rule that permits or rejects it.',
+        transfer: 'Changed case: repeat with a different local-search strategy and compare the acceptance rule.'
+      },
+      zh: {
+        title: '预测会被接受的候选状态',
+        prompt: '在揭示下一次局部搜索步骤之前，预测哪个候选状态会被接受，并说明当前比较规则为什么允许或拒绝它。',
+        transfer: '迁移情境：换一种局部搜索策略，再比较接受规则。'
+      },
+      fields: [
+        {key:'candidate', type:'text', en:'Candidate you expect to be accepted', zh:'你预测会被接受的候选状态'},
+        {key:'rule', type:'select', en:'Expected comparison rule', zh:'预期比较规则', options:[
+          ['improve','Accept only an improving move','只接受改进移动'],
+          ['worse','A worsening move can be accepted','可能接受变差移动'],
+          ['memory','Memory or tabu status changes the choice','记忆或禁忌状态改变选择']
+        ]}
+      ]
+    },
+    'wumpus-world': {
+      scenario: 4, transferScenario: 2, action: '#stepBtn', actionClicks: 1,
+      mask: ['.bento-main'], actual: ['#a11yStateSummary', '#log', '#scoreV'],
+      en: {
+        title: 'Classify a frontier square before the move',
+        prompt: 'Choose one frontier square and predict whether the current evidence makes it proven safe, a possible hazard, or unresolved before the agent takes its next step.',
+        transfer: 'Changed case: switch to the probability-based policy and reconsider the same kind of frontier evidence.'
+      },
+      zh: {
+        title: '在移动前判断一个前沿方格',
+        prompt: '选择一个前沿方格，并在智能体执行下一步之前判断当前证据是否能证明它安全、可能有危险，或仍未解决。',
+        transfer: '迁移情境：切换到概率策略，再判断类似的前沿证据。'
+      },
+      fields: [
+        {key:'square', type:'text', en:'Frontier square', zh:'前沿方格'},
+        {key:'status', type:'select', en:'Predicted knowledge status', zh:'预测的知识状态', options:[
+          ['safe','Proven safe','已证明安全'], ['hazard','Possible hazard','可能有危险'], ['unresolved','Unresolved','未解决']
+        ]}
+      ]
+    },
+    'cnf-sat': {
+      scenario: 2, transferScenario: 3, action: '#dpllStep', actionClicks: 1,
+      mask: ['#parseOut', '#cnfPlayer', '#satOut', '#dpllPlayer', '#resolveOut'],
+      actual: ['#dpllAction', '#dpllDetail', '#dpllAssign', '#dpllClauses'],
+      en: {
+        title: 'Predict the next DPLL inference',
+        prompt: 'Before the next DPLL trace step is revealed, predict whether the solver will force a literal, branch, or expose a conflict, and name the literal or branch if you can.',
+        transfer: 'Changed case: use another formula and predict which pruning mechanism appears first.'
+      },
+      zh: {
+        title: '预测下一次 DPLL 推理',
+        prompt: '在揭示下一条 DPLL 轨迹之前，预测求解器会强制某个文字、进行分支，还是暴露冲突；如果可以，请写出对应文字或分支。',
+        transfer: '迁移情境：换一个公式，预测最先出现哪种剪枝机制。'
+      },
+      fields: [
+        {key:'kind', type:'select', en:'Next mechanism', zh:'下一种机制', options:[
+          ['unit','Unit propagation','单元传播'], ['branch','Branch','分支'], ['conflict','Conflict','冲突'], ['pure','Pure literal','纯文字']
+        ]},
+        {key:'literal', type:'text', en:'Literal, branch, or contradiction source', zh:'文字、分支或冲突来源'}
+      ]
+    },
+    'bayes-classifier': {
+      scenario: 0, transferScenario: 2,
+      mask: ['.bento-main'], actual: ['#counts', '#posteriorPos', '#posteriorNeg'],
+      en: {
+        title: 'Predict the counts before the posterior',
+        prompt: 'For the prepared population, predict the true-positive and false-positive counts before the posterior probability is revealed.',
+        transfer: 'Changed case: raise the base rate and predict how the two positive-count groups change.'
+      },
+      zh: {
+        title: '在后验概率揭示前预测人数',
+        prompt: '对于准备好的总体，在揭示后验概率之前预测真阳性和假阳性人数。',
+        transfer: '迁移情境：提高基率，再预测两类阳性人数会怎样变化。'
+      },
+      fields: [
+        {key:'tp', type:'number', en:'Predicted true positives', zh:'预测真阳性人数'},
+        {key:'fp', type:'number', en:'Predicted false positives', zh:'预测假阳性人数'}
+      ]
+    },
+    'bayes-network': {
+      scenario: 1, transferScenario: 2,
+      mask: ['.bento-main'], actual: ['#a11yStateSummary'],
+      en: {
+        title: 'Predict an evidence update and dependence status',
+        prompt: 'Before the prepared evidence is revealed, predict the direction of the target probability update and whether the two report variables are independent under the stated conditioning set.',
+        transfer: 'Changed case: add the second report and reconsider the dependence relation after conditioning on Alarm.'
+      },
+      zh: {
+        title: '预测证据更新与条件依赖关系',
+        prompt: '在揭示准备好的证据之前，预测目标概率会向哪个方向变化，并判断在给定条件集下两个报告变量是否独立。',
+        transfer: '迁移情境：加入第二个报告，并在给定 Alarm 后重新判断依赖关系。'
+      },
+      fields: [
+        {key:'direction', type:'select', en:'Predicted probability direction', zh:'预测概率方向', options:[
+          ['up','Increase','上升'], ['down','Decrease','下降'], ['same','About the same','大致不变']
+        ]},
+        {key:'dependence', type:'select', en:'Predicted dependence status', zh:'预测依赖状态', options:[
+          ['independent','Conditionally independent','条件独立'], ['dependent','Dependent','相关'], ['uncertain','Not enough information yet','信息不足']
+        ]}
+      ]
+    },
+    'overfitting': {
+      scenario: 2, transferScenario: 3,
+      mask: ['.bento-main'], 
