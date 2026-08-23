@@ -35,8 +35,12 @@ def collect_sources(slug):
             errors=[]; page.on('pageerror',lambda exc: errors.append(str(exc)))
             page.goto(page_path.resolve().as_uri(),wait_until='domcontentloaded',timeout=12000)
             page.wait_for_timeout(700)
-            en=page.locator('button[data-lang="en"]')
-            if en.count(): en.first.click(); page.wait_for_timeout(250)
+            if page.evaluate("() => !!window.__r4Localization && window.__r4Localization.ready()"):
+                page.evaluate("() => window.__r4Localization.setLocale('en', {immediate:true})")
+                page.wait_for_timeout(250)
+            else:
+                en=page.locator('button[data-lang=\"en\"]')
+                if en.count(): en.first.click(); page.wait_for_timeout(250)
             rows=page.evaluate('''() => {
               const skip=n=>{const e=n.nodeType===1?n:n.parentElement;if(!e)return true;return !!e.closest('script,style,noscript,template,[data-essay-lang="zh"],[lang="zh"],.lang-switch')};
               const out=[]; const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);

@@ -25,6 +25,8 @@ ROOT_PUBLIC_FILES = (
     "media/AI_Playgrounds_Demo_15s.mp4",
     "assets/guided-challenges.css",
     "assets/guided-challenges.js",
+    "assets/localization-r4.css",
+    "assets/localization-r4.js",
     "robots.txt",
     "sitemap.xml",
     # Deliberately public files linked from the live application.
@@ -110,6 +112,12 @@ def build_site() -> None:
         copy_file(relative_path)
 
     copy_file("tests/index.html")
+
+    locale_sources = sorted((ROOT / "assets" / "locales").glob("*-r4.js"))
+    if len(locale_sources) != 12:
+        raise RuntimeError(f"Expected 12 R4 locale catalogs, found {len(locale_sources)}")
+    for source in locale_sources:
+        copy_file(str(source.relative_to(ROOT)))
 
     applet_sources = sorted((ROOT / "playgrounds").glob("*/index.html"))
     applet_names = {path.parent.name for path in applet_sources}

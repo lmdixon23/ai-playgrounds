@@ -53,3 +53,7 @@ R4 adds two permanent gates:
 - a Chromium locale-switch suite that enters Vietnamese and Spanish on every applet, exercises the shared Guided Challenge surface, checks dynamic state and accessibility copy, and returns to English without state corruption.
 
 Human review remains a release gate. Automated translation and automated QA can establish completeness and structural consistency, but R4 is not final-release-ready until a fluent Vietnamese reviewer and a fluent Spanish reviewer approve the learner-facing language or return bounded corrections.
+
+## Completion receipt
+
+All twelve applet catalogs are present and exact-source coverage is enforced per applet. Vietnamese and Spanish remain machine-generated drafts pending the already-required fluent human review gate. No runtime network translation is used.
