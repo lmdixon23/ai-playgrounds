@@ -493,8 +493,23 @@
     },
     "patterns": [
       {
-        "source": "^\\(([-+0-9.]+), ([-+0-9.]+)\\) residual=([-+0-9.]+)$",
-        "target": "($1, $2) phần dư=$3",
+        "source": "^Training point ([0-9]+) at x=([-+0-9.]+), y=([-+0-9.]+)\\. Residual ([-+0-9.]+)\\.$",
+        "target": "Điểm huấn luyện $1 tại x=$2, y=$3. Phần dư $4.",
+        "flags": "g"
+      },
+      {
+        "source": "^State summary updated: Degree: ([0-9]+); Regularization: ([^;]+); Sample size: ([0-9]+); Train MSE: ([-+0-9.]+); Validation MSE: ([-+0-9.]+)$",
+        "target": "Tóm tắt trạng thái đã cập nhật: Bậc: $1; Chính quy hóa: $2; Cỡ mẫu: $3; MSE huấn luyện: $4; MSE xác thực: $5",
+        "flags": "g"
+      },
+      {
+        "source": "^Degree: ([0-9]+) Regularization: (.+?) Lambda: ([-+0-9.]+) Sample size: ([0-9]+) Noise: ([-+0-9.]+) True function: (.+?) Train MSE: ([-+0-9.]+) Validation MSE: ([-+0-9.]+)$",
+        "target": "Bậc: $1 Chính quy hóa: $2 Lambda: $3 Cỡ mẫu: $4 Nhiễu: $5 Hàm thật: $6 MSE huấn luyện: $7 MSE xác thực: $8",
+        "flags": "g"
+      },
+      {
+        "source": "^Degree: ([0-9]+) Regularization: (.+?) Sample size: ([0-9]+) Train MSE: ([-+0-9.]+) Validation MSE: ([-+0-9.]+)$",
+        "target": "Bậc: $1 Chính quy hóa: $2 Cỡ mẫu: $3 MSE huấn luyện: $4 MSE xác thực: $5",
         "flags": "g"
       }
     ]
@@ -974,8 +989,23 @@
     },
     "patterns": [
       {
-        "source": "^\\(([-+0-9.]+), ([-+0-9.]+)\\) residual=([-+0-9.]+)$",
-        "target": "($1, $2) residuo=$3",
+        "source": "^Training point ([0-9]+) at x=([-+0-9.]+), y=([-+0-9.]+)\\. Residual ([-+0-9.]+)\\.$",
+        "target": "Punto de entrenamiento $1 en x=$2, y=$3. Residuo $4.",
+        "flags": "g"
+      },
+      {
+        "source": "^State summary updated: Degree: ([0-9]+); Regularization: ([^;]+); Sample size: ([0-9]+); Train MSE: ([-+0-9.]+); Validation MSE: ([-+0-9.]+)$",
+        "target": "Resumen de estado actualizado: Grado: $1; Regularización: $2; Tamaño de muestra: $3; MSE de entrenamiento: $4; MSE de validación: $5",
+        "flags": "g"
+      },
+      {
+        "source": "^Degree: ([0-9]+) Regularization: (.+?) Lambda: ([-+0-9.]+) Sample size: ([0-9]+) Noise: ([-+0-9.]+) True function: (.+?) Train MSE: ([-+0-9.]+) Validation MSE: ([-+0-9.]+)$",
+        "target": "Grado: $1 Regularización: $2 Lambda: $3 Tamaño de muestra: $4 Ruido: $5 Función real: $6 MSE de entrenamiento: $7 MSE de validación: $8",
+        "flags": "g"
+      },
+      {
+        "source": "^Degree: ([0-9]+) Regularization: (.+?) Sample size: ([0-9]+) Train MSE: ([-+0-9.]+) Validation MSE: ([-+0-9.]+)$",
+        "target": "Grado: $1 Regularización: $2 Tamaño de muestra: $3 MSE de entrenamiento: $4 MSE de validación: $5",
         "flags": "g"
       }
     ]

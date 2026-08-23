@@ -430,7 +430,7 @@
     },
     "patterns": [
       {
-        "source": "^\\\\(([0-9]+),([0-9]+)\\\\): -no breeze, -no stench$",
+        "source": "^\\(([0-9]+),([0-9]+)\\): -no breeze, -no stench$",
         "target": "($1,$2): không có gió, không có mùi hôi",
         "flags": "g"
       }
@@ -848,7 +848,7 @@
     },
     "patterns": [
       {
-        "source": "^\\\\(([0-9]+),([0-9]+)\\\\): -no breeze, -no stench$",
+        "source": "^\\(([0-9]+),([0-9]+)\\): -no breeze, -no stench$",
         "target": "($1,$2): sin brisa, sin hedor",
         "flags": "g"
       }
