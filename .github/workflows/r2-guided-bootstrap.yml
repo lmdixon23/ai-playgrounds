@@ -121,7 +121,7 @@ jobs:
         run: python tools/browser_qa.py --no-screenshots
         working-directory: /tmp/r2repo
 
-      - name: Commit and fast-forward R2 branch
+      - name: Commit and fast-forward R2 content branch
         id: push
         env:
           GH_TOKEN: ${{ github.token }}
@@ -130,15 +130,34 @@ jobs:
           git -C /tmp/r2repo diff --check
           remote_sha="$(git ls-remote "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" refs/heads/feature/v1.1.0-guided-challenges-r2 | cut -f1)"
           test "$remote_sha" = "08dff4671ff1f887d2956dbfa449bde3c0abf3e8"
+          # The Actions token cannot update workflow files. The workflow edit was present
+          # throughout the full validation stack above; restore only that one file before
+          # the content commit, then add it through the GitHub connector afterward.
+          git -C /tmp/r2repo restore --source=HEAD -- .github/workflows/verify.yml
+          python - <<'PY'
+          import subprocess
+          expected={
+            'docs/GUIDED_CHALLENGE_ARCHITECTURE.md','tools/browser_qa.py','tools/build_site.py',
+            'tools/verify_guided_challenges.py','tools/guided_challenge_qa.py',
+            'assets/guided-challenges.css','assets/guided-challenges.js',
+            'playgrounds/bayes-classifier/index.html','playgrounds/bayes-network/index.html','playgrounds/cnf-sat/index.html',
+            'playgrounds/convolution/index.html','playgrounds/hill-climbing/index.html','playgrounds/kmeans/index.html',
+            'playgrounds/knn-classifier/index.html','playgrounds/neural-network/index.html','playgrounds/overfitting/index.html',
+            'playgrounds/q-learning-gridworld/index.html','playgrounds/search-pathfinding/index.html','playgrounds/wumpus-world/index.html'
+          }
+          got=set(filter(None,subprocess.check_output(['git','-C','/tmp/r2repo','diff','--name-only','HEAD'],text=True).splitlines()))
+          assert got==expected,(sorted(expected-got),sorted(got-expected))
+          print('R2_PUBLISH_BOUNDARY=PASS files=19')
+          PY
           git -C /tmp/r2repo config user.name 'Logan M. Dixon'
           git -C /tmp/r2repo config user.email '178442787+lmdixon23@users.noreply.github.com'
-          git -C /tmp/r2repo add -- .github/workflows/verify.yml docs/GUIDED_CHALLENGE_ARCHITECTURE.md tools/browser_qa.py tools/build_site.py tools/verify_guided_challenges.py tools/guided_challenge_qa.py assets/guided-challenges.css assets/guided-challenges.js playgrounds/*/index.html
+          git -C /tmp/r2repo add -- docs/GUIDED_CHALLENGE_ARCHITECTURE.md tools/browser_qa.py tools/build_site.py tools/verify_guided_challenges.py tools/guided_challenge_qa.py assets/guided-challenges.css assets/guided-challenges.js playgrounds/*/index.html
           git -C /tmp/r2repo commit -m 'Implement suite-wide Guided Challenge state architecture'
           new_sha="$(git -C /tmp/r2repo rev-parse HEAD)"
           test "$(git -C /tmp/r2repo rev-parse HEAD^)" = "08dff4671ff1f887d2956dbfa449bde3c0abf3e8"
           git -C /tmp/r2repo push origin HEAD:refs/heads/feature/v1.1.0-guided-challenges-r2
           echo "R2_HEAD=$new_sha" >> "$GITHUB_STEP_SUMMARY"
-          echo "FINAL_R2_GUIDED_CHALLENGE_BOOTSTRAP=PASS" >> "$GITHUB_STEP_SUMMARY"
+          echo "FINAL_R2_GUIDED_CHALLENGE_CONTENT_BOOTSTRAP=PASS" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Publish gate status
         if: always()
