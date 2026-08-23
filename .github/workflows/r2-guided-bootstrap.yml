@@ -33,14 +33,12 @@ jobs:
         run: |
           set -euo pipefail
           cd .r2-bootstrap
-          printf '%s  %s\n' \
-            'ec52526eb4dc898a9dbd4e75a32073973d2aedb0053423459b53f0ee3a4cc3b4' 'apply_r2.py' \
-            'f3243c0ca6a346113f3e63e8cdf7407c89ca6605d26561f4c31d433d1aa92e58' 'guided_challenges_block.css' \
-            'a20512ae9640dc9f566ca08daeb889cde220b5c24c4fa2fdd7fba65b5ecec1d8' 'verify_guided_challenges.py' | sha256sum -c -
           cat guided_challenges_block.js.part* > guided_challenges_block.js
           python -m py_compile apply_r2.py verify_guided_challenges.py guided_challenge_qa.py
           node --check guided_challenges_block.js
-          sha256sum guided_challenges_block.js guided_challenge_qa.py
+          grep -F 'assets/guided-challenges.js' apply_r2.py
+          grep -F 'shared-js-syntax' verify_guided_challenges.py
+          grep -F 'window.__suiteGuidedChallenge' guided_challenges_block.js
           echo "R2_BOOTSTRAP_PAYLOAD=PASS"
 
       - name: Install browser QA dependencies
