@@ -1895,8 +1895,11 @@
   });
   // Replay scrubber wiring.
   document.getElementById('replaySlider').addEventListener('input', () => {
-    const idx = parseInt(document.getElementById('replaySlider').value, 10);
-    if (trajectory.length === 0) return;
+    let idx = parseInt(document.getElementById('replaySlider').value, 10);
+    if (trajectory.length === 0 || Number.isNaN(idx)) return;
+    idx = Math.max(0, Math.min(trajectory.length - 1, idx));
+    if (trajectory[idx] == null) return;
+    document.getElementById('replaySlider').value = idx;
     if (!replayMode) {
       liveState = state;
       replayMode = true;
@@ -2565,7 +2568,7 @@
     if(body&&!body.querySelector('.featured-actions')){const actions=document.createElement('div');actions.className='featured-actions';actions.innerHTML='<button type="button" class="step-btn" data-start-featured></button>';body.appendChild(actions)}
   }
   let active=new URL(location.href).searchParams.get('mode')||'explore';if(!panels[active])active='explore';
-  let restoring=false;
+  let restoring=true;
 
   function profileScenario(){
     const profile=window.APPLET_LEARNER_PROFILE||{};

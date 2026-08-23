@@ -5,7 +5,7 @@
   const CONFIGS = {
     'search-pathfinding': {
       scenario: 0, transferScenario: 1, action: '#stepBtn', actionClicks: 1,
-      mask: ['.bento-main'], actual: ['#a11yStateSummary', '#tpCount', '.stage-caption', '.stage-metric'],
+      mask: ['#grid', '.stats-strip'], actual: ['#a11yStateSummary', '#tpCount', '.stage-caption', '.stage-metric'],
       en: {
         title: 'Predict the next frontier move',
         prompt: 'Before one search step is revealed, predict which frontier state will be expanded next and explain the ordering rule that makes it next.',
@@ -22,20 +22,20 @@
       ]
     },
     'hill-climbing': {
-      scenario: 1, transferScenario: 2, action: '#stepBtn', actionClicks: 1,
-      mask: ['.bento-main'], actual: ['#a11yStateSummary', '#tpCount', '#status'],
+      scenario: 0, transferScenario: 2, action: '#stepBtn', actionClicks: 1,
+      mask: ['.bento-main'], actual: ['#a11yStateSummary', '#tpCount', '#costV', '#bestV', '#acceptV'],
       en: {
-        title: 'Predict the accepted candidate',
-        prompt: 'Before the next local-search step is revealed, predict which candidate will be accepted and identify the comparison rule that permits or rejects it.',
-        transfer: 'Changed case: repeat with a different local-search strategy and compare the acceptance rule.'
+        title: 'Predict the next move outcome',
+        prompt: 'Before one best-improvement hill-climbing step is revealed, predict whether the accepted move will lower the tour cost, leave the state unchanged because no improving neighbor exists, or worsen the cost, and identify the rule that governs acceptance.',
+        transfer: 'Changed case: switch to simulated annealing and predict whether a worsening move can now be accepted.'
       },
       zh: {
-        title: '预测会被接受的候选状态',
-        prompt: '在揭示下一次局部搜索步骤之前，预测哪个候选状态会被接受，并说明当前比较规则为什么允许或拒绝它。',
-        transfer: '迁移情境：换一种局部搜索策略，再比较接受规则。'
+        title: '预测下一步移动结果',
+        prompt: '在揭示一次最佳改进爬山步骤之前，预测被接受的移动会降低路线成本、因为没有更优邻居而保持不变，还是会让成本变差，并说明接受规则。',
+        transfer: '迁移情境：切换到模拟退火，再预测是否可能接受一次变差移动。'
       },
       fields: [
-        {key:'candidate', type:'text', en:'Candidate you expect to be accepted', zh:'你预测会被接受的候选状态'},
+        {key:'outcome', type:'select', en:'Predicted move outcome', zh:'预测移动结果', options:[['improve','Cost decreases','成本下降'],['unchanged','No improving move is accepted','没有改进移动被接受'],['worse','Cost increases','成本上升']]},
         {key:'rule', type:'select', en:'Expected comparison rule', zh:'预期比较规则', options:[
           ['improve','Accept only an improving move','只接受改进移动'],
           ['worse','A worsening move can be accepted','可能接受变差移动'],
@@ -45,7 +45,7 @@
     },
     'wumpus-world': {
       scenario: 4, transferScenario: 2, action: '#stepBtn', actionClicks: 1,
-      mask: ['.bento-main'], actual: ['#a11yStateSummary', '#log', '#scoreV'],
+      mask: ['.cell-maps', '.cell-analysis'], actual: ['#a11yStateSummary', '#log', '#scoreV'],
       en: {
         title: 'Classify a frontier square before the move',
         prompt: 'Choose one frontier square and predict whether the current evidence makes it proven safe, a possible hazard, or unresolved before the agent takes its next step.',
@@ -64,7 +64,7 @@
       ]
     },
     'cnf-sat': {
-      scenario: 2, transferScenario: 3, action: '#dpllStep', actionClicks: 1,
+      scenario: 2, transferScenario: 3, action: '#dpllStep', actionClicks: 1, concealOnPrepare: true,
       mask: ['#parseOut', '#cnfPlayer', '#satOut', '#dpllPlayer', '#resolveOut'],
       actual: ['#dpllAction', '#dpllDetail', '#dpllAssign', '#dpllClauses'],
       en: {
@@ -103,18 +103,20 @@
       ]
     },
     'bayes-network': {
-      scenario: 1, transferScenario: 2,
+      scenario: 2, transferScenario: 3,
       mask: ['.net-cpts', '.infer-section'], actual: ['#a11yStateSummary'],
       en: {
         title: 'Predict an evidence update and dependence status',
-        prompt: 'Before the prepared evidence is revealed, predict the direction of the target probability update and whether the two report variables are independent under the stated conditioning set.',
-        transfer: 'Changed case: add the second report and reconsider the dependence relation after conditioning on Alarm.'
+        prompt: 'With JohnCalls=true and MaryCalls=true, predict whether P(Alarm) increases and whether JohnCalls and MaryCalls are conditionally independent given Alarm. The evidence settings stay visible; the posterior and mechanism explanation stay hidden until reveal.',
+        transfer: 'Changed case: with the calls observed, add Earthquake=true; predict how P(Burglary) changes and whether Burglary and Earthquake are independent when conditioning on Alarm.'
       },
       zh: {
         title: '预测证据更新与条件依赖关系',
-        prompt: '在揭示准备好的证据之前，预测目标概率会向哪个方向变化，并判断在给定条件集下两个报告变量是否独立。',
-        transfer: '迁移情境：加入第二个报告，并在给定 Alarm 后重新判断依赖关系。'
+        prompt: '当 JohnCalls=true 且 MaryCalls=true 时，预测 P(Alarm) 是否上升，并判断在给定 Alarm 后 JohnCalls 与 MaryCalls 是否条件独立。证据设置保持可见；后验与机制解释会一直隐藏到揭示。',
+        transfer: '迁移情境：在两个来电已观察的情况下加入 Earthquake=true，预测 P(Burglary) 如何变化，并判断给定 Alarm 后 Burglary 与 Earthquake 是否独立。'
       },
+      actualNote: {en:'Model relation: JohnCalls and MaryCalls are conditionally independent given Alarm.', zh:'模型关系：给定 Alarm 后，JohnCalls 与 MaryCalls 条件独立。'},
+      transferActualNote: {en:'Model relation: conditioning on the common effect Alarm makes Burglary and Earthquake dependent; this is explaining away.', zh:'模型关系：给定共同结果 Alarm 后，Burglary 与 Earthquake 会产生条件依赖，这就是解释消除。'},
       fields: [
         {key:'direction', type:'select', en:'Predicted probability direction', zh:'预测概率方向', options:[
           ['up','Increase','上升'], ['down','Decrease','下降'], ['same','About the same','大致不变']
@@ -144,7 +146,7 @@
     },
     'neural-network': {
       scenario: 1, transferScenario: 2, action: '#stepBtn', actionClicks: 12,
-      mask: ['.bento-main'], actual: ['#a11yStateSummary', '#lossV', '#accV'],
+      mask: ['.bento-main'], actual: ['#a11yStateSummary', '#datasetSel', '#actSel', '#h1V', '#h2V', '#lossV', '#accV'],
       en: {
         title: 'Predict the representational change',
         prompt: 'Before training frames are revealed, predict whether the prepared architecture is restricted to an affine boundary or can represent a curved boundary, and explain which feature or activation makes the difference.',
@@ -163,44 +165,44 @@
       ]
     },
     'kmeans': {
-      scenario: 4, transferScenario: 1, action: '#stepBtn', actionClicks: 2,
-      mask: ['.bento-main'], actual: ['#a11yStateSummary', '#sseV', '#silV', '#iterV'],
+      scenario: 0, transferScenario: 3, action: '#stepBtn', actionClicks: 2,
+      mask: ['.bento-main'], actual: ['#a11yStateSummary', '#cvOverlay circle[data-role="point"]', '#cvOverlay rect[data-role="centroid"]', '#iterV', '#inertiaV', '#silhOverall'],
       en: {
         title: 'Predict assignment and centroid movement',
-        prompt: 'Before the next assignment/update cycle is revealed, predict which cluster a representative point will join and the direction its centroid should move.',
-        transfer: 'Changed case: use a poor initialization and predict how the first update differs.'
+        prompt: 'The initial points and centroids are visible. Before the first assignment/update cycle is revealed, predict which cluster Point 1 will join and approximately where Centroid 1 will be after the update.',
+        transfer: 'Changed case: use k-means++ initialization on packed groups and predict Point 1 and Centroid 1 again.'
       },
       zh: {
         title: '预测分配与质心移动',
-        prompt: '在揭示下一轮分配与更新之前，预测一个代表性点会加入哪个簇，以及对应质心应向哪个方向移动。',
-        transfer: '迁移情境：改用较差的初始化，再预测第一次更新有何不同。'
+        prompt: '初始数据点和质心保持可见。在揭示第一次分配与更新之前，预测 Point 1 会加入哪个簇，以及更新后 Centroid 1 大约位于哪里。',
+        transfer: '迁移情境：在紧密群组上改用 k-means++ 初始化，再次预测 Point 1 与 Centroid 1。'
       },
       fields: [
-        {key:'assignment', type:'text', en:'Predicted cluster assignment', zh:'预测簇分配'},
-        {key:'movement', type:'text', en:'Predicted centroid movement', zh:'预测质心移动方向'}
+        {key:'assignment', type:'text', en:'Predicted cluster for Point 1', zh:'预测 Point 1 所属簇'},
+        {key:'movement', type:'text', en:'Approximate updated position of Centroid 1', zh:'Centroid 1 更新后的大致位置'}
       ]
     },
     'convolution': {
       scenario: 0, transferScenario: 1,
-      mask: ['.canvas-pair'], actual: ['#a11yStateSummary', '#szOut', '#windowMath', '#hiSum'],
+      mask: ['#output', '#windowInspector'], actual: ['#a11yStateSummary', '#szOut', '#windowMath'],
       en: {
         title: 'Predict one output-cell calculation',
-        prompt: 'Before the output is revealed, predict the value of a representative output cell and explain which input values and kernel weights contribute to its multiply-and-sum.',
+        prompt: 'The input image and kernel stay visible. Before the output is revealed, predict the value of the center output cell and list the input-by-kernel products that contribute to its multiply-and-sum.',
         transfer: 'Changed case: switch to an edge kernel and predict how the sign and magnitude of the response change.'
       },
       zh: {
         title: '预测一个输出单元的计算',
-        prompt: '在揭示输出之前，预测一个代表性输出单元的值，并说明哪些输入值和卷积核权重参与了乘加。',
+        prompt: '输入图像和卷积核保持可见。在揭示输出之前，预测中心输出单元的数值，并列出参与乘加的输入值与卷积核权重乘积。',
         transfer: '迁移情境：切换到边缘卷积核，再预测响应的符号和大小如何变化。'
       },
       fields: [
-        {key:'value', type:'number', en:'Predicted output-cell value', zh:'预测输出单元数值'},
+        {key:'value', type:'number', en:'Predicted center output-cell value', zh:'预测中心输出单元数值'},
         {key:'products', type:'textarea', en:'Which products contribute?', zh:'哪些乘积项会参与？'}
       ]
     },
     'q-learning-gridworld': {
       scenario: 2, transferScenario: 3, action: '#stepBtn', actionClicks: 1,
-      mask: ['.bento-main'], actual: ['#a11yStateSummary', '#status', '#tpCount'],
+      mask: ['.bento-main'], actual: ['#a11yStateSummary', '#tpCount', '#epV', '#stV', '#retV'],
       en: {
         title: 'Predict the TD update',
         prompt: 'Before one transition is revealed, predict the selected action, the TD target or its direction, and whether the current Q value should move up, down, or stay about the same.',
@@ -224,6 +226,7 @@
       explore:'Explore', guided:'Guided Challenge', modeLabel:'Learning mode',
       begin:'Prepare challenge', lock:'Lock prediction', reveal:'Reveal mechanism', compare:'Compare', reset:'Reset challenge',
       explain:'Explain the discrepancy', transfer:'Try changed case', prediction:'Your locked prediction', actual:'Revealed applet state',
+      before:'Before the hidden step', after:'After the hidden step', actionUnavailable:'The prepared applet step is unavailable. Reset the challenge instead of revealing a fabricated result.',
       hidden:'The relevant result is hidden until you lock a prediction and reveal it.',
       states:{
         inactive:'Challenge inactive. Prepare a challenge when you are ready.',
@@ -239,6 +242,7 @@
       explore:'自由探索', guided:'引导挑战', modeLabel:'学习模式',
       begin:'准备挑战', lock:'锁定预测', reveal:'揭示机制', compare:'比较', reset:'重置挑战',
       explain:'解释预测与结果的差异', transfer:'尝试变化后的情境', prediction:'已锁定的预测', actual:'揭示后的工具状态',
+      before:'隐藏步骤之前', after:'隐藏步骤之后', actionUnavailable:'准备好的工具步骤当前不可用。请重置挑战，不要揭示伪造结果。',
       hidden:'相关结果会保持隐藏，直到你锁定预测并主动揭示。',
       states:{
         inactive:'挑战未启动。准备好后开始。',
@@ -265,6 +269,7 @@
   let stateHistory = ['inactive'];
   let lockedPrediction = null;
   let actualSnapshot = '';
+  let beforeActionSnapshot = '';
   let internalMutation = false;
   let transferRound = false;
   const concealed = [];
@@ -458,7 +463,9 @@
 
   function concealOutputs() {
     restoreOutputs();
-    let targets = queryAllUnique(config && config.mask ? config.mask : ['.bento-main']);
+    const maskSelectors = config && config.mask ? config.mask : ['.bento-main'];
+    const actualSelectors = config && config.actual ? config.actual : [];
+    let targets = queryAllUnique([...maskSelectors, ...actualSelectors]);
     if (!targets.length) targets = Array.from(inner.querySelectorAll('canvas'));
     targets.forEach(el => {
       concealed.push({el, visibility:el.style.visibility, aria:el.getAttribute('aria-hidden')});
@@ -504,37 +511,51 @@
   }
 
   function runDeferredAction() {
-    if (!config || !config.action) return;
+    if (!config || !config.action) return true;
     const btn = document.querySelector(config.action);
-    if (!btn) return;
+    if (!btn) return false;
+    const frozenRecord = frozen.find(item => item.el === btn);
+    if (frozenRecord && frozenRecord.disabled) return false;
+    const restoreDisabled = btn.disabled;
     internalMutation = true;
     try {
       const n = Math.max(1, Number(config.actionClicks || 1));
       for (let i = 0; i < n; i += 1) {
-        if (btn.disabled) btn.dispatchEvent(new MouseEvent('click', {bubbles:true, cancelable:true, view:window}));
-        else btn.click();
+        btn.disabled = false;
+        btn.click();
+        if (i < n - 1 && btn.disabled) return false;
       }
-    } finally { internalMutation = false; }
+      return true;
+    } finally {
+      btn.disabled = restoreDisabled;
+      internalMutation = false;
+    }
+  }
+
+  function dispatchCanvasClick(canvas, xFraction, yFraction) {
+    if (!canvas) return false;
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return false;
+    canvas.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,view:window,clientX:rect.left+rect.width*xFraction,clientY:rect.top+rect.height*yFraction}));
+    return true;
+  }
+
+  function prepareChallengeContext(isTransfer = false) {
+    if (slug === 'kmeans') { const place=document.querySelector('#placeBtn'); if (place && !place.disabled) place.click(); }
+    if (slug === 'convolution') dispatchCanvasClick(document.querySelector('#output'),0.5,0.5);
   }
 
   function actualText() {
     try { if (typeof window.renderAccessibilityLayer === 'function') window.renderAccessibilityLayer({announce:false}); } catch (_) {}
-    const selectors = (config && config.actual) || ['#a11yStateSummary'];
-    const parts = [];
-    selectors.forEach(sel => {
-      const el = document.querySelector(sel); if (!el) return;
-      const txt = String(el.innerText || el.textContent || el.value || '').replace(/\s+/g,' ').trim();
-      if (txt && !parts.includes(txt)) parts.push(txt);
-    });
-    if (!parts.length) {
-      const a11y = document.querySelector('#a11yStateSummary');
-      if (a11y) parts.push(String(a11y.innerText || a11y.textContent || '').replace(/\s+/g,' ').trim());
-    }
-    return parts.join('\n').slice(0, 1800) || (lang() === 'zh' ? '请查看已揭示的可视结果。' : 'Inspect the revealed visual result.');
+    const selectors=(config&&config.actual)||['#a11yStateSummary']; const parts=[];
+    selectors.forEach(sel=>{ const el=document.querySelector(sel); if(!el)return; const aria=String(el.getAttribute&&el.getAttribute('aria-label')||'').replace(/\s+/g,' ').trim(); const raw=String(el.innerText||el.textContent||el.value||'').replace(/\s+/g,' ').trim(); const txt=aria&&raw&&aria!==raw?`${aria} | ${raw}`:(aria||raw); if(txt&&!parts.includes(txt))parts.push(txt); });
+    if(!parts.length){const a=document.querySelector('#a11yStateSummary');if(a)parts.push(String(a.innerText||a.textContent||'').replace(/\s+/g,' ').trim());}
+    const note=config&&(transferRound?config.transferActualNote:config.actualNote); const noteText=note&&(note[lang()]||note.en); if(noteText&&!parts.includes(noteText))parts.push(noteText);
+    return parts.join('\n').slice(0,2200)||(lang()==='zh'?'请查看已揭示的可视结果。':'Inspect the revealed visual result.');
   }
 
   function clearGenericSurface() {
-    lockedPrediction = null; actualSnapshot = ''; transferRound = false;
+    lockedPrediction = null; actualSnapshot = ''; beforeActionSnapshot = ''; transferRound = false;
     q('.suite-guided-comparison').hidden = true;
     q('.suite-guided-explain-wrap').hidden = true;
     q('.suite-guided-transfer-wrap').hidden = true;
@@ -548,34 +569,27 @@
   }
 
   function beginGeneric() {
-    clearGenericSurface();
-    concealOutputs();
-    unfreezeExploreControls();
-    applyScenario(transferRound ? config.transferScenario : config.scenario);
-    freezeExploreControls();
-    genericFieldElements().forEach(el => el.disabled = false);
-    beginBtn.disabled = true;
-    setState('awaiting-prediction');
-    updatePredictionState();
-    genericFieldElements()[0]?.focus();
+    clearGenericSurface(); unfreezeExploreControls();
+    if (!config.action || config.concealOnPrepare) concealOutputs();
+    applyScenario(config.scenario); prepareChallengeContext(false); freezeExploreControls();
+    genericFieldElements().forEach(el => el.disabled = false); beginBtn.disabled = true;
+    setState('awaiting-prediction'); updatePredictionState(); genericFieldElements()[0]?.focus();
   }
 
   function lockGeneric() {
     if (lockBtn.disabled || !predictionComplete()) return;
-    lockedPrediction = collectPrediction();
-    genericFieldElements().forEach(el => el.disabled = true);
-    lockBtn.disabled = true;
-    setState('locked');
-    runDeferredAction();
-    revealBtn.disabled = false;
+    lockedPrediction=collectPrediction(); genericFieldElements().forEach(el=>el.disabled=true); lockBtn.disabled=true; setState('locked');
+    if(config.action){ beforeActionSnapshot=actualText(); concealOutputs(); if(!runDeferredAction()){q('.suite-guided-status').textContent=c().actionUnavailable; revealBtn.disabled=true; return;} }
+    revealBtn.disabled=false;
   }
 
   function revealGeneric() {
     if (revealBtn.disabled || state !== 'locked') return;
     restoreOutputs();
-    actualSnapshot = actualText();
-    q('.suite-guided-prediction').textContent = predictionText(lockedPrediction || {});
-    q('.suite-guided-actual').textContent = actualSnapshot;
+    const afterSnapshot=actualText();
+    actualSnapshot=beforeActionSnapshot?`${c().before}:\n${beforeActionSnapshot}\n\n${c().after}:\n${afterSnapshot}`:afterSnapshot;
+    q('.suite-guided-prediction').textContent=predictionText(lockedPrediction||{});
+    q('.suite-guided-actual').textContent=actualSnapshot;
     q('.suite-guided-comparison').hidden = false;
     revealBtn.disabled = true; compareBtn.disabled = false;
     setState('revealed');
@@ -592,12 +606,9 @@
 
   function transferGeneric() {
     if (transferBtn.disabled || state !== 'compared') return;
-    unfreezeExploreControls();
-    concealOutputs();
-    internalMutation = true;
-    try { applyScenario(config.transferScenario); } finally { internalMutation = false; }
-    freezeExploreControls();
-    transferRound = true; lockedPrediction = null; actualSnapshot = '';
+    unfreezeExploreControls(); restoreOutputs(); if(!config.action||config.concealOnPrepare)concealOutputs();
+    internalMutation=true; try { applyScenario(config.transferScenario); prepareChallengeContext(true); } finally { internalMutation=false; }
+    freezeExploreControls(); transferRound=true; lockedPrediction=null; actualSnapshot=''; beforeActionSnapshot='';
     q('.suite-guided-comparison').hidden = true; q('.suite-guided-explain-wrap').hidden = true; q('.suite-guided-transfer-wrap').hidden = true;
     explain.value = ''; transferBtn.disabled = true; revealBtn.disabled = true; compareBtn.disabled = true; beginBtn.disabled = true;
     genericFieldElements().forEach(el => { el.value = ''; el.disabled = false; });
@@ -672,7 +683,7 @@
       extension.querySelector('.suite-guided-transfer-prompt').textContent = lang() === 'zh' ? '改变距离规则后重新预测邻居。' : 'Change the closeness rule and predict the neighbors again.';
       knnTransfer.textContent = c().transfer;
     };
-    renderKnnCopy(); window.addEventListener('languagechange', renderKnnCopy);
+    renderKnnCopy(); document.querySelectorAll('button[data-lang]').forEach(button=>button.addEventListener('click',()=>setTimeout(renderKnnCopy,80)));
     document.querySelector('#guidedStart')?.addEventListener('click', () => setTimeout(() => setState('awaiting-prediction'), 0));
     document.querySelector('#guidedLock')?.addEventListener('click', () => setTimeout(inferKnnState, 0));
     document.querySelector('#guidedReveal')?.addEventListener('click', () => setTimeout(inferKnnState, 0));
@@ -742,6 +753,7 @@
     prediction: () => lockedPrediction ? JSON.parse(JSON.stringify(lockedPrediction)) : null,
     actual: () => actualSnapshot,
     fieldKeys: () => config ? config.fields.map(f => f.key) : [],
+    contract: () => config ? {scenario:config.scenario,transferScenario:config.transferScenario,action:config.action||null,concealOnPrepare:!!config.concealOnPrepare,mask:[...(config.mask||[])],actual:[...(config.actual||[])]} : {native:true},
     start: () => { setMode('guided'); if (slug === 'knn-classifier') document.querySelector('#guidedStart')?.click(); else beginGeneric(); },
     lock: () => { if (slug === 'knn-classifier') document.querySelector('#guidedLock')?.click(); else lockGeneric(); },
     reveal: () => { if (slug === 'knn-classifier') document.querySelector('#guidedReveal')?.click(); else revealGeneric(); },

@@ -37,13 +37,15 @@ def fill_generic(page):
         else: el.fill('prediction')
 
 def check_generic(page,slug,checks):
-    page.locator('[data-suite-mode="guided"]').click()
-    checks.append(('guided_mode_visible',not page.locator('.suite-guided-panel').is_hidden(),{}))
-    page.locator('.suite-guided-begin').click()
-    wait_state(page,'awaiting-prediction')
+    page.locator('[data-suite-mode="guided"]').click(); checks.append(('guided_mode_visible',not page.locator('.suite-guided-panel').is_hidden(),{}))
+    contract=page.evaluate('() => window.__suiteGuidedChallenge.contract()')
+    checks.append(('contract_exposes_scenario_mapping',isinstance(contract,dict) and 'scenario' in contract and 'transferScenario' in contract,{'contract':contract}))
+    page.locator('.suite-guided-begin').click(); wait_state(page,'awaiting-prediction')
     checks.append(('reveal_disabled_before_lock',page.locator('.suite-guided-reveal').is_disabled(),{}))
-    concealed=page.locator('[data-guided-concealed="1"]').count()
-    checks.append(('result_concealed_before_prediction',concealed>=1,{'concealed':concealed}))
+    concealed=page.locator('[data-guided-concealed="1"]').count(); should=bool(contract.get('concealOnPrepare')) or not bool(contract.get('action'))
+    checks.append(('concealment_timing_matches_challenge_type',concealed>=1 if should else concealed==0,{'concealed':concealed,'should_conceal_on_prepare':should,'contract':contract}))
+    counts={sel:page.locator(sel).count() for sel in contract.get('mask',[])}
+    checks.append(('configured_mask_selectors_exist',all(n>0 for n in counts.values()),{'selectors':counts}))
     fill_generic(page)
     wait_state(page,'prediction-complete-unlocked')
     checks.append(('lock_enabled_only_when_complete',not page.locator('.suite-guided-lock').is_disabled(),{}))
@@ -53,6 +55,8 @@ def check_generic(page,slug,checks):
     disabled=page.locator('[data-guided-field]').evaluate_all('(els)=>els.every(e=>e.disabled)')
     checks.append(('locked_prediction_immutable',bool(disabled),{'values':values_before}))
     checks.append(('reveal_enabled_after_lock',not page.locator('.suite-guided-reveal').is_disabled(),{}))
+    if contract.get('action'):
+        n=page.locator('[data-guided-concealed="1"]').count(); checks.append(('step_result_concealed_after_lock',n>=1,{'concealed':n}))
     zh=page.locator('button[data-lang="zh"]')
     en=page.locator('button[data-lang="en"]')
     if zh.count() and en.count():
@@ -63,7 +67,13 @@ def check_generic(page,slug,checks):
     page.locator('.suite-guided-reveal').click()
     wait_state(page,'revealed')
     actual=page.locator('.suite-guided-actual').inner_text().strip()
-    checks.append(('reveal_has_text_actual',bool(actual),{'actual':actual[:240]}))
+    checks.append(('reveal_has_text_actual',bool(actual) and 'Inspect the revealed visual result.' not in actual,{'actual':actual[:500]}))
+    if contract.get('action'): checks.append(('step_reveal_has_before_after_text','Before the hidden step' in actual and 'After the hidden step' in actual,{'actual':actual[:700]}))
+    semantic=True
+    if slug=='bayes-network': semantic='conditionally independent given Alarm' in actual
+    elif slug=='kmeans': semantic='Point 1:' in actual and 'Centroid 1 at' in actual
+    elif slug=='convolution': semantic='Σ =' in actual
+    checks.append(('mechanism_specific_actual_text',semantic,{'slug':slug,'actual':actual[:700]}))
     checks.append(('result_unconcealed_after_reveal',page.locator('[data-guided-concealed="1"]').count()==0,{}))
     page.locator('.suite-guided-compare').click(); wait_state(page,'compared')
     checks.append(('compare_precedes_explanation',not page.locator('.suite-guided-explain-wrap').is_hidden(),{}))
@@ -72,7 +82,9 @@ def check_generic(page,slug,checks):
     page.locator('.suite-guided-transfer').click(); wait_state(page,'awaiting-prediction')
     cleared=page.locator('[data-guided-field]').evaluate_all('(els)=>els.every(e=>e.value==="")')
     checks.append(('transfer_requires_new_prediction',bool(cleared),{}))
-    checks.append(('transfer_reconceals_actual',page.locator('[data-guided-concealed="1"]').count()>=1,{}))
+    transfer_concealed=page.locator('[data-guided-concealed="1"]').count()
+    transfer_should_conceal=bool(contract.get('concealOnPrepare')) or not bool(contract.get('action'))
+    checks.append(('transfer_concealment_timing_matches_challenge_type',transfer_concealed>=1 if transfer_should_conceal else transfer_concealed==0,{'concealed':transfer_concealed,'should_conceal':transfer_should_conceal}))
     page.locator('.suite-guided-reset').click(); wait_state(page,'inactive')
     hist=history(page)
     checks.append(('reset_returns_inactive_and_records_reset',state(page)=='inactive' and 'reset' in hist,{'history':hist}))
@@ -121,7 +133,9 @@ def check_knn(page,checks):
     if zh.count() and en.count():
         zh.first.click();page.wait_for_timeout(100)
         checks.append(('language_switch_preserves_knn_prediction',state(page)=='prediction-complete-unlocked' and not page.locator('#guidedLock').is_disabled(),{}))
-        en.first.click();page.wait_for_timeout(80)
+        checks.append(('knn_extension_translates_to_chinese',page.locator('.suite-guided-knn-compare').inner_text().strip()=='比较',{'label':page.locator('.suite-guided-knn-compare').inner_text().strip()}))
+        en.first.click();page.wait_for_timeout(100)
+        checks.append(('knn_extension_returns_to_english',page.locator('.suite-guided-knn-compare').inner_text().strip()=='Compare',{'label':page.locator('.suite-guided-knn-compare').inner_text().strip()}))
     page.locator('#guidedLock').click(); wait_state(page,'locked')
     checks.append(('knn_reveal_enabled_after_lock',not page.locator('#guidedReveal').is_disabled(),{}))
     page.locator('#guidedReveal').click(); wait_state(page,'revealed')

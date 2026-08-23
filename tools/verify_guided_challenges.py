@@ -12,14 +12,14 @@ APPLETS=[
 START='<!-- suite-guided-challenge-v2:start -->';END='<!-- suite-guided-challenge-v2:end -->'
 REQUIRED_STATES=['inactive','awaiting-prediction','prediction-complete-unlocked','locked','revealed','compared','reset']
 PREDICTION_TERMS={
- 'search-pathfinding':['Next frontier state or coordinate'], 'hill-climbing':['Candidate you expect to be accepted'],
+ 'search-pathfinding':['Next frontier state or coordinate'], 'hill-climbing':['Predicted move outcome'],
  'wumpus-world':['Predicted knowledge status'], 'cnf-sat':['Next mechanism'],
  'bayes-classifier':['Predicted true positives','Predicted false positives'],
  'bayes-network':['Predicted probability direction','Predicted dependence status'],
  'overfitting':['Training error','Validation error'], 'neural-network':['Predicted boundary family'],
  'knn-classifier':['#knnGuided','guidedLock','guidedReveal'],
- 'kmeans':['Predicted cluster assignment','Predicted centroid movement'],
- 'convolution':['Predicted output-cell value'], 'q-learning-gridworld':['Predicted action','Predicted Q update direction'],
+ 'kmeans':['Predicted cluster for Point 1','Approximate updated position of Centroid 1'],
+ 'convolution':['Predicted center output-cell value'], 'q-learning-gridworld':['Predicted action','Predicted Q update direction'],
 }
 EXPECTED_BLOCK='''<!-- suite-guided-challenge-v2:start -->\n<link href="../../assets/guided-challenges.css" rel="stylesheet"/>\n<script defer src="../../assets/guided-challenges.js"></script>\n<!-- suite-guided-challenge-v2:end -->'''
 
@@ -48,6 +48,9 @@ def main()->int:
         checks.append({'kind':'shared-asset-reference','applet':slug,'pass':exact})
         if not exact:failures.append(f'{slug}: guided asset reference block missing, duplicated, or altered')
         hashes.append(hashlib.sha256(b.encode()).hexdigest() if b else '')
+        restore_ok='let restoring=true;' in text and 'let restoring=false;' not in text
+        checks.append({'kind':'pre-restore-url-write-suppression','applet':slug,'pass':restore_ok})
+        if not restore_ok:failures.append(f'{slug}: learning-mode URL writes are not suppressed before deferred restore')
         source=js if slug!='knn-classifier' else js+'\n'+text
         for phrase in PREDICTION_TERMS[slug]:
             ok=phrase in source;checks.append({'kind':'prediction-object','applet':slug,'phrase':phrase,'pass':ok})
@@ -67,8 +70,28 @@ def main()->int:
     for token in ["setState('locked')","setState('revealed')","setState('compared')","visibility = 'hidden'","el.disabled = true","button[data-lang]"]:
         ok=token in js;checks.append({'kind':'state-mechanism','token':token,'pass':ok})
         if not ok:failures.append(f'missing state mechanism {token}')
+    freeze_required=[
+      "scenario: 0, transferScenario: 2, action: '#stepBtn'","scenario: 2, transferScenario: 3,","scenario: 0, transferScenario: 3, action: '#stepBtn'",
+      "mask: ['.cell-maps', '.cell-analysis']","mask: ['#grid', '.stats-strip']",'concealOnPrepare: true','beforeActionSnapshot','const frozenRecord = frozen.find(item => item.el === btn);',
+      'function prepareChallengeContext(isTransfer = false)',"dispatchCanvasClick(document.querySelector('#output'),0.5,0.5)",
+      'JohnCalls and MaryCalls are conditionally independent given Alarm','contract: () => config ?','setTimeout(renderKnnCopy,80)'
+    ]
+    for token in freeze_required:
+      ok=token in js;checks.append({'kind':'english-freeze-contract','token':token,'pass':ok})
+      if not ok:failures.append('English-freeze contract missing: '+token)
+    for token in ["btn.dispatchEvent(new MouseEvent('click'",'#sseV','#silV','#hiSum',"actual: ['#a11yStateSummary', '#status', '#tpCount']"]:
+      ok=token not in js;checks.append({'kind':'english-freeze-forbidden','token':token,'pass':ok})
+      if not ok:failures.append('English-freeze stale mechanism remains: '+token)
+    hill=(ROOT/'playgrounds/hill-climbing/index.html').read_text(encoding='utf-8-sig')
+    hill_guard='Number.isNaN(idx)' in hill and 'Math.min(trajectory.length - 1, idx)' in hill and 'trajectory[idx] == null' in hill
+    checks.append({'kind':'hill-replay-restore-guard','pass':hill_guard})
+    if not hill_guard:failures.append('Hill replay restoration does not clamp and validate transient trajectory indices')
+    overfit=(ROOT/'playgrounds/overfitting/index.html').read_text(encoding='utf-8-sig')
+    ok='"label": "Validation MSE", "zhLabel": "验证 MSE", "selector": "#testMse"' in overfit
+    checks.append({'kind':'english-freeze-zh-parity','pass':ok})
+    if not ok:failures.append('Overfitting Chinese accessibility label still says test MSE')
     doc=ROOT/'docs/GUIDED_CHALLENGE_ARCHITECTURE.md';dt=doc.read_text(encoding='utf-8-sig') if doc.is_file() else ''
-    for phrase in ['Prompt -> Commit prediction -> Reveal mechanism -> Compare -> Explain -> Transfer','R2 suite-wide implementation','prediction-complete-unlocked','shared external assets']:
+    for phrase in ['Prompt -> Commit prediction -> Reveal mechanism -> Compare -> Explain -> Transfer','R2 suite-wide implementation','prediction-complete-unlocked','shared external assets','R2 English freeze hardening']:
         ok=phrase in dt;checks.append({'kind':'architecture-doc','phrase':phrase,'pass':ok})
         if not ok:failures.append(f'architecture doc missing {phrase}')
     wf=ROOT/'.github/workflows/verify.yml';wt=wf.read_text(encoding='utf-8-sig') if wf.is_file() else ''

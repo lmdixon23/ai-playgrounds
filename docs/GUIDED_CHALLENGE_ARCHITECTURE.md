@@ -120,3 +120,18 @@ Implementation rules:
 - The suite-level challenge JavaScript and CSS are shared external assets. Applet pages contain only stable references to those assets, avoiding duplicated implementation copies and keeping one canonical state machine.
 
 R2 adds static contract verification and a twelve-applet browser state-transition suite. The browser suite checks reveal-before-lock prevention, immutable locked predictions, bilingual state preservation, text-equivalent actual results, compare-before-explain ordering, transfer-to-new-prediction behavior, reset behavior, and the KNN exact-neighbor path.
+
+## R2 English freeze hardening
+
+The English freeze audit adds a stricter mechanism-alignment contract on top of the generic state machine.
+
+- Step-based applets keep the prepared stimulus visible while the learner predicts. The result is concealed only after lock and before the deferred applet step runs.
+- Immediate-computation applets conceal only result surfaces before scenario application.
+- Accessibility text that contains the answer is concealed together with the visual answer and restored at Reveal.
+- Deferred actions use the same enabled control path available in Explore mode. Disabled applet actions fail closed rather than being force-dispatched.
+- Step-based reveals include text snapshots from before and after the hidden step.
+- Frozen scenario mappings align Hill Climbing with best-improvement then simulated annealing, Bayesian Networks with two-report conditional independence then explaining away, and K-means with assignment/update then k-means++ initialization.
+- K-means names Point 1 and Centroid 1 and reveals text labels/coordinates. Convolution names the center output cell and precomputes its hidden window arithmetic.
+- Challenge responses remain ephemeral and are not added to URLs, localStorage, sessionStorage, analytics, or the student response packet.
+- Learning-mode URL writes remain suppressed until the deferred URL-state restore completes, preventing challenge input from overwriting pending shared-state restoration.
+- Replay history is treated as transient state; Hill validates restored replay indices against the trajectory currently available before rendering.
