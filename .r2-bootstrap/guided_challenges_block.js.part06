@@ -1,0 +1,57 @@
+  document.querySelector('#guidedReset')?.addEventListener('click', () => setTimeout(() => { if (state !== 'reset') setState('inactive'); }, 0));
+    const mo = new MutationObserver(inferKnnState);
+    ['#guidedLock','#guidedReveal','#guidedResult'].forEach(sel => { const el = document.querySelector(sel); if (el) mo.observe(el,{attributes:true,childList:true,subtree:true}); });
+    knnCompare.addEventListener('click', () => {
+      if (state !== 'revealed') return; knnCompare.disabled = true;
+      extension.querySelector('.suite-guided-explain-wrap').hidden = false; extension.querySelector('.suite-guided-transfer-wrap').hidden = false;
+      setState('compared'); knnExplain.focus();
+    });
+    knnExplain.addEventListener('input', () => knnTransfer.disabled = !knnExplain.value.trim());
+    knnTransfer.addEventListener('click', () => {
+      if (knnTransfer.disabled) return;
+      document.querySelector('#guidedReset')?.click();
+      const metric = document.querySelector('#metricSel');
+      if (metric) { metric.value = metric.value === 'euclidean' ? 'manhattan' : 'euclidean'; metric.dispatchEvent(new Event('change',{bubbles:true})); }
+      document.querySelector('#guidedStart')?.click();
+      knnExplain.value = ''; knnTransfer.disabled = true; knnCompare.disabled = true;
+      extension.querySelector('.suite-guided-explain-wrap').hidden = true; extension.querySelector('.suite-guided-transfer-wrap').hidden = true;
+      setState('awaiting-prediction');
+    });
+  }
+
+  modeExplore.addEventListener('click', () => setMode('explore'));
+  modeGuided.addEventListener('click', () => setMode('guided'));
+  resetBtn.addEventListener('click', () => resetChallenge(true));
+
+  document.querySelectorAll('button[data-lang]').forEach(button => button.addEventListener('click', () => {
+    setTimeout(() => {
+      const values = {};
+      genericFieldElements().forEach(el => values[el.dataset.guidedField] = el.value);
+      renderCopy();
+      genericFieldElements().forEach(el => { if (Object.prototype.hasOwnProperty.call(values, el.dataset.guidedField)) el.value = values[el.dataset.guidedField]; });
+      if (slug === 'knn-classifier') inferKnnState();
+    }, 60);
+  }));
+
+  document.querySelector('#hardReset')?.addEventListener('click', () => {
+    if (state !== 'inactive' && !internalMutation) resetChallenge(true);
+  }, true);
+
+  if (slug === 'knn-classifier') setupKnn(); else setupGeneric();
+  renderCopy(); setMode('explore');
+
+  window.__suiteGuidedChallenge = {
+    slug,
+    mode: () => mode,
+    state: () => state,
+    history: () => stateHistory.slice(),
+    prediction: () => lockedPrediction ? JSON.parse(JSON.stringify(lockedPrediction)) : null,
+    actual: () => actualSnapshot,
+    fieldKeys: () => config ? config.fields.map(f => f.key) : [],
+    start: () => { setMode('guided'); if (slug === 'knn-classifier') document.querySelector('#guidedStart')?.click(); else beginGeneric(); },
+    lock: () => { if (slug === 'knn-classifier') document.querySelector('#guidedLock')?.click(); else lockGeneric(); },
+    reveal: () => { if (slug === 'knn-classifier') document.querySelector('#guidedReveal')?.click(); else revealGeneric(); },
+    compare: () => { if (slug === 'knn-classifier') knnCompare?.click(); else compareGeneric(); },
+    reset: () => resetChallenge(true)
+  };
+})();
