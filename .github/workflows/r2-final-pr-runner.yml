@@ -1,0 +1,93 @@
+name: R2 final freeze PR runner
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/r2-final-pr-runner.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Materialize immutable direct runner
+        run: |
+          set -euo pipefail
+          curl -fsSL "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/22f3029321a7bab515b7c0f00b132660f4d60721/.github/workflows/r2-guided-bootstrap.yml" -o /tmp/direct.yml
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('/tmp/direct.yml').read_text(encoding='utf-8')
+          names={
+            'patch':'Apply English freeze directly to exact R2 head',
+            'install':'Install browser QA dependencies',
+            'tests':'Run final English-freeze validation stack',
+            'push':'Commit and fast-forward exact R2 branch',
+          }
+          for key,name in names.items():
+              marker=f'      - name: {name}\n'
+              a=s.index(marker)
+              a=s.index('        run: |\n',a)+len('        run: |\n')
+              b=s.find('\n      - name:',a)
+              if b<0:b=len(s)
+              raw=s[a:b]
+              prefix=' '*10
+              code='\n'.join(line[len(prefix):] if line.startswith(prefix) else line for line in raw.splitlines())+'\n'
+              Path(f'/tmp/{key}.sh').write_text(code,encoding='utf-8')
+          print('R2_FINAL_PR_RUNNER_MATERIALIZATION=PASS')
+          PY
+
+      - name: Apply exact final patch
+        id: patch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          rm -rf /tmp/r2
+          bash /tmp/patch.sh
+
+      - name: Install browser QA dependencies
+        id: install
+        run: bash /tmp/install.sh
+
+      - name: Run full final validation
+        id: tests
+        working-directory: /tmp/r2
+        run: bash /tmp/tests.sh
+
+      - name: Fast-forward R2 only after all gates pass
+        id: push
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash /tmp/push.sh
+
+      - name: Publish final receipt
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PATCH: ${{ steps.patch.outcome }}
+          INSTALL: ${{ steps.install.outcome }}
+          TESTS: ${{ steps.tests.outcome }}
+          PUSH: ${{ steps.push.outcome }}
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/status
+          git fetch origin automation/r2-english-freeze-status
+          git worktree add /tmp/status origin/automation/r2-english-freeze-status
+          head="$(git ls-remote "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" refs/heads/feature/v1.1.0-guided-challenges-r2 | cut -f1)"
+          printf 'run_id=%s\npatch=%s\ninstall=%s\ntests=%s\npush=%s\nr2_head=%s\ntrigger=temporary-pr\n' "$GITHUB_RUN_ID" "$PATCH" "$INSTALL" "$TESTS" "$PUSH" "$head" > /tmp/status/R2_ENGLISH_FREEZE_STATUS.txt
+          git -C /tmp/status config user.name 'Logan M. Dixon'
+          git -C /tmp/status config user.email '178442787+lmdixon23@users.noreply.github.com'
+          git -C /tmp/status add R2_ENGLISH_FREEZE_STATUS.txt
+          git -C /tmp/status commit -m "Record PR-triggered final R2 freeze ${GITHUB_RUN_ID}"
+          git -C /tmp/status push origin HEAD:refs/heads/automation/r2-english-freeze-status
