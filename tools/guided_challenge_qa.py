@@ -22,12 +22,13 @@ def history(page): return page.evaluate('() => window.__suiteGuidedChallenge?.hi
 
 def switch_applet_locale(page, code, timeout=7000):
     # EN/ZH remain the applet's native languages. Exercise those through the same
-    # buttons a learner uses, even when R4 is present. VI/ES use the R4 overlay API
-    # and are independently covered by r4_localization_qa.py.
+    # handlers a learner uses, even when R4 hides the legacy buttons behind the
+    # four-language select. VI/ES use the R4 overlay API and are independently
+    # covered by r4_localization_qa.py.
     if code in ('en','zh'):
         button=page.locator(f'button[data-lang="{code}"]')
         if not button.count(): raise RuntimeError(f'language control missing: {code}')
-        button.first.click(force=True)
+        button.first.evaluate("(el) => el.click()")
     else:
         has_r4=page.evaluate("() => !!window.__r4Localization && window.__r4Localization.ready()")
         if not has_r4: raise RuntimeError(f'R4 localization runtime unavailable for locale: {code}')
