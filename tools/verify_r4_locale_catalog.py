@@ -5,6 +5,12 @@ import argparse, json, pathlib, re, shutil, subprocess, tempfile
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 ASCII_WORD=re.compile(r'[A-Za-z]{2,}')
 SKIP_EXACT={'EN','中文','English','简体中文','Tiếng Việt','Español','GitHub','ORCID'}
+# Dynamic numeric observations are applet state, not stable localization keys.
+# In Overfitting these values are regenerated from the current random sample, so
+# exact-string catalogs would necessarily fail whenever the sample changes.
+DYNAMIC_DATA=(
+    re.compile(r'^\(\s*[+\-−]?(?:\d+(?:\.\d+)?|\.\d+)\s*,\s*[+\-−]?(?:\d+(?:\.\d+)?|\.\d+)\s*\)\s+residual\s*=\s*[+\-−]?(?:\d+(?:\.\d+)?|\.\d+)$', re.I),
+)
 
 def launch(p):
     args=['--no-sandbox','--disable-dev-shm-usage']
@@ -20,6 +26,7 @@ def translatable(s):
     s=norm(s)
     if not s or s in SKIP_EXACT or len(s)>1200: return False
     if s.startswith(('http://','https://','data:')): return False
+    if any(pattern.fullmatch(s) for pattern in DYNAMIC_DATA): return False
     if not ASCII_WORD.search(s): return False
     if re.fullmatch(r'[A-Za-z0-9_./:+×−–—↺↑←→<>=%()\[\],;|* ]+',s) and len(s)<24: return False
     return True
