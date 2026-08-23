@@ -34,9 +34,9 @@ jobs:
           set -euo pipefail
           cd .r2-bootstrap
           printf '%s  %s\n' \
-            'd247071bb67d3a255e2126753364616bf2239dffcc35d80badcf31b7be6d13e2' 'apply_r2.py' \
+            'ec52526eb4dc898a9dbd4e75a32073973d2aedb0053423459b53f0ee3a4cc3b4' 'apply_r2.py' \
             'f3243c0ca6a346113f3e63e8cdf7407c89ca6605d26561f4c31d433d1aa92e58' 'guided_challenges_block.css' \
-            '6fbb8d2619ea7b8b05a75ea53c92da67ba2bfc5d2784982806efd47fbc256162' 'verify_guided_challenges.py' | sha256sum -c -
+            'a20512ae9640dc9f566ca08daeb889cde220b5c24c4fa2fdd7fba65b5ecec1d8' 'verify_guided_challenges.py' | sha256sum -c -
           cat guided_challenges_block.js.part* > guided_challenges_block.js
           python -m py_compile apply_r2.py verify_guided_challenges.py guided_challenge_qa.py
           node --check guided_challenges_block.js
@@ -68,8 +68,9 @@ jobs:
           python - <<'PY'
           import json
           expected={
-            '.github/workflows/verify.yml','docs/GUIDED_CHALLENGE_ARCHITECTURE.md','tools/browser_qa.py',
+            '.github/workflows/verify.yml','docs/GUIDED_CHALLENGE_ARCHITECTURE.md','tools/browser_qa.py','tools/build_site.py',
             'tools/verify_guided_challenges.py','tools/guided_challenge_qa.py',
+            'assets/guided-challenges.css','assets/guided-challenges.js',
             'playgrounds/bayes-classifier/index.html','playgrounds/bayes-network/index.html','playgrounds/cnf-sat/index.html',
             'playgrounds/convolution/index.html','playgrounds/hill-climbing/index.html','playgrounds/kmeans/index.html',
             'playgrounds/knn-classifier/index.html','playgrounds/neural-network/index.html','playgrounds/overfitting/index.html',
@@ -78,7 +79,7 @@ jobs:
           report=json.load(open('/tmp/r2-report.json',encoding='utf-8'))
           got=set(report['changed_files'])
           assert got==expected,(sorted(expected-got),sorted(got-expected))
-          print('R2_APPLY_BOUNDARY=PASS files=17')
+          print('R2_APPLY_BOUNDARY=PASS files=20')
           PY
           git -C /tmp/r2repo diff --check
 
@@ -133,7 +134,7 @@ jobs:
           test "$remote_sha" = "08dff4671ff1f887d2956dbfa449bde3c0abf3e8"
           git -C /tmp/r2repo config user.name 'Logan M. Dixon'
           git -C /tmp/r2repo config user.email '178442787+lmdixon23@users.noreply.github.com'
-          git -C /tmp/r2repo add -- .github/workflows/verify.yml docs/GUIDED_CHALLENGE_ARCHITECTURE.md tools/browser_qa.py tools/verify_guided_challenges.py tools/guided_challenge_qa.py playgrounds/*/index.html
+          git -C /tmp/r2repo add -- .github/workflows/verify.yml docs/GUIDED_CHALLENGE_ARCHITECTURE.md tools/browser_qa.py tools/build_site.py tools/verify_guided_challenges.py tools/guided_challenge_qa.py assets/guided-challenges.css assets/guided-challenges.js playgrounds/*/index.html
           git -C /tmp/r2repo commit -m 'Implement suite-wide Guided Challenge state architecture'
           new_sha="$(git -C /tmp/r2repo rev-parse HEAD)"
           test "$(git -C /tmp/r2repo rev-parse HEAD^)" = "08dff4671ff1f887d2956dbfa449bde3c0abf3e8"
