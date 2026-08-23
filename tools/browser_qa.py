@@ -27,7 +27,7 @@ VIEWPORTS = {
     "desktop_1366": {"width": 1366, "height": 900, "is_mobile": False},
 }
 REQUIRED_HOME_SELECTORS = ["h1", "#applets", "#teach", "#why", "#research", "#bfsGrid", "#filters"]
-REQUIRED_APPLET_SELECTORS = [".scenario-gallery", ".signature-challenge", ".lab-panel", ".visual-explanation", ".accessibility-layer", ".learning-mode-shell", ".key-terms", ".header-more"]
+REQUIRED_APPLET_SELECTORS = [".scenario-gallery", ".signature-challenge", ".lab-panel", ".visual-explanation", ".accessibility-layer", ".learning-mode-shell", ".key-terms", ".header-more", ".suite-guided-shell"]
 
 
 def launch_chromium(playwright: Any):

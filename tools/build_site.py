@@ -23,6 +23,8 @@ ROOT_PUBLIC_FILES = (
     "og-image.png",
     "media/AI_Playgrounds_Demo_15s.gif",
     "media/AI_Playgrounds_Demo_15s.mp4",
+    "assets/guided-challenges.css",
+    "assets/guided-challenges.js",
     "robots.txt",
     "sitemap.xml",
     # Deliberately public files linked from the live application.
