@@ -1,0 +1,153 @@
+       locked:'预测已锁定且不可修改。底层工具已运行，但结果仍保持隐藏。',
+        revealed:'机制已揭示。请把锁定预测与实际工具状态进行比较。',
+        compared:'比较已完成。请先解释差异，再尝试迁移情境。',
+        reset:'挑战已重置。'
+      }
+    }
+  };
+
+  if (!CONFIGS[slug] && slug !== 'knn-classifier') return;
+
+  const lang = () => (document.documentElement.lang || 'en').toLowerCase().startsWith('zh') ? 'zh' : 'en';
+  const c = () => COMMON[lang()];
+  const config = CONFIGS[slug] || null;
+  const inner = document.querySelector('.interactive-inner');
+  if (!inner) return;
+
+  let mode = 'explore';
+  let state = 'inactive';
+  let stateHistory = ['inactive'];
+  let lockedPrediction = null;
+  let actualSnapshot = '';
+  let internalMutation = false;
+  let transferRound = false;
+  const concealed = [];
+  const frozen = [];
+
+  const shell = document.createElement('section');
+  shell.className = 'suite-guided-shell';
+  shell.dataset.guidedState = state;
+  shell.innerHTML = `
+    <div class="suite-guided-modebar" role="group" aria-label="Learning mode">
+      <span class="suite-guided-mode-label"></span>
+      <button type="button" data-suite-mode="explore" aria-pressed="true"></button>
+      <button type="button" data-suite-mode="guided" aria-pressed="false"></button>
+    </div>
+    <section class="suite-guided-panel" hidden>
+      <div class="suite-guided-heading">
+        <div><strong class="suite-guided-title"></strong><p class="suite-guided-prompt"></p></div>
+        <button type="button" class="suite-guided-reset"></button>
+      </div>
+      <div class="suite-guided-status" aria-live="polite"></div>
+      <div class="suite-guided-generic">
+        <div class="suite-guided-fields"></div>
+        <div class="suite-guided-actions">
+          <button type="button" class="suite-guided-begin primary"></button>
+          <button type="button" class="suite-guided-lock" disabled></button>
+          <button type="button" class="suite-guided-reveal primary" disabled></button>
+          <button type="button" class="suite-guided-compare" disabled></button>
+        </div>
+        <div class="suite-guided-hidden-note" hidden></div>
+        <div class="suite-guided-comparison" hidden>
+          <div><strong class="suite-guided-prediction-label"></strong><pre class="suite-guided-prediction"></pre></div>
+          <div><strong class="suite-guided-actual-label"></strong><pre class="suite-guided-actual"></pre></div>
+        </div>
+        <label class="suite-guided-explain-wrap" hidden><span class="suite-guided-explain-label"></span><textarea data-guided-explanation rows="3"></textarea></label>
+        <div class="suite-guided-transfer-wrap" hidden><p class="suite-guided-transfer-prompt"></p><button type="button" class="suite-guided-transfer" disabled></button></div>
+      </div>
+      <div class="suite-guided-native" hidden></div>
+    </section>`;
+  inner.insertBefore(shell, inner.firstElementChild);
+
+  const q = sel => shell.querySelector(sel);
+  const modeExplore = q('[data-suite-mode="explore"]');
+  const modeGuided = q('[data-suite-mode="guided"]');
+  const panel = q('.suite-guided-panel');
+  const learningShell = inner.querySelector('.learning-mode-shell');
+  const fieldsRoot = q('.suite-guided-fields');
+  const beginBtn = q('.suite-guided-begin');
+  const lockBtn = q('.suite-guided-lock');
+  const revealBtn = q('.suite-guided-reveal');
+  const compareBtn = q('.suite-guided-compare');
+  const resetBtn = q('.suite-guided-reset');
+  const transferBtn = q('.suite-guided-transfer');
+  const explain = q('[data-guided-explanation]');
+
+  function setState(next) {
+    state = next;
+    shell.dataset.guidedState = next;
+    stateHistory.push(next);
+    q('.suite-guided-status').textContent = c().states[next] || next;
+  }
+
+  function fieldValue(el) {
+    return String(el.value == null ? '' : el.value).trim();
+  }
+
+  function genericFieldElements() {
+    return Array.from(fieldsRoot.querySelectorAll('[data-guided-field]'));
+  }
+
+  function predictionComplete() {
+    const els = genericFieldElements();
+    return els.length > 0 && els.every(el => fieldValue(el) !== '');
+  }
+
+  function updatePredictionState() {
+    if (state === 'locked' || state === 'revealed' || state === 'compared') return;
+    if (state !== 'awaiting-prediction' && state !== 'prediction-complete-unlocked') return;
+    const complete = predictionComplete();
+    lockBtn.disabled = !complete;
+    setState(complete ? 'prediction-complete-unlocked' : 'awaiting-prediction');
+  }
+
+  function collectPrediction() {
+    const out = {};
+    genericFieldElements().forEach(el => { out[el.dataset.guidedField] = fieldValue(el); });
+    return out;
+  }
+
+  function predictionText(pred) {
+    if (!config) return '';
+    return config.fields.map(f => {
+      const label = f[lang()] || f.en;
+      let value = pred[f.key] || '';
+      if (f.type === 'select' && f.options) {
+        const found = f.options.find(x => x[0] === value);
+        if (found) value = found[lang() === 'zh' ? 2 : 1];
+      }
+      return `${label}: ${value}`;
+    }).join('\n');
+  }
+
+  function renderFields() {
+    if (!config) return;
+    fieldsRoot.innerHTML = '';
+    config.fields.forEach(f => {
+      const label = document.createElement('label');
+      label.className = 'suite-guided-field';
+      const span = document.createElement('span');
+      span.textContent = f[lang()] || f.en;
+      label.appendChild(span);
+      let el;
+      if (f.type === 'textarea') {
+        el = document.createElement('textarea'); el.rows = 2;
+      } else if (f.type === 'select') {
+        el = document.createElement('select');
+        const placeholder = document.createElement('option'); placeholder.value = ''; placeholder.textContent = lang() === 'zh' ? '请选择' : 'Choose';
+        el.appendChild(placeholder);
+        (f.options || []).forEach(opt => {
+          const o = document.createElement('option'); o.value = opt[0]; o.textContent = opt[lang() === 'zh' ? 2 : 1]; el.appendChild(o);
+        });
+      } else {
+        el = document.createElement('input'); el.type = f.type === 'number' ? 'number' : 'text';
+        if (f.type === 'number') el.step = 'any';
+      }
+      el.dataset.guidedField = f.key;
+      el.setAttribute('aria-label', f[lang()] || f.en);
+      el.autocomplete = 'off';
+      el.disabled = state === 'locked' || state === 'revealed' || state === 'compared';
+      label.appendChild(el); fieldsRoot.appendChild(label);
+    });
+    fieldsRoot.addEventListener('input', updatePredictionState, {once:false});
+    fieldsRoot.addEventListener('change', updatePrediction
