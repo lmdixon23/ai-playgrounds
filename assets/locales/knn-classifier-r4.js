@@ -510,7 +510,7 @@
     },
     "patterns": [
       {
-        "source": "^Training point ([0-9]+): class ([AB]) at coordinates ([0-9]+), ([0-9]+)\\\\.$",
+        "source": "^Training point ([0-9]+): class ([AB]) at coordinates ([0-9]+), ([0-9]+)\\.$",
         "target": "Điểm huấn luyện $1: lớp $2 tại tọa độ $3, $4.",
         "flags": "g"
       }
@@ -1008,7 +1008,7 @@
     },
     "patterns": [
       {
-        "source": "^Training point ([0-9]+): class ([AB]) at coordinates ([0-9]+), ([0-9]+)\\\\.$",
+        "source": "^Training point ([0-9]+): class ([AB]) at coordinates ([0-9]+), ([0-9]+)\\.$",
         "target": "Punto de entrenamiento $1: clase $2 en las coordenadas $3, $4.",
         "flags": "g"
       }

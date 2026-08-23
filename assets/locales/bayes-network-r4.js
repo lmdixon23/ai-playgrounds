@@ -441,7 +441,7 @@
     },
     "patterns": [
       {
-        "source": "Exact inference by enumeration: computed in ([0-9.]+) ms\\\\.",
+        "source": "Exact inference by enumeration: computed in ([0-9.]+) ms\\.",
         "target": "Suy luận chính xác bằng phép liệt kê: tính trong $1 ms.",
         "flags": "g"
       },
@@ -900,7 +900,7 @@
     },
     "patterns": [
       {
-        "source": "Exact inference by enumeration: computed in ([0-9.]+) ms\\\\.",
+        "source": "Exact inference by enumeration: computed in ([0-9.]+) ms\\.",
         "target": "Inferencia exacta por enumeración: calculada en $1 ms.",
         "flags": "g"
       },
