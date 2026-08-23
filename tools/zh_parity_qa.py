@@ -18,6 +18,7 @@ def launch(p):
     return p.chromium.launch(headless=True,args=args)
 
 def has_cjk(text): return bool(CJK.search(text or ''))
+def mode_text(text): return (text or '').strip().rstrip(':：').strip()
 
 def main():
     from playwright.sync_api import sync_playwright
@@ -43,7 +44,7 @@ def main():
                     mode_label=page.locator('.suite-guided-mode-label').inner_text().strip()
                     guided_label=page.locator('[data-suite-mode="guided"]').inner_text().strip()
                     explore_label=page.locator('[data-suite-mode="explore"]').inner_text().strip()
-                    checks.append(('shared_mode_copy_zh',mode_label=='学习模式' and guided_label=='引导挑战' and explore_label=='自由探索',{'mode':mode_label,'guided':guided_label,'explore':explore_label}))
+                    checks.append(('shared_mode_copy_zh',mode_text(mode_label)=='学习模式' and guided_label=='引导挑战' and explore_label=='自由探索',{'mode':mode_label,'guided':guided_label,'explore':explore_label}))
                     page.locator('[data-suite-mode="guided"]').click(); page.wait_for_timeout(100)
                     if slug=='knn-classifier':
                         start=page.locator('#guidedStart').inner_text().strip()
@@ -58,7 +59,8 @@ def main():
                     en.first.click()
                     page.wait_for_function("() => (document.documentElement.lang || '').toLowerCase().startsWith('en')",timeout=7000)
                     page.wait_for_timeout(100)
-                    checks.append(('returns_to_english',page.locator('.suite-guided-mode-label').inner_text().strip()=='Learning mode',{}))
+                    english_mode=page.locator('.suite-guided-mode-label').inner_text().strip()
+                    checks.append(('returns_to_english',mode_text(english_mode)=='Learning mode',{'mode':english_mode}))
                 except Exception as exc:
                     checks.append(('exception',False,{'error':str(exc)}))
                 passed=all(bool(x[1]) for x in checks) and not page_errors
