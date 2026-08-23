@@ -44,17 +44,17 @@
       ]
     },
     'wumpus-world': {
-      scenario: 2, transferScenario: 1, action: '#stepBtn', actionClicks: 1,
+      scenario: 4, transferScenario: 2, action: '#stepBtn', actionClicks: 1,
       mask: ['.cell-maps', '.cell-analysis'], actual: ['#a11yStateSummary', '#log', '#scoreV'],
       en: {
         title: 'Classify a frontier square before the move',
         prompt: 'Choose one frontier square and predict whether the current evidence makes it proven safe, a possible hazard, or unresolved before the agent takes its next step.',
-        transfer: 'Changed case: switch to the AIMA-inspired hybrid heuristic and reconsider the same frontier evidence without probability ranking.'
+        transfer: 'Changed case: switch to the probability-based policy and reconsider the same kind of frontier evidence.'
       },
       zh: {
         title: '在移动前判断一个前沿方格',
         prompt: '选择一个前沿方格，并在智能体执行下一步之前判断当前证据是否能证明它安全、可能有危险，或仍未解决。',
-        transfer: '迁移情境：切换到 AIMA 启发式混合策略，在不按概率排序的情况下重新判断同类前沿证据。'
+        transfer: '迁移情境：切换到概率策略，再判断类似的前沿证据。'
       },
       fields: [
         {key:'square', type:'text', en:'Frontier square', zh:'前沿方格'},
@@ -512,10 +512,6 @@
 
   function runDeferredAction() {
     if (!config || !config.action) return true;
-    if (slug === 'wumpus-world' && typeof window.__wumpusGuidedStep === 'function') {
-      internalMutation = true;
-      try { return !!window.__wumpusGuidedStep(); } finally { internalMutation = false; }
-    }
     const btn = document.querySelector(config.action);
     if (!btn) return false;
     const frozenRecord = frozen.find(item => item.el === btn);
