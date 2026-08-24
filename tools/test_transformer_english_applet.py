@@ -41,6 +41,9 @@ def main() -> int:
         "Q/K perturbation",
         "finite-ablation",
         "Guided Challenges",
+        "Scaled scores q·k / √dₖ",
+        "Causal mask",
+        "Attention weights after softmax",
     )
     for phrase in required_source:
         checks.append((f"source contract: {phrase}", phrase in source, {}))
@@ -134,6 +137,25 @@ def main() -> int:
                 )
             )
 
+            # The raw scaled-score matrix, structural mask, and post-softmax
+            # attention weights are separate views of the same four-token state.
+            checks.append(
+                (
+                    "score matrix exposes all 16 pre-mask scores",
+                    page.locator("#scoreMatrix td").count() == 16
+                    and "MASK" not in page.locator("#scoreMatrix").inner_text(),
+                    {"count": page.locator("#scoreMatrix td").count()},
+                )
+            )
+            checks.append(
+                (
+                    "causal mask is a separate structural matrix",
+                    page.locator("#maskMatrix td").count() == 16
+                    and "MASK" in page.locator("#maskMatrix").inner_text()
+                    and "ALLOW" in page.locator("#maskMatrix").inner_text(),
+                    {"text": page.locator("#maskMatrix").inner_text()[:240]},
+                )
+            )
             masked_text = (
                 page.locator("#matrix tr").nth(1).locator("td").nth(1).inner_text()
             )
@@ -158,7 +180,9 @@ def main() -> int:
             checks.append(
                 (
                     "keyboard attention-cell inspection updates pair detail",
-                    "q·k/√dₖ" in pair_text and "attention weight" in pair_text,
+                    "Raw q·k" in pair_text
+                    and "q·k/√dₖ" in pair_text
+                    and "attention weight" in pair_text,
                     {"text": pair_text},
                 )
             )
@@ -172,6 +196,8 @@ def main() -> int:
                         for term in (
                             "query q:",
                             "source keys:",
+                            "raw scaled scores:",
+                            "causal mask row:",
                             "masked/unmasked scores:",
                             "attention row:",
                             "logits:",
@@ -181,7 +207,7 @@ def main() -> int:
                             "causal mask:",
                         )
                     ),
-                    {"state": state_text[:420]},
+                    {"state": state_text[:500]},
                 )
             )
 
@@ -260,6 +286,13 @@ def main() -> int:
                     "mask-leak scenario names autoregressive violation",
                     "autoregressive dependency constraint" in mask_note,
                     {"note": mask_note},
+                )
+            )
+            checks.append(
+                (
+                    "mask-off matrix marks all sources allowed",
+                    "MASK" not in page.locator("#maskMatrix").inner_text(),
+                    {"text": page.locator("#maskMatrix").inner_text()[:240]},
                 )
             )
 
@@ -345,11 +378,13 @@ def main() -> int:
                 )
             )
 
-            substitution_challenge = run_challenge("substitution", "increase")
+            substitution_challenge = run_challenge("substitution", "local-increase")
             checks.append(
                 (
-                    "challenge 3 predicts substitution direction",
+                    "challenge 3 predicts QKV scope and probability direction",
                     "prediction matched" in substitution_challenge
+                    and "Earlier-position Q/K/V max Δ" in substitution_challenge
+                    and "substituted-position Q/K/V max Δ" in substitution_challenge
                     and "P(sleep):" in substitution_challenge
                     and "Transfer:" in substitution_challenge,
                     {"text": substitution_challenge},
@@ -368,8 +403,8 @@ def main() -> int:
                 )
             )
 
-            # Small-screen rendering remains bounded; matrix overflow is contained
-            # by its own scroll region rather than widening the document.
+            # Small-screen rendering remains bounded; each matrix owns its overflow
+            # instead of widening the document.
             page.set_viewport_size({"width": 390, "height": 844})
             page.wait_for_timeout(30)
             body_width = page.evaluate("() => document.documentElement.scrollWidth")
