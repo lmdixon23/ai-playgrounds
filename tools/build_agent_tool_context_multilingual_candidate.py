@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 import subprocess
 from pathlib import Path
 
@@ -18,16 +17,151 @@ R4_SOURCE_FREEZE = "9f2f5286f4de3e12a881b61d491c87efe6950166"
 R5_LOCALIZATION_FREEZE = "37bdc6a4a84b672ad564d81564e8a055c2b2c9a6"
 LOCALES = ("en", "zh", "vi", "es")
 
-CSS = r'''\n<style id="lab14-i18n-style">\n.lab14-locale-bar{display:flex;justify-content:flex-end;align-items:center;gap:7px;flex-wrap:wrap;margin:0 0 14px;padding:8px 10px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-family:system-ui,-apple-system,sans-serif}\n.lab14-locale-bar .locale-label{color:var(--muted);font-size:.78rem;font-weight:700;margin-right:2px}\n.lab14-locale-bar button{border:1px solid var(--border);background:var(--card);color:var(--fg);border-radius:7px;padding:6px 9px;cursor:pointer;min-height:34px}\n.lab14-locale-bar button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}\n@media(max-width:480px){.lab14-locale-bar{justify-content:flex-start}.lab14-locale-bar button{min-height:42px}}\n</style>\n'''
+CSS = r'''
+<style id="lab14-i18n-style">
+.lab14-locale-bar{display:flex;justify-content:flex-end;align-items:center;gap:7px;flex-wrap:wrap;margin:0 0 14px;padding:8px 10px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-family:system-ui,-apple-system,sans-serif}
+.lab14-locale-bar .locale-label{color:var(--muted);font-size:.78rem;font-weight:700;margin-right:2px}
+.lab14-locale-bar button{border:1px solid var(--border);background:var(--card);color:var(--fg);border-radius:7px;padding:6px 9px;cursor:pointer;min-height:34px}
+.lab14-locale-bar button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+@media(max-width:480px){.lab14-locale-bar{justify-content:flex-start}.lab14-locale-bar button{min-height:42px}}
+</style>
+'''
 
-BAR = r'''\n<section id="lab14-locale-bar" class="lab14-locale-bar" aria-label="Language" data-lab14-no-translate="true">\n  <span class="locale-label">Language</span>\n  <button type="button" data-locale="en">EN</button>\n  <button type="button" data-locale="zh">中文</button>\n  <button type="button" data-locale="vi">VI</button>\n  <button type="button" data-locale="es">ES</button>\n</section>\n'''
+BAR = r'''
+<section id="lab14-locale-bar" class="lab14-locale-bar" aria-label="Language" data-lab14-no-translate="true">
+  <span class="locale-label">Language</span>
+  <button type="button" data-locale="en">EN</button>
+  <button type="button" data-locale="zh">中文</button>
+  <button type="button" data-locale="vi">VI</button>
+  <button type="button" data-locale="es">ES</button>
+</section>
+'''
 
-RUNTIME_TEMPLATE = r'''\n<script id="lab14-i18n-runtime">\n(()=>{'use strict';\nconst CATALOGS=__CATALOGS__;\nconst META={r4SourceFreeze:'__R4__',r5LocalizationFreeze:'__R5__'};\nconst LOCALES=['en','zh','vi','es'];\nconst HTML_LANG={en:'en',zh:'zh-Hans',vi:'vi',es:'es'};\nconst PLACEHOLDER=/\\{([A-Za-z0-9_]+)\\}/g;\nlet active='en',mutating=false,observer=null;\nfunction escapeRe(value){return value.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&')}\nfunction compile(template){\n  const names=[];let source='^',last=0,m;PLACEHOLDER.lastIndex=0;\n  while((m=PLACEHOLDER.exec(template))){source+=escapeRe(template.slice(last,m.index))+'([\\\\s\\\\S]+?)';names.push(m[1]);last=m.index+m[0].length}\n  source+=escapeRe(template.slice(last))+'$';\n  return{re:new RegExp(source),names,literal:template.replace(PLACEHOLDER,'').length};\n}\nconst exact=new Map(),patterns=[],staticPatterns=[];\nfor(const key of Object.keys(CATALOGS.en)){\n  for(const locale of LOCALES){\n    const value=String(CATALOGS[locale][key]),compiled=compile(value),entry={key,locale,value,...compiled};\n    if(compiled.names.length===0){exact.set(value,key);if(value.length>=2)staticPatterns.push(entry)}else patterns.push(entry);\n  }\n}\npatterns.sort((a,b)=>b.literal-a.literal||a.names.length-b.names.length);\nstaticPatterns.sort((a,b)=>b.value.length-a.value.length);\nfunction formatTarget(key,vars,target,depth){\n  const template=String(CATALOGS[target][key]);\n  return template.replace(PLACEHOLDER,(_,name)=>translateCore(Object.hasOwn(vars,name)?String(vars[name]):`{${name}}`,target,depth+1));\n}\nfunction directMatch(text,target,depth){\n  const exactKey=exact.get(text);if(exactKey!==undefined)return String(CATALOGS[target][exactKey]);\n  for(const p of patterns){const match=p.re.exec(text);if(!match)continue;const vars={};p.names.forEach((name,index)=>{vars[name]=match[index+1]});return formatTarget(p.key,vars,target,depth)}\n  return null;\n}\nfunction prefixedMatch(text,target,depth){\n  for(const p of staticPatterns){if(text===p.value||!text.startsWith(p.value))continue;const rest=text.slice(p.value.length);if(!/^[\\s:;,.!?→()\\-]/.test(rest))continue;return String(CATALOGS[target][p.key])+translateCore(rest,target,depth+1)}\n  return null;\n}\nfunction translateJsonValue(value,target){\n  if(typeof value==='string')return translateCore(value,target,0);\n  if(Array.isArray(value))return value.map(item=>translateJsonValue(item,target));\n  if(value&&typeof value==='object'){const out={};for(const [key,item] of Object.entries(value))out[key]=translateJsonValue(item,target);return out}\n  return value;\n}\nfunction translateJsonText(text,target){\n  const trimmed=text.trim();if(!trimmed||!['{','['].includes(trimmed[0]))return null;\n  try{return JSON.stringify(translateJsonValue(JSON.parse(trimmed),target))}catch(_){return null}\n}\nfunction translateCore(text,target,depth=0){\n  if(depth>6||!text)return text;\n  const direct=directMatch(text,target,depth);if(direct!==null)return direct;\n  const jsonText=translateJsonText(text,target);if(jsonText!==null)return jsonText;\n  if(text.startsWith('TEXT: '))return 'TEXT: '+translateCore(text.slice(6),target,depth+1);\n  if(text.includes('\\n'))return text.split('\\n').map(line=>translateCore(line,target,depth+1)).join('\\n');\n  const prefixed=prefixedMatch(text,target,depth);if(prefixed!==null)return prefixed;\n  return text;\n}\nfunction translateTextValue(value,target){const match=String(value).match(/^(\\s*)([\\s\\S]*?)(\\s*)$/);if(!match)return value;return match[1]+translateCore(match[2],target,0)+match[3]}\nfunction translateState(){\n  const node=document.querySelector('#stateText');if(!node)return;\n  try{const parsed=JSON.parse(node.textContent);node.textContent=JSON.stringify(translateJsonValue(parsed,active),null,2)}catch(_){/* state may be between renders */}\n}\nfunction shouldSkip(node){const parent=node.parentElement;if(!parent)return true;return !!parent.closest('script,style,#lab14-locale-bar,#stateText,[data-lab14-no-translate]')}\nfunction observe(){if(observer)observer.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:false})}\nfunction translateTree(root=document.body){\n  if(mutating||!root)return;mutating=true;if(observer)observer.disconnect();\n  try{\n    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),nodes=[];let node;while((node=walker.nextNode()))nodes.push(node);\n    for(const textNode of nodes){if(shouldSkip(textNode))continue;const next=translateTextValue(textNode.nodeValue,active);if(next!==textNode.nodeValue)textNode.nodeValue=next}\n    const elements=root.querySelectorAll?root.querySelectorAll('[title],[aria-label],[placeholder]'):[];\n    for(const element of elements){if(element.closest('#lab14-locale-bar,[data-lab14-no-translate]'))continue;for(const attr of ['title','aria-label','placeholder'])if(element.hasAttribute(attr)){const before=element.getAttribute(attr),after=translateTextValue(before,active);if(after!==before)element.setAttribute(attr,after)}}\n    translateState();\n    document.title=`${CATALOGS[active]['page.title']} — Lab 14`;\n  }finally{mutating=false;observe()}\n}\nfunction updateButtons(){for(const button of document.querySelectorAll('#lab14-locale-bar button[data-locale]'))button.setAttribute('aria-pressed',button.dataset.locale===active?'true':'false')}\nfunction setLocale(locale){if(!LOCALES.includes(locale))throw new Error(`Unsupported locale: ${locale}`);active=locale;document.documentElement.lang=HTML_LANG[locale];updateButtons();translateTree(document.body);window.dispatchEvent(new CustomEvent('lab14localechange',{detail:{locale}}))}\nfunction getLocale(){return active}\nfor(const button of document.querySelectorAll('#lab14-locale-bar button[data-locale]'))button.addEventListener('click',()=>setLocale(button.dataset.locale));\nobserver=new MutationObserver(records=>{\n  if(mutating)return;const roots=new Set();\n  for(const record of records){for(const node of record.addedNodes){if(node.nodeType===Node.ELEMENT_NODE)roots.add(node);else if(node.nodeType===Node.TEXT_NODE&&node.parentElement)roots.add(node.parentElement)}if(record.type==='characterData'&&record.target.parentElement)roots.add(record.target.parentElement)}\n  for(const root of roots)translateTree(root);\n});\nobserve();\nwindow.Lab14Localization={setLocale,getLocale,catalogs:CATALOGS,translate:translateCore,meta:META};\nconst requested=new URLSearchParams(location.search).get('lang');\nactive='en';document.documentElement.lang='en';updateButtons();document.title=`${CATALOGS.en['page.title']} — Lab 14`;\nif(LOCALES.includes(requested)&&requested!=='en')window.setTimeout(()=>setLocale(requested),0);\n})();\n</script>\n'''
+RUNTIME_TEMPLATE = r'''
+<script id="lab14-i18n-runtime">
+(()=>{'use strict';
+const CATALOGS=__CATALOGS__;
+const META={r4SourceFreeze:'__R4__',r5LocalizationFreeze:'__R5__'};
+const LOCALES=['en','zh','vi','es'];
+const HTML_LANG={en:'en',zh:'zh-Hans',vi:'vi',es:'es'};
+let active='en',observer=null,mutating=false;
 
+function parseTemplate(template){
+  const parts=[],names=[];let pos=0;
+  while(pos<template.length){
+    const open=template.indexOf('{',pos);if(open<0){parts.push(template.slice(pos));break;}
+    const close=template.indexOf('}',open+1);if(close<0){parts.push(template.slice(pos));break;}
+    const name=template.slice(open+1,close);
+    if(!/^[A-Za-z0-9_]+$/.test(name)){parts.push(template.slice(pos));break;}
+    parts.push(template.slice(pos,open));names.push(name);pos=close+1;
+    if(pos===template.length)parts.push('');
+  }
+  if(parts.length===0)parts.push(template);
+  return {parts,names,literal:parts.reduce((n,p)=>n+p.length,0)};
+}
+const exact=new Map(),templates=[],staticEntries=[];
+for(const key of Object.keys(CATALOGS.en)){
+  for(const locale of LOCALES){
+    const value=String(CATALOGS[locale][key]);
+    const parsed=parseTemplate(value);const entry={key,locale,value,...parsed};
+    if(parsed.names.length===0){if(!exact.has(value))exact.set(value,key);if(value.length>=2)staticEntries.push(entry)}
+    else templates.push(entry);
+  }
+}
+templates.sort((a,b)=>b.literal-a.literal||a.names.length-b.names.length);
+staticEntries.sort((a,b)=>b.value.length-a.value.length);
 
-def materialize_template(value: str) -> str:
-    """Turn layout \n markers into newlines without touching intentional \\n JS escapes."""
-    return re.sub(r"(?<!\\)\\n", "\n", value)
+function matchTemplate(entry,text){
+  const {parts,names}=entry;if(!text.startsWith(parts[0]))return null;
+  let pos=parts[0].length;const vars={};
+  for(let i=0;i<names.length;i++){
+    const next=parts[i+1];
+    if(next===''){vars[names[i]]=text.slice(pos);pos=text.length;continue;}
+    const at=text.indexOf(next,pos);if(at<0)return null;
+    vars[names[i]]=text.slice(pos,at);pos=at+next.length;
+  }
+  return pos===text.length?vars:null;
+}
+function translateTemplate(key,vars,target,depth){
+  const template=String(CATALOGS[target][key]);let out='',pos=0;
+  while(pos<template.length){
+    const open=template.indexOf('{',pos);if(open<0){out+=template.slice(pos);break;}
+    const close=template.indexOf('}',open+1);if(close<0){out+=template.slice(pos);break;}
+    const name=template.slice(open+1,close);out+=template.slice(pos,open);
+    out+=translateCore(Object.hasOwn(vars,name)?String(vars[name]):`{${name}}`,target,depth+1);pos=close+1;
+  }
+  return out;
+}
+function translateJsonValue(value,target){
+  if(typeof value==='string')return translateCore(value,target,1);
+  if(Array.isArray(value))return value.map(v=>translateJsonValue(v,target));
+  if(value&&typeof value==='object'){const out={};for(const [k,v] of Object.entries(value))out[k]=translateJsonValue(v,target);return out;}
+  return value;
+}
+function translateCore(text,target,depth=0){
+  if(depth>8||text===null||text===undefined)return text;
+  text=String(text);if(!text)return text;
+  const key=exact.get(text);if(key!==undefined)return String(CATALOGS[target][key]);
+  for(const entry of templates){const vars=matchTemplate(entry,text);if(vars!==null)return translateTemplate(entry.key,vars,target,depth);}
+  const trimmed=text.trim();
+  if(trimmed&&(trimmed[0]==='{'||trimmed[0]==='[')){
+    try{return JSON.stringify(translateJsonValue(JSON.parse(trimmed),target));}catch(_){}
+  }
+  if(text.startsWith('TEXT: '))return 'TEXT: '+translateCore(text.slice(6),target,depth+1);
+  if(text.includes('\n'))return text.split('\n').map(line=>translateCore(line,target,depth+1)).join('\n');
+  for(const entry of staticEntries){
+    if(text===entry.value||!text.startsWith(entry.value))continue;
+    const rest=text.slice(entry.value.length);if(!rest||!' :;,.!?→()-'.includes(rest[0]))continue;
+    return String(CATALOGS[target][entry.key])+translateCore(rest,target,depth+1);
+  }
+  return text;
+}
+function translateTextValue(value,target){
+  const raw=String(value);const core=raw.trim();if(!core)return raw;
+  const lead=raw.slice(0,raw.length-raw.trimStart().length);const trail=raw.slice(raw.trimEnd().length);
+  return lead+translateCore(core,target,0)+trail;
+}
+function shouldSkip(node){
+  const p=node.parentElement;if(!p)return true;
+  return p.tagName==='SCRIPT'||p.tagName==='STYLE'||!!p.closest('#lab14-locale-bar,#stateText,[data-lab14-no-translate]');
+}
+function translateState(){
+  const node=document.getElementById('stateText');if(!node)return;
+  try{node.textContent=JSON.stringify(translateJsonValue(JSON.parse(node.textContent),active),null,2);}catch(_){}
+}
+function observe(){if(observer)observer.observe(document.body,{subtree:true,childList:true,characterData:true});}
+function translateTree(root=document.body){
+  if(!root||mutating)return;mutating=true;if(observer)observer.disconnect();
+  try{
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);const nodes=[];let n;while((n=walker.nextNode()))nodes.push(n);
+    for(const node of nodes){if(shouldSkip(node))continue;const next=translateTextValue(node.nodeValue,active);if(next!==node.nodeValue)node.nodeValue=next;}
+    const elements=root.querySelectorAll?root.querySelectorAll('[title],[aria-label],[placeholder]'):[];
+    for(const el of elements){if(el.closest('#lab14-locale-bar,[data-lab14-no-translate]'))continue;for(const attr of ['title','aria-label','placeholder'])if(el.hasAttribute(attr)){const before=el.getAttribute(attr),after=translateTextValue(before,active);if(after!==before)el.setAttribute(attr,after);}}
+    translateState();document.title=`${CATALOGS[active]['page.title']} — Lab 14`;
+  }finally{mutating=false;observe();}
+}
+function updateButtons(){for(const button of document.querySelectorAll('#lab14-locale-bar button[data-locale]'))button.setAttribute('aria-pressed',button.dataset.locale===active?'true':'false');}
+function setLocale(locale){
+  if(!LOCALES.includes(locale))throw new Error(`Unsupported locale: ${locale}`);
+  active=locale;document.documentElement.lang=HTML_LANG[locale];updateButtons();translateTree(document.body);
+  window.dispatchEvent(new CustomEvent('lab14localechange',{detail:{locale}}));
+}
+function getLocale(){return active;}
+for(const button of document.querySelectorAll('#lab14-locale-bar button[data-locale]'))button.addEventListener('click',()=>setLocale(button.dataset.locale));
+observer=new MutationObserver(records=>{
+  if(mutating)return;const roots=new Set();
+  for(const record of records){
+    for(const node of record.addedNodes){if(node.nodeType===Node.ELEMENT_NODE)roots.add(node);else if(node.nodeType===Node.TEXT_NODE&&node.parentElement)roots.add(node.parentElement);}
+    if(record.type==='characterData'&&record.target.parentElement)roots.add(record.target.parentElement);
+  }
+  for(const root of roots)translateTree(root);
+});
+observe();window.Lab14Localization={setLocale,getLocale,catalogs:CATALOGS,translate:translateCore,meta:META};
+active='en';document.documentElement.lang='en';updateButtons();document.title=`${CATALOGS.en['page.title']} — Lab 14`;
+const requested=new URLSearchParams(location.search).get('lang');if(LOCALES.includes(requested)&&requested!=='en')setTimeout(()=>setLocale(requested),0);
+})();
+</script>
+'''
 
 
 def load_catalogs() -> dict[str, dict[str, str]]:
@@ -36,8 +170,7 @@ def load_catalogs() -> dict[str, dict[str, str]]:
         payload = json.loads(path.read_text(encoding="utf-8"))
         if payload.get("source_freeze_head") != R4_SOURCE_FREEZE:
             raise RuntimeError(f"{path.name} is not bound to the frozen R4 source")
-        strings = payload.get("strings", {})
-        for key, entry in strings.items():
+        for key, entry in payload.get("strings", {}).items():
             if set(entry) != set(LOCALES):
                 raise RuntimeError(f"{path.name}:{key} does not contain exactly en/zh/vi/es")
             normalized = {locale: str(entry[locale]) for locale in LOCALES}
@@ -58,10 +191,7 @@ def build(output: Path) -> Path:
     source = ENGLISH_INTERMEDIATE.read_text(encoding="utf-8")
     catalogs = load_catalogs()
     payload = json.dumps(catalogs, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
-    runtime_template = materialize_template(RUNTIME_TEMPLATE)
-    runtime = runtime_template.replace("__CATALOGS__", payload).replace("__R4__", R4_SOURCE_FREEZE).replace("__R5__", R5_LOCALIZATION_FREEZE)
-    css = materialize_template(CSS)
-    bar = materialize_template(BAR)
+    runtime = RUNTIME_TEMPLATE.replace("__CATALOGS__", payload).replace("__R4__", R4_SOURCE_FREEZE).replace("__R5__", R5_LOCALIZATION_FREEZE)
 
     runtime_js = runtime.split(">", 1)[1].rsplit("</script>", 1)[0]
     syntax = subprocess.run(["node", "--check", "-"], input=runtime_js, text=True, capture_output=True, check=False)
@@ -82,8 +212,8 @@ def build(output: Path) -> Path:
     if missing:
         raise RuntimeError(f"Frozen R4 English candidate no longer matches R6 builder contract: {missing}")
 
-    generated = source.replace("</style>", "</style>\n" + css, 1)
-    generated = generated.replace("<main>", "<main>\n" + bar, 1)
+    generated = source.replace("</style>", "</style>\n" + CSS, 1)
+    generated = generated.replace("<main>", "<main>\n" + BAR, 1)
     generated = generated.replace("</body>", runtime + "\n</body>", 1)
     generated = generated.replace("non-public v1.3 English candidate", "non-public v1.3 four-locale candidate", 1)
 
