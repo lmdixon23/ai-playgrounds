@@ -148,10 +148,16 @@ def main() -> int:
         "la temperatura cambia los pesos del modelo",
         "siempre se elige el token más probable",
     ]
+
+    # Misconception claim strings intentionally state false propositions so learners
+    # can reject them. Forbidden wording must therefore be absent from explanatory,
+    # instructional, and result text, not from the quoted misconception claims.
+    vi_assertive_text = "\n".join(str(value) for key, value in vi.items() if not key.endswith(".claim"))
+    es_assertive_text = "\n".join(str(value) for key, value in es.items() if not key.endswith(".claim"))
     for phrase in vi_forbidden:
-        check(phrase.lower() not in vi_text.lower(), f"forbidden/weaker Vietnamese wording present: {phrase}")
+        check(phrase.lower() not in vi_assertive_text.lower(), f"forbidden/weaker Vietnamese wording present outside a misconception claim: {phrase}")
     for phrase in es_forbidden:
-        check(phrase.lower() not in es_text.lower(), f"forbidden/weaker Spanish wording present: {phrase}")
+        check(phrase.lower() not in es_assertive_text.lower(), f"forbidden/weaker Spanish wording present outside a misconception claim: {phrase}")
 
     # Ensure the four guided challenge contracts each retain Prompt -> prediction
     # -> mechanism -> explanation -> transfer semantics in both languages.
