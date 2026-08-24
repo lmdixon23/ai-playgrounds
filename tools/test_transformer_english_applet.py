@@ -44,6 +44,7 @@ def main() -> int:
         "Scaled scores q·k / √dₖ",
         "Causal mask",
         "Attention weights after softmax",
+        "Top probability:",
     )
     for phrase in required_source:
         checks.append((f"source contract: {phrase}", phrase in source, {}))
@@ -137,6 +138,24 @@ def main() -> int:
                 )
             )
 
+            top_info = page.evaluate(
+                """() => {
+                  const C=window.TransformerLanguageModelCore;
+                  const top=C.topTokens(C.forwardText('I like cats'),1)[0];
+                  return {token:top[0],percent:(100*top[1]).toFixed(2)};
+                }"""
+            )
+            top_text = page.locator("#topPrediction").inner_text()
+            checks.append(
+                (
+                    "top predicted token is explicit and not conflated with sampling",
+                    top_info["token"] in top_text
+                    and top_info["percent"] in top_text
+                    and "not a sampled output" in top_text,
+                    {"expected": top_info, "text": top_text},
+                )
+            )
+
             # The raw scaled-score matrix, structural mask, and post-softmax
             # attention weights are separate views of the same four-token state.
             checks.append(
@@ -179,8 +198,10 @@ def main() -> int:
             pair_text = page.locator("#pairDetail").inner_text()
             checks.append(
                 (
-                    "keyboard attention-cell inspection updates pair detail",
-                    "Raw q·k" in pair_text
+                    "keyboard attention-cell inspection exposes source K/V and score chain",
+                    "Source key k_j" in pair_text
+                    and "source value v_j" in pair_text
+                    and "Raw q·k" in pair_text
                     and "q·k/√dₖ" in pair_text
                     and "attention weight" in pair_text,
                     {"text": pair_text},
@@ -196,18 +217,20 @@ def main() -> int:
                         for term in (
                             "query q:",
                             "source keys:",
+                            "source values:",
                             "raw scaled scores:",
                             "causal mask row:",
                             "masked/unmasked scores:",
                             "attention row:",
                             "logits:",
                             "probabilities:",
+                            "top probability token:",
                             "temperature:",
                             "position information:",
                             "causal mask:",
                         )
                     ),
-                    {"state": state_text[:500]},
+                    {"state": state_text[:620]},
                 )
             )
 
