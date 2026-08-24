@@ -9,7 +9,7 @@ from build_transformer_multilingual_candidate import build as build_multilingual
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = ROOT / "_site" / "playgrounds" / "transformer-language-model" / "index.html"
 CANONICAL = "https://lmdixon23.github.io/ai-playgrounds/playgrounds/transformer-language-model/"
-PUBLIC_BADGE = "AI Playgrounds v1.2"
+PUBLIC_BADGE = "AI Playgrounds v1.3"
 
 HEAD = f"""
 <meta name="description" content="Trace toy tokens through position-aware causal self-attention to exact next-token probabilities in a deterministic, offline Transformer language-model lab.">
@@ -52,8 +52,6 @@ def build_public(output: Path) -> Path:
     )
     html = html.replace(english_source_subtitle, catalogs["en"]["page.subtitle"])
 
-    # A release badge is locale-neutral. Replacing all catalog variants prevents a
-    # locale switch from reintroducing the earlier non-public candidate wording.
     for locale in ("en", "zh", "vi", "es"):
         html = html.replace(str(catalogs[locale]["page.badge"]), PUBLIC_BADGE)
 
