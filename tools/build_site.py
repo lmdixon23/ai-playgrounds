@@ -113,10 +113,34 @@ def build_site() -> None:
 
     copy_file("tests/index.html")
 
-    locale_sources = sorted((ROOT / "assets" / "locales").glob("*-r4.js"))
-    if len(locale_sources) != 12:
-        raise RuntimeError(f"Expected 12 R4 locale catalogs, found {len(locale_sources)}")
-    for source in locale_sources:
+    locale_dir = ROOT / "assets" / "locales"
+    shared_locale = locale_dir / "common-r4.js"
+    if not shared_locale.is_file():
+        raise RuntimeError("Missing shared R4 locale catalog: common-r4.js")
+
+    applet_locale_sources = sorted(
+        path
+        for path in locale_dir.glob("*-r4.js")
+        if path.name != "common-r4.js"
+    )
+    catalog_applets = {
+        source.name.removesuffix("-r4.js")
+        for source in applet_locale_sources
+    }
+    if catalog_applets != EXPECTED_APPLETS:
+        missing = sorted(EXPECTED_APPLETS - catalog_applets)
+        unexpected = sorted(catalog_applets - EXPECTED_APPLETS)
+        raise RuntimeError(
+            "R4 applet locale catalog mismatch. "
+            f"Missing={missing}; unexpected={unexpected}"
+        )
+    if len(applet_locale_sources) != 12:
+        raise RuntimeError(
+            f"Expected 12 applet R4 locale catalogs, found {len(applet_locale_sources)}"
+        )
+
+    copy_file(str(shared_locale.relative_to(ROOT)))
+    for source in applet_locale_sources:
         copy_file(str(source.relative_to(ROOT)))
 
     applet_sources = sorted((ROOT / "playgrounds").glob("*/index.html"))
@@ -211,6 +235,15 @@ def validate_boundary() -> None:
 
     if len(list(SITE.rglob("playgrounds/*/index.html"))) != 12:
         raise RuntimeError("The deployment must contain exactly twelve applets.")
+
+    deployed_locale_sources = sorted((SITE / "assets" / "locales").glob("*-r4.js"))
+    if len(deployed_locale_sources) != 13:
+        raise RuntimeError(
+            "The deployment must contain exactly twelve applet R4 catalogs "
+            "plus common-r4.js."
+        )
+    if not (SITE / "assets" / "locales" / "common-r4.js").is_file():
+        raise RuntimeError("The shared R4 locale catalog was not deployed.")
 
 
 def main() -> None:
