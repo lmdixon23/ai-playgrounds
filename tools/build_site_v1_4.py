@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import re
+from html import escape
 from pathlib import Path
 
 import build_site as base
@@ -85,10 +86,6 @@ LAB14_COURSE_ROW = (
 LAB14_LEGEND = '<span style="--legend:#0f766e"><i></i>Agent Tool Use and Context Protocols</span>'
 
 
-def inject_head(html: str, fragment: str) -> str:
-    return html if fragment.split('id="', 1)[-1].split('"', 1)[0] in html else html.replace("</head>", fragment + "\n</head>", 1)
-
-
 def upgrade_landing() -> None:
     path = SITE / "index.html"
     html = path.read_text(encoding="utf-8")
@@ -122,6 +119,35 @@ def upgrade_support_pages() -> None:
         path.write_text(html, encoding="utf-8")
 
 
+def bilingual(en: object, zh: object) -> str:
+    return f'<span class="v14-en">{escape(str(en))}</span><span class="v14-zh">{escape(str(zh))}</span>'
+
+
+def render_complete_applet_map() -> str:
+    cards: list[str] = []
+    for entry in sorted(v13.release_manifest(), key=lambda item: int(item.get("course_order", 999))):
+        slug = escape(str(entry["slug"]), quote=True)
+        accent = escape(str(entry.get("accent", "#2563eb")), quote=True)
+        icon = escape(str(entry.get("icon", "•")))
+        title_en = entry.get("title", slug)
+        title_zh = entry.get("title_zh", title_en)
+        desc_en = entry.get("desc", "")
+        desc_zh = entry.get("desc_zh", desc_en)
+        category_en = entry.get("category_en", entry.get("course_phase", "AI"))
+        category_zh = entry.get("category_zh", category_en)
+        time = escape(str(entry.get("time", "")))
+        level = escape(str(entry.get("level", "")))
+        cards.append(
+            f'<article class="applet-card" style="--applet-accent:{accent}">'
+            f'<div class="card-head"><span class="card-icon">{icon}</span><span class="phase">{bilingual(category_en, category_zh)}</span></div>'
+            f'<h3><a href="playgrounds/{slug}/index.html">{bilingual(title_en, title_zh)}</a></h3>'
+            f'<p>{bilingual(desc_en, desc_zh)}</p>'
+            f'<p class="tiny">{time} · {level}</p>'
+            '</article>'
+        )
+    return ''.join(cards)
+
+
 def transform_curriculum_tracks() -> None:
     path = SITE / "curriculum.html"
     html = path.read_text(encoding="utf-8")
@@ -136,10 +162,19 @@ def transform_curriculum_tracks() -> None:
     if anchor not in html:
         raise RuntimeError("Could not locate curriculum applet-map anchor for v1.4 track split")
     html = html.replace(anchor, MODERN_SECTION + "\n" + anchor, 1)
+
+    map_section = html.index(anchor)
+    grid_anchor = '<div class="applet-grid">'
+    grid_start = html.index(grid_anchor, map_section)
+    section_end = html.index("</section>", grid_start)
+    html = html[:grid_start] + grid_anchor + render_complete_applet_map() + "</div>" + html[section_end:]
+
     if 'id="v14-curriculum-track-style"' not in html:
         html = html.replace("</head>", TRACK_STYLE + "\n</head>", 1)
     if html.count('class="order-dot"') != 13:
         raise RuntimeError("v1.4 foundations/course table must contain thirteen rows; Lab 14 belongs to Modern Extensions")
+    if html.count('class="applet-card"') != 14:
+        raise RuntimeError("v1.4 curriculum applet map must contain all fourteen public applets")
     if "modern-extensions" not in html or "Agent Tool Use and Context Protocols" not in html:
         raise RuntimeError("v1.4 curriculum track split did not complete")
     path.write_text(html, encoding="utf-8")
