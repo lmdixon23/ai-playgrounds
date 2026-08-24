@@ -13,6 +13,7 @@ from build_transformer_public import build_public as build_transformer_public
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "_site"
+PUBLIC_MANIFEST = ROOT / "tools" / "applets_v1_2.json"
 
 ROOT_PUBLIC_FILES = (
     ".nojekyll",
@@ -107,12 +108,17 @@ def copy_file(relative_path: str) -> None:
     shutil.copy2(source, destination)
 
 
+def public_manifest() -> list[dict[str, object]]:
+    manifest = json.loads(PUBLIC_MANIFEST.read_text(encoding="utf-8"))
+    if len(manifest) != 13 or {entry.get("slug") for entry in manifest} != PUBLIC_APPLETS:
+        raise RuntimeError("v1.2 public manifest must contain exactly the thirteen release applets")
+    return manifest
+
+
 def transform_landing() -> None:
     path = SITE / "index.html"
     html = path.read_text(encoding="utf-8")
-    manifest = json.loads((ROOT / "applets.json").read_text(encoding="utf-8"))
-    if len(manifest) != 13 or {entry.get("slug") for entry in manifest} != PUBLIC_APPLETS:
-        raise RuntimeError("Public applet metadata must contain exactly the thirteen v1.2 applets")
+    manifest = public_manifest()
 
     compact = json.dumps(manifest, ensure_ascii=False, separators=(",", ":"))
     html, count = re.subn(
@@ -202,6 +208,11 @@ def build_site() -> None:
 
     for relative_path in ROOT_PUBLIC_FILES:
         copy_file(relative_path)
+
+    # The legacy source manifest remains bound to the twelve source applets used by
+    # the inherited v1.1 release checker. The deployed v1.2 manifest is a separate,
+    # explicit thirteen-applet release input.
+    shutil.copy2(PUBLIC_MANIFEST, SITE / "applets.json")
 
     copy_file("tests/index.html")
 

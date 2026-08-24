@@ -10,6 +10,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SITE = ROOT / "_site"
 PUBLIC_PAGE = SITE / "playgrounds" / "transformer-language-model" / "index.html"
+PUBLIC_MANIFEST = ROOT / "tools" / "applets_v1_2.json"
 
 
 def launch(playwright):
@@ -42,23 +43,29 @@ def main() -> int:
         return build.returncode
 
     checks: list[tuple[str, bool, object]] = []
-    manifest = json.loads((ROOT / "applets.json").read_text(encoding="utf-8"))
+    legacy_manifest = json.loads((ROOT / "applets.json").read_text(encoding="utf-8"))
+    manifest = json.loads(PUBLIC_MANIFEST.read_text(encoding="utf-8"))
+    deployed_manifest = json.loads((SITE / "applets.json").read_text(encoding="utf-8"))
     slugs = {entry["slug"] for entry in manifest}
     deployed = {path.parent.name for path in (SITE / "playgrounds").glob("*/index.html")}
     deployed_files = [path for path in SITE.rglob("*") if path.is_file()]
 
-    checks.append(("thirteen metadata entries", len(manifest) == 13 and "transformer-language-model" in slugs, {"count": len(manifest), "slugs": sorted(slugs)}))
+    checks.append(("legacy source manifest remains twelve", len(legacy_manifest) == 12 and all(entry.get("slug") != "transformer-language-model" for entry in legacy_manifest), {"count": len(legacy_manifest)}))
+    checks.append(("thirteen v1.2 metadata entries", len(manifest) == 13 and "transformer-language-model" in slugs, {"count": len(manifest), "slugs": sorted(slugs)}))
+    checks.append(("deployed manifest equals v1.2 manifest", deployed_manifest == manifest, {}))
     checks.append(("thirteen deployed applets", len(deployed) == 13 and deployed == slugs, {"deployed": sorted(deployed)}))
     checks.append(("minimal v1.2 Pages artifact is 53 files", len(deployed_files) == 53, {"files": len(deployed_files)}))
 
     home = (SITE / "index.html").read_text(encoding="utf-8")
     curriculum = (SITE / "curriculum.html").read_text(encoding="utf-8")
+    release_notes = (SITE / "release-notes.html").read_text(encoding="utf-8")
     sitemap = (SITE / "sitemap.xml").read_text(encoding="utf-8")
     public = PUBLIC_PAGE.read_text(encoding="utf-8")
 
     checks.append(("landing names thirteen applets", "Explore the thirteen applets" in home and "Explore all thirteen" in home, {}))
     checks.append(("landing manifest contains Lab 13", '"slug":"transformer-language-model"' in home, {}))
     checks.append(("curriculum has thirteenth Lab 13 row", curriculum.count('class="order-dot"') == 13 and "playgrounds/transformer-language-model/index.html" in curriculum, {"rows": curriculum.count('class="order-dot"')}))
+    checks.append(("public release notes identify v1.2", "release-v1-2-0" in release_notes and "AI Playgrounds v1.2.0, released August 24, 2026." in release_notes, {}))
     checks.append(("sitemap contains Lab 13", "playgrounds/transformer-language-model/index.html" in sitemap, {}))
     checks.append(("public Lab 13 drops candidate wording", all(term not in public for term in ("English source candidate:", "non-public v1.2 candidate", "v1.2 非公开候选版本", "ứng viên v1.2 chưa công khai", "candidato v1.2 no público")), {}))
     checks.append(("public Lab 13 canonical metadata", "https://lmdixon23.github.io/ai-playgrounds/playgrounds/transformer-language-model/" in public and 'hreflang="vi"' in public and 'hreflang="es"' in public, {}))

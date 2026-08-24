@@ -31,7 +31,8 @@ def main() -> int:
     release_notes = read("RELEASE_NOTES.md")
     changelog = read("CHANGELOG.md")
     readme = read("README.md")
-    manifest = json.loads(read("applets.json"))
+    legacy_manifest = json.loads(read("applets.json"))
+    manifest = json.loads(read("tools/applets_v1_2.json"))
 
     require(re.fullmatch(r"\d+\.\d+\.\d+", VERSION) is not None, f"Invalid configured semantic version: {VERSION}")
     require(re.fullmatch(r"\d{4}-\d{2}-\d{2}", RELEASE_DATE) is not None, f"Invalid configured release date: {RELEASE_DATE}")
@@ -45,9 +46,10 @@ def main() -> int:
     require(re.search(rf"(?m)^## \[{re.escape(VERSION)}\] - {re.escape(RELEASE_DATE)}$|^## {re.escape(VERSION)} - {re.escape(RELEASE_DATE)}$", changelog) is not None, "CHANGELOG.md lacks the versioned entry.")
     require(f"releases/tag/{TAG}" in readme, "README.md lacks the current-release link.")
     require("Archived v1.0.1 DOI" in readme and "10.5281/zenodo.21854217" in readme, "README.md must preserve the archived v1.0.1 DOI boundary.")
+    require(len(legacy_manifest) == 12, "Legacy source manifest must remain bound to the twelve inherited source applets.")
     slugs = {entry.get("slug") for entry in manifest}
-    require(len(manifest) == 13 and "transformer-language-model" in slugs, "applets.json must contain the thirteen-app v1.2 inventory.")
-    print(f"Release metadata: PASS ({TAG}, {RELEASE_DATE}, {len(manifest)} applets)")
+    require(len(manifest) == 13 and "transformer-language-model" in slugs, "tools/applets_v1_2.json must contain the thirteen-app v1.2 inventory.")
+    print(f"Release metadata: PASS ({TAG}, {RELEASE_DATE}, {len(manifest)} public applets)")
     return 0
 
 
