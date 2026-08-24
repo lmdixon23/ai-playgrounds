@@ -98,6 +98,7 @@ def upgrade_landing() -> None:
     html = html.replace("AI Playgrounds | Fourteen interactive foundations of AI", "AI Playgrounds | Fourteen interactive AI labs")
     html = html.replace("AI Playgrounds: fourteen multilingual interactives for foundational artificial intelligence", "AI Playgrounds: fourteen multilingual AI labs from foundations to modern extensions")
     html = html.replace("Fourteen multilingual, offline-ready interactives for foundational artificial intelligence.", "Fourteen multilingual, offline-ready AI labs spanning foundations and modern extensions.")
+    html = html.replace('"version": "1.3.0"', f'"version": "{RELEASE_VERSION}"')
     if 'name="ai-playgrounds-version"' not in html:
         html = html.replace("</head>", f'<meta name="ai-playgrounds-version" content="{RELEASE_VERSION}">\n' + SELECT_STYLE + "\n</head>", 1)
     elif 'id="v14-language-select-style"' not in html:
