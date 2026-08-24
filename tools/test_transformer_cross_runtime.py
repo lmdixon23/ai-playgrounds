@@ -44,6 +44,13 @@ process.stdout.write(JSON.stringify(core.forwardTokens(payload.tokens,payload.op
 
 
 def assert_close(actual, expected, path="root", tol=1e-12):
+    """Recursively compare JSON-compatible numeric structures.
+
+    Python's oracle intentionally returns tuples for immutable model state while the
+    JavaScript JSON representation necessarily uses arrays. Sequence type therefore
+    carries no semantic weight in this parity gate; keys, lengths, booleans, strings,
+    nulls, and numeric values do.
+    """
     if expected is None or actual is None:
         if actual != expected:
             raise AssertionError(f"{path}: {actual!r} != {expected!r}")
@@ -53,12 +60,26 @@ def assert_close(actual, expected, path="root", tol=1e-12):
             raise AssertionError(f"{path}: {actual!r} != {expected!r}")
         return
     if isinstance(expected, (int, float)) and not isinstance(expected, bool):
-        if not isinstance(actual, (int, float)):
+        if not isinstance(actual, (int, float)) or isinstance(actual, bool):
             raise AssertionError(f"{path}: expected numeric, got {type(actual).__name__}")
         if not math.isclose(float(actual), float(expected), rel_tol=tol, abs_tol=tol):
             raise AssertionError(f"{path}: {actual!r} != {expected!r}")
         return
+    if isinstance(expected, dict):
+        if not isinstance(actual, dict):
+            raise AssertionError(f"{path}: expected mapping, got {type(actual).__name__}")
+        actual_keys = set(actual)
+        expected_keys = set(expected)
+        if actual_keys != expected_keys:
+            missing = sorted(expected_keys - actual_keys)
+            extra = sorted(actual_keys - expected_keys)
+            raise AssertionError(f"{path}: key mismatch; missing={missing}, extra={extra}")
+        for key in expected:
+            assert_close(actual[key], expected[key], f"{path}.{key}", tol=tol)
+        return
     if isinstance(expected, (list, tuple)):
+        if not isinstance(actual, (list, tuple)):
+            raise AssertionError(f"{path}: expected sequence, got {type(actual).__name__}")
         if len(actual) != len(expected):
             raise AssertionError(f"{path}: length {len(actual)} != {len(expected)}")
         for index, (a, e) in enumerate(zip(actual, expected, strict=True)):
@@ -66,6 +87,23 @@ def assert_close(actual, expected, path="root", tol=1e-12):
         return
     if actual != expected:
         raise AssertionError(f"{path}: {actual!r} != {expected!r}")
+
+
+def parity_harness_self_test():
+    # The previous harness compared root dictionaries shallowly, making Python
+    # tuples disagree with JavaScript arrays before their numeric contents were
+    # inspected. Keep a direct regression check for that failure mode.
+    assert_close(
+        {"outer": {"values": [1.0, 2.0], "flag": True}, "name": "fixture"},
+        {"outer": {"values": (1.0, 2.0), "flag": True}, "name": "fixture"},
+        path="harness_self_test",
+    )
+    try:
+        assert_close({"x": [1.0, 3.0]}, {"x": (1.0, 2.0)}, path="harness_negative")
+    except AssertionError:
+        pass
+    else:
+        raise AssertionError("parity harness failed to detect a nested numeric mismatch")
 
 
 def python_payload(tokens, *, use_positions=True, causal_mask=True, temperature=1.0):
@@ -104,6 +142,22 @@ def run_case(name, tokens, **options):
 
 
 def main() -> int:
+    try:
+        parity_harness_self_test()
+        print("PASS parity_harness_self_test")
+    except Exception as exc:
+        print(f"FAIL parity_harness_self_test: {exc}", file=sys.stderr)
+        payload = {
+            "harness": "tools/test_transformer_cross_runtime.py",
+            "cases": 0,
+            "passed": 0,
+            "failed": 1,
+            "pass": False,
+            "failures": [f"parity_harness_self_test: {type(exc).__name__}: {exc}"],
+        }
+        print(json.dumps(payload, indent=2))
+        return 1
+
     cases = [
         ("canonical", ("<BOS>", "i", "like", "cats"), {}),
         ("substitution", ("<BOS>", "i", "like", "dogs"), {}),
@@ -126,6 +180,7 @@ def main() -> int:
 
     payload = {
         "harness": "tools/test_transformer_cross_runtime.py",
+        "harness_self_test": True,
         "cases": len(cases),
         "passed": len(cases) - len(failures),
         "failed": len(failures),
