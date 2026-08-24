@@ -1,5 +1,6 @@
 name: R4 assistant semantic translation review
 
+# Existing-workflow retrigger after initial workflow creation.
 on:
   push:
     branches:
@@ -24,7 +25,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "1f248d841018be734476b5942c8a83c83c63eedf"
+          test "$(git rev-parse HEAD^)" = "5fa5f422701cc97f735670650c54aab0542b1f0e"
           test "$(git merge-base HEAD 305360568063474eb12fb54a4b19df8f50935a59)" = "305360568063474eb12fb54a4b19df8f50935a59"
           python - <<'PY'
           import subprocess
