@@ -56,7 +56,9 @@ def main() -> int:
             score_text = page.locator("#scoreEquation").inner_text()
             checks.append(("score inspector shows dot product and scaling", "√4" in score_text and "attention weight" in score_text, {"text": score_text}))
 
-            accessible = page.locator("#accessibleState").inner_text()
+            # This state sits inside a collapsed <details>; text_content verifies the
+            # programmatic text equivalent without requiring the disclosure to be open.
+            accessible = page.locator("#accessibleState").text_content() or ""
             checks.append(("text-equivalent state includes core numeric layers", all(term in accessible for term in ("Prompt:", "Q:", "K(source):", "Scaled score:", "Attention row:", "Final logits:", "Next-token probabilities:")), {"text": accessible[:500]}))
 
             # The causal mask makes future cells unavailable in earlier rows.
