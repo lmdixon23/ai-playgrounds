@@ -27,6 +27,7 @@ The candidate now closes the English-only implementation obligations needed befo
 15. **Keyboard-operable attention inspection.** Every permitted weight cell is a button; keyboard activation updates the synchronized token/vector/text state and reports the selected query-key calculation.
 16. **Text-equivalent numeric state.** The candidate exposes prompt, tokens, IDs, selected token, query, source keys, raw scaled scores, structural mask row, masked/unmasked scores, attention row, logits, probabilities, temperature, position state, mask state, and Q/K perturbation as text.
 17. **Explicit evidence boundaries and misconception corrections.** The source rejects frontier-model equivalence, attention-as-understanding/explanation, internet-search behavior, stored-answer retrieval, token-equals-word, position-equals-word-meaning, deterministic top-token selection, and temperature-changes-weights interpretations.
+18. **Literal special-token rendering.** `<BOS>` and `<UNK>` are inserted as DOM text rather than HTML so special-token labels remain visible in token controls, matrix headers, and the vocabulary distribution.
 
 ## 2. Adversarial corrections completed since the first English candidate
 
@@ -44,9 +45,11 @@ A subsequent frozen-contract review identified two additional gaps before accept
 - **G — score/mask separation:** closed by separate scaled-score, mask, and attention matrices.
 - **H — two-part substitution challenge:** closed by requiring prediction of both projected Q/K/V scope and named probability direction.
 
+The first full candidate gate then exposed one rendering defect: special tokens written through `innerHTML` were parsed as element names and disappeared visually. That was treated as an applet defect rather than weakening the test. It is now closed by DOM-safe literal text construction across token controls, matrix headers, and vocabulary labels.
+
 ## 3. Verification boundary
 
-`tools/test_transformer_english_applet.py` now adversarially checks at minimum:
+`tools/test_transformer_english_applet.py` adversarially checks at minimum:
 
 - source/evidence contracts;
 - single-file and no-network constraints;
@@ -55,7 +58,7 @@ A subsequent frozen-contract review identified two additional gaps before accept
 - causal-mask rendering and mask-off behavior;
 - keyboard attention-cell inspection including raw and scaled dot products;
 - required text-equivalent state;
-- unknown-token and context-truncation behavior;
+- unknown-token and context-truncation behavior, which also regression-test visible `<UNK>` and `<BOS>` rendering;
 - Q/K perturbation arithmetic;
 - order/position ablation;
 - mask leakage;
@@ -72,7 +75,7 @@ This candidate is accepted as the **English semantic/source freeze** only when t
 The following items remain required for Lab 13 release readiness and are deliberately not part of the English source-freeze gate:
 
 1. Simplified-Chinese translation and separate semantic parity audit.
-2. Vietnamese and Spanish translation catalogs, machine parity/state tests, and human review before release readiness.
+2. Vietnamese and Spanish translation catalogs, machine parity/state tests, and a separate adversarial semantic review pass performed within the project. No external colleague cold pass is required.
 3. Four-locale browser state preservation and arithmetic-invariance testing.
 4. Public `playgrounds/` integration only after localization acceptance.
 5. Navigation, `applets.json`, curriculum, sitemap, release metadata, and deployment-boundary expansion from twelve to thirteen applets.
