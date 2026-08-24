@@ -47,7 +47,7 @@ jobs:
           cp .r4-assistant-review/verify_r4_locale_catalog.py tools/verify_r4_locale_catalog.py
           cp .r4-assistant-review/R4_ASSISTANT_TRANSLATION_AUDIT.md docs/R4_ASSISTANT_TRANSLATION_AUDIT.md
           echo '37a5d685f18829296fd61f749677797822a8f0c593f19d18a6495fa1da0dbb06  assets/locales/common-r4.js' | sha256sum -c -
-          echo '5b55f4b747864632585b7d6ad799314582dfd5ddc59fbf77e466240ce7a843b1  tools/verify_r4_locale_catalog.py' | sha256sum -c -
+          test "$(git hash-object tools/verify_r4_locale_catalog.py)" = '03c63c425132a5e3fe21155135138b783b1fd868'
           echo 'f8e9ce5ee9ffaa2ca434fb9ccc8df60d68dbf263c6e0585e6725c4aab60ae9f0  docs/R4_ASSISTANT_TRANSLATION_AUDIT.md' | sha256sum -c -
           node --check assets/locales/common-r4.js
           python -m py_compile tools/verify_r4_locale_catalog.py
@@ -104,7 +104,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          # Restore the permanent Verify workflow and remove all one-use staging.
           git show b830d968986be78af89649493ee1d03b1c8f7d73:.github/workflows/verify.yml > .github/workflows/verify.yml
           rm -f .github/workflows/_r4-assistant-semantic-review.yml
           rm -rf .r4-assistant-review
