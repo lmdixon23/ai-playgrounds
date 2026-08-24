@@ -11,6 +11,16 @@ SKIP_EXACT={'EN','中文','English','简体中文','Tiếng Việt','Español','
 DYNAMIC_DATA=(
     re.compile(r'^\(\s*[+\-−]?(?:\d+(?:\.\d+)?|\.\d+)\s*,\s*[+\-−]?(?:\d+(?:\.\d+)?|\.\d+)\s*\)\s+residual\s*=\s*[+\-−]?(?:\d+(?:\.\d+)?|\.\d+)$', re.I),
 )
+# Short invariant technical labels, names, and mathematical formula fragments may
+# legitimately remain identical across locales.
+INVARIANT_TECH={
+    'A*','BFS','DFS','Dijkstra','DPLL','CNF','SAT','UNSAT','ReLU','Adam','SGD',
+    'Q-learning','SARSA','Expected SARSA','Gibbs','EM','GMM','KNN','k-means','k-means++',
+    'D-separation','Bayes','Manhattan','Chebyshev','Euclidean','MSE','L1','L2','Ridge',
+    'Sobel-X','Sobel-Y','XOR','AND','OR','NOT','TD','CPT','DAG','LMS','URL','JSON','PNG',
+    'Logan M. Dixon ·','Modus ponens (SAT, simple)','MSE + λ‖w‖²',
+    'Q(s,a) ← Q(s,a) + α[r + γ max','Q-learning (Softmax)',
+}
 
 def launch(p):
     args=['--no-sandbox','--disable-dev-shm-usage']
@@ -30,6 +40,18 @@ def translatable(s):
     if not ASCII_WORD.search(s): return False
     if re.fullmatch(r'[A-Za-z0-9_./:+×−–—↺↑←→<>=%()\[\],;|* ]+',s) and len(s)<24: return False
     return True
+
+def identity_allowed(s):
+    s=norm(s)
+    if s in INVARIANT_TECH: return True
+    # Equations, selector-like tokens, and compact labels composed only of known
+    # technical names/numbers/symbols may remain language-invariant.
+    if len(s) <= 36:
+        cleaned=re.sub(r'[^A-Za-z*+\-0-9]+',' ',s).strip()
+        tokens={t for t in cleaned.split() if t}
+        if tokens and all(t in INVARIANT_TECH or t.isdigit() or re.fullmatch(r'[A-Z0-9]+',t) for t in tokens):
+            return True
+    return False
 
 def collect_sources(slug):
     from playwright.sync_api import sync_playwright
@@ -82,29 +104,32 @@ def load_locale(slug):
     if proc.returncode: raise RuntimeError(proc.stderr)
     return json.loads(proc.stdout)
 
-def assert_runtime_common(common):
+def assert_runtime_common():
     runtime=(ROOT/'assets'/'localization-r4.js').read_text(encoding='utf-8-sig')
-    for locale in ('vi','es'):
-        for source,target in (common.get(locale) or {}).items():
-            if source not in runtime or target not in runtime:
-                raise RuntimeError(f'R4 shared catalog/runtime fallback drift for {locale}: {source!r}')
+    # Runtime semantics: applet-local generated strings are the draft; reviewed
+    # shared terms are the final override layer. The order is therefore material.
+    if 'return Object.assign({}, local, common);' not in runtime:
+        raise RuntimeError('R4 runtime no longer gives reviewed common strings precedence over local machine drafts')
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--slug',required=True);args=ap.parse_args();slug=args.slug
     sources,title,description=collect_sources(slug); bundle=load_locale(slug); data=bundle.get('data') or {}; common=bundle.get('common') or {}
-    assert_runtime_common(common)
+    assert_runtime_common()
     failures=[]
     if data.get('ready') is not True: failures.append('ready flag is not true')
     for locale in ('vi','es'):
         local=((data.get(locale) or {}).get('strings') or {})
-        strings=dict(common.get(locale) or {}); strings.update(local)
+        # Match browser runtime precedence exactly: common reviewed translations win.
+        strings=dict(local); strings.update(common.get(locale) or {})
         patterns=(data.get(locale) or {}).get('patterns') or []
         missing=sorted(source for source in sources if source not in strings and not pattern_covers(source,patterns))
+        identical=sorted(source for source in sources if source in strings and norm(strings[source])==source and not identity_allowed(source))
         extras=sorted(set(strings)-sources)
         if missing: failures.append(f'{locale}: {len(missing)} missing source translations; first={missing[:12]}')
+        if identical: failures.append(f'{locale}: {len(identical)} untranslated English prose strings; first={identical[:12]}')
         meta=(data.get('meta') or {}).get(locale) or {}
         if not meta.get('title') or not meta.get('description'): failures.append(f'{locale}: metadata title/description missing')
-        print(json.dumps({'slug':slug,'locale':locale,'rendered_sources':len(sources),'translated_sources':len(strings),'shared_sources':len(common.get(locale) or {}),'missing':len(missing),'extras':len(extras),'first_missing':missing[:20],'first_extras':extras[:20]},ensure_ascii=False,indent=2))
+        print(json.dumps({'slug':slug,'locale':locale,'rendered_sources':len(sources),'translated_sources':len(strings),'shared_reviewed_sources':len(common.get(locale) or {}),'missing':len(missing),'identical_prose':len(identical),'extras':len(extras),'first_missing':missing[:20],'first_identical_prose':identical[:20]},ensure_ascii=False,indent=2))
     enmeta=(data.get('meta') or {}).get('en') or {}
     if enmeta.get('title')!=title: failures.append(f'English metadata title mismatch: {enmeta.get("title")!r} != {title!r}')
     if enmeta.get('description')!=description: failures.append('English metadata description mismatch')
