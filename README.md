@@ -9,11 +9,11 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Archived v1.0.1 DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21854217.svg)](https://doi.org/10.5281/zenodo.21854217)
 
-Fourteen multilingual, offline-ready interactives for foundational artificial intelligence. The suite covers search, logic, probability, machine learning, neural networks, computer vision, reinforcement learning, Transformer language modeling, and agent tool use and runtime protocols.
+Fourteen multilingual, offline-ready interactive AI labs spanning foundational mechanisms and modern extensions. The suite covers search, logic, probability, machine learning, neural networks, computer vision, reinforcement learning, Transformer language modeling, and agent tool use and runtime protocols.
 
 **Live site:** https://lmdixon23.github.io/ai-playgrounds/
 
-**Current release:** [v1.3.0](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.3.0)
+**Current release:** [v1.4.0](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.4.0)
 
 **Archived v1.0.1 DOI:** [10.5281/zenodo.21854217](https://doi.org/10.5281/zenodo.21854217) · **All-versions DOI:** [10.5281/zenodo.21854216](https://doi.org/10.5281/zenodo.21854216)
 
@@ -46,18 +46,28 @@ v1.2.0 added a deterministic decoder-like teaching model that connects token IDs
 
 The applet explicitly distinguishes attention weights from a general explanation of model reasoning, separates argmax probability from sampling, and treats its tokenizer and weights as small teaching fixtures rather than a reproduction of a frontier LLM.
 
+v1.4.0 adds a presentation-only Tokenize -> Represent -> Attend -> Predict journey so learners can follow that mechanism more progressively without changing the frozen model state or arithmetic.
+
 ## Lab 14: Agent Tool Use and Context Protocols
 
-v1.3.0 adds a deterministic agent-runtime lab that separates model output, structured tool calls, schema validation, authorization, execution, observations, provenance-aware context updates, and stopping. Eight scenarios cover observation-driven replanning, overlapping schemas, invalid arguments, text versus execution, permission denial, instruction-like tool content, MCP 2026-07-28 serialization, and termination.
+v1.3.0 added a deterministic agent-runtime lab that separates model output, structured tool calls, schema validation, authorization, execution, observations, provenance-aware context updates, and stopping. Eight scenarios cover observation-driven replanning, overlapping schemas, invalid arguments, text versus execution, permission denial, instruction-like tool content, MCP 2026-07-28 serialization, and termination.
 
 The applet keeps the computational boundary explicit: natural-language text is not execution, tool availability is not authorization, schema validity is not correctness, and an instruction-like tool observation does not automatically become a controlling instruction. Four-locale switching is presentation-only and is verified not to mutate the frozen machine state, permissions, tool data, provenance, or action history.
 
+v1.4.0 makes the runtime story explicitly visible as Propose -> Validate -> Authorize -> Execute -> Observe -> Update / choose next -> Stop while preserving the same deterministic policy and tool world.
+
+## v1.4 product-quality pass
+
+v1.4 keeps the suite at fourteen applets. It replaces the remaining prominent four-button locale controls in Labs 13 and 14 with native four-language selectors, adapts landing/support language controls to native selectors, moves release provenance out of the Lab 13/14 hero treatment, and separates the curriculum into a Foundations / course track and Modern AI extensions while retaining the quick-entry sampler.
+
+The planning matrix in [docs/CURRICULUM_COVERAGE_MATRIX.md](docs/CURRICULUM_COVERAGE_MATRIX.md) compares current coverage against AIMA and the Spring 2026 CS50/CSCI E-80 AI curriculum. It is used to balance classical gaps such as minimax, constraint satisfaction, temporal probabilistic reasoning, planning, and MDP methods against contemporary future labs.
+
 ## Explore
 
-Use the live site or build the deterministic v1.3 Pages artifact with:
+Use the live site or build the deterministic v1.4 Pages artifact with:
 
 ```bash
-python tools/build_site_v1_3.py
+python tools/build_site_v1_4.py
 ```
 
 The deployed applets require no server, account, package manager, or backend. Lab 13 and Lab 14 are generated into the minimal Pages artifact from frozen source and audited four-locale localization inputs, producing self-contained HTML files.
@@ -70,14 +80,17 @@ The repository uses complementary verification layers:
 python tools/release_check.py
 python tools/run_algorithm_tests.py
 python tools/test_transformer_public_integration.py
+python tools/test_transformer_v1_4_experience.py
 python tools/test_agent_tool_context.py
 python tools/test_agent_tool_context_cross_runtime.py
 python tools/test_agent_tool_context_multilingual_applet.py
 python tools/test_agent_tool_context_public_integration.py
+python tools/test_agent_tool_context_v1_4_experience.py
+python tools/test_v1_4_public_integration.py
 python tools/browser_qa.py --no-screenshots
 ```
 
-The inherited algorithm gate requires all 45 legacy regression cases to pass with no skipped cases. Lab 13 adds 20 independent numeric fixtures, Python-to-JavaScript parity, semantic localization gates, four-locale arithmetic and state parity, and public integration regression coverage. Lab 14 adds 20 deterministic reference tests, eight cross-runtime fixture families, English and multilingual browser gates, 1,801 static and dynamic localization checks across 163 merged presentation keys, state-preserving four-locale browser QA, and a public v1.3 integration gate. GitHub Actions runs the cumulative verification stack on pull requests and release-bound main revisions.
+The inherited algorithm gate requires all 45 legacy regression cases to pass with no skipped cases. Lab 13 adds 20 independent numeric fixtures, Python-to-JavaScript parity, semantic localization gates, four-locale arithmetic and state parity, public integration regression coverage, and a v1.4 presentation-state gate. Lab 14 adds 20 deterministic reference tests, eight cross-runtime fixture families, English and multilingual browser gates, 1,801 static and dynamic localization checks across 163 merged presentation keys, state-preserving four-locale browser QA, public v1.3 regression coverage, and a v1.4 runtime-journey gate. The full-site v1.4 gate verifies the fourteen-app/54-file boundary, curriculum completeness, language selector behavior, and responsive containment. GitHub Actions runs the cumulative stack on pull requests and release-bound main revisions.
 
 ## Teaching materials
 
@@ -89,7 +102,7 @@ The inherited algorithm gate requires all 45 legacy regression cases to pass wit
 
 ## Research status
 
-AI Playgrounds v1.3.0 is the current software release. The earlier v1.0.1 artifact remains immutable and archived at its version DOI. Its DOI should not be interpreted as a DOI for v1.3.0.
+AI Playgrounds v1.4.0 is the current software release. The earlier v1.0.1 artifact remains immutable and archived at its version DOI. Its DOI should not be interpreted as a DOI for v1.4.0.
 
 A separate design-and-tools research manuscript about the suite remains in preparation. Publication of the software is not publication of that manuscript.
 
