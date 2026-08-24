@@ -60,7 +60,7 @@ v1.4.0 makes the runtime story explicitly visible as Propose -> Validate -> Auth
 
 v1.4 keeps the suite at fourteen applets. It replaces the remaining prominent four-button locale controls in Labs 13 and 14 with native four-language selectors, adapts landing/support language controls to native selectors, moves release provenance out of the Lab 13/14 hero treatment, and separates the curriculum into a Foundations / course track and Modern AI extensions while retaining the quick-entry sampler.
 
-The planning matrix in [docs/CURRICULUM_COVERAGE_MATRIX.md](docs/CURRICULUM_COVERAGE_MATRIX.md) compares current coverage against AIMA and the Spring 2026 CS50/CSCI E-80 AI curriculum. It is used to balance classical gaps such as minimax, constraint satisfaction, temporal probabilistic reasoning, planning, and MDP methods against contemporary future labs.
+The planning matrix in [docs/AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md](docs/AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md) compares current coverage against AIMA and the Spring 2026 CS50/CSCI E-80 AI curriculum. It is used to balance classical gaps such as minimax, constraint satisfaction, temporal probabilistic reasoning, planning, and MDP methods against contemporary future labs.
 
 ## Explore
 
