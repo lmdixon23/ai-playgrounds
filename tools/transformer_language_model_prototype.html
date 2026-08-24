@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lab 13 Prototype — Transformer Language Modeling</title>
+<style>
+:root{--bg:#f8fafc;--card:#fff;--fg:#172033;--muted:#64748b;--border:#cbd5e1;--accent:#7c3aed;--soft:#f1f5f9;--mask:#e2e8f0;--good:#166534;--bad:#b91c1c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,sans-serif}main{max-width:1180px;margin:0 auto;padding:24px}.top{display:flex;gap:18px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}.top h1{margin:0 0 5px;font-size:1.65rem}.sub{margin:0;color:var(--muted);max-width:780px}.badge{padding:5px 9px;border:1px solid var(--border);border-radius:999px;background:var(--card);font-size:.76rem;color:var(--muted)}.controls,.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:16px}.controls{display:flex;gap:14px;align-items:end;flex-wrap:wrap}.field{display:flex;flex-direction:column;gap:4px;min-width:160px}.field label,.tiny{color:var(--muted);font-size:.78rem;font-weight:650}.field select,.field input[type=text]{padding:7px 9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--fg);font:inherit}.toggle{display:flex;gap:7px;align-items:center;min-height:38px}.slider{min-width:210px}.slider-row{display:flex;gap:8px;align-items:center}.slider input{width:150px}.temp{font-family:ui-monospace,monospace;font-weight:700;color:var(--accent)}.pipeline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:16px}.stage{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px}.stage strong{display:block;color:var(--accent);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em}.stage span{display:block;margin-top:4px;font-size:.9rem}.tokens{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.token{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:7px 9px;cursor:pointer;font:inherit}.token.active{outline:2px solid var(--accent);border-color:var(--accent)}.token .id{display:block;font:11px ui-monospace,monospace;color:var(--muted)}.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px}.vector-row{display:grid;grid-template-columns:100px 1fr;gap:8px;padding:5px 0;border-bottom:1px dashed var(--border)}.vector-row:last-child{border-bottom:0}.vec{font-family:ui-monospace,monospace;font-size:.82rem;overflow-wrap:anywhere}.matrix-wrap{overflow:auto}.matrix{border-collapse:collapse;width:100%;font-size:.78rem;text-align:center}.matrix th,.matrix td{border:1px solid var(--border);padding:6px;min-width:58px}.matrix th{background:var(--soft);font-weight:650}.matrix td.masked{background:var(--mask);color:var(--muted)}.matrix td.selected{outline:2px solid var(--accent);outline-offset:-2px}.bars{display:grid;gap:6px;margin-top:9px}.bar-row{display:grid;grid-template-columns:80px 1fr 64px;gap:8px;align-items:center}.bar-track{height:14px;background:var(--soft);border-radius:999px;overflow:hidden}.bar-fill{height:100%;background:var(--accent);border-radius:999px}.num{font:12px ui-monospace,monospace;text-align:right}.challenge{border-left:5px solid var(--accent)}.challenge h2{margin:0 0 5px;font-size:1.05rem}.challenge p{margin:4px 0 10px}.challenge-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.challenge select,.challenge button{padding:7px 10px;border:1px solid var(--border);border-radius:7px;background:var(--card);font:inherit}.challenge button{cursor:pointer}.challenge button.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:700}.challenge button:disabled{opacity:.45;cursor:not-allowed}.challenge-result{margin-top:10px;padding:10px;border-radius:8px;background:var(--soft);white-space:pre-wrap}.warning{padding:10px 12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;color:#9a3412;margin-top:12px}.status{font:12px ui-monospace,monospace;color:var(--muted)}@media(max-width:800px){.pipeline{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}}@media(max-width:480px){main{padding:14px}.pipeline{grid-template-columns:1fr}.bar-row{grid-template-columns:68px 1fr 58px}}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <div>
+      <h1>Transformer Language Modeling</h1>
+      <p class="sub">R1 prototype: trace a tiny deterministic decoder-like block from tokens to causal self-attention to next-token probabilities. Every displayed number comes from the same frozen arithmetic as the Python oracle.</p>
+    </div>
+    <span class="badge">non-public v1.2 prototype</span>
+  </div>
+
+  <section class="controls" aria-label="Transformer controls">
+    <div class="field"><label for="prompt">Prepared prompt</label><select id="prompt"><option value="I like cats">I like cats</option><option value="I like dogs">I like dogs</option><option value="cats sleep .">cats sleep .</option><option value="dogs play .">dogs play .</option></select></div>
+    <label class="toggle"><input id="positions" type="checkbox" checked> add position vectors</label>
+    <label class="toggle"><input id="mask" type="checkbox" checked> causal mask</label>
+    <div class="field slider"><label for="temperature">Temperature</label><div class="slider-row"><input id="temperature" type="range" min="0.25" max="2.5" step="0.25" value="1"><span id="tempV" class="temp">1.00</span></div></div>
+  </section>
+
+  <section class="pipeline" aria-label="Pipeline overview">
+    <div class="stage"><strong>1 · Tokenize</strong><span>text → toy token IDs</span></div>
+    <div class="stage"><strong>2 · Represent</strong><span>embedding + position</span></div>
+    <div class="stage"><strong>3 · Attend</strong><span>QKᵀ / √dₖ → mask → softmax</span></div>
+    <div class="stage"><strong>4 · Predict</strong><span>final state → logits → probabilities</span></div>
+  </section>
+
+  <section class="card">
+    <div class="tiny">TOKENS · click one to inspect its vectors and attention row</div>
+    <div id="tokens" class="tokens"></div>
+    <p id="stateSummary" class="status" aria-live="polite"></p>
+  </section>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Selected token vectors</h2>
+      <div id="vectors"></div>
+      <div class="warning"><strong>Attention is not an explanation.</strong> These weights show how this toy head combines value vectors. A large weight does not by itself identify the cause of the final output logit.</div>
+    </section>
+
+    <section class="card">
+      <h2>Next-token distribution</h2>
+      <p class="tiny">Temperature changes the displayed distribution; it does not change the frozen logits or train the model.</p>
+      <div id="bars" class="bars"></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Causal self-attention matrix</h2>
+    <p class="tiny">Rows are destination tokens (queries). Columns are source tokens (keys/values). Future cells are structurally unavailable when the causal mask is on.</p>
+    <div class="matrix-wrap"><table id="matrix" class="matrix"></table></div>
+  </section>
+
+  <section class="card challenge">
+    <h2>Guided Challenge · predict before reveal</h2>
+    <p>For the <strong>final token</strong>, which permitted source token will receive the largest attention weight?</p>
+    <div class="challenge-controls">
+      <select id="prediction" aria-label="Predicted highest-attention source"><option value="">Choose a token</option></select>
+      <button id="lock" type="button">Lock prediction</button>
+      <button id="reveal" class="primary" type="button" disabled>Reveal weights</button>
+      <button id="resetChallenge" type="button">Reset</button>
+    </div>
+    <div id="challengeResult" class="challenge-result" hidden></div>
+  </section>
+</main>
+
+<script src="./transformer_language_model_core.js"></script>
+<script>
+(() => {
+  'use strict';
+  const C=window.TransformerLanguageModelCore;
+  if(!C) throw new Error('TransformerLanguageModelCore missing');
+  const $=id=>document.getElementById(id);
+  let result=null, selected=0, locked=null;
+  const prompt=$('prompt'), positions=$('positions'), mask=$('mask'), temp=$('temperature');
+
+  const fmt=(x,n=4)=>Number(x).toFixed(n);
+  const vec=v=>'['+v.map(x=>fmt(x,3)).join(', ')+']';
+  function recompute(){
+    result=C.forwardText(prompt.value,{usePositions:positions.checked,causalMask:mask.checked,temperature:Number(temp.value)});
+    selected=Math.min(selected,result.tokens.length-1);
+    $('tempV').textContent=Number(temp.value).toFixed(2);
+    render(); resetChallenge(false);
+  }
+  function render(){ renderTokens(); renderVectors(); renderMatrix(); renderBars(); renderPredictionOptions(); renderSummary(); }
+  function renderTokens(){
+    $('tokens').innerHTML='';
+    result.tokens.forEach((token,i)=>{const b=document.createElement('button');b.type='button';b.className='token'+(i===selected?' active':'');b.innerHTML=`${token}<span class="id">id ${result.tokenIds[i]} · pos ${i}</span>`;b.addEventListener('click',()=>{selected=i;renderTokens();renderVectors();renderMatrix();renderSummary()});$('tokens').appendChild(b)});
+  }
+  function row(label,value){return `<div class="vector-row"><strong>${label}</strong><span class="vec">${value}</span></div>`}
+  function renderVectors(){
+    const i=selected;
+    $('vectors').innerHTML=[row('input x',vec(result.inputs[i])),row('query q',vec(result.queries[i])),row('key k',vec(result.keys[i])),row('value v',vec(result.values[i])),row('attention',vec(result.attention[i])),row('attn output',vec(result.attentionOutputs[i])),row('final state',vec(result.finalStates[i]))].join('');
+  }
+  function renderMatrix(){
+    const table=$('matrix');table.innerHTML='';
+    const head=document.createElement('tr');head.innerHTML='<th>query ↓ / key →</th>'+result.tokens.map(t=>`<th>${t}</th>`).join('');table.appendChild(head);
+    result.tokens.forEach((token,i)=>{const tr=document.createElement('tr');const th=document.createElement('th');th.textContent=token;tr.appendChild(th);result.attention[i].forEach((weight,j)=>{const td=document.createElement('td');const masked=result.maskedScores[i][j]===null;td.className=(masked?'masked ':'')+(i===selected?'selected':'');td.textContent=masked?'MASK':fmt(weight,3);td.title=masked?'future source blocked by causal mask':`raw scaled score ${fmt(result.rawScores[i][j],4)}; attention ${fmt(weight,4)}`;tr.appendChild(td)});table.appendChild(tr)});
+  }
+  function renderBars(){
+    $('bars').innerHTML='';
+    const max=Math.max(...result.probabilities);
+    C.VOCAB.forEach((token,i)=>{const p=result.probabilities[i];const row=document.createElement('div');row.className='bar-row';row.innerHTML=`<span>${token}</span><div class="bar-track"><div class="bar-fill" style="width:${max?100*p/max:0}%"></div></div><span class="num">${(100*p).toFixed(2)}%</span>`;$('bars').appendChild(row)});
+  }
+  function renderPredictionOptions(){
+    const select=$('prediction'), prior=select.value;select.innerHTML='<option value="">Choose a token</option>';result.tokens.forEach((token,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=`${token} · position ${i}`;select.appendChild(o)});if([...select.options].some(o=>o.value===prior))select.value=prior;
+  }
+  function renderSummary(){
+    const i=selected, permitted=result.attention[i].filter((_,j)=>!result.causalMask||j<=i).length;
+    $('stateSummary').textContent=`Selected ${result.tokens[i]} at position ${i}. ${permitted} source position(s) permitted. Position vectors ${result.usePositions?'on':'off'}; causal mask ${result.causalMask?'on':'off'}; temperature ${result.temperature.toFixed(2)}.`;
+  }
+  function resetChallenge(clear=true){locked=null;$('reveal').disabled=true;$('lock').disabled=false;$('prediction').disabled=false;$('challengeResult').hidden=true;if(clear)$('prediction').value='';}
+  $('lock').addEventListener('click',()=>{const v=$('prediction').value;if(v==='')return;locked=Number(v);$('prediction').disabled=true;$('lock').disabled=true;$('reveal').disabled=false;$('challengeResult').hidden=false;$('challengeResult').textContent=`Locked prediction: ${result.tokens[locked]} at position ${locked}. The weights remain hidden until Reveal.`;});
+  $('reveal').addEventListener('click',()=>{if(locked===null)return;const row=result.attention.at(-1);const allowed=row.map((w,i)=>({w,i})).filter(x=>!result.causalMask||x.i<result.tokens.length);const winner=allowed.reduce((a,b)=>b.w>a.w?b:a);const correct=winner.i===locked;$('challengeResult').hidden=false;$('challengeResult').textContent=`${correct?'Prediction matched.':'Prediction differed.'}\nHighest weight: ${result.tokens[winner.i]} at position ${winner.i} = ${fmt(winner.w,4)}\nLocked prediction: ${result.tokens[locked]} at position ${locked}\nFinal attention row: ${row.map((w,i)=>`${result.tokens[i]}=${fmt(w,4)}`).join(' · ')}`;$('reveal').disabled=true;});
+  $('resetChallenge').addEventListener('click',()=>resetChallenge(true));
+  [prompt,positions,mask,temp].forEach(el=>el.addEventListener('input',recompute));
+  recompute();
+})();
+</script>
+</body>
+</html>
