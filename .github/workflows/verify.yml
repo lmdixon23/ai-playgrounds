@@ -99,20 +99,18 @@ jobs:
       - name: Run browser and responsive QA
         run: python tools/browser_qa.py --no-screenshots
 
-      - name: Finalize tested assistant-reviewed R4 tree
+      - name: Publish tested reviewed content without workflow changes
         if: github.event_name == 'pull_request' && github.head_ref == 'feature/v1.1.0-vi-es-localization-r4'
         shell: bash
         run: |
           set -euo pipefail
-          git show b830d968986be78af89649493ee1d03b1c8f7d73:.github/workflows/verify.yml > .github/workflows/verify.yml
-          rm -f .github/workflows/_r4-assistant-semantic-review.yml
+          # Workflow files remain untouched in this bot-authored commit. They are
+          # restored/removed afterward through the owner-authorized GitHub API.
           rm -rf .r4-assistant-review
           git diff --check
           python - <<'PY'
           import subprocess
-          allowed={
-            '.github/workflows/verify.yml',
-            '.github/workflows/_r4-assistant-semantic-review.yml',
+          expected={
             '.r4-assistant-review/R4_ASSISTANT_TRANSLATION_AUDIT.md',
             '.r4-assistant-review/verify_r4_locale_catalog.py',
             '.r4-assistant-review/common.b64.part00',
@@ -129,13 +127,11 @@ jobs:
           for row in [x for x in raw.split(b'\0') if x]:
               text=row.decode('utf-8','replace')
               if len(text)>=4: got.add(text[3:])
-          if got != allowed:
-              raise SystemExit(f'Finalization boundary mismatch. Missing={sorted(allowed-got)} Unexpected={sorted(got-allowed)}')
-          print('R4_REVIEW_FINALIZATION_BOUNDARY=PASS')
+          if got != expected:
+              raise SystemExit(f'Content publication boundary mismatch. Missing={sorted(expected-got)} Unexpected={sorted(got-expected)}')
+          print('R4_REVIEW_CONTENT_BOUNDARY=PASS files=10')
           PY
           git add -A -- \
-            .github/workflows/verify.yml \
-            .github/workflows/_r4-assistant-semantic-review.yml \
             .r4-assistant-review \
             assets/locales/common-r4.js \
             docs/R4_ASSISTANT_TRANSLATION_AUDIT.md \
@@ -145,8 +141,8 @@ jobs:
           git config user.email '178442787+lmdixon23@users.noreply.github.com'
           git commit -m 'Integrate assistant-reviewed Vietnamese and Spanish semantics'
           git push origin HEAD:refs/heads/feature/v1.1.0-vi-es-localization-r4
-          echo "FINAL_REVIEWED_HEAD=$(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
-          echo 'R4_ASSISTANT_REVIEW_FINALIZED=PASS' >> "$GITHUB_STEP_SUMMARY"
+          echo "REVIEWED_CONTENT_HEAD=$(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
+          echo 'R4_REVIEWED_CONTENT_PUBLISHED=PASS' >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload verification evidence
         if: always()
