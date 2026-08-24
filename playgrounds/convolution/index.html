@@ -7,7 +7,7 @@
 <title>Convolution Playground | AI Playgrounds</title>
 <link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E" rel="icon"/>
 <meta content="Move a small filter across an image. Inspect every multiply-and-sum operation, then compare edge, blur, pooling, and learned-filter behavior." name="description"/>
-<link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/" rel="canonical"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/?lang=en" hreflang="en" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/?lang=zh" hreflang="zh-Hans" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/?lang=en" hreflang="x-default" rel="alternate"/>
+<link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/" rel="canonical"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/?lang=en" hreflang="en" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/?lang=zh" hreflang="zh-Hans" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/?lang=vi" hreflang="vi" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/?lang=es" hreflang="es" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/?lang=en" hreflang="x-default" rel="alternate"/>
 <meta content="website" property="og:type"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/" property="og:url"/>
 <meta content="Convolution Playground | AI Playgrounds" property="og:title"/>
@@ -17,7 +17,7 @@
 <meta content="Convolution Playground | AI Playgrounds" name="twitter:title"/>
 <meta content="Move a small filter across an image. Inspect every multiply-and-sum operation, then compare edge, blur, pooling, and learned-filter behavior." name="twitter:description"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" name="twitter:image"/>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Convolution Playground | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/","description":"Move a small filter across an image. Inspect every multiply-and-sum operation, then compare edge, blur, pooling, and learned-filter behavior.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Convolution Playground | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/","description":"Move a small filter across an image. Inspect every multiply-and-sum operation, then compare edge, blur, pooling, and learned-filter behavior.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh","vi","es"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
 <style>
   :root {
     --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #0e7490;
@@ -584,6 +584,7 @@
 .interactive-inner{container-type:inline-size;max-width:min(1320px,100%)!important}
 @media(max-width:820px){.learning-mode-head{align-items:flex-start;flex-direction:column}.learning-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-mode-panel{grid-template-columns:1fr}.learning-mode-panel>details{grid-column:1!important}.copy-experiment{width:100%}}
 </style>
+<link href="../../assets/localization-r4.css" rel="stylesheet"/>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to applet controls</a>
@@ -635,7 +636,7 @@
 </header>
 <aside class="tldr">
 <strong data-i18n="tldr-strong">The big idea</strong>
-<span data-i18n="tldr-body">A 3×3 grid of numbers, slid across an image and multiplied + summed at every position. That's a "convolution." It's how CNNs turn raw pixels into edges.</span>
+<span data-i18n="tldr-body">This applet uses the operation commonly called convolution in CNN practice: a kernel slides without being flipped, so mathematically it is cross-correlation. Each multiply-and-sum produces one feature-map response; a filter can highlight an edge but does not recognize an object by itself.</span>
 </aside>
 <section class="interactive" id="main" role="main" tabindex="-1">
 <div class="interactive-inner">
@@ -781,7 +782,7 @@
 <div aria-hidden="true" class="cv-hl cell" id="outputCellHl"></div>
 </div>
 <p data-i18n="output-hint" style="color:var(--muted); font-size:0.78rem; margin-top:4px; font-style:italic;">
-        What the CNN "sees."
+        One feature-map response.
       </p>
 <p class="cv-caption" data-i18n="cap-output" id="outputCap">Each pixel = the kernel multiplied + summed over its 3×3 input neighbourhood. Grayscale = magnitude (abs on).</p>
 </div>
@@ -911,15 +912,15 @@
 </article>
 <article class="scenario-card" data-scenario-index="3">
 <h3>Scenario 4: Max pooling reduces resolution</h3>
-<p class="scenario-meta"><strong>Core question: </strong> What information survives when each small block keeps only its strongest activation?</p>
+<p class="scenario-meta"><strong>Core question: </strong> What information survives when each small block keeps only its numerically largest activation?</p>
 <p class="scenario-meta"><strong>Run and watch: </strong> Switch to convolution followed by two-by-two max pooling and compare output dimensions.</p>
 <p class="scenario-meta"><strong>Predict first: </strong> Predict which small features will remain visible after pooling.</p>
 <p class="scenario-meta"><strong>Explain afterward: </strong> Explain the tradeoff between lower spatial detail and a smaller, more tolerant representation.</p>
 <button class="step-btn" type="button">Apply and compare</button>
 </article>
 <article class="scenario-card" data-scenario-index="4">
-<h3>Scenario 5: Stacked convolutions see a larger region</h3>
-<p class="scenario-meta"><strong>Core question: </strong> Why can two small filters detect a pattern larger than either filter alone?</p>
+<h3>Scenario 5: Stacked convolutions create a larger theoretical receptive field</h3>
+<p class="scenario-meta"><strong>Core question: </strong> Why can one later output depend on a larger input region than either kernel covers alone?</p>
 <p class="scenario-meta"><strong>Run and watch: </strong> Stack two three-by-three convolutions and inspect the effective receptive field.</p>
 <p class="scenario-meta"><strong>Predict first: </strong> Predict the effective width and height before applying the second layer.</p>
 <p class="scenario-meta"><strong>Explain afterward: </strong> Trace how one second-layer value depends on a five-by-five region of the original image.</p>
@@ -1127,7 +1128,7 @@
 <h2>Pooling and receptive fields</h2>
 <ul>
 <li><strong>Convolution plus 2×2 max pooling:</strong> each 2×2 output region is reduced to its
-      largest value. Resolution is halved, computation falls, and small translations may affect the
+      numerically largest value, not necessarily the value with largest magnitude when signed responses are present. Resolution is halved, computation falls, and small translations may affect the
       pooled representation less.</li>
 <li><strong>Two stacked 3×3 convolutions:</strong> with stride one and suitable padding, each
       final output depends on a 5×5 region of the original input. Stacking <code>n</code> such layers
@@ -1266,7 +1267,7 @@
       'k-sharp': 'Sharpen', 'k-emboss': 'Emboss', 'k-custom': 'Custom',
       'opt-abs': 'Take absolute value', 'opt-relu': 'Apply ReLU (clip ≥ 0)',
       'input-h3': 'Input', 'input-hint': 'Click and drag to draw.',
-      'output-h3': 'Output (after convolution)', 'output-hint': 'What the CNN "sees."',
+      'output-h3': 'Output (after convolution)', 'output-hint': 'One feature-map response.',
       'window-h3': '🔍 Sliding-window inspector',
       'window-hint': 'Click any cell on the output canvas to see the 3×3 input window centered on it, the kernel, and the dot-product math that produced that pixel.',
       'window-empty': '(click on the output canvas to inspect a cell)',
@@ -1323,17 +1324,17 @@
       'tour2name': 'Sobel-Y finds horizontal edges',
       'tour2desc': 'Same image, Sobel-Y. Now the horizontal bar lights up instead. The kernel is rotated 90°. Two filters, two complementary features.',
       'tour3name': 'Conv → max-pool downsamples',
-      'tour3desc': "Switch to 'Conv + max-pool'. Output is now 16×16 (downsampled). Pooling keeps the strongest activation in each 2×2 block: translation tolerance comes from here.",
+      'tour3desc': "Switch to 'Conv + max-pool'. Output is now 16×16 (downsampled). Pooling keeps the numerically largest activation in each 2×2 block. This can reduce sensitivity to small local shifts, but pooling is not the only source of translation robustness.",
       'tour4name': 'Stacked convs grow receptive field',
-      'tour4desc': "Switch to 'Conv → conv'. Two 3×3 kernels stacked = a 5×5 effective receptive field. Try the default (Sobel-X then Sobel-Y): this approximates a corner detector. Real CNNs stack dozens of layers.",
+      'tour4desc': "Switch to 'Conv → conv'. Two 3×3 kernels stacked = a 5×5 effective receptive field. Try the default (Sobel-X then Sobel-Y): this can produce a response associated with changes in both directions; interpreting it as a corner detector requires additional context and nonlinear processing. Real CNNs stack dozens of layers.",
       // worksheet answer-feedback (ws{n}ok / ws{n}no) ---
       'ws1ok': 'Correct. The Identity kernel [[0,0,0],[0,1,0],[0,0,0]] multiplies the center pixel by 1 and everyone else by 0. The output is exactly the input: a useful sanity check.',
       'ws1no': "Try 'same as input'. Identity kernel preserves the center pixel and zeros out the rest of the neighborhood: output = input.",
       'ws2ok': 'Correct. Sobel-X detects horizontal *changes* in intensity: which happen at the edges of vertical lines. The vertical bar of the cross lights up because that\'s where pixel values change horizontally.',
       'ws2no': "Try 'vertical bar'. Sobel-X kernel = [[-1,0,1],[-2,0,2],[-1,0,1]] computes ∂I/∂x: large where pixels change horizontally, which is at vertical edges.",
-      'ws3ok': 'Correct. Stacked 3×3 convs grow the receptive field by 2 cells per layer: 3 → 5 → 7. Two 3×3 layers see a 5×5 input patch with FEWER parameters than one 5×5 kernel (18 vs 25). This is why CNN architectures stack small kernels.',
+      'ws3ok': 'Correct. Stacked 3×3 convolutions grow the theoretical receptive field by 2 cells per layer: 3 → 5 → 7. In this single-channel toy case, two 3×3 kernels use 18 weights versus 25 for one 5×5 kernel; parameter efficiency is one reason architectures stack small kernels.',
       'ws3no': 'Try 5×5. Each 3×3 conv adds 2 to the receptive field width (1 on each side). Stacking two 3×3s sees 5×5.',
-      'ws4ok': 'Correct. Gradient descent nudges all 9 kernel values toward the Sobel-X target. As the MSE loss falls, the random kernel converges to the edge-detector: exactly how a CNN learns its filters during training.',
+      'ws4ok': 'Correct for this toy target-matching task. Gradient descent moves the 9 kernel values toward a filter that reproduces the Sobel-X target output. Real CNNs also use gradient-based optimization, but learn many filters jointly from a task loss rather than by copying a named kernel.',
       'ws4no': "Try 'they converge toward Sobel-X' or 'they learn the edge detector'. Gradient descent computes how each of the 9 weights should change to reduce the loss, then updates them: step by step the random kernel becomes the target.",
       // Learn-the-filter mode.
       'learn-toggle': '🎯 Learn the filter',
@@ -1346,7 +1347,7 @@
       'learn-lr-label': 'Learning rate:',
       'learn-lr-title': 'Learning rate: how big a step gradient descent takes each update. Too large diverges; too small is slow.',
       'learn-loss-label': 'loss (MSE):', 'learn-step-label': 'step',
-      'learn-caption': 'Last week the network learned its weights by gradient descent. A CNN learns its filters the same way: watch a random kernel become an edge detector.',
+      'learn-caption': 'This toy learner uses gradient descent to match a specified filter output. Real CNNs also use gradient-based optimization, but their filters are learned jointly from the task loss rather than by copying a named filter.',
       // NEW: canvas captions (a11y / "what you're looking at").
       'cap-input': 'The 32×32 image you feed in. Dark pixels = 1, white = 0.',
       'cap-kernel': 'The 3×3 weights slid over every position. Use Tab and the arrow keys to move between cells.',
@@ -1384,7 +1385,7 @@
       'reset-all': '↺ 全部重置', 'input-label': '输入:',
       'kernel-label': '卷积核预设:', 'layer-label': '层模式:',
       'tldr-strong': '核心思想',
-      'tldr-body': '一个 3×3 的数字网格,在图像上滑动,每个位置做点乘并求和。这就是"卷积"。卷积神经网络就是这样把像素变成边缘的。',
+      'tldr-body': '本工具展示 CNN 实践中常称为“卷积”的滑动乘加运算。由于卷积核没有翻转，数学上这里执行的是互相关；每次乘加只产生一个特征图响应，单个滤波器并不等于物体识别。',
       'layer-conv': '单层卷积(一个核)',
       'layer-pool': '卷积 + 最大池化(降采样)',
       'pool-label': '池化大小 p:',
@@ -1408,7 +1409,7 @@
       'k-sharp': '锐化', 'k-emboss': '浮雕', 'k-custom': '自定义',
       'opt-abs': '取绝对值', 'opt-relu': '应用 ReLU(裁剪 ≥ 0)',
       'input-h3': '输入', 'input-hint': '点击并拖动可绘制。',
-      'output-h3': '输出(卷积之后)', 'output-hint': '这就是卷积网络"看见"的内容。',
+      'output-h3': '输出(卷积之后)', 'output-hint': '这是一个特征图响应，而不是卷积网络“看见”的全部内容。',
       'window-h3': '🔍 滑动窗口检查器',
       'window-hint': '点击输出画布上的任意格子,查看以它为中心的 3×3 输入窗口、卷积核,以及生成该像素的点积运算。',
       'window-empty': '(点击输出画布查看某个格子)',
@@ -1465,17 +1466,17 @@
       'tour2name': 'Sobel-Y 找出水平边缘',
       'tour2desc': '同一图像,Sobel-Y。现在亮起的换成了水平条。卷积核旋转了 90°。两个过滤器,两个互补的特征。',
       'tour3name': '卷积 → 最大池化降采样',
-      'tour3desc': '切换到"卷积 + 最大池化"。输出现在是 16×16(已降采样)。池化保留每个 2×2 块中最强的激活--平移容忍性正源于此。',
+      'tour3desc': '切换到"卷积 + 最大池化"。输出现在是 16×16(已降采样)。池化保留每个 2×2 块中数值最大的激活,这可以降低对小幅局部位移的敏感度;池化并不是平移鲁棒性的唯一来源。',
       'tour4name': '堆叠卷积扩大感受野',
-      'tour4desc': '切换到"卷积 → 卷积"。两个 3×3 卷积核堆叠 = 5×5 的有效感受野。试试默认配置(先 Sobel-X 再 Sobel-Y)--这近似一个角点检测器。真实 CNN 会堆叠几十层。',
+      'tour4desc': '切换到"卷积 → 卷积"。两个 3×3 卷积核堆叠形成 5×5 的理论感受野。默认的 Sobel-X 再 Sobel-Y 会对两个方向的变化产生响应;把它解释为角点检测仍需要更多上下文和非线性处理。',
       // 练习题答案反馈(ws{n}ok / ws{n}no)---
       'ws1ok': '正确。恒等卷积核 [[0,0,0],[0,1,0],[0,0,0]] 把中心像素乘以 1,其余全部乘以 0。输出恰好等于输入--一个有用的完整性检查。',
       'ws1no': '试试"same as input"。恒等卷积核保留中心像素,把邻域其余部分置零--输出 = 输入。',
       'ws2ok': '正确。Sobel-X 检测强度沿水平方向的*变化*--这发生在竖直线条的边缘处。十字的竖直条亮起,因为那里像素值沿水平方向变化。',
       'ws2no': '试试"vertical bar"。Sobel-X 卷积核 = [[-1,0,1],[-2,0,2],[-1,0,1]] 计算 ∂I/∂x--在像素沿水平方向变化处取值大,也就是竖直边缘处。',
-      'ws3ok': '正确。堆叠的 3×3 卷积每层让感受野扩大 2 格:3 → 5 → 7。两个 3×3 层看到的是 5×5 的输入块,而参数比一个 5×5 卷积核更少(18 对 25)。这正是 CNN 架构堆叠小卷积核的原因。',
+      'ws3ok': '正确。堆叠的 3×3 卷积每层让理论感受野扩大 2 格:3 → 5 → 7。在这个单通道玩具示例中,两个 3×3 核共有 18 个权重,一个 5×5 核有 25 个;参数效率是架构堆叠小卷积核的原因之一。',
       'ws3no': '试试 5×5。每个 3×3 卷积让感受野宽度加 2(每侧各 1)。堆叠两个 3×3 就能看到 5×5。',
-      'ws4ok': '正确。梯度下降把全部 9 个卷积核值朝 Sobel-X 目标推动。随着 MSE 损失下降,随机卷积核收敛为边缘检测器--这正是 CNN 在训练中学习其过滤器的方式。',
+      'ws4ok': '对这个玩具目标匹配任务而言是这样。梯度下降让 9 个卷积核值逐步得到能复现 Sobel-X 目标输出的滤波器。真实 CNN 也使用基于梯度的优化,但会从任务损失中联合学习许多滤波器,而不是复制一个指定卷积核。',
       'ws4no': '试试"they converge toward Sobel-X"或"they learn the edge detector"。梯度下降计算这 9 个权重各自应如何改变以降低损失,然后更新它们--随机卷积核一步步变成目标。',
       // 学习卷积核模式。
       'learn-toggle': '🎯 学习卷积核',
@@ -2387,10 +2388,10 @@
       description: "Same image, Sobel-Y. Now the horizontal bar lights up instead. The kernel is rotated 90°. Two filters, two complementary features.",
       apply: () => applyPreset('conv', 'cross', 'edgeY') },
     { name: 'Conv → max-pool downsamples',
-      description: "Switch to 'Conv + max-pool'. Output is now 16×16 (downsampled). Pooling keeps the strongest activation in each 2×2 block: translation tolerance comes from here.",
+      description: "Switch to 'Conv + max-pool'. Output is now 16×16 (downsampled). Pooling keeps the numerically largest activation in each 2×2 block. This can reduce sensitivity to small local shifts, but pooling is not the only source of translation robustness.",
       apply: () => applyPreset('conv-pool', 'cross', 'edgeX') },
     { name: 'Stacked convs grow receptive field',
-      description: "Switch to 'Conv → conv'. Two 3×3 kernels stacked = a 5×5 effective receptive field. Try the default (Sobel-X then Sobel-Y): this approximates a corner detector. Real CNNs stack dozens of layers.",
+      description: "Switch to 'Conv → conv'. Two 3×3 kernels stacked = a 5×5 effective receptive field. Try the default (Sobel-X then Sobel-Y): this can produce a response associated with changes in both directions; interpreting it as a corner detector requires additional context and nonlinear processing. Real CNNs stack dozens of layers.",
       apply: () => applyPreset('conv-conv', 'cross', 'edgeX') },
   ];
   let tourIdx = 0;
@@ -2490,7 +2491,7 @@
       ok:  ['ws3ok', "Correct. Stacked 3×3 convs grow the receptive field by 2 cells per layer: 3 → 5 → 7. Two 3×3 layers see a 5×5 input patch with FEWER parameters than one 5×5 kernel (18 vs 25). This is why CNN architectures stack small kernels."],
       no:  ['ws3no', "Try 5×5. Each 3×3 conv adds 2 to the receptive field width (1 on each side). Stacking two 3×3s sees 5×5."] },
     { correct: 1,
-      ok:  ['ws4ok', "Correct. Gradient descent nudges all 9 kernel values toward the Sobel-X target. As the MSE loss falls, the random kernel converges to the edge-detector: exactly how a CNN learns its filters during training."],
+      ok:  ['ws4ok', "Correct. Gradient descent nudges all 9 kernel values toward the Sobel-X target. As the MSE loss falls, the random kernel converges to the edge-detector: a toy analogue of gradient-based filter learning; real CNNs learn many filters jointly from a task loss."],
       no:  ['ws4no', "Try 'they converge toward Sobel-X' or 'they learn the edge detector'. Gradient descent computes how each of the 9 weights should change to reduce the loss, then updates them: step by step the random kernel becomes the target."] },
   ];
   WORKSHEET.forEach((q, i) => {
@@ -3293,7 +3294,7 @@
 </script>
 <script id="learner-content-system">
 (() => {
-  const profile = {"slug":"convolution","en":{"title":"Convolution Playground","big":"Move a small filter across an image. Inspect every multiply-and-sum operation, then compare edge, blur, pooling, and learned-filter behavior.","primer":"A convolution converts a local patch of pixels into one output value. Learn the names of the filter, output, and movement settings before stacking layers.","terms":[{"term":"Convolution","definition":"A repeated multiply-and-sum operation applied to local image patches."},{"term":"Kernel or filter","definition":"The small matrix of weights that slides across the image."},{"term":"Feature map","definition":"The grid of output values produced by a filter."},{"term":"Stride","definition":"How many pixels the kernel moves at each step."},{"term":"Padding","definition":"Extra border values added so the kernel can process image edges."},{"term":"Convolutional neural network (CNN)","definition":"A neural network that learns many filters across multiple layers."},{"term":"Channel","definition":"One component of an image or feature map, such as red, green, and blue."},{"term":"Receptive field","definition":"The region of the input that can affect one output value."},{"term":"Learned filter","definition":"A kernel whose values are adjusted from data during training rather than chosen by hand."}],"scenarios":[{"title":"The identity filter preserves the image","question":"What filter would copy each pixel without changing its neighbors?","run":"Apply the identity kernel to the cross image and compare input with output.","predict":"Predict which kernel cell must carry the full weight.","explain":"Explain why a center weight of one and all other weights of zero copies the image."},{"title":"The Sobel x-direction filter detects vertical edges","question":"Why does measuring horizontal brightness change reveal vertical boundaries?","run":"Apply the Sobel x-direction filter and inspect where the output becomes bright or dark.","predict":"Predict which part of the cross will produce the strongest response.","explain":"Connect the left-to-right brightness change to the vertical edge orientation."},{"title":"The Sobel y-direction filter detects horizontal edges","question":"How does rotating a filter change the feature it detects?","run":"Apply the Sobel y-direction filter to the same image and compare it with the x-direction result.","predict":"Predict which bar of the cross will now produce the strongest response.","explain":"Explain how the rotated weights measure top-to-bottom change."},{"title":"Max pooling reduces resolution","question":"What information survives when each small block keeps only its strongest activation?","run":"Switch to convolution followed by two-by-two max pooling and compare output dimensions.","predict":"Predict which small features will remain visible after pooling.","explain":"Explain the tradeoff between lower spatial detail and a smaller, more tolerant representation."},{"title":"Stacked convolutions see a larger region","question":"Why can two small filters detect a pattern larger than either filter alone?","run":"Stack two three-by-three convolutions and inspect the effective receptive field.","predict":"Predict the effective width and height before applying the second layer.","explain":"Trace how one second-layer value depends on a five-by-five region of the original image."}]},"zh":{"title":"卷积演练场","big":"让一个小滤波器在图像上滑动。检查每次乘加运算，再比较边缘、模糊、池化和学习滤波器的行为。","primer":"卷积把一小块像素转换为一个输出值。叠加层之前，先熟悉滤波器、输出和移动设置的名称。","terms":[{"term":"卷积","definition":"对图像局部区域重复进行乘法并求和的运算。"},{"term":"卷积核或滤波器","definition":"在图像上滑动的小型权重矩阵。"},{"term":"特征图","definition":"滤波器产生的输出值网格。"},{"term":"步幅","definition":"卷积核每一步移动的像素数。"},{"term":"填充","definition":"在图像边缘增加的额外数值，使卷积核能处理边界。"},{"term":"卷积神经网络（CNN）","definition":"在多层中学习许多滤波器的神经网络。"},{"term":"通道","definition":"图像或特征图的一个分量，例如红、绿、蓝通道。"},{"term":"感受野","definition":"能够影响某一个输出值的输入区域。"},{"term":"学习得到的滤波器","definition":"在训练中根据数据调整数值，而不是由人手工指定的卷积核。"}],"scenarios":[{"title":"恒等滤波器保持图像不变","question":"什么滤波器能复制每个像素而不改变邻居？","run":"把恒等卷积核应用到十字图像，并比较输入与输出。","predict":"预测哪个卷积核单元必须承担全部权重。","explain":"解释中心权重为 1、其他权重为 0 为什么会复制图像。"},{"title":"Sobel x 方向滤波器检测垂直边缘","question":"为什么测量水平方向亮度变化会显示垂直边界？","run":"应用 Sobel x 方向滤波器，观察输出哪里变亮或变暗。","predict":"预测十字的哪一部分会产生最强响应。","explain":"把从左到右的亮度变化与垂直边缘方向联系起来。"},{"title":"Sobel y 方向滤波器检测水平边缘","question":"旋转滤波器为什么会改变检测到的特征？","run":"把 Sobel y 方向滤波器应用到同一图像，并与 x 方向结果比较。","predict":"预测十字的哪条横杆会产生最强响应。","explain":"解释旋转后的权重如何测量从上到下的变化。"},{"title":"最大池化降低分辨率","question":"每个小区域只保留最强激活时，哪些信息会留下？","run":"切换到卷积后接二乘二最大池化，并比较输出尺寸。","predict":"预测哪些小特征在池化后仍可见。","explain":"解释空间细节减少与表示更小、更具容忍性之间的取舍。"},{"title":"叠加卷积看到更大区域","question":"为什么两个小滤波器能检测比单个滤波器更大的模式？","run":"叠加两个三乘三卷积并检查有效感受野。","predict":"应用第二层前预测有效宽度和高度。","explain":"追踪第二层一个数值如何依赖原图中的五乘五区域。"}]}};
+  const profile = {"slug":"convolution","en":{"title":"Convolution Playground","big":"Move a small filter across an image. Inspect every multiply-and-sum operation, then compare edge, blur, pooling, and learned-filter behavior.","primer":"CNN-style convolution in this applet is cross-correlation: it converts a local patch of pixels into one output value without flipping the kernel. Learn the names of the filter, output, and movement settings before stacking layers.","terms":[{"term":"Convolution","definition":"The CNN-style sliding multiply-and-sum used here. Because the kernel is not flipped, the mathematical operation is cross-correlation."},{"term":"Kernel or filter","definition":"The small matrix of weights that slides across the image."},{"term":"Feature map","definition":"The grid of output values produced by a filter."},{"term":"Stride","definition":"How many pixels the kernel moves at each step."},{"term":"Padding","definition":"Extra border values added so the kernel can process image edges."},{"term":"Convolutional neural network (CNN)","definition":"A neural network that learns many filters across multiple layers."},{"term":"Channel","definition":"One component of an image or feature map, such as red, green, and blue."},{"term":"Receptive field","definition":"The region of the input that can affect one output value."},{"term":"Learned filter","definition":"A kernel whose values are adjusted from data during training rather than chosen by hand."}],"scenarios":[{"title":"The identity filter preserves the image","question":"What filter would copy each pixel without changing its neighbors?","run":"Apply the identity kernel to the cross image and compare input with output.","predict":"Predict which kernel cell must carry the full weight.","explain":"Explain why a center weight of one and all other weights of zero copies the image."},{"title":"The Sobel x-direction filter detects vertical edges","question":"Why does measuring horizontal brightness change reveal vertical boundaries?","run":"Apply the Sobel x-direction filter and inspect where the output becomes bright or dark.","predict":"Predict which part of the cross will produce the strongest response.","explain":"Connect the left-to-right brightness change to the vertical edge orientation."},{"title":"The Sobel y-direction filter detects horizontal edges","question":"How does rotating a filter change the feature it detects?","run":"Apply the Sobel y-direction filter to the same image and compare it with the x-direction result.","predict":"Predict which bar of the cross will now produce the strongest response.","explain":"Explain how the rotated weights measure top-to-bottom change."},{"title":"Max pooling reduces resolution","question":"What information survives when each small block keeps only its numerically largest activation?","run":"Switch to convolution followed by two-by-two max pooling and compare output dimensions.","predict":"Predict which small features will remain visible after pooling.","explain":"Explain the tradeoff between lower spatial detail and a smaller, more tolerant representation."},{"title":"Stacked convolutions create a larger theoretical receptive field","question":"Why can one later output depend on a larger input region than either kernel covers alone?","run":"Stack two three-by-three convolutions and inspect the effective receptive field.","predict":"Predict the effective width and height before applying the second layer.","explain":"Trace how one second-layer value depends on a five-by-five region of the original image."}]},"zh":{"title":"卷积演练场","big":"让一个小滤波器在图像上滑动。检查每次乘加运算，再比较边缘、模糊、池化和学习滤波器的行为。","primer":"本工具中的 CNN 风格“卷积”不翻转卷积核，因此数学上是互相关：它把一小块像素转换成一个输出值。叠加层之前，先熟悉滤波器、输出和移动设置。","terms":[{"term":"卷积（CNN 实践用语）","definition":"本工具使用滑动乘加但不翻转卷积核，因此数学上是互相关；深度学习中通常仍称为卷积。"},{"term":"卷积核或滤波器","definition":"在图像上滑动的小型权重矩阵。"},{"term":"特征图","definition":"滤波器产生的输出值网格。"},{"term":"步幅","definition":"卷积核每一步移动的像素数。"},{"term":"填充","definition":"在图像边缘增加的额外数值，使卷积核能处理边界。"},{"term":"卷积神经网络（CNN）","definition":"在多层中学习许多滤波器的神经网络。"},{"term":"通道","definition":"图像或特征图的一个分量，例如红、绿、蓝通道。"},{"term":"感受野","definition":"能够影响某一个输出值的输入区域。"},{"term":"学习得到的滤波器","definition":"在训练中根据数据调整数值，而不是由人手工指定的卷积核。"}],"scenarios":[{"title":"恒等滤波器保持图像不变","question":"什么滤波器能复制每个像素而不改变邻居？","run":"把恒等卷积核应用到十字图像，并比较输入与输出。","predict":"预测哪个卷积核单元必须承担全部权重。","explain":"解释中心权重为 1、其他权重为 0 为什么会复制图像。"},{"title":"Sobel x 方向滤波器检测垂直边缘","question":"为什么测量水平方向亮度变化会显示垂直边界？","run":"应用 Sobel x 方向滤波器，观察输出哪里变亮或变暗。","predict":"预测十字的哪一部分会产生最强响应。","explain":"把从左到右的亮度变化与垂直边缘方向联系起来。"},{"title":"Sobel y 方向滤波器检测水平边缘","question":"旋转滤波器为什么会改变检测到的特征？","run":"把 Sobel y 方向滤波器应用到同一图像，并与 x 方向结果比较。","predict":"预测十字的哪条横杆会产生最强响应。","explain":"解释旋转后的权重如何测量从上到下的变化。"},{"title":"最大池化降低分辨率","question":"每个小区域只保留数值最大的激活时，哪些信息会留下？","run":"切换到卷积后接二乘二最大池化，并比较输出尺寸。","predict":"预测哪些小特征在池化后仍可见。","explain":"解释空间细节减少与表示更小、更具容忍性之间的取舍。"},{"title":"叠加卷积形成更大的理论感受野","question":"为什么后层的一个输出可以依赖比任一卷积核本身更大的输入区域？","run":"叠加两个三乘三卷积并检查有效感受野。","predict":"应用第二层前预测有效宽度和高度。","explain":"追踪第二层一个数值如何依赖原图中的五乘五区域。"}]}};
   window.APPLET_LEARNER_PROFILE = profile;
   const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
   const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;
@@ -3416,7 +3417,7 @@
     if(body&&!body.querySelector('.featured-actions')){const actions=document.createElement('div');actions.className='featured-actions';actions.innerHTML='<button type="button" class="step-btn" data-start-featured></button>';body.appendChild(actions)}
   }
   let active=new URL(location.href).searchParams.get('mode')||'explore';if(!panels[active])active='explore';
-  let restoring=false;
+  let restoring=true;
 
   function profileScenario(){
     const profile=window.APPLET_LEARNER_PROFILE||{};
@@ -3631,5 +3632,12 @@
   if (SOURCE_ALLOWLIST.has(source)) send('/event/campaign/' + source);
 })();
 </script>
+
+<!-- suite-guided-challenge-v2:start -->
+<link href="../../assets/guided-challenges.css" rel="stylesheet"/>
+<script defer src="../../assets/guided-challenges.js"></script>
+<!-- suite-guided-challenge-v2:end -->
+<script src="../../assets/locales/convolution-r4.js"></script>
+<script src="../../assets/localization-r4.js"></script>
 </body>
 </html>

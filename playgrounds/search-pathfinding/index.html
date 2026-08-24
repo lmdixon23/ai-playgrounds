@@ -7,7 +7,7 @@
 <title>Pathfinding Visualizer | AI Playgrounds</title>
 <link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E" rel="icon"/>
 <meta content="Compare four ways to search the same map. Watch how each algorithm chooses the next cell, how much work it does, and whether it finds the least-cost path." name="description"/>
-<link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/" rel="canonical"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/?lang=en" hreflang="en" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/?lang=zh" hreflang="zh-Hans" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/?lang=en" hreflang="x-default" rel="alternate"/>
+<link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/" rel="canonical"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/?lang=en" hreflang="en" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/?lang=zh" hreflang="zh-Hans" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/?lang=vi" hreflang="vi" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/?lang=es" hreflang="es" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/?lang=en" hreflang="x-default" rel="alternate"/>
 <meta content="website" property="og:type"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/" property="og:url"/>
 <meta content="Pathfinding Visualizer | AI Playgrounds" property="og:title"/>
@@ -17,7 +17,7 @@
 <meta content="Pathfinding Visualizer | AI Playgrounds" name="twitter:title"/>
 <meta content="Compare four ways to search the same map. Watch how each algorithm chooses the next cell, how much work it does, and whether it finds the least-cost path." name="twitter:description"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" name="twitter:image"/>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Pathfinding Visualizer | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/","description":"Compare four ways to search the same map. Watch how each algorithm chooses the next cell, how much work it does, and whether it finds the least-cost path.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Pathfinding Visualizer | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/","description":"Compare four ways to search the same map. Watch how each algorithm chooses the next cell, how much work it does, and whether it finds the least-cost path.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh","vi","es"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
 <style>
   :root {
     --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #2563eb;
@@ -519,6 +519,7 @@
 .interactive-inner{container-type:inline-size;max-width:min(1320px,100%)!important}
 @media(max-width:820px){.learning-mode-head{align-items:flex-start;flex-direction:column}.learning-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-mode-panel{grid-template-columns:1fr}.learning-mode-panel>details{grid-column:1!important}.copy-experiment{width:100%}}
 </style>
+<link href="../../assets/localization-r4.css" rel="stylesheet"/>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to applet controls</a>
@@ -672,8 +673,8 @@
 <h3>Scenario 2: Depth-first search can find the wrong kind of success</h3>
 <p class="scenario-meta"><strong>Core question: </strong> Why is finding a path different from finding the shortest path?</p>
 <p class="scenario-meta"><strong>Run and watch: </strong> Run depth-first search (DFS), then compare its path length with breadth-first search (BFS) on the same grid.</p>
-<p class="scenario-meta"><strong>Predict first: </strong> Which search will reach a goal first, and which will produce the shorter path?</p>
-<p class="scenario-meta"><strong>Explain afterward: </strong> Explain how following one branch deeply can create a fast but inefficient route.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> With this fixed grid and neighbor order, which search will expand fewer nodes before reaching the goal, and which will produce the shorter path?</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain how following one branch deeply can reach the goal after relatively few expansions yet still produce a longer route. One trace is not a general runtime ranking.</p>
 <button class="step-btn" type="button">Apply and compare</button>
 </article>
 <article class="scenario-card" data-scenario-index="2">
@@ -689,7 +690,7 @@
 <p class="scenario-meta"><strong>Core question: </strong> What changes when the estimate is allowed to overstate the remaining distance?</p>
 <p class="scenario-meta"><strong>Run and watch: </strong> Run A* with 1.5 times the Manhattan estimate and compare it with standard A*.</p>
 <p class="scenario-meta"><strong>Predict first: </strong> Predict which version will visit fewer nodes and whether both must return the same path cost.</p>
-<p class="scenario-meta"><strong>Explain afterward: </strong> Explain why faster focus can break the mathematical guarantee of an optimal path.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain why stronger heuristic weighting can remove the optimal-path guarantee without implying a general runtime speedup.</p>
 <button class="step-btn" type="button">Apply and compare</button>
 </article>
 <article class="scenario-card" data-scenario-index="4">
@@ -959,9 +960,7 @@
 <li>Build an open map and a detour maze. How does heuristic usefulness change the explored count?</li>
 <li>Explain why an overestimating heuristic can change the optimality conclusion.</li>
 </ul>
-<p><strong>Misconceptions to test:</strong> DFS is a shortest-path algorithm; Dijkstra only
-      works on weighted graphs; A* is always faster; any heuristic preserves optimality; BFS simply
-      becomes Dijkstra rather than being a special uniform-cost case.</p>
+<p><strong>Misconceptions to test:</strong> DFS is a shortest-path algorithm; finishing first in one animation proves an algorithm is generally faster; BFS minimizes weighted path cost; Dijkstra only works on weighted graphs; A* is always faster; any heuristic preserves optimality; BFS simply becomes Dijkstra rather than being a special uniform-cost case.</p>
 </div>
 </section>
 <section data-essay-lang="zh" hidden="" lang="zh">
@@ -1104,11 +1103,11 @@
       'tour0name': 'BFS vs A*: same maze, different work',
       'tour0desc': 'Small grid, demo maze, BFS. Run once, record visited nodes, then switch to A* on the same maze. The paths stay optimal, but the frontier work changes dramatically.',
       'tour1name': 'DFS trap: fast path is not best path',
-      'tour1desc': "Small grid, maze layout, DFS. Run after BFS and compare path length. DFS can find a path quickly while missing the shortest route.",
+      'tour1desc': "Small grid, maze layout, DFS. Run after BFS and compare path length. On this fixed grid and neighbor order, DFS can reach the goal after relatively few expansions while returning a longer route. That does not make DFS generally faster.",
       'tour2name': 'A* focus: heuristic saves work without losing optimality',
       'tour2desc': 'Small grid, demo maze, A* with Manhattan. Compare path length and visited nodes against BFS. The heuristic focuses work while preserving the shortest-path guarantee.',
-      'tour3name': 'Weighted A*: faster, no longer guaranteed',
-      'tour3desc': 'Medium grid, A* with 1.5× Manhattan. The search may visit fewer cells, but overestimation breaks the guarantee that the first path found is shortest.',
+      'tour3name': 'Weighted A*: may focus more, no longer guaranteed',
+      'tour3desc': 'Medium grid, A* with 1.5× Manhattan. The search may visit fewer cells, but overestimation removes the guarantee that the returned path has minimum cost.',
       'tour4name': 'Weighted terrain: BFS ignores cost, Dijkstra does not',
       'tour4desc': 'Small grid, zero heuristic, mud paint selected. Add a mud corridor and compare BFS with Dijkstra. BFS counts steps; Dijkstra counts cost.',
       // worksheet answer-feedback (ws{n}ok / ws{n}no) ---
@@ -1211,11 +1210,11 @@
       'tour0name': 'BFS 在小网格上:最短路径,但工作量大',
       'tour0desc': '小网格,示例迷宫,BFS。点击"运行搜索"。BFS 以起点为中心一圈圈向外探索,直到碰到终点。它保证最短路径,但会访问很多节点。',
       'tour1name': 'DFS 能找到一条路,但常常是糟糕的',
-      'tour1desc': '同一网格,DFS。运行。DFS 先沿一个方向一头扎到底--常常很快找到一条弯弯绕绕的非最短路径。是"一条路",而不是"那条最短路"。',
+      'tour1desc': '同一网格,DFS。运行。在固定网格和邻居顺序下，DFS 可能在扩展较少节点后到达目标，却返回更长路线。这不表示 DFS 一般更快；它找到的是一条路，不一定是最短路。',
       'tour2name': 'A* 配曼哈顿:聚焦搜索,且最优',
       'tour2desc': '使用可行(admissible)曼哈顿启发式的 A*。访问的节点比 BFS 少得多,同时仍能找到最短路径。启发式把搜索朝终点方向裁剪。',
-      'tour3name': 'A* 配不可行启发式:更快,但次优',
-      'tour3desc': '同样的 A*,但启发式 = 1.5× 曼哈顿(会高估)。访问的节点更少--但路径不再保证最短。最优性定理要求启发式可行(admissible)。',
+      'tour3name': '加权 A*：可能更聚焦，但不再保证最优',
+      'tour3desc': '同样的 A*,但启发式 = 1.5× 曼哈顿(会高估)。它可能访问更少节点，但返回路径不再保证具有最低代价。最优性保证要求满足相应的启发式条件。',
       'tour4name': '迪杰斯特拉 = 零启发式的 A*',
       'tour4desc': 'A* 中把启发式设为零就成了纯粹的 Dijkstra。在无权网格上它表现得像 BFS。试着画一些泥地(代价 3)--Dijkstra 会绕开它,而 BFS 不会。',
       // 练习题答案反馈(ws{n}ok / ws{n}no)---
@@ -2194,7 +2193,7 @@
     { name: 'A* focus: heuristic saves work without losing optimality',
       description: "Small grid, demo maze, A* with Manhattan. Compare path length and visited nodes against BFS.",
       apply: () => { applySize('small'); loadDemoMaze(); setAlgo('astar', 'manhattan'); } },
-    { name: 'Weighted A*: faster, no longer guaranteed',
+    { name: 'Weighted A*: may focus more, no longer guaranteed',
       description: "Medium grid, A* with 1.5× Manhattan. Overestimation can reduce work, but it breaks the shortest-path guarantee.",
       apply: () => { applySize('medium'); loadDemoMaze(); setAlgo('astar', 'manhattan15'); } },
     { name: 'Weighted terrain: BFS ignores cost, Dijkstra does not',
@@ -2771,7 +2770,7 @@
 </script>
 <script id="learner-content-system">
 (() => {
-  const profile = {"slug":"search-pathfinding","en":{"title":"Pathfinding Visualizer","big":"Compare four ways to search the same map. Watch how each algorithm chooses the next cell, how much work it does, and whether it finds the least-cost path.","primer":"Search algorithms differ in two questions: which location should be explored next, and what counts as a good path? Learn the names below before comparing the traces.","terms":[{"term":"Breadth-first search (BFS)","definition":"Explores every location at the current distance before moving farther away."},{"term":"Depth-first search (DFS)","definition":"Follows one branch deeply before backtracking to try another branch."},{"term":"Dijkstra's algorithm","definition":"Finds a least-cost path when different moves can have different costs."},{"term":"A* search","definition":"Combines the cost already paid with an estimate of the cost still remaining."},{"term":"Heuristic","definition":"An estimate that helps a search focus on promising locations."},{"term":"Frontier","definition":"Locations that have been discovered but not yet explored."},{"term":"Path cost","definition":"The total cost accumulated along a route from start to goal."},{"term":"Explored set","definition":"Nodes that the algorithm has already removed from the frontier and processed."},{"term":"Admissible heuristic","definition":"A remaining-cost estimate that never overestimates the true cheapest cost."}],"scenarios":[{"title":"Breadth-first search and A* on the same maze","question":"How much work can a useful estimate save without changing the shortest path?","run":"Run breadth-first search (BFS), record the path length and visited nodes, then run A* search on the unchanged maze.","predict":"Will A* visit fewer nodes, the same number, or more? Will the path length change?","explain":"Use the frontier and visited counts to explain how the heuristic focuses A*."},{"title":"Depth-first search can find the wrong kind of success","question":"Why is finding a path different from finding the shortest path?","run":"Run depth-first search (DFS), then compare its path length with breadth-first search (BFS) on the same grid.","predict":"Which search will reach a goal first, and which will produce the shorter path?","explain":"Explain how following one branch deeply can create a fast but inefficient route."},{"title":"A* with a safe Manhattan-distance estimate","question":"How can A* reduce work while keeping the shortest-path guarantee?","run":"Run A* with the Manhattan-distance heuristic, then compare its path and visited nodes with breadth-first search (BFS).","predict":"Predict whether the path length will match BFS and where the visited cells will concentrate.","explain":"Connect the estimate to the narrower search pattern without claiming the estimate knows the route."},{"title":"Weighted A* trades a guarantee for stronger focus","question":"What changes when the estimate is allowed to overstate the remaining distance?","run":"Run A* with 1.5 times the Manhattan estimate and compare it with standard A*.","predict":"Predict which version will visit fewer nodes and whether both must return the same path cost.","explain":"Explain why faster focus can break the mathematical guarantee of an optimal path."},{"title":"Breadth-first search counts steps; Dijkstra counts cost","question":"Why can two paths with the same number of steps have different total costs?","run":"Paint a muddy corridor, run breadth-first search (BFS), then run Dijkstra's algorithm without changing the map.","predict":"Predict whether the algorithms will choose the same route through the weighted terrain.","explain":"Use step count and terrain cost to explain the different choices."}]},"zh":{"title":"寻路可视化","big":"在同一张地图上比较四种搜索方法。观察每种算法如何选择下一个格子、完成多少工作，以及是否找到最低成本路径。","primer":"搜索算法主要在两个问题上不同：下一步探索哪里，以及什么才算好路径。比较轨迹前，先熟悉下面的术语。","terms":[{"term":"广度优先搜索（BFS）","definition":"先探索当前距离上的所有位置，再继续向更远处搜索。"},{"term":"深度优先搜索（DFS）","definition":"沿一条分支深入前进，走不通时再回退。"},{"term":"Dijkstra 算法","definition":"当不同移动具有不同成本时，寻找最低成本路径。"},{"term":"A* 搜索","definition":"把已经付出的成本与剩余成本的估计结合起来。"},{"term":"启发式","definition":"帮助搜索集中到更有希望位置上的估计。"},{"term":"搜索前沿","definition":"已经发现但尚未探索的位置。"},{"term":"路径代价","definition":"从起点到目标沿一条路线累计的总代价。"},{"term":"已探索集合","definition":"算法已经从前沿取出并处理过的节点。"},{"term":"可采纳启发式","definition":"从不高估真实最低剩余代价的估计函数。"}],"scenarios":[{"title":"同一迷宫中的广度优先搜索与 A*","question":"有用的估计能减少多少工作，同时保持最短路径不变？","run":"先运行广度优先搜索（BFS），记录路径长度和访问节点，再在同一迷宫中运行 A*。","predict":"预测 A* 会访问更少、相同还是更多节点。路径长度会改变吗？","explain":"用搜索前沿和访问数量解释启发式如何让 A* 更集中。"},{"title":"深度优先搜索可能找到“错误的成功”","question":"找到一条路径与找到最短路径有什么不同？","run":"运行深度优先搜索（DFS），再在同一网格上与广度优先搜索（BFS）的路径长度比较。","predict":"预测哪种搜索更快到达目标，哪种会给出更短路径。","explain":"解释深入一条分支为什么可能很快找到路径，却得到低效路线。"},{"title":"使用安全曼哈顿距离估计的 A*","question":"A* 如何减少工作并保持最短路径保证？","run":"使用曼哈顿距离启发式运行 A*，再与广度优先搜索（BFS）的路径和访问节点数比较。","predict":"预测路径长度是否与 BFS 相同，访问格子会集中在哪里。","explain":"把估计与更窄的搜索范围联系起来，但不要说估计已经知道路线。"},{"title":"加权 A* 用保证换取更强聚焦","question":"当估计可以高估剩余距离时，会发生什么？","run":"使用 1.5 倍曼哈顿估计运行 A*，并与标准 A* 比较。","predict":"预测哪种会访问更少节点，以及两者是否必须得到相同路径成本。","explain":"解释更强聚焦为什么可能破坏最优路径的数学保证。"},{"title":"广度优先搜索计算步数；Dijkstra 计算成本","question":"为什么步数相同的两条路径可能总成本不同？","run":"画出一条泥泞走廊，运行广度优先搜索（BFS），再在不改变地图的情况下运行 Dijkstra 算法。","predict":"预测两种算法是否会在加权地形中选择相同路线。","explain":"用步数和地形成本解释不同选择。"}]}};
+  const profile = {"slug":"search-pathfinding","en":{"title":"Pathfinding Visualizer","big":"Compare four ways to search the same map. Watch how each algorithm chooses the next cell, how much work it does, and whether it finds the least-cost path.","primer":"Search algorithms differ in two questions: which location should be explored next, and what counts as a good path? Learn the names below before comparing the traces.","terms":[{"term":"Breadth-first search (BFS)","definition":"Explores every location at the current number of edges from the start before moving farther away."},{"term":"Depth-first search (DFS)","definition":"Follows one branch deeply before backtracking to try another branch."},{"term":"Dijkstra's algorithm","definition":"Finds a least-cost path when different moves can have different costs."},{"term":"A* search","definition":"Combines the cost already paid with an estimate of the cost still remaining."},{"term":"Heuristic","definition":"An estimate that helps a search focus on promising locations."},{"term":"Frontier","definition":"Locations that have been discovered but not yet explored."},{"term":"Path cost","definition":"The total cost accumulated along a route from start to goal."},{"term":"Explored set","definition":"Nodes that the algorithm has already removed from the frontier and processed."},{"term":"Admissible heuristic","definition":"A remaining-cost estimate that never overestimates the true cheapest cost."}],"scenarios":[{"title":"Breadth-first search and A* on the same maze","question":"How much work can a useful estimate save without changing the shortest path?","run":"Run breadth-first search (BFS), record the path length and visited nodes, then run A* search on the unchanged maze.","predict":"Will A* visit fewer nodes, the same number, or more? Will the path length change?","explain":"Use the frontier and visited counts to explain how the heuristic focuses A*."},{"title":"Depth-first search can find the wrong kind of success","question":"Why is finding a path different from finding the shortest path?","run":"Run depth-first search (DFS), then compare its path length with breadth-first search (BFS) on the same grid.","predict":"With this fixed grid and neighbor order, which search will expand fewer nodes before reaching the goal, and which will produce the shorter path?","explain":"Explain how following one branch deeply can reach the goal after relatively few expansions yet still produce a longer route. One trace is not a general runtime ranking."},{"title":"A* with a safe Manhattan-distance estimate","question":"How can A* reduce work while keeping the shortest-path guarantee?","run":"Run A* with the Manhattan-distance heuristic, then compare its path and visited nodes with breadth-first search (BFS).","predict":"Predict whether the path length will match BFS and where the visited cells will concentrate.","explain":"Connect the estimate to the narrower search pattern without claiming the estimate knows the route."},{"title":"Weighted A* trades a guarantee for stronger focus","question":"What changes when the estimate is allowed to overstate the remaining distance?","run":"Run A* with 1.5 times the Manhattan estimate and compare it with standard A*.","predict":"Predict which version will visit fewer nodes and whether both must return the same path cost.","explain":"Explain why stronger heuristic weighting can remove the optimal-path guarantee without implying a general runtime speedup."},{"title":"Breadth-first search counts steps; Dijkstra counts cost","question":"Why can two paths with the same number of steps have different total costs?","run":"Paint a muddy corridor, run breadth-first search (BFS), then run Dijkstra's algorithm without changing the map.","predict":"Predict whether the algorithms will choose the same route through the weighted terrain.","explain":"Use step count and terrain cost to explain the different choices."}]},"zh":{"title":"寻路可视化","big":"在同一张地图上比较四种搜索方法。观察每种算法如何选择下一个格子、完成多少工作，以及是否找到最低成本路径。","primer":"搜索算法主要在两个问题上不同：下一步探索哪里，以及什么才算好路径。比较轨迹前，先熟悉下面的术语。","terms":[{"term":"广度优先搜索（BFS）","definition":"先探索与起点具有相同边数距离的所有位置，再继续向边数更远处搜索。"},{"term":"深度优先搜索（DFS）","definition":"沿一条分支深入前进，走不通时再回退。"},{"term":"Dijkstra 算法","definition":"当不同移动具有不同成本时，寻找最低成本路径。"},{"term":"A* 搜索","definition":"把已经付出的成本与剩余成本的估计结合起来。"},{"term":"启发式","definition":"帮助搜索集中到更有希望位置上的估计。"},{"term":"搜索前沿","definition":"已经发现但尚未探索的位置。"},{"term":"路径代价","definition":"从起点到目标沿一条路线累计的总代价。"},{"term":"已探索集合","definition":"算法已经从前沿取出并处理过的节点。"},{"term":"可采纳启发式","definition":"从不高估真实最低剩余代价的估计函数。"}],"scenarios":[{"title":"同一迷宫中的广度优先搜索与 A*","question":"有用的估计能减少多少工作，同时保持最短路径不变？","run":"先运行广度优先搜索（BFS），记录路径长度和访问节点，再在同一迷宫中运行 A*。","predict":"预测 A* 会访问更少、相同还是更多节点。路径长度会改变吗？","explain":"用搜索前沿和访问数量解释启发式如何让 A* 更集中。"},{"title":"深度优先搜索可能找到“错误的成功”","question":"找到一条路径与找到最短路径有什么不同？","run":"运行深度优先搜索（DFS），再在同一网格上与广度优先搜索（BFS）的路径长度比较。","predict":"在固定网格和固定邻居顺序下，预测哪种搜索会在到达目标前扩展更少节点，以及哪种会给出更短路径。","explain":"解释深入一条分支为什么可能在扩展较少节点后到达目标，却仍得到更长路线；单次轨迹不能证明算法一般更快。"},{"title":"使用安全曼哈顿距离估计的 A*","question":"A* 如何减少工作并保持最短路径保证？","run":"使用曼哈顿距离启发式运行 A*，再与广度优先搜索（BFS）的路径和访问节点数比较。","predict":"预测路径长度是否与 BFS 相同，访问格子会集中在哪里。","explain":"把估计与更窄的搜索范围联系起来，但不要说估计已经知道路线。"},{"title":"加权 A* 用保证换取更强聚焦","question":"当估计可以高估剩余距离时，会发生什么？","run":"使用 1.5 倍曼哈顿估计运行 A*，并与标准 A* 比较。","predict":"预测哪种会访问更少节点，以及两者是否必须得到相同路径成本。","explain":"解释更强聚焦为什么可能破坏最优路径的数学保证。"},{"title":"广度优先搜索计算步数；Dijkstra 计算成本","question":"为什么步数相同的两条路径可能总成本不同？","run":"画出一条泥泞走廊，运行广度优先搜索（BFS），再在不改变地图的情况下运行 Dijkstra 算法。","predict":"预测两种算法是否会在加权地形中选择相同路线。","explain":"用步数和地形成本解释不同选择。"}]}};
   window.APPLET_LEARNER_PROFILE = profile;
   const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
   const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;
@@ -2894,7 +2893,7 @@
     if(body&&!body.querySelector('.featured-actions')){const actions=document.createElement('div');actions.className='featured-actions';actions.innerHTML='<button type="button" class="step-btn" data-start-featured></button>';body.appendChild(actions)}
   }
   let active=new URL(location.href).searchParams.get('mode')||'explore';if(!panels[active])active='explore';
-  let restoring=false;
+  let restoring=true;
 
   function profileScenario(){
     const profile=window.APPLET_LEARNER_PROFILE||{};
@@ -3109,5 +3108,12 @@
   if (SOURCE_ALLOWLIST.has(source)) send('/event/campaign/' + source);
 })();
 </script>
+
+<!-- suite-guided-challenge-v2:start -->
+<link href="../../assets/guided-challenges.css" rel="stylesheet"/>
+<script defer src="../../assets/guided-challenges.js"></script>
+<!-- suite-guided-challenge-v2:end -->
+<script src="../../assets/locales/search-pathfinding-r4.js"></script>
+<script src="../../assets/localization-r4.js"></script>
 </body>
 </html>

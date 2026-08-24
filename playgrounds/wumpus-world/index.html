@@ -7,7 +7,7 @@
 <title>Wumpus World | AI Playgrounds</title>
 <link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E" rel="icon"/>
 <meta content="Follow a logical agent as it turns breezes and stenches into beliefs about nearby danger. Distinguish what is true, what is proven, and what remains unknown." name="description"/>
-<link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/" rel="canonical"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/?lang=en" hreflang="en" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/?lang=zh" hreflang="zh-Hans" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/?lang=en" hreflang="x-default" rel="alternate"/>
+<link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/" rel="canonical"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/?lang=en" hreflang="en" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/?lang=zh" hreflang="zh-Hans" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/?lang=vi" hreflang="vi" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/?lang=es" hreflang="es" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/?lang=en" hreflang="x-default" rel="alternate"/>
 <meta content="website" property="og:type"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/" property="og:url"/>
 <meta content="Wumpus World | AI Playgrounds" property="og:title"/>
@@ -17,7 +17,7 @@
 <meta content="Wumpus World | AI Playgrounds" name="twitter:title"/>
 <meta content="Follow a logical agent as it turns breezes and stenches into beliefs about nearby danger. Distinguish what is true, what is proven, and what remains unknown." name="twitter:description"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" name="twitter:image"/>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Wumpus World | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/","description":"Follow a logical agent as it turns breezes and stenches into beliefs about nearby danger. Distinguish what is true, what is proven, and what remains unknown.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Wumpus World | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/","description":"Follow a logical agent as it turns breezes and stenches into beliefs about nearby danger. Distinguish what is true, what is proven, and what remains unknown.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh","vi","es"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
 <style>
   :root {
     --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #c2410c;
@@ -524,6 +524,7 @@
 .interactive-inner{container-type:inline-size;max-width:min(1320px,100%)!important}
 @media(max-width:820px){.learning-mode-head{align-items:flex-start;flex-direction:column}.learning-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-mode-panel{grid-template-columns:1fr}.learning-mode-panel>details{grid-column:1!important}.copy-experiment{width:100%}}
 </style>
+<link href="../../assets/localization-r4.css" rel="stylesheet"/>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to applet controls</a>
@@ -558,9 +559,9 @@
 <div class="bento-cell cell-controls">
 <div class="control-row">
 <label data-i18n="strategy-label">Agent strategy:</label>
-<select id="strategySel" title="Pure logic = current default (stop when stuck). AIMA hybrid = textbook agent (shoot + gamble + climb home). Probabilistic = Ch 13.6 (rank gambles by pit probability).">
+<select id="strategySel" title="Pure logic = conservative baseline (stop when stuck). AIMA-inspired hybrid = simplified shoot / heuristic-risk / climb policy. Probabilistic = simplified possible-world pit-risk ranking under this applet's explicit prior assumptions.">
 <option data-i18n="strat-logic" selected="" value="logic">Pure logic (stop when stuck)</option>
-<option data-i18n="strat-hybrid" value="hybrid">AIMA hybrid (shoot + gamble + climb home)</option>
+<option data-i18n="strat-hybrid" value="hybrid">AIMA-inspired hybrid (shoot + gamble + climb home)</option>
 <option data-i18n="strat-prob" value="prob">Probabilistic (lowest pit-probability)</option>
 </select>
 </div>
@@ -761,7 +762,7 @@
 <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
 </div>
 <div class="ws-q" id="ws2" style="margin-top:10px;">
-<p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Switch to "AIMA hybrid" strategy. Compared to pure logic across many runs, the score variance (some win big, some die) is:</span></p>
+<p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Switch to "AIMA-inspired hybrid" strategy. Compared to pure logic across many runs, the score variance (some win big, some die) is:</span></p>
 <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="0"/> <span data-i18n="ws2o0">Lower: taking the arrow shot and gambling removes uncertainty, so outcomes get more consistent.</span></label>
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="1"/> <span data-i18n="ws2o1">Same: the scoring rules don't change, so the spread of scores is identical.</span></label>
@@ -882,8 +883,7 @@
       safe route exists, because the available evidence does not entail that route's safety.</li>
 <li><strong>Hybrid:</strong> uses logical conclusions first, then may shoot, leave, or take a
       heuristic risk when no safe frontier remains.</li>
-<li><strong>Probabilistic:</strong> enumerates hazard configurations consistent with the current
-      constraints and ranks unresolved frontier cells by estimated pit probability. Lowest estimated
+<li><strong>Probabilistic:</strong> enumerates frontier pit configurations consistent with the current breeze evidence, weights them using the applet's explicit per-cell prior, and ranks unresolved frontier cells by the resulting estimated pit probability. Lowest estimated
       risk is still not the same as proven safety.</li>
 </ul>
 <h2>How the simplified inference works</h2>
@@ -897,8 +897,7 @@
 <h2>What this model leaves out</h2>
 <p>
     Full Wumpus agents can represent orientation, forward motion, turning, shooting, bumps, screams,
-    action costs, and utility-sensitive planning. A probabilistic agent also needs a prior over hazard
-    layouts and a decision rule that balances survival probability against reward. This applet separates
+    action costs, and utility-sensitive planning. A probabilistic agent needs a prior over hazard layouts and a decision rule that balances survival probability against reward. This applet uses a simplified independent per-cell pit prior for its frontier calculation; changing that prior would change the estimates. This applet separates
     those layers so learners can see where deduction ends and additional risk assumptions begin.
   </p>
 <div class="for-teachers">
@@ -992,7 +991,7 @@
       'tldr-strong': 'The big idea',
       'tldr-body': 'A logical agent infers safe squares from percepts. Watch its knowledge map fill in next to the ground truth: the difference between "I haven\'t seen it" and "I\'ve proved it\'s not there."',
       'strat-logic': 'Pure logic (stop when stuck)',
-      'strat-hybrid': 'AIMA hybrid (shoot + gamble + climb home)',
+      'strat-hybrid': 'AIMA-inspired hybrid (shoot + gamble + climb home)',
       'strat-prob': 'Probabilistic (lowest pit-probability)',
       'reveal-label': 'Reveal hidden world (teacher view)',
       'reveal-title': "Reveal what's actually in every cell. Off by default so students see only what the agent knows.",
@@ -1035,7 +1034,7 @@
       'ws-pick': 'Pick an answer first.',
       // worksheet question prompts (data-i18n spans) ---
       'ws1q': '"Pure logic" strategy. Generate several new worlds and let the agent run. Does the pure-logic agent ALWAYS retrieve the gold?',
-      'ws2q': 'Switch to "AIMA hybrid" strategy. Compared to pure logic across many runs, the score variance (some win big, some die) is:',
+      'ws2q': 'Switch to "AIMA-inspired hybrid" strategy. Compared to pure logic across many runs, the score variance (some win big, some die) is:',
       'ws3q': 'What is the per-step score penalty in the AIMA-style scoring (just the magnitude, no sign)?',
       // --- MCQ option text (data-i18n spans) ---
       'ws1o0': 'Yes: once it has the safety rules, the logic always finds a proven-safe path to the gold.',
@@ -1050,17 +1049,17 @@
       // lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
       'tour0name': 'Pure logic: safe inference only',
       'tour0desc': "Default 'Pure logic' strategy on a fresh world. The agent only enters cells it can PROVE are safe from percepts (breeze/stench). When uncertain, it stops. Often climbs out without gold: that's the point.",
-      'tour1name': 'AIMA hybrid: shoot + gamble + climb out',
-      'tour1desc': "Switch to 'AIMA hybrid'. This agent uses the arrow on inferred wumpus locations, and when stuck will gamble on a low-probability cell. Sutton-style risk-taking: sometimes wins big, sometimes dies.",
+      'tour1name': 'AIMA-inspired hybrid: shoot + gamble + climb out',
+      'tour1desc': "Switch to 'AIMA-inspired hybrid'. This agent uses the arrow on inferred Wumpus locations and, when no proven-safe frontier remains, may take a heuristic risk on an unresolved admissible cell. This heuristic fallback is not a probability-ranked safety guarantee.",
       'tour2name': 'Probabilistic: rank by pit-probability',
-      'tour2desc': "'Probabilistic' agent (AIMA Ch 13.6). When forced to gamble, it estimates P(pit) per frontier cell and picks the lowest. The difference from hybrid is informed risk vs. naive risk.",
+      'tour2desc': "The AIMA-inspired probabilistic strategy estimates pit risk over frontier cells under this applet's stated prior assumptions and chooses the lowest estimated risk. The hybrid uses a simpler heuristic fallback; neither rule proves the selected cell safe.",
       'tour3name': 'Reveal world + read the reasoning log',
-      'tour3desc': "Turn ON 'Reveal hidden world' (teacher view). Now you can see what the agent SHOULD know vs. what it actually knows. Step slowly and watch the reasoning log fill in: 'Breeze at (1,2), so a pit is in {(1,3), (2,2)}'.",
+      'tour3desc': "Turn ON 'Reveal hidden world' (teacher view). Now you can see the hidden ground truth versus what this simplified inference system has derived. Step slowly and watch the reasoning log fill in: 'Breeze at (1,2), so a pit is in {(1,3), (2,2)}'.",
       // worksheet answer-feedback (ws{n}ok / ws{n}no) ---
       'ws1ok': "Correct. Pure logic only moves to cells it can PROVE are safe from percepts. Many worlds force the agent to gamble (the gold is reachable only through unprovably-safe cells). The pure-logic agent climbs out empty-handed in those worlds: that's the limitation.",
       'ws1no': "Try 'no'. Sometimes the gold is only reachable through cells the agent can't prove safe. Pure logic climbs out empty-handed in those worlds.",
-      'ws2ok': 'Correct. The hybrid agent takes risks: gambles on uncertain cells, fires the arrow. Sometimes it scores +1000 (gold + climb out); sometimes it dies (−1000). The variance is the price of higher expected value.',
-      'ws2no': "Try 'higher'. Hybrid takes risks: sometimes scores big, sometimes dies. Pure logic is conservative: low variance, low expected value.",
+      'ws2ok': 'Correct. The hybrid agent takes risks: gambles on uncertain cells, fires the arrow. Sometimes it scores +1000 (gold + climb out); sometimes it dies (−1000). The wider score range comes from taking risks. Whether expected value is higher depends on the assumed distribution of worlds and the utility or scoring model.',
+      'ws2no': "Try 'higher'. Hybrid takes risks: sometimes scores big, sometimes dies. Pure logic is conservative and often returns without gold. Its expected value cannot be ranked without a distribution over worlds and an explicit utility model.",
       'ws3ok': 'Correct. AIMA Wumpus scoring: −1 per action (so 1 is the magnitude), +1000 for grabbing gold, −1000 for dying. The per-step penalty incentivizes finding short paths.',
       'ws3no': 'Try 1. AIMA standard: −1 per step, +1000 for gold, −1000 for death.',
       'score-bd-label': 'Score breakdown:',
@@ -1082,7 +1081,7 @@
       'tldr-strong': '核心思想',
       'tldr-body': '逻辑智能体从感知信息推断哪些格子是安全的。观察它的知识地图与真实世界并排成长--"我没看到"与"我已证明它不在那里"的差别就在这里。',
       'strat-logic': '纯逻辑(卡住即停)',
-      'strat-hybrid': 'AIMA 混合(射箭 + 冒险 + 爬出)',
+      'strat-hybrid': 'AIMA 启发的混合(射箭 + 冒险 + 爬出)',
       'strat-prob': '概率(选陷阱概率最低的)',
       'reveal-label': '显示隐藏的真实世界(教师视角)',
       'reveal-title': '显示每个格子的真实内容。默认关闭,学生只能看到智能体已知的部分。',
@@ -1125,7 +1124,7 @@
       'ws-pick': '请先选择一个答案。',
       // 练习题题干(data-i18n span)---
       'ws1q': '"纯逻辑"策略。生成若干个新世界并让智能体运行。纯逻辑智能体总能取回金子吗?',
-      'ws2q': '切换到"AIMA 混合"策略。与纯逻辑相比,多次运行下来,得分的方差(有的赢得多、有的死掉)是:',
+      'ws2q': '切换到"AIMA 启发的混合"策略。与纯逻辑相比,多次运行下来,得分的方差(有的赢得多、有的死掉)是:',
       'ws3q': '在 AIMA 式计分中,每走一步的扣分是多少(只填数值大小,不带符号)?',
       // --- MCQ 选项文本(data-i18n span)---
       'ws1o0': '能--只要掌握了安全规则,逻辑总能找到一条已证明安全的路径取到金子。',
@@ -1140,17 +1139,17 @@
       // 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
       'tour0name': '纯逻辑:只做安全推理',
       'tour0desc': '在全新世界上使用默认的"纯逻辑"策略。智能体只进入能从感知(微风/臭味)中证明为安全的方格。当无法确定时,它就停下。常常空手爬出--这正是要点。',
-      'tour1name': 'AIMA 混合:射箭 + 冒险 + 爬出',
-      'tour1desc': '切换到"AIMA 混合"。这个智能体会朝推断出的 Wumpus 位置射箭,卡住时会在低概率方格上冒险。这是冒险型的策略--有时赢得很多,有时送命。',
+      'tour1name': 'AIMA 启发的混合:射箭 + 冒险 + 爬出',
+      'tour1desc': '切换到“AIMA 启发的混合”。这个智能体会朝推断出的 Wumpus 位置射箭；当没有已证明安全的前沿时，它可能按启发式规则选择一个尚未解决但可选的方格冒险。这个回退规则不是按概率排序的安全保证。',
       'tour2name': '概率:按陷阱概率排序',
-      'tour2desc': '"概率"智能体(AIMA 第 13.6 节)。被迫冒险时,它对每个前沿方格估计 P(陷阱),选概率最低的。与混合策略的区别在于:有依据的冒险 对比 盲目的冒险。',
+      'tour2desc': 'AIMA 启发的概率策略在本工具明确的先验假设下估计前沿方格的陷阱风险，并选择估计风险最低者。混合策略使用更简单的启发式回退；两者都不能证明所选方格安全。',
       'tour3name': '显示真实世界 + 阅读推理日志',
-      'tour3desc': '打开"显示隐藏的真实世界"(教师视角)。现在你能看到智能体本应知道什么与它实际知道什么的对比。慢慢单步,看推理日志逐步填充:"在 (1,2) 感到微风,所以陷阱位于 {(1,3), (2,2)}"。',
+      'tour3desc': '打开“显示隐藏的真实世界”(教师视角)。现在你能比较隐藏真相与这个简化推理系统目前实际推出的结论。慢慢单步,看推理日志逐步填充:"在 (1,2) 感到微风,所以陷阱位于 {(1,3), (2,2)}"。',
       // 练习题答案反馈(ws{n}ok / ws{n}no)---
       'ws1ok': '正确。纯逻辑只移动到能从感知中证明为安全的方格。许多世界会迫使智能体冒险(金子只能经由无法证明安全的方格到达)。在那些世界里纯逻辑智能体空手爬出--这就是它的局限。',
       'ws1no': '试试"no"。有时金子只能经由智能体无法证明安全的方格到达。在那些世界里纯逻辑会空手爬出。',
-      'ws2ok': '正确。混合智能体会冒险--在不确定的方格上赌一把、射出箭。有时得 +1000(取金 + 爬出);有时送命(−1000)。方差是换取更高期望收益所付出的代价。',
-      'ws2no': '试试"higher"。混合策略会冒险:有时得分很高,有时送命。纯逻辑较保守--方差低、期望收益也低。',
+      'ws2ok': '正确。混合智能体会冒险--在不确定的方格上赌一把、射出箭。有时得 +1000(取金 + 爬出);有时送命(−1000)。更宽的得分范围来自冒险;期望收益是否更高取决于世界分布以及采用的效用或计分模型。',
+      'ws2no': '试试"higher"。混合策略会冒险:有时得分很高,有时送命。纯逻辑较保守并常常空手返回;若没有世界分布和明确的效用模型,不能直接比较两者的期望收益。',
       'ws3ok': '正确。AIMA Wumpus 计分:每个动作 −1(所以数值大小是 1),抓到金子 +1000,死亡 −1000。每步扣分促使智能体寻找更短的路径。',
       'ws3no': '试试 1。AIMA 标准:每步 −1,取金 +1000,死亡 −1000。',
       'score-bd-label': '得分分解:',
@@ -1652,7 +1651,7 @@
           `P(pit at (${c[1]+1},${c[0]+1})) = ${(c[3]*100).toFixed(0)}%`).join(', ')}. Picking lowest P(pit).`);
       } else {
         pick = candidates[0];
-        addLog('infer', `AIMA hybrid: forced gamble on (${pick[1]+1},${pick[0]+1}).`);
+        addLog('infer', `AIMA-inspired hybrid: forced gamble on (${pick[1]+1},${pick[0]+1}).`);
       }
       return {kind: 'go', target: [pick[0], pick[1]], gambling: true};
     }
@@ -1980,6 +1979,12 @@
     }
   }
 
+  window.__wumpusGuidedStep = () => {
+    const before = stepCount;
+    actOne();
+    return stepCount > before;
+  };
+
   $('stepBtn').addEventListener('click', () => {
     if (replayMode) {
       // While scrubbed back, ❘▶ walks forward through history; resume live once caught up.
@@ -2255,14 +2260,14 @@
     { name: 'Pure logic: safe inference only',
       description: "Default 'Pure logic' strategy on a fresh world. The agent only enters cells it can PROVE are safe from percepts (breeze/stench). When uncertain, it stops. Often climbs out without gold: that's the point.",
       apply: () => { $('strategySel').value = 'logic'; $('strategySel').dispatchEvent(new Event('change')); $('hardReset').click(); } },
-    { name: 'AIMA hybrid: shoot + gamble + climb out',
-      description: "Switch to 'AIMA hybrid'. This agent uses the arrow on inferred wumpus locations, and when stuck will gamble on a low-probability cell. Sutton-style risk-taking: sometimes wins big, sometimes dies.",
+    { name: 'AIMA-inspired hybrid: shoot + gamble + climb out',
+      description: "Switch to 'AIMA-inspired hybrid'. This agent uses the arrow on inferred Wumpus locations and, when no proven-safe frontier remains, may take a heuristic risk on an unresolved admissible cell. This heuristic fallback is not a probability-ranked safety guarantee.",
       apply: () => { $('strategySel').value = 'hybrid'; $('strategySel').dispatchEvent(new Event('change')); $('hardReset').click(); } },
     { name: 'Probabilistic: rank by pit-probability',
-      description: "'Probabilistic' agent (AIMA Ch 13.6). When forced to gamble, it estimates P(pit) per frontier cell and picks the lowest. The difference from hybrid is informed risk vs. naive risk.",
+      description: "The AIMA-inspired probabilistic strategy estimates pit risk over frontier cells under this applet's stated prior assumptions and chooses the lowest estimated risk. The hybrid uses a simpler heuristic fallback; neither rule proves the selected cell safe.",
       apply: () => { $('strategySel').value = 'prob'; $('strategySel').dispatchEvent(new Event('change')); $('hardReset').click(); } },
     { name: 'Reveal world + read the reasoning log',
-      description: "Turn ON 'Reveal hidden world' (teacher view). Now you can see what the agent SHOULD know vs. what it actually knows. Step slowly and watch the reasoning log fill in: 'Breeze at (1,2), so a pit is in {(1,3), (2,2)}'.",
+      description: "Turn ON 'Reveal hidden world' (teacher view). Now you can see the hidden ground truth versus what this simplified inference system has derived. Step slowly and watch the reasoning log fill in: 'Breeze at (1,2), so a pit is in {(1,3), (2,2)}'.",
       apply: () => { $('revealChk').checked = true; $('strategySel').value = 'logic'; $('strategySel').dispatchEvent(new Event('change')); $('hardReset').click(); } },
     { name: 'Unknown is not safe',
       description: 'Hide the world and use pure logic. Step until the agent stops, then inspect the knowledge map. Unknown cells are not safe cells; the agent needs a proof before moving.',
@@ -2355,8 +2360,8 @@
       ok:  ['ws1ok', "Correct. Pure logic only moves to cells it can PROVE are safe from percepts. Many worlds force the agent to gamble (the gold is reachable only through unprovably-safe cells). The pure-logic agent climbs out empty-handed in those worlds: that's the limitation."],
       no:  ['ws1no', "Try 'no'. Sometimes the gold is only reachable through cells the agent can't prove safe. Pure logic climbs out empty-handed in those worlds."] },
     { correct: 2,
-      ok:  ['ws2ok', "Correct. The hybrid agent takes risks: gambles on uncertain cells, fires the arrow. Sometimes it scores +1000 (gold + climb out); sometimes it dies (−1000). The variance is the price of higher expected value."],
-      no:  ['ws2no', "Try 'higher'. Hybrid takes risks: sometimes scores big, sometimes dies. Pure logic is conservative: low variance, low expected value."] },
+      ok:  ['ws2ok', "Correct. The hybrid agent takes risks: gambles on uncertain cells, fires the arrow. Sometimes it scores +1000 (gold + climb out); sometimes it dies (−1000). The wider score range comes from taking risks. Whether expected value is higher depends on the assumed distribution of worlds and the utility or scoring model."],
+      no:  ['ws2no', "Try 'higher'. Hybrid takes risks: sometimes scores big, sometimes dies. Pure logic is conservative and often returns without gold. Its expected value cannot be ranked without a distribution over worlds and an explicit utility model."] },
     { correct: 0,
       ok:  ['ws3ok', "Correct. AIMA Wumpus scoring: −1 per action (so 1 is the magnitude), +1000 for grabbing gold, −1000 for dying. The per-step penalty incentivizes finding short paths."],
       no:  ['ws3no', "Try 1. AIMA standard: −1 per step, +1000 for gold, −1000 for death."] },
@@ -2815,7 +2820,7 @@
     if(body&&!body.querySelector('.featured-actions')){const actions=document.createElement('div');actions.className='featured-actions';actions.innerHTML='<button type="button" class="step-btn" data-start-featured></button>';body.appendChild(actions)}
   }
   let active=new URL(location.href).searchParams.get('mode')||'explore';if(!panels[active])active='explore';
-  let restoring=false;
+  let restoring=true;
 
   function profileScenario(){
     const profile=window.APPLET_LEARNER_PROFILE||{};
@@ -3030,5 +3035,12 @@
   if (SOURCE_ALLOWLIST.has(source)) send('/event/campaign/' + source);
 })();
 </script>
+
+<!-- suite-guided-challenge-v2:start -->
+<link href="../../assets/guided-challenges.css" rel="stylesheet"/>
+<script defer src="../../assets/guided-challenges.js"></script>
+<!-- suite-guided-challenge-v2:end -->
+<script src="../../assets/locales/wumpus-world-r4.js"></script>
+<script src="../../assets/localization-r4.js"></script>
 </body>
 </html>
