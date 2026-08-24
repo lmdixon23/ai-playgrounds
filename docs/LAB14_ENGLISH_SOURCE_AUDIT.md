@@ -1,6 +1,14 @@
 # Lab 14 English Source Audit
 
-Status: **R4 candidate — acceptance pending exact-head permanent Verify PASS**.
+Status: **PASS — R4 English candidate accepted; receipt-bearing exact-head verification pending**.
+
+Accepted English candidate head: `587807821e4caefbcf73578c5c7283a2b8f5f104`.
+
+Permanent Verify receipt: run `32748581142`, job `97499868086` — **PASS**.
+
+Lab 14 English candidate browser/semantic gate: **48/48 PASS**, with zero page or console errors.
+
+Evidence artifact: `ai-playgrounds-verification-32748581142`, artifact ID `9528167792`, SHA-256 `e21a0c962ba19c5719101edda504111d9c5c11c890c0c312fd7c81c16dedfc3e`.
 
 ## 1. Source construction
 
@@ -17,7 +25,7 @@ The generated candidate remains non-public. It is not copied into `playgrounds/`
 
 ## 2. Frozen English semantic boundaries
 
-The English candidate must keep the following distinctions explicit:
+The accepted English candidate keeps the following distinctions explicit:
 
 1. natural-language model text is not tool execution;
 2. tool availability is distinct from schema validity;
@@ -34,7 +42,7 @@ The candidate explicitly rejects ten corresponding misconceptions, including cla
 
 ## 3. One-file and offline boundary
 
-The generated English candidate must contain:
+The accepted English candidate contains:
 
 - no external `<script src>` dependency;
 - no runtime `fetch`;
@@ -47,7 +55,7 @@ All tool behavior remains the frozen in-memory deterministic world inherited fro
 
 ## 4. Browser acceptance matrix
 
-`tools/test_agent_tool_context_english_applet.py` must verify at minimum:
+`tools/test_agent_tool_context_english_applet.py` completed **48/48 checks**, including:
 
 - exact eight-scenario inventory;
 - exact five-Challenge inventory;
@@ -65,18 +73,15 @@ All tool behavior remains the frozen in-memory deterministic world inherited fro
 - desktop and mobile root containment;
 - zero page or console errors.
 
-## 5. R4 acceptance rule
+The same Verify run passed the complete inherited v1.2 release/deployment/localization/browser stack, Lab 13 gates, and the accepted Lab 14 R0–R3 reference/parity/prototype gates.
 
-R4 is accepted only when one exact branch head contains:
+## 5. R4 freeze decision
 
-- the accepted R0–R3 deterministic foundation;
-- the English candidate builder;
-- the English browser/semantic audit;
-- the permanent English-candidate Verify workflow gate;
-- this audit record;
-- one complete permanent Verify PASS at that exact head.
+The English candidate at `587807821e4caefbcf73578c5c7283a2b8f5f104` is the accepted semantic and browser candidate.
 
-After that pass, this document must be updated with the exact accepted head, workflow run, job, check counts, and evidence artifact before R5 ZH/VI/ES catalog work begins.
+This receipt update is deliberately documentation-only. The exact receipt-bearing branch head produced by this commit must receive one fresh complete permanent Verify PASS before it becomes the frozen `source_freeze_head` for R5 localization. No English source, state-machine, tool-schema, authorization, candidate-scoring, or protocol-semantic change may occur between the accepted candidate and that final receipt-head verification.
+
+Once the receipt-bearing head passes unchanged, R4 is frozen and R5 ZH/VI/ES semantic catalog work may begin against that exact head.
 
 ## 6. Public-release boundary
 
