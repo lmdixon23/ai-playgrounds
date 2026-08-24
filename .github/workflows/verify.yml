@@ -97,7 +97,8 @@ jobs:
           cp /tmp/browser_qa.py tools/browser_qa.py
           rm -f tools/_r4_browser_qa_fix.py
           rm -f .github/workflows/_r4-browser-qa-compat-repair.yml
-          git show HEAD^:.github/workflows/verify.yml > .github/workflows/verify.yml
+          git fetch --no-tags --depth=1 origin main
+          git show FETCH_HEAD:.github/workflows/verify.yml > .github/workflows/verify.yml
           git diff --check
           git add -- tools/browser_qa.py tools/_r4_browser_qa_fix.py .github/workflows/_r4-browser-qa-compat-repair.yml .github/workflows/verify.yml
           staged="$(git diff --cached --name-only | sort)"
