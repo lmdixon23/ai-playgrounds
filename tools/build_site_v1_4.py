@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import re
 from html import escape
 from pathlib import Path
 
@@ -20,6 +19,13 @@ SELECT_STYLE = r'''
 .v14-language-select:focus-visible{outline:3px solid color-mix(in srgb,var(--accent,#2563eb) 45%,transparent);outline-offset:2px}
 .support-language-switch button[data-support-lang],.lang button[data-lang]{display:none!important}
 @media(pointer:coarse){.v14-language-select{min-height:44px}}
+</style>
+'''
+
+VERSION_STYLE = r'''
+<style id="v14-version-provenance-style">
+.v14-version-provenance{max-width:1180px;margin:22px auto 10px;padding:12px 18px;border-top:1px solid var(--border,#dbe4ee);color:var(--muted,#64748b);font:12px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center}
+.v14-release-zh{display:none}html[lang^="zh"] .v14-release-en{display:none}html[lang^="zh"] .v14-release-zh{display:inline}
 </style>
 '''
 
@@ -113,9 +119,11 @@ def upgrade_support_pages() -> None:
         if "support-language-switch" not in html:
             continue
         if 'id="v14-language-select-style"' not in html:
-            html = html.replace("</head>", SELECT_STYLE + "\n</head>", 1)
+            html = html.replace("</head>", SELECT_STYLE + "\n" + VERSION_STYLE + "\n</head>", 1)
         if 'id="v14-support-language-select"' not in html:
             html = html.replace("</body>", SUPPORT_SELECT_SCRIPT + "\n</body>", 1)
+        if "data-v14-support-version" not in html and "</footer>" in html:
+            html = html.replace("</footer>", f'<p data-v14-support-version="true">AI Playgrounds · v{RELEASE_VERSION}</p>\n</footer>', 1)
         path.write_text(html, encoding="utf-8")
 
 
@@ -180,12 +188,34 @@ def transform_curriculum_tracks() -> None:
     path.write_text(html, encoding="utf-8")
 
 
-def add_release_version_metadata() -> None:
+def transform_release_notes_v14() -> None:
+    path = SITE / "release-notes.html"
+    html = path.read_text(encoding="utf-8")
+    banner = (
+        '<section id="release-v1-4-0" style="margin:1rem 0;padding:1rem 1.2rem;border:1px solid currentColor;border-radius:12px">'
+        '<h2><span class="v14-release-en">AI Playgrounds v1.4.0, released August 25, 2026.</span><span class="v14-release-zh">AI Playgrounds v1.4.0，发布于 2026 年 8 月 25 日。</span></h2>'
+        '<p><span class="v14-release-en">v1.4 keeps fourteen public applets and improves the Transformer and agent-runtime visual journeys, language selectors, curriculum navigation, and visible release provenance before Lab 15.</span><span class="v14-release-zh">v1.4 保留十四个公开 applet，并在 Lab 15 之前改进 Transformer 与智能体运行时的可视路径、语言选择器、课程导航和可见的版本来源信息。</span></p>'
+        '</section>'
+    )
+    if "release-v1-4-0" not in html:
+        marker = '<section id="release-v1-3-0"'
+        if marker not in html:
+            raise RuntimeError("Could not locate v1.3 release banner for v1.4 insertion")
+        html = html.replace(marker, banner + marker, 1)
+    path.write_text(html, encoding="utf-8")
+
+
+def add_release_version_presentation() -> None:
     for path in sorted((SITE / "playgrounds").glob("*/index.html")):
         html = path.read_text(encoding="utf-8")
         if 'name="ai-playgrounds-version"' not in html:
             html = html.replace("</head>", f'<meta name="ai-playgrounds-version" content="{RELEASE_VERSION}">\n</head>', 1)
-            path.write_text(html, encoding="utf-8")
+        if path.parent.name not in {"transformer-language-model", "agent-tool-context"}:
+            if 'id="v14-version-provenance-style"' not in html:
+                html = html.replace("</head>", VERSION_STYLE + "\n</head>", 1)
+            if "data-v14-version-provenance" not in html:
+                html = html.replace("</body>", f'<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v{RELEASE_VERSION}</div>\n</body>', 1)
+        path.write_text(html, encoding="utf-8")
 
 
 def build_site() -> None:
@@ -195,7 +225,8 @@ def build_site() -> None:
     upgrade_landing()
     upgrade_support_pages()
     transform_curriculum_tracks()
-    add_release_version_metadata()
+    transform_release_notes_v14()
+    add_release_version_presentation()
 
 
 def validate_boundary() -> None:
@@ -203,7 +234,8 @@ def validate_boundary() -> None:
     base.validate_local_references()
     manifest = v13.release_manifest()
     expected = {str(entry["slug"]) for entry in manifest}
-    deployed = {path.parent.name for path in (SITE / "playgrounds").glob("*/index.html")}
+    deployed_paths = sorted((SITE / "playgrounds").glob("*/index.html"))
+    deployed = {path.parent.name for path in deployed_paths}
     if deployed != expected or len(deployed) != 14:
         raise RuntimeError("v1.4 must preserve the exact fourteen-app v1.3 inventory")
     lab13 = (SITE / "playgrounds" / "transformer-language-model" / "index.html").read_text(encoding="utf-8")
@@ -212,9 +244,17 @@ def validate_boundary() -> None:
         raise RuntimeError("v1.4 engagement wrappers are not present in the deployed Labs 13/14")
     if "AI Playgrounds v1.3" in lab13 or "AI Playgrounds v1.3" in lab14:
         raise RuntimeError("v1.4 public Labs 13/14 retain a prominent v1.3 badge")
-    for path in (SITE / "playgrounds").glob("*/index.html"):
-        if f'name="ai-playgrounds-version" content="{RELEASE_VERSION}"' not in path.read_text(encoding="utf-8"):
+    for path in deployed_paths:
+        source = path.read_text(encoding="utf-8")
+        if f'name="ai-playgrounds-version" content="{RELEASE_VERSION}"' not in source:
             raise RuntimeError(f"Missing v1.4 version metadata: {path.parent.name}")
+        if path.parent.name in {"transformer-language-model", "agent-tool-context"}:
+            if f"v{RELEASE_VERSION}" not in source:
+                raise RuntimeError(f"Missing visible v1.4 provenance: {path.parent.name}")
+        elif "data-v14-version-provenance" not in source:
+            raise RuntimeError(f"Missing visible v1.4 provenance: {path.parent.name}")
+    if "release-v1-4-0" not in (SITE / "release-notes.html").read_text(encoding="utf-8"):
+        raise RuntimeError("Public release notes lack the v1.4 release banner")
 
 
 def main() -> None:
