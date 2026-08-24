@@ -1,4 +1,4 @@
-name: Publish v1.3.0
+name: Publish v1.4.0
 
 on:
   workflow_run:
@@ -10,19 +10,18 @@ permissions:
   actions: read
 
 concurrency:
-  group: publish-v1.3.0
+  group: publish-v1.4.0
   cancel-in-progress: false
 
 jobs:
   publish:
     if: >-
       github.event.workflow_run.head_branch == 'main' &&
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.head_sha == '31de867576769e843a373e6a767428fe71c954bc'
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      TAG: v1.3.0
+      TAG: v1.4.0
       RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
       GH_TOKEN: ${{ github.token }}
 
@@ -61,7 +60,7 @@ jobs:
         run: |
           set -euo pipefail
           python tools/check_release_metadata.py
-          python tools/build_site_v1_3.py
+          python tools/build_site_v1_4.py
 
       - name: Fail closed if tag or release already exists
         run: |
@@ -82,24 +81,24 @@ jobs:
           from pathlib import Path
 
           text = Path('RELEASE_NOTES.md').read_text(encoding='utf-8')
-          marker = '## v1.3.0, 2026-08-25'
+          marker = '## v1.4.0, 2026-08-25'
           start = text.index(marker)
           tail = text[start:]
           next_heading = tail.find('\n## v', len(marker))
           section = tail if next_heading < 0 else tail[:next_heading]
           body = section.split('\n', 1)[1].strip() + '\n'
-          path = Path('release-evidence/v1.3.0-release-notes.md')
+          path = Path('release-evidence/v1.4.0-release-notes.md')
           path.parent.mkdir(parents=True, exist_ok=True)
           path.write_text(body, encoding='utf-8')
           PY
-          test -s release-evidence/v1.3.0-release-notes.md
+          test -s release-evidence/v1.4.0-release-notes.md
 
       - name: Create immutable tag
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -a "$TAG" "$RELEASE_SHA" -m "AI Playgrounds v1.3.0"
+          git tag -a "$TAG" "$RELEASE_SHA" -m "AI Playgrounds v1.4.0"
           git push origin "refs/tags/$TAG"
 
       - name: Publish GitHub release
@@ -108,24 +107,24 @@ jobs:
           gh release create "$TAG" \
             --repo "$GITHUB_REPOSITORY" \
             --target "$RELEASE_SHA" \
-            --title "AI Playgrounds v1.3.0" \
-            --notes-file release-evidence/v1.3.0-release-notes.md
+            --title "AI Playgrounds v1.4.0" \
+            --notes-file release-evidence/v1.4.0-release-notes.md
 
       - name: Write publication receipt
         run: |
           set -euo pipefail
           {
-            echo "release=v1.3.0"
+            echo "release=v1.4.0"
             echo "sha=$RELEASE_SHA"
             echo "deploy_run=${{ github.event.workflow_run.id }}"
             echo "tag=$TAG"
-          } > release-evidence/v1.3.0-publication-receipt.txt
+          } > release-evidence/v1.4.0-publication-receipt.txt
 
       - name: Upload publication receipt
         uses: actions/upload-artifact@v7
         with:
-          name: ai-playgrounds-v1.3.0-publication-${{ github.event.workflow_run.id }}
+          name: ai-playgrounds-v1.4.0-publication-${{ github.event.workflow_run.id }}
           path: |
-            release-evidence/v1.3.0-publication-receipt.txt
-            release-evidence/v1.3.0-release-notes.md
+            release-evidence/v1.4.0-publication-receipt.txt
+            release-evidence/v1.4.0-release-notes.md
           retention-days: 90

@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.4.0] - 2026-08-25
+
+### Added
+- A mechanism-journey layer for Lab 13 that lets learners move through Tokenize, Represent, Attend, and Predict without changing the frozen Transformer arithmetic or learner state.
+- A seven-stage runtime journey for Lab 14 that makes Propose, Validate, Authorize, Execute, Observe, Update/choose next, and Stop visually distinct while preserving the frozen deterministic runtime.
+- A curriculum coverage matrix comparing the fourteen-app suite with AIMA 4th edition and the Spring 2026 CS50/CSCI E-80 AI curriculum, including prioritized classical and contemporary gaps for future labs.
+- Dedicated v1.4 browser and integration gates covering engagement-state invariance, language-selection state preservation, curriculum completeness, and 390 px containment.
+
+### Changed
+- Replaced the remaining prominent Lab 13 and Lab 14 four-button locale controls with native EN/ZH/VI/ES selectors while retaining `?lang=` deep links and existing localization runtimes.
+- Adapted landing and support-page language controls to native selectors using only the translations actually available on those surfaces.
+- Moved Lab 13 and Lab 14 software-version provenance out of the hero treatment and into secondary page provenance while retaining explicit release metadata.
+- Reframed the curriculum around Foundations / course track, Modern AI extensions, and the existing quick-entry sampler; Lab 14 is now explicitly a modern extension while Lab 13 remains at the advanced introductory/modern boundary.
+- Regenerated the curriculum applet map from the complete fourteen-entry release inventory so generated Labs 13 and 14 remain present in navigation.
+- Preserved the fourteen-applet, 54-file deterministic Pages boundary; v1.4 adds no Lab 15.
+
+### Fixed
+- Removed a mutation-observer feedback loop discovered by the first Lab 14 v1.4 browser gate and replaced it with event-driven presentation updates.
+- Corrected the first full-site v1.4 acceptance pass after it exposed an incomplete generated curriculum applet map and an over-specific Simplified-Chinese `lang` assertion.
+
 ## [1.3.0] - 2026-08-25
 
 ### Added

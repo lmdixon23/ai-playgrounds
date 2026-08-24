@@ -1,5 +1,47 @@
 # Release notes
 
+## v1.4.0, 2026-08-25
+
+### Product-quality pass before Lab 15
+
+- Keeps the public suite at fourteen applets and treats v1.4 as an experience, navigation, and provenance release rather than adding another lab.
+- Adds a curriculum coverage matrix against AIMA 4th edition and the Spring 2026 CS50/CSCI E-80 AI curriculum so future labs can balance classical introductory-AI gaps with contemporary extensions.
+- Explicitly blocks Lab 15 implementation until the v1.4 quality and release boundary is complete.
+
+### Lab 13: clearer Transformer mechanism journey
+
+- Adds a visible Tokenize -> Represent -> Attend -> Predict journey over the existing deterministic Transformer lab.
+- Lets learners focus the relevant existing mechanism panels without changing prompt state, temperature, masking, position information, perturbations, challenge state, or numeric model outputs.
+- Replaces the prominent four-language button group with a native English / 简体中文 / Tiếng Việt / Español selector while retaining state preservation and `?lang=` deep links.
+- Moves software-version provenance out of the hero treatment and into a secondary provenance area.
+
+### Lab 14: clearer agent-runtime journey
+
+- Extends the learner-visible runtime story to Propose -> Validate -> Authorize -> Execute -> Observe -> Update / choose next -> Stop.
+- Makes schema rejection, authorization denial, execution error, successful observation, context update, next-action selection, and correct stopping visually distinct without changing the frozen deterministic policy or tool world.
+- Preserves the canonical `weather.current -> 8 C -> unit.convert_temperature -> 46.4 F -> STOP` trace and side-effect-free behavior for invalid or unauthorized calls.
+- Replaces the prominent four-language button group with the same native four-language selector pattern used by the rest of the multilingual applet experience.
+
+### Suite navigation and language UX
+
+- Adapts the landing and support-page language controls to native selectors using only the translations actually available on those surfaces.
+- Retains the existing native four-language selector overlay for the original twelve applets.
+- Reframes curriculum navigation into Foundations / course track, Modern AI extensions, and the existing quick-entry sampler.
+- Keeps Transformer Language Modeling at the advanced introductory/modern boundary and identifies Agent Tool Use and Context Protocols as a modern extension rather than a classical-course prerequisite.
+- Regenerates the curriculum applet map from the full fourteen-entry release inventory so generated Labs 13 and 14 remain discoverable.
+
+### Verification and provenance
+
+- Preserves the fourteen-applet, 54-file deterministic Pages boundary.
+- Adds dedicated Lab 13 v1.4, Lab 14 v1.4, and full-site v1.4 product-quality browser gates while retaining all inherited v1.3 verification.
+- The accepted behavior candidate at `1a30893ce0341e3063bb969921cd8b66d1243915` passed permanent Verify run `32780480520`, job `97601258430`.
+- Candidate evidence artifact `9539645266` has SHA-256 `4e7e5ec532076e19967252a7805825651dd200d4002449071c47bb3f1bbd8cbf`.
+- v1.4.0 does not modify or reassign the immutable v1.0.1 DOI `10.5281/zenodo.21854217`.
+
+### Verification boundary
+
+Software checks establish implementation and release integrity only. They do not establish learning gains, classroom adoption, or accessibility conformance.
+
 ## v1.3.0, 2026-08-25
 
 ### Lab 14: Agent Tool Use and Context Protocols
