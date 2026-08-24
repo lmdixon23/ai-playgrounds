@@ -1,10 +1,18 @@
 # Lab 14 Four-Locale Browser and State-Preservation Audit
 
-Status: **R6 candidate — acceptance pending exact-head permanent Verify PASS**.
+Status: **PASS — R6 candidate accepted; receipt-bearing exact-head verification pending**.
 
 Frozen R4 English source head: `9f2f5286f4de3e12a881b61d491c87efe6950166`.
 
 Frozen R5 localization head: `37bdc6a4a84b672ad564d81564e8a055c2b2c9a6`.
+
+Accepted R6 candidate head: `517781a5ab82fcba7857589d0acb574e5e30f045`.
+
+Permanent Verify run `32757567198`, job `97528515969`: **PASS**.
+
+R6 four-locale browser/state-preservation gate: **48/48 checks PASS**, with zero page or console errors. The same run also passed the entire inherited v1.2 stack, every Lab 13 gate, all Lab 14 R0-R5 gates, and the complete responsive browser matrix.
+
+Evidence artifact: `ai-playgrounds-verification-32757567198`, artifact ID `9531519391`, SHA-256 `10feacb466a4d654827bf0eec4dbc44286a7413b737dac4e1b1dd8f2efc62921`.
 
 ## 1. R6 construction
 
@@ -34,7 +42,7 @@ Locale changes therefore operate on the DOM presentation layer rather than the f
 
 ## 3. State-preservation contract
 
-For every locale switch, R6 must preserve exactly:
+For every locale switch, R6 preserves exactly:
 
 - the selected scenario;
 - the complete `Lab14Prototype` state;
@@ -46,11 +54,11 @@ For every locale switch, R6 must preserve exactly:
 - challenge selection and committed prediction;
 - challenge lock/reveal control state.
 
-The accessible text-equivalent state may localize string values for the learner, but machine-state keys and the underlying object returned by `Lab14Prototype.getState()` must remain unchanged.
+The accessible text-equivalent state may localize string values for the learner, but machine-state keys and the underlying object returned by `Lab14Prototype.getState()` remain unchanged.
 
 ## 4. Dynamic localization contract
 
-R6 must also preserve localization after the frozen English implementation rerenders content. This includes:
+The accepted candidate preserves localization after the frozen English implementation rerenders content. This includes:
 
 - scenario goals;
 - model-side text candidates;
@@ -62,11 +70,11 @@ R6 must also preserve localization after the frozen English implementation reren
 - Guided Challenge prompts, options, and post-reveal explanations;
 - the adversarial meeting-note observation.
 
-The adversarial note must remain visibly instruction-like in each target language while preserving `mail.send` as the protected tool identifier. Localization must not sanitize the attack into benign prose.
+The adversarial note remains visibly instruction-like in each target language while preserving `mail.send` as the protected tool identifier. Localization does not sanitize the attack into benign prose.
 
 ## 5. Browser acceptance matrix
 
-`tools/test_agent_tool_context_multilingual_applet.py` verifies at minimum:
+`tools/test_agent_tool_context_multilingual_applet.py` completed **48/48 checks** across:
 
 1. a single-file, offline, non-public four-locale candidate;
 2. exact R4 and R5 freeze bindings;
@@ -83,12 +91,12 @@ The adversarial note must remain visibly instruction-like in each target languag
 13. mobile root containment in all four locales;
 14. zero page and console errors.
 
-## 6. R6 acceptance rule
+## 6. R6 freeze decision
 
-R6 is accepted only after one exact branch head containing the multilingual builder, browser/state-preservation gate, permanent Verify workflow gate, and this audit record receives one complete permanent Verify PASS.
+The R6 candidate at `517781a5ab82fcba7857589d0acb574e5e30f045` is accepted.
 
-After that pass, update this document with the accepted head, run, job, check count, and evidence artifact. Then run one final exact-head receipt verification. That receipt-bearing head is the only R6 freeze that R7 public integration may consume.
+This receipt update is documentation-only. The exact receipt-bearing branch head produced by this commit must receive one fresh complete permanent Verify PASS before it becomes the frozen R6 browser/state-preservation head consumed by R7. No R4 source, R5 localization value, multilingual runtime behavior, or R6 browser assertion may change between the accepted candidate and that receipt-head verification.
 
 ## 7. Public-release boundary
 
-R6 does not alter AI Playgrounds v1.2.0. Public Lab 14 integration remains prohibited until R6 is frozen and R7 independently validates the fourteen-applet v1.3.0 public artifact.
+R6 does not alter AI Playgrounds v1.2.0. Public Lab 14 integration remains prohibited until the R6 receipt head is frozen and R7 independently validates the fourteen-applet v1.3.0 public artifact.
