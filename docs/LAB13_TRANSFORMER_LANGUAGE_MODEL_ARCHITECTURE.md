@@ -251,7 +251,7 @@ The applet enters the suite **after** R4, so all four locales are part of the ac
 - Vietnamese;
 - Spanish.
 
-English remains the source semantic freeze. Simplified Chinese gets a separate parity audit. Vietnamese and Spanish catalogs must pass the same machine coverage/state tests and remain explicitly subject to human review before release readiness.
+English remains the source semantic freeze. Simplified Chinese gets a separate parity audit. Vietnamese and Spanish catalogs must pass the same machine coverage/state tests plus a separate adversarial semantic review pass before release readiness. Per project-owner direction, Lab 13 does **not** depend on an external colleague cold pass; Vietnamese and Spanish translation/review are performed within the project, with terminology cross-checking when uncertainty is material.
 
 Mathematical symbols, token IDs, matrix labels (`Q`, `K`, `V`) and code identifiers should not be translated when doing so would reduce correspondence with the equations.
 
@@ -329,7 +329,7 @@ Do not claim:
 5. algorithm + browser + accessibility contracts;
 6. Simplified Chinese parity;
 7. Vietnamese/Spanish catalogs and browser parity;
-8. human VI/ES review;
+8. adversarial VI/ES semantic review plus exact-head parity rerun;
 9. suite navigation/curriculum/release metadata integration;
 10. only then consider merge into the v1.2 release chain.
 
