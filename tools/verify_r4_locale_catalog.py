@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, json, pathlib, re, shutil, subprocess, tempfile
+import argparse, json, pathlib, re, shutil, subprocess
 
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 ASCII_WORD=re.compile(r'[A-Za-z]{2,}')
@@ -73,27 +73,38 @@ def pattern_covers(source, rows):
     return False
 
 def load_locale(slug):
+    common_path=ROOT/'assets'/'locales'/'common-r4.js'
     path=ROOT/'assets'/'locales'/f'{slug}-r4.js'
+    if not common_path.is_file(): raise RuntimeError(f'missing shared locale file: {common_path}')
     if not path.is_file(): raise RuntimeError(f'missing locale file: {path}')
-    js=f'''global.window={{}};\nrequire({json.dumps(str(path))});\nconst d=window.__AI_PLAYGROUNDS_R4_LOCALES[{json.dumps(slug)}];\nprocess.stdout.write(JSON.stringify(d));\n'''
+    js=f'''global.window={{}};\nrequire({json.dumps(str(common_path))});\nrequire({json.dumps(str(path))});\nconst root=window.__AI_PLAYGROUNDS_R4_LOCALES||{{}};\nconst d=root[{json.dumps(slug)}];\nprocess.stdout.write(JSON.stringify({{data:d,common:root.common||{{}}}}));\n'''
     proc=subprocess.run(['node','-e',js],capture_output=True,text=True,encoding='utf-8',errors='replace')
     if proc.returncode: raise RuntimeError(proc.stderr)
     return json.loads(proc.stdout)
 
+def assert_runtime_common(common):
+    runtime=(ROOT/'assets'/'localization-r4.js').read_text(encoding='utf-8-sig')
+    for locale in ('vi','es'):
+        for source,target in (common.get(locale) or {}).items():
+            if source not in runtime or target not in runtime:
+                raise RuntimeError(f'R4 shared catalog/runtime fallback drift for {locale}: {source!r}')
+
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--slug',required=True);args=ap.parse_args();slug=args.slug
-    sources,title,description=collect_sources(slug); data=load_locale(slug)
+    sources,title,description=collect_sources(slug); bundle=load_locale(slug); data=bundle.get('data') or {}; common=bundle.get('common') or {}
+    assert_runtime_common(common)
     failures=[]
     if data.get('ready') is not True: failures.append('ready flag is not true')
     for locale in ('vi','es'):
-        strings=((data.get(locale) or {}).get('strings') or {})
+        local=((data.get(locale) or {}).get('strings') or {})
+        strings=dict(common.get(locale) or {}); strings.update(local)
         patterns=(data.get(locale) or {}).get('patterns') or []
         missing=sorted(source for source in sources if source not in strings and not pattern_covers(source,patterns))
         extras=sorted(set(strings)-sources)
         if missing: failures.append(f'{locale}: {len(missing)} missing source translations; first={missing[:12]}')
         meta=(data.get('meta') or {}).get(locale) or {}
         if not meta.get('title') or not meta.get('description'): failures.append(f'{locale}: metadata title/description missing')
-        print(json.dumps({'slug':slug,'locale':locale,'rendered_sources':len(sources),'translated_sources':len(strings),'missing':len(missing),'extras':len(extras),'first_missing':missing[:20],'first_extras':extras[:20]},ensure_ascii=False,indent=2))
+        print(json.dumps({'slug':slug,'locale':locale,'rendered_sources':len(sources),'translated_sources':len(strings),'shared_sources':len(common.get(locale) or {}),'missing':len(missing),'extras':len(extras),'first_missing':missing[:20],'first_extras':extras[:20]},ensure_ascii=False,indent=2))
     enmeta=(data.get('meta') or {}).get('en') or {}
     if enmeta.get('title')!=title: failures.append(f'English metadata title mismatch: {enmeta.get("title")!r} != {title!r}')
     if enmeta.get('description')!=description: failures.append('English metadata description mismatch')
