@@ -129,7 +129,7 @@ The public curriculum should expose three complementary ways into the same apple
 
 This is navigation, not a claim that one curriculum is universally canonical.
 
-The curriculum coverage matrix in `docs/CURRICULUM_COVERAGE_MATRIX.md` remains planning evidence for future Lab 15+ decisions.
+The curriculum coverage matrix in `docs/AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md` remains planning evidence for future Lab 15+ decisions.
 
 ## 9. Acceptance stages
 
