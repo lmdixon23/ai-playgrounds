@@ -429,11 +429,14 @@
       "Changed case: switch to the AIMA-inspired hybrid heuristic and reconsider the same frontier evidence without probability ranking.": "Tình huống thay đổi: chuyển sang chiến lược lai lấy cảm hứng từ AIMA và xem xét lại cùng loại bằng chứng biên mà không xếp hạng theo xác suất."
     },
     "patterns": [
-      {
-        "source": "^\\(([0-9]+),([0-9]+)\\): -no breeze, -no stench$",
-        "target": "($1,$2): không có gió, không có mùi hôi",
-        "flags": "g"
-      }
+      {"source":"^\\(([0-9]+),([0-9]+)\\): -no breeze, -no stench$","target":"($1,$2): không có gió, không có mùi hôi","flags":"g"},
+      {"source":"^\\(([0-9]+),([0-9]+)\\): breeze, -no stench$","target":"($1,$2): gió, không có mùi hôi","flags":"g"},
+      {"source":"^\\(([0-9]+),([0-9]+)\\): -no breeze, stench$","target":"($1,$2): không có gió, mùi hôi","flags":"g"},
+      {"source":"^\\(([0-9]+),([0-9]+)\\): breeze, stench$","target":"($1,$2): gió, mùi hôi","flags":"g"},
+      {"source":"^\\(([0-9]+),([0-9]+)\\): -no breeze, -no stench, GLITTER!$","target":"($1,$2): không có gió, không có mùi hôi, lấp lánh!","flags":"g"},
+      {"source":"^\\(([0-9]+),([0-9]+)\\): breeze, -no stench, GLITTER!$","target":"($1,$2): gió, không có mùi hôi, lấp lánh!","flags":"g"},
+      {"source":"^\\(([0-9]+),([0-9]+)\\): -no breeze, stench, GLITTER!$","target":"($1,$2): không có gió, mùi hôi, lấp lánh!","flags":"g"},
+      {"source":"^\\(([0-9]+),([0-9]+)\\): breeze, stench, GLITTER!$","target":"($1,$2): gió, mùi hôi, lấp lánh!","flags":"g"}
     ]
   },
   "es": {
@@ -847,11 +850,14 @@
       "Changed case: switch to the AIMA-inspired hybrid heuristic and reconsider the same frontier evidence without probability ranking.": "Caso modificado: cambia a la heurística híbrida inspirada en AIMA y vuelve a considerar la misma evidencia de frontera sin ordenarla por probabilidad."
     },
     "patterns": [
-      {
-        "source": "^\\(([0-9]+),([0-9]+)\\): -no breeze, -no stench$",
-        "target": "($1,$2): sin brisa, sin hedor",
-        "flags": "g"
-      }
+      {"source":"^\\(([0-9]+),([0-9]+)\\): -no breeze, -no stench$","target":"($1,$2): sin brisa, sin hedor","flags":"g"},
+      {"source":"^\\(([0-9]+),([0-9]+)\\): breeze, -no stench$","target":"($1,$2): brisa, sin hedor","flags":"g"},
+      {"source":"^\\(([0-9]+),([0-9]+)\\): -no breeze, stench$","target":"($1,$2): sin brisa, hedor","flags":"g"},
+      {"source":"^\\(([0-9]+),([0-9]+)\\): breeze, stench$","target":"($1,$2): brisa, hedor","flags":"g"},
+      {"source":"^\\(([0-9]+),([0-9]+)\\): -no breeze, -no stench, GLITTER!$","target":"($1,$2): sin brisa, sin hedor, ¡brillo!","flags":"g"},
+      {"source":"^\\(([0-9]+),([0-9]+)\\): breeze, -no stench, GLITTER!$","target":"($1,$2): brisa, sin hedor, ¡brillo!","flags":"g"},
+      {"source":"^\\(([0-9]+),([0-9]+)\\): -no breeze, stench, GLITTER!$","target":"($1,$2): sin brisa, hedor, ¡brillo!","flags":"g"},
+      {"source":"^\\(([0-9]+),([0-9]+)\\): breeze, stench, GLITTER!$","target":"($1,$2): brisa, hedor, ¡brillo!","flags":"g"}
     ]
   }
 };
