@@ -1,28 +1,21 @@
 # Lab 14 ZH/VI/ES Semantic Localization Audit
 
-Status: **PASS — R5 semantic catalog accepted; receipt-bearing exact-head verification pending**.
+Status: **R5 REOPENED — expanded semantic coverage pending fresh exact-head verification**.
 
 Frozen English source head: `9f2f5286f4de3e12a881b61d491c87efe6950166`.
 
-Accepted R5 candidate head: `246d21b7f2b13756cc9785843bc731fc3d811519`.
-
-Permanent Verify receipt: run `32749753653`, job `97503973643` — **PASS**.
-
-Semantic catalog gate: **1309 checks PASS**, covering **121 side-by-side EN/ZH/VI/ES keys** with zero failures.
-
-Language coverage in the accepted catalog: 1418 CJK characters, 1251 Vietnamese diacritic characters, and 137 Spanish diacritic/inverted-punctuation characters.
-
-Evidence artifact: `ai-playgrounds-verification-32749753653`, artifact ID `9528657731`, SHA-256 `84a21ebc3f5ed1818959792308e67d76a47e6f1f5617f01f592c61e3f0468c85`.
+The earlier 121-key catalog candidate and its receipt remain valid evidence for those keys, but they are no longer sufficient to freeze R5 because the browser-facing dynamic surface was found to contain additional English strings that also require semantic review before R6.
 
 ## 1. Catalog architecture
 
-R5 adds one side-by-side semantic catalog:
+R5 now uses two side-by-side EN/ZH/VI/ES semantic catalogs, both bound to the same frozen R4 English source:
 
-`tools/agent_tool_context_locales.json`
+- `tools/agent_tool_context_locales.json` — 121 primary learner-facing keys;
+- `tools/agent_tool_context_locales_dynamic.json` — dynamic goal, model-output, fixture, validation, authorization, runtime-error, trust, and role surfaces required by R6.
 
-Every catalog key contains English, Simplified Chinese, Vietnamese, and Spanish values together so the source meaning can be audited directly against each translation. The catalog is explicitly bound to the frozen R4 English source head above.
+Every catalog key contains English, Simplified Chinese, Vietnamese, and Spanish together so the source meaning can be inspected directly against each translation.
 
-The accepted catalog covers the learner-facing semantic surfaces needed for R6 browser localization, including:
+The primary catalog covers:
 
 - page identity, evidence boundary, controls, scenario names, and runtime pipeline;
 - context, candidate, tool, MCP, trace, Guided Challenge, and accessible-state labels;
@@ -32,9 +25,36 @@ The accepted catalog covers the learner-facing semantic surfaces needed for R6 b
 - ten misconception statements and their corrections;
 - core terminology for model output, tool call, schema validity, authorization, execution, observation, context update, and termination.
 
-## 2. Protected computational identifiers
+The dynamic supplement closes the remaining browser-semantic gap by covering:
 
-Localization is presentation-only. R5 preserves executable and state-bearing identifiers, including:
+- all eight scenario goals;
+- all model-side text outputs shown by the frozen teaching policy;
+- trusted and adversarial note fixtures;
+- schema-validation error templates;
+- authorization outcomes;
+- deterministic execution-error text;
+- budget/invalid-action/runtime-error labels;
+- trust and role display literals.
+
+## 2. Why R5 was reopened
+
+The initial 121-key gate passed completely, including an exact receipt-bearing Verify run. Before beginning R6, a browser-surface audit found that several English strings were still generated directly from frozen state/tool fixtures rather than represented in the primary localization catalog.
+
+Proceeding to browser localization without reviewing those strings would have created an un-audited translation layer. R5 was therefore deliberately reopened before R6, and the missing surfaces were added as a second source-bound catalog rather than silently translated in browser code.
+
+The previous candidate receipts are preserved as provenance:
+
+- primary catalog candidate head `246d21b7f2b13756cc9785843bc731fc3d811519`;
+- Verify run `32749753653`, job `97503973643` — PASS;
+- primary gate `1309/1309` over 121 keys;
+- receipt head `0ef6c3d61c54ee084bf937053301cdee0930389b`;
+- Verify run `32750256129`, job `97505271372` — PASS.
+
+Those receipts do not constitute the final R5 freeze after expansion.
+
+## 3. Protected computational identifiers
+
+Localization is presentation-only. Both catalogs preserve executable and state-bearing identifiers, including:
 
 - `weather.current`;
 - `weather.forecast`;
@@ -44,13 +64,14 @@ Localization is presentation-only. R5 preserves executable and state-bearing ide
 - `notes.search`;
 - `temperature_c`;
 - `temperature_f`;
-- `MCP 2026-07-28`.
+- `MCP 2026-07-28`;
+- role/state identifiers where they are part of the executable representation.
 
 R6 may translate explanatory text surrounding these identifiers, but it must not translate or mutate tool names, argument keys, state keys, schema keys, protocol version values, or frozen tool data.
 
-## 3. High-risk semantic boundaries
+## 4. High-risk semantic boundaries
 
-The accepted catalog preserves all R4 distinctions in every locale:
+Both catalogs must preserve all R4 distinctions in every locale:
 
 1. availability is not authorization;
 2. schema validity is not correctness or permission;
@@ -62,33 +83,41 @@ The accepted catalog preserves all R4 distinctions in every locale:
 8. MCP remains a version-scoped protocol scenario rather than the definition of an agent;
 9. the toy provenance rule is not represented as a general solution to prompt injection.
 
-The translations deliberately retain technical identifiers where translation would change the computational object being taught.
+Critically, the translated adversarial meeting-note fixture must remain visibly instruction-like. Localization must not sanitize away the attack that the scenario is designed to teach.
 
-## 4. Static semantic gate
+## 5. Semantic gates
 
-`tools/test_agent_tool_context_localization.py` completed **1309/1309 semantic and structural checks** over 121 catalog keys. The gate verifies:
+`tools/test_agent_tool_context_localization.py` verifies the 121-key primary catalog, including source binding, exact four-locale coverage, placeholder parity, protected-token preservation, translated-prose coverage, high-risk terminology, misconception negations, bounded prompt-injection claims, and frozen-English source anchoring.
 
-- exact binding to the frozen R4 source head;
-- exact EN/ZH/VI/ES coverage for every catalog key;
-- placeholder parity across all dynamic templates;
-- protected-token preservation;
-- rejection of nontrivial English prose mapped to itself, except explicitly allowed identifiers;
-- substantial Simplified-Chinese, Vietnamese, and Spanish language-specific character coverage;
-- required high-risk terminology in each locale;
-- explicit negation of authorization and schema misconceptions;
-- bounded prompt-injection claims in each locale;
-- selected English source strings still occurring in the frozen English candidate rebuilt from the R4 builder.
+`tools/test_agent_tool_context_dynamic_localization.py` separately verifies the dynamic supplement, including:
 
-The same permanent Verify run also passed the inherited v1.2 stack, every Lab 13 gate, all accepted Lab 14 R0–R4 gates, and the complete 63-case responsive browser matrix.
+- exact binding to the same R4 source freeze;
+- exact EN/ZH/VI/ES coverage;
+- placeholder parity;
+- protected identifier preservation;
+- frozen prototype/core source anchoring;
+- all eight scenario-goal translations;
+- all model-side text-output translations;
+- adversarial note preservation as instruction-like content in ZH/VI/ES;
+- distinct localized validation, authorization, and execution-error semantics;
+- language-specific character coverage;
+- source JavaScript syntax sanity.
 
-## 5. R5 freeze decision
+Both gates are now permanent steps in `.github/workflows/verify.yml`.
 
-The semantic catalog at `246d21b7f2b13756cc9785843bc731fc3d811519` is accepted.
+## 6. Expanded R5 acceptance rule
 
-This receipt update is documentation-only. The exact receipt-bearing branch head produced by this commit must receive one fresh complete permanent Verify PASS before it becomes the frozen R5 localization catalog head used by R6. No catalog value, English-source binding, placeholder, protected identifier, or high-risk semantic rule may change between the accepted candidate and that final receipt-head verification.
+The earlier R5 freeze is superseded. Expanded R5 is accepted only after one exact branch head containing:
 
-Once the receipt-bearing head passes unchanged, R5 is frozen and R6 four-locale browser/state-preservation work may begin against that exact head.
+- both catalogs;
+- both semantic verifiers;
+- both permanent workflow gates;
+- this reopened audit record;
 
-## 6. Public-release boundary
+receives a complete permanent Verify PASS.
+
+After that pass, update this document with the expanded accepted head, both catalog key counts, both gate check counts, run/job, and evidence artifact. Then run one final receipt-bearing exact-head Verify pass. That final receipt head becomes the only accepted R5 localization freeze for R6.
+
+## 7. Public-release boundary
 
 R5 does not create a public Lab 14 page and does not modify AI Playgrounds v1.2.0. Browser localization and state-preservation are R6 obligations; fourteen-applet public integration remains R7.
