@@ -14,7 +14,7 @@ The candidate now closes the English-only implementation obligations needed befo
 2. **Frozen arithmetic preserved.** The embedded base model uses the same vocabulary, embeddings, position vectors, Q/K/V projections, feed-forward transform, output projection, causal mask, stable softmax, and temperature operation as the independently tested reference core.
 3. **Visible causal pipeline.** Learners can inspect surface text, toy token IDs, token embedding, position vector, input vector, Q/K/V values, masked/unmasked scaled scores, attention weights, attention output, final state, logits, and next-token probabilities.
 4. **Score, mask, and attention separation.** The pre-mask scaled-score matrix, structural causal-mask matrix, and post-softmax attention-weight matrix are three separate synchronized views. Attention cells display numeric weights while redundant intensity encoding assists visual scanning, so color is not the sole information channel.
-5. **Numeric pair inspection.** Selecting a permitted attention cell reports the raw `q·k` dot product, scaled `q·k / sqrt(d_k)` score, and final attention weight for that destination/source pair.
+5. **Numeric pair and source-vector inspection.** Selecting a permitted attention cell reports the source `k_j` and `v_j` vectors, raw `q·k` dot product, scaled `q·k / sqrt(d_k)` score, and final attention weight for that destination/source pair.
 6. **Constrained learner text.** A bounded text path demonstrates the source-locked toy tokenizer, `<UNK>` mapping, punctuation tokenization, and maximum-context truncation while preserving `<BOS>`.
 7. **Structural causal masking.** Future cells are rendered as `MASK`; the source explicitly avoids anthropomorphizing masking as a model choosing not to look.
 8. **Bounded Q/K perturbation.** The learner can alter one final-query or source-key component by a fixed `+0.50` perturbation and inspect the resulting scaled-score and attention-weight change.
@@ -24,10 +24,11 @@ The candidate now closes the English-only implementation obligations needed befo
 12. **Executable attention-not-explanation counterexample.** For `sleep sleep i`, the largest final-row attention weight and the largest finite-ablation effect on the original top-token logit occur at different source positions. The finite ablation removes one `alpha_j v_j` contribution without renormalization and is explicitly scoped as a diagnostic counterexample rather than a complete causal explanation.
 13. **All four frozen Guided Challenges.** Highest attention, causal-mask leak, token substitution, and temperature transfer each use an isolated deterministic fixture and enforce `Prompt -> Commit prediction -> Reveal mechanism -> Compare -> Explain -> Transfer`. The substitution challenge requires both the Q/K/V change scope and the direction of a named next-token probability.
 14. **Challenge-state isolation.** Prediction choices and reveals are generated from the same fixed challenge fixture rather than from arbitrary experiment state.
-15. **Keyboard-operable attention inspection.** Every permitted weight cell is a button; keyboard activation updates the synchronized token/vector/text state and reports the selected query-key calculation.
-16. **Text-equivalent numeric state.** The candidate exposes prompt, tokens, IDs, selected token, query, source keys, raw scaled scores, structural mask row, masked/unmasked scores, attention row, logits, probabilities, temperature, position state, mask state, and Q/K perturbation as text.
-17. **Explicit evidence boundaries and misconception corrections.** The source rejects frontier-model equivalence, attention-as-understanding/explanation, internet-search behavior, stored-answer retrieval, token-equals-word, position-equals-word-meaning, deterministic top-token selection, and temperature-changes-weights interpretations.
-18. **Literal special-token rendering.** `<BOS>` and `<UNK>` are inserted as DOM text rather than HTML so special-token labels remain visible in token controls, matrix headers, and the vocabulary distribution.
+15. **Keyboard-operable attention inspection.** Every permitted weight cell is a button; keyboard activation updates the synchronized token/vector/text state and reports the selected source-vector and query-key calculation.
+16. **Explicit top-probability token.** The output panel names the maximum-probability token and its probability while explicitly distinguishing that argmax display from a sampled generation output.
+17. **Text-equivalent numeric state.** The candidate exposes prompt, tokens, IDs, selected token, query, all source keys, all source values, raw scaled scores, structural mask row, masked/unmasked scores, attention row, logits, probabilities, top-probability token, temperature, position state, mask state, and Q/K perturbation as text.
+18. **Explicit evidence boundaries and misconception corrections.** The source rejects frontier-model equivalence, attention-as-understanding/explanation, internet-search behavior, stored-answer retrieval, token-equals-word, position-equals-word-meaning, deterministic top-token selection, and temperature-changes-weights interpretations.
+19. **Literal special-token rendering.** `<BOS>` and `<UNK>` are inserted as DOM text rather than HTML so special-token labels remain visible in token controls, matrix headers, and the vocabulary distribution.
 
 ## 2. Adversarial corrections completed since the first English candidate
 
@@ -47,6 +48,11 @@ A subsequent frozen-contract review identified two additional gaps before accept
 
 The first full candidate gate then exposed one rendering defect: special tokens written through `innerHTML` were parsed as element names and disappeared visually. That was treated as an applet defect rather than weakening the test. It is now closed by DOM-safe literal text construction across token controls, matrix headers, and vocabulary labels.
 
+A final contract reread identified two smaller completeness gaps before freezing English semantics. Both are now closed rather than deferred to localization:
+
+- **I — explicit output argmax:** the next-token panel now names the top-probability token and probability while warning that this is not equivalent to a sampled output.
+- **J — source K/V visibility:** attention-pair inspection now exposes the selected source key and value vectors, and the text-equivalent state includes all source K and V vectors.
+
 ## 3. Verification boundary
 
 `tools/test_transformer_english_applet.py` adversarially checks at minimum:
@@ -54,10 +60,11 @@ The first full candidate gate then exposed one rendering defect: special tokens 
 - source/evidence contracts;
 - single-file and no-network constraints;
 - canonical embedded-core arithmetic;
+- an explicit top-probability token consistent with the computed distribution and not conflated with sampling;
 - distinct full score, mask, and attention matrices;
 - causal-mask rendering and mask-off behavior;
-- keyboard attention-cell inspection including raw and scaled dot products;
-- required text-equivalent state;
+- keyboard attention-cell inspection including source K/V, raw dot product, scaled dot product, and final weight;
+- required text-equivalent state including all source keys and values plus the top-probability token;
 - unknown-token and context-truncation behavior, which also regression-test visible `<UNK>` and `<BOS>` rendering;
 - Q/K perturbation arithmetic;
 - order/position ablation;
