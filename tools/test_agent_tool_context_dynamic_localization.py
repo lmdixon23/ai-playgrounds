@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / "tools" / "agent_tool_context_locales_dynamic.json"
 PROTOTYPE = ROOT / "tools" / "agent_tool_context_prototype.html"
 CORE = ROOT / "tools" / "agent_tool_context_core.js"
+ENGLISH_BUILDER = ROOT / "tools" / "build_agent_tool_context_english_candidate.py"
 SOURCE_FREEZE_HEAD = "9f2f5286f4de3e12a881b61d491c87efe6950166"
 LOCALES = ("en", "zh", "vi", "es")
 PLACEHOLDER = re.compile(r"\{([A-Za-z0-9_]+)\}")
@@ -67,7 +68,7 @@ def main() -> int:
     checks += 1
     require(payload.get("source_freeze_head") == SOURCE_FREEZE_HEAD, "dynamic catalog is not bound to the frozen R4 English head", failures)
     checks += 1
-    require(len(strings) >= 30, f"dynamic semantic supplement is unexpectedly small: {len(strings)} keys", failures)
+    require(len(strings) >= 40, f"dynamic semantic supplement is unexpectedly small: {len(strings)} keys", failures)
 
     for key, entry in strings.items():
         checks += 1
@@ -90,10 +91,14 @@ def main() -> int:
                     checks += 1
                     require(token in value, f"{key}/{locale}: protected identifier changed or disappeared: {token}", failures)
 
-    # Every English dynamic phrase must remain grounded in the frozen R4 source.
+    # Every English dynamic phrase must remain grounded in one of the files that
+    # form the frozen R4 source: prototype, independent core, or English builder.
     # Machine-state display labels bind to their exact state identifiers through
     # SOURCE_ANCHOR_OVERRIDES rather than pretending the derived prose was literal.
-    source = PROTOTYPE.read_text(encoding="utf-8") + "\n" + CORE.read_text(encoding="utf-8")
+    source = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in (PROTOTYPE, CORE, ENGLISH_BUILDER)
+    )
     for key, entry in strings.items():
         en = str(entry.get("en", ""))
         anchors = source_anchors(key, en)
@@ -105,9 +110,9 @@ def main() -> int:
     vi_marks = len(re.findall(r"[ăâđêôơưĂÂĐÊÔƠƯàáảãạằắẳẵặầấẩẫậèéẻẽẹềếểễệìíỉĩịòóỏõọồốổỗộờớởỡợùúủũụừứửữựỳýỷỹỵ]", combined["vi"], flags=re.I))
     es_marks = len(re.findall(r"[áéíóúüñ¿¡]", combined["es"], flags=re.I))
     checks += 3
-    require(cjk >= 250, f"dynamic Chinese supplement contains too little CJK text: {cjk}", failures)
-    require(vi_marks >= 150, f"dynamic Vietnamese supplement contains too few language-specific characters: {vi_marks}", failures)
-    require(es_marks >= 25, f"dynamic Spanish supplement contains too few language-specific characters: {es_marks}", failures)
+    require(cjk >= 350, f"dynamic Chinese supplement contains too little CJK text: {cjk}", failures)
+    require(vi_marks >= 250, f"dynamic Vietnamese supplement contains too few language-specific characters: {vi_marks}", failures)
+    require(es_marks >= 30, f"dynamic Spanish supplement contains too few language-specific characters: {es_marks}", failures)
 
     # Adversarial observation must remain visibly instruction-like in every locale;
     # localization must not sanitize away the attack that the scenario teaches.
@@ -132,12 +137,13 @@ def main() -> int:
             checks += 1
             require(term.lower() in text, f"{locale}: missing dynamic semantic distinction: {term}", failures)
 
-    # Goal and model-text surfaces must cover all eight scenarios and all source-side text outputs.
     expected_goal_keys = {f"goal.{name}" for name in ("canonical", "overlap", "invalid", "text", "permission", "injection", "mcp", "termination")}
     checks += 1
     require(expected_goal_keys.issubset(strings), f"missing scenario goal translations: {sorted(expected_goal_keys - set(strings))}", failures)
     checks += 1
     require({"model_text.overlap", "model_text.text_claim", "model_text.convert", "model_text.weather"}.issubset(strings), "model-side text outputs are not fully localized", failures)
+    checks += 1
+    require(all(f"term.{name}.definition" in strings for name in ("model_output", "tool_call", "schema_valid", "authorized", "executed", "observation", "context_update", "termination")), "key-term definitions are not fully localized", failures)
 
     proc = subprocess.run(["node", "--check", str(CORE)], cwd=ROOT, text=True, capture_output=True, check=False)
     checks += 1
