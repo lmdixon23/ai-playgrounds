@@ -157,7 +157,7 @@ def main() -> int:
             checks.append(("challenge commit freezes prediction", page.locator("#prediction").is_disabled() and page.locator("#challengeType").is_disabled() and page.locator("#reveal").is_enabled(), {}))
             page.locator("#reveal").click()
             challenge_text = page.locator("#challengeResult").inner_text()
-            checks.append(("challenge reveal exposes validation mechanism", not page.locator("#challengeResult").is_hidden() and "Prediction matched" in challenge_text and "missing required property" in challenge_text, {"text": challenge_text}))
+            checks.append(("challenge reveal exposes validation mechanism", not page.locator("#challengeResult").is_hidden() and "Prediction matched" in challenge_text and "missing required argument: day" in challenge_text and "missing required argument: hour" in challenge_text, {"text": challenge_text}))
             page.locator("#resetChallenge").click()
             checks.append(("challenge reset restores prediction state", page.locator("#prediction").is_enabled() and page.locator("#reveal").is_disabled() and page.locator("#challengeResult").is_hidden(), {}))
 
