@@ -21,6 +21,7 @@ PUBLIC_SUBTITLE = {
 
 HEAD = f"""
 <meta name="description" content="Trace a deterministic agent loop through structured tool calls, validation, authorization, execution, observations, context updates, and stopping.">
+<meta name="lab14-r6-freeze" content="{R6_BROWSER_FREEZE}">
 <link rel="canonical" href="{CANONICAL}">
 <link rel="alternate" hreflang="en" href="{CANONICAL}?lang=en">
 <link rel="alternate" hreflang="zh-Hans" href="{CANONICAL}?lang=zh">
@@ -80,10 +81,10 @@ def build_public(output: Path) -> Path:
         raise RuntimeError(f"Public Lab 14 still contains candidate wording: {remaining}")
     if 'href="../../index.html"' not in html or CANONICAL not in html:
         raise RuntimeError("Public Lab 14 shell metadata/back route was not installed")
+    if f'name="lab14-r6-freeze" content="{R6_BROWSER_FREEZE}"' not in html:
+        raise RuntimeError("Public Lab 14 lost its R6 freeze binding")
     if "fetch(" in html or "XMLHttpRequest" in html or "<script src=" in html:
         raise RuntimeError("Public Lab 14 must remain one-file and network-independent")
-    if R6_BROWSER_FREEZE == "":
-        raise RuntimeError("R6 browser freeze must be bound before public integration")
 
     output.write_text(html, encoding="utf-8")
     return output
