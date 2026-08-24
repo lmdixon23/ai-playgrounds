@@ -1,6 +1,6 @@
 # Lab 14 Four-Locale Browser and State-Preservation Audit
 
-Status: **PASS — R6 candidate accepted; receipt-bearing exact-head verification pending**.
+Status: **PASS — R6 browser/state-preservation freeze accepted**.
 
 Frozen R4 English source head: `9f2f5286f4de3e12a881b61d491c87efe6950166`.
 
@@ -8,11 +8,15 @@ Frozen R5 localization head: `37bdc6a4a84b672ad564d81564e8a055c2b2c9a6`.
 
 Accepted R6 candidate head: `517781a5ab82fcba7857589d0acb574e5e30f045`.
 
-Permanent Verify run `32757567198`, job `97528515969`: **PASS**.
+Candidate Verify run `32757567198`, job `97528515969`: **PASS**.
 
-R6 four-locale browser/state-preservation gate: **48/48 checks PASS**, with zero page or console errors. The same run also passed the entire inherited v1.2 stack, every Lab 13 gate, all Lab 14 R0-R5 gates, and the complete responsive browser matrix.
+Frozen R6 receipt head: `07f89d13269041d9ed66de2362bf84c288bb86de`.
 
-Evidence artifact: `ai-playgrounds-verification-32757567198`, artifact ID `9531519391`, SHA-256 `10feacb466a4d654827bf0eec4dbc44286a7413b737dac4e1b1dd8f2efc62921`.
+Final receipt Verify run `32757986082`, job `97529853044`: **PASS**.
+
+R6 four-locale browser/state-preservation gate: **48/48 checks PASS**, with zero page or console errors. The receipt run also passed the entire inherited v1.2 stack, every Lab 13 gate, all Lab 14 R0-R5 gates, and the complete responsive browser matrix.
+
+Receipt evidence artifact: `ai-playgrounds-verification-32757986082`, artifact ID `9531664877`, SHA-256 `5f439f614296d0a8ef351a64b171edab3b848ef2fc292991c7615c7b59d2b227`.
 
 ## 1. R6 construction
 
@@ -93,10 +97,10 @@ The adversarial note remains visibly instruction-like in each target language wh
 
 ## 6. R6 freeze decision
 
-The R6 candidate at `517781a5ab82fcba7857589d0acb574e5e30f045` is accepted.
+**PASS.** The R6 browser/state-preservation layer is frozen at receipt head `07f89d13269041d9ed66de2362bf84c288bb86de`.
 
-This receipt update is documentation-only. The exact receipt-bearing branch head produced by this commit must receive one fresh complete permanent Verify PASS before it becomes the frozen R6 browser/state-preservation head consumed by R7. No R4 source, R5 localization value, multilingual runtime behavior, or R6 browser assertion may change between the accepted candidate and that receipt-head verification.
+R7 may consume that head as an immutable dependency. Any later change to the R4 English source, R5 localization values, multilingual runtime behavior, or R6 browser assertions invalidates the R6 freeze and requires re-verification before release.
 
 ## 7. Public-release boundary
 
-R6 does not alter AI Playgrounds v1.2.0. Public Lab 14 integration remains prohibited until the R6 receipt head is frozen and R7 independently validates the fourteen-applet v1.3.0 public artifact.
+R6 itself does not alter AI Playgrounds v1.2.0. Public Lab 14 integration is governed separately by R7 and may be released only from a receipt-bearing R7 head that independently validates the fourteen-applet v1.3.0 public artifact.
