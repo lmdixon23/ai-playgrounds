@@ -70,8 +70,8 @@ jobs:
       - name: Check versioned release metadata
         run: python tools/check_release_metadata.py
 
-      - name: Verify minimal deployment boundary
-        run: python tools/build_site.py
+      - name: Verify minimal v1.3 deployment boundary
+        run: python tools/build_site_v1_3.py
 
       - name: Run 45 algorithm regression tests
         run: python tools/run_algorithm_tests.py
@@ -97,7 +97,7 @@ jobs:
       - name: Run Lab 13 four-locale browser parity QA
         run: python tools/test_transformer_multilingual_applet.py
 
-      - name: Run Lab 13 public v1.2 integration QA
+      - name: Run Lab 13 public v1.3 regression QA
         run: python tools/test_transformer_public_integration.py
 
       - name: Run Lab 14 agent tool-context reference tests
@@ -120,6 +120,9 @@ jobs:
 
       - name: Run Lab 14 four-locale browser parity QA
         run: python tools/test_agent_tool_context_multilingual_applet.py
+
+      - name: Run Lab 14 public v1.3 integration QA
+        run: python tools/test_agent_tool_context_public_integration.py
 
       - name: Run browser and responsive QA
         run: python tools/browser_qa.py --no-screenshots
