@@ -297,10 +297,19 @@ def single_check(page_path: str, slug: str, kind: str, viewport_name: str, scree
                 lang_count = page.locator("button[data-lang]").count()
                 checks.append({"name": "language_buttons_present", "pass": lang_count >= 2, "detail": {"count": lang_count}})
                 if lang_count >= 2:
-                    page.locator("button[data-lang='zh']").first.click(timeout=1500)
-                    checks.append({"name": "zh_toggle_active", "pass": page.locator("button[data-lang='zh'].active").count() >= 1, "detail": {"active_count": page.locator("button[data-lang='zh'].active").count()}})
-                    page.locator("button[data-lang='en']").first.click(timeout=1500)
-                    checks.append({"name": "en_toggle_active", "pass": page.locator("button[data-lang='en'].active").count() >= 1, "detail": {"active_count": page.locator("button[data-lang='en'].active").count()}})
+                    r4_ready = bool(page.evaluate("() => !!window.__r4Localization && window.__r4Localization.ready()"))
+                    switch_applet_locale(page, "zh")
+                    if r4_ready:
+                        zh_value = page.locator(".r4-language-select").input_value() if page.locator(".r4-language-select").count() else ""
+                        checks.append({"name": "zh_toggle_active", "pass": document_lang(page).lower().startswith("zh") and zh_value == "zh", "detail": {"lang": document_lang(page), "select": zh_value}})
+                    else:
+                        checks.append({"name": "zh_toggle_active", "pass": page.locator("button[data-lang='zh'].active").count() >= 1, "detail": {"active_count": page.locator("button[data-lang='zh'].active").count()}})
+                    switch_applet_locale(page, "en")
+                    if r4_ready:
+                        en_value = page.locator(".r4-language-select").input_value() if page.locator(".r4-language-select").count() else ""
+                        checks.append({"name": "en_toggle_active", "pass": document_lang(page).lower().startswith("en") and en_value == "en", "detail": {"lang": document_lang(page), "select": en_value}})
+                    else:
+                        checks.append({"name": "en_toggle_active", "pass": page.locator("button[data-lang='en'].active").count() >= 1, "detail": {"active_count": page.locator("button[data-lang='en'].active").count()}})
                 checks.append({"name": "aria_live_present", "pass": page.locator("[aria-live]").count() >= 1, "detail": {"count": page.locator("[aria-live]").count()}})
                 checks.append({"name": "a11y_summary_present", "pass": page.locator("#a11yStateSummary").count() >= 1, "detail": {"count": page.locator("#a11yStateSummary").count()}})
                 header_children = page.locator(".header-actions > *")
@@ -429,9 +438,14 @@ def run_all(screenshots: bool, child_timeout: int) -> Dict[str, Any]:
                                 count=page.locator(selector).count();checks.append({"name":f"applet_selector_{selector}","pass":count>=1,"detail":{"selector":selector,"count":count}})
                             lang_count=page.locator("button[data-lang]").count();checks.append({"name":"language_buttons_present","pass":lang_count>=2,"detail":{"count":lang_count}})
                             if lang_count>=2:
-                                page.locator("button[data-lang='zh']").first.click(timeout=1500)
-                                checks.append({"name":"zh_toggle_active","pass":page.locator("button[data-lang='zh'].active").count()>=1,"detail":{}})
-                                page.locator("button[data-lang='en']").first.click(timeout=1500)
+                                r4_ready=bool(page.evaluate("() => !!window.__r4Localization && window.__r4Localization.ready()"))
+                                switch_applet_locale(page,"zh")
+                                if r4_ready:
+                                    zh_value=page.locator(".r4-language-select").input_value() if page.locator(".r4-language-select").count() else ""
+                                    checks.append({"name":"zh_toggle_active","pass":document_lang(page).lower().startswith("zh") and zh_value=="zh","detail":{"lang":document_lang(page),"select":zh_value}})
+                                else:
+                                    checks.append({"name":"zh_toggle_active","pass":page.locator("button[data-lang='zh'].active").count()>=1,"detail":{}})
+                                switch_applet_locale(page,"en")
                             header_children=page.locator(".header-actions > *")
                             child_classes=[header_children.nth(i).get_attribute("class") or header_children.nth(i).get_attribute("id") or "" for i in range(header_children.count())]
                             checks.append({"name":"standard_header_actions","pass":header_children.count()==3 and page.locator(".header-actions > #shareLink").count()==1 and page.locator(".header-actions > details.header-more").count()==1 and page.locator(".header-actions > #hardReset").count()==1,"detail":{"children":child_classes}})
