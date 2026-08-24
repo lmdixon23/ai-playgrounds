@@ -1,5 +1,38 @@
 # Release notes
 
+## v1.3.0, 2026-08-25
+
+### Lab 14: Agent Tool Use and Context Protocols
+
+- Added the fourteenth public applet, a deterministic agent-runtime lab for structured tool use and context updates.
+- Separates model text, structured tool calls, schema validation, authorization, execution, returned observations, provenance-aware context updates, and stopping into explicit runtime stages.
+- Includes eight deterministic scenarios covering observation-driven replanning, overlapping tool schemas, invalid arguments, text versus execution, permission denial, instruction-like tool output, MCP 2026-07-28 serialization, and correct termination.
+- Includes five prediction-before-reveal Guided Challenges for next-action selection, validation gates, observation effects, trust classification, and stop decisions.
+
+### Four-locale parity
+
+- Added English, Simplified Chinese, Vietnamese, and Spanish semantic coverage for both static and dynamically generated Lab 14 surfaces.
+- Preserves tool names, state keys, argument keys, protocol identifiers, frozen numeric data, permission state, provenance, and complete deterministic machine state across locale switches.
+- Keeps the adversarial note fixture visibly instruction-like in every locale without allowing translated content to rewrite the goal, principal, or authorization state.
+- Keeps the public Lab 14 applet as one self-contained, offline-ready HTML file with no runtime API, fetch, XHR, WebSocket, EventSource, or external script dependency.
+
+### Verification and deployment
+
+- Added independent Python and JavaScript Lab 14 references with 20 reference tests and eight cross-runtime parity fixture families.
+- Added prototype, English-source, primary localization, dynamic localization, four-locale browser/state-preservation, and public v1.3 integration gates.
+- Expanded the deterministic Pages boundary from thirteen to fourteen applets and from 53 to 54 files while retaining every inherited v1.2, Lab 13, algorithm, localization, and browser gate.
+- Rebound the public Lab 13 regression gate to the fourteen-applet v1.3 artifact so the Transformer applet remains verified after Lab 14 integration.
+
+### Release provenance
+
+- v1.3.0 does not modify the immutable v1.0.1 tag, release, or version DOI.
+- The archived v1.0.1 DOI remains `10.5281/zenodo.21854217`; it is not represented as a DOI for v1.3.0.
+- The separate design-and-tools research manuscript remains in preparation and is not part of this software release.
+
+### Verification boundary
+
+Software checks establish implementation and release integrity only. They do not establish learning gains, classroom adoption, or accessibility conformance.
+
 ## v1.2.0, 2026-08-24
 
 ### Lab 13: Transformer Language Modeling
@@ -92,12 +125,12 @@ Explore panels include pre-rendered scenarios, dynamic text changes language imm
 
 ## Privacy and portability
 
-The legacy applets require no account, backend, database, package manager, or build step. Student responses remain local unless the learner copies or prints them. Lab 13 is generated deterministically into the Pages artifact from its frozen source and catalogs and remains one self-contained offline HTML file after generation.
+The legacy applets require no account, backend, database, package manager, or build step. Student responses remain local unless the learner copies or prints them. Lab 13 and Lab 14 are generated deterministically into the Pages artifact from frozen source and localization inputs and remain self-contained offline HTML files after generation.
 
 ## Release integrity
 
 - GitHub Pages deploys a deterministic public artifact containing only intentionally published files.
-- GitHub Actions requires static release checks, algorithm regression tests, release-metadata checks, Lab 13-specific gates, and browser/responsive QA.
+- GitHub Actions requires static release checks, algorithm regression tests, release-metadata checks, Lab 13 and Lab 14 specific gates, and browser/responsive QA.
 - The release tag identifies the exact verified source revision.
 
 ## Scope
