@@ -10,6 +10,7 @@ VERSION = "1.4.0"
 TAG = f"v{VERSION}"
 RELEASE_DATE = "2026-08-25"
 R6_BROWSER_FREEZE = "07f89d13269041d9ed66de2362bf84c288bb86de"
+COVERAGE_MATRIX = ROOT / "docs" / "AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md"
 
 
 def read(relative: str) -> str:
@@ -62,7 +63,7 @@ def main() -> int:
     require((ROOT / "tools" / "build_site_v1_4.py").is_file(), "v1.4 Pages builder is missing")
     require((ROOT / "tools" / "test_v1_4_public_integration.py").is_file(), "v1.4 public integration gate is missing")
     require((ROOT / "docs" / "V1_4_PRODUCT_QUALITY_ARCHITECTURE.md").is_file(), "v1.4 product-quality architecture is missing")
-    require((ROOT / "docs" / "CURRICULUM_COVERAGE_MATRIX.md").is_file(), "curriculum coverage matrix is missing")
+    require(COVERAGE_MATRIX.is_file(), f"curriculum coverage matrix is missing: {COVERAGE_MATRIX.relative_to(ROOT)}")
     print(f"Release metadata: PASS ({TAG}, {RELEASE_DATE}, {len(composed)} public applets)")
     return 0
 
