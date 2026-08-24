@@ -11,12 +11,15 @@ SKIP_EXACT={'EN','中文','English','简体中文','Tiếng Việt','Español','
 DYNAMIC_DATA=(
     re.compile(r'^\(\s*[+\-−]?(?:\d+(?:\.\d+)?|\.\d+)\s*,\s*[+\-−]?(?:\d+(?:\.\d+)?|\.\d+)\s*\)\s+residual\s*=\s*[+\-−]?(?:\d+(?:\.\d+)?|\.\d+)$', re.I),
 )
-# Short invariant technical labels may legitimately stay identical across locales.
+# Short invariant technical labels, names, and mathematical formula fragments may
+# legitimately remain identical across locales.
 INVARIANT_TECH={
     'A*','BFS','DFS','Dijkstra','DPLL','CNF','SAT','UNSAT','ReLU','Adam','SGD',
     'Q-learning','SARSA','Expected SARSA','Gibbs','EM','GMM','KNN','k-means','k-means++',
     'D-separation','Bayes','Manhattan','Chebyshev','Euclidean','MSE','L1','L2','Ridge',
     'Sobel-X','Sobel-Y','XOR','AND','OR','NOT','TD','CPT','DAG','LMS','URL','JSON','PNG',
+    'Logan M. Dixon ·','Modus ponens (SAT, simple)','MSE + λ‖w‖²',
+    'Q(s,a) ← Q(s,a) + α[r + γ max','Q-learning (Softmax)',
 }
 
 def launch(p):
