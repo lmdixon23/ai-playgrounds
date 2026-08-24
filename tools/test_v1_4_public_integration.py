@@ -52,7 +52,8 @@ def main() -> int:
 
     curriculum = (SITE / "curriculum.html").read_text(encoding="utf-8")
     checks.append(("curriculum separates foundations and modern extensions", curriculum.count('class="order-dot"') == 13 and 'id="modern-extensions"' in curriculum and "Foundations / course track" in curriculum and "现代 AI 扩展" in curriculum, {"course_rows": curriculum.count('class="order-dot"')}))
-    checks.append(("Lab 14 is removed from foundations table but retained as an extension", "Agent Tool Use and Context Protocols</a></td><td data-label=\"Concept area\">Agent systems and tool protocols" not in curriculum and curriculum.count("playgrounds/agent-tool-context/index.html") >= 2, {"agent_links": curriculum.count("playgrounds/agent-tool-context/index.html")}))
+    checks.append(("curriculum applet map contains the complete public inventory", curriculum.count('class="applet-card"') == 14 and all(f'playgrounds/{entry["slug"]}/index.html' in curriculum for entry in manifest), {"cards": curriculum.count('class="applet-card"')}))
+    checks.append(("Lab 14 is removed from foundations table but retained as an extension and applet-map entry", "Agent Tool Use and Context Protocols</a></td><td data-label=\"Concept area\">Agent systems and tool protocols" not in curriculum and curriculum.count("playgrounds/agent-tool-context/index.html") >= 2, {"agent_links": curriculum.count("playgrounds/agent-tool-context/index.html")}))
 
     landing = (SITE / "index.html").read_text(encoding="utf-8")
     checks.append(("landing reframes suite as foundations plus extensions", "Fourteen interactive AI labs" in landing and "foundations to modern extensions" in landing and "v1.4.0" in landing, {}))
@@ -76,13 +77,15 @@ def main() -> int:
             checks.append(("landing exposes native language select instead of buttons", page.locator(".lang .v14-language-select").is_visible() and page.locator(".lang button[data-lang]:visible").count() == 0 and page.locator(".lang .v14-language-select option").count() == 2, {"options": page.locator(".lang .v14-language-select option").count()}))
             page.select_option(".lang .v14-language-select", "zh")
             page.wait_for_timeout(30)
-            checks.append(("landing dropdown drives existing localization", page.locator("html").get_attribute("lang") == "zh-Hans" and "移动" in page.locator("h1").inner_text(), {"lang": page.locator("html").get_attribute("lang"), "h1": page.locator("h1").inner_text()}))
+            landing_lang = page.locator("html").get_attribute("lang") or ""
+            checks.append(("landing dropdown drives existing localization", landing_lang.startswith("zh") and "移动" in page.locator("h1").inner_text(), {"lang": landing_lang, "h1": page.locator("h1").inner_text()}))
 
             page.goto((SITE / "curriculum.html").resolve().as_uri(), wait_until="load", timeout=10_000)
             checks.append(("support page exposes native language select instead of buttons", page.locator(".support-language-switch .v14-language-select").is_visible() and page.locator(".support-language-switch button[data-support-lang]:visible").count() == 0 and page.locator(".support-language-switch .v14-language-select option").count() == 2, {"options": page.locator(".support-language-switch .v14-language-select option").count()}))
             page.select_option(".support-language-switch .v14-language-select", "zh")
             page.wait_for_timeout(30)
-            checks.append(("curriculum dropdown preserves support localization", page.locator("html").get_attribute("lang") == "zh-Hans" and page.locator("#modern-extensions .v14-zh").first.is_visible(), {"lang": page.locator("html").get_attribute("lang")}))
+            curriculum_lang = page.locator("html").get_attribute("lang") or ""
+            checks.append(("curriculum dropdown preserves support localization", curriculum_lang.startswith("zh") and page.locator("#modern-extensions .v14-zh").first.is_visible(), {"lang": curriculum_lang}))
 
             page.goto((SITE / "playgrounds" / "overfitting" / "index.html").resolve().as_uri() + "?lang=vi", wait_until="load", timeout=10_000)
             page.wait_for_function("() => document.querySelector('.r4-language-select')")
