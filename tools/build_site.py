@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import json
+import re
 import shutil
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
+
+from build_transformer_public import build_public as build_transformer_public
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -40,7 +44,7 @@ ROOT_PUBLIC_FILES = (
     "codemeta.json",
 )
 
-EXPECTED_APPLETS = {
+LEGACY_SOURCE_APPLETS = {
     "bayes-classifier",
     "bayes-network",
     "cnf-sat",
@@ -54,6 +58,7 @@ EXPECTED_APPLETS = {
     "search-pathfinding",
     "wumpus-world",
 }
+PUBLIC_APPLETS = LEGACY_SOURCE_APPLETS | {"transformer-language-model"}
 
 FORBIDDEN_DEPLOYED_PATHS = (
     ".git",
@@ -102,6 +107,93 @@ def copy_file(relative_path: str) -> None:
     shutil.copy2(source, destination)
 
 
+def transform_landing() -> None:
+    path = SITE / "index.html"
+    html = path.read_text(encoding="utf-8")
+    manifest = json.loads((ROOT / "applets.json").read_text(encoding="utf-8"))
+    if len(manifest) != 13 or {entry.get("slug") for entry in manifest} != PUBLIC_APPLETS:
+        raise RuntimeError("Public applet metadata must contain exactly the thirteen v1.2 applets")
+
+    compact = json.dumps(manifest, ensure_ascii=False, separators=(",", ":"))
+    html, count = re.subn(
+        r"const APPLETS=\[[\s\S]*?\];\nconst COPY=",
+        "const APPLETS=" + compact + ";\nconst COPY=",
+        html,
+        count=1,
+    )
+    if count != 1:
+        raise RuntimeError("Could not synchronize landing-page applet manifest")
+
+    replacements = {
+        "AI Playgrounds | Twelve interactive foundations of AI": "AI Playgrounds | Thirteen interactive foundations of AI",
+        "Twelve bilingual, offline-ready AI interactives for search, logic, probability, machine learning, vision, and reinforcement learning.": "Thirteen multilingual, offline-ready AI interactives for search, logic, probability, machine learning, neural networks, computer vision, reinforcement learning, and Transformer language modeling.",
+        "Twelve bilingual, single-file AI interactives built for classroom use and independent exploration.": "Thirteen multilingual, single-file AI interactives built for classroom use and independent exploration.",
+        "AI Playgrounds: twelve bilingual interactives for foundational artificial intelligence": "AI Playgrounds: thirteen multilingual interactives for foundational artificial intelligence",
+        "Twelve bilingual, offline-ready interactives for foundational artificial intelligence.": "Thirteen multilingual, offline-ready interactives for foundational artificial intelligence.",
+        "Twelve bilingual interactives for search, logic, probability, machine learning, vision, and reinforcement learning. Each runs as one portable HTML file, with no account or backend.": "Thirteen multilingual interactives for search, logic, probability, machine learning, neural networks, computer vision, reinforcement learning, and Transformer language modeling. Each deployed applet remains portable and offline-ready, with no account or backend.",
+        "Explore all twelve": "Explore all thirteen",
+        "Explore the twelve applets": "Explore the thirteen applets",
+        "12 inspectable applets": "13 inspectable applets",
+        "English + Simplified Chinese": "EN + ZH + VI + ES",
+        "十二个双语交互工具，涵盖搜索、逻辑、概率、机器学习、视觉和强化学习。每个工具都是一个可离线运行的 HTML 文件，不需要账户或后端。": "十三个多语言交互工具，涵盖搜索、逻辑、概率、机器学习、神经网络、计算机视觉、强化学习与 Transformer 语言建模。每个已部署工具都可离线使用，不需要账户或后端。",
+        "探索全部十二个": "探索全部十三个",
+        "探索十二个交互工具": "探索十三个交互工具",
+        "12 个可检查的交互工具": "13 个可检查的交互工具",
+        "英语 + 简体中文": "英语 + 简体中文 + 越南语 + 西班牙语",
+        '"inLanguage":["en","zh"]': '"inLanguage":["en","zh","vi","es"]',
+        '"inLanguage": ["en", "zh-Hans"]': '"inLanguage": ["en", "zh-Hans", "vi", "es"]',
+        '"version": "1.0.1"': '"version": "1.2.0"',
+    }
+    for old, new in replacements.items():
+        html = html.replace(old, new)
+
+    if "transformer-language-model" not in html or "Explore the thirteen applets" not in html:
+        raise RuntimeError("Landing-page v1.2 transformation did not complete")
+    path.write_text(html, encoding="utf-8")
+
+
+def transform_curriculum() -> None:
+    path = SITE / "curriculum.html"
+    html = path.read_text(encoding="utf-8")
+    html = html.replace(
+        "Course-aligned and quick-entry sequences for twelve foundational AI applets.",
+        "Course-aligned and quick-entry sequences for thirteen foundational AI applets.",
+    )
+    legend_anchor = '<span style="--legend:#b91c1c"><i></i>Q-Learning Gridworld</span>'
+    legend_extra = legend_anchor + '<span style="--legend:#6d28d9"><i></i>Transformer Language Modeling</span>'
+    if legend_anchor in html and "<i></i>Transformer Language Modeling</span>" not in html:
+        html = html.replace(legend_anchor, legend_extra, 1)
+
+    row = (
+        '<tr style="--applet-accent:#6d28d9"><td data-label="#"><span class="order-dot">13</span></td>'
+        '<td data-label="Applet"><a href="playgrounds/transformer-language-model/index.html">Transformer Language Modeling</a></td>'
+        '<td data-label="Concept area">Generative language models</td>'
+        '<td data-label="Why here">Connect token representation, causal self-attention, and next-token probabilities after the earlier neural-network foundations.</td></tr>'
+    )
+    if "playgrounds/transformer-language-model/index.html" not in html:
+        html = html.replace("</tbody>", row + "</tbody>", 1)
+
+    if html.count('class="order-dot"') != 13:
+        raise RuntimeError("Built curriculum must contain exactly thirteen course rows")
+    path.write_text(html, encoding="utf-8")
+
+
+def transform_release_notes() -> None:
+    path = SITE / "release-notes.html"
+    html = path.read_text(encoding="utf-8")
+    banner = (
+        '<section id="release-v1-2-0" style="margin:1rem 0;padding:1rem 1.2rem;border:1px solid currentColor;border-radius:12px">'
+        '<h2>AI Playgrounds v1.2.0, released August 24, 2026.</h2>'
+        '<p>v1.2.0 adds Lab 13, Transformer Language Modeling, as the thirteenth public applet with EN, ZH, VI, and ES semantic parity, deterministic reference arithmetic, prediction-before-reveal challenges, and offline browser operation.</p>'
+        '</section>'
+    )
+    if "release-v1-2-0" not in html:
+        html, count = re.subn(r"(<main[^>]*>)", r"\1" + banner, html, count=1)
+        if count != 1:
+            raise RuntimeError("Could not insert v1.2 release note into public page")
+    path.write_text(html, encoding="utf-8")
+
+
 def build_site() -> None:
     if SITE.exists():
         shutil.rmtree(SITE)
@@ -127,16 +219,16 @@ def build_site() -> None:
         source.name.removesuffix("-r4.js")
         for source in applet_locale_sources
     }
-    if catalog_applets != EXPECTED_APPLETS:
-        missing = sorted(EXPECTED_APPLETS - catalog_applets)
-        unexpected = sorted(catalog_applets - EXPECTED_APPLETS)
+    if catalog_applets != LEGACY_SOURCE_APPLETS:
+        missing = sorted(LEGACY_SOURCE_APPLETS - catalog_applets)
+        unexpected = sorted(catalog_applets - LEGACY_SOURCE_APPLETS)
         raise RuntimeError(
-            "R4 applet locale catalog mismatch. "
+            "R4 legacy applet locale catalog mismatch. "
             f"Missing={missing}; unexpected={unexpected}"
         )
     if len(applet_locale_sources) != 12:
         raise RuntimeError(
-            f"Expected 12 applet R4 locale catalogs, found {len(applet_locale_sources)}"
+            f"Expected 12 legacy applet R4 locale catalogs, found {len(applet_locale_sources)}"
         )
 
     copy_file(str(shared_locale.relative_to(ROOT)))
@@ -146,11 +238,11 @@ def build_site() -> None:
     applet_sources = sorted((ROOT / "playgrounds").glob("*/index.html"))
     applet_names = {path.parent.name for path in applet_sources}
 
-    if applet_names != EXPECTED_APPLETS:
-        missing = sorted(EXPECTED_APPLETS - applet_names)
-        unexpected = sorted(applet_names - EXPECTED_APPLETS)
+    if applet_names != LEGACY_SOURCE_APPLETS:
+        missing = sorted(LEGACY_SOURCE_APPLETS - applet_names)
+        unexpected = sorted(applet_names - LEGACY_SOURCE_APPLETS)
         raise RuntimeError(
-            f"Applet set mismatch. Missing={missing}; unexpected={unexpected}"
+            f"Legacy source applet set mismatch. Missing={missing}; unexpected={unexpected}"
         )
 
     for source in applet_sources:
@@ -158,6 +250,16 @@ def build_site() -> None:
         destination = SITE / relative_path
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, destination)
+
+    # Lab 13 is generated from its independently verified English source and frozen
+    # four-locale catalogs. The deployed result is still one self-contained HTML file.
+    build_transformer_public(
+        SITE / "playgrounds" / "transformer-language-model" / "index.html"
+    )
+
+    transform_landing()
+    transform_curriculum()
+    transform_release_notes()
 
 
 def is_external(reference: str) -> bool:
@@ -230,17 +332,21 @@ def validate_boundary() -> None:
         for path in (SITE / "playgrounds").glob("*/index.html")
     }
 
-    if deployed_applets != EXPECTED_APPLETS:
-        raise RuntimeError("The deployed applet set is incomplete.")
+    if deployed_applets != PUBLIC_APPLETS:
+        missing = sorted(PUBLIC_APPLETS - deployed_applets)
+        unexpected = sorted(deployed_applets - PUBLIC_APPLETS)
+        raise RuntimeError(
+            f"The deployed v1.2 applet set is incorrect. Missing={missing}; unexpected={unexpected}"
+        )
 
-    if len(list(SITE.rglob("playgrounds/*/index.html"))) != 12:
-        raise RuntimeError("The deployment must contain exactly twelve applets.")
+    if len(list(SITE.rglob("playgrounds/*/index.html"))) != 13:
+        raise RuntimeError("The v1.2 deployment must contain exactly thirteen applets.")
 
     deployed_locale_sources = sorted((SITE / "assets" / "locales").glob("*-r4.js"))
     if len(deployed_locale_sources) != 13:
         raise RuntimeError(
-            "The deployment must contain exactly twelve applet R4 catalogs "
-            "plus common-r4.js."
+            "The deployment must contain exactly twelve legacy applet R4 catalogs "
+            "plus common-r4.js; Lab 13 locales are embedded in its single HTML file."
         )
     if not (SITE / "assets" / "locales" / "common-r4.js").is_file():
         raise RuntimeError("The shared R4 locale catalog was not deployed.")
