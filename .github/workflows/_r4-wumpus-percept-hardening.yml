@@ -1,0 +1,96 @@
+name: R4 Wumpus percept localization hardening
+
+on:
+  push:
+    branches:
+      - feature/v1.1.0-vi-es-localization-r4
+    paths:
+      - '.github/workflows/_r4-wumpus-percept-hardening.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch-test-publish:
+    if: github.event.head_commit.message == 'Run fail-closed Wumpus percept localization hardening'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Bind exact repair parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "223c1c1dec191ceb59752bd09088d5d9e0a66f5a"
+          python -m py_compile tools/_patch_wumpus_percept_patterns.py tools/verify_wumpus_percept_localization.py
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Apply exact Wumpus pattern family
+        run: |
+          set -euo pipefail
+          python tools/_patch_wumpus_percept_patterns.py
+          node --check assets/locales/wumpus-world-r4.js
+          python tools/verify_wumpus_percept_localization.py
+          git diff --check
+
+      - name: Install browser QA dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Run complete R4 verification stack
+        run: |
+          set -euo pipefail
+          python tools/release_check.py
+          python tools/verify_pedagogical_contracts.py
+          python tools/verify_guided_challenges.py
+          python tools/guided_challenge_qa.py
+          python tools/verify_zh_parity.py
+          python tools/zh_parity_qa.py
+          python tools/verify_r4_localization.py
+          python tools/verify_wumpus_percept_localization.py
+          python tools/r4_localization_qa.py
+          python tools/check_release_metadata.py
+          python tools/build_site.py
+          python tools/run_algorithm_tests.py
+          python tools/browser_qa.py --no-screenshots
+          echo 'R4_WUMPUS_FULL_STACK=PASS'
+
+      - name: Remove temporary repair files
+        run: |
+          set -euo pipefail
+          rm tools/_patch_wumpus_percept_patterns.py
+          rm .github/workflows/_r4-wumpus-percept-hardening.yml
+          git diff --check
+
+      - name: Commit tested hardening
+        run: |
+          set -euo pipefail
+          git add -- assets/locales/wumpus-world-r4.js tools/verify_wumpus_percept_localization.py .github/workflows/verify.yml tools/_patch_wumpus_percept_patterns.py .github/workflows/_r4-wumpus-percept-hardening.yml
+          git diff --cached --check
+          git config user.name 'Logan M. Dixon'
+          git config user.email '178442787+lmdixon23@users.noreply.github.com'
+          git commit -m 'Harden dynamic Wumpus percept localization'
+          git push origin HEAD:refs/heads/feature/v1.1.0-vi-es-localization-r4
+          echo "R4_HARDENED_HEAD=$(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
+          echo 'FINAL_R4_WUMPUS_PERCEPT_HARDENING=PASS' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: r4-wumpus-percept-hardening-${{ github.run_id }}
+          path: release-evidence/
+          if-no-files-found: ignore
+          retention-days: 90
