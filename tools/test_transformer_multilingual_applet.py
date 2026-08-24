@@ -144,7 +144,7 @@ def main() -> int:
                 page.wait_for_timeout(40)
                 catalog_title = page.evaluate("locale => window.Lab13Localization.catalogs[locale]['page.title']", locale)
                 catalog_boundary = page.evaluate("locale => window.Lab13Localization.catalogs[locale]['boundary.label']", locale)
-                catalog_challenge = page.evaluate("locale => window.Lab13Localization.catalogs[locale]['challenge.heading']", locale)
+                catalog_challenge = page.evaluate("locale => window.Lab13Localization.catalogs[locale]['challenge.title']", locale)
                 body_text = page.locator("body").inner_text()
                 checks.append((f"{locale} title localized", page.locator("h1").first.inner_text() == catalog_title, {"title": page.locator("h1").first.inner_text(), "expected": catalog_title}))
                 checks.append((f"{locale} document language", page.locator("html").get_attribute("lang") == html_lang, {"lang": page.locator("html").get_attribute("lang")}))
