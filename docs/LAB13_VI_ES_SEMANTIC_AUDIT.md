@@ -1,10 +1,12 @@
 # Lab 13 Vietnamese and Spanish Semantic Audit
 
-Status: **VI/ES semantic-catalog parity candidate**. Acceptance requires a complete exact-head `Verify` PASS that includes `tools/test_transformer_vi_es_localization.py`.
+Status: **PASS — VI/ES semantic-catalog parity accepted**.
 
 English source freeze: `e89c0b5d8b166b66407fc018deb1b7eec485b6a4`.
 
 Accepted EN/ZH catalog parity receipt: `f550b21d37951a511c4b311b33981284fd4f9d8f`, `Verify` run #120 (`32730071342`) PASS.
+
+Accepted VI/ES semantic-catalog receipt: `84a027795beed4b03df2af056a4ac1c68eab356e`, `Verify` run #131 (`32731989720`) PASS. The permanent workflow passed every inherited v1.1 gate, all Lab 13 reference/prototype/English/ZH gates, the newly registered VI/ES semantic gate, and the full browser/responsive suite.
 
 Scope: `tools/transformer_language_model_locales_vi_es.json` against the English key set in `tools/transformer_language_model_locales.json`. This checkpoint covers semantic catalogs only; multilingual browser integration remains a separate gate.
 
@@ -113,14 +115,16 @@ The token-substitution challenge retains its two-part requirement: predict both 
 - diagnostic-ablation qualification;
 - explicit division of fixed logits by higher temperature;
 - all four prompt/mechanism/explain/transfer challenge components;
-- rejection of known stronger or misleading phrasings.
+- rejection of known stronger or misleading phrasings outside intentionally false misconception claims.
+
+The first permanent VI/ES workflow run exposed a validator-scope defect: the forbidden-phrase scan also inspected the quoted misconception claims, where false propositions are intentionally stated so learners can reject them. The validator was corrected to keep the prohibition on explanatory, instructional, and result text while excluding only keys ending in `.claim`. No semantic requirement was weakened. Run #131 then passed all 794 VI/ES checks.
 
 A failure is to be corrected in the catalog or implementation. The semantic requirements are not to be weakened merely to make the gate pass.
 
 ## 8. Acceptance decision
 
-**HOLD pending exact-head `Verify`.**
+**PASS.**
 
-If the complete permanent workflow passes at the exact head containing both locale catalogs, this audit, the VI/ES gate, and the workflow registration, VI/ES semantic-catalog parity is accepted.
+The complete permanent workflow passed at exact semantic head `84a027795beed4b03df2af056a4ac1c68eab356e`; VI/ES semantic-catalog parity is accepted.
 
-After that pass, the next task is a single offline four-locale browser candidate with state-preserving locale switching and arithmetic-invariance tests. Public `playgrounds/` integration remains blocked until that browser gate passes.
+The next task is a single offline four-locale browser candidate with state-preserving locale switching and arithmetic-invariance tests. Public `playgrounds/` integration remains blocked until that browser gate passes.
