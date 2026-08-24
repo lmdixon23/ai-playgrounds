@@ -2,7 +2,7 @@
 
 The suite supports two orders:
 
-1. **Course and AIMA-aligned sequence:** preserves conceptual dependencies and follows the broad progression from search to logic, probability, machine learning, and reinforcement learning.
+1. **Course and AIMA-aligned sequence:** preserves conceptual dependencies and follows the broad progression from search to logic, probability, machine learning, reinforcement learning, and modern generative language modeling.
 2. **Quick-entry sampler:** optimized for a first visit or short four-lesson introduction. It is not the full course order.
 
 ## Quick-entry sampler
@@ -27,7 +27,12 @@ The suite supports two orders:
 | 9 | [Tiny Neural Network](playgrounds/neural-network/index.html) | Neural networks | Build intuition for hidden representations and nonlinearity. |
 | 10 | [K-Means Clustering](playgrounds/kmeans/index.html) | Unsupervised learning | Introduce iterative unsupervised clustering and initialization sensitivity. |
 | 11 | [Convolution Playground](playgrounds/convolution/index.html) | Computer vision | Connect local filters to feature maps and learned visual representations. |
-| 12 | [Q-Learning Gridworld](playgrounds/q-learning-gridworld/index.html) | Reinforcement learning | Conclude with trial-and-error learning, delayed reward, and policy emergence. |
+| 12 | [Q-Learning Gridworld](playgrounds/q-learning-gridworld/index.html) | Reinforcement learning | Develop trial-and-error learning, delayed reward, and policy emergence. |
+| 13 | [Transformer Language Modeling](playgrounds/transformer-language-model/index.html) | Generative language models | Connect token representation, causal self-attention, logits, and next-token probabilities after the earlier neural-network foundations. |
+
+## Why Lab 13 comes after the foundational sequence
+
+Transformer Language Modeling relies on representation, linear projections, nonlinear feed-forward computation, probability distributions, and model limitations that are easier to interpret after the earlier learning and neural-network applets. It is placed after the foundational AIMA-style sequence as a bridge from classical introductory AI into modern generative language systems rather than as a replacement for those foundations.
 
 ## Why the orders differ
 

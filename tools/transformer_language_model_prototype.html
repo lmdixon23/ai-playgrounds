@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lab 13 R2 Candidate — Transformer Language Modeling</title>
+<style>
+:root{--bg:#f8fafc;--card:#fff;--fg:#172033;--muted:#64748b;--border:#cbd5e1;--accent:#6d28d9;--soft:#f1f5f9;--mask:#e2e8f0;--warn-bg:#fff7ed;--warn-border:#fed7aa;--warn-fg:#9a3412}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,sans-serif}button,select,input{font:inherit}main{max-width:1220px;margin:0 auto;padding:24px}.top{display:flex;gap:18px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}.top h1{margin:0 0 5px;font-size:1.7rem}.sub{margin:0;color:var(--muted);max-width:820px}.badge{padding:5px 9px;border:1px solid var(--border);border-radius:999px;background:var(--card);font-size:.76rem;color:var(--muted)}.controls,.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:16px}.controls{display:flex;gap:14px;align-items:end;flex-wrap:wrap}.field{display:flex;flex-direction:column;gap:4px;min-width:170px}.field label,.tiny{color:var(--muted);font-size:.78rem;font-weight:650}.field select{padding:7px 9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--fg)}.toggle{display:flex;gap:7px;align-items:center;min-height:38px}.slider{min-width:210px}.slider-row{display:flex;gap:8px;align-items:center}.slider input{width:150px}.temp{font-family:ui-monospace,monospace;font-weight:700;color:var(--accent)}.scenario{border-left:5px solid var(--accent)}.scenario h2,.challenge h2{margin:0 0 5px;font-size:1.05rem}.scenario p{margin:3px 0}.scenario-finding{margin-top:9px;padding:9px 11px;border-radius:8px;background:var(--soft);font-size:.88rem}.pipeline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:16px}.stage{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px}.stage strong{display:block;color:var(--accent);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em}.stage span{display:block;margin-top:4px;font-size:.9rem}.tokens{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.token{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:7px 9px;cursor:pointer;color:var(--fg)}.token.active{outline:2px solid var(--accent);border-color:var(--accent)}.token .id{display:block;font:11px ui-monospace,monospace;color:var(--muted)}.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px}.vector-row{display:grid;grid-template-columns:112px 1fr;gap:8px;padding:5px 0;border-bottom:1px dashed var(--border)}.vector-row:last-child{border-bottom:0}.vec{font-family:ui-monospace,monospace;font-size:.82rem;overflow-wrap:anywhere}.score-inspector{display:grid;grid-template-columns:minmax(150px,.7fr) minmax(0,1.3fr);gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}.score-inspector select{width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--fg)}.score-equation{font-family:ui-monospace,monospace;font-size:.82rem;background:var(--soft);border-radius:8px;padding:9px;overflow-wrap:anywhere}.matrix-wrap{overflow:auto}.matrix{border-collapse:collapse;width:100%;font-size:.78rem;text-align:center}.matrix th,.matrix td{border:1px solid var(--border);padding:6px;min-width:58px}.matrix th{background:var(--soft);font-weight:650}.matrix td.masked{background:var(--mask);color:var(--muted)}.matrix td.selected{outline:2px solid var(--accent);outline-offset:-2px}.matrix td.weight:not(.masked){background:rgba(109,40,217,var(--heat,0))}.bars{display:grid;gap:6px;margin-top:9px}.bar-row{display:grid;grid-template-columns:80px 1fr 76px;gap:8px;align-items:center}.bar-track{height:14px;background:var(--soft);border-radius:999px;overflow:hidden}.bar-fill{height:100%;background:var(--accent);border-radius:999px}.num{font:12px ui-monospace,monospace;text-align:right}.warning{padding:10px 12px;background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:8px;color:var(--warn-fg);margin-top:12px}.status{font:12px ui-monospace,monospace;color:var(--muted)}.challenge{border-left:5px solid var(--accent)}.challenge-picker{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0 12px}.challenge-picker select,.challenge-controls select,.challenge-controls button{padding:7px 10px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--fg)}.challenge-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.challenge-controls button{cursor:pointer}.challenge-controls button.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:700}.challenge-controls button:disabled{opacity:.45;cursor:not-allowed}.challenge-result{margin-top:10px;padding:10px;border-radius:8px;background:var(--soft);white-space:pre-wrap}.challenge-result[hidden]{display:none}.transfer{margin-top:10px;font-size:.88rem;color:var(--muted)}details{margin-top:16px}details summary{cursor:pointer;font-weight:700}pre.state{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--soft);border:1px solid var(--border);border-radius:8px;padding:10px;font:12px/1.45 ui-monospace,monospace}.boundary{font-size:.88rem;color:var(--muted)}@media(max-width:800px){.pipeline{grid-template-columns:1fr 1fr}.grid,.score-inspector{grid-template-columns:1fr}}@media(max-width:480px){main{padding:14px}.pipeline{grid-template-columns:1fr}.bar-row{grid-template-columns:68px 1fr 66px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <div>
+      <h1>Transformer Language Modeling</h1>
+      <p class="sub">R2 English candidate: trace a tiny deterministic decoder-like block from tokens to causal self-attention to next-token probabilities. Every displayed number is computed by the same frozen arithmetic as the Python oracle.</p>
+    </div>
+    <span class="badge">non-public v1.2 candidate</span>
+  </div>
+
+  <section class="controls" aria-label="Transformer controls">
+    <div class="field"><label for="scenario">Scenario</label><select id="scenario">
+      <option value="canonical">Causal next-token prediction</option>
+      <option value="substitution">Attention score perturbation</option>
+      <option value="order">Order matters</option>
+      <option value="mask">Mask ablation</option>
+      <option value="temperature">Temperature</option>
+      <option value="attentionLimit">Attention is not explanation</option>
+    </select></div>
+    <div class="field"><label for="prompt">Prepared prompt</label><select id="prompt">
+      <option value="I like cats">I like cats</option>
+      <option value="I like dogs">I like dogs</option>
+      <option value="cats sleep .">cats sleep .</option>
+      <option value="dogs play .">dogs play .</option>
+      <option value="like I cats">like I cats</option>
+      <option value="they run .">they run .</option>
+    </select></div>
+    <label class="toggle"><input id="positions" type="checkbox" checked> add position vectors</label>
+    <label class="toggle"><input id="mask" type="checkbox" checked> causal mask</label>
+    <div class="field slider"><label for="temperature">Temperature</label><div class="slider-row"><input id="temperature" type="range" min="0.25" max="2.5" step="0.25" value="1"><span id="tempV" class="temp">1.00</span></div></div>
+  </section>
+
+  <section class="card scenario" aria-live="polite">
+    <h2 id="scenarioTitle">Causal next-token prediction</h2>
+    <p id="scenarioGoal">Follow the final token through masked attention and inspect the resulting next-token distribution.</p>
+    <div id="scenarioFinding" class="scenario-finding"></div>
+  </section>
+
+  <section class="pipeline" aria-label="Pipeline overview">
+    <div class="stage"><strong>1 · Tokenize</strong><span>surface text → toy token strings → IDs</span></div>
+    <div class="stage"><strong>2 · Represent</strong><span>token embedding + position vector</span></div>
+    <div class="stage"><strong>3 · Attend</strong><span>QKᵀ / √dₖ → causal mask → softmax</span></div>
+    <div class="stage"><strong>4 · Predict</strong><span>final state → logits → probabilities</span></div>
+  </section>
+
+  <section class="card">
+    <div class="tiny">TOKENS · select one to inspect its vectors and attention row</div>
+    <div id="tokens" class="tokens"></div>
+    <p id="stateSummary" class="status" aria-live="polite"></p>
+  </section>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Vector and score inspector</h2>
+      <div id="vectors"></div>
+      <div class="score-inspector">
+        <div class="field"><label for="sourceToken">Source token for selected query</label><select id="sourceToken"></select></div>
+        <div id="scoreEquation" class="score-equation"></div>
+      </div>
+      <div class="warning"><strong>Attention is not an explanation.</strong> The weights show how this toy head combines value vectors. A large attention weight does not by itself identify the cause of the final output logit or what a model understands.</div>
+    </section>
+
+    <section class="card">
+      <h2>Next-token distribution</h2>
+      <p class="tiny">Each row shows the frozen logit and the probability after temperature scaling. Temperature changes the displayed distribution; it does not change the logits or train the model.</p>
+      <div id="bars" class="bars"></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Causal self-attention matrix</h2>
+    <p class="tiny">Rows are destination tokens (queries). Columns are source tokens (keys/values). Numeric values remain visible even when heat intensity is used. Future cells are explicitly marked MASK when structurally unavailable.</p>
+    <div class="matrix-wrap"><table id="matrix" class="matrix"></table></div>
+  </section>
+
+  <section class="card challenge">
+    <h2>Guided Challenge · predict before reveal</h2>
+    <div class="challenge-picker"><label for="challengeType" class="tiny">Challenge</label><select id="challengeType">
+      <option value="attention">1 · Highest permitted attention</option>
+      <option value="maskLeak">2 · Causal-mask leak</option>
+      <option value="substitution">3 · Token substitution</option>
+      <option value="temperature">4 · Temperature transfer</option>
+    </select></div>
+    <p id="challengePrompt"></p>
+    <div class="challenge-controls">
+      <select id="prediction" aria-label="Prediction"></select>
+      <button id="lock" type="button">Lock prediction</button>
+      <button id="reveal" class="primary" type="button" disabled>Reveal mechanism</button>
+      <button id="resetChallenge" type="button">Reset</button>
+    </div>
+    <div id="challengeResult" class="challenge-result" hidden></div>
+    <div id="transferPrompt" class="transfer"></div>
+  </section>
+
+  <details class="card">
+    <summary>Text-equivalent model state</summary>
+    <p class="boundary">This state is intended to make every numeric visualization inspectable without relying on color or pointer precision.</p>
+    <pre id="accessibleState" class="state" aria-live="polite"></pre>
+  </details>
+
+  <details class="card">
+    <summary>Evidence boundary and misconceptions</summary>
+    <p class="boundary">This is a fixed toy decoder-like calculation, not a pretrained language model. It does not search the internet, store complete answers, reproduce frontier-model internals, or establish how a production model reasons. A token is not necessarily one word. The causal mask is a structural restriction on permitted source positions. Position vectors are not word meanings. The highest-probability token need not be sampled in a stochastic generator.</p>
+  </details>
+</main>
+
+<script src="./transformer_language_model_core.js"></script>
+<script>
+(() => {
+  'use strict';
+  const C=window.TransformerLanguageModelCore;
+  if(!C) throw new Error('TransformerLanguageModelCore missing');
+  const $=id=>document.getElementById(id);
+  let result=null, selected=0, sourceSelected=0, locked=null;
+  const scenario=$('scenario'), prompt=$('prompt'), positions=$('positions'), mask=$('mask'), temp=$('temperature');
+
+  const SCENARIOS={
+    canonical:{title:'Causal next-token prediction',goal:'Follow the final token through masked attention and inspect the resulting next-token distribution.',prompt:'I like cats',positions:true,mask:true,temp:1},
+    substitution:{title:'Attention score perturbation',goal:'Substitute dogs for cats and inspect how changed token representation changes Q/K scores, attention, and the final distribution.',prompt:'I like dogs',positions:true,mask:true,temp:1},
+    order:{title:'Order matters',goal:'Use the reordered prompt and compare position vectors on versus off. With position vectors removed, permuting the earlier tokens cannot change this toy final distribution.',prompt:'like I cats',positions:true,mask:true,temp:1},
+    mask:{title:'Mask ablation',goal:'Turn the causal mask off and inspect how an earlier query can now assign nonzero weight to future source tokens.',prompt:'I like cats',positions:true,mask:false,temp:1},
+    temperature:{title:'Temperature',goal:'Keep the frozen logits fixed while changing the sharpness of the displayed next-token distribution.',prompt:'I like cats',positions:true,mask:true,temp:2},
+    attentionLimit:{title:'Attention is not explanation',goal:'Inspect a case where the final query attends most to dogs while the top next-token probability is sleep. Token identity of the largest attention source is not the output decision.',prompt:'I like dogs',positions:true,mask:true,temp:1}
+  };
+  const CHALLENGES={
+    attention:{prompt:'For the final token, which permitted source token receives the largest attention weight?',transfer:'Transfer: if you replace one earlier token, identify which Q/K score comparisons must be recomputed before predicting the new winner.'},
+    maskLeak:{prompt:'If the causal mask is removed, what happens to future-source contributions for an earlier query?',transfer:'Transfer: explain why allowing those future contributions would violate autoregressive next-token semantics at that earlier position.'},
+    substitution:{prompt:'When cats is replaced by dogs in I like cats, what happens to the probability assigned to sleep?',transfer:'Transfer: separate the changed token representation, changed attention row, changed final state, and changed output probability.'},
+    temperature:{prompt:'If the logits stay fixed and temperature changes from 1.0 to 0.5, what happens to the probability distribution?',transfer:'Transfer: predict the opposite effect when temperature rises above 1.0 without changing model weights.'}
+  };
+
+  const fmt=(x,n=4)=>Number(x).toFixed(n);
+  const vec=v=>'['+v.map(x=>fmt(x,3)).join(', ')+']';
+  const entropy=p=>C.entropy(p);
+  const winnerIndex=row=>row.reduce((best,w,i)=>w>row[best]?i:best,0);
+  const topProbabilityIndex=probs=>probs.reduce((best,p,i)=>p>probs[best]?i:best,0);
+
+  function applyScenario(){
+    const s=SCENARIOS[scenario.value];
+    prompt.value=s.prompt; positions.checked=s.positions; mask.checked=s.mask; temp.value=String(s.temp);
+    selected=0; sourceSelected=0; recompute(false);
+  }
+
+  function recompute(reset=true){
+    result=C.forwardText(prompt.value,{usePositions:positions.checked,causalMask:mask.checked,temperature:Number(temp.value)});
+    selected=Math.min(selected,result.tokens.length-1); sourceSelected=Math.min(sourceSelected,result.tokens.length-1);
+    $('tempV').textContent=Number(temp.value).toFixed(2);
+    render(); if(reset) resetChallenge(false);
+  }
+
+  function render(){renderScenario();renderTokens();renderVectors();renderSourceOptions();renderScore();renderMatrix();renderBars();renderSummary();renderAccessibleState();renderChallengeDefinition();}
+
+  function renderScenario(){
+    const s=SCENARIOS[scenario.value]; $('scenarioTitle').textContent=s.title; $('scenarioGoal').textContent=s.goal;
+    let finding='Inspect the synchronized views, then make a prediction in Guided Challenge before revealing the mechanism.';
+    if(scenario.value==='order'){
+      const a=C.forwardTokens(['<BOS>','i','like','cats'],{usePositions:false}).probabilities;
+      const b=C.forwardTokens(['<BOS>','like','i','cats'],{usePositions:false}).probabilities;
+      const withA=C.forwardTokens(['<BOS>','i','like','cats'],{usePositions:true}).probabilities;
+      const withB=C.forwardTokens(['<BOS>','like','i','cats'],{usePositions:true}).probabilities;
+      const noDelta=Math.max(...a.map((x,i)=>Math.abs(x-b[i]))), posDelta=Math.max(...withA.map((x,i)=>Math.abs(x-withB[i])));
+      finding=`Comparison fixture: maximum probability change after the swap = ${noDelta.toExponential(2)} with positions off, versus ${posDelta.toExponential(2)} with positions on.`;
+    }else if(scenario.value==='mask'){
+      const masked=C.forwardText('I like cats',{causalMask:true}), unmasked=C.forwardText('I like cats',{causalMask:false});
+      finding=`For query i at position 1, future weights are ${fmt(masked.attention[1][2],4)}, ${fmt(masked.attention[1][3],4)} with the mask on, but ${fmt(unmasked.attention[1][2],4)}, ${fmt(unmasked.attention[1][3],4)} with it off.`;
+    }else if(scenario.value==='temperature'){
+      const cold=C.forwardText('I like cats',{temperature:.5}), hot=C.forwardText('I like cats',{temperature:2});
+      finding=`The logits are identical; entropy changes from ${fmt(entropy(cold.probabilities),4)} at T=0.5 to ${fmt(entropy(hot.probabilities),4)} at T=2.0.`;
+    }else if(scenario.value==='attentionLimit'){
+      const row=result.attention.at(-1), wi=winnerIndex(row), ti=topProbabilityIndex(result.probabilities);
+      finding=`Largest final attention source: ${result.tokens[wi]} (${fmt(row[wi],4)}). Top next-token probability: ${C.VOCAB[ti]} (${fmt(result.probabilities[ti],4)}). These are different quantities in different stages of the pipeline.`;
+    }else if(scenario.value==='substitution'){
+      const cats=C.forwardText('I like cats'), dogs=C.forwardText('I like dogs');
+      const i=C.TOKEN_TO_ID.sleep;
+      finding=`Replacing cats with dogs changes P(sleep) from ${fmt(cats.probabilities[i],4)} to ${fmt(dogs.probabilities[i],4)} and changes the final attention row as well.`;
+    }
+    $('scenarioFinding').textContent=finding;
+  }
+
+  function renderTokens(){
+    $('tokens').innerHTML='';
+    result.tokens.forEach((token,i)=>{const b=document.createElement('button');b.type='button';b.className='token'+(i===selected?' active':'');b.setAttribute('aria-pressed',i===selected?'true':'false');b.innerHTML=`${token}<span class="id">id ${result.tokenIds[i]} · pos ${i}</span>`;b.addEventListener('click',()=>{selected=i;sourceSelected=Math.min(sourceSelected,i);renderTokens();renderVectors();renderSourceOptions();renderScore();renderMatrix();renderSummary();renderAccessibleState()});$('tokens').appendChild(b)});
+  }
+
+  function row(label,value){return `<div class="vector-row"><strong>${label}</strong><span class="vec">${value}</span></div>`}
+  function renderVectors(){
+    const i=selected, embedding=C.TOKEN_EMBEDDINGS[result.tokens[i]], position=result.usePositions?C.POSITION_VECTORS[i]:[0,0,0,0];
+    $('vectors').innerHTML=[row('embedding',vec(embedding)),row('position',vec(position)),row('input x',vec(result.inputs[i])),row('query q',vec(result.queries[i])),row('key k',vec(result.keys[i])),row('value v',vec(result.values[i])),row('attention',vec(result.attention[i])),row('attn output',vec(result.attentionOutputs[i])),row('residual 1',vec(result.residual1[i])),row('feed-forward',vec(result.feedForward[i])),row('final state',vec(result.finalStates[i]))].join('');
+  }
+
+  function renderSourceOptions(){
+    const select=$('sourceToken'), prior=String(sourceSelected); select.innerHTML='';
+    result.tokens.forEach((token,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=`${token} · source ${i}`;select.appendChild(o)});
+    if([...select.options].some(o=>o.value===prior)) select.value=prior; else {sourceSelected=0;select.value='0';}
+  }
+
+  function renderScore(){
+    const i=selected,j=sourceSelected,q=result.queries[i],k=result.keys[j],dot=q.reduce((s,x,d)=>s+x*k[d],0),raw=result.rawScores[i][j],masked=result.maskedScores[i][j]===null,w=result.attention[i][j];
+    $('scoreEquation').textContent=masked?`q${i} · k${j} = ${fmt(dot,5)}; / √4 = ${fmt(raw,5)}; causal mask => unavailable; attention weight = 0`:`q${i} · k${j} = ${fmt(dot,5)}; / √4 = ${fmt(raw,5)}; permitted; softmax attention weight = ${fmt(w,5)}`;
+  }
+
+  function renderMatrix(){
+    const table=$('matrix');table.innerHTML=''; const head=document.createElement('tr');head.innerHTML='<th>query ↓ / key →</th>'+result.tokens.map(t=>`<th>${t}</th>`).join('');table.appendChild(head);
+    result.tokens.forEach((token,i)=>{const tr=document.createElement('tr'),th=document.createElement('th');th.textContent=token;tr.appendChild(th);result.attention[i].forEach((weight,j)=>{const td=document.createElement('td'),masked=result.maskedScores[i][j]===null;td.className=(masked?'masked ':'weight ')+(i===selected&&j===sourceSelected?'selected':'');td.style.setProperty('--heat',String(Math.min(.28,weight*.75)));td.textContent=masked?'MASK':fmt(weight,3);td.tabIndex=0;td.setAttribute('aria-label',masked?`query ${token}, source ${result.tokens[j]}, masked future position`:`query ${token}, source ${result.tokens[j]}, attention ${fmt(weight,4)}, scaled score ${fmt(result.rawScores[i][j],4)}`);td.addEventListener('click',()=>{selected=i;sourceSelected=j;renderTokens();renderVectors();renderSourceOptions();renderScore();renderMatrix();renderSummary();renderAccessibleState()});td.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();td.click()}});tr.appendChild(td)});table.appendChild(tr)});
+  }
+
+  function renderBars(){
+    $('bars').innerHTML=''; const max=Math.max(...result.probabilities);
+    C.VOCAB.forEach((token,i)=>{const p=result.probabilities[i],r=document.createElement('div');r.className='bar-row';r.innerHTML=`<span>${token}</span><div class="bar-track" aria-hidden="true"><div class="bar-fill" style="width:${max?100*p/max:0}%"></div></div><span class="num">L ${fmt(result.logits[i],3)} · ${(100*p).toFixed(2)}%</span>`;$('bars').appendChild(r)});
+  }
+
+  function renderSummary(){
+    const i=selected,permitted=result.attention[i].filter((_,j)=>!result.causalMask||j<=i).length;
+    $('stateSummary').textContent=`Selected ${result.tokens[i]} at position ${i}. ${permitted} source position(s) permitted. Position vectors ${result.usePositions?'on':'off'}; causal mask ${result.causalMask?'on':'off'}; temperature ${result.temperature.toFixed(2)}.`;
+  }
+
+  function renderAccessibleState(){
+    const i=selected,j=sourceSelected, top=topProbabilityIndex(result.probabilities);
+    $('accessibleState').textContent=[
+      `Prompt: ${prompt.value}`,
+      `Tokens: ${result.tokens.map((t,k)=>`${k}:${t}[id=${result.tokenIds[k]}]`).join(' | ')}`,
+      `Selected query token: ${i}:${result.tokens[i]}`,
+      `Selected source token: ${j}:${result.tokens[j]}`,
+      `Q: ${vec(result.queries[i])}`,
+      `K(source): ${vec(result.keys[j])}`,
+      `V(source): ${vec(result.values[j])}`,
+      `Scaled score: ${fmt(result.rawScores[i][j],6)}`,
+      `Mask state: ${result.maskedScores[i][j]===null?'masked':'permitted'}`,
+      `Attention row: ${result.attention[i].map((w,k)=>`${result.tokens[k]}=${fmt(w,5)}`).join(' | ')}`,
+      `Final logits: ${C.VOCAB.map((t,k)=>`${t}=${fmt(result.logits[k],5)}`).join(' | ')}`,
+      `Next-token probabilities: ${C.VOCAB.map((t,k)=>`${t}=${fmt(result.probabilities[k],5)}`).join(' | ')}`,
+      `Top next token: ${C.VOCAB[top]}=${fmt(result.probabilities[top],5)}`,
+      `Temperature: ${result.temperature.toFixed(2)}`,
+      `Position information: ${result.usePositions?'on':'off'}`,
+      `Causal masking: ${result.causalMask?'on':'off'}`
+    ].join('\n');
+  }
+
+  function renderChallengeDefinition(){
+    const type=$('challengeType').value, def=CHALLENGES[type]; $('challengePrompt').textContent=def.prompt; $('transferPrompt').textContent=def.transfer;
+    const select=$('prediction'), prior=select.value; select.innerHTML='<option value="">Choose a prediction</option>';
+    const add=(value,label)=>{const o=document.createElement('option');o.value=value;o.textContent=label;select.appendChild(o)};
+    if(type==='attention') result.tokens.forEach((token,i)=>add(String(i),`${token} · position ${i}`));
+    if(type==='maskLeak'){add('future','Future-source weights become nonzero');add('zero','Future-source weights remain zero');}
+    if(type==='substitution'){add('increase','P(sleep) increases');add('decrease','P(sleep) decreases');add('same','P(sleep) stays exactly the same');}
+    if(type==='temperature'){add('sharper','Distribution becomes sharper / lower entropy');add('flatter','Distribution becomes flatter / higher entropy');add('same','Distribution is unchanged');}
+    if([...select.options].some(o=>o.value===prior)) select.value=prior;
+  }
+
+  function resetChallenge(clear=true){locked=null;$('reveal').disabled=true;$('lock').disabled=false;$('prediction').disabled=false;$('challengeResult').hidden=true;if(clear)$('prediction').value='';}
+
+  function revealChallenge(){
+    const type=$('challengeType').value; let expected='',mechanism='';
+    if(type==='attention'){
+      const row=result.attention.at(-1),wi=winnerIndex(row);expected=String(wi);mechanism=`Highest permitted weight: ${result.tokens[wi]} at position ${wi} = ${fmt(row[wi],4)}. Final row: ${row.map((w,i)=>`${result.tokens[i]}=${fmt(w,4)}`).join(' · ')}`;
+    }else if(type==='maskLeak'){
+      const m=C.forwardText('I like cats',{causalMask:true}),u=C.forwardText('I like cats',{causalMask:false});expected='future';mechanism=`At query position 1, masked future weights are ${fmt(m.attention[1][2],4)} and ${fmt(m.attention[1][3],4)}. With the mask removed they become ${fmt(u.attention[1][2],4)} and ${fmt(u.attention[1][3],4)}.`;
+    }else if(type==='substitution'){
+      const a=C.forwardText('I like cats'),b=C.forwardText('I like dogs'),idx=C.TOKEN_TO_ID.sleep,delta=b.probabilities[idx]-a.probabilities[idx];expected=delta>1e-12?'increase':delta<-1e-12?'decrease':'same';mechanism=`P(sleep) changes from ${fmt(a.probabilities[idx],5)} to ${fmt(b.probabilities[idx],5)}; Δ = ${fmt(delta,5)}. The substituted token changes representation, Q/K/V quantities, attention, final state, and output projection.`;
+    }else{
+      const a=C.forwardText('I like cats',{temperature:1}),b=C.forwardText('I like cats',{temperature:.5}),ea=entropy(a.probabilities),eb=entropy(b.probabilities);expected=eb<ea?'sharper':eb>ea?'flatter':'same';mechanism=`Logits are unchanged. Entropy changes from ${fmt(ea,5)} at T=1.0 to ${fmt(eb,5)} at T=0.5, so the distribution is ${expected}.`;
+    }
+    const correct=locked===expected;$('challengeResult').hidden=false;$('challengeResult').textContent=`${correct?'Prediction matched.':'Prediction differed.'}\n${mechanism}\nLocked prediction: ${$('prediction').selectedOptions[0].textContent}`;$('reveal').disabled=true;
+  }
+
+  $('lock').addEventListener('click',()=>{const v=$('prediction').value;if(v==='')return;locked=v;$('prediction').disabled=true;$('lock').disabled=true;$('reveal').disabled=false;$('challengeResult').hidden=false;$('challengeResult').textContent=`Prediction locked: ${$('prediction').selectedOptions[0].textContent}. The mechanism remains concealed until Reveal.`;});
+  $('reveal').addEventListener('click',()=>{if(locked===null)return;revealChallenge()});
+  $('resetChallenge').addEventListener('click',()=>resetChallenge(true));
+  $('challengeType').addEventListener('change',()=>{renderChallengeDefinition();resetChallenge(true)});
+  $('sourceToken').addEventListener('change',()=>{sourceSelected=Number($('sourceToken').value);renderScore();renderMatrix();renderAccessibleState()});
+  scenario.addEventListener('change',applyScenario);
+  [prompt,positions,mask,temp].forEach(el=>el.addEventListener('input',()=>recompute(true)));
+  recompute(false); resetChallenge(true);
+})();
+</script>
+</body>
+</html>

@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.2.0] - 2026-08-24
+
+### Added
+- Lab 13, Transformer Language Modeling, as the thirteenth public AI Playground.
+- Deterministic Python and JavaScript reference implementations with 20 numeric/adversarial fixtures and recursive cross-runtime parity.
+- A single-file Transformer applet covering token representation, position information, Q/K/V projections, causal self-attention, logits, next-token probabilities, temperature, and bounded attention perturbations.
+- Four isolated prediction-before-reveal Guided Challenges and six mechanism scenarios, including causal-mask leakage and an attention-not-explanation counterexample.
+- Simplified-Chinese, Vietnamese, and Spanish Lab 13 semantic catalogs with protected model tokens, placeholder parity, and adversarial terminology checks.
+- Four-locale state-preserving browser parity and a dedicated public v1.2 integration gate.
+
+### Changed
+- Expanded the deterministic Pages deployment boundary from twelve to thirteen applets.
+- Updated the landing catalogue and curriculum sequence to include Transformer Language Modeling.
+- Updated release, citation, CodeMeta, and README metadata for v1.2.0 while retaining v1.0.1 as the immutable archived DOI-bearing release.
+
+### Fixed
+- Repaired a prototype text-equivalent-state regression exposed by the permanent browser gate.
+- Corrected over-broad VI/ES semantic trap checks so negated misconception statements are accepted while unqualified causal claims still fail.
+- Preserved literal `<BOS>` and `<UNK>` rendering after the initial English candidate exposed HTML-parsing loss of special-token labels.
+
 ## [1.0.1] - 2026-08-08
 
 ### Added

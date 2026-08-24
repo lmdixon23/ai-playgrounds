@@ -1,0 +1,195 @@
+#!/usr/bin/env python3
+"""Cross-runtime parity gate for Lab 13's Python and JavaScript models."""
+
+from __future__ import annotations
+
+import json
+import math
+import pathlib
+import subprocess
+import sys
+
+from transformer_language_model_reference import forward_tokens
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+JS_CORE = ROOT / "tools" / "transformer_language_model_core.js"
+
+
+def js_forward(tokens, *, use_positions=True, causal_mask=True, temperature=1.0):
+    payload = json.dumps(
+        {
+            "tokens": list(tokens),
+            "options": {
+                "usePositions": use_positions,
+                "causalMask": causal_mask,
+                "temperature": temperature,
+            },
+        }
+    )
+    code = f"""
+const core=require({json.dumps(str(JS_CORE))});
+const payload={payload};
+process.stdout.write(JSON.stringify(core.forwardTokens(payload.tokens,payload.options)));
+"""
+    proc = subprocess.run(
+        ["node", "-e", code],
+        cwd=ROOT,
+        text=True,
+        encoding="utf-8",
+        capture_output=True,
+    )
+    if proc.returncode:
+        raise RuntimeError(proc.stderr or proc.stdout)
+    return json.loads(proc.stdout)
+
+
+def assert_close(actual, expected, path="root", tol=1e-12):
+    """Recursively compare JSON-compatible numeric structures.
+
+    Python's oracle intentionally returns tuples for immutable model state while the
+    JavaScript JSON representation necessarily uses arrays. Sequence type therefore
+    carries no semantic weight in this parity gate; keys, lengths, booleans, strings,
+    nulls, and numeric values do.
+    """
+    if expected is None or actual is None:
+        if actual != expected:
+            raise AssertionError(f"{path}: {actual!r} != {expected!r}")
+        return
+    if isinstance(expected, bool):
+        if actual is not expected:
+            raise AssertionError(f"{path}: {actual!r} != {expected!r}")
+        return
+    if isinstance(expected, (int, float)) and not isinstance(expected, bool):
+        if not isinstance(actual, (int, float)) or isinstance(actual, bool):
+            raise AssertionError(f"{path}: expected numeric, got {type(actual).__name__}")
+        if not math.isclose(float(actual), float(expected), rel_tol=tol, abs_tol=tol):
+            raise AssertionError(f"{path}: {actual!r} != {expected!r}")
+        return
+    if isinstance(expected, dict):
+        if not isinstance(actual, dict):
+            raise AssertionError(f"{path}: expected mapping, got {type(actual).__name__}")
+        actual_keys = set(actual)
+        expected_keys = set(expected)
+        if actual_keys != expected_keys:
+            missing = sorted(expected_keys - actual_keys)
+            extra = sorted(actual_keys - expected_keys)
+            raise AssertionError(f"{path}: key mismatch; missing={missing}, extra={extra}")
+        for key in expected:
+            assert_close(actual[key], expected[key], f"{path}.{key}", tol=tol)
+        return
+    if isinstance(expected, (list, tuple)):
+        if not isinstance(actual, (list, tuple)):
+            raise AssertionError(f"{path}: expected sequence, got {type(actual).__name__}")
+        if len(actual) != len(expected):
+            raise AssertionError(f"{path}: length {len(actual)} != {len(expected)}")
+        for index, (a, e) in enumerate(zip(actual, expected, strict=True)):
+            assert_close(a, e, f"{path}[{index}]", tol=tol)
+        return
+    if actual != expected:
+        raise AssertionError(f"{path}: {actual!r} != {expected!r}")
+
+
+def parity_harness_self_test():
+    # The previous harness compared root dictionaries shallowly, making Python
+    # tuples disagree with JavaScript arrays before their numeric contents were
+    # inspected. Keep a direct regression check for that failure mode.
+    assert_close(
+        {"outer": {"values": [1.0, 2.0], "flag": True}, "name": "fixture"},
+        {"outer": {"values": (1.0, 2.0), "flag": True}, "name": "fixture"},
+        path="harness_self_test",
+    )
+    try:
+        assert_close({"x": [1.0, 3.0]}, {"x": (1.0, 2.0)}, path="harness_negative")
+    except AssertionError:
+        pass
+    else:
+        raise AssertionError("parity harness failed to detect a nested numeric mismatch")
+
+
+def python_payload(tokens, *, use_positions=True, causal_mask=True, temperature=1.0):
+    result = forward_tokens(
+        tokens,
+        use_positions=use_positions,
+        causal_mask=causal_mask,
+        temperature=temperature,
+    )
+    return {
+        "tokens": list(result.tokens),
+        "tokenIds": list(result.token_ids),
+        "inputs": result.inputs,
+        "queries": result.queries,
+        "keys": result.keys,
+        "values": result.values,
+        "rawScores": result.raw_scores,
+        "maskedScores": result.masked_scores,
+        "attention": result.attention,
+        "attentionOutputs": result.attention_outputs,
+        "residual1": result.residual1,
+        "feedForward": result.feed_forward,
+        "finalStates": result.final_states,
+        "logits": result.logits,
+        "probabilities": result.probabilities,
+        "temperature": result.temperature,
+        "causalMask": result.causal_mask,
+        "usePositions": result.use_positions,
+    }
+
+
+def run_case(name, tokens, **options):
+    py = python_payload(tokens, **options)
+    js = js_forward(tokens, **options)
+    assert_close(js, py, path=name, tol=1e-11)
+
+
+def main() -> int:
+    try:
+        parity_harness_self_test()
+        print("PASS parity_harness_self_test")
+    except Exception as exc:
+        print(f"FAIL parity_harness_self_test: {exc}", file=sys.stderr)
+        payload = {
+            "harness": "tools/test_transformer_cross_runtime.py",
+            "cases": 0,
+            "passed": 0,
+            "failed": 1,
+            "pass": False,
+            "failures": [f"parity_harness_self_test: {type(exc).__name__}: {exc}"],
+        }
+        print(json.dumps(payload, indent=2))
+        return 1
+
+    cases = [
+        ("canonical", ("<BOS>", "i", "like", "cats"), {}),
+        ("substitution", ("<BOS>", "i", "like", "dogs"), {}),
+        ("no_positions", ("<BOS>", "like", "i", "cats"), {"use_positions": False}),
+        ("no_mask", ("<BOS>", "i", "like", "cats"), {"causal_mask": False}),
+        ("cold_temperature", ("<BOS>", "i", "like", "cats"), {"temperature": 0.5}),
+        ("hot_temperature", ("<BOS>", "i", "like", "cats"), {"temperature": 2.0}),
+        ("single_token", ("<BOS>",), {}),
+        ("unknown_token", ("<BOS>", "not-in-vocab", "cats"), {}),
+    ]
+
+    failures = []
+    for name, tokens, options in cases:
+        try:
+            run_case(name, tokens, **options)
+            print(f"PASS {name}")
+        except Exception as exc:
+            failures.append(f"{name}: {type(exc).__name__}: {exc}")
+            print(f"FAIL {name}: {exc}", file=sys.stderr)
+
+    payload = {
+        "harness": "tools/test_transformer_cross_runtime.py",
+        "harness_self_test": True,
+        "cases": len(cases),
+        "passed": len(cases) - len(failures),
+        "failed": len(failures),
+        "pass": not failures,
+        "failures": failures,
+    }
+    print(json.dumps(payload, indent=2))
+    return 0 if not failures else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
