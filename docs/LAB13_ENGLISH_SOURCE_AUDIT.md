@@ -1,84 +1,75 @@
 # Lab 13 English Source Audit
 
-Status: **candidate implemented; English source is not frozen yet**.
+Status: **English semantic/source freeze candidate**. The freeze becomes effective only if the exact branch head containing this audit passes the complete permanent `Verify` workflow.
 
 Scope: `tools/transformer_language_model_applet_en.html` on the clean post-v1.1 Lab 13 branch.
 
-This audit is deliberately stricter than a visual review. It compares the English candidate against the frozen mechanism contract in `docs/LAB13_TRANSFORMER_LANGUAGE_MODEL_ARCHITECTURE.md` and distinguishes implemented behavior from remaining acceptance work.
+This audit compares the English candidate against the frozen mechanism contract in `docs/LAB13_TRANSFORMER_LANGUAGE_MODEL_ARCHITECTURE.md`. It distinguishes semantic/source readiness from later localization, public-suite integration, and release readiness.
 
-## 1. Current positive findings
+## 1. Implemented English mechanism boundary
 
-The candidate now establishes the next implementation layer beyond the R1 foundation:
+The candidate now closes the English-only implementation obligations needed before localization:
 
-1. **Single-file offline candidate.** The HTML contains its deterministic JavaScript model directly and has no external script, fetch, XHR, backend, account, or API dependency.
-2. **Frozen arithmetic preserved.** The embedded model uses the same vocabulary, embeddings, position vectors, Q/K/V projections, feed-forward transform, output projection, causal mask, stable softmax, and temperature operation as the reference core.
-3. **Visible causal pipeline.** The learner can inspect token IDs, token embedding, position vector, input vector, Q/K/V values, attention row, attention output, final state, logits, and next-token probabilities.
-4. **Causal mask is structural in the interface.** Future cells are rendered as `MASK`, rather than anthropomorphized as a model choosing not to look.
-5. **Position ablation is numerically exposed.** The order scenario compares `I like cats` with `like i cats` and reports the maximum probability delta with position information on versus off.
-6. **Mask leakage is numerically exposed.** The mask scenario selects an earlier destination and reports the nonzero future-source attention that appears when the mask is removed.
-7. **Temperature is correctly scoped.** The candidate reports an entropy comparison while explicitly stating that temperature rescales fixed logits and does not retrain the model.
-8. **Prediction-before-reveal exists for the first Guided Challenge.** The learner must commit before the canonical attention row and score row are revealed.
-9. **Evidence boundaries and misconception corrections are explicit.** The source rejects frontier-model equivalence, attention-as-explanation, internet-search, stored-answer retrieval, token-equals-word, position-equals-meaning, and temperature-changes-weights interpretations.
-10. **Text-equivalent numeric state exists.** Prompt, tokens, IDs, selected token, query, source keys, attention row, logits, probabilities, temperature, position state, and mask state are available as text.
+1. **Single-file offline operation.** The HTML embeds its deterministic JavaScript model and has no external script, fetch, XHR, backend, account, or API dependency.
+2. **Frozen arithmetic preserved.** The embedded base model uses the same vocabulary, embeddings, position vectors, Q/K/V projections, feed-forward transform, output projection, causal mask, stable softmax, and temperature operation as the independently tested reference core.
+3. **Visible causal pipeline.** Learners can inspect surface text, toy token IDs, token embedding, position vector, input vector, Q/K/V values, masked/unmasked scaled scores, attention weights, attention output, final state, logits, and next-token probabilities.
+4. **Constrained learner text.** A bounded text path demonstrates the source-locked toy tokenizer, `<UNK>` mapping, punctuation tokenization, and maximum-context truncation while preserving `<BOS>`.
+5. **Structural causal masking.** Future cells are rendered as `MASK`; the source explicitly avoids anthropomorphizing masking as a model choosing not to look.
+6. **Bounded Q/K perturbation.** The learner can alter one final-query or source-key component by a fixed `+0.50` perturbation and inspect the resulting scaled-score and attention-weight change.
+7. **Order/position ablation.** The candidate compares a token swap with position information on versus off and reports the resulting maximum probability delta.
+8. **Mask leakage.** An earlier destination can be inspected with the mask disabled; the interface reports the resulting future-source attention mass and identifies the autoregressive dependency violation.
+9. **Temperature transfer.** The source compares distribution entropy while preserving logits and explicitly states that temperature does not retrain the model.
+10. **Executable attention-not-explanation counterexample.** For `sleep sleep i`, the largest final-row attention weight and the largest finite-ablation effect on the original top-token logit occur at different source positions. The finite ablation removes one `alpha_j v_j` contribution without renormalization and is explicitly scoped as a diagnostic counterexample rather than a complete causal explanation.
+11. **All four frozen Guided Challenges.** Highest attention, causal-mask leak, token substitution, and temperature transfer each use an isolated deterministic fixture and enforce `Prompt -> Commit prediction -> Reveal mechanism -> Compare -> Explain -> Transfer`.
+12. **Challenge-state isolation.** Prediction choices and reveals are generated from the same fixed challenge fixture rather than from arbitrary experiment state.
+13. **Keyboard-operable attention inspection.** Every permitted matrix cell is a button; keyboard activation updates the synchronized token/vector/text state and reports the selected query-key score and attention weight.
+14. **Text-equivalent numeric state.** The candidate exposes prompt, tokens, IDs, selected token, query, source keys, masked/unmasked scores, attention row, logits, probabilities, temperature, position state, mask state, and Q/K perturbation as text.
+15. **Explicit evidence boundaries and misconception corrections.** The source rejects frontier-model equivalence, attention-as-understanding/explanation, internet-search behavior, stored-answer retrieval, token-equals-word, position-equals-word-meaning, deterministic top-token selection, and temperature-changes-weights interpretations.
 
-## 2. Adversarial findings that block English source freeze
+## 2. Adversarial corrections completed since the first English candidate
 
-These are material blockers, not optional polish.
+The previous audit placed source freeze on HOLD for six material blockers. All six are now closed in the candidate:
 
-### A. Q/K perturbation scenario is not yet implemented
+- **A — Q/K perturbation:** closed by explicit query/key component perturbation and browser regression coverage.
+- **B — attention-not-explanation counterexample:** closed by the executable `sleep sleep i` finite-ablation fixture.
+- **C — Guided Challenges 2–4:** closed; all four architecture-frozen challenges are implemented.
+- **D — challenge fixture mismatch:** closed by isolating each prediction/reveal pair from arbitrary experiment/scenario state.
+- **E — constrained text input:** closed with `<UNK>`, punctuation, and max-context behavior.
+- **F — keyboard attention-cell inspection:** closed by permitted-cell controls plus synchronized pair detail.
 
-The architecture requires an experiment that changes one query/key component and lets the learner observe the resulting score and attention change. The candidate currently asks the learner to transfer toward such a perturbation, but it does not yet provide the control.
+## 3. Verification boundary
 
-**Required correction:** add a bounded deterministic Q/K component perturbation with independent regression coverage.
+`tools/test_transformer_english_applet.py` now adversarially checks at minimum:
 
-### B. Attention-not-explanation needs an executable counterexample
+- source/evidence contracts;
+- single-file and no-network constraints;
+- canonical embedded-core arithmetic;
+- causal-mask rendering;
+- keyboard attention-cell inspection;
+- required text-equivalent state;
+- unknown-token and context-truncation behavior;
+- Q/K perturbation arithmetic;
+- order/position ablation;
+- mask leakage;
+- temperature/logit invariance;
+- the finite-ablation attention counterexample;
+- fixture isolation and prediction-before-reveal for all four Guided Challenges;
+- bounded mobile document width.
 
-The current candidate states the limitation correctly, but the dedicated scenario remains explanatory rather than computational. A stronger fixture has already been identified in the frozen toy model: for `sleep sleep i`, the largest final-row attention weight is on the final `i`, while finite ablation of an earlier `sleep` value contribution can change the top output logit more.
+This candidate is accepted as the **English semantic/source freeze** only when the exact head containing the candidate, this audit, its QA harness, and the permanent workflow change receives a complete `Verify` PASS. A failure leaves the freeze ineffective and must be corrected before any ZH/VI/ES semantic translation work begins.
 
-**Required correction:** encode this counterexample in the browser with clearly labeled finite-ablation semantics and state that the ablation itself is diagnostic, not a complete causal explanation.
+## 4. Deliberately unresolved work after English freeze
 
-### C. Guided Challenges 2–4 are absent
+The following items remain required for Lab 13 release readiness and are deliberately not part of the English source-freeze gate:
 
-Only Challenge 1, highest permitted attention, is implemented.
+1. Simplified-Chinese translation and separate semantic parity audit.
+2. Vietnamese and Spanish translation catalogs, machine parity/state tests, and human review before release readiness.
+3. Four-locale browser state preservation and arithmetic-invariance testing.
+4. Public `playgrounds/` integration only after localization acceptance.
+5. Navigation, `applets.json`, curriculum, sitemap, release metadata, and deployment-boundary expansion from twelve to thirteen applets.
+6. Full public mobile/tablet/desktop QA after integration.
+7. v1.2 release/tag/DOI actions only after the cumulative v1.2 release gate passes.
 
-Still required:
+## 5. Deployment and provenance decision
 
-- causal-mask leak prediction;
-- token-substitution direction prediction;
-- temperature sharpness/flatness transfer prediction.
-
-Each must preserve `Prompt -> Commit prediction -> Reveal mechanism -> Compare -> Explain -> Transfer`.
-
-### D. Challenge state is not yet isolated from arbitrary scenario state
-
-The reveal calculation for Challenge 1 is bound to the canonical `I like cats` fixture, while the prediction options are currently regenerated from the active experiment prompt. If a learner changes scenarios before entering the challenge, the option labels can cease to correspond to the canonical reveal fixture.
-
-**Required correction:** either bind both prediction and reveal to an explicit challenge fixture or derive both from the same current state. This is a correctness blocker.
-
-### E. Optional constrained text input is not yet implemented
-
-The architecture permits prepared prompts plus optional learner text constrained to the toy vocabulary. The candidate currently uses prepared prompts only.
-
-**Required correction before source freeze:** add a constrained text path or explicitly defer it in the architecture. The preferred path is to add it because it makes the source-locked tokenizer limitation directly testable, including `<UNK>` behavior and maximum-context truncation.
-
-### F. Attention-cell keyboard inspection is incomplete
-
-Token selection is keyboard accessible because tokens are buttons. Individual matrix cells are static table cells, so a keyboard user cannot select a query/source pair for synchronized inspection.
-
-**Required correction:** make permitted attention cells keyboard-operable controls or provide an equivalent query/source selector that updates the same text state.
-
-### G. The candidate is intentionally outside the public deployment boundary
-
-This is not a defect at this checkpoint. `tools/build_site.py` must continue to deploy exactly the existing twelve applets until the English source is frozen and ZH/VI/ES parity work is complete. Navigation, `applets.json`, curriculum, sitemap, release metadata, and Pages deployment scope must not be expanded yet.
-
-## 3. Source-freeze decision
-
-**Decision: HOLD.**
-
-The single-file English candidate is a material implementation advance and is suitable for continued machine verification. It is not yet the English semantic freeze because A–F above affect mechanism completeness, challenge correctness, or accessibility.
-
-The next implementation checkpoint should close A–F in one coherent English-only increment, rerun the Python/JavaScript/reference chain plus candidate browser QA, and only then freeze English semantics for Simplified-Chinese parity.
-
-## 4. Release-boundary decision
-
-No public Lab 13 deployment, v1.2 release metadata change, tag, release, DOI mutation, or Paper 7 change is authorized by this checkpoint.
+The English candidate remains under `tools/`, so the public Pages boundary continues to contain exactly the existing twelve applets. No public Lab 13 deployment, version tag, release, DOI mutation, or Paper 7 change is authorized by this checkpoint.
