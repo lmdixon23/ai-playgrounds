@@ -92,6 +92,13 @@ LAB14_COURSE_ROW = (
 LAB14_LEGEND = '<span style="--legend:#0f766e"><i></i>Agent Tool Use and Context Protocols</span>'
 
 
+def insert_before_last(html: str, marker: str, fragment: str) -> str:
+    index = html.rfind(marker)
+    if index < 0:
+        raise RuntimeError(f"Could not locate final {marker} marker")
+    return html[:index] + fragment + html[index:]
+
+
 def upgrade_landing() -> None:
     path = SITE / "index.html"
     html = path.read_text(encoding="utf-8")
@@ -215,7 +222,8 @@ def add_release_version_presentation() -> None:
             if 'id="v14-version-provenance-style"' not in html:
                 html = html.replace("</head>", VERSION_STYLE + "\n</head>", 1)
             if "data-v14-version-provenance" not in html:
-                html = html.replace("</body>", f'<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v{RELEASE_VERSION}</div>\n</body>', 1)
+                fragment = f'<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v{RELEASE_VERSION}</div>\n'
+                html = insert_before_last(html, "</body>", fragment)
         path.write_text(html, encoding="utf-8")
 
 
