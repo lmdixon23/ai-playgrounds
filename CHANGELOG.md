@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.3.0] - 2026-08-25
+
+### Added
+- Lab 14, Agent Tool Use and Context Protocols, as the fourteenth public AI Playground.
+- Deterministic Python and JavaScript agent-runtime references with 20 reference tests and eight cross-runtime parity fixture families.
+- Eight browser scenarios spanning observation-driven replanning, schema overlap, invalid arguments, text versus execution, permissions, adversarial tool output, MCP 2026-07-28, and stopping.
+- Five prediction-before-reveal Guided Challenges for action selection, runtime gates, observation updates, trust classification, and termination.
+- Complete EN/ZH/VI/ES semantic coverage for static and dynamic Lab 14 surfaces with protected tool, state, and protocol identifiers.
+- Four-locale browser/state-preservation and public v1.3 integration gates.
+
+### Changed
+- Expanded the deterministic Pages deployment boundary from thirteen to fourteen applets and from 53 to 54 files.
+- Updated the landing catalogue, curriculum sequence, release notes, sitemap, citation metadata, CodeMeta metadata, and README for v1.3.0.
+- Rebound the public Lab 13 regression gate and badge to the fourteen-applet v1.3 artifact.
+- Preserved the v1.2 manifest as an immutable thirteen-app release input and composed v1.3 from that inventory plus one explicit Lab 14 release record.
+
+### Fixed
+- Reopened the initial R5 localization freeze after a browser-surface audit identified dynamic strings outside the first 121-key catalog, then added a separately verified 42-key dynamic supplement.
+- Repaired the first R6 localization runtime after CI exposed escaped-whitespace matching that prevented DOM translation.
+- Replaced the failing generic runtime matcher with deterministic exact/template matching, JSON observation translation, state-preserving DOM localization, and post-render mutation handling.
+
 ## [1.2.0] - 2026-08-24
 
 ### Added
