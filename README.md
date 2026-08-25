@@ -121,10 +121,11 @@ python tools/test_cnf_sat_engagement_candidate.py
 python tools/test_bayes_network_engagement_candidate.py
 python tools/test_v1_5_public_integration.py
 python tools/test_v1_5_1_hci_adoption.py
+python tools/test_v1_5_1_hci_extended.py
 python tools/browser_qa.py --no-screenshots
 ```
 
-The v1.5.1 gate additionally verifies the 14-applet composition plus two Activity Pack canaries, analytics-wrapper coverage on every public HTML page, KNN touch recovery, four-locale Bayesian method containment, Neural Network landscape containment, 200% text-enlargement stress across all applets, Activity Pack autosave/guarded clear/focus recovery, canonical GoatCounter page/campaign data, true event semantics, and analytics opt-out behavior.
+The v1.5.1 gates verify the 14-applet composition plus two Activity Pack canaries, analytics-wrapper coverage on every public HTML page, KNN touch recovery, four-locale Bayesian method containment, Neural Network landscape containment, split-screen/narrow-desktop containment, 200% text-enlargement stress across all applets, Activity Pack autosave/guarded clear/focus recovery in both canaries, canonical GoatCounter page/campaign data, true event semantics, and analytics opt-out behavior.
 
 ## Teaching materials
 
