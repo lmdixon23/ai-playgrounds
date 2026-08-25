@@ -66,24 +66,51 @@ def main() -> int:
             page.wait_for_timeout(30)
             checks.append(("stepping the existing DPLL player grows the same tree", page.evaluate("() => window.__cnfDpllPresentationState.getIndex()") == 1 and page.locator("#cnf-eq-svg .cnf-eq-node").count() == 2, {"index": page.evaluate("() => window.__cnfDpllPresentationState.getIndex()"), "nodes": page.locator("#cnf-eq-svg .cnf-eq-node").count()}))
 
-            formula = "(A | B) & (~A | B) & (A | ~B) & (~A | ~B)"
+            # Parser-valid two-variable UNSAT instance with no initial unit or pure literal.
+            # DPLL must make a real branch, hit a contradiction, backtrack to the sibling,
+            # and hit the second contradiction. Written using the applet's documented word
+            # operators rather than programming-language aliases the parser does not promise.
+            formula = "(A or B) and ((not A) or B) and (A or (not B)) and ((not A) or (not B))"
             page.fill("#input", formula)
             page.click("#convertBtn")
-            page.wait_for_timeout(30)
+            page.wait_for_timeout(40)
             branch_trace = page.evaluate("() => window.__cnfDpllPresentationState.getTrace()")
             actions = [row["action"] for row in branch_trace]
-            checks.append(("adversarial UNSAT fixture contains branch conflict and backtrack", "branch+" in actions and "branch-" in actions and "unsat" in actions, {"actions": actions}))
+            parse_error = page.locator("#parseOut .error").count()
+            required_actions = {"branch+", "branch-", "unsat"}
+            has_required_actions = required_actions.issubset(set(actions))
+            checks.append(("adversarial UNSAT fixture parses and contains branch conflict and backtrack", parse_error == 0 and has_required_actions, {"formula": formula, "parseErrors": parse_error, "actions": actions, "traceLength": len(branch_trace)}))
 
-            first_unsat = actions.index("unsat")
-            for _ in range(first_unsat):
-                page.click("#dpllStep")
-            page.wait_for_timeout(30)
-            checks.append(("conflict becomes a visible pruned leaf", page.evaluate("() => window.__cnfDpllPresentationState.getIndex()") == first_unsat and page.locator("#cnf-eq-svg .cnf-eq-node.unsat").count() >= 1 and page.locator("#cnf-eq-svg .cnf-eq-node").count() == first_unsat + 1, {"index": page.evaluate("() => window.__cnfDpllPresentationState.getIndex()"), "unsatNodes": page.locator("#cnf-eq-svg .cnf-eq-node.unsat").count()}))
-
-            if first_unsat + 1 < len(actions):
-                page.click("#dpllStep")
+            first_unsat = actions.index("unsat") if "unsat" in actions else None
+            if first_unsat is not None:
+                for _ in range(first_unsat):
+                    page.click("#dpllStep")
                 page.wait_for_timeout(30)
-            checks.append(("backtracking opens a sibling branch rather than crossing the conflict", page.locator("#cnf-eq-svg .cnf-eq-node.backtrack").count() >= 1 and "backtrack" in page.locator("#cnf-eq-path").inner_text().lower(), {"path": page.locator("#cnf-eq-path").inner_text(), "backtrackNodes": page.locator("#cnf-eq-svg .cnf-eq-node.backtrack").count()}))
+                conflict_ok = (
+                    page.evaluate("() => window.__cnfDpllPresentationState.getIndex()") == first_unsat
+                    and page.locator("#cnf-eq-svg .cnf-eq-node.unsat").count() >= 1
+                    and page.locator("#cnf-eq-svg .cnf-eq-node").count() == first_unsat + 1
+                )
+            else:
+                conflict_ok = False
+            checks.append(("conflict becomes a visible pruned leaf", conflict_ok, {"firstUnsat": first_unsat, "index": page.evaluate("() => window.__cnfDpllPresentationState.getIndex()"), "unsatNodes": page.locator("#cnf-eq-svg .cnf-eq-node.unsat").count(), "actions": actions}))
+
+            backtrack_index = actions.index("branch-") if "branch-" in actions else None
+            if backtrack_index is not None:
+                page.click("#dpllReset")
+                for _ in range(backtrack_index):
+                    page.click("#dpllStep")
+                page.wait_for_timeout(30)
+                path_text = page.locator("#cnf-eq-path").inner_text()
+                backtrack_ok = (
+                    page.evaluate("() => window.__cnfDpllPresentationState.getIndex()") == backtrack_index
+                    and page.locator("#cnf-eq-svg .cnf-eq-node.backtrack").count() >= 1
+                    and "backtrack" in path_text.lower()
+                )
+            else:
+                path_text = page.locator("#cnf-eq-path").inner_text()
+                backtrack_ok = False
+            checks.append(("backtracking opens a sibling branch rather than crossing the conflict", backtrack_ok, {"backtrackIndex": backtrack_index, "path": path_text, "backtrackNodes": page.locator("#cnf-eq-svg .cnf-eq-node.backtrack").count(), "actions": actions}))
 
             trace_before_locale = page.evaluate("() => window.__cnfDpllPresentationState.getTrace()")
             index_before_locale = page.evaluate("() => window.__cnfDpllPresentationState.getIndex()")
