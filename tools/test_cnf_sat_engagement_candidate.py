@@ -66,23 +66,23 @@ def main() -> int:
             page.wait_for_timeout(30)
             checks.append(("stepping the existing DPLL player grows the same tree", page.evaluate("() => window.__cnfDpllPresentationState.getIndex()") == 1 and page.locator("#cnf-eq-svg .cnf-eq-node").count() == 2, {"index": page.evaluate("() => window.__cnfDpllPresentationState.getIndex()"), "nodes": page.locator("#cnf-eq-svg .cnf-eq-node").count()}))
 
-            # Parser-valid two-variable UNSAT instance with no initial unit or pure literal.
-            # DPLL must make a real branch, hit a contradiction, backtrack to the sibling,
-            # and hit the second contradiction. Written using the applet's documented word
-            # operators rather than programming-language aliases the parser does not promise.
-            formula = "(A or B) and ((not A) or B) and (A or (not B)) and ((not A) or (not B))"
+            # Two-variable UNSAT instance with no initial unit or pure literal.
+            # Uses the applet's documented syntax: ~, &, and |.
+            formula = "(A | B) & (~A | B) & (A | ~B) & (~A | ~B)"
             page.fill("#input", formula)
             page.click("#convertBtn")
             page.wait_for_timeout(40)
             branch_trace = page.evaluate("() => window.__cnfDpllPresentationState.getTrace()")
             actions = [row["action"] for row in branch_trace]
-            parse_error = page.locator("#parseOut .error").count()
+            vars_seen = page.evaluate("() => window.__cnfDpllPresentationState.getVars()")
+            parse_error_text = page.locator("#parseOut .error").all_inner_texts()
             required_actions = {"branch+", "branch-", "unsat"}
             has_required_actions = required_actions.issubset(set(actions))
-            checks.append(("adversarial UNSAT fixture parses and contains branch conflict and backtrack", parse_error == 0 and has_required_actions, {"formula": formula, "parseErrors": parse_error, "actions": actions, "traceLength": len(branch_trace)}))
+            checks.append(("adversarial UNSAT fixture parses and contains branch conflict and backtrack", not parse_error_text and vars_seen == ["A", "B"] and has_required_actions, {"formula": formula, "parseErrors": parse_error_text, "vars": vars_seen, "actions": actions, "traceLength": len(branch_trace), "input": page.locator("#input").input_value()}))
 
             first_unsat = actions.index("unsat") if "unsat" in actions else None
             if first_unsat is not None:
+                page.click("#dpllReset")
                 for _ in range(first_unsat):
                     page.click("#dpllStep")
                 page.wait_for_timeout(30)
@@ -115,10 +115,12 @@ def main() -> int:
             trace_before_locale = page.evaluate("() => window.__cnfDpllPresentationState.getTrace()")
             index_before_locale = page.evaluate("() => window.__cnfDpllPresentationState.getIndex()")
             page.select_option(".r4-language-select", "vi")
-            page.wait_for_timeout(100)
+            page.wait_for_timeout(140)
             trace_after_locale = page.evaluate("() => window.__cnfDpllPresentationState.getTrace()")
             index_after_locale = page.evaluate("() => window.__cnfDpllPresentationState.getIndex()")
-            checks.append(("four-locale overlay preserves DPLL state and localizes tree", trace_before_locale == trace_after_locale and index_before_locale == index_after_locale and "Xem DPLL" in page.locator("#cnf-eq-title").inner_text(), {"lang": page.locator("html").get_attribute("lang"), "index": index_after_locale}))
+            locale_title = page.locator("#cnf-eq-title").inner_text()
+            checks.append(("four-locale overlay preserves DPLL state", trace_before_locale == trace_after_locale and index_before_locale == index_after_locale, {"lang": page.locator("html").get_attribute("lang"), "indexBefore": index_before_locale, "indexAfter": index_after_locale}))
+            checks.append(("DPLL tree localizes through its isolated locale surface", "xem dpll" in locale_title.lower(), {"lang": page.locator("html").get_attribute("lang"), "title": locale_title, "locale": page.evaluate("() => window.__r4Localization.locale()"), "noTranslate": page.locator("#cnf-eq-tree").get_attribute("data-r4-no-translate")}))
             context.close()
 
             reduced = browser.new_context(viewport={"width": 900, "height": 900}, reduced_motion="reduce")
