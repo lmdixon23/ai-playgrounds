@@ -21,7 +21,16 @@ STYLE = r'''
 .lab15-language-select{min-height:38px;padding:6px 32px 6px 10px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--fg);font:inherit;cursor:pointer}
 .lab15-language-select:focus-visible{outline:3px solid #3157c855;outline-offset:2px}
 @media(pointer:coarse){.lab15-language-select{min-height:44px}}
-@media(max-width:560px){.lab15-locale-bar{justify-content:stretch;flex-wrap:wrap}.lab15-language-select{flex:1 1 180px;max-width:100%}}
+@media(max-width:560px){
+  html,body{max-width:100%;overflow-x:hidden}
+  .shell,.grid,.panel,.challenge-grid,.challenge-box,.controls,.summary,.utility-list,.transport,.tree-wrap{min-width:0;max-width:100%}
+  .shell{width:100%}
+  .tree-wrap{width:100%;overflow-x:auto;overflow-y:hidden}
+  .utility-item label{min-width:0;flex-wrap:wrap;overflow-wrap:anywhere}
+  .utility-item input{max-width:100%}
+  .lab15-locale-bar{justify-content:stretch;flex-wrap:wrap;min-width:0;max-width:100%}
+  .lab15-language-select{flex:1 1 180px;min-width:0;max-width:100%}
+}
 </style>
 '''
 
@@ -80,7 +89,12 @@ RUNTIME = r'''
     for(const entry of templateEntries){
       const match=entry.re.exec(text);
       if(!match) continue;
-      const args={}; entry.names.forEach((name,index)=>{args[name]=match[index+1]});
+      const args={};
+      entry.names.forEach((name,index)=>{
+        const raw=match[index+1];
+        const translated=direct(raw);
+        args[name]=translated===null ? raw : translated;
+      });
       return format(catalogs[current][entry.key],args);
     }
     return null;
@@ -170,12 +184,12 @@ RUNTIME = r'''
     }
   }
   function localizeAll(){localizeScoped(document.body)}
-  function schedule(root){
+  function schedule(){
     if(scheduled) return;
     scheduled=true;
     queueMicrotask(()=>{
       scheduled=false;
-      localizeScoped(root||document.body);
+      localizeAll();
     });
   }
   function setLocale(code,{updateHistory=true}={}){
@@ -203,13 +217,7 @@ RUNTIME = r'''
     localizeAll();
     observer=new MutationObserver(mutations=>{
       if(mutating) return;
-      let root=null;
-      for(const mutation of mutations){
-        if(mutation.type==="characterData") root=mutation.target.parentElement||root;
-        else if(mutation.type==="attributes") root=mutation.target;
-        else if(mutation.addedNodes.length) root=mutation.target;
-      }
-      if(root) schedule(root);
+      if(mutations.some(m=>m.type==="characterData" || m.type==="attributes" || m.addedNodes.length || m.removedNodes.length)) schedule();
     });
     observe();
     window.Lab15Localization={
@@ -289,6 +297,11 @@ def build_candidate(output: Path) -> Path:
         1,
     )
     html = html.replace("R4 English candidate", "R6 · EN/ZH/VI/ES", 1)
+    html = html.replace(
+        "<title>Lab 15 Prototype | Minimax and Alpha-Beta</title>",
+        f"<title>{catalogs['en']['page.title']}</title>",
+        1,
+    )
     html = html.replace("</head>", STYLE + "\n</head>", 1)
 
     payload = json.dumps(
@@ -308,6 +321,7 @@ def build_candidate(output: Path) -> Path:
         "window.Lab15Localization",
         R4_SOURCE_FREEZE,
         "R6 · EN/ZH/VI/ES",
+        f"<title>{catalogs['en']['page.title']}</title>",
     )
     missing = [item for item in required if item not in html]
     if missing:
