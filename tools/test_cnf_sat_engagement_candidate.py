@@ -70,6 +70,10 @@ def main() -> int:
             page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
             page.goto(OUTPUT.resolve().as_uri() + "?lang=en", wait_until="load", timeout=10_000)
             page.wait_for_function("() => !!window.__cnfDpllPresentationState && !!window.__cnfDpllTreeExperience")
+            # The v1.4 shell and guided-challenge layer have deliberate deferred
+            # initialization. Do not mutate the experiment until those late
+            # initializers have finished restoring their canonical startup state.
+            page.wait_for_timeout(500)
 
             trace = page.evaluate("() => window.__cnfDpllPresentationState.getTrace()")
             checks.append(("default formula generates a visible tree from actual trace", len(trace) > 0 and page.locator("#cnf-eq-svg .cnf-eq-node").count() == 1, {"traceLength": len(trace), "visibleNodes": page.locator("#cnf-eq-svg .cnf-eq-node").count()}))
