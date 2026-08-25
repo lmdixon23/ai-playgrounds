@@ -92,8 +92,8 @@ The first Activity Packs are adapted from classroom worksheets and use a consist
 
 **predict -> run -> observe -> explain -> transfer**
 
-- [NN-1 · Make it fail, then make it learn](activities/nn-1.html) — non-linearity, hidden-layer capacity, training dynamics, and train/test generalization.
-- [CNN-1 · Be the filter](activities/cnn-1.html) — hand-calculated convolution, directional edges, learned filters, and pooling.
+- [NN-1 · Make it fail, then make it learn](activities/nn-1.html): non-linearity, hidden-layer capacity, training dynamics, and train/test generalization.
+- [CNN-1 · Be the filter](activities/cnn-1.html): hand-calculated convolution, directional edges, learned filters, and pooling.
 
 Responses autosave **locally in the learner's browser** and can be printed or saved as PDF. AI Playgrounds has no assignment-submission backend. Teacher answer keys are intentionally not published on the student site.
 
