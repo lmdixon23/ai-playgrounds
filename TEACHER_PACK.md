@@ -8,42 +8,42 @@
 
 ## Assignment levels
 
-### Level 1 — Quick Assign · 10–15 min
+### Level 1 - Quick Assign · 10-15 min
 
 Quick Assigns reuse the applet's existing Guided Challenge and local Student response packet. Students complete one bounded mechanism task using:
 
-**predict → run/manipulate → observe → explain → transfer**
+**predict -> run/manipulate -> observe -> explain -> transfer**
 
 Use the stable ID when assigning work. Student writing stays local unless the student copies, prints, or submits it through the teacher's normal classroom system.
 
 | ID | Applet | Core task | Teacher look-for | Student link |
 |---|---|---|---|---|
-| **QA-SEARCH-01** | Pathfinding | Compare A* and BFS on the same maze | Distinguishes search work from path quality; connects the heuristic to frontier ordering; avoids “A* is always faster.” | [Open QA-SEARCH-01](playgrounds/search-pathfinding/index.html#quick-assign-qa-search-01) |
-| **QA-LOCAL-01** | Hill Climbing / Simulated Annealing | Explain why greedy local search can get stuck and how an escape mechanism differs | States that no improving neighbor does not prove global optimality; explains annealing or restart correctly. | [Open QA-LOCAL-01](playgrounds/hill-climbing/index.html#quick-assign-qa-local-01) |
-| **QA-WUMPUS-01** | Wumpus World | Classify a state/action as safe, risky, or unresolved from percept evidence | Distinguishes unknown from dangerous and entailment from plausibility; probability does not prove safety. | [Open QA-WUMPUS-01](playgrounds/wumpus-world/index.html#quick-assign-qa-wumpus-01) |
-| **QA-SAT-01** | CNF/SAT | Connect CNF structure to DPLL propagation, branching, conflict, and pruning | Names actual inference/branch evidence; a branch conflict prunes that branch, while global UNSAT requires exhausting relevant alternatives. | [Open QA-SAT-01](playgrounds/cnf-sat/index.html#quick-assign-qa-sat-01) |
+| **QA-SEARCH-01** | Pathfinding | Compare A* and BFS on the same maze | Distinguishes search work from path quality; connects the heuristic to frontier ordering; avoids “A* is always faster.” | [Open QA-SEARCH-01](playgrounds/search-pathfinding/index.html?mode=classroom#quick-assign-qa-search-01) |
+| **QA-LOCAL-01** | Hill Climbing / Simulated Annealing | Explain why greedy local search can get stuck and how an escape mechanism differs | States that no improving neighbor does not prove global optimality; explains annealing or restart correctly. | [Open QA-LOCAL-01](playgrounds/hill-climbing/index.html?mode=classroom#quick-assign-qa-local-01) |
+| **QA-WUMPUS-01** | Wumpus World | Classify a state/action as safe, risky, or unresolved from percept evidence | Distinguishes unknown from dangerous and entailment from plausibility; probability does not prove safety. | [Open QA-WUMPUS-01](playgrounds/wumpus-world/index.html?mode=classroom#quick-assign-qa-wumpus-01) |
+| **QA-SAT-01** | CNF/SAT | Connect CNF structure to DPLL propagation, branching, conflict, and pruning | Names actual inference/branch evidence; a branch conflict prunes that branch, while global UNSAT requires exhausting relevant alternatives. | [Open QA-SAT-01](playgrounds/cnf-sat/index.html?mode=classroom#quick-assign-qa-sat-01) |
 
 The remaining eleven Level-1 IDs are reserved in `tools/quick_assigns_v1.json` so the naming system stays stable, but they are not advertised until their individual activity contracts pass.
 
-### Level 2 — Activity Pack · roughly 30–50 min
+### Level 2 - Activity Pack · roughly 30-50 min
 
 The current pilot includes two public student-facing Activity Packs. Responses autosave locally and can be printed or saved as PDF.
 
 | ID | Applet | Time | Core inquiry | Student link |
 |---|---|---:|---|---|
-| **NN-1** | Tiny Neural Network | 35–45 min | Make a network fail, then add the mechanism/capacity needed to succeed; connect loss and train/test behavior to what changed. | [Open NN-1](activities/nn-1.html) |
-| **CNN-1** | Convolution Playground | 40–50 min | Compute one convolution by hand, connect it to the visual scan, then investigate directional edges, learned filters, and pooling. | [Open CNN-1](activities/cnn-1.html) |
+| **NN-1** | Tiny Neural Network | 35-45 min | Make a network fail, then add the mechanism/capacity needed to succeed; connect loss and train/test behavior to what changed. | [Open NN-1](activities/nn-1.html) |
+| **CNN-1** | Convolution Playground | 40-50 min | Compute one convolution by hand, connect it to the visual scan, then investigate directional edges, learned filters, and pooling. | [Open CNN-1](activities/cnn-1.html) |
 
 **Teacher-answer boundary:** public Activity Packs do not contain private answer keys or grading exemplars. Keep genuinely secret teacher solutions outside the deployed student site.
 
-### Level 3 — Lesson / Unit Pack
+### Level 3 - Lesson / Unit Pack
 
 Reserved for future longer teacher packages. A Level 3 package may include prerequisites, warm-up, a longer sequence, rubric guidance, extension work, and private teacher materials. No Level 3 package is implied to exist yet.
 
 ## Quick start
 
 1. Choose one applet from the map below.
-2. For a 10–15 minute assignment, give students one stable Quick Assign ID.
+2. For a 10-15 minute assignment, give students one stable Quick Assign ID.
 3. For a full inquiry lesson, use an Activity Pack when available.
 4. Require a prediction before the relevant reveal/run where the task supports it.
 5. Require one specific observation from applet state, not a generic impression.
@@ -106,8 +106,8 @@ These two labs remain optional extensions rather than prerequisites for the Foun
 
 | Applet | Concept | Time | Core question |
 |---|---|---:|---|
-| [Transformer Language Modeling](playgrounds/transformer-language-model/index.html) | Transformers / modern NLP | 30–40 min | How can changing representation or attention state change the next-token distribution? |
-| [Agent Tool Use and Context Protocols](playgrounds/agent-tool-context/index.html) | Agent systems | 30–40 min | What has to happen between a proposed tool call and a legitimate action? |
+| [Transformer Language Modeling](playgrounds/transformer-language-model/index.html) | Transformers / modern NLP | 30-40 min | How can changing representation or attention state change the next-token distribution? |
+| [Agent Tool Use and Context Protocols](playgrounds/agent-tool-context/index.html) | Agent systems | 30-40 min | What has to happen between a proposed tool call and a legitimate action? |
 
 ## Suggested 4-lesson mini-unit
 
