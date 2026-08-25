@@ -19,174 +19,122 @@ jobs:
     name: Release and browser checks
     runs-on: ubuntu-latest
     timeout-minutes: 30
-
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: "3.13"
-
       - name: Set up Node
         uses: actions/setup-node@v6
         with:
           node-version: "22"
-
       - name: Install browser QA dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install playwright
           python -m playwright install --with-deps chromium
-
       - name: Run release checks
         run: python tools/release_check.py
-
       - name: Verify pedagogical contracts
         run: python tools/verify_pedagogical_contracts.py
-
       - name: Verify guided challenge contracts
         run: python tools/verify_guided_challenges.py
-
       - name: Run guided challenge state QA
         run: python tools/guided_challenge_qa.py
-
       - name: Verify Simplified Chinese parity contracts
         run: python tools/verify_zh_parity.py
-
       - name: Run Simplified Chinese browser parity QA
         run: python tools/zh_parity_qa.py
-
       - name: Verify Vietnamese and Spanish R4 localization
         run: python tools/verify_r4_localization.py
-
       - name: Verify all dynamic Wumpus percept translations
         run: python tools/verify_wumpus_percept_localization.py
-
       - name: Run Vietnamese and Spanish R4 browser QA
         run: python tools/r4_localization_qa.py
-
       - name: Check versioned release metadata
         run: python tools/check_release_metadata.py
-
       - name: Verify minimal v1.3 deployment boundary
         run: python tools/build_site_v1_3.py
-
       - name: Run 45 algorithm regression tests
         run: python tools/run_algorithm_tests.py
-
       - name: Run Lab 15 minimax and alpha-beta reference/census QA
         run: python tools/test_minimax_alpha_beta.py
-
       - name: Verify Lab 15 Python-JavaScript parity
         run: python tools/test_minimax_alpha_beta_cross_runtime.py
-
       - name: Run Lab 15 prototype browser QA
         run: python tools/test_minimax_alpha_beta_prototype.py
-
       - name: Run Lab 15 English single-file candidate QA
         run: python tools/test_minimax_alpha_beta_english_applet.py
-
       - name: Verify Lab 15 EN/ZH/VI/ES semantic catalog
         run: python tools/test_minimax_alpha_beta_localization.py
-
       - name: Run Lab 15 four-locale browser/state QA
         run: python tools/test_minimax_alpha_beta_multilingual_applet.py
-
       - name: Run Lab 15 v1.6 public integration and HCI QA
         run: python tools/test_v1_6_public_integration.py
-
       - name: Run Lab 13 Transformer reference tests
         run: python tools/test_transformer_language_model.py
-
       - name: Verify Lab 13 Python-JavaScript parity
         run: python tools/test_transformer_cross_runtime.py
-
       - name: Run Lab 13 prototype browser QA
         run: python tools/test_transformer_prototype.py
-
       - name: Run Lab 13 English single-file candidate QA
         run: python tools/test_transformer_english_applet.py
-
       - name: Verify Lab 13 Simplified Chinese semantic catalog
         run: python tools/test_transformer_zh_localization.py
-
       - name: Verify Lab 13 Vietnamese and Spanish semantic catalogs
         run: python tools/test_transformer_vi_es_localization.py
-
       - name: Run Lab 13 four-locale browser parity QA
         run: python tools/test_transformer_multilingual_applet.py
-
       - name: Run Lab 13 public v1.3 regression QA
         run: python tools/test_transformer_public_integration.py
-
       - name: Run Lab 13 v1.4 engagement and UX QA
         run: python tools/test_transformer_v1_4_experience.py
-
       - name: Run Lab 13 engagement-excellence candidate QA
         run: python tools/test_transformer_engagement_candidate.py
-
       - name: Run Lab 14 agent tool-context reference tests
         run: python tools/test_agent_tool_context.py
-
       - name: Verify Lab 14 Python-JavaScript parity
         run: python tools/test_agent_tool_context_cross_runtime.py
-
       - name: Run Lab 14 prototype browser QA
         run: python tools/test_agent_tool_context_prototype.py
-
       - name: Run Lab 14 English single-file candidate QA
         run: python tools/test_agent_tool_context_english_applet.py
-
       - name: Verify Lab 14 ZH/VI/ES semantic catalog
         run: python tools/test_agent_tool_context_localization.py
-
       - name: Verify Lab 14 dynamic localization supplement
         run: python tools/test_agent_tool_context_dynamic_localization.py
-
       - name: Run Lab 14 four-locale browser parity QA
         run: python tools/test_agent_tool_context_multilingual_applet.py
-
       - name: Run Lab 14 public v1.3 integration QA
         run: python tools/test_agent_tool_context_public_integration.py
-
       - name: Run Lab 14 v1.4 engagement and UX QA
         run: python tools/test_agent_tool_context_v1_4_experience.py
-
       - name: Run Lab 14 engagement-excellence candidate QA
         run: python tools/test_agent_tool_context_engagement_candidate.py
-
       - name: Run CNF/SAT DPLL-tree engagement candidate QA
         run: python tools/test_cnf_sat_engagement_candidate.py
-
       - name: Run Bayesian posterior-delta engagement candidate QA
         run: python tools/test_bayes_network_engagement_candidate.py
-
       - name: Run v1.4 public product-quality integration QA
         run: python tools/test_v1_4_public_integration.py
-
       - name: Run v1.5 public engagement-excellence integration QA
         run: python tools/test_v1_5_public_integration.py
-
       - name: Run v1.5.1 HCI, analytics, and Activity Pack QA
         run: python tools/test_v1_5_1_hci_adoption.py
-
       - name: Run v1.5.1 extended split-screen and Activity Pack HCI QA
         run: python tools/test_v1_5_1_hci_extended.py
-
       - name: Run v1.6.1 Quick Assign and release-currency QA
         run: python tools/test_v1_6_1_quick_assign_currency.py
-
       - name: Run v1.6.1 final composition and design-system consistency QA
         run: python tools/test_v1_6_1_design_consistency.py
-
       - name: Run v1.6.2 final public provenance QA
         run: python tools/test_v1_6_2_public_provenance.py
-
+      - name: Run v1.7 all-lab Quick Assign QA
+        run: python tools/test_v1_7_all_quick_assigns.py
       - name: Run browser and responsive QA
         run: python tools/browser_qa.py --no-screenshots
-
       - name: Upload verification evidence
         if: always()
         uses: actions/upload-artifact@v7
