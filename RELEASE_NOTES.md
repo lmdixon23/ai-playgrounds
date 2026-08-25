@@ -20,7 +20,7 @@
 
 - Adds a visible action packet whose path is derived from the actual runtime event across Propose -> Validate -> Authorize -> Execute -> Observe -> Update -> Stop.
 - Makes rejection and authorization denial visibly stop at the correct runtime gate.
-- Adds an explicit context delta and `SIMULATED WORLD — no real external action` surface.
+- Adds an explicit context delta and `SIMULATED WORLD - no real external action` surface.
 - Adds a learner-selected one-step sandbox for principal, tool, and JSON arguments using a fresh isolated in-memory world. Learner-selected calls are explicitly distinguished from model-selected actions.
 - Preserves side-effect-free rejection/denial, frozen runtime semantics, four-locale state invariance, reduced motion, offline operation, and narrow-viewport containment.
 
