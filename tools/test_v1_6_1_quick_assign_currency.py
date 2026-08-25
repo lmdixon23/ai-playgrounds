@@ -62,6 +62,9 @@ def main() -> int:
         src = (SITE / "playgrounds" / row["slug"] / "index.html").read_text(encoding="utf-8")
         checks.append((f"{row['id']} stable anchor and five-stage response surface", src.count(f'data-quick-assign-id="{row["id"]}"') == 1 and f'id="{row["anchor"]}"' in src and all(f'data-lab-answer="{stage}"' in src for stage in ("predict", "observe", "explain", "transfer")) and 'data-lab-action="copy"' in src and 'data-lab-action="print"' in src, {}))
         checks.append((f"{row['id']} carries four-locale Quick Assign overlay", 'data-quick-assign-locales="1"' in src and "r4languagechange" in src, {}))
+        canonical_suffix = f"index.html?mode=classroom#{row['anchor']}"
+        checks.append((f"{row['id']} Teacher Pack uses classroom-mode deep link", f"playgrounds/{row['slug']}/{canonical_suffix}" in teacher, {}))
+        checks.append((f"{row['id']} Curriculum uses classroom-mode deep link", f"playgrounds/{row['slug']}/{canonical_suffix}" in curriculum, {}))
     for row in reserved:
         src = (SITE / "playgrounds" / row["slug"] / "index.html").read_text(encoding="utf-8")
         checks.append((f"reserved ID not surfaced: {row['id']}", f'data-quick-assign-id="{row["id"]}"' not in src, {}))
@@ -88,10 +91,13 @@ def main() -> int:
                 page = context.new_page()
                 page.on("pageerror", lambda exc, aid=row["id"]: page_errors.append(f"{aid}: {exc}"))
                 page.on("console", lambda msg, aid=row["id"]: console_errors.append(f"{aid}: {msg.text}") if msg.type == "error" else None)
-                page.goto((SITE / "playgrounds" / row["slug"] / "index.html").resolve().as_uri() + f"#{row['anchor']}", wait_until="domcontentloaded", timeout=30_000)
-                page.wait_for_timeout(150)
+                url = (SITE / "playgrounds" / row["slug"] / "index.html").resolve().as_uri() + f"?mode=classroom#{row['anchor']}"
+                page.goto(url, wait_until="domcontentloaded", timeout=30_000)
+                page.wait_for_timeout(250)
                 details = page.locator(f"#{row['anchor']}")
                 checks.append((f"{row['id']} deep anchor resolves", details.count() == 1, {}))
+                mode_selected = page.locator('.learning-mode-tab[data-mode="classroom"]').get_attribute("aria-selected")
+                checks.append((f"{row['id']} direct link opens Use in class mode", mode_selected == "true", {"aria_selected": mode_selected}))
                 details.evaluate("el => el.open = true")
                 predict = details.locator('[data-lab-answer="predict"]')
                 predict.fill("state-preservation sentinel")
