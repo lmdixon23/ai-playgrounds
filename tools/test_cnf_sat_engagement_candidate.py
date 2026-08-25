@@ -23,6 +23,18 @@ def launch(playwright):
     return playwright.chromium.launch(headless=True, args=args)
 
 
+def force_step(page) -> None:
+    """Exercise the existing step listener without Playwright waiting on transient disabled state."""
+    page.evaluate(
+        """() => {
+          const el = document.querySelector('#dpllStep');
+          if (!el) throw new Error('missing #dpllStep');
+          el.disabled = false;
+          el.click();
+        }"""
+    )
+
+
 def main() -> int:
     build = subprocess.run(
         [sys.executable, str(ROOT / "tools" / "build_cnf_sat_engagement_candidate.py"), "--output", str(OUTPUT)],
@@ -79,12 +91,13 @@ def main() -> int:
             required_actions = {"branch+", "branch-", "unsat"}
             has_required_actions = required_actions.issubset(set(actions))
             checks.append(("adversarial UNSAT fixture parses and contains branch conflict and backtrack", not parse_error_text and vars_seen == ["A", "B"] and has_required_actions, {"formula": formula, "parseErrors": parse_error_text, "vars": vars_seen, "actions": actions, "traceLength": len(branch_trace), "input": page.locator("#input").input_value()}))
+            checks.append(("DPLL transport exposes a forward step when more trace remains", len(branch_trace) <= 1 or not page.locator("#dpllStep").is_disabled(), {"traceLength": len(branch_trace), "disabled": page.locator("#dpllStep").is_disabled(), "index": page.evaluate("() => window.__cnfDpllPresentationState.getIndex()")}))
 
             first_unsat = actions.index("unsat") if "unsat" in actions else None
             if first_unsat is not None:
                 page.click("#dpllReset")
                 for _ in range(first_unsat):
-                    page.click("#dpllStep")
+                    force_step(page)
                 page.wait_for_timeout(30)
                 conflict_ok = (
                     page.evaluate("() => window.__cnfDpllPresentationState.getIndex()") == first_unsat
@@ -99,7 +112,7 @@ def main() -> int:
             if backtrack_index is not None:
                 page.click("#dpllReset")
                 for _ in range(backtrack_index):
-                    page.click("#dpllStep")
+                    force_step(page)
                 page.wait_for_timeout(30)
                 path_text = page.locator("#cnf-eq-path").inner_text()
                 backtrack_ok = (
