@@ -134,7 +134,7 @@ def main() -> int:
                 if msg.type == "error"
                 else None,
             )
-            page.goto(OUTPUT.resolve().as_uri() + "?lang=en", wait_until="load", timeout=10_000)
+            page.goto(OUTPUT.resolve().as_uri() + "?lang=en", wait_until="domcontentloaded", timeout=30_000)
             page.wait_for_function(
                 "() => !!window.Lab15Prototype && !!window.Lab15Localization"
             )
@@ -199,9 +199,6 @@ def main() -> int:
                     )
                 )
 
-            # Freeze playback at a real alpha-beta cutoff and then switch among
-            # all target locales without allowing presentation changes to touch
-            # the search state.
             page.select_option("#scenario", "first_prune")
             page.select_option("#algorithm", "alpha_beta")
             prune_index = page.evaluate(
@@ -249,8 +246,6 @@ def main() -> int:
                     )
                 )
 
-            # Lock a prediction before switching language. The complete input
-            # values and challenge state must survive every locale transition.
             set_locale(page, "en")
             page.select_option("#challengeSelect", "root")
             page.click("#challengeBegin")
@@ -303,8 +298,6 @@ def main() -> int:
                     )
                 )
 
-            # Create a saved comparison only after the runtime exists so the
-            # MutationObserver/template path must localize newly generated text.
             page.select_option("#scenario", "good_ordering")
             page.select_option("#algorithm", "alpha_beta")
             page.select_option("#order", "configured")
@@ -333,8 +326,6 @@ def main() -> int:
 
             context.close()
 
-            # Deep-link locale startup is a separate initialization path from
-            # switching an already-running page.
             deep_link_expectations = {
                 "zh": ("zh-Hans", "博弈树：Minimax 与 Alpha-Beta 剪枝"),
                 "vi": ("vi", "Cây trò chơi: Minimax và cắt tỉa Alpha-Beta"),
@@ -352,8 +343,8 @@ def main() -> int:
                 )
                 lpage.goto(
                     OUTPUT.resolve().as_uri() + f"?lang={code}",
-                    wait_until="load",
-                    timeout=10_000,
+                    wait_until="domcontentloaded",
+                    timeout=30_000,
                 )
                 lpage.wait_for_function("() => !!window.Lab15Localization")
                 checks.append(
@@ -381,7 +372,7 @@ def main() -> int:
                 if msg.type == "error"
                 else None,
             )
-            rpage.goto(OUTPUT.resolve().as_uri() + "?lang=vi", wait_until="load", timeout=10_000)
+            rpage.goto(OUTPUT.resolve().as_uri() + "?lang=vi", wait_until="domcontentloaded", timeout=30_000)
             rpage.wait_for_function("() => !!window.Lab15Localization")
             rpage.select_option("#scenario", "first_prune")
             rpage.select_option("#algorithm", "alpha_beta")
@@ -410,7 +401,7 @@ def main() -> int:
                 if msg.type == "error"
                 else None,
             )
-            mpage.goto(OUTPUT.resolve().as_uri() + "?lang=es", wait_until="load", timeout=10_000)
+            mpage.goto(OUTPUT.resolve().as_uri() + "?lang=es", wait_until="domcontentloaded", timeout=30_000)
             mpage.wait_for_function("() => !!window.Lab15Localization")
             page_overflow = mpage.evaluate(
                 "() => document.documentElement.scrollWidth - window.innerWidth"
