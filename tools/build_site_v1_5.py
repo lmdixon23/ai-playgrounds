@@ -133,9 +133,10 @@ def add_v15_release_banner() -> None:
 
 
 def build_site() -> None:
-    # Start from the exact released v1.4 public composition, then alter only the
-    # four applets that survived the engagement FAS.
+    # Start from the exact v1.4 public composition and validate that inherited
+    # release boundary before changing any version provenance or applet surface.
     v14.build_site()
+    v14.validate_boundary()
     build_transformer_engagement(SITE / "playgrounds" / "transformer-language-model" / "index.html")
     build_agent_engagement(SITE / "playgrounds" / "agent-tool-context" / "index.html")
     transform_cnf_sat()
@@ -147,7 +148,9 @@ def build_site() -> None:
 
 
 def validate_boundary() -> None:
-    v14.validate_boundary()
+    # v1.4 was already validated before the v1.5 transformations. At this stage
+    # its version assertions would correctly fail, so validate local references
+    # plus the stricter v1.5 composition contract instead.
     base.validate_local_references()
 
     deployed_paths = sorted((SITE / "playgrounds").glob("*/index.html"))
@@ -167,7 +170,7 @@ def validate_boundary() -> None:
             raise RuntimeError(f"Missing v1.5 version metadata: {slug}")
         if f"v{PREVIOUS_VERSION}" in source and slug in {"transformer-language-model", "agent-tool-context"}:
             raise RuntimeError(f"Modern applet still exposes v1.4 as current provenance: {slug}")
-        for marker in required_by_slug.get(slug, ()): 
+        for marker in required_by_slug.get(slug, ()):
             if marker not in source:
                 raise RuntimeError(f"Missing v1.5 engagement marker {marker!r}: {slug}")
 
