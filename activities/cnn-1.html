@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="ai-playgrounds-version" content="1.5.1">
+<title>CNN-1 · Be the filter | AI Playgrounds</title>
+<meta name="description" content="Student activity for the AI Playgrounds Convolution Playground: calculate one convolution, inspect edges, learn a filter, and test pooling.">
+<link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/activities/cnn-1.html">
+<style>
+:root{color-scheme:light dark;--bg:#f8fafc;--card:#fff;--ink:#0f172a;--muted:#475569;--line:#cbd5e1;--accent:#0f766e;--soft:#ecfdf5;--good:#047857}
+@media(prefers-color-scheme:dark){:root{--bg:#020617;--card:#0f172a;--ink:#e5e7eb;--muted:#cbd5e1;--line:#334155;--accent:#5eead4;--soft:#042f2e;--good:#6ee7b7}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}main{max-width:980px;margin:auto;padding:28px 20px 80px}a{color:var(--accent)}.toolbar{position:sticky;top:8px;z-index:20;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-bottom:14px}.button,button{min-height:44px;padding:9px 13px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}.primary{background:var(--accent);color:#fff;border-color:transparent}.hero,.section,.run,.rubric,.privacy{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin:16px 0}.hero{border-top:5px solid var(--accent)}.eyebrow{margin:0;color:var(--accent);font-size:.78rem;font-weight:850;letter-spacing:.09em;text-transform:uppercase}.hero h1{font-size:clamp(2rem,5vw,3.7rem);line-height:1;margin:.18em 0}.lead{font-size:1.08rem}.golden{border-left:5px solid var(--good);background:var(--soft);padding:12px 15px;border-radius:12px}.meta-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0}.meta-grid>div{border:1px solid var(--line);border-radius:12px;padding:10px}.controls,.rubric table{width:100%;border-collapse:collapse}.controls th,.controls td,.rubric th,.rubric td{border:1px solid var(--line);padding:9px;text-align:left;vertical-align:top}.controls th,.rubric th{background:var(--soft)}.run h3{margin-top:0;color:var(--accent)}.setup{background:var(--soft);padding:10px 12px;border-radius:10px}.prompt{margin:15px 0}.prompt label{display:block;font-weight:800;margin-bottom:6px}.prompt small{display:block;color:var(--muted);font-weight:400;margin-top:3px}textarea{width:100%;min-height:92px;resize:vertical;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:10px;font:inherit}.short{min-height:68px}.status{min-height:1.4em;color:var(--good);font-size:.9rem}.privacy{border-left:5px solid var(--accent)}.calc{display:grid;grid-template-columns:1fr 1fr;gap:16px}.matrix{border-collapse:collapse;margin:8px 0}.matrix td{border:1px solid var(--line);padding:8px 12px;text-align:center;font-family:ui-monospace,monospace;font-weight:700}:focus-visible{outline:3px solid var(--accent);outline-offset:3px}@media(max-width:680px){main{padding:18px 12px 58px}.hero,.section,.run,.rubric,.privacy{padding:16px}.meta-grid,.calc{grid-template-columns:1fr}.toolbar{position:static;justify-content:stretch}.toolbar>*{flex:1 1 auto;justify-content:center}.controls{display:block;overflow-x:auto}.hero h1{font-size:2.5rem}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}@media print{body{background:white;color:black;font-size:10.5pt}main{max-width:none;padding:0}.toolbar,.status,.privacy .screen-only{display:none!important}.hero,.section,.run,.rubric,.privacy{box-shadow:none;border-radius:0;break-inside:avoid;margin:8mm 0;padding:5mm}.run{break-inside:auto}.prompt{break-inside:avoid}textarea{min-height:28mm;background:white;color:black}.short{min-height:20mm}a{color:black;text-decoration:none}.meta-grid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<main>
+<div class="toolbar" aria-label="Activity controls">
+<a class="button" href="index.html">← Activities</a>
+<a class="button primary" href="../playgrounds/convolution/index.html?mode=explore&amp;featured=1" target="_blank" rel="noopener">Open applet</a>
+<button id="printBtn" type="button">Print / PDF</button>
+<button id="clearBtn" type="button">Clear responses</button>
+</div>
+<section class="hero">
+<p class="eyebrow">CNN-1 · Core Activity · 40–50 minutes</p>
+<h1>Be the filter</h1>
+<p class="lead">Your job is to be a scientist: <strong>predict what will happen, run the experiment, then explain what you saw.</strong> You will connect one hand-calculated convolution to the same operation repeated across an image.</p>
+<p class="golden"><strong>Golden rule:</strong> a surprising result is useful evidence. Record the prediction first; then explain the discrepancy instead of rewriting the prediction.</p>
+<div class="meta-grid"><div><strong>Learning focus</strong><br>Multiply-and-sum, edges, learned filters, pooling</div><div><strong>What to submit</strong><br>Predictions, observations, one hand calculation, explanations, reflection</div><div><strong>Response storage</strong><br>Autosaves locally in this browser only</div></div>
+<p id="saveStatus" class="status" role="status" aria-live="polite">Ready. Responses save locally as you type.</p>
+</section>
+<section class="section">
+<h2>The controls you will use</h2>
+<table class="controls"><thead><tr><th>Control</th><th>Use in this activity</th></tr></thead><tbody>
+<tr><td>Input</td><td>Cross and other presets; the applet also supports drawing your own input</td></tr>
+<tr><td>Kernel preset</td><td>Identity · Sobel-X · Sobel-Y · Laplacian · Blur · 9 editable cells</td></tr>
+<tr><td>Layer mode</td><td>Single conv · Conv + max-pool · Conv → conv</td></tr>
+<tr><td>Absolute value / ReLU</td><td>Change what information is retained in the displayed response</td></tr>
+<tr><td>Learn the filter</td><td>Train nine kernel weights toward a target response</td></tr>
+<tr><td>Inspect &amp; scan</td><td>See the local 3×3 patch, products, sliding window, and output size</td></tr>
+</tbody></table>
+</section>
+<section class="section"><h2>Part A · Five experiments</h2><p>For every run: <strong>Predict first → Run it → Explain what happened.</strong></p></section>
+<article class="run">
+<h3>Run 1 · The do-nothing filter</h3>
+<p class="setup"><strong>Set up:</strong> Input = <strong>Cross</strong> · Kernel preset = <strong>Identity</strong>.</p>
+<div class="prompt"><label for="r1p">Predict: What should the output look like compared with the input? Why?</label><textarea id="r1p" data-response></textarea></div>
+<div class="prompt"><label for="r1o">Observe: What actually appears in the output feature map?</label><textarea id="r1o" data-response class="short"></textarea></div>
+<div class="prompt"><label for="r1e">Explain: The Identity kernel has a single 1 in the center and zeros elsewhere. Why does multiply-and-sum preserve the image?</label><textarea id="r1e" data-response></textarea></div>
+</article>
+<article class="run">
+<h3>Run 2 · Find the vertical edges</h3>
+<p class="setup"><strong>Set up:</strong> Input = <strong>Cross</strong> · Kernel preset = <strong>Sobel-X</strong>.</p>
+<div class="prompt"><label for="r2p">Predict: Which part of the cross will produce the strongest response—the vertical bar, horizontal bar, or center?</label><textarea id="r2p" data-response></textarea></div>
+<div class="prompt"><label for="r2o">Observe: Where do the strongest responses occur?</label><textarea id="r2o" data-response class="short"></textarea></div>
+<div class="prompt"><label for="r2e">Explain: Sobel-X measures left-to-right brightness change. Why does that emphasize vertical edges?</label><textarea id="r2e" data-response></textarea></div>
+</article>
+<article class="run">
+<h3>Run 3 · Be the filter by hand</h3>
+<p>Do one convolution step yourself—the same local operation the applet repeats at every output position.</p>
+<div class="calc"><div><strong>Kernel</strong><table class="matrix" aria-label="Kernel matrix"><tr><td>1</td><td>0</td><td>−1</td></tr><tr><td>1</td><td>0</td><td>−1</td></tr><tr><td>1</td><td>0</td><td>−1</td></tr></table></div><div><strong>Image patch</strong><table class="matrix" aria-label="Image patch matrix"><tr><td>5</td><td>8</td><td>9</td></tr><tr><td>0</td><td>1</td><td>7</td></tr><tr><td>2</td><td>4</td><td>5</td></tr></table></div></div>
+<div class="prompt"><label for="r3calc">Compute: Multiply all nine pairs and add them. Show enough work that another student could check it.</label><textarea id="r3calc" data-response></textarea></div>
+<p class="setup"><strong>Check the mechanism:</strong> In the applet, enter the same 3×3 kernel and turn <strong>Take absolute value</strong> off. Open <strong>Inspect &amp; scan</strong>, hover an output cell, and inspect its own patch and products. The applet pixels use a different numeric scale, so compare the operation—not the exact total.</p>
+<div class="prompt"><label for="r3sign">Explain: What does the sign of a directional edge response tell you? What information disappears when absolute value is turned on?</label><textarea id="r3sign" data-response></textarea></div>
+</article>
+<article class="run">
+<h3>Run 4 · Watch a filter being learned</h3>
+<p class="setup"><strong>Set up:</strong> Input = <strong>Cross</strong> · turn on <strong>Learn the filter</strong> · Target = <strong>Sobel-X</strong> → Train.</p>
+<div class="prompt"><label for="r4p">Predict: The nine kernel values start near random. What should happen to them and to the loss as training runs?</label><textarea id="r4p" data-response></textarea></div>
+<div class="prompt"><label for="r4loss">Observe: What does the loss do over time?</label><textarea id="r4loss" data-response></textarea></div>
+<div class="prompt"><label for="r4compare">Open the Learner vs. target view. If the output becomes similar to the target while individual weights are not identical, what does that suggest about identifying a filter from limited data?</label><textarea id="r4compare" data-response></textarea></div>
+</article>
+<article class="run">
+<h3>Run 5 · Shrinking the picture with pooling</h3>
+<p class="setup"><strong>Set up:</strong> Input = <strong>Cross</strong> · Kernel preset = <strong>Sobel-X</strong> · Layer mode = <strong>Conv + max-pool</strong>. Open <strong>Inspect &amp; scan</strong> to watch the output-size readout.</p>
+<div class="prompt"><label for="r5p">Predict: What will max-pooling do to output size and detail?</label><textarea id="r5p" data-response></textarea></div>
+<div class="prompt"><label for="r5o">Observe: What changed in size and visible detail?</label><textarea id="r5o" data-response></textarea></div>
+<div class="prompt"><label for="r5e">Explain: Why might a CNN deliberately keep only a strong response from each small region? What is gained, and what is lost?</label><textarea id="r5e" data-response></textarea></div>
+</article>
+<section class="section">
+<h2>Part B · Use the explanation on the applet page</h2>
+<div class="prompt"><label for="b1">1. In “multiply + sum,” what exactly is multiplied and what exactly is summed?</label><textarea id="b1" data-response></textarea></div>
+<div class="prompt"><label for="b2">2. What does taking the absolute value hide? Why might a scientist sometimes keep the sign?</label><textarea id="b2" data-response></textarea></div>
+<div class="prompt"><label for="b3">3. What can happen after convolution in a CNN, and why are nonlinear activations relevant?</label><textarea id="b3" data-response></textarea></div>
+</section>
+<section class="section">
+<h2>Part C · Reflection and transfer</h2>
+<div class="prompt"><label for="c1">1. Traceability: Choose one prediction that was wrong. What did you predict, what happened, and what did it teach you about filters?</label><textarea id="c1" data-response></textarea></div>
+<div class="prompt"><label for="c2">2. Counterfactual: What is the most important difference between selecting a hand-designed filter such as Sobel-X and learning a filter from data?</label><textarea id="c2" data-response></textarea></div>
+<div class="prompt"><label for="c3">3. Connect back and forward: Based on neural-network weight learning and this learned filter, predict how many learned filters in deeper layers could help recognize a complex object.</label><textarea id="c3" data-response></textarea></div>
+</section>
+<section class="rubric">
+<h2>How this is assessed</h2>
+<table><thead><tr><th>Criterion</th><th>What strong work shows</th></tr></thead><tbody>
+<tr><td>Predictions made first</td><td>A prediction is recorded before each experiment, even when it turns out wrong.</td></tr>
+<tr><td>Observations</td><td>Specific description of the feature map, local arithmetic, loss, or pooling result.</td></tr>
+<tr><td>Explanations</td><td>Connections to multiply-and-sum, direction-sensitive edges, learned filters, and information loss.</td></tr>
+<tr><td>Reflection</td><td>Reasoning from experimental evidence and connection to later CNN ideas.</td></tr>
+</tbody></table>
+</section>
+<section class="privacy"><h2>Local response storage</h2><p>Your typed responses are saved only in this browser using local storage so an accidental refresh does not erase your work. Nothing on this activity page submits answers to AI Playgrounds. <span class="screen-only">Use <strong>Clear responses</strong> to remove the saved copy from this browser.</span></p></section>
+<footer><p>AI Playgrounds · Activity CNN-1 · v1.5.1</p></footer>
+</main>
+<script>
+(()=>{'use strict';
+const KEY='ai-playgrounds-activity-cnn-1-v1';
+const fields=[...document.querySelectorAll('[data-response]')];
+const status=document.getElementById('saveStatus');
+function setStatus(text){status.textContent=text;clearTimeout(setStatus.t);setStatus.t=setTimeout(()=>{status.textContent='Responses saved locally in this browser.'},1800)}
+function snapshot(){return Object.fromEntries(fields.map(f=>[f.id,f.value]))}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(snapshot()));setStatus('Saved locally.')}catch(_){status.textContent='Local save is unavailable in this browser.'}}
+function load(){try{const raw=localStorage.getItem(KEY);if(!raw)return;const data=JSON.parse(raw);fields.forEach(f=>{if(Object.prototype.hasOwnProperty.call(data,f.id))f.value=String(data[f.id]??'')});status.textContent='Restored responses saved in this browser.'}catch(_){status.textContent='Could not restore the locally saved response.'}}
+fields.forEach(f=>f.addEventListener('input',save));
+document.getElementById('printBtn').addEventListener('click',()=>window.print());
+document.getElementById('clearBtn').addEventListener('click',()=>{if(!confirm('Clear all CNN-1 responses saved in this browser?'))return;fields.forEach(f=>f.value='');try{localStorage.removeItem(KEY)}catch(_){}setStatus('Responses cleared.');fields[0]?.focus()});
+load();
+})();
+</script>
+</body>
+</html>

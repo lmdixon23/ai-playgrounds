@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.5.1] - 2026-08-25
+
+### Added
+- Two ready-to-assign public student Activity Pack canaries: **NN-1 Make it fail, then make it learn** and **CNN-1 Be the filter**, both structured around predict -> run -> observe -> explain -> transfer and local-only response autosave.
+- A learner-centered state/recovery QA contract adapted from the audited PWP Notebook interaction model: initial state -> learner action -> expected state -> recovery path -> focus/accessibility/state consistency.
+- Dedicated v1.5.1 browser checks for KNN touch recovery, four-locale Bayesian method containment, Tiny Neural Network mobile-landscape transport, 200% text enlargement, Activity Pack autosave/clear/focus recovery, and GoatCounter payload semantics.
+
+### Changed
+- Rebound the deterministic public composition to v1.5.1 while preserving all fourteen applet algorithms and the complete v1.5 engagement layer.
+- Expanded the Pages artifact from 54 to 57 files by adding the Activity Pack index plus two student activity pages; the applet count remains fourteen.
+- Reworked the privacy-minimized GoatCounter wrapper so every public HTML page, including Labs 13/14 and Activity Packs, receives exactly one wrapper; page views now send canonical paths and titles, synthetic interactions use true GoatCounter events (`e=1`), and allow-listed `ap_src` values populate GoatCounter campaign query data.
+- Updated Teacher Pack, quality, README, analytics/privacy, citation, and CodeMeta metadata for the fourteen-lab Foundations + Modern Extensions model and the Activity Pack pilot.
+
+### Fixed
+- Added KNN Guided Challenge near-miss recovery so an imprecise mobile tap near a training point selects the intended nearby point instead of unexpectedly relocating the query and clearing prediction progress.
+- Reflowed Bayesian Network inference-method controls into a two-row mobile layout so longer EN/VI/ES labels remain visible at 390 px.
+- Reflowed Tiny Neural Network history/scrub controls for short mobile-landscape layouts.
+- Eliminated analytics blind spots for Transformer Language Modeling and Agent Tool Use, normalized `/index.html` aliases, supplied page titles, and separated events from page-visit totals.
+
+### Evidence boundary
+- The v1.5.1 software/browser assurance establishes behavior under the tested conditions; it does not establish accessibility conformance, measured learning gains, classroom adoption, or universal learner preference.
+- Teacher answer keys remain outside the public student site.
+- The immutable v1.0.1 DOI remains historical provenance and is not reassigned to v1.5.1.
+
 ## [1.5.0] - 2026-08-25
 
 ### Added

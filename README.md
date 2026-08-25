@@ -1,6 +1,6 @@
 # AI Playgrounds
 
-> **Start in five minutes:** open the live site, choose one applet, make a prediction, change one variable, and explain the trace. The suite contains 14 multilingual, offline-ready applets with deterministic algorithm and browser verification. [Live suite](https://lmdixon23.github.io/ai-playgrounds/) · [Educator guide](docs/EDUCATOR_ADOPTION_GUIDE.md) · [Release status](docs/RESEARCH_COMPANION_STATUS.md) · [Analytics and privacy](docs/ANALYTICS_AND_PRIVACY.md)
+> **Start in five minutes:** open the live site, choose one applet, make a prediction, change one variable, and explain the trace. The suite contains 14 multilingual, offline-ready applets with deterministic algorithm and browser verification. [Live suite](https://lmdixon23.github.io/ai-playgrounds/) · [Teacher Pack](teacher-pack.html) · [Activity Packs](activities/) · [Analytics and privacy](docs/ANALYTICS_AND_PRIVACY.md)
 
 **Evidence boundary:** release checks establish bounded software behaviour and deployment integrity; they do not establish learning gains, classroom adoption, universal learner preference, or accessibility conformance.
 
@@ -9,11 +9,11 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Archived v1.0.1 DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21854217.svg)](https://doi.org/10.5281/zenodo.21854217)
 
-Fourteen multilingual, offline-ready interactive AI labs spanning foundational mechanisms and modern extensions. The suite covers search, logic, probability, machine learning, neural networks, computer vision, reinforcement learning, Transformer language modeling, and agent tool use and runtime protocols.
+Fourteen multilingual, offline-ready interactive AI labs spanning foundational mechanisms and modern extensions. The suite covers search, logic, probability, machine learning, neural networks, computer vision, reinforcement learning, Transformer language modeling, and agent tool use/runtime protocols.
 
 **Live site:** https://lmdixon23.github.io/ai-playgrounds/
 
-**Current release:** [v1.5.0](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.5.0)
+**Current release:** [v1.5.1](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.5.1)
 
 **Archived v1.0.1 DOI:** [10.5281/zenodo.21854217](https://doi.org/10.5281/zenodo.21854217) · **All-versions DOI:** [10.5281/zenodo.21854216](https://doi.org/10.5281/zenodo.21854216)
 
@@ -37,88 +37,100 @@ Each applet includes:
 - visual and text-based explanations,
 - teacher notes and model limitations where appropriate,
 - keyboard guidance,
-- shareable or reproducible experiment state where appropriate,
+- shareable/reproducible experiment state where appropriate,
 - offline-ready operation without an account or backend.
+
+## Course structure
+
+The public catalogue has **12 Foundations/course-track labs** plus **2 Modern AI extensions**.
+
+The Foundations track covers pathfinding, local search, Wumpus World, CNF/SAT, Bayes Rule, Bayesian Networks, KNN, overfitting, a tiny neural network, K-Means, convolution, and Q-Learning. The modern extensions are Transformer Language Modeling and Agent Tool Use and Context Protocols.
+
+The planning matrix in [docs/AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md](docs/AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md) compares current coverage against AIMA and the Spring 2026 CS50/CSCI E-80 AI curriculum so future labs can balance classical gaps with contemporary extensions.
 
 ## Lab 13: Transformer Language Modeling
 
-v1.2.0 added a deterministic decoder-like teaching model that connects token IDs, token and position vectors, Q/K/V projections, causal masking, self-attention, logits, temperature, and next-token probabilities. Its browser arithmetic is cross-checked against an independent Python reference and the same frozen fixtures are exercised in JavaScript and browser QA.
+v1.2.0 added a deterministic decoder-like teaching model connecting token IDs, token/position vectors, Q/K/V projections, causal masking, self-attention, logits, temperature, and next-token probabilities. Its browser arithmetic is cross-checked against an independent Python reference.
 
-The applet explicitly distinguishes attention weights from a general explanation of model reasoning, separates argmax probability from sampling, and treats its tokenizer and weights as small teaching fixtures rather than a reproduction of a frontier LLM.
+The applet explicitly distinguishes attention weights from a general explanation of model reasoning, separates argmax probability from sampling, and treats its tokenizer/weights as small teaching fixtures rather than a reproduction of a frontier LLM.
 
-v1.4.0 added a presentation-only Tokenize -> Represent -> Attend -> Predict journey so learners can follow that mechanism progressively without changing the frozen model state or arithmetic.
-
-v1.5.0 adds state-derived continuity across those stages, an explicit deterministic `Append argmax token` action, and a saved baseline/current comparison. The continuity animation is a replay of already-computed model state rather than a claim about wall-clock execution order, and the arithmetic remains unchanged.
+v1.4.0 added a progressive Tokenize -> Represent -> Attend -> Predict journey. v1.5.0 added state-derived continuity, deterministic `Append argmax token`, and a saved baseline/current comparison while preserving frozen arithmetic.
 
 ## Lab 14: Agent Tool Use and Context Protocols
 
-v1.3.0 added a deterministic agent-runtime lab that separates model output, structured tool calls, schema validation, authorization, execution, observations, provenance-aware context updates, and stopping. Eight scenarios cover observation-driven replanning, overlapping schemas, invalid arguments, text versus execution, permission denial, instruction-like tool content, MCP 2026-07-28 serialization, and termination.
+v1.3.0 added a deterministic agent-runtime lab separating model output, structured tool calls, schema validation, authorization, execution, observations, provenance-aware context updates, and stopping. Eight scenarios cover observation-driven replanning, overlapping schemas, invalid arguments, text versus execution, permission denial, instruction-like tool content, MCP 2026-07-28 serialization, and termination.
 
-The applet keeps the computational boundary explicit: natural-language text is not execution, tool availability is not authorization, schema validity is not correctness, and an instruction-like tool observation does not automatically become a controlling instruction. Four-locale switching is presentation-only and is verified not to mutate the frozen machine state, permissions, tool data, provenance, or action history.
+v1.4.0 made the runtime story explicitly visible as Propose -> Validate -> Authorize -> Execute -> Observe -> Update / choose next -> Stop. v1.5.0 added a state-derived action packet, explicit context delta, and learner-selected one-step sandbox. The sandbox uses a fresh in-memory simulated world and cannot perform a real external action.
 
-v1.4.0 made the runtime story explicitly visible as Propose -> Validate -> Authorize -> Execute -> Observe -> Update / choose next -> Stop while preserving the same deterministic policy and tool world.
+## v1.5.0 engagement-excellence pass
 
-v1.5.0 adds a state-derived action packet that visibly stops at the actual gate reached by the runtime, an explicit context delta, and a learner-selected one-step sandbox. The sandbox runs only against a fresh in-memory **simulated world** and cannot mutate the canonical scenario state or perform a real external action.
-
-## v1.5 engagement-excellence pass
-
-v1.5 keeps the suite at fourteen applets and applies an evidence-led engagement/immediate-impact pass rather than adding Lab 15. The Full Assurance Stack evaluates first meaningful action, agency, causal continuity, memorable transformation, prediction coupling, exploration depth, replayability, equivalent access, responsive integrity, and mechanism-first visual impact.
-
-Four applets had a credible missing mechanism relation and receive targeted additions:
+v1.5.0 kept the suite at fourteen applets and applied an evidence-led engagement/immediate-impact pass rather than adding Lab 15. Four applets had a credible missing mechanism relation and received targeted additions:
 
 - **Transformer Language Modeling:** continuous state journey, deterministic continuation, and baseline/current comparison.
 - **Agent Tool Use and Context Protocols:** visible runtime packet, context delta, and isolated simulated-world sandbox.
 - **CNF and SAT Builder:** a DPLL branch/prune tree derived from the existing solver trace.
-- **Bayesian Network:** exact before/after posterior markers and percentage-point deltas for evidence changes such as explaining away.
+- **Bayesian Network:** exact before/after posterior markers and percentage-point deltas.
 
-The remaining ten applets are deliberately unchanged at the behavior layer. The audit found that their current direct manipulation, playback, scenario, prediction, and visual mechanisms already meet the internal design-quality threshold; adding generic animation, gamification, sound, badges, or other spectacle would not improve the explanatory mechanism.
+The remaining ten applets were deliberately left unchanged at the behavior layer because the audit found no credible mechanism-level deficit justifying additional UI or animation. The acceptance record is in [docs/ENGAGEMENT_FIRST_MOVE_AUDIT.md](docs/ENGAGEMENT_FIRST_MOVE_AUDIT.md), the assurance model is in [docs/ENGAGEMENT_EXCELLENCE_FAS.md](docs/ENGAGEMENT_EXCELLENCE_FAS.md), and the human-evidence layer is defined in [docs/ENGAGEMENT_USABILITY_PROTOCOL.md](docs/ENGAGEMENT_USABILITY_PROTOCOL.md).
 
-The acceptance record is in [docs/ENGAGEMENT_FIRST_MOVE_AUDIT.md](docs/ENGAGEMENT_FIRST_MOVE_AUDIT.md), the assurance model is in [docs/ENGAGEMENT_EXCELLENCE_FAS.md](docs/ENGAGEMENT_EXCELLENCE_FAS.md), and the next human-evidence layer is defined in [docs/ENGAGEMENT_USABILITY_PROTOCOL.md](docs/ENGAGEMENT_USABILITY_PROTOCOL.md).
+## v1.5.1 HCI and adoption hardening
 
-## v1.4 product-quality pass
+v1.5.1 changes **no applet algorithm**. It adds the highest-value improvements identified by a second learner-centered Educational-HCI assurance pass:
 
-v1.4 kept the suite at fourteen applets. It replaced the remaining prominent four-button locale controls in Labs 13 and 14 with native four-language selectors, adapted landing/support language controls to native selectors, moved release provenance out of the Lab 13/14 hero treatment, and separated the curriculum into a Foundations / course track and Modern AI extensions while retaining the quick-entry sampler.
+- KNN Guided Challenge near-miss recovery so an imprecise mobile tap near a training point does not unexpectedly relocate the query and erase prediction progress;
+- two-row Bayesian inference-method controls on narrow mobile layouts, including longer localized labels;
+- Tiny Neural Network history-transport reflow for short mobile-landscape layouts;
+- a PWP-inspired [learner-centered state/recovery contract](docs/HCI_STATE_RECOVERY_CONTRACT.md) covering initial state, learner action, expected state, recovery, focus, accessibility/state consistency, and failure paths;
+- targeted 844×390 landscape, 390px touch, 200% text-enlargement, localized-component, autosave/recovery, and analytics browser checks;
+- complete GoatCounter instrumentation across the built public HTML surface, including Labs 13/14 and Activity Packs;
+- canonical page paths and titles, true GoatCounter events (`e=1`), and allow-listed campaign attribution while preserving the no-general-referrer and no-learner-content privacy boundary;
+- two ready-to-assign **student Activity Pack canaries**, NN-1 and CNN-1.
 
-The planning matrix in [docs/AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md](docs/AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md) compares current coverage against AIMA and the Spring 2026 CS50/CSCI E-80 AI curriculum. It is used to balance classical gaps such as minimax, constraint satisfaction, temporal probabilistic reasoning, planning, and MDP methods against contemporary future labs.
+## Activity Packs
+
+The first Activity Packs are adapted from classroom worksheets and use a consistent inquiry structure:
+
+**predict -> run -> observe -> explain -> transfer**
+
+- [NN-1 · Make it fail, then make it learn](activities/nn-1.html): non-linearity, hidden-layer capacity, training dynamics, and train/test generalization.
+- [CNN-1 · Be the filter](activities/cnn-1.html): hand-calculated convolution, directional edges, learned filters, and pooling.
+
+Responses autosave **locally in the learner's browser** and can be printed or saved as PDF. AI Playgrounds has no assignment-submission backend. Teacher answer keys are intentionally not published on the student site.
 
 ## Explore
 
-Use the live site or build the deterministic v1.5 Pages artifact with:
+Build the deterministic v1.5.1 Pages artifact with:
 
 ```bash
-python tools/build_site_v1_5.py
+python tools/build_site_v1_5_1.py
 ```
 
-The deployed applets require no server, account, package manager, or backend. Lab 13 and Lab 14 are generated into the minimal Pages artifact from frozen source and audited four-locale localization inputs, producing self-contained HTML files. The v1.5 composition then adds only the four FAS-accepted engagement layers and keeps the fourteen-applet/54-file public boundary fixed.
+The deployed applets require no server, account, package manager, or backend. Labs 13 and 14 are generated into the public artifact from frozen source/localization inputs and remain self-contained. v1.5.1 composes its HCI/adoption layer over the immutable historical v1.5 builder rather than rewriting the previous release composition.
 
 ## Verification
 
-The repository uses complementary verification layers:
+The repository uses complementary verification layers. The release workflow includes the inherited pedagogical, localization, algorithm, Transformer, agent, engagement, public-integration, and broad browser gates plus the v1.5.1 HCI/adoption gate:
 
 ```bash
 python tools/release_check.py
+python tools/check_release_metadata.py
 python tools/run_algorithm_tests.py
-python tools/test_transformer_public_integration.py
-python tools/test_transformer_v1_4_experience.py
 python tools/test_transformer_engagement_candidate.py
-python tools/test_agent_tool_context.py
-python tools/test_agent_tool_context_cross_runtime.py
-python tools/test_agent_tool_context_multilingual_applet.py
-python tools/test_agent_tool_context_public_integration.py
-python tools/test_agent_tool_context_v1_4_experience.py
 python tools/test_agent_tool_context_engagement_candidate.py
 python tools/test_cnf_sat_engagement_candidate.py
 python tools/test_bayes_network_engagement_candidate.py
-python tools/test_v1_4_public_integration.py
 python tools/test_v1_5_public_integration.py
+python tools/test_v1_5_1_hci_adoption.py
+python tools/test_v1_5_1_hci_extended.py
 python tools/browser_qa.py --no-screenshots
 ```
 
-The inherited algorithm gate requires all 45 legacy regression cases to pass with no skipped cases. Lab 13 adds 20 independent numeric fixtures, Python-to-JavaScript parity, semantic localization gates, four-locale arithmetic and state parity, public integration regression coverage, the v1.4 presentation-state gate, and the v1.5 engagement-state gate. Lab 14 adds 20 deterministic reference tests, eight cross-runtime fixture families, English and multilingual browser gates, 1,801 static and dynamic localization checks across 163 merged presentation keys, state-preserving four-locale browser QA, public regression coverage, the v1.4 runtime-journey gate, and the v1.5 isolated-sandbox gate. CNF/SAT and Bayesian Network add dedicated adversarial browser gates for their new v1.5 visual mechanisms. The full-site v1.5 gate verifies the fourteen-app/54-file boundary, that only the four accepted applets receive new engagement runtimes, and responsive containment. GitHub Actions runs the cumulative stack on pull requests and release-bound main revisions.
+The v1.5.1 gates verify the 14-applet composition plus two Activity Pack canaries, analytics-wrapper coverage on every public HTML page, KNN touch recovery, four-locale Bayesian method containment, Neural Network landscape containment, split-screen/narrow-desktop containment, 200% text-enlargement stress across all applets, Activity Pack autosave/guarded clear/focus recovery in both canaries, canonical GoatCounter page/campaign data, true event semantics, and analytics opt-out behavior.
 
 ## Teaching materials
 
 - [Teacher Pack](teacher-pack.html)
+- [Activity Packs](activities/)
 - [Curriculum Map](curriculum.html)
 - [Student Lab Sheet](student-lab.html)
 - [How the project works](quality.html)
@@ -126,9 +138,9 @@ The inherited algorithm gate requires all 45 legacy regression cases to pass wit
 
 ## Research status
 
-AI Playgrounds v1.5.0 is the current software release. The earlier v1.0.1 artifact remains immutable and archived at its version DOI. Its DOI should not be interpreted as a DOI for v1.5.0.
+AI Playgrounds v1.5.1 is the current software release. The earlier v1.0.1 artifact remains immutable and archived at its version DOI. Its DOI should not be interpreted as a DOI for v1.5.1.
 
-The v1.5 deterministic/browser evidence supports implementation integrity and an internal design-level engagement/immediate-impact assessment. It does not establish measured learning gains or universal learner preference; `docs/ENGAGEMENT_USABILITY_PROTOCOL.md` defines the human evidence required for stronger claims.
+The deterministic/browser evidence supports implementation integrity and bounded design/interaction claims. It does not establish measured learning gains, universal learner preference, classroom adoption, or accessibility conformance. A separate human-usability protocol defines the evidence required for stronger claims.
 
 A separate design-and-tools research manuscript about the suite remains in preparation. Publication of the software is not publication of that manuscript.
 
@@ -141,6 +153,7 @@ The project is released under the MIT License.
 - [Citation metadata](CITATION.cff)
 - [Release notes](RELEASE_NOTES.md)
 - [Localization standard](docs/LOCALIZATION.md)
+- [Analytics and privacy](docs/ANALYTICS_AND_PRIVACY.md)
 
 Built by Logan M. Dixon
 
@@ -148,7 +161,3 @@ Built by Logan M. Dixon
 - [ORCID](https://orcid.org/0009-0001-0592-462X)
 - [GitHub repository](https://github.com/lmdixon23/ai-playgrounds)
 - [Releases](https://github.com/lmdixon23/ai-playgrounds/releases)
-
-## Contributing
-
-Start with the [bounded contributor on-ramp](docs/CONTRIBUTOR_ONRAMP.md). Educator feedback, translation review, accessibility observations, deterministic edge cases, and small lesson activities are preferred over unscoped feature requests.

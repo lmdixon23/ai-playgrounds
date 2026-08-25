@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "1.5.0"
+VERSION = "1.5.1"
 TAG = f"v{VERSION}"
 RELEASE_DATE = "2026-08-25"
 R6_BROWSER_FREEZE = "07f89d13269041d9ed66de2362bf84c288bb86de"
@@ -14,6 +14,8 @@ COVERAGE_MATRIX = ROOT / "docs" / "AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md"
 ENGAGEMENT_FAS = ROOT / "docs" / "ENGAGEMENT_EXCELLENCE_FAS.md"
 ENGAGEMENT_AUDIT = ROOT / "docs" / "ENGAGEMENT_FIRST_MOVE_AUDIT.md"
 USABILITY_PROTOCOL = ROOT / "docs" / "ENGAGEMENT_USABILITY_PROTOCOL.md"
+HCI_RECOVERY = ROOT / "docs" / "HCI_STATE_RECOVERY_CONTRACT.md"
+ANALYTICS_SPEC = ROOT / "docs" / "ANALYTICS_AND_PRIVACY.md"
 
 
 def read(relative: str) -> str:
@@ -48,28 +50,33 @@ def main() -> int:
     require(codemeta.get("softwareVersion") == VERSION, "codemeta.json softwareVersion does not match")
     require(codemeta.get("dateModified") == RELEASE_DATE, "codemeta.json dateModified does not match")
     require(codemeta.get("datePublished") == RELEASE_DATE, "codemeta.json datePublished does not match")
-    require(codemeta.get("identifier", "").endswith(f"/releases/tag/{TAG}"), "codemeta.json identifier does not match v1.5.0")
+    require(codemeta.get("identifier", "").endswith(f"/releases/tag/{TAG}"), "codemeta.json identifier does not match v1.5.1")
     require(yaml_scalar(cff, "version", VERSION), "CITATION.cff version does not match")
     require(yaml_scalar(cff, "date-released", RELEASE_DATE), "CITATION.cff date-released does not match")
-    require("10.5281/zenodo.21854217" not in cff, "CITATION.cff must not attach the archived v1.0.1 DOI to v1.5.0")
-    require(f"## {TAG}, {RELEASE_DATE}" in release_notes, "RELEASE_NOTES.md lacks the v1.5.0 release heading")
-    require(re.search(rf"(?m)^## \[{re.escape(VERSION)}\] - {re.escape(RELEASE_DATE)}$|^## {re.escape(VERSION)} - {re.escape(RELEASE_DATE)}$", changelog) is not None, "CHANGELOG.md lacks the v1.5.0 entry")
-    require(f"releases/tag/{TAG}" in readme, "README.md lacks the v1.5.0 current-release link")
+    require("10.5281/zenodo.21854217" not in cff, "CITATION.cff must not attach the archived v1.0.1 DOI to v1.5.1")
+    require(f"## {TAG}, {RELEASE_DATE}" in release_notes, "RELEASE_NOTES.md lacks the v1.5.1 release heading")
+    require(re.search(rf"(?m)^## \[{re.escape(VERSION)}\] - {re.escape(RELEASE_DATE)}$|^## {re.escape(VERSION)} - {re.escape(RELEASE_DATE)}$", changelog) is not None, "CHANGELOG.md lacks the v1.5.1 entry")
+    require(f"releases/tag/{TAG}" in readme, "README.md lacks the v1.5.1 current-release link")
     require("Archived v1.0.1 DOI" in readme and "10.5281/zenodo.21854217" in readme, "README.md must preserve the archived v1.0.1 DOI boundary")
     require(len(legacy_manifest) == 12, "Legacy source manifest must remain bound to the twelve inherited source applets")
     require(len(inherited_manifest) == 13 and inherited_manifest[-1].get("slug") == "transformer-language-model", "tools/applets_v1_2.json must remain the thirteen-app v1.2 inventory")
     slugs = [entry.get("slug") for entry in composed]
-    require(len(composed) == 14 and len(set(slugs)) == 14 and slugs[-1] == "agent-tool-context", "v1.5 composition must preserve fourteen unique applets with Lab 14 appended")
+    require(len(composed) == 14 and len(set(slugs)) == 14 and slugs[-1] == "agent-tool-context", "v1.5.1 composition must preserve fourteen unique applets with Lab 14 appended")
     require(lab14.get("course_order") == 14 and lab14.get("showcase_order") == 14, "Lab 14 release metadata order is incorrect")
     require("playgrounds/agent-tool-context/index.html" in sitemap, "sitemap.xml lacks the Lab 14 route")
     require(R6_BROWSER_FREEZE in public_builder, "Public Lab 14 builder is not bound to the frozen R6 head")
 
-    # Preserve v1.4 as an inherited, reproducible historical composition and add
-    # a separately bounded v1.5 engagement composition rather than mutating it.
-    require((ROOT / "tools" / "build_site_v1_4.py").is_file(), "v1.4 Pages builder is missing")
-    require((ROOT / "tools" / "test_v1_4_public_integration.py").is_file(), "v1.4 public integration gate is missing")
-    require((ROOT / "tools" / "build_site_v1_5.py").is_file(), "v1.5 Pages builder is missing")
-    require((ROOT / "tools" / "test_v1_5_public_integration.py").is_file(), "v1.5 public integration gate is missing")
+    # Historical release compositions remain separately reproducible. v1.5.1
+    # layers HCI/adoption hardening over v1.5 rather than mutating old builders.
+    for relative, label in (
+        ("tools/build_site_v1_4.py", "v1.4 Pages builder"),
+        ("tools/test_v1_4_public_integration.py", "v1.4 public integration gate"),
+        ("tools/build_site_v1_5.py", "v1.5 Pages builder"),
+        ("tools/test_v1_5_public_integration.py", "v1.5 public integration gate"),
+        ("tools/build_site_v1_5_1.py", "v1.5.1 Pages builder"),
+        ("tools/test_v1_5_1_hci_adoption.py", "v1.5.1 HCI/adoption gate"),
+    ):
+        require((ROOT / relative).is_file(), f"{label} is missing")
 
     for path, label in (
         (ROOT / "tools" / "test_transformer_engagement_candidate.py", "Lab 13 engagement gate"),
@@ -84,9 +91,19 @@ def main() -> int:
     require(ENGAGEMENT_FAS.is_file(), "Engagement Full Assurance Stack is missing")
     require(ENGAGEMENT_AUDIT.is_file(), "Engagement applet acceptance audit is missing")
     require(USABILITY_PROTOCOL.is_file(), "Human engagement/usability protocol is missing")
+    require(HCI_RECOVERY.is_file(), "Learner-centered HCI state/recovery contract is missing")
+    require(ANALYTICS_SPEC.is_file(), "Analytics/privacy specification is missing")
     require("ten" in ENGAGEMENT_AUDIT.read_text(encoding="utf-8").lower() and "no change" in ENGAGEMENT_AUDIT.read_text(encoding="utf-8").lower(), "Engagement audit must preserve the explicit no-forced-change decision")
+    require("**Release:** v1.5.1" in ANALYTICS_SPEC.read_text(encoding="utf-8"), "Analytics/privacy specification is not rebound to v1.5.1")
 
-    print(f"Release metadata: PASS ({TAG}, {RELEASE_DATE}, {len(composed)} public applets)")
+    activities = ROOT / "activities"
+    require((activities / "index.html").is_file(), "Activity Pack index source is missing")
+    require((activities / "nn-1.html").is_file(), "NN-1 Activity Pack source is missing")
+    require((activities / "cnn-1.html").is_file(), "CNN-1 Activity Pack source is missing")
+    require("TEACHER_PRIVATE" not in read("activities/nn-1.html") and "Expected answers" not in read("activities/nn-1.html"), "NN-1 public activity must not contain a teacher answer key")
+    require("TEACHER_PRIVATE" not in read("activities/cnn-1.html") and "Expected answers" not in read("activities/cnn-1.html"), "CNN-1 public activity must not contain a teacher answer key")
+
+    print(f"Release metadata: PASS ({TAG}, {RELEASE_DATE}, {len(composed)} public applets + 2 Activity Pack canaries)")
     return 0
 
 

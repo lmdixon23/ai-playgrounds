@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="ai-playgrounds-version" content="1.5.1">
+<title>NN-1 · Make it fail, then make it learn | AI Playgrounds</title>
+<meta name="description" content="Student activity for the AI Playgrounds Tiny Neural Network: predict, run, observe, explain, and transfer.">
+<link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/activities/nn-1.html">
+<style>
+:root{color-scheme:light dark;--bg:#f8fafc;--card:#fff;--ink:#0f172a;--muted:#475569;--line:#cbd5e1;--accent:#2563eb;--soft:#eff6ff;--good:#047857}
+@media(prefers-color-scheme:dark){:root{--bg:#020617;--card:#0f172a;--ink:#e5e7eb;--muted:#cbd5e1;--line:#334155;--accent:#93c5fd;--soft:#172554;--good:#6ee7b7}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}main{max-width:980px;margin:auto;padding:28px 20px 80px}a{color:var(--accent)}.toolbar{position:sticky;top:8px;z-index:20;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-bottom:14px}.button,button{min-height:44px;padding:9px 13px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}.primary{background:var(--accent);color:#fff;border-color:transparent}.hero,.section,.run,.rubric,.privacy{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin:16px 0}.hero{border-top:5px solid var(--accent)}.eyebrow{margin:0;color:var(--accent);font-size:.78rem;font-weight:850;letter-spacing:.09em;text-transform:uppercase}.hero h1{font-size:clamp(2rem,5vw,3.7rem);line-height:1;margin:.18em 0}.lead{font-size:1.08rem}.golden{border-left:5px solid var(--good);background:var(--soft);padding:12px 15px;border-radius:12px}.meta-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0}.meta-grid>div{border:1px solid var(--line);border-radius:12px;padding:10px}.controls{width:100%;border-collapse:collapse}.controls th,.controls td,.rubric th,.rubric td{border:1px solid var(--line);padding:9px;text-align:left;vertical-align:top}.controls th,.rubric th{background:var(--soft)}.run h3{margin-top:0;color:var(--accent)}.setup{background:var(--soft);padding:10px 12px;border-radius:10px}.prompt{margin:15px 0}.prompt label{display:block;font-weight:800;margin-bottom:6px}.prompt small{display:block;color:var(--muted);font-weight:400;margin-top:3px}textarea{width:100%;min-height:92px;resize:vertical;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:10px;font:inherit}.short{min-height:68px}.status{min-height:1.4em;color:var(--good);font-size:.9rem}.privacy{border-left:5px solid var(--accent)}:focus-visible{outline:3px solid var(--accent);outline-offset:3px}@media(max-width:680px){main{padding:18px 12px 58px}.hero,.section,.run,.rubric,.privacy{padding:16px}.meta-grid{grid-template-columns:1fr}.toolbar{position:static;justify-content:stretch}.toolbar>*{flex:1 1 auto;justify-content:center}.controls{display:block;overflow-x:auto}.hero h1{font-size:2.5rem}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}@media print{body{background:white;color:black;font-size:10.5pt}main{max-width:none;padding:0}.toolbar,.status,.privacy .screen-only{display:none!important}.hero,.section,.run,.rubric,.privacy{box-shadow:none;border-radius:0;break-inside:avoid;margin:8mm 0;padding:5mm}.run{break-inside:auto}.prompt{break-inside:avoid}textarea{min-height:28mm;background:white;color:black}.short{min-height:20mm}a{color:black;text-decoration:none}.meta-grid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<main>
+<div class="toolbar" aria-label="Activity controls">
+<a class="button" href="index.html">← Activities</a>
+<a class="button primary" href="../playgrounds/neural-network/index.html?mode=explore&amp;featured=1" target="_blank" rel="noopener">Open applet</a>
+<button id="printBtn" type="button">Print / PDF</button>
+<button id="clearBtn" type="button">Clear responses</button>
+</div>
+<section class="hero">
+<p class="eyebrow">NN-1 · Core Activity · 35–45 minutes</p>
+<h1>Make it fail, then make it learn</h1>
+<p class="lead">Your job is to be a scientist: <strong>predict what will happen, run the experiment, then explain what you saw.</strong> You will deliberately make a neural network fail before you make it succeed.</p>
+<p class="golden"><strong>Golden rule:</strong> a wrong prediction with an honest, well-reasoned explanation is useful evidence. Do not change a prediction after seeing the result.</p>
+<div class="meta-grid"><div><strong>Learning focus</strong><br>Non-linearity, hidden capacity, loss, generalization</div><div><strong>What to submit</strong><br>Your predictions, observations, explanations, and reflection</div><div><strong>Response storage</strong><br>Autosaves locally in this browser only</div></div>
+<p id="saveStatus" class="status" role="status" aria-live="polite">Ready. Responses save locally as you type.</p>
+</section>
+<section class="section">
+<h2>The controls you will use</h2>
+<table class="controls"><thead><tr><th>Control</th><th>Use in this activity</th></tr></thead><tbody>
+<tr><td>Dataset</td><td>Two moons · Concentric circles · XOR · Two blobs</td></tr>
+<tr><td>Activation</td><td>tanh · ReLU · sigmoid · linear</td></tr>
+<tr><td>Hidden 1 / Hidden 2</td><td>0–12 neurons; 0 means no hidden layer</td></tr>
+<tr><td>Learning rate / optimizer</td><td>Keep defaults unless a run says otherwise</td></tr>
+<tr><td>Train / pause · Reset weights</td><td>Run and repeat experiments</td></tr>
+<tr><td>Show test loss/points</td><td>Compare training behavior with held-out data</td></tr>
+</tbody></table>
+</section>
+<section class="section"><h2>Part A · Five experiments</h2><p>For every run: <strong>Predict first → Run it → Explain what happened.</strong></p></section>
+<article class="run">
+<h3>Run 1 · Can a straight line bend?</h3>
+<p>Give the network a curvy problem while switching off its ability to create a nonlinear transformation.</p>
+<p class="setup"><strong>Set up:</strong> Dataset = <strong>Two moons</strong> · Activation = <strong>linear</strong> · Hidden 1 = <strong>6</strong> · Hidden 2 = <strong>4</strong> → Train.</p>
+<div class="prompt"><label for="r1p">Predict: Will this network separate the two moons? Why?</label><textarea id="r1p" data-response></textarea></div>
+<div class="prompt"><label for="r1o">Observe: What happens to the decision boundary and loss?</label><textarea id="r1o" data-response class="short"></textarea></div>
+<div class="prompt"><label for="r1e">Explain: Why can a stack of linear layers still fail to create a curved boundary?</label><textarea id="r1e" data-response></textarea></div>
+</article>
+<article class="run">
+<h3>Run 2 · No hidden layer</h3>
+<p class="setup"><strong>Set up:</strong> Dataset = <strong>Concentric circles</strong> · Activation = <strong>ReLU</strong> · Hidden 1 = <strong>0</strong> · Hidden 2 = <strong>0</strong> → Reset weights → Train.</p>
+<div class="prompt"><label for="r2p">Predict: Can this network separate the inner dots from the outer ring? Why?</label><textarea id="r2p" data-response></textarea></div>
+<div class="prompt"><label for="r2o">Observe: What does the loss do?</label><textarea id="r2o" data-response class="short"></textarea></div>
+<div class="prompt"><label for="r2e">Explain: What limitation is visible in the boundary?</label><textarea id="r2e" data-response></textarea></div>
+</article>
+<article class="run">
+<h3>Run 3 · Add capacity</h3>
+<p class="setup"><strong>Set up:</strong> Keep <strong>Concentric circles</strong> and <strong>ReLU</strong> · Hidden 1 = <strong>6</strong> · Hidden 2 = <strong>4</strong> → Reset weights → Train.</p>
+<div class="prompt"><label for="r3p">Predict: What shape do you expect the boundary to become?</label><textarea id="r3p" data-response></textarea></div>
+<div class="prompt"><label for="r3o">Observe: What changes compared with Run 2?</label><textarea id="r3o" data-response class="short"></textarea></div>
+<div class="prompt"><label for="r3e">Explain: What did the hidden layers make possible?</label><textarea id="r3e" data-response></textarea></div>
+</article>
+<article class="run">
+<h3>Run 4 · Watch it learn</h3>
+<p class="setup"><strong>Set up:</strong> Dataset = <strong>XOR</strong> · Activation = <strong>ReLU</strong> · Hidden 1 = <strong>6</strong> · Hidden 2 = <strong>4</strong> → Reset weights → Train and watch the whole process.</p>
+<div class="prompt"><label for="r4p">Predict: What should happen to loss if training is working?</label><textarea id="r4p" data-response class="short"></textarea></div>
+<div class="prompt"><label for="r4loss">Describe the loss curve over the epochs.</label><textarea id="r4loss" data-response></textarea></div>
+<div class="prompt"><label for="r4boundary">Describe what the decision boundary does as loss changes.</label><textarea id="r4boundary" data-response></textarea></div>
+</article>
+<article class="run">
+<h3>Run 5 · Train versus test</h3>
+<p>Increase capacity, then ask whether the model learned a reusable pattern or mostly fitted the training examples.</p>
+<p class="setup"><strong>Set up:</strong> Dataset = <strong>XOR</strong> · Activation = <strong>ReLU</strong> · Hidden 1 = <strong>10–12</strong> · Hidden 2 = <strong>10–12</strong> · turn on <strong>Show test loss/points</strong> → Reset weights → Train.</p>
+<div class="prompt"><label for="r5p">Predict: Will training and test loss stay close together? Why?</label><textarea id="r5p" data-response></textarea></div>
+<div class="prompt"><label for="r5o">Observe: What happens to the training and test curves?</label><textarea id="r5o" data-response></textarea></div>
+<div class="prompt"><label for="r5e">Explain: What would a persistent train/test gap mean?</label><textarea id="r5e" data-response></textarea></div>
+</article>
+<section class="section">
+<h2>Part B · Use the explanation on the applet page</h2>
+<div class="prompt"><label for="b1">1. Why does a chain of linear transformations collapse to another linear transformation?</label><textarea id="b1" data-response></textarea></div>
+<div class="prompt"><label for="b2">2. In your own words, what happens during one training epoch?</label><textarea id="b2" data-response></textarea></div>
+<div class="prompt"><label for="b3">3. Find one common failure mode you did not deliberately test above. What setting causes it?</label><textarea id="b3" data-response></textarea></div>
+</section>
+<section class="section">
+<h2>Part C · Reflection and transfer</h2>
+<div class="prompt"><label for="c1">1. Traceability: Pick one prediction that was wrong. What did you predict, what happened, and what did it teach you?</label><textarea id="c1" data-response></textarea></div>
+<div class="prompt"><label for="c2">2. Counterfactual: What is the most important thing a hidden layer with a nonlinear activation lets the model do that a single linear neuron cannot? Use evidence from a run.</label><textarea id="c2" data-response></textarea></div>
+<div class="prompt"><label for="c3">3. Connect forward: Based on what you observed here, predict one way a neural network might learn useful structure from an image.</label><textarea id="c3" data-response></textarea></div>
+</section>
+<section class="rubric">
+<h2>How this is assessed</h2>
+<table><thead><tr><th>Criterion</th><th>What strong work shows</th></tr></thead><tbody>
+<tr><td>Predictions made first</td><td>A prediction exists before each run, even when it turns out wrong.</td></tr>
+<tr><td>Observations</td><td>Specific description of what the boundary and loss actually did.</td></tr>
+<tr><td>Explanations</td><td>Connections to non-linearity, hidden layers, training, and generalization.</td></tr>
+<tr><td>Reflection</td><td>Reasoning from evidence rather than restating a definition.</td></tr>
+</tbody></table>
+</section>
+<section class="privacy"><h2>Local response storage</h2><p>Your typed responses are saved only in this browser using local storage so an accidental refresh does not erase your work. Nothing on this activity page submits answers to AI Playgrounds. <span class="screen-only">Use <strong>Clear responses</strong> to remove the saved copy from this browser.</span></p></section>
+<footer><p>AI Playgrounds · Activity NN-1 · v1.5.1</p></footer>
+</main>
+<script>
+(()=>{'use strict';
+const KEY='ai-playgrounds-activity-nn-1-v1';
+const fields=[...document.querySelectorAll('[data-response]')];
+const status=document.getElementById('saveStatus');
+function setStatus(text){status.textContent=text;clearTimeout(setStatus.t);setStatus.t=setTimeout(()=>{status.textContent='Responses saved locally in this browser.'},1800)}
+function snapshot(){return Object.fromEntries(fields.map(f=>[f.id,f.value]))}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(snapshot()));setStatus('Saved locally.')}catch(_){status.textContent='Local save is unavailable in this browser.'}}
+function load(){try{const raw=localStorage.getItem(KEY);if(!raw)return;const data=JSON.parse(raw);fields.forEach(f=>{if(Object.prototype.hasOwnProperty.call(data,f.id))f.value=String(data[f.id]??'')});status.textContent='Restored responses saved in this browser.'}catch(_){status.textContent='Could not restore the locally saved response.'}}
+fields.forEach(f=>f.addEventListener('input',save));
+document.getElementById('printBtn').addEventListener('click',()=>window.print());
+document.getElementById('clearBtn').addEventListener('click',()=>{if(!confirm('Clear all NN-1 responses saved in this browser?'))return;fields.forEach(f=>f.value='');try{localStorage.removeItem(KEY)}catch(_){}setStatus('Responses cleared.');fields[0]?.focus()});
+load();
+})();
+</script>
+</body>
+</html>
