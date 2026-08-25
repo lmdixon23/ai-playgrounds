@@ -16,9 +16,9 @@ These Level-1 activities take about 10-15 minutes and reuse each applet's existi
 | Stable ID | Applet | Focus |
 |---|---|---|
 | `QA-SEARCH-01` | [Pathfinding](playgrounds/search-pathfinding/index.html?mode=classroom#quick-assign-qa-search-01) | A* vs BFS: distinguish path quality from search work |
-| `QA-LOCAL-01` | [Hill Climbing / Simulated Annealing](playgrounds/hill-climbing/index.html?mode=classroom#quick-assign-qa-local-01) | Explain local optima and an escape mechanism |
+| `QA-LOCAL-01` | [Hill Climbing / Simulated Annealing](playgrounds/hill-climbing/index.html?mode=classroom#quick-assign-qa-local-01) | Explain how local-search acceptance shapes the cost trajectory and when escape mechanisms can help |
 | `QA-WUMPUS-01` | [Wumpus World](playgrounds/wumpus-world/index.html?mode=classroom#quick-assign-qa-wumpus-01) | Distinguish safe, hazardous, and unresolved states from percept evidence |
-| `QA-SAT-01` | [CNF/SAT](playgrounds/cnf-sat/index.html?mode=classroom#quick-assign-qa-sat-01) | Connect CNF to DPLL propagation, conflict, branching, and pruning |
+| `QA-SAT-01` | [CNF/SAT](playgrounds/cnf-sat/index.html?mode=classroom#quick-assign-qa-sat-01) | Distinguish SAT/UNSAT/entailment and explain concrete CNF/DPLL or resolution evidence |
 
 The remaining eleven Level-1 IDs are reserved in `tools/quick_assigns_v1.json` but are not advertised until their individual activity contracts pass.
 
