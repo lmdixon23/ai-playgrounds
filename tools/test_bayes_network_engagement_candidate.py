@@ -23,6 +23,14 @@ def launch(playwright):
     return playwright.chromium.launch(headless=True, args=args)
 
 
+def machine_snapshot(page):
+    """Exclude presentation-only timing metadata from the posterior state invariant."""
+    return page.evaluate("""() => {
+      const s=window.__bayesPosteriorDeltaExperience.getCurrent();
+      return {preset:s.preset,vars:s.vars,labels:s.labels,evidence:s.evidence,method:s.method,post:s.post};
+    }""")
+
+
 def main() -> int:
     build = subprocess.run(
         [sys.executable, str(ROOT / "tools" / "build_bayes_network_engagement_candidate.py"), "--output", str(OUTPUT)],
@@ -58,23 +66,26 @@ def main() -> int:
             page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
             page.goto(OUTPUT.resolve().as_uri() + "?lang=en", wait_until="load", timeout=10_000)
             page.wait_for_function("() => !!window.__bayesPosteriorDeltaExperience")
+            # v1.4 learning-mode and guided-challenge startup intentionally uses
+            # deferred restoration. Do not mutate evidence before that settles.
+            page.wait_for_timeout(500)
 
             initial = page.evaluate("() => window.__bayesPosteriorDeltaExperience.getCurrent()")
-            checks.append(("initial exact snapshot is available without a fabricated baseline", initial["method"] == "exact" and page.evaluate("() => window.__bayesPosteriorDeltaExperience.getPrevious()") is None and page.locator(".bayes-eq-prev-marker").count() == 0, {"method": initial["method"]}))
+            checks.append(("initial exact snapshot is available without a fabricated baseline", initial["method"] == "exact" and page.evaluate("() => window.__bayesPosteriorDeltaExperience.getPrevious()") is None and page.locator(".bayes-eq-prev-marker").count() == 0, {"method": initial["method"], "burglary": initial["post"]["B"]}))
 
             page.click("#s3")
-            page.wait_for_timeout(40)
+            page.wait_for_timeout(60)
             both = page.evaluate("() => window.__bayesPosteriorDeltaExperience.getCurrent()")
             prior = page.evaluate("() => window.__bayesPosteriorDeltaExperience.getPrevious()")
-            checks.append(("exact evidence change leaves the previous posterior as a ghost baseline", prior is not None and both["post"]["B"] > prior["post"]["B"] and page.locator(".bayes-eq-prev-marker").count() == len(both["vars"]), {"priorB": prior["post"]["B"] if prior else None, "bothB": both["post"]["B"], "markers": page.locator(".bayes-eq-prev-marker").count()}))
+            checks.append(("exact evidence change leaves the previous posterior as a ghost baseline", prior is not None and both["post"]["B"] > prior["post"]["B"] and page.locator(".bayes-eq-prev-marker").count() == len(both["vars"]), {"priorB": prior["post"]["B"] if prior else None, "bothB": both["post"]["B"], "markers": page.locator(".bayes-eq-prev-marker").count(), "evidence": both["evidence"]}))
 
             page.click("#s5")
-            page.wait_for_timeout(40)
+            page.wait_for_timeout(60)
             with_eq = page.evaluate("() => window.__bayesPosteriorDeltaExperience.getCurrent()")
             before_eq = page.evaluate("() => window.__bayesPosteriorDeltaExperience.getPrevious()")
             b_index = with_eq["vars"].index("B")
             b_delta_text = page.locator("#postRow .infer-cell").nth(b_index).locator(".bayes-eq-delta").inner_text()
-            checks.append(("explaining away becomes an exact visible downward before-after delta", before_eq is not None and with_eq["post"]["B"] < before_eq["post"]["B"] and "↓" in b_delta_text and page.locator("#postRow .infer-cell.bayes-eq-largest").count() == 1, {"beforeB": before_eq["post"]["B"] if before_eq else None, "afterB": with_eq["post"]["B"], "delta": b_delta_text}))
+            checks.append(("explaining away becomes an exact visible downward before-after delta", before_eq is not None and with_eq["post"]["B"] < before_eq["post"]["B"] and "↓" in b_delta_text and page.locator("#postRow .infer-cell.bayes-eq-largest").count() == 1, {"beforeB": before_eq["post"]["B"] if before_eq else None, "afterB": with_eq["post"]["B"], "delta": b_delta_text, "evidence": with_eq["evidence"]}))
 
             state_before_sampling = page.evaluate("() => window.__bayesPosteriorDeltaExperience.getCurrent()")
             page.click("[data-m='gibbs']")
@@ -83,12 +94,14 @@ def main() -> int:
             checks.append(("sampling mode suppresses exact causal delta instead of conflating Monte Carlo noise", sampling["method"] == "gibbs" and page.evaluate("() => window.__bayesPosteriorDeltaExperience.getPrevious()") is None and page.locator(".bayes-eq-prev-marker").count() == 0 and "Monte Carlo noise" in page.locator("#bayes-eq-help").inner_text(), {"beforeMethod": state_before_sampling["method"], "afterMethod": sampling["method"], "help": page.locator("#bayes-eq-help").inner_text()}))
 
             page.click("[data-m='exact']")
-            page.wait_for_timeout(40)
-            exact_before_locale = page.evaluate("() => window.__bayesPosteriorDeltaExperience.getCurrent()")
+            page.wait_for_timeout(60)
+            exact_before_locale = machine_snapshot(page)
             page.select_option(".r4-language-select", "es")
-            page.wait_for_timeout(100)
-            exact_after_locale = page.evaluate("() => window.__bayesPosteriorDeltaExperience.getCurrent()")
-            checks.append(("locale switch preserves posterior state and localizes comparison layer", exact_before_locale == exact_after_locale and "Mantén visible" in page.locator("#bayes-eq-title").inner_text(), {"lang": page.locator("html").get_attribute("lang")}))
+            page.wait_for_timeout(180)
+            exact_after_locale = machine_snapshot(page)
+            locale_title = page.locator("#bayes-eq-title").inner_text()
+            checks.append(("locale switch preserves Bayesian machine state", exact_before_locale == exact_after_locale, {"before": exact_before_locale, "after": exact_after_locale, "lang": page.locator("html").get_attribute("lang")}))
+            checks.append(("posterior comparison surface localizes independently", "mantén visible" in locale_title.lower(), {"lang": page.locator("html").get_attribute("lang"), "title": locale_title, "locale": page.evaluate("() => window.__r4Localization.locale()"), "noTranslate": page.locator("#bayes-eq-strip").get_attribute("data-r4-no-translate")}))
             context.close()
 
             reduced = browser.new_context(viewport={"width": 900, "height": 900}, reduced_motion="reduce")
@@ -97,8 +110,9 @@ def main() -> int:
             rpage.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
             rpage.goto(OUTPUT.resolve().as_uri(), wait_until="load", timeout=10_000)
             rpage.wait_for_function("() => !!window.__bayesPosteriorDeltaExperience")
+            rpage.wait_for_timeout(500)
             rpage.click("#s3")
-            rpage.wait_for_timeout(30)
+            rpage.wait_for_timeout(50)
             checks.append(("reduced-motion path retains exact numeric before-after comparison", rpage.locator(".bayes-eq-delta").count() > 0 and rpage.locator(".bayes-eq-prev-marker").count() > 0, {}))
             reduced.close()
 
@@ -108,8 +122,9 @@ def main() -> int:
             mpage.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
             mpage.goto(OUTPUT.resolve().as_uri() + "?lang=vi", wait_until="load", timeout=10_000)
             mpage.wait_for_function("() => !!window.__bayesPosteriorDeltaExperience")
+            mpage.wait_for_timeout(500)
             mpage.click("#s3")
-            mpage.wait_for_timeout(30)
+            mpage.wait_for_timeout(50)
             overflow = mpage.evaluate("() => document.documentElement.scrollWidth-window.innerWidth")
             checks.append(("posterior delta layer fits 390px mobile", overflow <= 1 and mpage.locator("#bayes-eq-strip").is_visible(), {"overflow": overflow}))
             mobile.close()
