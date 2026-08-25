@@ -14,6 +14,7 @@ FILES = {
     locale: ROOT / "tools" / f"minimax_alpha_beta_locale_{locale}.json"
     for locale in ("en", "zh", "vi", "es")
 }
+FRAGMENTS = ROOT / "tools" / "minimax_alpha_beta_locale_fragments.json"
 PLACEHOLDER_RE = re.compile(r"\{([A-Za-z0-9_]+)\}")
 CJK_RE = re.compile(r"[\u3400-\u9fff]")
 VIET_RE = re.compile(r"[ăâđêôơưĂÂĐÊÔƠƯàáảãạằắẳẵặầấẩẫậèéẻẽẹềếểễệìíỉĩịòóỏõọồốổỗộờớởỡợùúủũụừứửữựỳýỷỹỵ]", re.I)
@@ -38,8 +39,30 @@ def load(locale: str) -> dict[str, str]:
     return {str(key): str(value) for key, value in strings.items()}
 
 
+def load_fragments() -> dict[str, dict[str, str]]:
+    data = json.loads(FRAGMENTS.read_text(encoding="utf-8"))
+    if data.get("schema") != "ai-playgrounds-lab15-locale-fragments-v1":
+        raise RuntimeError("unexpected Lab 15 fragment schema")
+    if data.get("source_freeze_head") != FREEZE:
+        raise RuntimeError("Lab 15 fragments are not bound to the R4 freeze")
+    locales = data.get("locales")
+    if not isinstance(locales, dict) or set(locales) != set(FILES):
+        raise RuntimeError("Lab 15 fragment locale set mismatch")
+    return {
+        locale: {str(key): str(value) for key, value in strings.items()}
+        for locale, strings in locales.items()
+    }
+
+
 def main() -> int:
     catalogs = {locale: load(locale) for locale in FILES}
+    fragments = load_fragments()
+    for locale in catalogs:
+        overlap = set(catalogs[locale]) & set(fragments[locale])
+        if overlap:
+            raise RuntimeError(f"duplicate base/fragment keys for {locale}: {sorted(overlap)}")
+        catalogs[locale].update(fragments[locale])
+
     en = catalogs["en"]
     failures: list[str] = []
     checks = 0
@@ -50,7 +73,7 @@ def main() -> int:
         if not ok:
             failures.append(message)
 
-    check(len(en) >= 115, f"English presentation catalog unexpectedly small: {len(en)}")
+    check(len(en) >= 120, f"English presentation catalog unexpectedly small: {len(en)}")
     for locale, catalog in catalogs.items():
         check(
             set(catalog) == set(en),
@@ -71,13 +94,10 @@ def main() -> int:
     cjk_chars = len(CJK_RE.findall(zh_text))
     vi_diacritics = len(VIET_RE.findall(vi_text))
     es_diacritics = len(SPANISH_RE.findall(es_text))
-    check(cjk_chars >= 900, f"unexpectedly little Simplified-Chinese content: {cjk_chars}")
-    check(vi_diacritics >= 650, f"unexpectedly little Vietnamese content: {vi_diacritics}")
-    check(es_diacritics >= 75, f"unexpectedly little Spanish content: {es_diacritics}")
+    check(cjk_chars >= 950, f"unexpectedly little Simplified-Chinese content: {cjk_chars}")
+    check(vi_diacritics >= 700, f"unexpectedly little Vietnamese content: {vi_diacritics}")
+    check(es_diacritics >= 80, f"unexpectedly little Spanish content: {es_diacritics}")
 
-    # Algorithm names, bound variables, player roles, and concrete node ids are
-    # machine/model identifiers. If the English string carries one, its target
-    # string must carry the same literal token.
     protected = ("MAX", "MIN", "Minimax", "Alpha-Beta", "alpha", "beta", "B1", "B2")
     for token in protected:
         for key, english in en.items():
@@ -89,9 +109,6 @@ def main() -> int:
                     f"protected token {token!r} changed or disappeared at {locale}:{key}",
                 )
 
-    # Machine-state text keys stay stable across locales. Presentation values
-    # inside placeholders may localize at runtime, but the underlying state key
-    # vocabulary is never translated or rewritten.
     for key in sorted(k for k in en if k.startswith("text.")):
         for locale in ("zh", "vi", "es"):
             check(
@@ -109,8 +126,6 @@ def main() -> int:
         for term in terms:
             check(term.lower() in body, f"required technical term missing for {locale}: {term}")
 
-    # Precision traps: these concepts are easy to weaken in translation and are
-    # central to the Lab 15 evidence boundary.
     precision = {
         "zh": {
             "hero.boundary": ("算法未求值",),
@@ -118,6 +133,7 @@ def main() -> int:
             "panel.order": ("不能改变", "精确 Minimax 值"),
             "state.not_claimed": ("不声称完整最优集合",),
             "challenge.prune.actual": ("B2", "算法不会对它求值"),
+            "panel.cutoff.tail": ("不会被算法求值",),
         },
         "vi": {
             "hero.boundary": ("thuật toán không đánh giá",),
@@ -125,6 +141,7 @@ def main() -> int:
             "panel.order": ("không thể thay đổi", "giá trị Minimax chính xác"),
             "state.not_claimed": ("không khẳng định tập tối ưu đầy đủ",),
             "challenge.prune.actual": ("B2", "thuật toán không đánh giá nó"),
+            "panel.cutoff.tail": ("không được thuật toán đánh giá",),
         },
         "es": {
             "hero.boundary": ("no evaluados por el algoritmo",),
@@ -132,6 +149,7 @@ def main() -> int:
             "panel.order": ("No puede cambiar", "valor Minimax exacto"),
             "state.not_claimed": ("no afirma el conjunto óptimo completo",),
             "challenge.prune.actual": ("B2", "algoritmo no lo evalúa"),
+            "panel.cutoff.tail": ("no son evaluados por el algoritmo",),
         },
     }
     for locale, per_key in precision.items():
