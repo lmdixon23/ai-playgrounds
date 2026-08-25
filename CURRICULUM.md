@@ -11,14 +11,14 @@ The learner applets support English, Simplified Chinese, Vietnamese, and Spanish
 
 ## Beginning-of-course Quick Assigns
 
-These Level-1 activities take about 10–15 minutes and reuse each applet's existing Guided Challenge and local response packet.
+These Level-1 activities take about 10-15 minutes and reuse each applet's existing Guided Challenge and local response packet.
 
 | Stable ID | Applet | Focus |
 |---|---|---|
-| `QA-SEARCH-01` | [Pathfinding](playgrounds/search-pathfinding/index.html#quick-assign-qa-search-01) | A* vs BFS: distinguish path quality from search work |
-| `QA-LOCAL-01` | [Hill Climbing / Simulated Annealing](playgrounds/hill-climbing/index.html#quick-assign-qa-local-01) | Explain local optima and an escape mechanism |
-| `QA-WUMPUS-01` | [Wumpus World](playgrounds/wumpus-world/index.html#quick-assign-qa-wumpus-01) | Distinguish safe, hazardous, and unresolved states from percept evidence |
-| `QA-SAT-01` | [CNF/SAT](playgrounds/cnf-sat/index.html#quick-assign-qa-sat-01) | Connect CNF to DPLL propagation, conflict, branching, and pruning |
+| `QA-SEARCH-01` | [Pathfinding](playgrounds/search-pathfinding/index.html?mode=classroom#quick-assign-qa-search-01) | A* vs BFS: distinguish path quality from search work |
+| `QA-LOCAL-01` | [Hill Climbing / Simulated Annealing](playgrounds/hill-climbing/index.html?mode=classroom#quick-assign-qa-local-01) | Explain local optima and an escape mechanism |
+| `QA-WUMPUS-01` | [Wumpus World](playgrounds/wumpus-world/index.html?mode=classroom#quick-assign-qa-wumpus-01) | Distinguish safe, hazardous, and unresolved states from percept evidence |
+| `QA-SAT-01` | [CNF/SAT](playgrounds/cnf-sat/index.html?mode=classroom#quick-assign-qa-sat-01) | Connect CNF to DPLL propagation, conflict, branching, and pruning |
 
 The remaining eleven Level-1 IDs are reserved in `tools/quick_assigns_v1.json` but are not advertised until their individual activity contracts pass.
 
@@ -58,11 +58,11 @@ These are optional modern/boundary extensions rather than prerequisites for the 
 
 ## Assignment levels
 
-- **Level 1 — Quick Assign:** 10–15 minutes, inside the applet, one controlled mechanism task.
-- **Level 2 — Activity Pack:** roughly 30–50 minutes, separate student activity page; current canaries are `NN-1` and `CNN-1`.
-- **Level 3 — Lesson / Unit Pack:** reserved for future longer teacher packages; none is implied to exist yet.
+- **Level 1 - Quick Assign:** 10-15 minutes, inside the applet, one controlled mechanism task.
+- **Level 2 - Activity Pack:** roughly 30-50 minutes, separate student activity page; current canaries are `NN-1` and `CNN-1`.
+- **Level 3 - Lesson / Unit Pack:** reserved for future longer teacher packages; none is implied to exist yet.
 
-All levels use the same inquiry spine where appropriate: **predict → run → observe → explain → transfer**.
+All levels use the same inquiry spine where appropriate: **predict -> run -> observe -> explain -> transfer**.
 
 ## Why the orders differ
 
