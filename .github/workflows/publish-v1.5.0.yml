@@ -82,9 +82,10 @@ jobs:
         if: steps.intent.outputs.publish == 'true'
         run: |
           set -euo pipefail
+          # Exact-sha Verify has already run the browser integration gate. Keep
+          # publication rechecks dependency-free and deterministic here.
           python tools/check_release_metadata.py
           python tools/build_site_v1_5.py
-          python tools/test_v1_5_public_integration.py
 
       - name: Fail closed if v1.5 tag or release appeared concurrently
         if: steps.intent.outputs.publish == 'true'
