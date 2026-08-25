@@ -1,6 +1,6 @@
 # AI Playgrounds
 
-> **Start in five minutes:** open the live site, choose one applet, make a prediction, change one variable, and explain the trace. The suite contains 14 multilingual, offline-ready applets with deterministic algorithm and browser verification. [Live suite](https://lmdixon23.github.io/ai-playgrounds/) · [Teacher Pack](teacher-pack.html) · [Activity Packs](activities/) · [Analytics and privacy](docs/ANALYTICS_AND_PRIVACY.md)
+> **Start in five minutes:** open the live site, choose one applet, make a prediction, change one variable, and explain the trace. The suite contains 15 multilingual, offline-ready applets with deterministic algorithm and browser verification. [Live suite](https://lmdixon23.github.io/ai-playgrounds/) · [Teacher Pack](teacher-pack.html) · [Activity Packs](activities/) · [Analytics and privacy](docs/ANALYTICS_AND_PRIVACY.md)
 
 **Evidence boundary:** release checks establish bounded software behaviour and deployment integrity; they do not establish learning gains, classroom adoption, universal learner preference, or accessibility conformance.
 
@@ -9,11 +9,11 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Archived v1.0.1 DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21854217.svg)](https://doi.org/10.5281/zenodo.21854217)
 
-Fourteen multilingual, offline-ready interactive AI labs spanning foundational mechanisms and modern extensions. The suite covers search, logic, probability, machine learning, neural networks, computer vision, reinforcement learning, Transformer language modeling, and agent tool use/runtime protocols.
+Fifteen multilingual, offline-ready interactive AI labs spanning thirteen Foundations/course-track mechanisms and two Modern AI extensions. The suite covers uninformed and informed search, local search, adversarial search, logic, probability, machine learning, neural networks, computer vision, reinforcement learning, Transformer language modeling, and agent tool use/runtime protocols.
 
 **Live site:** https://lmdixon23.github.io/ai-playgrounds/
 
-**Current release:** [v1.5.1](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.5.1)
+**Current release:** [v1.6.0](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.6.0)
 
 **Archived v1.0.1 DOI:** [10.5281/zenodo.21854217](https://doi.org/10.5281/zenodo.21854217) · **All-versions DOI:** [10.5281/zenodo.21854216](https://doi.org/10.5281/zenodo.21854216)
 
@@ -25,7 +25,7 @@ Fourteen multilingual, offline-ready interactive AI labs spanning foundational m
 
 ## Why this project exists
 
-Foundational AI concepts are dynamic. A search frontier expands, evidence changes a posterior probability, a model begins to overfit, value propagates through repeated experience, causal self-attention changes a next-token distribution, or a tool observation changes the next justified agent action.
+Foundational AI concepts are dynamic. A search frontier expands, evidence changes a posterior probability, a model begins to overfit, a game-tree value backs up through an opponent's move, value propagates through reinforcement learning, causal self-attention changes a next-token distribution, or a tool observation changes the next justified agent action.
 
 AI Playgrounds turns those mechanisms into direct experiments that learners can manipulate before implementing them in code.
 
@@ -42,90 +42,82 @@ Each applet includes:
 
 ## Course structure
 
-The public catalogue has **12 Foundations/course-track labs** plus **2 Modern AI extensions**.
+The public catalogue has **13 Foundations/course-track labs** plus **2 Modern AI extensions**.
 
-The Foundations track covers pathfinding, local search, Wumpus World, CNF/SAT, Bayes Rule, Bayesian Networks, KNN, overfitting, a tiny neural network, K-Means, convolution, and Q-Learning. The modern extensions are Transformer Language Modeling and Agent Tool Use and Context Protocols.
+The Foundations track covers pathfinding, local search, Wumpus World, CNF/SAT, Bayes Rule, Bayesian Networks, KNN, overfitting, a tiny neural network, K-Means, convolution, Q-Learning, and Game Trees with Minimax/Alpha-Beta. The modern extensions are Transformer Language Modeling and Agent Tool Use and Context Protocols.
 
-The planning matrix in [docs/AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md](docs/AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md) compares current coverage against AIMA and the Spring 2026 CS50/CSCI E-80 AI curriculum so future labs can balance classical gaps with contemporary extensions.
+The planning matrix in [docs/AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md](docs/AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md) compares coverage against AIMA and the Spring 2026 CS50/CSCI E-80 AI curriculum.
 
-## Lab 13: Transformer Language Modeling
+## Lab 15: Game Trees, Minimax, and Alpha-Beta Pruning
 
-v1.2.0 added a deterministic decoder-like teaching model connecting token IDs, token/position vectors, Q/K/V projections, causal masking, self-attention, logits, temperature, and next-token probabilities. Its browser arithmetic is cross-checked against an independent Python reference.
+v1.6.0 adds a deterministic adversarial-search playground for finite, two-player, zero-sum, perfect-information game trees. Learners back terminal utilities through alternating MAX and MIN nodes, then compare full minimax with Alpha-Beta on the same tree and child order.
 
-The applet explicitly distinguishes attention weights from a general explanation of model reasoning, separates argmax probability from sampling, and treats its tokenizer/weights as small teaching fixtures rather than a reproduction of a frontier LLM.
+The core relation is:
 
-v1.4.0 added a progressive Tokenize -> Represent -> Attend -> Predict journey. v1.5.0 added state-derived continuity, deterministic `Append argmax token`, and a saved baseline/current comparison while preserving frozen arithmetic.
+`terminal utilities -> recursive MIN/MAX backups -> root value and move`
 
-## Lab 14: Agent Tool Use and Context Protocols
+The Alpha-Beta experiment keeps the exact minimax result while exposing safe cutoffs. Pruned nodes remain visible and are explicitly marked **not evaluated**, so pruning is not misrepresented as deleting part of the game or as an approximation. A move-order comparison demonstrates:
 
-v1.3.0 added a deterministic agent-runtime lab separating model output, structured tool calls, schema validation, authorization, execution, observations, provenance-aware context updates, and stopping. Eight scenarios cover observation-driven replanning, overlapping schemas, invalid arguments, text versus execution, permission denial, instruction-like tool content, MCP 2026-07-28 serialization, and termination.
+`same tree + different child order -> different search work -> same exact minimax result`
 
-v1.4.0 made the runtime story explicitly visible as Propose -> Validate -> Authorize -> Execute -> Observe -> Update / choose next -> Stop. v1.5.0 added a state-derived action packet, explicit context delta, and learner-selected one-step sandbox. The sandbox uses a fresh in-memory simulated world and cannot perform a real external action.
+The lab includes editable terminal utilities, deterministic trace playback, saved-run comparison, five prediction-before-reveal Guided Challenges, EN/ZH/VI/ES state-preserving localization, reduced-motion support, text-equivalent state, mobile/split-screen containment, and 200% text-enlargement regression coverage.
 
-## v1.5.0 engagement-excellence pass
+Verification includes 26 independent Python reference tests, a 648-case bounded exhaustive census, independent Python/JavaScript parity, prototype and English-candidate browser QA, 1,235 semantic-localization checks, a 39-check four-locale browser/state gate, and the composed v1.6 public/HCI gate. The engagement/HCI decision is recorded in [docs/LAB15_ENGAGEMENT_HCI_AUDIT.md](docs/LAB15_ENGAGEMENT_HCI_AUDIT.md).
 
-v1.5.0 kept the suite at fourteen applets and applied an evidence-led engagement/immediate-impact pass rather than adding Lab 15. Four applets had a credible missing mechanism relation and received targeted additions:
+## Labs 13 and 14
 
-- **Transformer Language Modeling:** continuous state journey, deterministic continuation, and baseline/current comparison.
-- **Agent Tool Use and Context Protocols:** visible runtime packet, context delta, and isolated simulated-world sandbox.
-- **CNF and SAT Builder:** a DPLL branch/prune tree derived from the existing solver trace.
-- **Bayesian Network:** exact before/after posterior markers and percentage-point deltas.
+**Transformer Language Modeling** connects token/position representation, causal self-attention, logits, temperature, and next-token probabilities in a deterministic toy decoder-like model. It explicitly separates attention from a general explanation of reasoning and distinguishes argmax from sampling.
 
-The remaining ten applets were deliberately left unchanged at the behavior layer because the audit found no credible mechanism-level deficit justifying additional UI or animation. The acceptance record is in [docs/ENGAGEMENT_FIRST_MOVE_AUDIT.md](docs/ENGAGEMENT_FIRST_MOVE_AUDIT.md), the assurance model is in [docs/ENGAGEMENT_EXCELLENCE_FAS.md](docs/ENGAGEMENT_EXCELLENCE_FAS.md), and the human-evidence layer is defined in [docs/ENGAGEMENT_USABILITY_PROTOCOL.md](docs/ENGAGEMENT_USABILITY_PROTOCOL.md).
+**Agent Tool Use and Context Protocols** separates model text, structured tool calls, validation, authorization, execution, observations, provenance-aware context updates, and stopping in a deterministic simulated tool world. Text is not execution, schema validity is not authorization, and no real external action occurs.
 
-## v1.5.1 HCI and adoption hardening
+## Product hardening inherited from v1.5 and v1.5.1
 
-v1.5.1 changes **no applet algorithm**. It adds the highest-value improvements identified by a second learner-centered Educational-HCI assurance pass:
+v1.5 applied mechanism-first engagement improvements only where the Full Assurance Stack found a real missing relation: Transformer continuity, Agent runtime gates/context delta, a DPLL branch/prune tree, and exact Bayesian before/after posterior comparison. Ten already-strong applets were deliberately left behaviorally unchanged.
 
-- KNN Guided Challenge near-miss recovery so an imprecise mobile tap near a training point does not unexpectedly relocate the query and erase prediction progress;
-- two-row Bayesian inference-method controls on narrow mobile layouts, including longer localized labels;
-- Tiny Neural Network history-transport reflow for short mobile-landscape layouts;
-- a PWP-inspired [learner-centered state/recovery contract](docs/HCI_STATE_RECOVERY_CONTRACT.md) covering initial state, learner action, expected state, recovery, focus, accessibility/state consistency, and failure paths;
-- targeted 844×390 landscape, 390px touch, 200% text-enlargement, localized-component, autosave/recovery, and analytics browser checks;
-- complete GoatCounter instrumentation across the built public HTML surface, including Labs 13/14 and Activity Packs;
-- canonical page paths and titles, true GoatCounter events (`e=1`), and allow-listed campaign attribution while preserving the no-general-referrer and no-learner-content privacy boundary;
-- two ready-to-assign **student Activity Pack canaries**, NN-1 and CNN-1.
+v1.5.1 added learner-centered HCI/adoption hardening without changing applet algorithms: KNN touch recovery, Bayesian narrow-mobile method layout, Tiny Neural Network landscape reflow, a PWP-inspired state/recovery QA contract, corrected privacy-minimized GoatCounter semantics, and two ready-to-assign student Activity Pack canaries.
 
 ## Activity Packs
 
-The first Activity Packs are adapted from classroom worksheets and use a consistent inquiry structure:
+The first Activity Packs use a consistent inquiry structure:
 
 **predict -> run -> observe -> explain -> transfer**
 
 - [NN-1 · Make it fail, then make it learn](activities/nn-1.html): non-linearity, hidden-layer capacity, training dynamics, and train/test generalization.
 - [CNN-1 · Be the filter](activities/cnn-1.html): hand-calculated convolution, directional edges, learned filters, and pooling.
 
-Responses autosave **locally in the learner's browser** and can be printed or saved as PDF. AI Playgrounds has no assignment-submission backend. Teacher answer keys are intentionally not published on the student site.
+Responses autosave locally in the learner's browser and can be printed or saved as PDF. AI Playgrounds has no assignment-submission backend. Teacher answer keys are intentionally not published on the student site.
 
 ## Explore
 
-Build the deterministic v1.5.1 Pages artifact with:
+Build the deterministic v1.6 Pages artifact with:
 
 ```bash
-python tools/build_site_v1_5_1.py
+python tools/build_site_v1_6_public.py
 ```
 
-The deployed applets require no server, account, package manager, or backend. Labs 13 and 14 are generated into the public artifact from frozen source/localization inputs and remain self-contained. v1.5.1 composes its HCI/adoption layer over the immutable historical v1.5 builder rather than rewriting the previous release composition.
+The deployed applets require no server, account, package manager, or backend. Labs 13, 14, and 15 are generated deterministically into the public artifact and remain self-contained offline HTML files after generation.
 
 ## Verification
 
-The repository uses complementary verification layers. The release workflow includes the inherited pedagogical, localization, algorithm, Transformer, agent, engagement, public-integration, and broad browser gates plus the v1.5.1 HCI/adoption gate:
+The release workflow includes the complete inherited suite plus permanent Lab 15 gates:
 
 ```bash
 python tools/release_check.py
 python tools/check_release_metadata.py
 python tools/run_algorithm_tests.py
-python tools/test_transformer_engagement_candidate.py
-python tools/test_agent_tool_context_engagement_candidate.py
-python tools/test_cnf_sat_engagement_candidate.py
-python tools/test_bayes_network_engagement_candidate.py
-python tools/test_v1_5_public_integration.py
+python tools/test_minimax_alpha_beta.py
+python tools/test_minimax_alpha_beta_cross_runtime.py
+python tools/test_minimax_alpha_beta_prototype.py
+python tools/test_minimax_alpha_beta_english_applet.py
+python tools/test_minimax_alpha_beta_localization.py
+python tools/test_minimax_alpha_beta_multilingual_applet.py
+python tools/test_v1_6_public_integration.py
 python tools/test_v1_5_1_hci_adoption.py
 python tools/test_v1_5_1_hci_extended.py
 python tools/browser_qa.py --no-screenshots
 ```
 
-The v1.5.1 gates verify the 14-applet composition plus two Activity Pack canaries, analytics-wrapper coverage on every public HTML page, KNN touch recovery, four-locale Bayesian method containment, Neural Network landscape containment, split-screen/narrow-desktop containment, 200% text-enlargement stress across all applets, Activity Pack autosave/guarded clear/focus recovery in both canaries, canonical GoatCounter page/campaign data, true event semantics, and analytics opt-out behavior.
+The v1.6 public boundary is 15 applets and 58 deployed files. The three Activity Pack pages remain the index, NN-1, and CNN-1. Every public HTML page receives the privacy-minimized v1.6 analytics wrapper exactly once, while applet state, worksheet answers, free text, and experiment values remain excluded from analytics requests.
 
 ## Teaching materials
 
@@ -138,9 +130,9 @@ The v1.5.1 gates verify the 14-applet composition plus two Activity Pack canarie
 
 ## Research status
 
-AI Playgrounds v1.5.1 is the current software release. The earlier v1.0.1 artifact remains immutable and archived at its version DOI. Its DOI should not be interpreted as a DOI for v1.5.1.
+AI Playgrounds v1.6.0 is the current software release. The earlier v1.0.1 artifact remains immutable and archived at its version DOI. Its DOI should not be interpreted as a DOI for v1.6.0.
 
-The deterministic/browser evidence supports implementation integrity and bounded design/interaction claims. It does not establish measured learning gains, universal learner preference, classroom adoption, or accessibility conformance. A separate human-usability protocol defines the evidence required for stronger claims.
+The deterministic/browser evidence supports implementation integrity and bounded design/interaction claims. It does not establish measured learning gains, universal learner preference, classroom adoption, or accessibility conformance. The human-usability protocol defines the evidence required for stronger claims.
 
 A separate design-and-tools research manuscript about the suite remains in preparation. Publication of the software is not publication of that manuscript.
 
