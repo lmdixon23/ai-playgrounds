@@ -72,7 +72,7 @@ RUNTIME = r'''
     for(const [key,value] of Object.entries(cat)){
       if(!exactToKey.has(value)) exactToKey.set(value,key);
       if(/\{[A-Za-z0-9_]+\}/.test(value)) templateEntries.push(compileTemplate(value,key));
-      else if(value.length>=8) phraseEntries.push({key,value,length:value.length});
+      else if(value.length>=8 || key==="challenge.match" || key==="challenge.diff") phraseEntries.push({key,value,length:value.length});
     }
   }
   templateEntries.sort((a,b)=>b.literal-a.literal);
