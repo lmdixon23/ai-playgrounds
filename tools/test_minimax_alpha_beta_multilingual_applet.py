@@ -176,19 +176,21 @@ def main() -> int:
                 set_locale(page, code)
                 body = page.locator("body").inner_text()
                 exp = static_expectations[code]
+                scenario_text = page.locator('label[for="scenario"]').text_content() or ""
+                challenge_text = page.locator('label[for="challengeSelect"] strong').text_content() or ""
                 ok = (
                     page.locator("html").get_attribute("lang") == exp["lang"]
                     and page.title() == exp["title"]
-                    and page.locator('label[for="scenario"]').inner_text() == exp["scenario"]
-                    and page.locator('label[for="challengeSelect"] strong').inner_text() == exp["challenge"]
+                    and scenario_text == exp["scenario"]
+                    and challenge_text == exp["challenge"]
                     and all(phrase in body for phrase in exp["body"])
                     and page.locator("#lab15-language-select").input_value() == code
                 )
                 locale_static[code] = {
                     "lang": page.locator("html").get_attribute("lang"),
                     "title": page.title(),
-                    "scenario": page.locator('label[for="scenario"]').inner_text(),
-                    "challenge": page.locator('label[for="challengeSelect"] strong').inner_text(),
+                    "scenario": scenario_text,
+                    "challenge": challenge_text,
                 }
                 checks.append((f"{code} localizes the complete static teaching shell", ok, locale_static[code]))
                 checks.append(
