@@ -151,6 +151,29 @@ def patch_curriculum(active: list[dict]) -> None:
     path.write_text(html, encoding="utf-8")
 
 
+def patch_localized_select_containment() -> None:
+    """Contain two existing selectors whose translated labels exceed phone width."""
+    fixes = {
+        SITE / "playgrounds" / "search-pathfinding" / "index.html": "#algoSel",
+        SITE / "playgrounds" / "wumpus-world" / "index.html": "#strategySel",
+    }
+    for path, selector in fixes.items():
+        html = path.read_text(encoding="utf-8")
+        if 'id="v161-localized-select-containment"' in html:
+            raise RuntimeError(f"Localized-select containment would be applied twice: {path}")
+        css = (
+            '<style id="v161-localized-select-containment">'
+            '@media(max-width:640px){'
+            f'{selector}' + '{width:100%!important;max-width:100%!important;min-width:0!important;}'
+            '}'
+            '</style>'
+        )
+        if "</head>" not in html:
+            raise RuntimeError(f"Could not place mobile selector fix: {path}")
+        html = html.replace("</head>", css + "</head>", 1)
+        path.write_text(html, encoding="utf-8")
+
+
 def validate_public_links(active: list[dict]) -> None:
     for page_name in ("teacher-pack.html", "curriculum.html"):
         html = (SITE / page_name).read_text(encoding="utf-8")
@@ -165,6 +188,10 @@ def validate_public_links(active: list[dict]) -> None:
                 raise RuntimeError(f"{page_name} lacks canonical classroom-mode Quick Assign link for {row['id']}")
             if legacy in html:
                 raise RuntimeError(f"{page_name} retains hidden-panel Quick Assign link for {row['id']}")
+    for rel in ("playgrounds/search-pathfinding/index.html", "playgrounds/wumpus-world/index.html"):
+        html = (SITE / rel).read_text(encoding="utf-8")
+        if html.count('id="v161-localized-select-containment"') != 1:
+            raise RuntimeError(f"{rel} lacks exactly one localized-selector containment rule")
 
 
 def build_site() -> None:
@@ -172,8 +199,9 @@ def build_site() -> None:
     active = [row for row in candidate.registry() if row["status"] == "active"]
     patch_teacher(active)
     patch_curriculum(active)
+    patch_localized_select_containment()
     validate_public_links(active)
-    print("Built canonical v1.6.1 public candidate with bilingual support routes and classroom-mode Quick Assign deep links")
+    print("Built canonical v1.6.1 public candidate with bilingual support routes, classroom-mode Quick Assign deep links, and localized mobile control containment")
 
 
 if __name__ == "__main__":
