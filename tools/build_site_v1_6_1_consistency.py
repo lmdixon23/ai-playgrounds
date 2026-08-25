@@ -10,10 +10,11 @@ the final browser gate:
 * the home search input originally retained the pre-v1.6.1 renderer as its event
   listener even after the richer 15-lab renderer replaced the global function;
 * R4 VI/ES overlays refreshed known applet layers after activating the overlay
-  locale, which allowed native renderers to overwrite the stored English source
-  with translated text before a return to English.
+  locale, which allowed native renderers to overwrite the stored English source;
+* delayed VI/ES activation could outlive a later language choice and reapply a
+  superseded translation after the learner had already returned to English.
 
-Both fixes preserve the existing product architecture rather than weakening the
+The fixes preserve the existing product architecture rather than weakening the
 consistency tests.
 """
 
@@ -87,6 +88,7 @@ def patch_r4_roundtrip_lifecycle() -> None:
         ordered_marker
         + "\n  let canonicalDocumentTitle = '';"
         + "\n  let canonicalHeadingText = '';"
+        + "\n  let pendingOverlayTimer = null;"
     )
     if ordered_marker not in source:
         raise RuntimeError("R4 ordered-map marker changed")
@@ -128,6 +130,22 @@ def patch_r4_roundtrip_lifecycle() -> None:
         raise RuntimeError("R4 overlay lifecycle marker changed")
     source = source.replace(old_overlay, new_overlay, 1)
 
+    old_setlocale_start = """  function setLocale(locale, options = {}) {
+    locale = normalizeLocale(locale);
+    if (!SUPPORTED.includes(locale)) locale = 'en';
+    restoreTree(document.body);"""
+    new_setlocale_start = """  function setLocale(locale, options = {}) {
+    locale = normalizeLocale(locale);
+    if (!SUPPORTED.includes(locale)) locale = 'en';
+    if (pendingOverlayTimer !== null) {
+      clearTimeout(pendingOverlayTimer);
+      pendingOverlayTimer = null;
+    }
+    restoreTree(document.body);"""
+    if old_setlocale_start not in source:
+        raise RuntimeError("R4 setLocale start marker changed")
+    source = source.replace(old_setlocale_start, new_setlocale_start, 1)
+
     old_native_branch = """    if (locale === 'en' || locale === 'zh') {
       current = locale;
       clickNative(locale);
@@ -163,6 +181,19 @@ def patch_r4_roundtrip_lifecycle() -> None:
         raise RuntimeError("R4 native-locale branch marker changed")
     source = source.replace(old_native_branch, new_native_branch, 1)
 
+    old_schedule = """    current = 'en';
+    clickNative('en');
+    setTimeout(() => activateOverlay(locale), options.immediate ? 0 : 60);"""
+    new_schedule = """    current = 'en';
+    clickNative('en');
+    pendingOverlayTimer = setTimeout(() => {
+      pendingOverlayTimer = null;
+      activateOverlay(locale);
+    }, options.immediate ? 0 : 60);"""
+    if old_schedule not in source:
+        raise RuntimeError("R4 delayed-overlay marker changed")
+    source = source.replace(old_schedule, new_schedule, 1)
+
     old_init = """  function init() {
     installSelect();"""
     new_init = """  function init() {
@@ -176,7 +207,7 @@ def patch_r4_roundtrip_lifecycle() -> None:
 
     source = source.replace(
         "// v1.6.1: preserve canonical source text across VI/ES round trips.",
-        "// v1.6.1: preserve canonical source text across VI/ES round trips and refresh native layers before overlay activation.",
+        "// v1.6.1: preserve canonical source text across VI/ES round trips, refresh native layers before overlay activation, and cancel superseded locale timers.",
         1,
     )
     path.write_text(source, encoding="utf-8")
@@ -188,7 +219,7 @@ def build_site() -> None:
     patch_home_runtime()
     patch_r4_roundtrip_lifecycle()
     impl.base.validate_local_references()
-    print("Finalized v1.6.1 consistency composition with enriched search binding and reversible VI/ES locale lifecycle")
+    print("Finalized v1.6.1 consistency composition with enriched search binding and cancellable reversible VI/ES locale lifecycle")
 
 
 if __name__ == "__main__":
