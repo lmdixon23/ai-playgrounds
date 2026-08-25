@@ -217,8 +217,8 @@ def main() -> int:
                 set_locale(page, code)
                 title = page.locator("#traceTitle").inner_text()
                 explanation = page.locator("#traceExplanation").inner_text()
-                pruned_label = page.locator("#tree .node.pruned .value").inner_text()
-                svg_title = page.locator("#tree .node.pruned title").inner_text()
+                pruned_label = page.locator("#tree .node.pruned .value").text_content() or ""
+                svg_title = page.locator("#tree .node.pruned title").text_content() or ""
                 expected = dynamic_expectations[code]
                 checks.append(
                     (
@@ -384,7 +384,7 @@ def main() -> int:
             checks.append(
                 (
                     "Vietnamese reduced-motion path keeps complete localized prune and text state",
-                    rpage.locator("#tree .node.pruned .value").inner_text() == "ĐÃ CẮT"
+                    (rpage.locator("#tree .node.pruned .value").text_content() or "") == "ĐÃ CẮT"
                     and "cắt tỉa" in rpage.locator("#traceTitle").inner_text().lower()
                     and "pruned_not_evaluated=B2" in rpage.locator("#textState").inner_text(),
                     {},
