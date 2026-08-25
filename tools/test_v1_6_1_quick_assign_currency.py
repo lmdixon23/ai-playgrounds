@@ -27,7 +27,7 @@ def launch(playwright):
 
 def main() -> int:
     build = subprocess.run(
-        [sys.executable, str(ROOT / "tools" / "build_site_v1_6_1_candidate.py")],
+        [sys.executable, str(ROOT / "tools" / "build_site_v1_6_1_public.py")],
         cwd=ROOT,
         text=True,
         capture_output=True,
@@ -65,6 +65,8 @@ def main() -> int:
         canonical_suffix = f"index.html?mode=classroom#{row['anchor']}"
         checks.append((f"{row['id']} Teacher Pack uses classroom-mode deep link", f"playgrounds/{row['slug']}/{canonical_suffix}" in teacher, {}))
         checks.append((f"{row['id']} Curriculum uses classroom-mode deep link", f"playgrounds/{row['slug']}/{canonical_suffix}" in curriculum, {}))
+        legacy_suffix = f"index.html#{row['anchor']}"
+        checks.append((f"{row['id']} support pages reject hidden-panel legacy deep link", f"playgrounds/{row['slug']}/{legacy_suffix}" not in teacher and f"playgrounds/{row['slug']}/{legacy_suffix}" not in curriculum, {}))
     for row in reserved:
         src = (SITE / "playgrounds" / row["slug"] / "index.html").read_text(encoding="utf-8")
         checks.append((f"reserved ID not surfaced: {row['id']}", f'data-quick-assign-id="{row["id"]}"' not in src, {}))
@@ -111,7 +113,31 @@ def main() -> int:
                     value = predict.input_value()
                     w1, w2 = expected_words[locale]
                     checks.append((f"{row['id']} {locale} Quick Assign surface and state", w1 in summary and w2 in label and value == "state-preservation sentinel", {"summary": summary, "label": label, "value": value}))
-                layout = page.evaluate("() => ({width:innerWidth,scroll:document.documentElement.scrollWidth})")
+                layout = page.evaluate("""() => {
+                    const width = innerWidth;
+                    const scroll = document.documentElement.scrollWidth;
+                    const offenders = [...document.querySelectorAll('body *')]
+                      .filter(el => {
+                        const s = getComputedStyle(el);
+                        if (s.display === 'none' || s.visibility === 'hidden') return false;
+                        const r = el.getBoundingClientRect();
+                        return r.right > width + 2 || r.left < -2;
+                      })
+                      .slice(0, 12)
+                      .map(el => {
+                        const r = el.getBoundingClientRect();
+                        return {
+                          tag: el.tagName,
+                          id: el.id || '',
+                          cls: typeof el.className === 'string' ? el.className.slice(0,120) : '',
+                          left: Math.round(r.left),
+                          right: Math.round(r.right),
+                          width: Math.round(r.width),
+                          text: (el.textContent || '').trim().replace(/\s+/g,' ').slice(0,100)
+                        };
+                      });
+                    return {width,scroll,offenders};
+                  }""")
                 checks.append((f"{row['id']} 390px containment", layout["scroll"] <= layout["width"] + 2, layout))
                 context.close()
         finally:
