@@ -534,7 +534,7 @@ function parityFixtures() {
   return { scenarios, invalid };
 }
 
-module.exports = {
+const API = {
   MAX_PLAYER,
   MIN_PLAYER,
   TreeValidationError,
@@ -543,5 +543,9 @@ module.exports = {
   minimax,
   alphaBeta,
   scenario,
+  scenarioNames: () => Object.keys(SCENARIOS),
   parityFixtures,
 };
+
+if (typeof module !== "undefined" && module.exports) module.exports = API;
+if (typeof window !== "undefined") window.Lab15GameTreeCore = API;
