@@ -52,7 +52,7 @@ The planning matrix in [docs/AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md](docs/A
 
 v1.6.1 keeps the fifteen-lab curriculum and algorithms unchanged while tightening the product surface before broader distribution.
 
-- Formalizes four **Level 1 Quick Assign** canaries — `QA-SEARCH-01`, `QA-LOCAL-01`, `QA-WUMPUS-01`, and `QA-SAT-01` — by reusing each applet's existing Guided Challenge and local student response packet rather than adding a parallel worksheet system.
+- Formalizes four **Level 1 Quick Assign** canaries - `QA-SEARCH-01`, `QA-LOCAL-01`, `QA-WUMPUS-01`, and `QA-SAT-01` - by reusing each applet's existing Guided Challenge and local student response packet rather than adding a parallel worksheet system.
 - Adds stable teacher-facing assignment IDs and classroom-mode deep links for 10–15 minute `predict -> manipulate -> observe -> explain -> transfer` tasks.
 - Fixes the Lab 15 landing-card metadata defect that could render literal `undefined` values.
 - Gives the landing catalogue full EN/ZH/VI/ES navigation and enriched search vocabulary, including textbook and technical aliases such as QKV, MCP, DPLL, alpha beta, and Bellman.
