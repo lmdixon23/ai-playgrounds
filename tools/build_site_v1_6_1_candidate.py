@@ -38,7 +38,7 @@ ACTIVE_COPY = {
     "QA-LOCAL-01": {
         "vi": {
             "summary": "🧪 Bài tập nhanh · QA-LOCAL-01 · 10–15 phút",
-            "title": "Vì sao tìm kiếm tham lam bị mắc kẹt",
+            "title": "Vì sao tìm kiếm cục bộ bị mắc kẹt hoặc thoát ra",
             "intro": "Chạy một chiến lược tìm kiếm cục bộ, quan sát quỹ đạo chi phí rồi giải thích vì sao nó bị mắc kẹt hoặc thoát ra.",
             "predict": "Trước khi chạy, bạn dự đoán chiến lược này sẽ cải thiện đều, bị mắc kẹt hay đôi khi chấp nhận bước đi tệ hơn? Vì sao?",
             "observe": "Chạy hoặc bước từng bước. Ghi lại bài toán, thuật toán, chi phí hiện tại, chi phí tốt nhất và một đặc điểm của quỹ đạo.",
@@ -47,7 +47,7 @@ ACTIVE_COPY = {
         },
         "es": {
             "summary": "🧪 Tarea rápida · QA-LOCAL-01 · 10–15 min",
-            "title": "Por qué la búsqueda voraz se atasca",
+            "title": "Por qué la búsqueda local se atasca o escapa",
             "intro": "Ejecuta una estrategia de búsqueda local, observa su trayectoria de coste y explica por qué quedó atrapada o escapó.",
             "predict": "Antes de ejecutar, ¿esperas que la estrategia mejore de forma continua, se atasque o acepte a veces movimientos peores? ¿Por qué?",
             "observe": "Ejecuta o avanza paso a paso. Registra el problema, el algoritmo, el coste actual, el mejor coste y una característica de la trayectoria.",
@@ -78,7 +78,7 @@ ACTIVE_COPY = {
     "QA-SAT-01": {
         "vi": {
             "summary": "🧪 Bài tập nhanh · QA-SAT-01 · 10–15 phút",
-            "title": "DPLL sẽ làm gì tiếp theo?",
+            "title": "SAT, UNSAT hay suy ra truy vấn?",
             "intro": "Chuyển một cơ sở tri thức, kiểm tra tính thỏa được rồi giải thích cách CNF và resolution/DPLL làm lộ cấu trúc suy luận.",
             "predict": "Trước khi chuyển đổi, bạn dự đoán ví dụ này là SAT, UNSAT hay suy ra truy vấn? Vì sao?",
             "observe": "Chạy phép chuyển đổi và ít nhất một kiểm tra SAT hoặc resolution. Ghi lại kết quả CNF hoặc DPLL quan trọng.",
@@ -87,12 +87,12 @@ ACTIVE_COPY = {
         },
         "es": {
             "summary": "🧪 Tarea rápida · QA-SAT-01 · 10–15 min",
-            "title": "¿Qué hará DPLL a continuación?",
+            "title": "¿SAT, UNSAT o se deriva la consulta?",
             "intro": "Convierte una base de conocimiento, inspecciona la satisfacibilidad y explica cómo CNF y resolución/DPLL hacen visible la estructura de inferencia.",
             "predict": "Antes de convertir, ¿esperas que el ejemplo sea SAT, UNSAT o que implique la consulta? ¿Por qué?",
             "observe": "Ejecuta la conversión y al menos una comprobación SAT o de resolución. Registra el resultado clave de CNF o DPLL.",
             "explain": "¿Qué hace más fácil de comprobar para el solver la reescritura a CNF?",
-            "transfer": "¿Cuándo necesitaría un sistema de base de conocimiento resolución en lugar de una intuición basada solo en tablas de verdad?",
+            "transfer": "¿Cuándo necesitaría un sistema de conocimiento resolución en lugar de una intuición basada solo en tablas de verdad?",
         },
     },
 }
@@ -372,6 +372,8 @@ def validate() -> None:
             raise RuntimeError(f"{row['id']} must surface exactly once")
         if f'id="{row["anchor"]}"' not in source:
             raise RuntimeError(f"{row['id']} anchor missing")
+        if row["title"] not in source:
+            raise RuntimeError(f"{row['id']} registry title is not surfaced in the applet")
         for field in ('predict', 'observe', 'explain', 'transfer'):
             if f'data-lab-answer="{field}"' not in source:
                 raise RuntimeError(f"{row['id']} lost {field} response field")
