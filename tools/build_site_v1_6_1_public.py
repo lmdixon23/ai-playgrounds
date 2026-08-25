@@ -17,9 +17,9 @@ ZH = {
         "look": "优秀回答应区分搜索工作量与路径质量，把启发式与前沿排序联系起来，并避免声称 A* 总是更快。",
     },
     "QA-LOCAL-01": {
-        "title": "为什么贪心局部搜索会卡住",
-        "focus": "解释局部最优，并比较爬山法与模拟退火或重启等逃逸机制。",
-        "look": "优秀回答应说明没有更优邻居并不等于全局最优，并正确解释退火或重启如何改变搜索行为。",
+        "title": "为什么局部搜索会卡住或逃离",
+        "focus": "解释局部搜索的接受规则如何塑造代价轨迹，以及何时重启或模拟退火能够帮助逃离局部最优。",
+        "look": "优秀回答应把接受或拒绝邻居移动与代价轨迹联系起来，区分局部最优与全局最优，并解释重启或退火何时会改变结果。",
     },
     "QA-WUMPUS-01": {
         "title": "安全、危险还是未知？",
@@ -27,9 +27,9 @@ ZH = {
         "look": "优秀回答应区分未知与危险、蕴含与可能性，并说明概率估计不能证明某格一定安全。",
     },
     "QA-SAT-01": {
-        "title": "DPLL 下一步会做什么？",
-        "focus": "把 CNF 结构与 DPLL 的传播、分支、冲突和剪枝联系起来。",
-        "look": "优秀回答应指出实际的推理或分支证据；单个分支冲突只能剪去该分支，而全局 UNSAT 需要排除相关替代分支。",
+        "title": "SAT、UNSAT，还是蕴含查询？",
+        "focus": "把知识库转换为 CNF，检查 SAT 或归结结果，并解释求解器证据支持什么结论。",
+        "look": "优秀回答应区分可满足性与蕴含，引用具体的 CNF/DPLL 或归结结果，并准确说明该证据能够建立什么结论。",
     },
 }
 
@@ -186,6 +186,8 @@ def validate_public_links(active: list[dict]) -> None:
             legacy = f'playgrounds/{row["slug"]}/index.html#{row["anchor"]}'
             if canonical not in html:
                 raise RuntimeError(f"{page_name} lacks canonical classroom-mode Quick Assign link for {row['id']}")
+            if row["title"] not in html:
+                raise RuntimeError(f"{page_name} does not surface the registry title for {row['id']}")
             if legacy in html:
                 raise RuntimeError(f"{page_name} retains hidden-panel Quick Assign link for {row['id']}")
     for rel in ("playgrounds/search-pathfinding/index.html", "playgrounds/wumpus-world/index.html"):
