@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.6.0] - 2026-08-25
+
+### Added
+- Lab 15, **Game Trees: Minimax and Alpha-Beta Pruning**, as the fifteenth public applet and thirteenth Foundations/course-track lab.
+- An independent Python minimax/alpha-beta reference with fail-closed tree validation, deterministic traces, adversarial fixtures, and a 648-case bounded exhaustive census.
+- An independently implemented JavaScript core with recursive Python/JavaScript parity, including a parity-harness self-test and matching validation categories.
+- Five prediction-before-reveal Guided Challenges covering root choice, MIN backup, safe pruning, move ordering, and greedy-versus-minimax reasoning.
+- Complete EN/ZH/VI/ES semantic localization with protected algorithm/state identifiers and state-preserving locale switching.
+- A Lab 15 engagement and learner-centered HCI audit plus a permanent v1.6 public/HCI browser gate.
+
+### Changed
+- Expanded the deterministic Pages boundary from fourteen applets / 57 files to fifteen applets / 58 files while retaining exactly the three Activity Pack pages introduced in v1.5.1.
+- Expanded the Foundations/course track from twelve to thirteen labs; Transformer Language Modeling and Agent Tool Use remain the two Modern AI extensions.
+- Updated landing, curriculum, Teacher Pack, sitemap, README, citation metadata, CodeMeta, analytics coverage, deployment composition, and release automation for v1.6.0.
+- Preserved the v1.5.1 HCI, responsive, Activity Pack, and privacy-minimized GoatCounter hardening while adding Lab 15 to the same release-quality boundary.
+
+### Verification and evidence boundary
+- Lab 15 pre-integration evidence includes 26 Python reference tests, a 648-case exhaustive census, independent cross-runtime parity, 22 prototype browser checks, 22 English-candidate browser checks, 1,235 semantic-localization checks, and a four-locale state-preservation gate.
+- The release-level v1.6 gate additionally checks exact safe cutoffs, move-order work invariance, prediction locking, locale-state invariance, reduced motion, 390×844 portrait, 844×390 landscape, 640×720 split view, and 200% text enlargement.
+- Software/browser assurance establishes behavior under tested conditions; it does not establish accessibility conformance, measured learning gains, classroom adoption, or universal learner preference.
+- The immutable v1.0.1 DOI remains historical provenance and is not reassigned to v1.6.0.
+
 ## [1.5.1] - 2026-08-25
 
 ### Added

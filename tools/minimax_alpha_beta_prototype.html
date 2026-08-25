@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lab 15 Prototype | Minimax and Alpha-Beta</title>
+<style>
+:root{--bg:#f7f8fb;--card:#fff;--fg:#172033;--muted:#637083;--border:#d7dde7;--accent:#3157c8;--max:#1d4ed8;--min:#7c3aed;--good:#0f766e;--warn:#b45309;--bad:#b91c1c;--soft:#eef2ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}button,select,input,textarea{font:inherit;color:inherit}button,select,input{min-height:38px}.shell{max-width:1220px;margin:0 auto;padding:22px}.hero,.panel{background:var(--card);border:1px solid var(--border);border-radius:14px}.hero{padding:22px}.hero h1{margin:.1rem 0 .35rem;font-size:clamp(1.6rem,3vw,2.5rem)}.hero p{margin:.3rem 0;color:var(--muted);max-width:920px}.grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(290px,.75fr);gap:14px;margin-top:14px}.panel{padding:16px;min-width:0}.controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.control label{display:block;font-size:.76rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}.control select,.control input{width:100%;border:1px solid var(--border);border-radius:8px;background:#fff;padding:6px 9px}.transport{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.transport button,.action{border:1px solid var(--border);background:var(--card);border-radius:8px;padding:7px 11px;cursor:pointer}.transport button.primary,.action.primary{background:var(--accent);color:#fff;border-color:var(--accent)}button:disabled{opacity:.45;cursor:not-allowed}.tree-wrap{border:1px solid var(--border);border-radius:12px;background:linear-gradient(180deg,#fff,#fbfcff);overflow:auto;min-height:440px}.tree{display:block;width:100%;min-width:720px;height:auto}.edge{stroke:#aab4c3;stroke-width:2;fill:none}.node circle{fill:#fff;stroke:#8b98aa;stroke-width:2}.node.max circle{stroke:var(--max)}.node.min circle{stroke:var(--min)}.node.current circle{stroke-width:5;filter:drop-shadow(0 0 5px #3157c855)}.node.visited circle{fill:#eef2ff}.node.returned circle{fill:#ecfdf5;stroke:var(--good)}.node.pruned{opacity:.38}.node.pruned circle{stroke-dasharray:5 4;fill:#fff1f2;stroke:var(--bad)}.node text{font:11px ui-monospace,SFMono-Regular,Consolas,monospace;text-anchor:middle;fill:var(--fg);pointer-events:none}.node .role{font-size:9px;fill:var(--muted)}.node .value{font-weight:800}.node .bounds{font-size:9px;fill:var(--muted)}.summary{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin:12px 0}.metric{border:1px solid var(--border);border-radius:10px;background:#fff;padding:9px}.metric strong{display:block;font-size:.68rem;text-transform:uppercase;color:var(--muted)}.metric span{display:block;font:700 14px ui-monospace,monospace;margin-top:2px}.trace-card{border:1px solid var(--border);border-radius:10px;padding:11px;background:#fbfcff}.trace-card strong{color:var(--accent)}.trace-card p{margin:.35rem 0;color:var(--muted)}.state{white-space:pre-wrap;overflow-wrap:anywhere;background:#111827;color:#f8fafc;border-radius:9px;padding:10px;max-height:190px;overflow:auto;font:12px/1.45 ui-monospace,monospace}.utility-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.utility-item{border:1px solid var(--border);border-radius:8px;padding:8px}.utility-item label{display:flex;justify-content:space-between;align-items:center;gap:8px;font:12px ui-monospace,monospace}.utility-item input{width:76px;border:1px solid var(--border);border-radius:6px;padding:4px 6px}.baseline{border:1px solid var(--border);border-radius:10px;padding:10px;background:#fafafa;margin-top:10px}.baseline.empty{color:var(--muted)}.challenge{margin-top:14px}.challenge h2{margin:.15rem 0 .4rem}.challenge-grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:12px}.challenge-box{border:1px solid var(--border);border-radius:11px;padding:12px}.challenge-prediction{display:grid;gap:8px}.challenge-prediction label{font-weight:700}.challenge-prediction input,.challenge-prediction select,.challenge-prediction textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:7px}.challenge-prediction textarea{min-height:76px}.challenge-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.actual{margin-top:9px;padding:10px;border-radius:8px;background:#ecfdf5;border:1px solid #99d7c9}.hidden{display:none!important}.note{font-size:.82rem;color:var(--muted)}.pill{display:inline-flex;border:1px solid var(--border);border-radius:999px;padding:3px 8px;font-size:.72rem;color:var(--muted)}:focus-visible{outline:3px solid #3157c855;outline-offset:2px}
+@media(max-width:900px){.grid,.challenge-grid{grid-template-columns:1fr}.summary{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:560px){.shell{padding:10px}.controls{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,minmax(0,1fr))}.utility-list{grid-template-columns:1fr}.tree{min-width:650px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}.node.current circle{filter:none}}
+</style>
+</head>
+<body>
+<main class="shell">
+  <section class="hero">
+    <span class="pill">R3 English prototype</span>
+    <h1>Game Trees: Minimax and Alpha-Beta Pruning</h1>
+    <p>Back terminal utilities up through alternating MAX and MIN turns. Then switch on alpha-beta pruning to see which subtrees can be skipped without changing the exact root decision.</p>
+    <p><strong>Model boundary:</strong> finite deterministic two-player zero-sum perfect-information trees. Pruned nodes remain visible as part of the problem definition but are labeled not evaluated by the algorithm.</p>
+  </section>
+
+  <section class="grid">
+    <div class="panel">
+      <div class="controls">
+        <div class="control"><label for="scenario">Scenario</label><select id="scenario"></select></div>
+        <div class="control"><label for="algorithm">Algorithm</label><select id="algorithm"><option value="minimax">Minimax</option><option value="alpha_beta">Alpha-Beta</option></select></div>
+        <div class="control"><label for="order">Child order</label><select id="order"><option value="configured">Configured order</option><option value="reverse">Reverse every sibling list</option></select></div>
+      </div>
+      <div class="transport" role="group" aria-label="Trace playback">
+        <button id="resetTrace">Restart trace</button>
+        <button id="backTrace">Back</button>
+        <button id="stepTrace" class="primary">Step</button>
+        <button id="endTrace">Reveal complete trace</button>
+        <button id="saveBaseline">Save run for comparison</button>
+      </div>
+      <div class="summary" aria-label="Search summary">
+        <div class="metric"><strong>Root value</strong><span id="rootValue">hidden</span></div>
+        <div class="metric"><strong>Selected move</strong><span id="selectedMove">hidden</span></div>
+        <div class="metric"><strong>Optimal set</strong><span id="optimalSet">hidden</span></div>
+        <div class="metric"><strong>Visited</strong><span id="visitedCount">0</span></div>
+        <div class="metric"><strong>Leaves evaluated</strong><span id="leafCount">0</span></div>
+        <div class="metric"><strong>Pruned nodes</strong><span id="prunedCount">0</span></div>
+      </div>
+      <div class="tree-wrap"><svg id="tree" class="tree" role="img" aria-label="Game tree search state"></svg></div>
+      <div class="trace-card" aria-live="polite">
+        <strong id="traceTitle">Trace not started</strong>
+        <p id="traceExplanation">The tree and terminal utilities are visible, but no search event has been revealed.</p>
+        <div id="boundsLine" class="note"></div>
+      </div>
+      <h3>Text equivalent of current state</h3>
+      <pre id="textState" class="state"></pre>
+    </div>
+
+    <aside class="panel">
+      <h2>Manipulate the problem</h2>
+      <p class="note">Terminal utilities are the game's given data. Editing one recomputes the trace; it does not mutate the tree topology.</p>
+      <div id="utilities" class="utility-list"></div>
+      <div id="baseline" class="baseline empty">No comparison run saved.</div>
+      <h3>What to watch</h3>
+      <p class="note"><strong>MAX</strong> keeps the largest returned child value. <strong>MIN</strong> keeps the smallest. In Alpha-Beta mode, a cutoff is safe once <code>alpha &gt;= beta</code>; skipped nodes are not evaluated.</p>
+      <p class="note">Move ordering can change how much work alpha-beta does. It cannot change the exact minimax value of this fixed tree.</p>
+    </aside>
+  </section>
+
+  <section class="panel challenge">
+    <h2>Guided Challenge</h2>
+    <p class="note">Predict first, lock the prediction, then reveal the deterministic mechanism.</p>
+    <div class="challenge-grid">
+      <div class="challenge-box">
+        <label for="challengeSelect"><strong>Challenge</strong></label>
+        <select id="challengeSelect">
+          <option value="root">1. Predict the root choice</option>
+          <option value="min">2. Back up a MIN node</option>
+          <option value="prune">3. Will the branch prune?</option>
+          <option value="order">4. Which move order does less work?</option>
+          <option value="greedy">5. Greedy versus minimax</option>
+        </select>
+        <p id="challengePrompt"></p>
+        <button id="challengeBegin" class="action primary">Begin challenge</button>
+      </div>
+      <div class="challenge-box">
+        <div id="challengePrediction" class="challenge-prediction"></div>
+        <div class="challenge-actions">
+          <button id="challengeLock" class="action" disabled>Lock prediction</button>
+          <button id="challengeReveal" class="action primary" disabled>Reveal mechanism</button>
+          <button id="challengeReset" class="action">Reset challenge</button>
+        </div>
+        <div id="challengeActual" class="actual hidden" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+</main>
+<script src="minimax_alpha_beta_core.js"></script>
+<script>
+(() => {
+  "use strict";
+  const C = window.Lab15GameTreeCore;
+  if (!C) throw new Error("Lab15GameTreeCore did not load");
+
+  const $ = (id) => document.getElementById(id);
+  const scenarioLabels = {
+    simple_backup: "Simple backup",
+    greedy_trap: "Greedy trap",
+    first_prune: "First safe prune",
+    good_ordering: "Good move ordering",
+    poor_ordering: "Poor move ordering",
+    no_prune: "No pruning possible",
+    tied_optimum: "Tied optimal moves",
+    deep_cutoff: "Deep cutoff",
+    boundary_terminal: "Single terminal root",
+    boundary_chain: "One-child chain",
+    boundary_unbalanced: "Unbalanced boundary tree"
+  };
+  let baseTree = null;
+  let activeTree = null;
+  let result = null;
+  let traceIndex = -1;
+  let baseline = null;
+  let challenge = {state:"inactive", id:"root", prediction:null};
+
+  function clone(value){ return JSON.parse(JSON.stringify(value)); }
+  function applyOrder(tree, mode){
+    const out = clone(tree);
+    if(mode === "reverse"){
+      out.nodes.forEach(node => { if(node.children.length > 1) node.children.reverse(); });
+    }
+    return out;
+  }
+  function depthMap(tree){
+    const map = new Map();
+    function walk(id,d){ map.set(id,d); const n=tree.nodes.find(x=>x.id===id); n.children.forEach(c=>walk(c,d+1)); }
+    walk(tree.root,0); return map;
+  }
+  function recompute(reset=true){
+    activeTree = applyOrder(baseTree, $("order").value);
+    result = $("algorithm").value === "minimax" ? C.minimax(activeTree) : C.alphaBeta(activeTree);
+    if(reset) traceIndex = -1;
+    renderAll();
+  }
+  function loadScenario(name){
+    baseTree = C.scenario(name);
+    $("order").value = "configured";
+    recompute(true);
+    renderUtilities();
+  }
+  function visibleState(){
+    const events = traceIndex < 0 ? [] : result.trace.slice(0, traceIndex + 1);
+    const visited = new Set();
+    const returned = {};
+    const pruned = new Set();
+    let current = null;
+    let leaves = 0;
+    for(const event of events){
+      if(event.event === "enter") visited.add(event.node_id);
+      if(event.event === "leaf") leaves = event.evaluated_leaf_count;
+      if(event.event === "return") returned[event.node_id] = event.value;
+      if(event.event === "prune") event.pruned.forEach(id => pruned.add(id));
+      current = event;
+    }
+    return {events,visited,returned,pruned,current,leaves};
+  }
+  function layoutTree(tree){
+    const by = new Map(tree.nodes.map(n=>[n.id,n]));
+    const depths = depthMap(tree);
+    let leafSlot = 0;
+    const pos = new Map();
+    function place(id){
+      const node = by.get(id);
+      let x;
+      if(!node.children.length){ x = 70 + leafSlot++ * 105; }
+      else { const childXs=node.children.map(place); x=(childXs[0]+childXs[childXs.length-1])/2; }
+      const y = 62 + depths.get(id)*100;
+      pos.set(id,{x,y});
+      return x;
+    }
+    place(tree.root);
+    const maxDepth=Math.max(...depths.values());
+    return {pos,width:Math.max(720,leafSlot*105+90),height:Math.max(300,(maxDepth+1)*100+70),depths,by};
+  }
+  function svg(name, attrs={}){
+    const el=document.createElementNS("http://www.w3.org/2000/svg",name);
+    Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,String(v))); return el;
+  }
+  function renderTree(){
+    const state=visibleState(), data=layoutTree(activeTree), root=$("tree");
+    root.replaceChildren(); root.setAttribute("viewBox",`0 0 ${data.width} ${data.height}`);
+    for(const node of activeTree.nodes){
+      for(const childId of node.children){
+        const a=data.pos.get(node.id), b=data.pos.get(childId);
+        root.appendChild(svg("path",{class:"edge",d:`M ${a.x} ${a.y+25} C ${a.x} ${a.y+55}, ${b.x} ${b.y-55}, ${b.x} ${b.y-25}`}));
+      }
+    }
+    for(const node of activeTree.nodes){
+      const p=data.pos.get(node.id), depth=data.depths.get(node.id), terminal=node.children.length===0;
+      const classes=["node", C.playerForDepth(depth).toLowerCase()];
+      if(state.visited.has(node.id)) classes.push("visited");
+      if(Object.prototype.hasOwnProperty.call(state.returned,node.id)) classes.push("returned");
+      if(state.pruned.has(node.id)) classes.push("pruned");
+      if(state.current && state.current.node_id===node.id) classes.push("current");
+      const g=svg("g",{class:classes.join(" "),transform:`translate(${p.x} ${p.y})`});
+      const title=svg("title"); title.textContent=`${node.id}: ${terminal ? "terminal utility "+node.utility : C.playerForDepth(depth)+" node"}${state.pruned.has(node.id) ? "; not evaluated after cutoff" : ""}`;
+      const circle=svg("circle",{r:27});
+      const idText=svg("text",{y:-7}); idText.textContent=node.id;
+      const role=svg("text",{y:7,class:"role"}); role.textContent=terminal ? `u=${node.utility}` : C.playerForDepth(depth);
+      const value=svg("text",{y:20,class:"value"}); value.textContent=Object.prototype.hasOwnProperty.call(state.returned,node.id) ? `v=${state.returned[node.id]}` : (state.pruned.has(node.id) ? "PRUNED" : "");
+      g.append(title,circle,idText,role,value); root.appendChild(g);
+    }
+    root.setAttribute("aria-label",`Game tree. ${state.visited.size} nodes visited; ${state.pruned.size} nodes currently marked not evaluated after pruning.`);
+  }
+  function describeEvent(event){
+    if(!event) return ["Trace not started","The tree and terminal utilities are visible, but no search event has been revealed."];
+    const name=event.event.replaceAll("_"," ");
+    let explanation=`${event.player} at node ${event.node_id}: ${name}.`;
+    if(event.child_id) explanation += ` Child ${event.child_id}${event.value===null?"":` returned ${event.value}`}.`;
+    if(event.event==="best_update") explanation += ` The current best becomes ${event.best}.`;
+    if(event.event==="alpha_update") explanation += ` alpha becomes ${event.alpha}.`;
+    if(event.event==="beta_update") explanation += ` beta becomes ${event.beta}.`;
+    if(event.event==="prune") explanation += ` alpha (${event.alpha}) >= beta (${event.beta}), so ${event.pruned.join(", ")} will not be evaluated.`;
+    if(event.event==="return") explanation += ` This node returns ${event.value}.`;
+    return [`${traceIndex+1}/${result.trace.length} - ${name}`, explanation];
+  }
+  function renderTrace(){
+    const state=visibleState(), [title,explanation]=describeEvent(state.current);
+    $("traceTitle").textContent=title; $("traceExplanation").textContent=explanation;
+    if(state.current && $("algorithm").value==="alpha_beta"){
+      const a=state.current.alpha===null?"-inf":state.current.alpha, b=state.current.beta===null?"+inf":state.current.beta;
+      $("boundsLine").textContent=`Current bounds in this event: alpha=${a}, beta=${b}`;
+    } else $("boundsLine").textContent="";
+    const complete=traceIndex===result.trace.length-1;
+    $("rootValue").textContent=complete?String(result.root_value):"hidden";
+    $("selectedMove").textContent=complete?(result.selected_child??"terminal"):"hidden";
+    $("optimalSet").textContent=complete?($("algorithm").value==="minimax"?(result.optimal_children.length?result.optimal_children.join(", "):"terminal"):"not claimed from pruned trace"):"hidden";
+    $("visitedCount").textContent=String(state.visited.size);
+    $("leafCount").textContent=String(state.leaves);
+    $("prunedCount").textContent=String(state.pruned.size);
+    $("backTrace").disabled=traceIndex<0; $("stepTrace").disabled=complete; $("endTrace").disabled=complete;
+    const lines=[
+      `scenario=${$("scenario").value}`,
+      `algorithm=${$("algorithm").value}`,
+      `order=${$("order").value}`,
+      `trace_event=${state.current?state.current.event:"none"}`,
+      `trace_index=${traceIndex}`,
+      `visited=${[...state.visited].join(",")||"none"}`,
+      `evaluated_leaves=${state.leaves}`,
+      `pruned_not_evaluated=${[...state.pruned].join(",")||"none"}`,
+      `root_value=${complete?result.root_value:"hidden"}`,
+      `selected_move=${complete?(result.selected_child??"terminal"):"hidden"}`
+    ];
+    if(state.current && $("algorithm").value==="alpha_beta") lines.push(`alpha=${state.current.alpha===null?"-inf":state.current.alpha}; beta=${state.current.beta===null?"+inf":state.current.beta}`);
+    $("textState").textContent=lines.join("\n");
+  }
+  function renderUtilities(){
+    const box=$("utilities"); box.replaceChildren();
+    baseTree.nodes.filter(n=>!n.children.length).forEach(node=>{
+      const wrap=document.createElement("div"); wrap.className="utility-item";
+      const label=document.createElement("label"); const span=document.createElement("span"); span.textContent=node.id;
+      const input=document.createElement("input"); input.type="number"; input.min="-20"; input.max="20"; input.step="1"; input.value=String(node.utility); input.dataset.node=node.id;
+      input.addEventListener("change",()=>{
+        const value=Number(input.value);
+        if(!Number.isFinite(value)){input.value=String(node.utility);return;}
+        const bounded=Math.max(-20,Math.min(20,value)); input.value=String(bounded); node.utility=bounded; recompute(true);
+      });
+      label.append(span,input); wrap.appendChild(label); box.appendChild(wrap);
+    });
+  }
+  function renderBaseline(){
+    const box=$("baseline");
+    if(!baseline){box.className="baseline empty";box.textContent="No comparison run saved.";return;}
+    box.className="baseline";
+    const current={algorithm:$("algorithm").value,root:result.root_value,move:result.selected_child,visited:result.visited_nodes.length,leaves:result.evaluated_leaves.length,pruned:result.pruned_nodes.length};
+    box.textContent=`Saved: ${baseline.algorithm}, value ${baseline.root}, move ${baseline.move??"terminal"}, ${baseline.leaves} leaves. Current: ${current.algorithm}, value ${current.root}, move ${current.move??"terminal"}, ${current.leaves} leaves.`;
+  }
+  function renderAll(){ renderTree();renderTrace();renderBaseline(); }
+
+  C.scenarioNames().forEach(name=>{const option=document.createElement("option");option.value=name;option.textContent=scenarioLabels[name]||name;$("scenario").appendChild(option);});
+  $("scenario").value="simple_backup";
+  $("scenario").addEventListener("change",()=>loadScenario($("scenario").value));
+  $("algorithm").addEventListener("change",()=>recompute(true));
+  $("order").addEventListener("change",()=>recompute(true));
+  $("resetTrace").addEventListener("click",()=>{traceIndex=-1;renderAll();});
+  $("backTrace").addEventListener("click",()=>{traceIndex=Math.max(-1,traceIndex-1);renderAll();});
+  $("stepTrace").addEventListener("click",()=>{traceIndex=Math.min(result.trace.length-1,traceIndex+1);renderAll();});
+  $("endTrace").addEventListener("click",()=>{traceIndex=result.trace.length-1;renderAll();});
+  $("saveBaseline").addEventListener("click",()=>{baseline={algorithm:$("algorithm").value,root:result.root_value,move:result.selected_child,visited:result.visited_nodes.length,leaves:result.evaluated_leaves.length,pruned:result.pruned_nodes.length};renderBaseline();});
+
+  const challengeDefs={
+    root:{prompt:"On the Simple backup tree, which root child will MAX select, and what value reaches the root?", setup(){ $("scenario").value="simple_backup";$("algorithm").value="minimax";loadScenario("simple_backup"); }, fields:[["move","select",["A","B"]],["value","number"]], answer(){const r=C.minimax(C.scenario("simple_backup"));return{move:r.selected_child,value:r.root_value,text:`MAX selects ${r.selected_child}; the root value is ${r.root_value}. MIN returns 3 from A and 4 from B, so MAX chooses 4.`};}},
+    min:{prompt:"In Simple backup, node A is a MIN node with terminal children 3 and 5. What value does A return?",setup(){ $("scenario").value="simple_backup";$("algorithm").value="minimax";loadScenario("simple_backup"); },fields:[["value","number"]],answer(){const r=C.minimax(C.scenario("simple_backup"));return{value:r.node_returns.A,text:`A returns ${r.node_returns.A}. MIN keeps the smaller child value.`};}},
+    prune:{prompt:"In First safe prune with Alpha-Beta, will B's remaining child B2 be evaluated after B1 returns 4?",setup(){ $("scenario").value="first_prune";$("algorithm").value="alpha_beta";loadScenario("first_prune"); },fields:[["prune","select",["yes","no"]]],answer(){const r=C.alphaBeta(C.scenario("first_prune"));const e=r.trace.find(x=>x.event==="prune");return{prune:e&&e.pruned.includes("B2")?"yes":"no",text:`Yes. After B1 returns 4, alpha=5 and beta=4, so alpha >= beta. B2 is present in the tree but is not evaluated.`};}},
+    order:{prompt:"The Good ordering and Poor ordering scenarios contain the same utilities. Which one makes Alpha-Beta evaluate fewer leaves?",setup(){ $("scenario").value="good_ordering";$("algorithm").value="alpha_beta";loadScenario("good_ordering"); },fields:[["order","select",["good","poor","same"]]],answer(){const g=C.alphaBeta(C.scenario("good_ordering")),p=C.alphaBeta(C.scenario("poor_ordering"));return{order:g.evaluated_leaves.length<p.evaluated_leaves.length?"good":g.evaluated_leaves.length>p.evaluated_leaves.length?"poor":"same",text:`Good ordering evaluates ${g.evaluated_leaves.length} leaves; poor ordering evaluates ${p.evaluated_leaves.length}. Both return value ${g.root_value}.`};}},
+    greedy:{prompt:"In Greedy trap, branch A contains a visible utility 9. Does minimax select A or B?",setup(){ $("scenario").value="greedy_trap";$("algorithm").value="minimax";loadScenario("greedy_trap"); },fields:[["move","select",["A","B"]]],answer(){const r=C.minimax(C.scenario("greedy_trap"));return{move:r.selected_child,text:`Minimax selects ${r.selected_child}. MIN can force A down to -4, while B guarantees 2; the visible 9 does not determine the root choice.`};}}
+  };
+  function renderChallengePrompt(){challenge.id=$("challengeSelect").value;$("challengePrompt").textContent=challengeDefs[challenge.id].prompt;}
+  function renderChallengeFields(){
+    const box=$("challengePrediction");box.replaceChildren();
+    for(const [name,type,options] of challengeDefs[challenge.id].fields){
+      const label=document.createElement("label");label.textContent=name==="move"?"Predicted move":name==="value"?"Predicted value":name==="prune"?"Will B2 be pruned?":"Fewer leaves";
+      let input;
+      if(type==="select"){input=document.createElement("select");const blank=document.createElement("option");blank.value="";blank.textContent="Choose";input.appendChild(blank);options.forEach(v=>{const o=document.createElement("option");o.value=v;o.textContent=v;input.appendChild(o);});}
+      else {input=document.createElement("input");input.type="number";}
+      input.dataset.challengeField=name;input.addEventListener("input",syncChallengeReady);label.appendChild(input);box.appendChild(label);
+    }
+  }
+  function predictionValues(){const out={};document.querySelectorAll("[data-challenge-field]").forEach(el=>out[el.dataset.challengeField]=el.value);return out;}
+  function syncChallengeReady(){const fields=[...document.querySelectorAll("[data-challenge-field]")];$("challengeLock").disabled=challenge.state!=="awaiting"||!fields.length||fields.some(el=>el.value==="");}
+  function beginChallenge(){challenge={state:"awaiting",id:$("challengeSelect").value,prediction:null};challengeDefs[challenge.id].setup();renderChallengeFields();$("challengeActual").classList.add("hidden");$("challengeActual").textContent="";$("challengeReveal").disabled=true;syncChallengeReady();}
+  function lockChallenge(){if(challenge.state!=="awaiting")return;challenge.prediction=predictionValues();challenge.state="locked";document.querySelectorAll("[data-challenge-field]").forEach(el=>el.disabled=true);$("challengeLock").disabled=true;$("challengeReveal").disabled=false;}
+  function revealChallenge(){if(challenge.state!=="locked")return;const answer=challengeDefs[challenge.id].answer();challenge.state="revealed";const keys=Object.keys(answer).filter(k=>k!=="text");const matched=keys.every(k=>String(answer[k])===String(challenge.prediction[k]));$("challengeActual").textContent=`${matched?"Prediction matched. ":"Prediction differed. "}${answer.text}`;$("challengeActual").classList.remove("hidden");$("challengeReveal").disabled=true;if(challenge.id==="prune"){traceIndex=result.trace.findIndex(e=>e.event==="prune");renderAll();}else{$("endTrace").click();}}
+  function resetChallenge(){challenge={state:"inactive",id:$("challengeSelect").value,prediction:null};$("challengePrediction").replaceChildren();$("challengeActual").classList.add("hidden");$("challengeActual").textContent="";$("challengeLock").disabled=true;$("challengeReveal").disabled=true;}
+  $("challengeSelect").addEventListener("change",()=>{resetChallenge();renderChallengePrompt();});
+  $("challengeBegin").addEventListener("click",beginChallenge);$("challengeLock").addEventListener("click",lockChallenge);$("challengeReveal").addEventListener("click",revealChallenge);$("challengeReset").addEventListener("click",resetChallenge);
+  renderChallengePrompt();
+  loadScenario("simple_backup");
+
+  window.Lab15Prototype={
+    getTree:()=>clone(activeTree),
+    getResult:()=>clone(result),
+    getTraceIndex:()=>traceIndex,
+    setTraceIndex:(i)=>{traceIndex=Math.max(-1,Math.min(result.trace.length-1,Number(i)));renderAll();},
+    getVisibleState:()=>{const s=visibleState();return{visited:[...s.visited],pruned:[...s.pruned],returned:clone(s.returned),event:s.current?clone(s.current):null,leaves:s.leaves};},
+    getChallengeState:()=>clone(challenge),
+    recompute:()=>recompute(true)
+  };
+})();
+</script>
+</body>
+</html>
