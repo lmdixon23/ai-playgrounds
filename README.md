@@ -13,7 +13,7 @@ Fifteen multilingual, offline-ready interactive AI labs spanning thirteen Founda
 
 **Live site:** https://lmdixon23.github.io/ai-playgrounds/
 
-**Current release:** [v1.6.0](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.6.0)
+**Current release:** [v1.6.1](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.6.1)
 
 **Archived v1.0.1 DOI:** [10.5281/zenodo.21854217](https://doi.org/10.5281/zenodo.21854217) · **All-versions DOI:** [10.5281/zenodo.21854216](https://doi.org/10.5281/zenodo.21854216)
 
@@ -48,9 +48,25 @@ The Foundations track covers pathfinding, local search, Wumpus World, CNF/SAT, B
 
 The planning matrix in [docs/AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md](docs/AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md) compares coverage against AIMA and the Spring 2026 CS50/CSCI E-80 AI curriculum.
 
+## v1.6.1: teacher-adoption and cross-suite consistency hardening
+
+v1.6.1 keeps the fifteen-lab curriculum and algorithms unchanged while tightening the product surface before broader distribution.
+
+- Formalizes four **Level 1 Quick Assign** canaries - `QA-SEARCH-01`, `QA-LOCAL-01`, `QA-WUMPUS-01`, and `QA-SAT-01` - by reusing each applet's existing Guided Challenge and local student response packet rather than adding a parallel worksheet system.
+- Adds stable teacher-facing assignment IDs and classroom-mode deep links for 10–15 minute `predict -> manipulate -> observe -> explain -> transfer` tasks.
+- Fixes the Lab 15 landing-card metadata defect that could render literal `undefined` values.
+- Gives the landing catalogue full EN/ZH/VI/ES navigation and enriched search vocabulary, including textbook and technical aliases such as QKV, MCP, DPLL, alpha beta, and Bellman.
+- Fixes VI/ES -> EN title and page-title restoration across the original twelve applets, including rapid locale switching where superseded translation timers previously won the race.
+- Gives Labs 13–15 a shared outer product shell while retaining their concept-specific internal visualizations.
+- Flattens nested support-page language selectors and retains mobile/translation-expansion containment.
+- Adds [Applet Design System and Minimum Feature Contract](docs/APPLET_DESIGN_SYSTEM_CONTRACT.md) and [Public Surface Locale Matrix](docs/PUBLIC_SURFACE_LOCALE_MATRIX.md) so future labs and support pages have explicit minimum product contracts.
+- Adds a permanent final-composition/design-system QA gate over the generated `_site` artifact.
+
+The v1.6.1 release deliberately does **not** add a grading backend, a second assignment UI, a new algorithm, or a sixteenth lab.
+
 ## Lab 15: Game Trees, Minimax, and Alpha-Beta Pruning
 
-v1.6.0 adds a deterministic adversarial-search playground for finite, two-player, zero-sum, perfect-information game trees. Learners back terminal utilities through alternating MAX and MIN nodes, then compare full minimax with Alpha-Beta on the same tree and child order.
+v1.6.0 added a deterministic adversarial-search playground for finite, two-player, zero-sum, perfect-information game trees. Learners back terminal utilities through alternating MAX and MIN nodes, then compare full minimax with Alpha-Beta on the same tree and child order.
 
 The core relation is:
 
@@ -76,30 +92,34 @@ v1.5 applied mechanism-first engagement improvements only where the Full Assuran
 
 v1.5.1 added learner-centered HCI/adoption hardening without changing applet algorithms: KNN touch recovery, Bayesian narrow-mobile method layout, Tiny Neural Network landscape reflow, a PWP-inspired state/recovery QA contract, corrected privacy-minimized GoatCounter semantics, and two ready-to-assign student Activity Pack canaries.
 
-## Activity Packs
+## Quick Assigns and Activity Packs
 
-The first Activity Packs use a consistent inquiry structure:
+**Level 1 Quick Assigns** are approximately 10–15 minutes and reuse the applet's existing classroom response surface. The first four canaries are Search, Local Search, Wumpus World, and CNF/SAT. Stable IDs let a teacher assign a bounded task without a separate worksheet.
 
-**predict -> run -> observe -> explain -> transfer**
+**Level 2 Activity Packs** remain the longer 30–45 minute pilot resources:
 
 - [NN-1 · Make it fail, then make it learn](activities/nn-1.html): non-linearity, hidden-layer capacity, training dynamics, and train/test generalization.
 - [CNN-1 · Be the filter](activities/cnn-1.html): hand-calculated convolution, directional edges, learned filters, and pooling.
 
-Responses autosave locally in the learner's browser and can be printed or saved as PDF. AI Playgrounds has no assignment-submission backend. Teacher answer keys are intentionally not published on the student site.
+Both layers use the inquiry spine:
+
+**predict -> run/manipulate -> observe -> explain -> transfer**
+
+Responses remain local to the learner's browser unless the learner or teacher deliberately exports/prints them. AI Playgrounds has no assignment-submission backend. Teacher answer keys are intentionally not published on the student site.
 
 ## Explore
 
-Build the deterministic v1.6 Pages artifact with:
+Build the deterministic v1.6.1 Pages artifact with:
 
 ```bash
-python tools/build_site_v1_6_public.py
+python tools/build_site_v1_6_1_consistency.py
 ```
 
 The deployed applets require no server, account, package manager, or backend. Labs 13, 14, and 15 are generated deterministically into the public artifact and remain self-contained offline HTML files after generation.
 
 ## Verification
 
-The release workflow includes the complete inherited suite plus permanent Lab 15 gates:
+The release workflow retains the complete inherited suite and adds permanent v1.6.1 assignment/consistency gates:
 
 ```bash
 python tools/release_check.py
@@ -107,17 +127,16 @@ python tools/check_release_metadata.py
 python tools/run_algorithm_tests.py
 python tools/test_minimax_alpha_beta.py
 python tools/test_minimax_alpha_beta_cross_runtime.py
-python tools/test_minimax_alpha_beta_prototype.py
-python tools/test_minimax_alpha_beta_english_applet.py
-python tools/test_minimax_alpha_beta_localization.py
 python tools/test_minimax_alpha_beta_multilingual_applet.py
 python tools/test_v1_6_public_integration.py
 python tools/test_v1_5_1_hci_adoption.py
 python tools/test_v1_5_1_hci_extended.py
+python tools/test_v1_6_1_quick_assign_currency.py
+python tools/test_v1_6_1_design_consistency.py
 python tools/browser_qa.py --no-screenshots
 ```
 
-The v1.6 public boundary is 15 applets and 58 deployed files. The three Activity Pack pages remain the index, NN-1, and CNN-1. Every public HTML page receives the privacy-minimized v1.6 analytics wrapper exactly once, while applet state, worksheet answers, free text, and experiment values remain excluded from analytics requests.
+The v1.6.1 public boundary remains 15 applets and 58 deployed files. The three Activity Pack pages remain the index, NN-1, and CNN-1. Every public HTML page receives the privacy-minimized analytics wrapper exactly once, while applet state, worksheet answers, free text, and experiment values remain excluded from analytics requests.
 
 ## Teaching materials
 
@@ -130,7 +149,7 @@ The v1.6 public boundary is 15 applets and 58 deployed files. The three Activity
 
 ## Research status
 
-AI Playgrounds v1.6.0 is the current software release. The earlier v1.0.1 artifact remains immutable and archived at its version DOI. Its DOI should not be interpreted as a DOI for v1.6.0.
+AI Playgrounds v1.6.1 is the current software release. The earlier v1.0.1 artifact remains immutable and archived at its version DOI. Its DOI should not be interpreted as a DOI for v1.6.1.
 
 The deterministic/browser evidence supports implementation integrity and bounded design/interaction claims. It does not establish measured learning gains, universal learner preference, classroom adoption, or accessibility conformance. The human-usability protocol defines the evidence required for stronger claims.
 
@@ -141,6 +160,9 @@ A separate design-and-tools research manuscript about the suite remains in prepa
 The project is released under the MIT License.
 
 - [Architecture](ARCHITECTURE.md)
+- [Applet design-system contract](docs/APPLET_DESIGN_SYSTEM_CONTRACT.md)
+- [Quick Assign architecture](docs/QUICK_ASSIGN_ARCHITECTURE.md)
+- [Public surface locale matrix](docs/PUBLIC_SURFACE_LOCALE_MATRIX.md)
 - [Contributing](CONTRIBUTING.md)
 - [Citation metadata](CITATION.cff)
 - [Release notes](RELEASE_NOTES.md)
