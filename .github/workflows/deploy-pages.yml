@@ -26,24 +26,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-
       - name: Release check
         run: python tools/release_check.py
-
-      - name: Check v1.6.1 release metadata
+      - name: Check v1.6.2 release metadata
         run: python tools/check_release_metadata.py
-
-      - name: Build deterministic v1.6.1 public site
-        run: python tools/build_site_v1_6_1_consistency.py
-
+      - name: Build deterministic v1.6.2 public site
+        run: python tools/build_site_v1_6_2.py
       - name: Configure Pages
         uses: actions/configure-pages@v5
-
       - name: Upload minimal Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
           path: _site
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
