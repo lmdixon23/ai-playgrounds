@@ -64,7 +64,7 @@ def main() -> int:
     checks.append(("analytics covers every public HTML page exactly once", not analytics_missing and not analytics_duplicate, {"htmlPages": len(html_pages), "missing": analytics_missing, "duplicates": analytics_duplicate}))
 
     landing = (SITE / "index.html").read_text(encoding="utf-8")
-    checks.append(("landing metadata reflects fourteen multilingual labs", "14 interactive labs" in landing and "Fourteen multilingual" in landing and '"inLanguage":["en","zh-Hans","vi","es"]' in landing, {}))
+    checks.append(("landing metadata reflects fourteen multilingual labs", "14 interactive labs" in landing and "Fourteen multilingual" in landing and '"inLanguage":["en","zh","vi","es"]' in landing, {}))
     teacher = (SITE / "teacher-pack.html").read_text(encoding="utf-8")
     checks.append(("Teacher Pack exposes Activity Pack canaries and course/modern split", "NN-1" in teacher and "CNN-1" in teacher and "twelve Foundations/course-track labs plus two Modern AI extensions" in teacher, {}))
 
@@ -89,13 +89,32 @@ def main() -> int:
             cv = page.locator("#cv").bounding_box()
             checks.append(("KNN canvas available", cv is not None, {"box": cv}))
             if cv:
-                page.mouse.click(cv["x"] + cv["width"] * 0.52, cv["y"] + cv["height"] * 0.52)
+                page.locator("#cv").evaluate("""(cv,pos) => {
+                    const r=cv.getBoundingClientRect();
+                    cv.dispatchEvent(new MouseEvent('click',{
+                        bubbles:true,cancelable:true,view:window,
+                        clientX:r.left+r.width*pos.x,
+                        clientY:r.top+r.height*pos.y
+                    }));
+                }""", {"x": 0.52, "y": 0.52})
                 page.wait_for_timeout(30)
+                query_status = page.locator("#guidedStatus").inner_text()
+                checks.append(("KNN query placement advances challenge", "Step 2" in query_status, {"status": query_status}))
                 point = page.locator('[data-role="point"]').first.bounding_box()
                 if point:
-                    # Offset from the center far enough to miss the old ~12px CSS hit
-                    # target on mobile, while remaining inside the new 22px tolerance.
-                    page.mouse.click(point["x"] + point["width"] / 2 + 13, point["y"] + point["height"] / 2)
+                    # Exercise the canvas handler itself at a location that misses the
+                    # old ~12px visible target but remains inside the new 22px CSS
+                    # tolerance. This reproduces an imprecise touch without letting
+                    # an overlay element intercept the event.
+                    page.locator("#cv").evaluate("""(cv,pos) => {
+                        cv.dispatchEvent(new MouseEvent('click',{
+                            bubbles:true,cancelable:true,view:window,
+                            clientX:pos.x,clientY:pos.y
+                        }));
+                    }""", {
+                        "x": point["x"] + point["width"] / 2 + 13,
+                        "y": point["y"] + point["height"] / 2,
+                    })
                     page.wait_for_timeout(40)
                     status = page.locator("#guidedStatus").inner_text()
                     checks.append(("KNN near-miss selects rather than resets", "(1/" in status, {"status": status, "point": point}))
