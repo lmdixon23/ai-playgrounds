@@ -21,6 +21,16 @@ TRANSFORMER_ROW = re.compile(
     r'<td data-label="Applet"><a href="playgrounds/transformer-language-model/index\.html">[\s\S]*?</tr>'
 )
 
+# v1.5.1 deliberately adds a data attribute to the analytics script, while the
+# older inherited removal regex expects a literal <script>. v1.6 therefore
+# identifies the block by its stable privacy comment + data marker instead of
+# depending on one historical serialization shape.
+ANALYTICS_ANY_RE = re.compile(
+    r"\s*<!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected\. -->\s*"
+    r"<script[^>]*data-ai-playgrounds-analytics=[\"'][^\"']+[\"'][^>]*>[\s\S]*?window\.aiPlaygroundsAnalytics[\s\S]*?</script>\s*",
+    re.S,
+)
+
 LAB15_ROW = (
     '<tr style="--applet-accent:#0d9488"><td data-label="#"><span class="order-dot">13</span></td>'
     '<td data-label="Applet"><a href="playgrounds/minimax-alpha-beta/index.html">Game Trees: Minimax and Alpha-Beta Pruning</a></td>'
@@ -42,11 +52,6 @@ def corrected_patch_curriculum() -> None:
     path = SITE / "curriculum.html"
     html = path.read_text(encoding="utf-8")
 
-    # v1.4 intentionally left Transformer in the course table as a course-boundary
-    # lab and put Transformer + Agent in the Modern Extensions section. For v1.6,
-    # make the navigation taxonomy exact: the Foundations table is the original 12
-    # classical labs plus Lab 15; Transformer and Agent remain the two modern/boundary
-    # extensions. All fifteen still appear in the applet map.
     html, removed = TRANSFORMER_ROW.subn("", html, count=1)
     if removed != 1:
         raise RuntimeError("Could not remove Transformer course-boundary row for the v1.6 Foundations split")
@@ -69,29 +74,48 @@ def corrected_patch_curriculum() -> None:
     if f'playgrounds/{LAB15_SLUG}/index.html' not in html[map_start:section_end]:
         html = html[:grid_close] + LAB15_CARD + html[grid_close:]
 
-    replacements = {
+    for old, new in {
         "Fourteen multilingual": "Fifteen multilingual",
         "fourteen multilingual": "fifteen multilingual",
         "fourteen public applets": "fifteen public applets",
         "fourteen applets": "fifteen applets",
-    }
-    for old, new in replacements.items():
+    }.items():
         html = html.replace(old, new)
 
     if html.count('class="order-dot"') != EXPECTED_FOUNDATION_ROWS:
-        raise RuntimeError(
-            f"v1.6 Foundations table must contain exactly {EXPECTED_FOUNDATION_ROWS} rows"
-        )
+        raise RuntimeError(f"v1.6 Foundations table must contain exactly {EXPECTED_FOUNDATION_ROWS} rows")
     if html.count('class="applet-card"') != EXPECTED_APPLET_CARDS:
-        raise RuntimeError(
-            f"v1.6 applet map must contain exactly {EXPECTED_APPLET_CARDS} cards"
-        )
+        raise RuntimeError(f"v1.6 applet map must contain exactly {EXPECTED_APPLET_CARDS} cards")
     if "modern-extensions" not in html:
         raise RuntimeError("v1.6 must preserve the Modern AI extensions section")
     modern = html[html.index('id="modern-extensions"'):map_start]
     if "Transformer Language Modeling" not in modern or "Agent Tool Use and Context Protocols" not in modern:
         raise RuntimeError("v1.6 Modern Extensions must preserve Transformer and Agent Tool Use")
     path.write_text(html, encoding="utf-8")
+
+
+def corrected_upgrade_analytics() -> None:
+    pages = sorted(path for path in SITE.rglob("*.html") if path.is_file())
+    for path in pages:
+        html = path.read_text(encoding="utf-8")
+        html, removed = ANALYTICS_ANY_RE.subn("\n", html, count=1)
+        # Lab 15 is newly generated and has no inherited project analytics block;
+        # all inherited public pages must have exactly one removable block.
+        if path.parent.name == LAB15_SLUG and path.parent.parent.name == "playgrounds":
+            if removed not in (0, 1):
+                raise RuntimeError("Unexpected Lab 15 analytics block count")
+        elif removed != 1:
+            raise RuntimeError(f"Could not remove exactly one inherited analytics block: {path.relative_to(SITE)}")
+        if "data-ai-playgrounds-analytics=" in html:
+            raise RuntimeError(f"Stale analytics marker remains before v1.6 insertion: {path.relative_to(SITE)}")
+        kind, slug = v151.page_identity(path)
+        block = v151.analytics_block(kind, slug).replace(
+            'data-ai-playgrounds-analytics="v1.5.1"',
+            'data-ai-playgrounds-analytics="v1.6.0"',
+            1,
+        )
+        html = v151.insert_before_last(html, "</body>", block)
+        path.write_text(html, encoding="utf-8")
 
 
 def validate_boundary() -> None:
@@ -147,12 +171,15 @@ def validate_boundary() -> None:
 
 
 def build_site() -> None:
-    original = draft.patch_curriculum
+    original_curriculum = draft.patch_curriculum
+    original_analytics = draft.upgrade_analytics
     try:
         draft.patch_curriculum = corrected_patch_curriculum
+        draft.upgrade_analytics = corrected_upgrade_analytics
         draft.build_site()
     finally:
-        draft.patch_curriculum = original
+        draft.patch_curriculum = original_curriculum
+        draft.upgrade_analytics = original_analytics
     validate_boundary()
 
 
