@@ -1,5 +1,51 @@
 # Release notes
 
+## v1.5.0, 2026-08-25
+
+### Engagement excellence without decorative inflation
+
+- Keeps the public suite at fourteen applets and the deterministic Pages boundary at 54 files.
+- Applies the Full Assurance Stack to learner engagement and immediate visual impact, including Red Team, Blue Team, Arbiter, FMEA, fault-tree analysis, STPA, Bowtie, negative/boundary tests, and explicit kill conditions.
+- Researches strong interaction patterns from educational and model-explainer products and transfers only mechanism-faithful ideas: direct manipulation, state continuity, before/after comparison, one-step replay, and learner construction.
+- Deliberately leaves ten already-strong applets unchanged rather than adding arbitrary animation, gamification, sound, badges, points, or other spectacle.
+
+### Lab 13: Transformer state continuity and controlled continuation
+
+- Adds a state-derived Tokens -> Represent -> Attend -> Predict replay over the already-computed toy Transformer; it is explicitly not a wall-clock execution trace.
+- Adds `Append argmax token`, an explicit deterministic continuation rule rather than stochastic sampling.
+- Adds a saved baseline/current comparison for top-token probability, maximum probability delta, final-attention L1 delta, and the largest token-probability changes.
+- Preserves the frozen Transformer arithmetic, one-file/offline operation, four-locale state invariance, reduced-motion behavior, and 390 px containment.
+
+### Lab 14: runtime packet and isolated learner sandbox
+
+- Adds a visible action packet whose path is derived from the actual runtime event across Propose -> Validate -> Authorize -> Execute -> Observe -> Update -> Stop.
+- Makes rejection and authorization denial visibly stop at the correct runtime gate.
+- Adds an explicit context delta and `SIMULATED WORLD — no real external action` surface.
+- Adds a learner-selected one-step sandbox for principal, tool, and JSON arguments using a fresh isolated in-memory world. Learner-selected calls are explicitly distinguished from model-selected actions.
+- Preserves side-effect-free rejection/denial, frozen runtime semantics, four-locale state invariance, reduced motion, offline operation, and narrow-viewport containment.
+
+### CNF/SAT: DPLL branch-and-prune tree
+
+- Adds an SVG search tree derived read-only from the existing DPLL trace; there remains exactly one DPLL solver.
+- Makes real branching, unit/pure propagation, contradiction, pruning, sibling backtracking, and terminal SAT/UNSAT states spatially visible.
+- Adversarial browser QA uses a parser-valid two-variable UNSAT formula with no initial unit or pure literal so the test must exercise actual branch/conflict/backtrack behavior.
+- Preserves the existing DPLL transport, locale state, reduced-motion path, and mobile containment.
+
+### Bayesian Network: exact before/after posterior delta
+
+- Preserves the previous exact posterior as a marker and shows the current posterior plus exact percentage-point delta.
+- Makes explaining away visible without requiring the learner to remember the previous number.
+- Explicitly rejects generic probability-flow animation because the applet is not running a literal message-flow algorithm along its arrows.
+- Suppresses the exact before/after comparison for sampling methods so Monte Carlo noise is not misrepresented as a model-state change.
+
+### Verification and evidence boundary
+
+- Adds dedicated candidate gates for Lab 13, Lab 14, CNF/SAT, and Bayesian Network, plus a composed v1.5 public integration gate.
+- The accepted pre-integration behavior candidate at `e3eaae0473142271682d8ea0a97192ca9984e1ea` passed Verify run `32820222292`, job `97716565394`, including all inherited gates and final browser/responsive QA.
+- Adds a human usability protocol for time to first meaningful action, prediction integrity, mechanism explanation, recurring false mental models, voluntary exploration, accessibility paths, and fluent-reader locale review.
+- Design and browser evidence support an internal design-level engagement/immediate-impact assessment; they do not establish measured learning gains, universal learner preference, classroom adoption, or accessibility conformance.
+- v1.5.0 does not modify or reassign the immutable v1.0.1 DOI `10.5281/zenodo.21854217`.
+
 ## v1.4.0, 2026-08-25
 
 ### Product-quality pass before Lab 15
