@@ -4,15 +4,17 @@ from __future__ import annotations
 """Final corrective wrapper around the v1.6.1 consistency implementation.
 
 The substantive implementation remains in `build_site_v1_6_1_consistency_impl.py`
-for auditability. This wrapper contains only lifecycle corrections discovered by
-the final browser gate:
+for auditability. This wrapper contains only lifecycle/release corrections discovered
+by the final browser and publication gates:
 
 * the home search input originally retained the pre-v1.6.1 renderer as its event
   listener even after the richer 15-lab renderer replaced the global function;
 * R4 VI/ES overlays refreshed known applet layers after activating the overlay
   locale, which allowed native renderers to overwrite the stored English source;
 * delayed VI/ES activation could outlive a later language choice and reapply a
-  superseded translation after the learner had already returned to English.
+  superseded translation after the learner had already returned to English;
+* the pre-release Activity Pack provenance text used an explicit candidate label,
+  which must be rebound to the actual v1.6.1 release before publication.
 
 The fixes preserve the existing product architecture rather than weakening the
 consistency tests.
@@ -30,8 +32,6 @@ def validate(manifest: list[dict]) -> None:
     home = (SITE / "index.html").read_text(encoding="utf-8")
     if "undefinedundefined" in home or re.search(r">\s*undefined\s*<", home):
         raise RuntimeError("Landing page contains a literal undefined card value")
-    # The select itself is created by the final runtime; static HTML must contain
-    # the runtime contract, while Playwright verifies the actual rendered select.
     for marker in ("ap-home-language-select", "v161-home-four-locale-runtime"):
         if marker not in home:
             raise RuntimeError(f"Landing page lacks four-language runtime marker: {marker}")
@@ -62,16 +62,11 @@ def patch_home_runtime() -> None:
         raise RuntimeError("Landing category-renderer marker changed")
     html = html.replace(old_category, new_category, 1)
 
-    # The base page registered its input listener before the v1.6.1 renderer was
-    # installed. JavaScript event listeners retain the old function object, so
-    # aliases that exist only in the enriched keyword registry never reached the
-    # new renderer. Register the final renderer after replacement; it runs last.
     old_install = "function install(){const root=document.querySelector('.lang');"
     new_install = "function install(){const search=document.getElementById('search');if(search)search.addEventListener('input',renderApplets);const root=document.querySelector('.lang');"
     if old_install not in html:
         raise RuntimeError("Landing final-runtime install marker changed")
     html = html.replace(old_install, new_install, 1)
-
     path.write_text(html, encoding="utf-8")
 
 
@@ -79,25 +74,12 @@ def patch_r4_roundtrip_lifecycle() -> None:
     path = SITE / "assets" / "localization-r4.js"
     source = path.read_text(encoding="utf-8")
 
-    # Capture stable page identity before any overlay is activated. The original
-    # twelve applets all have a static H1 and English document title; keeping these
-    # two identity anchors separate from mutable experiment state makes EN recovery
-    # deterministic even when an applet renderer replaces text nodes.
     ordered_marker = "  const ordered = { vi: null, es: null };"
-    ordered_replacement = (
-        ordered_marker
-        + "\n  let canonicalDocumentTitle = '';"
-        + "\n  let canonicalHeadingText = '';"
-        + "\n  let pendingOverlayTimer = null;"
-    )
+    ordered_replacement = ordered_marker + "\n  let canonicalDocumentTitle = '';\n  let canonicalHeadingText = '';\n  let pendingOverlayTimer = null;"
     if ordered_marker not in source:
         raise RuntimeError("R4 ordered-map marker changed")
     source = source.replace(ordered_marker, ordered_replacement, 1)
 
-    # Refresh native/app-specific layers while the renderer is explicitly in
-    # English, then activate VI/ES and apply the overlay. Previously `current` was
-    # set to VI/ES first, so wrapped `tr()` calls could emit translated strings
-    # that the observer then mistook for canonical source text.
     old_overlay = """  function activateOverlay(locale) {
     current = locale;
     document.documentElement.lang = locale;
@@ -213,13 +195,23 @@ def patch_r4_roundtrip_lifecycle() -> None:
     path.write_text(source, encoding="utf-8")
 
 
+def patch_release_provenance() -> None:
+    for path in sorted(SITE.rglob("*.html")):
+        html = path.read_text(encoding="utf-8")
+        html = html.replace('content="1.6.1-candidate"', 'content="1.6.1"')
+        html = html.replace('current suite candidate v1.6.1', 'current suite release v1.6.1')
+        html = html.replace('v1.6.1 candidate', 'v1.6.1 release')
+        path.write_text(html, encoding="utf-8")
+
+
 def build_site() -> None:
     impl.validate = validate
     impl.build_site()
     patch_home_runtime()
     patch_r4_roundtrip_lifecycle()
+    patch_release_provenance()
     impl.base.validate_local_references()
-    print("Finalized v1.6.1 consistency composition with enriched search binding and cancellable reversible VI/ES locale lifecycle")
+    print("Finalized v1.6.1 release composition with enriched search binding, reversible locales, and release provenance")
 
 
 if __name__ == "__main__":
