@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.5.0] - 2026-08-25
+
+### Added
+- A state-derived Lab 13 continuity layer that keeps Tokens, Represent, Attend, and Predict visually connected, plus deterministic argmax continuation and exact baseline-versus-current comparison.
+- A Lab 14 runtime packet that visibly traverses actual validation, authorization, execution, observation, context-update, and stopping gates, together with an explicitly isolated learner-selected simulated-world sandbox.
+- A CNF/SAT DPLL branch-and-prune tree derived read-only from the existing DPLL trace; no second solver is introduced.
+- An exact Bayesian-network before/after posterior comparison that preserves the previous exact belief as a marker and highlights the largest percentage-point change.
+- Full Assurance Stack, applet-by-applet engagement acceptance audit, human usability protocol, and dedicated v1.5 public integration QA.
+
+### Changed
+- Promoted the four mechanism-faithful engagement candidates into the fourteen-applet v1.5 public composition while preserving the deterministic 54-file Pages boundary.
+- Deliberately left Pathfinding, Hill Climbing/Simulated Annealing, Wumpus World, Bayes Rule, KNN, Overfitting, Tiny Neural Network, K-Means, Convolution, and Q-Learning behavior unchanged because the audit found no credible mechanism-level deficit that justified additional UI or animation.
+- Updated release provenance and deployment/release automation for v1.5.0 while preserving historical v1.0.1 DOI ownership.
+
+### Fixed
+- Hardened Guided Challenge browser timing against shared-runner startup variance without weakening assertions.
+- Isolated candidate localization surfaces so locale switching cannot rewrite machine state or create translation feedback loops.
+- Constrained the Lab 14 runtime lane at 390 px and repaired the CNF/Bayesian candidate mounting order discovered by adversarial browser QA.
+- Replaced invalid or timing-sensitive adversarial test fixtures with parser-valid, state-stable fixtures that exercise the same intended mechanisms.
+
 ## [1.4.0] - 2026-08-25
 
 ### Added
@@ -46,7 +66,7 @@
 ### Added
 - Lab 13, Transformer Language Modeling, as the thirteenth public AI Playground.
 - Deterministic Python and JavaScript reference implementations with 20 numeric/adversarial fixtures and recursive cross-runtime parity.
-- A single-file Transformer applet covering token representation, position information, Q/K/V projections, causal self-attention, logits, next-token probabilities, temperature, and bounded attention perturbations.
+- A single-file Transformer applet covering token representation, position information, Q/K/V projections, causal masking, self-attention, logits, next-token probabilities, temperature, and bounded attention perturbations.
 - Four isolated prediction-before-reveal Guided Challenges and six mechanism scenarios, including causal-mask leakage and an attention-not-explanation counterexample.
 - Simplified-Chinese, Vietnamese, and Spanish Lab 13 semantic catalogs with protected model tokens, placeholder parity, and adversarial terminology checks.
 - Four-locale state-preserving browser parity and a dedicated public v1.2 integration gate.
@@ -78,7 +98,6 @@
 ### Fixed
 - Removed the stale pre-release 27-pass/2-fail/4-skip narrative from the research companion.
 - Added a constrained-environment validation wrapper and clearer separation between software assurance and educational efficacy.
-
 
 ## 1.0.0 - 2026-07-25
 

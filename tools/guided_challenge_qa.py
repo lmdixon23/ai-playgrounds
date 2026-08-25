@@ -6,6 +6,12 @@ from datetime import datetime, timezone
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 OUT=ROOT/'release-evidence'/'guided-challenge-qa.json'
 SLUGS=['bayes-classifier','bayes-network','cnf-sat','convolution','hill-climbing','kmeans','knn-classifier','neural-network','overfitting','q-learning-gridworld','search-pathfinding','wumpus-world']
+# Browser state transitions normally resolve well below one second, but shared
+# GitHub runners occasionally spend several seconds on layout/script startup.
+# Keep assertions identical and allow a bounded 8 s state-settle window so
+# infrastructure jitter is not mistaken for a learner-state regression.
+STATE_TIMEOUT_MS=8000
+NAV_TIMEOUT_MS=12000
 
 def launch(p):
     args=['--no-sandbox','--disable-dev-shm-usage']
@@ -19,14 +25,14 @@ def launch(p):
 def state(page): return page.evaluate('() => window.__suiteGuidedChallenge?.state() || null')
 def history(page): return page.evaluate('() => window.__suiteGuidedChallenge?.history() || []')
 def has_r4(page): return bool(page.evaluate('() => !!window.__r4Localization && window.__r4Localization.ready()'))
-def wait_state(page,want,timeout=5000): page.wait_for_function('(want)=>window.__suiteGuidedChallenge&&window.__suiteGuidedChallenge.state()===want',arg=want,timeout=timeout)
+def wait_state(page,want,timeout=STATE_TIMEOUT_MS): page.wait_for_function('(want)=>window.__suiteGuidedChallenge&&window.__suiteGuidedChallenge.state()===want',arg=want,timeout=timeout)
 
 def switch_native_locale(page,code):
     btn=page.locator(f'button[data-lang="{code}"]')
     if not btn.count(): raise RuntimeError(f'native language control missing: {code}')
     btn.first.click()
-    if code=='zh': page.wait_for_function("() => (document.documentElement.lang||'').toLowerCase().startsWith('zh')")
-    else: page.wait_for_function("(code)=>(document.documentElement.lang||'').toLowerCase().startsWith(code)",arg=code)
+    if code=='zh': page.wait_for_function("() => (document.documentElement.lang||'').toLowerCase().startsWith('zh')",timeout=STATE_TIMEOUT_MS)
+    else: page.wait_for_function("(code)=>(document.documentElement.lang||'').toLowerCase().startsWith(code)",arg=code,timeout=STATE_TIMEOUT_MS)
     page.wait_for_timeout(100)
 
 def fill_generic(page):
@@ -127,11 +133,11 @@ def main()->int:
         browser=launch(p)
         try:
             for slug in SLUGS:
-                context=browser.new_context(viewport={'width':1280,'height':900}); page=context.new_page(); page.set_default_timeout(5000)
+                context=browser.new_context(viewport={'width':1280,'height':900}); page=context.new_page(); page.set_default_timeout(STATE_TIMEOUT_MS)
                 page_errors=[];console_errors=[];page.on('pageerror',lambda exc,a=page_errors:a.append(str(exc)));page.on('console',lambda msg,a=console_errors:a.append(msg.text) if msg.type=='error' else None)
                 checks=[];t0=time.perf_counter()
                 try:
-                    page.goto((ROOT/'playgrounds'/slug/'index.html').resolve().as_uri(),wait_until='domcontentloaded',timeout=10000); page.wait_for_function('() => !!window.__suiteGuidedChallenge',timeout=5000)
+                    page.goto((ROOT/'playgrounds'/slug/'index.html').resolve().as_uri(),wait_until='domcontentloaded',timeout=NAV_TIMEOUT_MS); page.wait_for_function('() => !!window.__suiteGuidedChallenge',timeout=STATE_TIMEOUT_MS)
                     checks.append(('initial_explore_inactive',page.evaluate('() => window.__suiteGuidedChallenge.mode()==="explore" && window.__suiteGuidedChallenge.state()==="inactive"'),{}))
                     if slug=='knn-classifier': check_knn(page,checks)
                     else: check_generic(page,slug,checks)
