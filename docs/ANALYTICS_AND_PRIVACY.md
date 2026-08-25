@@ -1,10 +1,10 @@
 # Analytics and privacy specification
 
-**Scope:** AI Playgrounds public pages hosted at `lmdixon23.github.io`. **Release:** v1.5.1. **Analytics endpoint:** `https://lmdixon23.goatcounter.com/count`.
+**Scope:** AI Playgrounds public pages hosted at `lmdixon23.github.io`. **Release:** v1.6.0. **Analytics endpoint:** `https://lmdixon23.goatcounter.com/count`.
 
 ## Design decision
 
-The project uses a deliberately small aggregate measurement layer so public interest can be described without building learner profiles. Every public HTML page in the deterministic release artifact receives the same first-party inline wrapper, including generated Labs 13/14 and Activity Pack pages. The wrapper sends a 1x1 image request directly to the GoatCounter `/count` endpoint; it does **not** load GoatCounter's JavaScript or any other third-party runtime script. It runs only on the canonical GitHub Pages host. Downloaded files, `file://` use, localhost, mirrors, and school intranets send no project analytics.
+The project uses a deliberately small aggregate measurement layer so public interest can be described without building learner profiles. Every public HTML page in the deterministic release artifact receives the same first-party inline wrapper, including generated Labs 13/14/15 and Activity Pack pages. The wrapper sends a 1x1 image request directly to the GoatCounter `/count` endpoint; it does **not** load GoatCounter's JavaScript or any other third-party runtime script. It runs only on the canonical GitHub Pages host. Downloaded files, `file://` use, localhost, mirrors, and school intranets send no project analytics.
 
 ## Signals sent by the project code
 
