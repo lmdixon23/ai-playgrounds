@@ -1,5 +1,39 @@
 # Release notes
 
+## v1.5.1, 2026-08-25
+
+### Learner-centered HCI hardening
+
+- Keeps all fourteen applet algorithms unchanged while applying a second Educational-HCI assurance pass over the released v1.5.0 product.
+- Adds KNN Guided Challenge near-miss recovery so a slightly imprecise mobile tap near a training point selects the nearby point instead of unexpectedly moving the query and clearing prediction progress.
+- Reflows Bayesian Network inference-method choices into a two-row narrow-mobile layout so all four methods remain visible with EN/ZH/VI/ES labels.
+- Reflows Tiny Neural Network history/scrub controls for short mobile-landscape layouts.
+- Adds a PWP-inspired learner-state/recovery contract covering initial state, action, expected state, recovery path, focus/accessibility state, state preservation, and failure-path behavior.
+
+### Ready-to-assign Activity Pack pilot
+
+- Adds **NN-1 · Make it fail, then make it learn**, adapted from prior classroom use and structured around nonlinear capacity, training dynamics, and train/test generalization.
+- Adds **CNN-1 · Be the filter**, adapted from prior classroom use and structured around one hand-calculated convolution, directional edge detection, learned filters, and pooling.
+- Both activities use the same inquiry spine: predict -> run -> observe -> explain -> transfer.
+- Student text autosaves only in the local browser, supports guarded clearing and print/PDF use, and is never submitted to AI Playgrounds.
+- Teacher answer keys and grading exemplars are intentionally excluded from the public student site.
+
+### Analytics repair and adoption measurement
+
+- Applies the privacy-minimized analytics wrapper exactly once to every public HTML page in the deterministic artifact, including generated Labs 13/14 and the Activity Pack pages.
+- Normalizes canonical page paths so `/index.html` aliases do not fragment the same page, and sends the human-readable document title.
+- Sends synthetic applet/resource/outbound/engaged interactions as GoatCounter events with `e=1` instead of counting them as ordinary page paths.
+- Converts allow-listed `ap_src` values into GoatCounter campaign query data while retaining the project's no-general-referrer policy.
+- Preserves Global Privacy Control, Do Not Track, `?analytics=off`, local opt-out, canonical-host-only operation, no third-party analytics JavaScript, and no transmission of learner answers or experiment state.
+
+### Verification and evidence boundary
+
+- Expands the deterministic Pages boundary from 54 to 57 files while preserving exactly fourteen applets; the three additional files are the Activity Pack index plus NN-1 and CNN-1.
+- Adds a dedicated v1.5.1 browser gate covering analytics coverage and payload semantics, KNN touch recovery, four-locale Bayesian method containment, Neural Network 844×390 landscape containment, 200% text-enlargement stress across all fourteen applets, Activity Pack autosave/clear/focus recovery, and analytics opt-out behavior.
+- Retains the complete inherited v1.5 pedagogical, localization, algorithm, Transformer, agent, engagement, public-integration, and browser/responsive verification stack.
+- Software/browser assurance establishes behavior under tested conditions; it does not establish accessibility conformance, measured learning gains, classroom adoption, or universal learner preference.
+- v1.5.1 does not modify or reassign the immutable v1.0.1 DOI `10.5281/zenodo.21854217`.
+
 ## v1.5.0, 2026-08-25
 
 ### Engagement excellence without decorative inflation
@@ -95,7 +129,7 @@ Software checks establish implementation and release integrity only. They do not
 - Added the fourteenth public applet, a deterministic agent-runtime lab for structured tool use and context updates.
 - Separates model text, structured tool calls, schema validation, authorization, execution, returned observations, provenance-aware context updates, and stopping into explicit runtime stages.
 - Includes eight deterministic scenarios covering observation-driven replanning, overlapping tool schemas, invalid arguments, text versus execution, permission denial, instruction-like tool output, MCP 2026-07-28 serialization, and correct termination.
-- Includes five prediction-before-reveal Guided Challenges for next-action selection, validation gates, observation effects, trust classification, and stop decisions.
+- Includes five prediction-before-reveal Guided Challenges for next-action selection, validation gates, observation effects, trust classification, and termination.
 
 ### Four-locale parity
 
