@@ -63,7 +63,10 @@ def build_candidate(output: Path) -> Path:
         1,
     )
     source = source.replace("</head>", CSS + "\n</head>", 1)
-    source = source.replace("</body>", SCRIPT + "\n</body>", 1)
+    body_index = source.rfind("</body>")
+    if body_index < 0:
+        raise RuntimeError("Could not locate final document body boundary for Bayesian posterior runtime")
+    source = source[:body_index] + SCRIPT + "\n" + source[body_index:]
     required = (
         "__bayesPosteriorPresentationSnapshot",
         'id="bayes-engagement-excellence-style"',
