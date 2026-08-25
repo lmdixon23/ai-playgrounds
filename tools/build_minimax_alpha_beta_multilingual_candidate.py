@@ -37,6 +37,7 @@ RUNTIME = r'''
   let current = "en";
   let scheduled = false;
   let observer = null;
+  let mutating = false;
 
   const exactToKey = new Map();
   const phraseEntries = [];
@@ -99,9 +100,6 @@ RUNTIME = r'''
     }
     const templated=translateTemplate(text); if(templated!==null) return templated;
     let out=text;
-    // Handles deliberate runtime compositions such as
-    // "Prediction matched. " + mechanism-specific actual text while remaining
-    // restricted to reviewed catalog phrases.
     for(const entry of phraseEntries){
       if(!out.includes(entry.value)) continue;
       const target=catalogs[current][entry.key];
@@ -109,7 +107,11 @@ RUNTIME = r'''
     }
     return out;
   }
+  function skipElement(el){
+    return !!(el && el.closest && el.closest("#lab15-locale-data,[data-lab15-no-translate]"));
+  }
   function localizeAttributes(el){
+    if(skipElement(el)) return;
     for(const name of ["aria-label","title","placeholder"]){
       if(!el.hasAttribute || !el.hasAttribute(name)) continue;
       const before=el.getAttribute(name), after=translateScalar(before);
@@ -119,8 +121,7 @@ RUNTIME = r'''
   function localizeTextNode(node){
     if(!node || node.nodeType!==Node.TEXT_NODE) return;
     const parent=node.parentElement;
-    if(!parent || ["SCRIPT","STYLE","NOSCRIPT"].includes(parent.tagName)) return;
-    if(parent.closest("#lab15-locale-data")) return;
+    if(!parent || ["SCRIPT","STYLE","NOSCRIPT"].includes(parent.tagName) || skipElement(parent)) return;
     const before=node.nodeValue, after=translateScalar(before);
     if(after!==before) node.nodeValue=after;
   }
@@ -138,20 +139,44 @@ RUNTIME = r'''
     }
   }
   function updateChrome(){
-    document.documentElement.lang=HTML_LANG[current];
-    document.title=translateScalar(document.title);
+    const htmlLang=HTML_LANG[current];
+    if(document.documentElement.lang!==htmlLang) document.documentElement.lang=htmlLang;
+    const nextTitle=translateScalar(document.title);
+    if(document.title!==nextTitle) document.title=nextTitle;
     const label=document.getElementById("lab15-language-label");
-    if(label) label.textContent=catalogs[current]["locale.language"];
+    const labelText=catalogs[current]["locale.language"];
+    if(label && label.textContent!==labelText) label.textContent=labelText;
     const select=document.getElementById("lab15-language-select");
     if(select && select.value!==current) select.value=current;
   }
   function updateUrl(){
     try{const url=new URL(location.href);url.searchParams.set("lang",current);history.replaceState(null,"",url)}catch(_){ }
   }
-  function localizeAll(){updateChrome();localizeTree(document.body)}
+  function observe(){
+    if(observer && !mutating){
+      observer.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:["aria-label","title","placeholder"]});
+    }
+  }
+  function localizeScoped(root=document.body){
+    if(!root || mutating) return;
+    mutating=true;
+    if(observer) observer.disconnect();
+    try{
+      localizeTree(root);
+      updateChrome();
+    }finally{
+      mutating=false;
+      observe();
+    }
+  }
+  function localizeAll(){localizeScoped(document.body)}
   function schedule(root){
-    if(scheduled) return; scheduled=true;
-    queueMicrotask(()=>{scheduled=false;localizeTree(root||document.body);updateChrome()});
+    if(scheduled) return;
+    scheduled=true;
+    queueMicrotask(()=>{
+      scheduled=false;
+      localizeScoped(root||document.body);
+    });
   }
   function setLocale(code,{updateHistory=true}={}){
     if(!LOCALES.includes(code)) code="en";
@@ -177,6 +202,7 @@ RUNTIME = r'''
     current=initialLocale();
     localizeAll();
     observer=new MutationObserver(mutations=>{
+      if(mutating) return;
       let root=null;
       for(const mutation of mutations){
         if(mutation.type==="characterData") root=mutation.target.parentElement||root;
@@ -185,7 +211,7 @@ RUNTIME = r'''
       }
       if(root) schedule(root);
     });
-    observer.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:["aria-label","title","placeholder"]});
+    observe();
     window.Lab15Localization={
       locale:()=>current,
       getLocale:()=>current,
@@ -262,7 +288,6 @@ def build_candidate(output: Path) -> Path:
         '<meta name="lab15-candidate-stage" content="R6-Multilingual">',
         1,
     )
-    # This developer-facing badge is intentionally language-neutral.
     html = html.replace("R4 English candidate", "R6 · EN/ZH/VI/ES", 1)
     html = html.replace("</head>", STYLE + "\n</head>", 1)
 
