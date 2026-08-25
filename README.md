@@ -13,7 +13,7 @@ Fifteen multilingual, offline-ready interactive AI labs spanning thirteen Founda
 
 **Live site:** https://lmdixon23.github.io/ai-playgrounds/
 
-**Current release:** [v1.6.1](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.6.1)
+**Current release:** [v1.6.2](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.6.2)
 
 **Archived v1.0.1 DOI:** [10.5281/zenodo.21854217](https://doi.org/10.5281/zenodo.21854217) · **All-versions DOI:** [10.5281/zenodo.21854216](https://doi.org/10.5281/zenodo.21854216)
 
@@ -47,6 +47,10 @@ The public catalogue has **13 Foundations/course-track labs** plus **2 Modern AI
 The Foundations track covers pathfinding, local search, Wumpus World, CNF/SAT, Bayes Rule, Bayesian Networks, KNN, overfitting, a tiny neural network, K-Means, convolution, Q-Learning, and Game Trees with Minimax/Alpha-Beta. The modern extensions are Transformer Language Modeling and Agent Tool Use and Context Protocols.
 
 The planning matrix in [docs/AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md](docs/AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md) compares coverage against AIMA and the Spring 2026 CS50/CSCI E-80 AI curriculum.
+
+## v1.6.2: public provenance hotfix
+
+The v1.6.1 post-deployment audit found that the exact Pages artifact still contained legacy `v1.6.0` current-version markers in the homepage footer, analytics wrapper attributes, and hidden legacy chrome inside Labs 13–15. v1.6.2 normalizes those current-release markers across the generated public artifact and adds a permanent provenance gate. It changes no applet algorithm, curriculum item, Quick Assign, Activity Pack, or learner mechanism.
 
 ## v1.6.1: teacher-adoption and cross-suite consistency hardening
 
@@ -109,17 +113,17 @@ Responses remain local to the learner's browser unless the learner or teacher de
 
 ## Explore
 
-Build the deterministic v1.6.1 Pages artifact with:
+Build the deterministic v1.6.2 Pages artifact with:
 
 ```bash
-python tools/build_site_v1_6_1_consistency.py
+python tools/build_site_v1_6_2.py
 ```
 
 The deployed applets require no server, account, package manager, or backend. Labs 13, 14, and 15 are generated deterministically into the public artifact and remain self-contained offline HTML files after generation.
 
 ## Verification
 
-The release workflow retains the complete inherited suite and adds permanent v1.6.1 assignment/consistency gates:
+The release workflow retains the complete inherited suite and adds permanent assignment/consistency/provenance gates:
 
 ```bash
 python tools/release_check.py
@@ -133,10 +137,11 @@ python tools/test_v1_5_1_hci_adoption.py
 python tools/test_v1_5_1_hci_extended.py
 python tools/test_v1_6_1_quick_assign_currency.py
 python tools/test_v1_6_1_design_consistency.py
+python tools/test_v1_6_2_public_provenance.py
 python tools/browser_qa.py --no-screenshots
 ```
 
-The v1.6.1 public boundary remains 15 applets and 58 deployed files. The three Activity Pack pages remain the index, NN-1, and CNN-1. Every public HTML page receives the privacy-minimized analytics wrapper exactly once, while applet state, worksheet answers, free text, and experiment values remain excluded from analytics requests.
+The v1.6.2 public boundary remains 15 applets and 58 deployed files. The three Activity Pack pages remain the index, NN-1, and CNN-1. Every public HTML page receives the privacy-minimized analytics wrapper exactly once, while applet state, worksheet answers, free text, and experiment values remain excluded from analytics requests.
 
 ## Teaching materials
 
@@ -149,7 +154,7 @@ The v1.6.1 public boundary remains 15 applets and 58 deployed files. The three A
 
 ## Research status
 
-AI Playgrounds v1.6.1 is the current software release. The earlier v1.0.1 artifact remains immutable and archived at its version DOI. Its DOI should not be interpreted as a DOI for v1.6.1.
+AI Playgrounds v1.6.2 is the current software release. The earlier v1.0.1 artifact remains immutable and archived at its version DOI. Its DOI should not be interpreted as a DOI for v1.6.2.
 
 The deterministic/browser evidence supports implementation integrity and bounded design/interaction claims. It does not establish measured learning gains, universal learner preference, classroom adoption, or accessibility conformance. The human-usability protocol defines the evidence required for stronger claims.
 
@@ -165,7 +170,7 @@ The project is released under the MIT License.
 - [Public surface locale matrix](docs/PUBLIC_SURFACE_LOCALE_MATRIX.md)
 - [Contributing](CONTRIBUTING.md)
 - [Citation metadata](CITATION.cff)
-- [Release notes](RELEASE_NOTES.md)
+- [Release notes](docs/RELEASE_V1_6_2.md)
 - [Localization standard](docs/LOCALIZATION.md)
 - [Analytics and privacy](docs/ANALYTICS_AND_PRIVACY.md)
 
