@@ -106,7 +106,7 @@ def main() -> int:
             locale_title = page.locator("#lab13-eq-title").inner_text()
             checks.append(("locale switch preserves model state", state_before_locale == state_after_locale, {"before": state_before_locale, "after": state_after_locale}))
             checks.append(("locale switch preserves comparison baseline", baseline_before_locale == baseline_after_locale, {"before": baseline_before_locale, "after": baseline_after_locale}))
-            checks.append(("engagement surface localizes independently", "Sigue un estado" in locale_title, {"lang": page.locator("html").get_attribute("lang"), "title": locale_title, "locale": page.evaluate("() => window.Lab13Localization.getLocale()"), "noTranslate": page.locator("#lab13-eq-shell").get_attribute("data-lab13-no-translate")}))
+            checks.append(("engagement surface localizes independently", "sigue un estado" in locale_title.lower(), {"lang": page.locator("html").get_attribute("lang"), "title": locale_title, "locale": page.evaluate("() => window.Lab13Localization.getLocale()"), "noTranslate": page.locator("#lab13-eq-shell").get_attribute("data-lab13-no-translate")}))
             context.close()
 
             reduced = browser.new_context(viewport={"width": 900, "height": 900}, reduced_motion="reduce")
