@@ -84,6 +84,7 @@ def main() -> int:
             page.on("pageerror", lambda exc: page_errors.append(f"knn: {exc}"))
             page.on("console", lambda msg: console_errors.append(f"knn: {msg.text}") if msg.type == "error" else None)
             page.goto((SITE / "playgrounds" / "knn-classifier" / "index.html").resolve().as_uri(), wait_until="load", timeout=10_000)
+            page.click("#knnGuided > summary")
             page.click("#guidedStart")
             cv = page.locator("#cv").bounding_box()
             checks.append(("KNN canvas available", cv is not None, {"box": cv}))
