@@ -66,8 +66,8 @@ def main() -> int:
             page.click("#step")
             page.wait_for_timeout(40)
             first = page.evaluate("() => window.Lab14Prototype.getState()")
-            gates = page.locator("#lab14-eq-gates .lab14-eq-gate")
-            checks.append(("successful tool call traverses through context update", first["history"][-1]["event"] == "executed_ok" and gates.locator(".passed").count() == 6 and "temperature_c" in page.locator("#lab14-eq-delta-list").inner_text(), {"event": first["history"][-1], "passed": gates.locator(".passed").count(), "delta": page.locator("#lab14-eq-delta-list").inner_text()}))
+            passed_gates = page.locator("#lab14-eq-gates .lab14-eq-gate.passed").count()
+            checks.append(("successful tool call traverses through context update", first["history"][-1]["event"] == "executed_ok" and passed_gates == 6 and "temperature_c" in page.locator("#lab14-eq-delta-list").inner_text(), {"event": first["history"][-1], "passed": passed_gates, "delta": page.locator("#lab14-eq-delta-list").inner_text()}))
 
             page.select_option("#scenario", "permission")
             page.wait_for_timeout(20)
