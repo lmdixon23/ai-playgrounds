@@ -103,20 +103,25 @@ def copy_activity_packs() -> None:
 
 
 def patch_landing_metadata() -> None:
+    """Bind to the exact generated v1.5 landing contract, not stale source copy."""
     path = SITE / "index.html"
     html = path.read_text(encoding="utf-8")
-    replacements = {
-        "AI Playgrounds | Twelve interactive foundations of AI": "AI Playgrounds | 14 interactive labs for learning artificial intelligence",
-        "Twelve bilingual, offline-ready AI interactives for search, logic, probability, machine learning, vision, and reinforcement learning.": "Fourteen multilingual, offline-ready interactive AI labs covering search, logic, probability, machine learning, neural networks, vision, reinforcement learning, Transformers, and agent systems.",
-        "Twelve bilingual, single-file AI interactives built for classroom use and independent exploration.": "Fourteen multilingual AI labs built for classroom use and independent exploration, from foundational search and probability to Transformers and agent systems.",
-        "AI Playgrounds: twelve bilingual interactives for foundational artificial intelligence": "AI Playgrounds: fourteen multilingual interactive labs for artificial intelligence",
-        '"description":"Twelve bilingual, offline-ready interactives for foundational artificial intelligence."': '"description":"Fourteen multilingual, offline-ready interactive labs for foundational and modern artificial intelligence."',
-        '"inLanguage":["en","zh"]': '"inLanguage":["en","zh-Hans","vi","es"]',
+    inherited = {
+        "<title>AI Playgrounds | Fourteen interactive AI labs</title>",
+        "Fourteen multilingual, offline-ready AI interactives for search, logic, probability, machine learning, neural networks, computer vision, reinforcement learning, Transformer language modeling, and agent tool use.",
+        "Fourteen multilingual, single-file AI interactives built for classroom use and independent exploration.",
+        "AI Playgrounds: fourteen multilingual AI labs from foundations to modern extensions",
+        '"description":"Fourteen multilingual, offline-ready AI labs spanning foundations and modern extensions."',
+        '"inLanguage":["en","zh","vi","es"]',
     }
-    for old, new in replacements.items():
-        if old not in html:
-            raise RuntimeError(f"Landing metadata marker missing: {old[:60]!r}")
-        html = html.replace(old, new)
+    missing = sorted(marker for marker in inherited if marker not in html)
+    if missing:
+        raise RuntimeError(f"Inherited v1.5 landing metadata contract changed: {missing}")
+    html = html.replace(
+        "<title>AI Playgrounds | Fourteen interactive AI labs</title>",
+        "<title>AI Playgrounds | 14 interactive labs for learning artificial intelligence</title>",
+        1,
+    )
     path.write_text(html, encoding="utf-8")
 
 
