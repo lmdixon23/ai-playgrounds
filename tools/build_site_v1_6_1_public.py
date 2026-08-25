@@ -96,7 +96,7 @@ def curriculum_section(active: list[dict]) -> str:
     return (
         '<section id="quick-assigns" class="quick-assign-support">'
         f'<h2>{bilingual("Beginning-of-course Quick Assigns", "学期初快速任务")}</h2>'
-        f'<p>{bilingual("These Level-1 activities turn the existing in-applet response packets into stable, directly assignable 10-15 minute tasks. The link opens the applet in Use in class mode so the response packet is visible immediately.", "这些 Level 1 活动把 applet 内已有的作答包正式化为稳定、可直接布置的 10-15 分钟任务。链接会直接以“课堂使用”模式打开 applet，使作答包立即可见。", block=True)}</p>'
+        f'<p>{bilingual("These Level-1 activities turn the existing in-applet response packets into stable, directly assignable 10-15 minute tasks. The link opens the applet in Use in class mode and opens the exact assigned packet automatically.", "这些 Level 1 活动把 applet 内已有的作答包正式化为稳定、可直接布置的 10-15 分钟任务。链接会直接以“课堂使用”模式打开 applet，并自动展开指定的任务。", block=True)}</p>'
         '<table><thead><tr>'
         f'<th>ID</th><th>{bilingual("Activity", "活动")}</th><th>{bilingual("Focus", "重点")}</th><th>{bilingual("Time", "时间")}</th>'
         '</tr></thead><tbody>' + ''.join(rows) + '</tbody></table>'
@@ -174,6 +174,33 @@ def patch_localized_select_containment() -> None:
         path.write_text(html, encoding="utf-8")
 
 
+def patch_quick_assign_autopen(active: list[dict]) -> None:
+    """Make a stable Quick Assign URL open the exact assigned packet, not just its tab."""
+    script = """<script data-quick-assign-deeplink="1">(function(){
+'use strict';
+function openAssignedQuickAssign(){
+  var raw=(location.hash||'').replace(/^#/,'');
+  if(!raw.startsWith('quick-assign-')) return;
+  var target=document.getElementById(raw);
+  if(!target || !target.matches('details[data-quick-assign-id]')) return;
+  target.open=true;
+  requestAnimationFrame(function(){ target.scrollIntoView({block:'start'}); });
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',openAssignedQuickAssign,{once:true});
+else openAssignedQuickAssign();
+window.addEventListener('hashchange',openAssignedQuickAssign);
+})();</script>"""
+    for row in active:
+        path = SITE / "playgrounds" / row["slug"] / "index.html"
+        html = path.read_text(encoding="utf-8")
+        if 'data-quick-assign-deeplink="1"' in html:
+            raise RuntimeError(f"Quick Assign deep-link runtime would be applied twice: {row['id']}")
+        if "</body>" not in html:
+            raise RuntimeError(f"Quick Assign page lacks </body>: {row['id']}")
+        html = html.replace("</body>", script + "</body>", 1)
+        path.write_text(html, encoding="utf-8")
+
+
 def validate_public_links(active: list[dict]) -> None:
     for page_name in ("teacher-pack.html", "curriculum.html"):
         html = (SITE / page_name).read_text(encoding="utf-8")
@@ -192,6 +219,10 @@ def validate_public_links(active: list[dict]) -> None:
         html = (SITE / rel).read_text(encoding="utf-8")
         if html.count('id="v161-localized-select-containment"') != 1:
             raise RuntimeError(f"{rel} lacks exactly one localized-selector containment rule")
+    for row in active:
+        html = (SITE / "playgrounds" / row["slug"] / "index.html").read_text(encoding="utf-8")
+        if html.count('data-quick-assign-deeplink="1"') != 1:
+            raise RuntimeError(f"{row['id']} lacks exactly one Quick Assign deep-link runtime")
 
 
 def build_site() -> None:
@@ -200,8 +231,9 @@ def build_site() -> None:
     patch_teacher(active)
     patch_curriculum(active)
     patch_localized_select_containment()
+    patch_quick_assign_autopen(active)
     validate_public_links(active)
-    print("Built canonical v1.6.1 public candidate with bilingual support routes, classroom-mode Quick Assign deep links, and localized mobile control containment")
+    print("Built canonical v1.6.1 public candidate with bilingual support routes, direct-open Quick Assign links, and localized mobile control containment")
 
 
 if __name__ == "__main__":
