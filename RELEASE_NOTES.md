@@ -1,5 +1,42 @@
 # Release notes
 
+## v1.6.0, 2026-08-25
+
+### Lab 15: Game Trees, Minimax, and Alpha-Beta Pruning
+
+- Adds the fifteenth public AI Playground and thirteenth Foundations/course-track lab.
+- Models finite deterministic two-player, zero-sum, perfect-information game trees with alternating MAX and MIN decisions and numeric terminal utilities from MAX's perspective.
+- Makes recursive minimax backup inspectable as `terminal utilities -> MIN/MAX backups -> exact root value and move`.
+- Adds exact Alpha-Beta pruning over the same fixed tree and child order; a cutoff occurs only when the current bounds establish that remaining siblings cannot change the minimax result.
+- Keeps pruned subtrees spatially visible and explicitly labels them **not evaluated**, rather than implying that pruning deletes part of the game or approximates minimax.
+- Adds a move-order experiment in which the same tree and utilities produce different search work while preserving the same exact minimax result.
+- Includes bounded terminal-utility editing, deterministic trace stepping/replay, saved-run comparison, node inspection, and five prediction-before-reveal Guided Challenges.
+
+### Four-locale and learner-centered interaction
+
+- Adds complete English, Simplified Chinese, Vietnamese, and Spanish presentation catalogs while protecting `MAX`, `MIN`, `alpha`, `beta`, node ids, scenario ids, numeric utilities, and machine-state keys.
+- Locale switching is presentation-only and preserves the complete tree/search/trace/challenge state.
+- Provides a synchronized text-equivalent search state, focus-visible native controls, reduced-motion behavior, and internally scrollable wide trees rather than page-wide overflow.
+- Adds release-level checks for 390×844 portrait, 844×390 landscape, 640×720 split view, and 200% text enlargement.
+- The engagement/HCI audit adopts the current mechanism-first interaction model and explicitly rejects decorative animation, disappearing pruned branches, badges, points, sound, or automatic jumping to a cutoff without evidence that such additions improve the learner model.
+
+### Verification and release composition
+
+- The independent Python reference passes 26 adversarial/unit tests and a 648-case bounded exhaustive census.
+- The independent JavaScript implementation is recursively cross-checked against the Python reference across frozen scenario and invalid-input families, with a parity-harness self-test.
+- Prototype and English single-file browser candidates each pass 22 mechanism/browser checks.
+- The semantic localization gate contains 1,235 checks across 126 presentation keys per locale.
+- The four-locale browser/state gate preserves algorithm/challenge state while testing dynamic cutoff text, deep links, reduced motion, and narrow mobile behavior.
+- v1.6 expands the deterministic Pages boundary from fourteen to fifteen applets and from 57 to 58 files while retaining the Activity Pack index, NN-1, and CNN-1 exactly as the three Activity Pack pages.
+- The course structure is now thirteen Foundations/course-track labs plus two Modern AI extensions: Transformer Language Modeling and Agent Tool Use and Context Protocols.
+- The v1.5.1 HCI, responsive, Activity Pack, and privacy-minimized GoatCounter hardening remains in force; every public HTML page receives the v1.6 analytics wrapper exactly once.
+
+### Evidence boundary
+
+- Software/browser assurance establishes behavior under tested conditions; it does not establish accessibility conformance, measured learning gains, classroom adoption, or universal learner preference.
+- Human screen-reader/assistive-technology usability and fluent-learner translation naturalness remain separate evidence questions.
+- v1.6.0 does not modify or reassign the immutable v1.0.1 DOI `10.5281/zenodo.21854217`.
+
 ## v1.5.1, 2026-08-25
 
 ### Learner-centered HCI hardening
