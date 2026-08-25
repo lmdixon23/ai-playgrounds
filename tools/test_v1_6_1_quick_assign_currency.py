@@ -62,6 +62,7 @@ def main() -> int:
         src = (SITE / "playgrounds" / row["slug"] / "index.html").read_text(encoding="utf-8")
         checks.append((f"{row['id']} stable anchor and five-stage response surface", src.count(f'data-quick-assign-id="{row["id"]}"') == 1 and f'id="{row["anchor"]}"' in src and all(f'data-lab-answer="{stage}"' in src for stage in ("predict", "observe", "explain", "transfer")) and 'data-lab-action="copy"' in src and 'data-lab-action="print"' in src, {}))
         checks.append((f"{row['id']} carries four-locale Quick Assign overlay", 'data-quick-assign-locales="1"' in src and "r4languagechange" in src, {}))
+        checks.append((f"{row['id']} carries direct-open Quick Assign runtime", 'data-quick-assign-deeplink="1"' in src, {}))
         canonical_suffix = f"index.html?mode=classroom#{row['anchor']}"
         checks.append((f"{row['id']} Teacher Pack uses classroom-mode deep link", f"playgrounds/{row['slug']}/{canonical_suffix}" in teacher, {}))
         checks.append((f"{row['id']} Curriculum uses classroom-mode deep link", f"playgrounds/{row['slug']}/{canonical_suffix}" in curriculum, {}))
@@ -100,7 +101,8 @@ def main() -> int:
                 checks.append((f"{row['id']} deep anchor resolves", details.count() == 1, {}))
                 mode_selected = page.locator('.learning-mode-tab[data-mode="classroom"]').get_attribute("aria-selected")
                 checks.append((f"{row['id']} direct link opens Use in class mode", mode_selected == "true", {"aria_selected": mode_selected}))
-                details.evaluate("el => el.open = true")
+                packet_open = details.get_attribute("open") is not None
+                checks.append((f"{row['id']} direct link opens exact response packet", packet_open, {"open": packet_open}))
                 predict = details.locator('[data-lab-answer="predict"]')
                 predict.fill("state-preservation sentinel")
                 for locale in ("en", "zh", "vi", "es"):
@@ -113,7 +115,7 @@ def main() -> int:
                     value = predict.input_value()
                     w1, w2 = expected_words[locale]
                     checks.append((f"{row['id']} {locale} Quick Assign surface and state", w1 in summary and w2 in label and value == "state-preservation sentinel", {"summary": summary, "label": label, "value": value}))
-                layout = page.evaluate("""() => {
+                layout = page.evaluate(r"""() => {
                     const width = innerWidth;
                     const scroll = document.documentElement.scrollWidth;
                     const offenders = [...document.querySelectorAll('body *')]
