@@ -83,8 +83,16 @@ def main()->int:
             mpage=mobile.new_page()
             for slug in sorted(MODERN):
                 mpage.goto((SITE/'playgrounds'/slug/'index.html').resolve().as_uri()+'?lang=es',wait_until='load',timeout=20_000)
-                overflow=mpage.evaluate('()=>Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)-innerWidth')
-                check(f'{slug} Quick Assign 390px containment',overflow<=1,{'overflow':overflow})
+                layout=mpage.evaluate("""() => {
+                  const width=innerWidth;
+                  const scroll=Math.max(document.documentElement.scrollWidth,document.body.scrollWidth);
+                  const offenders=[...document.querySelectorAll('body *')].map(el=>{
+                    const r=el.getBoundingClientRect(),s=getComputedStyle(el);
+                    return {tag:el.tagName,id:el.id||'',cls:typeof el.className==='string'?el.className.slice(0,120):'',left:Math.round(r.left),right:Math.round(r.right),w:Math.round(r.width),display:s.display,text:(el.textContent||'').trim().replace(/\\s+/g,' ').slice(0,100)};
+                  }).filter(x=>x.display!=='none'&&(x.right>width+2||x.left<-2)).slice(0,12);
+                  return {width,scroll,overflow:scroll-width,offenders};
+                }""")
+                check(f'{slug} Quick Assign 390px containment',layout['overflow']<=1,layout)
             mobile.close()
         finally: browser.close()
     failures=[{'name':n,'detail':d} for n,ok,d in checks if not ok]
