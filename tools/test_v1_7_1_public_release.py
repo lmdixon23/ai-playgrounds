@@ -65,8 +65,10 @@ def main() -> int:
         check(f"{slug} retains one-time legacy migration", "localStorage.getItem('ai-playgrounds-theme')" in html and "localStorage.removeItem('ai-playgrounds-theme')" in html)
         check(f"{slug} no obsolete theme writes", "localStorage.setItem('ai-playgrounds-theme'" not in html)
         check(f"{slug} standard shell preserved", html.count('data-ap-standard-shell') == 1 and html.count('data-ap-standard-footer') == 1)
+        check(f"{slug} no stale current v1.7.0 provenance", "v1.7.0" not in html)
 
     notes = (SITE / "release-notes.html").read_text(encoding="utf-8")
+    check("release notes include current v1.7.1 card", 'id="release-v1-7-1"' in notes and "AI Playgrounds v1.7.1" in notes)
     check("release history keeps v1.7.0 and earlier", all(f'id="release-{v}"' in notes for v in ("v1-7-0", "v1-6-2", "v1-6-1", "v1-6-0")))
 
     failures = [{"name": n, "detail": d} for n, ok, d in checks if not ok]
