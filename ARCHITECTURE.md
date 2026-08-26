@@ -49,7 +49,7 @@ All fifteen **learner applets** and their fifteen Level-1 Quick Assigns support:
 
 Locale switching must preserve learner/algorithm state and restore the canonical English title/state on EN round-trip tests.
 
-This does **not** mean every educator/support surface is four-language. Teacher Pack, Curriculum, research/support pages, and Level-2 Activity Packs have separately declared boundaries in `docs/PUBLIC_SURFACE_LOCALE_MATRIX.md`.
+This does **not** mean every educator/support surface is four-language. Teacher Pack, Curriculum, research and support pages, and Level-2 Activity Packs have separately declared boundaries in `docs/PUBLIC_SURFACE_LOCALE_MATRIX.md`.
 
 Stable machine/source literals such as URLs, filenames, identifiers, formulas, licenses, names, and standard acronyms remain unchanged while their visible labels/explanations are localized where applicable. See `docs/LOCALIZATION.md`.
 
