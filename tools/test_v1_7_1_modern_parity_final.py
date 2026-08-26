@@ -100,7 +100,8 @@ def main() -> int:
                         page.select_option("#ap-standard-language-select", locale)
                         page.wait_for_timeout(100)
                         check(f"{slug}: parity copy switches to {locale}", page.locator(".ap-modern-tldr").inner_text() != original_big)
-                        check(f"{slug}: key terms switch to {locale}", page.locator("#ap-modern-terms-list").inner_text().strip() != "")
+                        terms_text = page.locator("#ap-modern-terms-list").text_content() or ""
+                        check(f"{slug}: key terms switch to {locale}", bool(terms_text.strip()), terms_text[:120])
                         page.select_option("#ap-standard-language-select", "en")
                         page.wait_for_timeout(100)
                         check(f"{slug}: EN title restores after {locale}", page.locator("#ap-standard-title").inner_text() == original_title)
