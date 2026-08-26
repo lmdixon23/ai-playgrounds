@@ -67,16 +67,27 @@ def main() -> int:
         browser = launch(p)
         try:
             context = browser.new_context(viewport={"width": 390, "height": 844}, reduced_motion="reduce")
-            page = context.new_page()
-            page.set_default_navigation_timeout(45_000)
-            page.set_default_timeout(10_000)
-            page.on("pageerror", lambda exc: page_errors.append(str(exc)))
-            page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
+            context.set_default_timeout(12_000)
             for slug in MODERN:
-                page.goto((SITE / "playgrounds" / slug / "index.html").resolve().as_uri() + "?lang=en", wait_until="domcontentloaded", timeout=45_000)
-                page.wait_for_selector("#ap-standard-language-select", timeout=10_000)
-                page.wait_for_selector("#ap-modern-a11y", timeout=10_000)
-                page.wait_for_timeout(160)
+                # A fresh page avoids inheriting pending timers/navigation state from the
+                # prior single-file lab. The gate cares about actual UI readiness, not a
+                # file:// load lifecycle event that is already covered elsewhere.
+                page = context.new_page()
+                page.on("pageerror", lambda exc: page_errors.append(str(exc)))
+                page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
+                page.goto(
+                    (SITE / "playgrounds" / slug / "index.html").resolve().as_uri() + "?lang=en",
+                    wait_until="commit",
+                    timeout=12_000,
+                )
+                page.wait_for_selector("#ap-standard-language-select", state="attached", timeout=12_000)
+                page.wait_for_selector("#ap-modern-a11y", state="attached", timeout=12_000)
+                page.wait_for_selector("details[data-quick-assign-id]", state="attached", timeout=12_000)
+                page.wait_for_selector("#ap-modern-a11y-state", state="attached", timeout=12_000)
+                page.wait_for_function(
+                    "() => { const el=document.querySelector('#ap-modern-a11y-state'); return el && el.textContent.trim() && !el.textContent.toLowerCase().includes('preparing'); }",
+                    timeout=12_000,
+                )
 
                 # Mature-suite accessibility parity: open structured layer plus live text state.
                 a11y = page.locator("#ap-modern-a11y")
@@ -105,6 +116,11 @@ def main() -> int:
 
                 for locale in ("vi", "es"):
                     page.select_option("#ap-standard-language-select", locale)
+                    page.wait_for_function(
+                        "loc => document.documentElement.lang.toLowerCase().startsWith(loc)",
+                        arg=locale,
+                        timeout=12_000,
+                    )
                     page.wait_for_timeout(220)
                     check(f"{slug}: accessibility summary localizes to {locale}", (a11y.locator("summary").inner_text() or "").strip() not in ("", "♿ Text and keyboard support"))
                     for key in ("predict", "observe", "explain", "transfer"):
@@ -116,6 +132,7 @@ def main() -> int:
                         actual = button.get_attribute("aria-label")
                         check(f"{slug}: {locale} {action} label", actual == EXPECTED[locale][expected_key], actual)
                     page.select_option("#ap-standard-language-select", "en")
+                    page.wait_for_function("() => document.documentElement.lang.toLowerCase().startsWith('en')", timeout=12_000)
                     page.wait_for_timeout(220)
                     check(f"{slug}: accessibility summary restores English after {locale}", a11y.locator("summary").inner_text().strip() == "♿ Text and keyboard support")
                     for key, expected in original_answers.items():
@@ -125,6 +142,7 @@ def main() -> int:
                 qa.locator('[data-qa-action="refresh-state"]').click()
                 state_text = qa.locator("[data-qa-modern-state]").inner_text().strip()
                 check(f"{slug}: state snapshot remains available after label round trips", bool(state_text), state_text[:120])
+                page.close()
             context.close()
         finally:
             browser.close()
