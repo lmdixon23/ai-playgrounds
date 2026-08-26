@@ -3,14 +3,17 @@ from __future__ import annotations
 
 """Final-composition wrapper for the v1.7 all-lab Quick Assign candidate.
 
-The v1.7 behavior builder owns the assignment content. This wrapper contains
-only product-level composition fixes found by integrated QA:
+The v1.7 behavior builder owns assignment content. This wrapper contains only
+product-level composition corrections found by integrated QA:
 
-* canonical modern-lab Quick Assign URLs open their targeted response surface;
-* a generated JavaScript newline escape is normalized before browser execution;
-* the modern response surface is explicitly contained at narrow viewports;
-* Activity Pack pilot footers do not hard-code a second current-suite version.
+* replace the generated modern Quick Assign script with one known-valid runtime;
+* open targeted modern Quick Assigns from their canonical assignment URL;
+* contain the modern response surface at narrow viewports;
+* remove a drifting current-release suffix from Activity Pack pilot footers.
 """
+
+import json
+import re
 
 import build_site_v1_7_quick_assigns as quick
 
@@ -27,16 +30,71 @@ MODERN_CONTAINMENT = r'''<style id="v17-modern-quick-assign-containment">
 </style>'''
 
 
+def corrected_modern_runtime(row: dict) -> str:
+    cfg = quick.MODERN[row["id"]]
+    return rf'''<script data-quick-assign-modern-runtime="1">
+(() => {{
+  'use strict';
+  const id = {json.dumps(row["id"])};
+  const root = document.querySelector('[data-quick-assign-id="' + id + '"]');
+  if (!root) return;
+  const key = 'ai-playgrounds-quick-assign:' + id;
+  const locale = () => {{
+    const value = String(document.documentElement.lang || 'en').toLowerCase();
+    return value.startsWith('zh') ? 'zh' : value.startsWith('vi') ? 'vi' : value.startsWith('es') ? 'es' : 'en';
+  }};
+  function paint() {{
+    const language = locale();
+    root.querySelectorAll('.qa-i18n').forEach(el => {{
+      el.textContent = el.getAttribute('data-qa-' + language) || el.getAttribute('data-qa-en') || '';
+    }});
+  }}
+  function save() {{
+    try {{
+      const data = {{}};
+      root.querySelectorAll('[data-qa-answer]').forEach(el => data[el.dataset.qaAnswer] = el.value);
+      localStorage.setItem(key, JSON.stringify(data));
+    }} catch (_error) {{}}
+  }}
+  function load() {{
+    try {{
+      const data = JSON.parse(localStorage.getItem(key) || '{{}}');
+      root.querySelectorAll('[data-qa-answer]').forEach(el => {{
+        if (Object.prototype.hasOwnProperty.call(data, el.dataset.qaAnswer)) el.value = data[el.dataset.qaAnswer];
+      }});
+    }} catch (_error) {{}}
+  }}
+  root.addEventListener('input', event => {{
+    if (event.target && event.target.matches('[data-qa-answer]')) save();
+  }});
+  root.querySelector('[data-qa-action="clear"]')?.addEventListener('click', () => {{
+    root.querySelectorAll('[data-qa-answer]').forEach(el => el.value = '');
+    try {{ localStorage.removeItem(key); }} catch (_error) {{}}
+  }});
+  root.querySelector('[data-qa-action="print"]')?.addEventListener('click', () => window.print());
+  root.querySelector('[data-qa-action="copy"]')?.addEventListener('click', async () => {{
+    const text = [...root.querySelectorAll('[data-qa-answer]')]
+      .map(el => el.dataset.qaAnswer.toUpperCase() + ': ' + el.value)
+      .join('\n\n');
+    try {{ await navigator.clipboard.writeText(text); }} catch (_error) {{}}
+  }});
+  window.addEventListener({json.dumps(cfg["event"])}, () => setTimeout(paint, 0));
+  document.querySelector('#ap-standard-language-select')?.addEventListener('change', () => setTimeout(paint, 0));
+  load();
+  paint();
+}})();
+</script>'''
+
+
 def repair_modern_generated_runtime() -> None:
-    """Repair one Python-to-JS escape boundary in the generated modern layer."""
-    bad = "join('\n\n');try{await navigator.clipboard.writeText(text);}"
-    good = "join('\\\\n\\\\n');try{await navigator.clipboard.writeText(text);}"
+    rows = {row["slug"]: row for row in quick.registry()}
+    pattern = re.compile(r'<script data-quick-assign-modern-runtime="1">.*?</script>', re.S)
     for slug in MODERN_SLUGS:
         path = SITE / "playgrounds" / slug / "index.html"
         html = path.read_text(encoding="utf-8")
-        if bad not in html:
-            raise RuntimeError(f"Modern Quick Assign generated-runtime escape marker changed: {slug}")
-        html = html.replace(bad, good, 1)
+        html, count = pattern.subn(corrected_modern_runtime(rows[slug]), html, count=1)
+        if count != 1:
+            raise RuntimeError(f"Modern Quick Assign runtime replacement failed: {slug}")
         if 'id="v17-modern-quick-assign-containment"' in html:
             raise RuntimeError(f"Modern containment would be applied twice: {slug}")
         html = html.replace("</head>", MODERN_CONTAINMENT + "\n</head>", 1)
@@ -65,8 +123,6 @@ def patch_modern_direct_open() -> None:
         html = path.read_text(encoding="utf-8")
         if 'data-v17-quick-assign-direct-open="1"' in html:
             raise RuntimeError(f"Direct-open runtime would be applied twice: {slug}")
-        if "</body>" not in html:
-            raise RuntimeError(f"Modern applet lacks </body>: {slug}")
         html = html.replace("</body>", runtime + "\n</body>", 1)
         path.write_text(html, encoding="utf-8")
 
@@ -88,11 +144,10 @@ def validate() -> None:
             raise RuntimeError(f"Modern Quick Assign direct-open contract missing: {slug}")
         if html.count('id="v17-modern-quick-assign-containment"') != 1:
             raise RuntimeError(f"Modern Quick Assign containment contract missing: {slug}")
-        if "join('\n\n');try{await navigator.clipboard.writeText(text);}" in html:
-            raise RuntimeError(f"Modern Quick Assign runtime still contains literal newline escape defect: {slug}")
+        if html.count('data-quick-assign-modern-runtime="1"') != 1:
+            raise RuntimeError(f"Modern Quick Assign runtime must exist exactly once: {slug}")
     for path in sorted((SITE / "activities").glob("*.html")):
-        html = path.read_text(encoding="utf-8")
-        if "current suite release v1.6." in html:
+        if "current suite release v1.6." in path.read_text(encoding="utf-8"):
             raise RuntimeError(f"Activity Pack current-version drift remains: {path.name}")
     quick.base.base.impl.base.validate_local_references()
 
