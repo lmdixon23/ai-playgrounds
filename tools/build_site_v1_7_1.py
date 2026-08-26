@@ -27,21 +27,42 @@ def patch_modern_theme_contract() -> None:
         if OLD_THEME_RUNTIME not in html:
             raise RuntimeError(f"Modern-shell theme runtime marker changed: {slug}")
         html = html.replace(OLD_THEME_RUNTIME, NEW_THEME_RUNTIME, 1)
+        # Labs 13-15 contain hidden legacy/current shell provenance from prior
+        # deterministic builders. They are part of the current generated applet,
+        # not the public release-history page, so normalize the full applet body.
+        html = html.replace("v1.7.0", "v1.7.1")
         html = html.replace('content="1.7.0"', 'content="1.7.1"')
         html = html.replace('data-ai-playgrounds-analytics="v1.7.0"', 'data-ai-playgrounds-analytics="v1.7.1"')
-        html = html.replace('AI Playgrounds · v1.7.0', 'AI Playgrounds · v1.7.1')
         path.write_text(html, encoding="utf-8")
 
     # Current generic surfaces show the patch version as provenance only. Historical
-    # release-note sections remain unchanged.
+    # release-note sections are handled separately so older release cards remain exact.
     for path in sorted(SITE.rglob("*.html")):
-        if path.parent.name in MODERN:
+        if path.parent.name in MODERN or path.name == "release-notes.html":
             continue
         html = path.read_text(encoding="utf-8")
         html = html.replace('<span class="site-version">v1.7.0</span>', '<span class="site-version">v1.7.1</span>')
         html = html.replace('data-ai-playgrounds-analytics="v1.7.0"', 'data-ai-playgrounds-analytics="v1.7.1"')
         html = html.replace('<meta name="ai-playgrounds-version" content="1.7.0">', '<meta name="ai-playgrounds-version" content="1.7.1">')
+        html = html.replace('data-v14-support-version="true">AI Playgrounds · v1.7.0<', 'data-v14-support-version="true">AI Playgrounds · v1.7.1<')
+        html = html.replace('data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.7.0<', 'data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.7.1<')
         path.write_text(html, encoding="utf-8")
+
+
+def patch_release_notes() -> None:
+    path = SITE / "release-notes.html"
+    html = path.read_text(encoding="utf-8")
+    anchor = '<section id="release-v1-7-0"'
+    if anchor not in html:
+        raise RuntimeError("Release-notes v1.7.0 anchor changed")
+    if 'id="release-v1-7-1"' not in html:
+        section = (
+            '<section id="release-v1-7-1" style="margin:1rem 0;padding:1rem 1.2rem;border:1px solid currentColor;border-radius:12px">'
+            '<h2>AI Playgrounds v1.7.1: shared theme behavior across all labs.</h2>'
+            '<p>Compatibility and consistency patch: Labs 13–15 now use the same persisted theme preference as the original applets, migrate the temporary modern-shell theme key, and preserve the complete v1.7.0 fifteen-lab, all-Quick-Assign, four-language, algorithm, and curriculum boundaries.</p></section>'
+        )
+        html = html.replace(anchor, section + anchor, 1)
+    path.write_text(html, encoding="utf-8")
 
 
 def validate() -> None:
@@ -62,6 +83,19 @@ def validate() -> None:
             raise RuntimeError(f"Modern lab does not retire obsolete theme key after migration: {slug}")
         if '<meta name="ai-playgrounds-version" content="1.7.1">' not in html:
             raise RuntimeError(f"Modern lab provenance not v1.7.1: {slug}")
+        if 'data-ai-playgrounds-analytics="v1.7.1"' not in html:
+            raise RuntimeError(f"Modern lab analytics provenance not v1.7.1: {slug}")
+        if "v1.7.0" in html:
+            raise RuntimeError(f"Modern lab retains stale current v1.7.0 provenance: {slug}")
+
+    home = (SITE / "index.html").read_text(encoding="utf-8")
+    if '<span class="site-version">v1.7.1</span>' not in home:
+        raise RuntimeError("Homepage visible release version is not v1.7.1")
+
+    notes = (SITE / "release-notes.html").read_text(encoding="utf-8")
+    for rel in ("release-v1-7-1", "release-v1-7-0", "release-v1-6-2", "release-v1-6-1", "release-v1-6-0"):
+        if f'id="{rel}"' not in notes:
+            raise RuntimeError(f"Release-note history missing {rel}")
 
     base.base.quick.base.base.impl.base.validate_local_references()
 
@@ -69,6 +103,7 @@ def validate() -> None:
 def build_site() -> None:
     base.build_site()
     patch_modern_theme_contract()
+    patch_release_notes()
     validate()
     print("Built deterministic v1.7.1 patch candidate: shared theme contract across original and modern applets")
 
