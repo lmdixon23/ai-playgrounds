@@ -14,7 +14,7 @@ import re
 from pathlib import Path
 
 import build_site as core
-import build_site_v1_7_1_modern_parity_accessible as base
+import build_site_v1_7_1_modern_parity_stable as base
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = base.SITE
@@ -102,8 +102,8 @@ def validate() -> None:
         required = (
             'class="ap-standard-header page-header"', 'id="ap-modern-share"', 'id="ap-modern-more"',
             'id="ap-modern-settings-json"', 'id="ap-modern-a11y"', 'id="ap-modern-a11y-state"',
-            'id="v171-modern-packet-label-runtime"', 'id="v171-modern-toolbar-runtime"',
-            '<script type="application/ld+json">',
+            'id="v171-modern-packet-label-runtime"', 'data-v171-stable-lifecycle="true"',
+            'id="v171-modern-toolbar-runtime"', '<script type="application/ld+json">',
         )
         missing = [marker for marker in required if marker not in html]
         if missing:
