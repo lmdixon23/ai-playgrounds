@@ -13,7 +13,7 @@ Fifteen multilingual, offline-ready interactive AI labs spanning thirteen Founda
 
 **Live site:** https://lmdixon23.github.io/ai-playgrounds/
 
-**Current release:** [v1.7.0](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.7.0)
+**Current release:** [v1.7.1](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.7.1)
 
 **Archived v1.0.1 DOI:** [10.5281/zenodo.21854217](https://doi.org/10.5281/zenodo.21854217) · **All-versions DOI:** [10.5281/zenodo.21854216](https://doi.org/10.5281/zenodo.21854216)
 
@@ -48,11 +48,19 @@ The Foundations track covers pathfinding, local search, Wumpus World, CNF/SAT, B
 
 The planning matrix in [docs/AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md](docs/AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md) compares coverage against AIMA and the Spring 2026 CS50/CSCI E-80 AI curriculum.
 
+## v1.7.1: shared theme behavior across all labs
+
+v1.7.1 is a compatibility/consistency patch. It does not add or change an AI mechanism, lab, language, Quick Assign, or curriculum unit.
+
+The original applets and the standardized Labs 13–15 shell now share the same persisted `theme` preference. A theme choice made in an original lab therefore carries into Transformer Language Modeling, Agent Tool Use, and Minimax/Alpha-Beta. Existing users of the temporary modern-shell `ai-playgrounds-theme` key are migrated once to the canonical `theme` key, and modern labs follow the system dark preference when no stored preference exists.
+
+The patch preserves the v1.7.0 public boundary: 15 applets, 58 deployed files, all 15 Level-1 Quick Assigns, four learner-facing languages, two Level-2 Activity Pack canaries, and unchanged algorithm/curriculum semantics.
+
 ## v1.7.0: Quick Assigns for every lab
 
-v1.7.0 completes the Level 1 teacher-assignment layer without adding another algorithm or a sixteenth lab.
+v1.7.0 completed the Level 1 teacher-assignment layer without adding another algorithm or a sixteenth lab.
 
-Every public applet now has one stable **Quick Assign** ID and a canonical classroom link. The activities are designed for about 10-15 minutes and use the shared inquiry spine:
+Every public applet has one stable **Quick Assign** ID and a canonical classroom link. The activities are designed for about 10–15 minutes and use the shared inquiry spine:
 
 **predict -> run/manipulate -> observe -> explain -> transfer**
 
@@ -74,9 +82,9 @@ The fifteen IDs are:
 - `QA-TRANSFORMER-01`
 - `QA-AGENT-01`
 
-The original twelve applets reuse their existing classroom response-packet machinery. Labs 13-15 use a local-only Quick Assign response surface aligned to their existing Guided Challenges. Responses remain in the learner's browser unless deliberately copied or printed. No response or answer text is sent to AI Playgrounds analytics.
+The original twelve applets reuse their existing classroom response-packet machinery. Labs 13–15 use a local-only Quick Assign response surface aligned to their existing Guided Challenges. Responses remain in the learner's browser unless deliberately copied or printed. No response or answer text is sent to AI Playgrounds analytics.
 
-Teacher Pack and Curriculum routes list all fifteen canonical activity links. EN/ZH/VI/ES presentation and response preservation are tested under the supported paths. v1.7.0 also removes the Activity Pack footer's drifting current-release suffix and constrains the Lab 15 challenge selector on narrow mobile layouts.
+Teacher Pack and Curriculum routes list all fifteen canonical activity links. EN/ZH/VI/ES presentation and response preservation are tested under the supported paths. v1.7.0 also removed the Activity Pack footer's drifting current-release suffix and constrained the Lab 15 challenge selector on narrow mobile layouts.
 
 ## Lab 15: Game Trees, Minimax, and Alpha-Beta Pruning
 
@@ -98,13 +106,13 @@ The lab includes editable terminal utilities, deterministic trace playback, save
 
 **Agent Tool Use and Context Protocols** separates model text, structured tool calls, validation, authorization, execution, observations, provenance-aware context updates, and stopping in a deterministic simulated tool world. Text is not execution, schema validity is not authorization, and no real external action occurs.
 
-## Product hardening inherited from v1.5 through v1.6.2
+## Product hardening inherited from v1.5 through v1.7
 
-v1.5 applied mechanism-first engagement improvements only where the Full Assurance Stack found a real missing relation. v1.5.1 added learner-centered HCI/adoption hardening, corrected privacy-minimized GoatCounter semantics, and the NN-1/CNN-1 Activity Pack canaries. v1.6.0 added Minimax/Alpha-Beta. v1.6.1 standardized cross-suite product contracts and introduced the first four Quick Assign canaries. v1.6.2 normalized current-version provenance in the exact deployed artifact.
+v1.5 applied mechanism-first engagement improvements only where the Full Assurance Stack found a real missing relation. v1.5.1 added learner-centered HCI/adoption hardening, corrected privacy-minimized GoatCounter semantics, and the NN-1/CNN-1 Activity Pack canaries. v1.6.0 added Minimax/Alpha-Beta. v1.6.1 standardized cross-suite product contracts and introduced the first four Quick Assign canaries. v1.6.2 normalized current-version provenance in the exact deployed artifact. v1.7.0 promoted the Quick Assign layer to all fifteen labs. v1.7.1 aligns the remaining modern-shell theme preference with the shared suite behavior.
 
 ## Quick Assigns and Activity Packs
 
-**Level 1 Quick Assigns** are approximately 10-15 minutes and are now available for all fifteen labs through stable IDs and classroom-mode links.
+**Level 1 Quick Assigns** are approximately 10–15 minutes and are available for all fifteen labs through stable IDs and classroom-mode links.
 
 **Level 2 Activity Packs** remain the longer pilot resources:
 
@@ -119,20 +127,21 @@ Responses remain local to the learner's browser unless the learner or teacher de
 
 ## Explore
 
-Build the deterministic v1.7.0 Pages artifact with:
+Build the deterministic v1.7.1 Pages artifact with:
 
 ```bash
-python tools/build_site_v1_7.py
+python tools/build_site_v1_7_1.py
 ```
 
 The deployed applets require no server, account, package manager, or backend. Labs 13, 14, and 15 are generated deterministically into the public artifact and remain self-contained offline HTML files after generation.
 
 ## Verification
 
-The release workflow retains the complete inherited suite and adds the all-lab Quick Assign and v1.7 public-release gates:
+The release workflow retains the complete inherited suite and adds the modern-shell theme-continuity and v1.7.1 release gates:
 
 ```bash
 python tools/release_check.py
+python tools/test_current_docs_consistency.py
 python tools/check_release_metadata.py
 python tools/run_algorithm_tests.py
 python tools/test_minimax_alpha_beta.py
@@ -146,10 +155,12 @@ python tools/test_v1_6_1_design_consistency.py
 python tools/test_v1_6_2_public_provenance.py
 python tools/test_v1_7_all_quick_assigns.py
 python tools/test_v1_7_public_release.py
+python tools/test_v1_7_1_modern_shell.py
+python tools/test_v1_7_1_public_release.py
 python tools/browser_qa.py --no-screenshots
 ```
 
-The v1.7.0 public boundary remains 15 applets and 58 deployed files. The three Activity Pack pages remain the index, NN-1, and CNN-1. Every public HTML page receives the privacy-minimized analytics wrapper exactly once, while applet state, worksheet answers, Quick Assign responses, free text, and experiment values remain excluded from analytics requests.
+The v1.7.1 public boundary remains 15 applets and 58 deployed files. The three Activity Pack pages remain the index, NN-1, and CNN-1. Every public HTML page receives the privacy-minimized analytics wrapper exactly once, while applet state, worksheet answers, Quick Assign responses, free text, and experiment values remain excluded from analytics requests.
 
 ## Teaching materials
 
@@ -162,7 +173,7 @@ The v1.7.0 public boundary remains 15 applets and 58 deployed files. The three A
 
 ## Research status
 
-AI Playgrounds v1.7.0 is the current software release. The earlier v1.0.1 artifact remains immutable and archived at its version DOI. Its DOI should not be interpreted as a DOI for v1.7.0.
+AI Playgrounds v1.7.1 is the current software release. The earlier v1.0.1 artifact remains immutable and archived at its version DOI. Its DOI should not be interpreted as a DOI for v1.7.1.
 
 The deterministic/browser evidence supports implementation integrity and bounded design/interaction claims. It does not establish measured learning gains, universal learner preference, classroom adoption, or accessibility conformance. The human-usability protocol defines the evidence required for stronger claims.
 
@@ -178,7 +189,7 @@ The project is released under the MIT License.
 - [Public surface locale matrix](docs/PUBLIC_SURFACE_LOCALE_MATRIX.md)
 - [Contributing](CONTRIBUTING.md)
 - [Citation metadata](CITATION.cff)
-- [Release notes](docs/RELEASE_V1_7_0.md)
+- [Release notes](docs/RELEASE_V1_7_1.md)
 - [Localization standard](docs/LOCALIZATION.md)
 - [Analytics and privacy](docs/ANALYTICS_AND_PRIVACY.md)
 
