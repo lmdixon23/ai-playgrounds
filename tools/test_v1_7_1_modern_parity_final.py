@@ -36,7 +36,7 @@ def qa_surface_count(source: str) -> int:
 
 def main() -> int:
     build = subprocess.run(
-        [sys.executable, str(ROOT / "tools" / "build_site_v1_7_1_modern_parity_final.py")],
+        [sys.executable, str(ROOT / "tools" / "build_site_v1_7_1_modern_parity_complete.py")],
         cwd=ROOT, text=True, capture_output=True, check=False,
     )
     if build.returncode:
@@ -58,7 +58,8 @@ def main() -> int:
         'id="ap-modern-settings-json"', 'class="ap-modern-tldr"',
         'id="ap-modern-key-terms"', 'id="ap-modern-a11y"', 'id="ap-modern-fidelity"',
         'class="ap-standard-footer ap-modern-rich-footer"', 'id="v171-modern-parity-runtime"',
-        'id="v171-modern-toolbar-runtime"',
+        'id="v171-modern-toolbar-runtime"', 'data-qa-modern-state',
+        'data-qa-action="refresh-state"', 'id="v171-modern-packet-runtime"',
     )
     for slug in MODERN:
         source = (SITE / "playgrounds" / slug / "index.html").read_text(encoding="utf-8")
@@ -103,6 +104,15 @@ def main() -> int:
                     page.locator("#ap-modern-more>summary").click()
                     check(f"{slug} {width}: More reveals Embed + settings", page.locator("#ap-modern-embed:visible").count() == 1 and page.locator("#ap-modern-settings-json:visible").count() == 1)
                     page.locator("#ap-modern-more>summary").click()
+
+                    qa = page.locator("details[data-quick-assign-id]")
+                    qa.evaluate("el=>el.open=true")
+                    page.wait_for_timeout(30)
+                    check(f"{slug} {width}: one modern state snapshot", qa.locator("[data-qa-modern-state]").count() == 1)
+                    check(f"{slug} {width}: refresh-state action visible", qa.locator('[data-qa-action="refresh-state"]:visible').count() == 1)
+                    qa.locator('[data-qa-action="refresh-state"]').click()
+                    state_text = qa.locator("[data-qa-modern-state]").inner_text().strip()
+                    check(f"{slug} {width}: state snapshot captures current mechanism", bool(state_text) and "appears here" not in state_text.lower(), state_text[:160])
 
                     original_title = page.locator("#ap-standard-title").inner_text()
                     original_doc_title = page.title()
