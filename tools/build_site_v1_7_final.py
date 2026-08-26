@@ -9,7 +9,7 @@ product-level composition corrections found by integrated QA:
 * replace the generated modern Quick Assign script with one known-valid runtime;
 * preserve JavaScript backslash escapes byte-for-byte during regex replacement;
 * open targeted modern Quick Assigns from their canonical assignment URL;
-* contain the modern response surface at narrow viewports;
+* contain the modern response surface and Lab 15 challenge selector at narrow viewports;
 * remove a drifting current-release suffix from Activity Pack pilot footers.
 """
 
@@ -28,9 +28,11 @@ MODERN_CONTAINMENT = r'''<style id="v17-modern-quick-assign-containment">
 .quick-assign-modern .challenge-controls{display:flex!important;flex-wrap:wrap!important;min-width:0!important;max-width:100%!important}
 .quick-assign-modern textarea{display:block;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
 .quick-assign-modern button{max-width:100%!important;white-space:normal!important;overflow-wrap:anywhere!important}
+#challengeSelect{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
 @media(max-width:480px){
   .quick-assign-modern{width:auto!important;max-width:100%!important;margin-left:0!important;margin-right:0!important;overflow:hidden!important}
   .quick-assign-modern .challenge-controls>*{flex:1 1 140px;max-width:100%!important}
+  #challengeSelect{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important}
 }
 </style>'''
 
@@ -169,7 +171,7 @@ def build_site() -> None:
     patch_modern_direct_open()
     decouple_activity_pack_footer()
     validate()
-    print("Finalized v1.7 all-lab Quick Assign candidate with byte-stable modern runtime, usable deep links, narrow-view containment, and version-decoupled Activity Pack provenance")
+    print("Finalized v1.7 all-lab Quick Assign candidate with byte-stable modern runtime, usable deep links, Minimax mobile containment, and version-decoupled Activity Pack provenance")
 
 
 if __name__ == "__main__":
