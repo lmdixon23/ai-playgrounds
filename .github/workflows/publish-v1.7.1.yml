@@ -1,0 +1,128 @@
+name: Publish v1.7.1
+
+on:
+  workflow_run:
+    workflows: ["Deploy to GitHub Pages"]
+    types: [completed]
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: publish-v1.7.1
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: >-
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      TAG: v1.7.1
+      RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - name: Checkout exact deployed revision
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+
+      - name: Determine v1.7.1 publication intent
+        id: intent
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY' > /tmp/v171-intent
+          import re
+          from pathlib import Path
+          cff = Path('CITATION.cff').read_text(encoding='utf-8')
+          print('true' if re.search(r"(?m)^version:\s*['\"]?1\.7\.1['\"]?\s*$", cff) else 'false')
+          PY
+          PUBLISH="$(cat /tmp/v171-intent)"
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            PUBLISH=false
+          fi
+          echo "publish=$PUBLISH" >> "$GITHUB_OUTPUT"
+          echo "v1.7.1 publication intent: $PUBLISH"
+
+      - name: Confirm exact current main revision
+        if: steps.intent.outputs.publish == 'true'
+        run: |
+          set -euo pipefail
+          git fetch origin main --quiet
+          test "$(git rev-parse origin/main)" = "$RELEASE_SHA"
+          test "$(git rev-parse HEAD)" = "$RELEASE_SHA"
+
+      - name: Wait for exact-sha Verify PASS
+        if: steps.intent.outputs.publish == 'true'
+        run: |
+          set -euo pipefail
+          VERIFY_ID=""
+          for attempt in $(seq 1 30); do
+            VERIFY_ID="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow Verify --commit "$RELEASE_SHA" --event push --json databaseId,status --jq 'map(select(.status == "completed" or .status == "in_progress" or .status == "queued"))[0].databaseId // empty')"
+            if [ -n "$VERIFY_ID" ]; then break; fi
+            sleep 10
+          done
+          test -n "$VERIFY_ID"
+          gh run watch "$VERIFY_ID" --repo "$GITHUB_REPOSITORY" --exit-status
+          test "$(gh run view "$VERIFY_ID" --repo "$GITHUB_REPOSITORY" --json conclusion --jq '.conclusion')" = "success"
+
+      - name: Recheck v1.7.1 metadata and exact public artifact
+        if: steps.intent.outputs.publish == 'true'
+        run: |
+          set -euo pipefail
+          python tools/check_release_metadata.py
+          python tools/test_v1_7_1_modern_parity.py
+          python tools/test_v1_7_1_modern_packet_labels.py
+          python tools/test_v1_7_1_public_release.py
+
+      - name: Fail closed if tag or release appeared concurrently
+        if: steps.intent.outputs.publish == 'true'
+        run: |
+          set -euo pipefail
+          ! git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1
+          ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1
+
+      - name: Prepare release notes
+        if: steps.intent.outputs.publish == 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p release-evidence
+          cp docs/RELEASE_V1_7_1.md release-evidence/v1.7.1-release-notes.md
+          test -s release-evidence/v1.7.1-release-notes.md
+
+      - name: Create immutable tag
+        if: steps.intent.outputs.publish == 'true'
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" "$RELEASE_SHA" -m "AI Playgrounds v1.7.1"
+          git push origin "refs/tags/$TAG"
+
+      - name: Publish GitHub release
+        if: steps.intent.outputs.publish == 'true'
+        run: |
+          set -euo pipefail
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target "$RELEASE_SHA" --title "AI Playgrounds v1.7.1" --notes-file release-evidence/v1.7.1-release-notes.md
+
+      - name: Write publication receipt
+        if: steps.intent.outputs.publish == 'true'
+        run: |
+          set -euo pipefail
+          printf 'release=v1.7.1\nsha=%s\ndeploy_run=%s\ntag=%s\n' "$RELEASE_SHA" '${{ github.event.workflow_run.id }}' "$TAG" > release-evidence/v1.7.1-publication-receipt.txt
+
+      - name: Upload publication receipt
+        if: steps.intent.outputs.publish == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: ai-playgrounds-v1.7.1-publication-${{ github.event.workflow_run.id }}
+          path: |
+            release-evidence/v1.7.1-publication-receipt.txt
+            release-evidence/v1.7.1-release-notes.md
+          retention-days: 90
