@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import json, pathlib, shutil, sys, time
+import http.server, json, pathlib, shutil, socketserver, sys, threading, time
+from contextlib import contextmanager
 from datetime import datetime, timezone
 
 ROOT=pathlib.Path(__file__).resolve().parents[1]
@@ -11,7 +12,7 @@ SLUGS=['bayes-classifier','bayes-network','cnf-sat','convolution','hill-climbing
 # Keep assertions identical and allow a bounded 8 s state-settle window so
 # infrastructure jitter is not mistaken for a learner-state regression.
 STATE_TIMEOUT_MS=8000
-NAV_TIMEOUT_MS=12000
+NAV_TIMEOUT_MS=20000
 
 def launch(p):
     args=['--no-sandbox','--disable-dev-shm-usage']
@@ -21,6 +22,22 @@ def launch(p):
         c=shutil.which(name)
         if c:return p.chromium.launch(headless=True,executable_path=c,args=args)
     return p.chromium.launch(headless=True,args=args)
+
+class QuietHandler(http.server.SimpleHTTPRequestHandler):
+    def log_message(self,_format:str,*args)->None:
+        return
+
+@contextmanager
+def local_repo_server():
+    handler=lambda *args,**kwargs:QuietHandler(*args,directory=str(ROOT),**kwargs)
+    with socketserver.ThreadingTCPServer(('127.0.0.1',0),handler) as server:
+        server.daemon_threads=True
+        thread=threading.Thread(target=server.serve_forever,daemon=True)
+        thread.start()
+        try:
+            yield f'http://127.0.0.1:{server.server_address[1]}'
+        finally:
+            server.shutdown();thread.join(timeout=2)
 
 def state(page): return page.evaluate('() => window.__suiteGuidedChallenge?.state() || null')
 def history(page): return page.evaluate('() => window.__suiteGuidedChallenge?.history() || []')
@@ -129,7 +146,7 @@ def check_knn(page,checks):
 def main()->int:
     from playwright.sync_api import sync_playwright
     cases=[]; failures=[]
-    with sync_playwright() as p:
+    with local_repo_server() as origin, sync_playwright() as p:
         browser=launch(p)
         try:
             for slug in SLUGS:
@@ -137,11 +154,19 @@ def main()->int:
                 page_errors=[];console_errors=[];page.on('pageerror',lambda exc,a=page_errors:a.append(str(exc)));page.on('console',lambda msg,a=console_errors:a.append(msg.text) if msg.type=='error' else None)
                 checks=[];t0=time.perf_counter()
                 try:
-                    page.goto((ROOT/'playgrounds'/slug/'index.html').resolve().as_uri(),wait_until='domcontentloaded',timeout=NAV_TIMEOUT_MS); page.wait_for_function('() => !!window.__suiteGuidedChallenge',timeout=STATE_TIMEOUT_MS)
+                    response=page.goto(f'{origin}/playgrounds/{slug}/index.html',wait_until='domcontentloaded',timeout=NAV_TIMEOUT_MS)
+                    checks.append(('local_artifact_http_200',response is not None and response.status==200,{} if response is None else {'status':response.status}))
+                    page.wait_for_function('() => !!window.__suiteGuidedChallenge',timeout=STATE_TIMEOUT_MS)
                     checks.append(('initial_explore_inactive',page.evaluate('() => window.__suiteGuidedChallenge.mode()==="explore" && window.__suiteGuidedChallenge.state()==="inactive"'),{}))
                     if slug=='knn-classifier': check_knn(page,checks)
                     else: check_generic(page,slug,checks)
-                except Exception as exc: checks.append(('exception',False,{'error':str(exc)}))
+                except Exception as exc:
+                    diagnostic={"error":str(exc)}
+                    try: diagnostic['current_state']=state(page)
+                    except Exception: diagnostic['current_state']='unavailable'
+                    try: diagnostic['history']=history(page)
+                    except Exception: diagnostic['history']='unavailable'
+                    checks.append(('exception',False,diagnostic))
                 passed=all(bool(x[1]) for x in checks) and not page_errors
                 rec={'slug':slug,'pass':passed,'checks':[{'name':n,'pass':bool(ok),'detail':d} for n,ok,d in checks],'page_errors':page_errors,'console_errors':console_errors,'elapsed_s':round(time.perf_counter()-t0,3)};cases.append(rec)
                 if not passed: failures.append(slug)
