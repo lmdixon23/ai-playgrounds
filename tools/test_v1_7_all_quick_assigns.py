@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import http.server
 import json
 import pathlib
 import shutil
+import socketserver
 import subprocess
 import sys
+import threading
+from contextlib import contextmanager
 
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 SITE=ROOT/'_site'
@@ -22,6 +26,24 @@ def launch(playwright):
         candidate=shutil.which(name)
         if candidate: return playwright.chromium.launch(headless=True,executable_path=candidate,args=args)
     return playwright.chromium.launch(headless=True,args=args)
+
+
+class QuietHandler(http.server.SimpleHTTPRequestHandler):
+    def log_message(self,_format:str,*args)->None:
+        return
+
+
+@contextmanager
+def local_site_server():
+    handler=lambda *args,**kwargs:QuietHandler(*args,directory=str(SITE),**kwargs)
+    with socketserver.ThreadingTCPServer(('127.0.0.1',0),handler) as server:
+        server.daemon_threads=True
+        thread=threading.Thread(target=server.serve_forever,daemon=True)
+        thread.start()
+        try:
+            yield f'http://127.0.0.1:{server.server_address[1]}'
+        finally:
+            server.shutdown();thread.join(timeout=2)
 
 
 def main()->int:
@@ -45,17 +67,20 @@ def main()->int:
 
     page_errors=[];console_errors=[]
     from playwright.sync_api import sync_playwright
-    with sync_playwright() as p:
+    with local_site_server() as origin, sync_playwright() as p:
         browser=launch(p)
         try:
             ctx=browser.new_context(viewport={'width':1280,'height':900},reduced_motion='reduce')
+            ctx.set_default_timeout(12_000)
             page=ctx.new_page();page.on('pageerror',lambda exc:page_errors.append(str(exc)));page.on('console',lambda msg:console_errors.append(msg.text) if msg.type=='error' else None)
             # Verify the eleven newly activated assignments. The initial four keep
             # their already-frozen v1.6.1 gate in the same Verify workflow.
             for r in [x for x in rows if x['id'] not in INITIAL]:
-                url=(SITE/'playgrounds'/r['slug']/'index.html').resolve().as_uri()+f'?mode=classroom&lang=en#{r["anchor"]}'
-                page.goto(url,wait_until='load',timeout=20_000)
+                url=f'{origin}/playgrounds/{r["slug"]}/index.html?mode=classroom&lang=en#{r["anchor"]}'
+                response=page.goto(url,wait_until='domcontentloaded',timeout=30_000)
+                check(f"{r['id']} local artifact returns HTTP 200",response is not None and response.status==200,None if response is None else response.status)
                 qa=page.locator(f'[data-quick-assign-id="{r["id"]}"]')
+                qa.wait_for(state='attached',timeout=12_000)
                 check(f"{r['id']} direct link resolves",qa.count()==1)
                 check(f"{r['id']} in viewport document",qa.evaluate('el=>!!el&&el.isConnected'))
                 if r['slug'] in MODERN:
@@ -64,10 +89,10 @@ def main()->int:
                     en=title.inner_text()
                     field=qa.locator('[data-qa-answer="predict"]');field.fill('keep-this-response')
                     for loc in ('zh','vi','es'):
-                        page.select_option('#ap-standard-language-select',loc);page.wait_for_timeout(90)
+                        page.select_option('#ap-standard-language-select',loc);page.wait_for_function("loc=>document.documentElement.lang.toLowerCase().startsWith(loc)",arg=loc,timeout=12_000);page.wait_for_timeout(90)
                         check(f"{r['id']} title switches {loc}",title.inner_text()!=en,{'title':title.inner_text()})
                         check(f"{r['id']} response survives {loc}",field.input_value()=='keep-this-response')
-                    page.select_option('#ap-standard-language-select','en');page.wait_for_timeout(90)
+                    page.select_option('#ap-standard-language-select','en');page.wait_for_function("()=>document.documentElement.lang.toLowerCase().startsWith('en')",timeout=12_000);page.wait_for_timeout(90)
                     check(f"{r['id']} title restores EN",title.inner_text()==en)
                     check(f"{r['id']} response survives EN roundtrip",field.input_value()=='keep-this-response')
                 else:
@@ -82,7 +107,8 @@ def main()->int:
             mobile=browser.new_context(viewport={'width':390,'height':844},is_mobile=True,has_touch=True,reduced_motion='reduce')
             mpage=mobile.new_page()
             for slug in sorted(MODERN):
-                mpage.goto((SITE/'playgrounds'/slug/'index.html').resolve().as_uri()+'?lang=es',wait_until='load',timeout=20_000)
+                response=mpage.goto(f'{origin}/playgrounds/{slug}/index.html?lang=es',wait_until='domcontentloaded',timeout=30_000)
+                check(f'{slug} mobile local artifact returns HTTP 200',response is not None and response.status==200,None if response is None else response.status)
                 layout=mpage.evaluate("""() => {
                   const width=innerWidth;
                   const scroll=Math.max(document.documentElement.scrollWidth,document.body.scrollWidth);
