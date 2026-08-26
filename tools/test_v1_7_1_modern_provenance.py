@@ -15,11 +15,16 @@ def main() -> int:
     checks = []
     for slug in MODERN:
         source = (SITE / "playgrounds" / slug / "index.html").read_text(encoding="utf-8")
+        prefs_start = source.find('<div class="header-prefs">')
+        prefs_end = source.find('</div>', prefs_start)
+        theme_pos = source.find('id="ap-standard-theme"')
         checks.extend([
             (f"{slug}: established portfolio", PORTFOLIO in source),
             (f"{slug}: established ORCID", ORCID in source),
             (f"{slug}: no alternate portfolio", "https://logandixon.me" not in source),
             (f"{slug}: no alternate ORCID", "0009-0008-1712-6630" not in source),
+            (f"{slug}: shared theme preference key", "ai-playgrounds-theme" not in source and "localStorage.setItem('theme'" in source),
+            (f"{slug}: theme lives in header preference row", prefs_start >= 0 and prefs_start < theme_pos < prefs_end),
         ])
     failed = [name for name, ok in checks if not ok]
     payload = {
