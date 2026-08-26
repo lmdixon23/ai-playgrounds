@@ -85,7 +85,10 @@ def validate() -> None:
         if missing: raise RuntimeError(f"Stable modern accessibility lifecycle incomplete for {slug}: {missing}")
         if 'readinessTimer' in page or 'readinessTries' in page or '__v171LabelWrapped' in page:
             raise RuntimeError(f"Polling/wrapped accessibility lifecycle survived stable composition: {slug}")
-    base.validate()
+    # The preceding accessibility wrapper already validated its own structured
+    # panel before this runtime replacement. Re-run the immediately preceding
+    # Quick Assign/parity validator, not the obsolete polling-runtime validator.
+    base.base.validate()
 
 
 def build_site() -> None:
