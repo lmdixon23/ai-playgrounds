@@ -16,12 +16,19 @@ This audit distinguishes **shared-shell deficits** from **legitimate concept-spe
 | Skip-to-controls link | 12/12 | 0/3 | Add |
 | Share current link/state affordance | 12/12 | 0/3 | Add generic share/copy; do not pretend every modern state is URL-serialized |
 | Embed helper / `?embed=1` | 12/12 | 0/3 | Add generic embed mode |
+| Mature header hierarchy | Share · More · Reset | flatter modern action row | Align; put Theme beside language and secondary actions under More |
+| Generic current-settings JSON | shared mature toolbar | 0/3 | Add local-only settings export; exclude learner responses |
 | TL;DR / Big idea orientation | 12/12 | 0/3 shared | Add concise concept-specific orientation |
 | Accessibility/text-state guidance layer | 12/12 | 0/3 shared | Add shared guidance, point to each lab's existing text/numeric state |
 | Key terms panel | 12/12 | 0/3 shared | Add compact concept-specific terms |
 | Essay/primer + misconception/fidelity framing | 12/12 | partial/ad hoc | Add compact shared fidelity/model-boundary block |
 | Shared theme preference namespace | 12/12 use `theme` | 0/3 (`ai-playgrounds-theme`) | Rejoin canonical `theme` key |
 | Theme placement in preference row | 12/12 | action-row placement | Move theme beside language preference |
+| Quick Assign state snapshot | original packet includes current-state evidence | 0/3 | Add from each modern lab's existing text-equivalent state |
+| Quick Assign Refresh state | original packet | 0/3 | Add |
+| Quick Assign copy includes state + answers | original packet | answers only | Align |
+| Quick Assign packet-only print | original packet | whole-page `window.print()` | Align |
+| Quick Assign localized action labels / textarea names | mature original packet localizes interface | action buttons / `aria-label`s English-only | Align EN/ZH/VI/ES |
 | Canonical suite portfolio + ORCID provenance | 12/12 | thinner footer | Enrich footer using the already-established repository values only |
 | Favicon | 12/12 | 0/3 | Add shared favicon |
 | JSON-LD WebApplication/LearningResource metadata | 12/12 | 0/3 | Add |
@@ -32,7 +39,6 @@ This audit distinguishes **shared-shell deficits** from **legitimate concept-spe
 | Scenario gallery | 12/12 | concept-specific selectors already exist | Do **not** duplicate |
 | Worksheet/response system | 12/12 | Quick Assign response layer exists | Do **not** duplicate |
 | Applet-specific CSV/PNG export | mixed, not universal | mixed/absent | Do **not** force; concept-specific |
-| Compact header More treatment | 12/12 has established narrow-header treatment | absent | Use responsive action wrapping; do not add a menu unless measured clutter warrants it |
 
 ## Rationale
 
@@ -45,7 +51,10 @@ The missing items chosen for v1.7.1 reduce product-learning friction without cha
 - terminology and misconception/fidelity boundaries are visible in the same conceptual location;
 - theme choice carries between old and new labs instead of splitting into two preference namespaces;
 - suite provenance uses the same already-established portfolio/ORCID values everywhere;
-- social/search metadata has the same completeness regardless of which generation produced the applet.
+- social/search metadata has the same completeness regardless of which generation produced the applet;
+- a modern Quick Assign captures the same type of inspectable state evidence as an original packet rather than asking the learner to reconstruct the run from memory;
+- Copy/Print packet behavior operates on the assignment packet rather than the whole applet;
+- the packet's action labels and accessible field names follow the same locale as its prompts.
 
 The following are intentionally **not** standardized into duplicate UI:
 
@@ -65,4 +74,4 @@ These are retained as evidence that consistency work must itself be tested at fi
 
 ## Evidence boundary
 
-This audit concerns product consistency, discoverability metadata, and implementation behavior. It does not establish learner preference, learning gains, classroom adoption, or accessibility conformance.
+This audit concerns product consistency, discoverability metadata, assignment-surface parity, and implementation behavior. It does not establish learner preference, learning gains, classroom adoption, or accessibility conformance.
