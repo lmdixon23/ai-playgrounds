@@ -27,32 +27,23 @@ FORBIDDEN_CURRENT_PHRASES = (
 )
 
 QUICK_ASSIGN_IDS = (
-    "QA-SEARCH-01",
-    "QA-LOCAL-01",
-    "QA-WUMPUS-01",
-    "QA-SAT-01",
-    "QA-BAYES-01",
-    "QA-BN-01",
-    "QA-KNN-01",
-    "QA-OVERFIT-01",
-    "QA-NN-01",
-    "QA-KMEANS-01",
-    "QA-CNN-01",
-    "QA-QL-01",
-    "QA-MINIMAX-01",
-    "QA-TRANSFORMER-01",
-    "QA-AGENT-01",
+    "QA-SEARCH-01", "QA-LOCAL-01", "QA-WUMPUS-01", "QA-SAT-01", "QA-BAYES-01",
+    "QA-BN-01", "QA-KNN-01", "QA-OVERFIT-01", "QA-NN-01", "QA-KMEANS-01",
+    "QA-CNN-01", "QA-QL-01", "QA-MINIMAX-01", "QA-TRANSFORMER-01", "QA-AGENT-01",
 )
 
 
 def normalized(text: str) -> str:
-    return re.sub(r"\s+", " ", text.lower().replace("–", "-").replace("—", "-")).strip()
+    text = text.lower().replace("–", "-").replace("—", "-")
+    # Markdown emphasis/code punctuation is presentation, not document semantics.
+    text = re.sub(r"[*_`]", "", text)
+    return re.sub(r"\s+", " ", text).strip()
 
 
 def require_all(rel: str, text: str, groups: list[tuple[str, ...]], failures: list[str]) -> None:
     low = normalized(text)
     for group in groups:
-        missing = [token for token in group if token.lower() not in low]
+        missing = [token for token in group if normalized(token) not in low]
         if missing:
             failures.append(f"{rel}: missing semantic markers {missing} from group {group}")
 
@@ -70,110 +61,85 @@ def main() -> int:
         docs[rel] = text
         low = normalized(text)
         for phrase in FORBIDDEN_CURRENT_PHRASES:
-            if phrase in low:
+            if normalized(phrase) in low:
                 failures.append(f"{rel}: stale current-facing phrase remains: {phrase}")
 
-    # Current product identity: verify facts, not one frozen marketing sentence.
     if "README.md" in docs:
-        require_all(
-            "README.md", docs["README.md"],
-            [
-                ("15", "multilingual", "offline-ready", "applets"),
-                ("13 foundations", "2 modern ai extensions"),
-                ("quick assign", "qa-transformer-01", "qa-agent-01"),
-                ("english", "simplified chinese", "vietnamese", "spanish"),
-                ("v1.7.0",),
-            ], failures,
-        )
+        require_all("README.md", docs["README.md"], [
+            ("15", "multilingual", "offline-ready", "applets"),
+            ("13 foundations", "2 modern ai extensions"),
+            ("quick assign", "qa-transformer-01", "qa-agent-01"),
+            ("english", "simplified chinese", "vietnamese", "spanish"),
+            ("v1.7.0",),
+        ], failures)
 
     if "QUALITY.md" in docs:
-        require_all(
-            "QUALITY.md", docs["QUALITY.md"],
-            [
-                ("fifteen", "multilingual", "learner applets"),
-                ("thirteen foundations/course-track labs", "two modern ai extensions"),
-                ("all fifteen", "quick assign"),
-                ("english", "simplified chinese", "vietnamese", "spanish"),
-                ("evidence limits", "learning gains", "accessibility conformance"),
-            ], failures,
-        )
+        require_all("QUALITY.md", docs["QUALITY.md"], [
+            ("fifteen", "multilingual", "learner applets"),
+            ("thirteen foundations/course-track labs", "two modern ai extensions"),
+            ("all fifteen", "quick assign"),
+            ("english", "simplified chinese", "vietnamese", "spanish"),
+            ("evidence limits", "learning gains", "accessibility conformance"),
+        ], failures)
 
     if "ARCHITECTURE.md" in docs:
-        require_all(
-            "ARCHITECTURE.md", docs["ARCHITECTURE.md"],
-            [
-                ("metadata for all fifteen applets",),
-                ("13 foundations/course-track labs", "2 modern ai extensions"),
-                ("original twelve", "labs 13-15", "concept-specific bodies"),
-                ("all fifteen", "learner applets", "level-1 quick assign"),
-                ("english", "simplified chinese", "vietnamese", "spanish"),
-                ("applet_design_system_contract.md",),
-            ], failures,
-        )
+        require_all("ARCHITECTURE.md", docs["ARCHITECTURE.md"], [
+            ("metadata for all fifteen applets",),
+            ("13 foundations/course-track labs", "2 modern ai extensions"),
+            ("original twelve", "labs 13-15", "concept-specific bodies"),
+            ("all fifteen", "learner applets", "level-1 quick assign"),
+            ("english", "simplified chinese", "vietnamese", "spanish"),
+            ("applet_design_system_contract.md",),
+        ], failures)
 
     if "docs/LAUNCH_KIT.md" in docs:
-        require_all(
-            "docs/LAUNCH_KIT.md", docs["docs/LAUNCH_KIT.md"],
-            [
-                ("15", "multilingual", "interactive ai labs"),
-                ("13 foundations/course-track labs", "2 modern ai extensions"),
-                ("quick assign", "every applet"),
-                ("english", "simplified chinese", "vietnamese", "spanish"),
-                ("learning gains", "accessibility conformance"),
-            ], failures,
-        )
+        require_all("docs/LAUNCH_KIT.md", docs["docs/LAUNCH_KIT.md"], [
+            ("15", "multilingual", "interactive ai labs"),
+            ("13 foundations/course-track labs", "2 modern ai extensions"),
+            ("quick assign", "every applet"),
+            ("english", "simplified chinese", "vietnamese", "spanish"),
+            ("learning gains", "accessibility conformance"),
+        ], failures)
 
     if "docs/SHOW_HN_READINESS.md" in docs:
-        require_all(
-            "docs/SHOW_HN_READINESS.md", docs["docs/SHOW_HN_READINESS.md"],
-            [
-                ("current v1.7.0 product",),
-                ("15 learner applets", "13 foundations/course-track labs", "2 modern ai extensions"),
-                ("one level-1 quick assign per applet",),
-                ("english", "simplified chinese", "vietnamese", "spanish"),
-            ], failures,
-        )
+        require_all("docs/SHOW_HN_READINESS.md", docs["docs/SHOW_HN_READINESS.md"], [
+            ("current v1.7.0 product",),
+            ("15 learner applets", "13 foundations/course-track labs", "2 modern ai extensions"),
+            ("one level-1 quick assign per applet",),
+            ("english", "simplified chinese", "vietnamese", "spanish"),
+        ], failures)
 
     if "docs/CONTRIBUTOR_ONRAMP.md" in docs:
-        require_all(
-            "docs/CONTRIBUTOR_ONRAMP.md", docs["docs/CONTRIBUTOR_ONRAMP.md"],
-            [
-                ("english", "simplified chinese", "vietnamese", "spanish"),
-                ("applet_design_system_contract.md",),
-                ("every public applet", "level-1 quick assign"),
-                ("public_surface_locale_matrix.md",),
-            ], failures,
-        )
+        require_all("docs/CONTRIBUTOR_ONRAMP.md", docs["docs/CONTRIBUTOR_ONRAMP.md"], [
+            ("english", "simplified chinese", "vietnamese", "spanish"),
+            ("applet_design_system_contract.md",),
+            ("every public applet", "level-1 quick assign"),
+            ("public_surface_locale_matrix.md",),
+        ], failures)
 
     locale_rel = "docs/PUBLIC_SURFACE_LOCALE_MATRIX.md"
     if locale_rel in docs:
         low = normalized(docs[locale_rel])
-        require_all(
-            locale_rel, docs[locale_rel],
-            [
-                ("current v1.7.0 claim-scoping control",),
-                ("all 15 level-1 quick assigns",),
-                ("landing page", "yes | yes | yes | yes"),
-                ("teacher pack", "yes | yes | no | no"),
-                ("curriculum map", "yes | yes | no | no"),
-                ("nn-1 activity pack", "yes | no | no | no"),
-                ("cnn-1 activity pack", "yes | no | no | no"),
-            ], failures,
-        )
+        require_all(locale_rel, docs[locale_rel], [
+            ("current v1.7.0 claim-scoping control",),
+            ("all 15 level-1 quick assigns",),
+            ("landing page", "yes | yes | yes | yes"),
+            ("teacher pack", "yes | yes | no | no"),
+            ("curriculum map", "yes | yes | no | no"),
+            ("nn-1 activity pack", "yes | no | no | no"),
+            ("cnn-1 activity pack", "yes | no | no | no"),
+        ], failures)
         if "fully four-language website" not in low:
             failures.append(f"{locale_rel}: missing explicit overclaim warning")
 
     qa_rel = "docs/QUICK_ASSIGN_ARCHITECTURE.md"
     if qa_rel in docs:
-        require_all(
-            qa_rel, docs[qa_rel],
-            [
-                ("active v1.7.0 contract",),
-                ("all fifteen public applets", "active v1.7.0 quick assign"),
-                ("predict -> manipulate/run -> observe -> explain -> transfer",),
-                ("english", "simplified chinese", "vietnamese", "spanish"),
-            ], failures,
-        )
+        require_all(qa_rel, docs[qa_rel], [
+            ("active v1.7.0 contract",),
+            ("all fifteen public applets", "active v1.7.0 quick assign"),
+            ("predict -> manipulate/run -> observe -> explain -> transfer",),
+            ("[en, zh, vi, es]",),
+        ], failures)
         for activity_id in QUICK_ASSIGN_IDS:
             if activity_id not in docs[qa_rel]:
                 failures.append(f"{qa_rel}: missing active Quick Assign ID {activity_id}")
