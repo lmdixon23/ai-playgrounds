@@ -35,7 +35,6 @@ QUICK_ASSIGN_IDS = (
 
 def normalized(text: str) -> str:
     text = text.lower().replace("–", "-").replace("—", "-")
-    # Markdown emphasis/code punctuation is presentation, not document semantics.
     text = re.sub(r"[*_`]", "", text)
     return re.sub(r"\s+", " ", text).strip()
 
@@ -70,7 +69,7 @@ def main() -> int:
             ("13 foundations", "2 modern ai extensions"),
             ("quick assign", "qa-transformer-01", "qa-agent-01"),
             ("english", "simplified chinese", "vietnamese", "spanish"),
-            ("v1.7.0",),
+            ("current release", "v1.7.1"),
         ], failures)
 
     if "QUALITY.md" in docs:
@@ -103,7 +102,7 @@ def main() -> int:
 
     if "docs/SHOW_HN_READINESS.md" in docs:
         require_all("docs/SHOW_HN_READINESS.md", docs["docs/SHOW_HN_READINESS.md"], [
-            ("current v1.7.0 product",),
+            ("current v1.7.1 product",),
             ("15 learner applets", "13 foundations/course-track labs", "2 modern ai extensions"),
             ("one level-1 quick assign per applet",),
             ("english", "simplified chinese", "vietnamese", "spanish"),
@@ -121,7 +120,7 @@ def main() -> int:
     if locale_rel in docs:
         low = normalized(docs[locale_rel])
         require_all(locale_rel, docs[locale_rel], [
-            ("current v1.7.0 claim-scoping control",),
+            ("current v1.7.1 claim-scoping control",),
             ("all 15 level-1 quick assigns",),
             ("landing page", "yes | yes | yes | yes"),
             ("teacher pack", "yes | yes | no | no"),
@@ -135,8 +134,8 @@ def main() -> int:
     qa_rel = "docs/QUICK_ASSIGN_ARCHITECTURE.md"
     if qa_rel in docs:
         require_all(qa_rel, docs[qa_rel], [
-            ("active v1.7.0 contract",),
-            ("all fifteen public applets", "active v1.7.0 quick assign"),
+            ("active v1.7.1 contract",),
+            ("all fifteen public applets", "active v1.7.1 quick assign"),
             ("predict -> manipulate/run -> observe -> explain -> transfer",),
             ("[en, zh, vi, es]",),
         ], failures)
@@ -149,8 +148,8 @@ def main() -> int:
         failures.append("missing historical scorecard: docs/SCORECARD.md")
     else:
         score = normalized(scorecard_path.read_text(encoding="utf-8"))
-        if "historical snapshot" not in score or "not the current v1.7.0 product inventory" not in score:
-            failures.append("docs/SCORECARD.md: launch-era numbers are not explicitly marked historical")
+        if "historical snapshot" not in score or "not a current product inventory" not in score:
+            failures.append("docs/SCORECARD.md: launch-era numbers are not explicitly marked as non-current")
 
     if failures:
         print("CURRENT DOC CONSISTENCY: FAIL")
