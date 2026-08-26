@@ -3,10 +3,9 @@ from __future__ import annotations
 
 """Final validation wrapper for the v1.7.1 modern-lab parity candidate.
 
-The parity layer standardizes only suite-level affordances. It preserves the
-verified Transformer, agent-runtime, and Minimax/Alpha-Beta mechanisms while
-normalizing the mature product shell, preference namespace, provenance, and
-head/discovery metadata used by the original twelve applets.
+This layer standardizes suite-level affordances around Labs 13-15 without
+changing Transformer arithmetic, agent-runtime semantics, Minimax/Alpha-Beta
+results, Guided Challenges, or Quick Assign response state.
 """
 
 import html as html_lib
@@ -22,6 +21,30 @@ ESTABLISHED_ORCID = "https://orcid.org/0009-0001-0592-462X"
 PUBLIC_ROOT = "https://lmdixon23.github.io/ai-playgrounds/"
 OG_IMAGE = PUBLIC_ROOT + "og-image.png"
 FAVICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E"
+SETTINGS_LABELS = {
+    "en": "Current settings (.json)",
+    "zh": "当前设置（.json）",
+    "vi": "Cài đặt hiện tại (.json)",
+    "es": "Configuración actual (.json)",
+}
+THEME_LABELS = {
+    "en": "Toggle dark or light theme",
+    "zh": "切换深色或浅色主题",
+    "vi": "Chuyển giao diện tối hoặc sáng",
+    "es": "Cambiar entre tema oscuro y claro",
+}
+
+TOOLBAR_STYLE = r'''<style id="v171-modern-toolbar-parity-style">
+.ap-standard-header .header-prefs #ap-standard-theme{width:38px;padding:6px;justify-content:center;font-size:0;line-height:1}
+.ap-standard-header .header-prefs #ap-standard-theme::first-letter{font-size:1rem}
+.ap-standard-header .header-more{position:relative}
+.ap-standard-header .header-more>summary{list-style:none;cursor:pointer;user-select:none;min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border:1px solid var(--border,#d7dde7);border-radius:8px;background:var(--card,#fff);color:var(--fg,#172033);font:inherit}
+.ap-standard-header .header-more>summary::-webkit-details-marker{display:none}
+.ap-standard-header .header-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:80;min-width:220px;padding:7px;background:var(--card,#fff);border:1px solid var(--border,#d7dde7);border-radius:10px;box-shadow:0 16px 35px rgba(15,23,42,.18);display:grid;gap:5px}
+.ap-standard-header .header-more-menu button{width:100%;text-align:left;justify-content:flex-start;white-space:normal}
+@media(pointer:coarse){.ap-standard-header .header-more>summary{min-height:44px}.ap-standard-header .header-prefs #ap-standard-theme{min-height:44px;width:44px}}
+@media(max-width:720px){.ap-standard-header .header-actions{width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important}.ap-standard-header .header-actions>button,.ap-standard-header .header-actions>.header-more,.ap-standard-header .header-more>summary{width:100%;justify-content:center}.ap-standard-header .header-more-menu{right:auto;left:0;max-width:min(290px,90vw)}}
+</style>'''
 
 
 def quick_assign_surface_count(page: str) -> int:
@@ -86,15 +109,11 @@ def normalize_head_metadata(page: str, row: dict) -> str:
         raise RuntimeError(f'No complete <head> for {row["slug"]}')
     head = page[head_open_end + 1:head_end]
 
-    # Replace crawler-visible page title with the same product naming used by the
-    # original twelve. Runtime locale synchronization below keeps it reversible.
     public_title = f'{row["title"]} | AI Playgrounds'
     head, title_count = re.subn(r'<title>.*?</title>', f'<title>{html_lib.escape(public_title)}</title>', head, count=1, flags=re.S | re.I)
     if title_count != 1:
         raise RuntimeError(f'Missing title element for {row["slug"]}')
 
-    # Remove only the metadata families governed by this parity layer; preserve
-    # viewport, version markers, canonical, and any mechanism-specific head data.
     governed_meta = (
         "description", "og:type", "og:url", "og:title", "og:description", "og:image",
         "twitter:card", "twitter:title", "twitter:description", "twitter:image",
@@ -109,28 +128,45 @@ def normalize_head_metadata(page: str, row: dict) -> str:
     head = re.sub(r'<link\b(?=[^>]*\brel=["\']icon["\'])[^>]*>\s*', "", head, flags=re.I)
     head = re.sub(r'<link\b(?=[^>]*\brel=["\']alternate["\'])[^>]*>\s*', "", head, flags=re.I)
     head = re.sub(r'<script\b(?=[^>]*\btype=["\']application/ld\+json["\'])[^>]*>.*?</script>\s*', "", head, flags=re.S | re.I)
-
     head = head.rstrip() + "\n" + metadata_block(row)
     return page[:head_open_end + 1] + head + page[head_end:]
+
+
+def more_menu(data: dict) -> str:
+    more_attrs = candidate.loc_attr(data, "more")
+    settings_attrs = candidate.attrs(SETTINGS_LABELS)
+    return (
+        f'<details class="header-more" id="ap-modern-more">'
+        f'<summary class="header-png" aria-haspopup="menu" {more_attrs}>••• {html_lib.escape(data["chrome"]["en"]["more"])}</summary>'
+        f'<div class="header-more-menu" role="menu">'
+        f'<button id="ap-modern-embed" type="button" {candidate.loc_attr(data,"embed")}>📎 <span>{html_lib.escape(data["chrome"]["en"]["embed"])}</span></button>'
+        f'<button id="ap-modern-settings-json" type="button" {settings_attrs}>⬇ <span>{html_lib.escape(SETTINGS_LABELS["en"])}</span></button>'
+        f'</div></details>'
+    )
+
+
+def toolbar_runtime(data: dict) -> str:
+    labels = json.dumps(THEME_LABELS, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    return f'''<script id="v171-modern-toolbar-runtime">
+(()=>{{'use strict';const THEME_LABELS={labels};const norm=v=>{{v=String(v||'').toLowerCase();return v.startsWith('zh')?'zh':v.startsWith('vi')?'vi':v.startsWith('es')?'es':'en'}};const loc=()=>norm(document.documentElement.lang);const theme=document.getElementById('ap-standard-theme');
+function paintTheme(){{if(!theme)return;const dark=document.body.classList.contains('ap-standard-dark');theme.textContent=dark?'☀️':'🌙';const label=THEME_LABELS[loc()]||THEME_LABELS.en;theme.setAttribute('aria-label',label);theme.title=label}}
+function stateData(){{const values={{}};document.querySelectorAll('#ap-modern-interactive-start input,#ap-modern-interactive-start select,#ap-modern-interactive-start textarea').forEach(el=>{{if(!el.id||el.closest('[data-quick-assign-id]'))return;if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;values[el.id]=el.type==='checkbox'?el.checked:el.value}});return{{applet:document.getElementById('ap-standard-title')?.textContent||document.title,slug:document.body.dataset.apModernParity||'',exported_at:new Date().toISOString(),values}}}}
+document.getElementById('ap-modern-settings-json')?.addEventListener('click',()=>{{const data=JSON.stringify(stateData(),null,2);const blob=new Blob([data],{{type:'application/json'}});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(document.body.dataset.apModernParity||'ai-playground')+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);document.getElementById('ap-modern-more')?.removeAttribute('open')}});
+theme?.addEventListener('click',()=>setTimeout(paintTheme,0));new MutationObserver(paintTheme).observe(document.documentElement,{{attributes:true,attributeFilter:['lang']}});document.addEventListener('click',e=>{{const more=document.getElementById('ap-modern-more');if(more?.open&&!more.contains(e.target))more.open=false}});paintTheme();
+}})();</script>'''
 
 
 def validate() -> None:
     for slug in MODERN:
         page = (SITE / "playgrounds" / slug / "index.html").read_text(encoding="utf-8")
         required = (
-            'class="ap-modern-skip"',
-            'class="ap-standard-header page-header"',
-            'id="ap-modern-share"',
-            'id="ap-modern-embed"',
-            'class="ap-modern-tldr"',
-            'id="ap-modern-key-terms"',
-            'id="ap-modern-a11y"',
-            'id="ap-modern-fidelity"',
-            'class="ap-standard-footer ap-modern-rich-footer"',
-            'id="v171-modern-parity-runtime"',
-            '<meta name="twitter:image"',
-            '<script type="application/ld+json">',
-            'rel="icon"',
+            'class="ap-modern-skip"', 'class="ap-standard-header page-header"',
+            'id="ap-modern-share"', 'id="ap-modern-more"', 'id="ap-modern-embed"',
+            'id="ap-modern-settings-json"', 'class="ap-modern-tldr"',
+            'id="ap-modern-key-terms"', 'id="ap-modern-a11y"', 'id="ap-modern-fidelity"',
+            'class="ap-standard-footer ap-modern-rich-footer"', 'id="v171-modern-parity-runtime"',
+            'id="v171-modern-toolbar-runtime"', '<meta name="twitter:image"',
+            '<script type="application/ld+json">', 'rel="icon"',
         )
         missing = [marker for marker in required if marker not in page]
         if missing:
@@ -145,28 +181,31 @@ def validate() -> None:
         theme_pos = page.find('id="ap-standard-theme"')
         if not (prefs_start >= 0 and prefs_start < theme_pos < prefs_end):
             raise RuntimeError(f"Theme control is not in the shared header preference row: {slug}")
+        actions_start = page.find('<div class="header-actions">')
+        actions_end = page.find('</div>', actions_start)
+        share_pos = page.find('id="ap-modern-share"')
+        more_pos = page.find('id="ap-modern-more"')
+        reset_pos = page.find('id="ap-standard-reset"')
+        if not (actions_start >= 0 and actions_start < share_pos < more_pos < reset_pos):
+            raise RuntimeError(f"Modern action hierarchy is not Share / More / Reset: {slug}")
         for hreflang in ("en", "zh-Hans", "vi", "es", "x-default"):
             if f'hreflang="{hreflang}"' not in page:
                 raise RuntimeError(f"Missing {hreflang} alternate for {slug}")
     candidate.predecessor.quick.base.base.impl.base.validate_local_references()
 
 
-def normalize_shell_provenance_and_metadata() -> None:
+def normalize_shell_provenance_toolbar_and_metadata() -> None:
     rows = manifest_by_slug()
+    data = candidate.load_data()
     for slug in MODERN:
         path = SITE / "playgrounds" / slug / "index.html"
         page = path.read_text(encoding="utf-8")
 
-        # Preserve the exact identity/provenance already used by the original 12.
         page = page.replace("https://logandixon.me", ESTABLISHED_PORTFOLIO)
         page = page.replace("https://orcid.org/0009-0008-1712-6630", ESTABLISHED_ORCID)
-
-        # The original twelve share `theme`; the v1.6.x modern shell accidentally
-        # introduced a second preference namespace. Rejoin the existing contract.
         page = page.replace("ai-playgrounds-theme", "theme")
 
-        # Match the established hierarchy: Theme + language are preferences in the
-        # utility row; Share / Embed / Reset are actions beside the title.
+        # Match the established preference row and system-theme fallback.
         theme_match = re.search(r'<button\b[^>]*\bid="ap-standard-theme"[^>]*>.*?</button>', page, flags=re.S | re.I)
         if not theme_match:
             raise RuntimeError(f"Modern theme control missing before hierarchy normalization: {slug}")
@@ -176,6 +215,22 @@ def normalize_shell_provenance_and_metadata() -> None:
         if prefs_marker not in page:
             raise RuntimeError(f"Modern header preference row missing: {slug}")
         page = page.replace(prefs_marker, prefs_marker + theme_button, 1)
+        page = page.replace(
+            "if(localStorage.getItem('theme')==='dark')document.body.classList.add('ap-standard-dark');",
+            "{const saved=localStorage.getItem('theme');if(saved==='dark'||(!saved&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.body.classList.add('ap-standard-dark');}",
+            1,
+        )
+
+        # Match the mature action hierarchy: Share, More (Embed + JSON), Reset.
+        embed_match = re.search(r'<button\b[^>]*\bid="ap-modern-embed"[^>]*>.*?</button>', page, flags=re.S | re.I)
+        if not embed_match:
+            raise RuntimeError(f"Modern Embed action missing before More-menu normalization: {slug}")
+        page = page[:embed_match.start()] + page[embed_match.end():]
+        share_match = re.search(r'<button\b[^>]*\bid="ap-modern-share"[^>]*>.*?</button>', page, flags=re.S | re.I)
+        if not share_match:
+            raise RuntimeError(f"Modern Share action missing: {slug}")
+        menu = more_menu(data)
+        page = page[:share_match.end()] + menu + page[share_match.end():]
 
         # Keep browser title synchronized with the localized standard-shell H1.
         marker = "$('#ap-standard-title').textContent=f('title',l);"
@@ -184,7 +239,12 @@ def normalize_shell_provenance_and_metadata() -> None:
             raise RuntimeError(f"Standard-shell title synchronization marker missing: {slug}")
         page = page.replace(marker, replacement, 1)
 
+        # Original twelve keep release number in secondary provenance, not the main footer.
+        page = page.replace(" · v1.7.1</div>", "</div>")
+        if 'id="v171-modern-toolbar-parity-style"' not in page:
+            page = page.replace("</head>", TOOLBAR_STYLE + "\n</head>", 1)
         page = normalize_head_metadata(page, rows[slug])
+        page = page.replace("</body>", toolbar_runtime(data) + "\n</body>", 1)
 
         if ESTABLISHED_PORTFOLIO not in page or ESTABLISHED_ORCID not in page:
             raise RuntimeError(f"Established modern-lab provenance missing after normalization: {slug}")
@@ -194,13 +254,11 @@ def normalize_shell_provenance_and_metadata() -> None:
 
 
 def build_site() -> None:
-    # Let the base parity layer compose the feature shell, but suppress its original
-    # textual Quick Assign validator until the DOM-aware final validation below.
     candidate.validate = lambda: candidate.predecessor.quick.base.base.impl.base.validate_local_references()
     candidate.build_site()
-    normalize_shell_provenance_and_metadata()
+    normalize_shell_provenance_toolbar_and_metadata()
     validate()
-    print("Finalized v1.7.1 modern-lab parity composition with shared theme/header hierarchy, established provenance, and original-suite discovery metadata")
+    print("Finalized v1.7.1 modern-lab parity: mature Share/More/Reset toolbar, shared theme preference, established provenance, and complete discovery metadata")
 
 
 if __name__ == "__main__":
