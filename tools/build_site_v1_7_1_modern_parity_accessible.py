@@ -81,6 +81,14 @@ schedulePaint();
 }})();</script>'''
 
 
+def append_before_document_body_close(page: str, addition: str, slug: str) -> str:
+    """Append after all embedded HTML strings, at the real document body close."""
+    close = page.lower().rfind("</body>")
+    if close < 0:
+        raise RuntimeError(f"Document closing body tag missing: {slug}")
+    return page[:close] + addition + "\n" + page[close:]
+
+
 def validate() -> None:
     for slug in MODERN:
         page = (SITE / "playgrounds" / slug / "index.html").read_text(encoding="utf-8")
@@ -89,6 +97,14 @@ def validate() -> None:
         for marker in ("schedulePaint", "__v171LabelWrapped", "setTimeout(run,95)"):
             if marker not in page:
                 raise RuntimeError(f"Modern packet label last-writer guard missing for {slug}: {marker}")
+        packet_pos = page.rfind('id="v171-modern-packet-runtime"')
+        labels_pos = page.rfind('id="v171-modern-packet-label-runtime"')
+        body_pos = page.lower().rfind("</body>")
+        if not (0 <= packet_pos < labels_pos < body_pos):
+            raise RuntimeError(
+                f"Modern packet label runtime is not at the final document boundary: {slug} "
+                f"packet={packet_pos} labels={labels_pos} body={body_pos}"
+            )
     base.validate()
 
 
@@ -100,7 +116,7 @@ def build_site() -> None:
         page = path.read_text(encoding="utf-8")
         if 'id="v171-modern-packet-label-runtime"' in page:
             raise RuntimeError(f"Modern packet label layer would be applied twice: {slug}")
-        page = page.replace("</body>", script + "\n</body>", 1)
+        page = append_before_document_body_close(page, script, slug)
         path.write_text(page, encoding="utf-8")
     validate()
     print("Completed v1.7.1 modern Quick Assign label parity with deterministic post-localization repaint")
