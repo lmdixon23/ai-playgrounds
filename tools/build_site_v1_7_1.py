@@ -13,6 +13,7 @@ import json
 import re
 from pathlib import Path
 
+import build_site as core
 import build_site_v1_7_1_modern_parity_accessible as base
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -42,9 +43,6 @@ def patch_current_provenance() -> None:
             html = html.replace('data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.7.0<', f'data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · {CURRENT}<')
         path.write_text(html, encoding="utf-8")
 
-    # Hidden historical chrome inside the three generated single-file bodies is
-    # part of the current document composition, so current-only badges must also
-    # be normalized. Historical release notes are handled separately below.
     for slug in base.MODERN:
         path = SITE / "playgrounds" / slug / "index.html"
         html = path.read_text(encoding="utf-8")
@@ -103,20 +101,23 @@ def validate() -> None:
         html = (SITE / "playgrounds" / slug / "index.html").read_text(encoding="utf-8")
         required = (
             'class="ap-standard-header page-header"', 'id="ap-modern-share"', 'id="ap-modern-more"',
-            'id="ap-modern-settings-json"', 'id="ap-modern-a11y"', 'open',
-            'id="ap-modern-a11y-state"', 'id="v171-modern-packet-label-runtime"',
-            'id="v171-modern-toolbar-runtime"', '<script type="application/ld+json">',
+            'id="ap-modern-settings-json"', 'id="ap-modern-a11y"', 'id="ap-modern-a11y-state"',
+            'id="v171-modern-packet-label-runtime"', 'id="v171-modern-toolbar-runtime"',
+            '<script type="application/ld+json">',
         )
         missing = [marker for marker in required if marker not in html]
         if missing:
             raise RuntimeError(f"v1.7.1 modern parity missing for {slug}: {missing}")
+        panel = re.search(r'<details\s+id="ap-modern-a11y"([^>]*)>', html, flags=re.I)
+        if not panel or "open" not in panel.group(1).lower():
+            raise RuntimeError(f"v1.7.1 accessibility panel is not open by default: {slug}")
 
     notes = (SITE / "release-notes.html").read_text(encoding="utf-8")
     for rel in ("release-v1-7-1", "release-v1-7-0", "release-v1-6-2", "release-v1-6-1", "release-v1-6-0"):
         if f'id="{rel}"' not in notes:
             raise RuntimeError(f"Release-note history missing {rel}")
 
-    base.base.base.candidate.predecessor.quick.base.base.impl.base.validate_local_references()
+    core.validate_local_references()
 
 
 def build_site() -> None:
