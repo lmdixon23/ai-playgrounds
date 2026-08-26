@@ -37,6 +37,8 @@ jobs:
           python -m playwright install --with-deps chromium
       - name: Run release checks
         run: python tools/release_check.py
+      - name: Verify current documentation consistency
+        run: python tools/test_current_docs_consistency.py
       - name: Verify pedagogical contracts
         run: python tools/verify_pedagogical_contracts.py
       - name: Verify guided challenge contracts
