@@ -1,6 +1,6 @@
 # Launch-hardening scorecard
 
-> **Historical snapshot.** This scorecard records the original launch-hardening assessment from the v1.0.x-era work. Its numerical scores, bilingual wording, and remaining closure gates are preserved as historical decision evidence; they are **not** the current v1.7.0 product inventory or release status. For current applet count, learner-language boundary, Quick Assign coverage, verification, and release information, use `README.md`, `QUALITY.md`, `RELEASE_NOTES.md`, and the latest tagged release.
+> **Historical snapshot.** This scorecard records the original launch-hardening assessment from the v1.0.x-era work. Its numerical scores, bilingual wording, and remaining closure gates are preserved as historical decision evidence; they are **not a current product inventory or release-status assessment**. For current applet count, learner-language boundary, Quick Assign coverage, verification, and release information, use `README.md`, `QUALITY.md`, the current release documentation, and the latest tagged release.
 
 Scores distinguish the **prepared local candidate** from the **fully closed live-release state** at the time of the original assessment. The latter required the then-remaining manual and account-bound gates; no score converts software testing into evidence of learning effectiveness.
 

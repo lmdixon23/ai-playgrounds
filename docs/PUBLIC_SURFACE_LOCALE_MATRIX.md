@@ -1,7 +1,7 @@
 # Public Surface Locale Matrix
 
-Date: 2026-08-26
-Status: **current v1.7.0 claim-scoping control**.
+Date: 2026-08-27
+Status: **current v1.7.1 claim-scoping control**.
 
 ## Why this exists
 
@@ -9,7 +9,7 @@ A green localization test for learner applets does not imply that every public s
 
 The canonical safe statement at the current boundary is:
 
-> **AI Playgrounds v1.7.0 contains 15 learner applets and 15 Level-1 Quick Assigns with English, Simplified Chinese, Vietnamese, and Spanish support. Some educator/support surfaces and the Level-2 Activity Pack pilot have narrower language boundaries.**
+> **AI Playgrounds v1.7.1 contains 15 learner applets and 15 Level-1 Quick Assigns with English, Simplified Chinese, Vietnamese, and Spanish support. Some educator/support surfaces and the Level-2 Activity Pack pilot have narrower language boundaries.**
 
 Do not shorten that to the whole AI Playgrounds website is available in four languages unless every public support and educator surface is separately brought to that boundary and verified.
 
@@ -21,7 +21,7 @@ Do not shorten that to the whole AI Playgrounds website is available in four lan
 | Transformer Language Modeling | yes | yes | yes | yes | dedicated four-locale semantic/browser/state tests |
 | Agent Tool Use and Context Protocols | yes | yes | yes | yes | dedicated four-locale semantic/browser/state tests |
 | Game Trees: Minimax / Alpha-Beta | yes | yes | yes | yes | dedicated four-locale semantic/browser/state tests |
-| **All 15 Level-1 Quick Assigns** | yes | yes | yes | yes | v1.7 all-lab Quick Assign locale/state/privacy gates |
+| **All 15 Level-1 Quick Assigns** | yes | yes | yes | yes | v1.7 all-lab Quick Assign locale/state/privacy gates remain in force |
 | Landing page | yes | yes | yes | yes | four-language navigation/catalogue support |
 | Teacher Pack | yes | yes | no | no | educator surface currently EN/ZH |
 | Curriculum Map | yes | yes | no | no | educator/navigation surface currently EN/ZH |
@@ -44,13 +44,13 @@ Do not shorten that to the whole AI Playgrounds website is available in four lan
 
 ## Historical rollout note
 
-v1.6.1 began with four early-course Quick Assign canaries. v1.7.0 promoted the remaining eleven after the all-lab assignment, localization/state, responsive, and release gates passed. That history should not be mistaken for the current four-activity boundary.
+v1.6.1 began with four early-course Quick Assign canaries. v1.7.0 promoted the remaining eleven after the all-lab assignment, localization/state, responsive, and release gates passed. v1.7.1 does not change that assignment or locale boundary; it only aligns modern-shell theme persistence with the rest of the suite.
 
 ## Paper / external-communication wording
 
 Preferred:
 
-> AI Playgrounds v1.7.0 contains 15 learner applets and 15 Level-1 Quick Assigns with English, Simplified Chinese, Vietnamese, and Spanish support. The current educator/support surfaces and Level-2 Activity Pack pilot have narrower language boundaries.
+> AI Playgrounds v1.7.1 contains 15 learner applets and 15 Level-1 Quick Assigns with English, Simplified Chinese, Vietnamese, and Spanish support. The current educator/support surfaces and Level-2 Activity Pack pilot have narrower language boundaries.
 
 Avoid:
 
