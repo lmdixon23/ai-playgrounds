@@ -9,6 +9,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SITE = ROOT / "_site"
+EVIDENCE = ROOT / "release-evidence" / "v1.7.1-modern-packet-label-qa.json"
 MODERN = ("transformer-language-model", "agent-tool-context", "minimax-alpha-beta")
 EXPECTED = {
     "en": {"predict":"Predict", "observe":"Observe", "explain":"Explain", "transfer":"Transfer", "refresh":"Refresh state", "copy":"Copy packet", "print":"Print packet", "clear":"Clear local draft"},
@@ -29,14 +30,26 @@ def launch(playwright):
     return playwright.chromium.launch(headless=True, args=args)
 
 
+def write_payload(payload: dict) -> None:
+    EVIDENCE.parent.mkdir(parents=True, exist_ok=True)
+    EVIDENCE.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+
 def main() -> int:
     build = subprocess.run(
         [sys.executable, str(ROOT / "tools" / "build_site_v1_7_1_modern_parity_accessible.py")],
         cwd=ROOT, text=True, capture_output=True, check=False,
     )
     if build.returncode:
-        print(build.stdout)
-        print(build.stderr, file=sys.stderr)
+        payload = {
+            "harness": "tools/test_v1_7_1_modern_packet_labels.py",
+            "stage": "build",
+            "pass": False,
+            "stdout": build.stdout[-12000:],
+            "stderr": build.stderr[-12000:],
+        }
+        write_payload(payload)
+        print(json.dumps(payload, indent=2, ensure_ascii=False))
         return build.returncode
 
     checks: list[tuple[str, bool, object]] = []
@@ -62,7 +75,7 @@ def main() -> int:
                 page.wait_for_selector("#ap-standard-language-select", timeout=5_000)
                 qa = page.locator("details[data-quick-assign-id]")
                 qa.evaluate("el=>el.open=true")
-                page.wait_for_timeout(40)
+                page.wait_for_timeout(120)
 
                 original_answers = {}
                 for key in ("predict", "observe", "explain", "transfer"):
@@ -72,21 +85,25 @@ def main() -> int:
                     check(f"{slug}: EN {key} aria-label", label == EXPECTED["en"][key], label)
                 for action, expected_key in (("refresh-state", "refresh"), ("copy", "copy"), ("print", "print"), ("clear", "clear")):
                     button = qa.locator(f'[data-qa-action="{action}"]')
-                    check(f"{slug}: EN {action} label", button.get_attribute("aria-label") == EXPECTED["en"][expected_key], button.get_attribute("aria-label"))
+                    actual = button.get_attribute("aria-label")
+                    check(f"{slug}: EN {action} label", actual == EXPECTED["en"][expected_key], actual)
 
                 for locale in ("vi", "es"):
                     page.select_option("#ap-standard-language-select", locale)
-                    page.wait_for_timeout(120)
+                    page.wait_for_timeout(180)
                     for key in ("predict", "observe", "explain", "transfer"):
                         field = qa.locator(f'[data-qa-answer="{key}"]')
-                        check(f"{slug}: {locale} {key} aria-label", field.get_attribute("aria-label") == EXPECTED[locale][key], field.get_attribute("aria-label"))
+                        actual = field.get_attribute("aria-label")
+                        check(f"{slug}: {locale} {key} aria-label", actual == EXPECTED[locale][key], actual)
                     for action, expected_key in (("refresh-state", "refresh"), ("copy", "copy"), ("print", "print"), ("clear", "clear")):
                         button = qa.locator(f'[data-qa-action="{action}"]')
-                        check(f"{slug}: {locale} {action} label", button.get_attribute("aria-label") == EXPECTED[locale][expected_key], button.get_attribute("aria-label"))
+                        actual = button.get_attribute("aria-label")
+                        check(f"{slug}: {locale} {action} label", actual == EXPECTED[locale][expected_key], actual)
                     page.select_option("#ap-standard-language-select", "en")
-                    page.wait_for_timeout(120)
+                    page.wait_for_timeout(180)
                     for key, expected in original_answers.items():
-                        check(f"{slug}: EN {key} aria-label restores after {locale}", qa.locator(f'[data-qa-answer="{key}"]').get_attribute("aria-label") == expected)
+                        actual = qa.locator(f'[data-qa-answer="{key}"]').get_attribute("aria-label")
+                        check(f"{slug}: EN {key} aria-label restores after {locale}", actual == expected, actual)
 
                 qa.locator('[data-qa-action="refresh-state"]').click()
                 state_text = qa.locator("[data-qa-modern-state]").inner_text().strip()
@@ -98,6 +115,7 @@ def main() -> int:
     failures = [{"name": n, "detail": d} for n, ok, d in checks if not ok]
     payload = {
         "harness": "tools/test_v1_7_1_modern_packet_labels.py",
+        "stage": "browser",
         "checks": len(checks),
         "passed": len(checks) - len(failures),
         "failed": len(failures),
@@ -106,6 +124,7 @@ def main() -> int:
         "pass": not failures and not page_errors and not console_errors,
         "failures": failures,
     }
+    write_payload(payload)
     print(json.dumps(payload, indent=2, ensure_ascii=False))
     return 0 if payload["pass"] else 1
 
