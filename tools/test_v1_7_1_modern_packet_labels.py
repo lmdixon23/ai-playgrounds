@@ -69,17 +69,16 @@ def main() -> int:
             context = browser.new_context(viewport={"width": 390, "height": 844}, reduced_motion="reduce")
             context.set_default_timeout(12_000)
             for slug in MODERN:
-                # A fresh page avoids inheriting pending timers/navigation state from the
-                # prior single-file lab. The gate cares about actual UI readiness, not a
-                # file:// load lifecycle event that is already covered elsewhere.
+                # This gate owns DOM/localization/accessibility parity. Real file://
+                # navigation is already exercised by the dedicated Lab 13/14/15 and
+                # final browser suites. Load the exact generated single-file document
+                # directly so irrelevant browser lifecycle timing cannot mask the
+                # contract this gate is designed to test.
                 page = context.new_page()
                 page.on("pageerror", lambda exc: page_errors.append(str(exc)))
                 page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
-                page.goto(
-                    (SITE / "playgrounds" / slug / "index.html").resolve().as_uri() + "?lang=en",
-                    wait_until="commit",
-                    timeout=12_000,
-                )
+                html = (SITE / "playgrounds" / slug / "index.html").read_text(encoding="utf-8")
+                page.set_content(html, wait_until="domcontentloaded", timeout=30_000)
                 page.wait_for_selector("#ap-standard-language-select", state="attached", timeout=12_000)
                 page.wait_for_selector("#ap-modern-a11y", state="attached", timeout=12_000)
                 page.wait_for_selector("details[data-quick-assign-id]", state="attached", timeout=12_000)
@@ -89,7 +88,6 @@ def main() -> int:
                     timeout=12_000,
                 )
 
-                # Mature-suite accessibility parity: open structured layer plus live text state.
                 a11y = page.locator("#ap-modern-a11y")
                 check(f"{slug}: structured accessibility layer open by default", a11y.get_attribute("open") is not None)
                 check(f"{slug}: accessibility keyboard card present", a11y.locator("#ap-modern-a11y-keyboard-title").count() == 1)
