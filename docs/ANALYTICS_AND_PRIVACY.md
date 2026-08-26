@@ -1,6 +1,6 @@
 # Analytics and privacy specification
 
-**Scope:** AI Playgrounds public pages hosted at `lmdixon23.github.io`. **Release:** v1.7.0. **Analytics endpoint:** `https://lmdixon23.goatcounter.com/count`.
+**Scope:** AI Playgrounds public pages hosted at `lmdixon23.github.io`. **Release:** v1.7.1. **Analytics endpoint:** `https://lmdixon23.goatcounter.com/count`.
 
 ## Design decision
 
