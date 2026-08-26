@@ -1,6 +1,6 @@
 # Analytics and privacy specification
 
-**Scope:** AI Playgrounds public pages hosted at `lmdixon23.github.io`. **Release:** v1.6.2. **Analytics endpoint:** `https://lmdixon23.goatcounter.com/count`.
+**Scope:** AI Playgrounds public pages hosted at `lmdixon23.github.io`. **Release:** v1.7.0. **Analytics endpoint:** `https://lmdixon23.goatcounter.com/count`.
 
 ## Design decision
 
@@ -24,7 +24,7 @@ The “first substantive interaction” is an **engaged applet tab session**, no
 
 ## Signals explicitly excluded from the request payload
 
-The project code does not transmit names, email addresses, school identifiers, free text, experiment values, model parameters, saved states, worksheet answers, grades, arbitrary query strings, fragments, general referrer URLs, exact coordinates, keystrokes, mouse trajectories, or time-on-task recordings. It does not set analytics cookies or a project tracking identifier.
+The project code does not transmit names, email addresses, school identifiers, free text, experiment values, model parameters, saved states, worksheet answers, Quick Assign responses, grades, arbitrary query strings, fragments, general referrer URLs, exact coordinates, keystrokes, mouse trajectories, or time-on-task recordings. It does not set analytics cookies or a project tracking identifier.
 
 A network request necessarily exposes ordinary connection metadata such as an IP address and User-Agent to the receiving server. GoatCounter's published privacy documentation states that hosted analytics store aggregate tables rather than IP addresses or full User-Agent strings; its session mechanism temporarily maps site + IP + User-Agent in memory for up to eight hours. Browser, operating-system, language, and country aggregates can be disabled in GoatCounter settings. The project's own wrapper sends no screen-width field.
 
