@@ -25,7 +25,7 @@ def launch(playwright):
 
 
 def main()->int:
-    run=subprocess.run([sys.executable,str(ROOT/'tools'/'build_site_v1_7_quick_assigns.py')],cwd=ROOT,text=True,capture_output=True)
+    run=subprocess.run([sys.executable,str(ROOT/'tools'/'build_site_v1_7_final.py')],cwd=ROOT,text=True,capture_output=True)
     if run.returncode:
         print(run.stdout);print(run.stderr,file=sys.stderr);return run.returncode
     rows=json.loads(REGISTRY.read_text(encoding='utf-8'))['activities']
@@ -59,6 +59,7 @@ def main()->int:
                 check(f"{r['id']} direct link resolves",qa.count()==1)
                 check(f"{r['id']} in viewport document",qa.evaluate('el=>!!el&&el.isConnected'))
                 if r['slug'] in MODERN:
+                    check(f"{r['id']} direct link opens response surface",qa.evaluate('el=>el.open===true'))
                     title=qa.locator('.quick-assign-modern-body h2 .qa-i18n')
                     en=title.inner_text()
                     field=qa.locator('[data-qa-answer="predict"]');field.fill('keep-this-response')
@@ -70,7 +71,7 @@ def main()->int:
                     check(f"{r['id']} title restores EN",title.inner_text()==en)
                     check(f"{r['id']} response survives EN roundtrip",field.input_value()=='keep-this-response')
                 else:
-                    summary=qa.locator('summary').inner_text();
+                    summary=qa.locator('summary').inner_text()
                     sel=page.locator('.r4-language-select');check(f"{r['id']} has four-language select",sel.count()==1)
                     for loc in ('vi','es'):
                         page.select_option('.r4-language-select',loc);page.wait_for_timeout(100)
