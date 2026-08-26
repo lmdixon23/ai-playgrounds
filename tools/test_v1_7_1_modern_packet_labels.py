@@ -68,11 +68,26 @@ def main() -> int:
         try:
             context = browser.new_context(viewport={"width": 390, "height": 844}, reduced_motion="reduce")
             page = context.new_page()
+            page.set_default_navigation_timeout(45_000)
+            page.set_default_timeout(10_000)
             page.on("pageerror", lambda exc: page_errors.append(str(exc)))
             page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
             for slug in MODERN:
-                page.goto((SITE / "playgrounds" / slug / "index.html").resolve().as_uri() + "?lang=en", wait_until="load", timeout=20_000)
-                page.wait_for_selector("#ap-standard-language-select", timeout=5_000)
+                page.goto((SITE / "playgrounds" / slug / "index.html").resolve().as_uri() + "?lang=en", wait_until="domcontentloaded", timeout=45_000)
+                page.wait_for_selector("#ap-standard-language-select", timeout=10_000)
+                page.wait_for_selector("#ap-modern-a11y", timeout=10_000)
+                page.wait_for_timeout(160)
+
+                # Mature-suite accessibility parity: open structured layer plus live text state.
+                a11y = page.locator("#ap-modern-a11y")
+                check(f"{slug}: structured accessibility layer open by default", a11y.get_attribute("open") is not None)
+                check(f"{slug}: accessibility keyboard card present", a11y.locator("#ap-modern-a11y-keyboard-title").count() == 1)
+                check(f"{slug}: accessibility reduced-motion card present", a11y.locator("#ap-modern-a11y-motion-title").count() == 1)
+                a11y_state = a11y.locator("#ap-modern-a11y-state")
+                check(f"{slug}: accessibility text state present", a11y_state.count() == 1)
+                state_value = (a11y_state.text_content() or "").strip()
+                check(f"{slug}: accessibility text state mirrors a real mechanism state", bool(state_value) and "preparing" not in state_value.lower(), state_value[:160])
+
                 qa = page.locator("details[data-quick-assign-id]")
                 qa.evaluate("el=>el.open=true")
                 page.wait_for_timeout(120)
@@ -90,7 +105,8 @@ def main() -> int:
 
                 for locale in ("vi", "es"):
                     page.select_option("#ap-standard-language-select", locale)
-                    page.wait_for_timeout(180)
+                    page.wait_for_timeout(220)
+                    check(f"{slug}: accessibility summary localizes to {locale}", (a11y.locator("summary").inner_text() or "").strip() not in ("", "♿ Text and keyboard support"))
                     for key in ("predict", "observe", "explain", "transfer"):
                         field = qa.locator(f'[data-qa-answer="{key}"]')
                         actual = field.get_attribute("aria-label")
@@ -100,7 +116,8 @@ def main() -> int:
                         actual = button.get_attribute("aria-label")
                         check(f"{slug}: {locale} {action} label", actual == EXPECTED[locale][expected_key], actual)
                     page.select_option("#ap-standard-language-select", "en")
-                    page.wait_for_timeout(180)
+                    page.wait_for_timeout(220)
+                    check(f"{slug}: accessibility summary restores English after {locale}", a11y.locator("summary").inner_text().strip() == "♿ Text and keyboard support")
                     for key, expected in original_answers.items():
                         actual = qa.locator(f'[data-qa-answer="{key}"]').get_attribute("aria-label")
                         check(f"{slug}: EN {key} aria-label restores after {locale}", actual == expected, actual)
