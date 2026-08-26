@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import http.server
 import json
 import pathlib
 import shutil
+import socketserver
 import subprocess
 import sys
+import threading
+from contextlib import contextmanager
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SITE = ROOT / "_site"
@@ -28,6 +32,25 @@ def launch(playwright):
         if candidate:
             return playwright.chromium.launch(headless=True, executable_path=candidate, args=args)
     return playwright.chromium.launch(headless=True, args=args)
+
+
+class QuietHandler(http.server.SimpleHTTPRequestHandler):
+    def log_message(self, _format: str, *args) -> None:
+        return
+
+
+@contextmanager
+def local_site_server():
+    handler = lambda *args, **kwargs: QuietHandler(*args, directory=str(SITE), **kwargs)
+    with socketserver.ThreadingTCPServer(("127.0.0.1", 0), handler) as server:
+        server.daemon_threads = True
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            yield f"http://127.0.0.1:{server.server_address[1]}"
+        finally:
+            server.shutdown()
+            thread.join(timeout=2)
 
 
 def write_payload(payload: dict) -> None:
@@ -63,22 +86,21 @@ def main() -> int:
 
     page_errors: list[str] = []
     console_errors: list[str] = []
-    with sync_playwright() as p:
+    with local_site_server() as origin, sync_playwright() as p:
         browser = launch(p)
         try:
             context = browser.new_context(viewport={"width": 390, "height": 844}, reduced_motion="reduce")
             context.set_default_timeout(12_000)
             for slug in MODERN:
-                # This gate owns DOM/localization/accessibility parity. Real file://
-                # navigation is already exercised by the dedicated Lab 13/14/15 and
-                # final browser suites. Load the exact generated single-file document
-                # directly so irrelevant browser lifecycle timing cannot mask the
-                # contract this gate is designed to test.
                 page = context.new_page()
                 page.on("pageerror", lambda exc: page_errors.append(str(exc)))
                 page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
-                html = (SITE / "playgrounds" / slug / "index.html").read_text(encoding="utf-8")
-                page.set_content(html, wait_until="domcontentloaded", timeout=30_000)
+                response = page.goto(
+                    f"{origin}/playgrounds/{slug}/index.html?lang=en",
+                    wait_until="domcontentloaded",
+                    timeout=30_000,
+                )
+                check(f"{slug}: local final artifact returns HTTP 200", response is not None and response.status == 200, None if response is None else response.status)
                 page.wait_for_selector("#ap-standard-language-select", state="attached", timeout=12_000)
                 page.wait_for_selector("#ap-modern-a11y", state="attached", timeout=12_000)
                 page.wait_for_selector("details[data-quick-assign-id]", state="attached", timeout=12_000)
