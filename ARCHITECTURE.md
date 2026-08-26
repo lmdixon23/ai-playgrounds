@@ -1,39 +1,68 @@
 # Architecture
 
-AI Playgrounds uses a no-build, single-file applet architecture.
+AI Playgrounds uses a no-build public-site architecture with self-contained/offline-ready applets and deterministic release composition.
 
 ## Public surfaces
 
 - `index.html` provides the live demonstration and searchable catalogue.
-- `playgrounds/<slug>/index.html` contains one complete applet.
-- Teacher, curriculum, student, quality, and citation pages are plain HTML.
-- `applets.json` provides shared public metadata for the twelve applets.
+- `playgrounds/<slug>/index.html` contains one complete public applet after deterministic composition.
+- Teacher, curriculum, student, quality, citation, and activity pages are plain HTML.
+- `applets.json` provides shared public metadata for all fifteen applets.
+- `docs/APPLET_DESIGN_SYSTEM_CONTRACT.md` defines the minimum shell, metadata, localization, assignment, accessibility/HCI, responsive, privacy, and release requirements for new labs.
 
-## Applet structure
+## Applet families
 
-Each applet contains:
+The public catalogue contains **13 Foundations/course-track labs** and **2 Modern AI extensions**.
 
-1. the primary interactive model,
-2. Explore, Understand, Use in class, and Text and keyboard modes,
-3. complete English and Chinese interface, explanation, scenario, and accessibility strings,
-4. local response-packet tools,
-5. shareable URL state whose exact serialized controls override scenario presets,
-6. optional analytics restricted to the canonical hosted site.
+The original twelve applets share the established learning-mode architecture, including Explore, Understand, Use in class, and Text and keyboard surfaces plus local response-packet tooling.
 
-No applet requires a framework, account, backend, package manager, model download, or remote runtime asset.
+Labs 13–15 have concept-specific bodies because Transformer internals, agent-runtime gates, and game trees require different visual organizations. They nevertheless inherit the same public product contract: suite navigation, standardized outer shell/provenance, complete catalogue metadata, four-language learner support, bounded assignment surface, accessibility-oriented behavior, responsive containment, and exact release verification.
 
-## Privacy and portability
+Consistency applies to what learners should not have to relearn; mechanism-specific bodies may differ when uniformity would distort the concept.
 
-Student responses remain in the browser unless the learner copies or prints them. The site has no student accounts, database, upload endpoint, or response-collection backend.
+## Shared learner contract
 
-## Visual identity
+Every released applet provides or has an explicit concept-specific equivalent for:
 
-Each applet has one categorical accent defined in `applets.json`. Color supports recognition but is never the only identifier. Applet names, icons, categories, and sequence numbers remain visible throughout the suite.
+1. one primary interactive mechanism;
+2. a meaningful initial or scenario state;
+3. visible state sufficient to explain the mechanism;
+4. prediction-before-reveal when a prediction is pedagogically meaningful;
+5. misconception/fidelity guidance;
+6. a reset/recovery path;
+7. text/keyboard access to concept-defining state where feasible;
+8. one stable Level-1 Quick Assign;
+9. optional analytics restricted to the canonical hosted site and excluding learner-authored responses.
 
-## Browser support
+The original twelve reuse their established Student response packets for Quick Assigns. Labs 13–15 use thin local-only response surfaces aligned to their Guided Challenges. All Quick Assigns use the inquiry spine:
 
-The public site is designed for current desktop and mobile browsers. Each applet can also be opened directly from the local filesystem.
+`predict -> manipulate/run -> observe -> explain -> transfer`
 
 ## Localization boundary
 
-Public learner and educator content is translated completely. Stable machine and source literals, including URLs, filenames, identifiers, formulas, licenses, names, and standard acronyms, remain unchanged while their visible labels and explanations are localized. See `docs/LOCALIZATION.md`.
+All fifteen **learner applets** and their fifteen Level-1 Quick Assigns support:
+
+- English;
+- Simplified Chinese;
+- Vietnamese;
+- Spanish.
+
+Locale switching must preserve learner/algorithm state and restore the canonical English title/state on EN round-trip tests.
+
+This does **not** mean every educator/support surface is four-language. Teacher Pack, Curriculum, research and support pages, and Level-2 Activity Packs have separately declared boundaries in `docs/PUBLIC_SURFACE_LOCALE_MATRIX.md`.
+
+Stable machine/source literals such as URLs, filenames, identifiers, formulas, licenses, names, and standard acronyms remain unchanged while their visible labels/explanations are localized where applicable. See `docs/LOCALIZATION.md`.
+
+## Privacy and portability
+
+Student responses remain in the browser unless the learner deliberately copies or prints them. The site has no student accounts, response database, upload endpoint, or assignment-submission backend.
+
+No applet requires an account, project backend, package manager, or remote runtime service. Labs 13–15 are generated deterministically into self-contained public HTML artifacts. Any future exception to the offline/self-contained boundary must be explicit in the applet design contract and public documentation.
+
+## Visual identity
+
+Each applet has one categorical accent defined in public metadata. Color supports recognition but is never the only identifier. The shared outer shell provides suite identity, navigation, language/theme/reset controls where applicable, and release provenance; the mechanism body is allowed to specialize.
+
+## Browser and HCI support
+
+The release QA covers desktop, classroom/projector, tablet, split/narrow desktop, phone portrait, phone landscape, reduced motion, and targeted text-enlargement/recovery cases. These checks establish bounded software behavior under tested conditions, not accessibility conformance or learner effectiveness.

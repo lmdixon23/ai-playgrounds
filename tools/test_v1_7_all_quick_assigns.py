@@ -61,6 +61,7 @@ def main()->int:
                 if r['slug'] in MODERN:
                     check(f"{r['id']} direct link opens response surface",qa.evaluate('el=>el.open===true'))
                     title=qa.locator('.quick-assign-modern-body h2 .qa-i18n')
+                    page.select_option('#ap-standard-language-select','en');page.wait_for_timeout(100)
                     en=title.inner_text()
                     field=qa.locator('[data-qa-answer="predict"]');field.fill('keep-this-response')
                     for loc in ('zh','vi','es'):
@@ -71,12 +72,16 @@ def main()->int:
                     check(f"{r['id']} title restores EN",title.inner_text()==en)
                     check(f"{r['id']} response survives EN roundtrip",field.input_value()=='keep-this-response')
                 else:
-                    summary=qa.locator('summary').inner_text()
                     sel=page.locator('.r4-language-select');check(f"{r['id']} has four-language select",sel.count()==1)
+                    # Capture the baseline from an explicit canonical-English state.
+                    # A previous applet may have persisted another locale on the shared
+                    # origin while navigation/localization initialization is settling.
+                    page.select_option('.r4-language-select','en');page.wait_for_timeout(120)
+                    summary=qa.locator('summary').inner_text()
                     for loc in ('vi','es'):
-                        page.select_option('.r4-language-select',loc);page.wait_for_timeout(100)
+                        page.select_option('.r4-language-select',loc);page.wait_for_timeout(120)
                         check(f"{r['id']} packet summary switches {loc}",qa.locator('summary').inner_text()!=summary,{'summary':qa.locator('summary').inner_text()})
-                        page.select_option('.r4-language-select','en');page.wait_for_timeout(100)
+                        page.select_option('.r4-language-select','en');page.wait_for_timeout(120)
                         check(f"{r['id']} packet summary restores EN from {loc}",qa.locator('summary').inner_text()==summary)
             ctx.close()
             mobile=browser.new_context(viewport={'width':390,'height':844},is_mobile=True,has_touch=True,reduced_motion='reduce')
