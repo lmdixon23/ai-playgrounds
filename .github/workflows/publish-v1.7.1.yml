@@ -19,7 +19,7 @@ jobs:
       github.event.workflow_run.head_branch == 'main' &&
       github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     env:
       TAG: v1.7.1
       RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
@@ -71,6 +71,20 @@ jobs:
           test -n "$VERIFY_ID"
           gh run watch "$VERIFY_ID" --repo "$GITHUB_REPOSITORY" --exit-status
           test "$(gh run view "$VERIFY_ID" --repo "$GITHUB_REPOSITORY" --json conclusion --jq '.conclusion')" = "success"
+
+      - name: Set up Python for publication recheck
+        if: steps.intent.outputs.publish == 'true'
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install publication browser dependencies
+        if: steps.intent.outputs.publish == 'true'
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
 
       - name: Recheck v1.7.1 metadata and deterministic public artifact
         if: steps.intent.outputs.publish == 'true'
