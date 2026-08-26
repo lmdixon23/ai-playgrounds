@@ -1,50 +1,56 @@
 # Public Surface Locale Matrix
 
-Date: 2026-08-25
-Status: v1.6.1 candidate claim-scoping control.
+Date: 2026-08-26
+Status: **current v1.7.0 claim-scoping control**.
 
 ## Why this exists
 
-A green localization test for learner applets does not imply that every public support page is translated into the same languages. This matrix prevents suite-level prose, metadata, papers, and release notes from silently expanding a local claim into a site-wide claim.
+A green localization test for learner applets does not imply that every public support page or Level-2 teaching resource is translated into the same languages. This matrix prevents suite-level prose, metadata, papers, and release notes from silently expanding a local claim into a site-wide claim.
 
 The canonical safe statement at the current boundary is:
 
-> **All 15 learner applets support English, Simplified Chinese, Vietnamese, and Spanish.**
+> **AI Playgrounds v1.7.0 contains 15 learner applets and 15 Level-1 Quick Assigns with English, Simplified Chinese, Vietnamese, and Spanish support. Some educator/support surfaces and the Level-2 Activity Pack pilot have narrower language boundaries.**
 
-Do not shorten that to “the whole AI Playgrounds website is available in four languages” unless every public support and educator surface is separately brought to that boundary and verified.
+Do not shorten that to the whole AI Playgrounds website is available in four languages unless every public support and educator surface is separately brought to that boundary and verified.
 
-## Current / candidate matrix
+## Current matrix
 
 | Surface | EN | ZH | VI | ES | Claim boundary |
 |---|:---:|:---:|:---:|:---:|---|
-| 12 original learner applets | yes | yes | yes | yes | R4 learner-interface overlay; state-preserving localization tests apply |
-| Transformer Language Modeling | yes | yes | yes | yes | dedicated four-locale catalog/browser/state tests |
-| Agent Tool Use and Context Protocols | yes | yes | yes | yes | dedicated four-locale catalog/browser/state tests |
-| Game Trees: Minimax / Alpha-Beta | yes | yes | yes | yes | dedicated four-locale catalog/browser/state tests |
-| **Active Level-1 Quick Assigns (first four labs)** | yes | yes | **candidate** | **candidate** | must not be called four-language until v1.6.1 Quick Assign locale gate passes |
-| Landing page | yes | yes | no | no | bilingual navigation/support surface; it may truthfully state that the 15 learner applets are four-language |
-| Teacher Pack | yes | yes | no | no | bilingual educator surface |
-| Curriculum Map | yes | yes | no | no | bilingual educator/navigation surface |
-| Research and citation page | yes | yes | no | no | bilingual research/support surface |
-| NN-1 Activity Pack | yes | no | no | no | student-facing Activity Pack pilot is English-only |
-| CNN-1 Activity Pack | yes | no | no | no | student-facing Activity Pack pilot is English-only |
-| Activity Pack index | yes | no | no | no | explicitly labels the Activity Pack pilot English-only |
+| 12 original learner applets | yes | yes | yes | yes | R4 learner-interface overlay; state-preserving locale tests apply |
+| Transformer Language Modeling | yes | yes | yes | yes | dedicated four-locale semantic/browser/state tests |
+| Agent Tool Use and Context Protocols | yes | yes | yes | yes | dedicated four-locale semantic/browser/state tests |
+| Game Trees: Minimax / Alpha-Beta | yes | yes | yes | yes | dedicated four-locale semantic/browser/state tests |
+| **All 15 Level-1 Quick Assigns** | yes | yes | yes | yes | v1.7 all-lab Quick Assign locale/state/privacy gates |
+| Landing page | yes | yes | yes | yes | four-language navigation/catalogue support |
+| Teacher Pack | yes | yes | no | no | educator surface currently EN/ZH |
+| Curriculum Map | yes | yes | no | no | educator/navigation surface currently EN/ZH |
+| Research and citation page | yes | yes | no | no | research/support surface currently EN/ZH |
+| Quality/support pages | varies | varies | no unless explicitly stated | no unless explicitly stated | inspect each support page before making a locale claim |
+| NN-1 Activity Pack | yes | no | no | no | Level-2 student resource remains English-only |
+| CNN-1 Activity Pack | yes | no | no | no | Level-2 student resource remains English-only |
+| Activity Pack index | yes | no | no | no | explicitly labels the Level-2 pilot boundary |
 
 ## Verification rules
 
 1. Current landing/Teacher Pack/curriculum metadata must describe the release as **15 applets = 13 Foundations/course-track labs + 2 Modern AI extensions**.
-2. Current public pages must not contain a stale current-release statement that says the suite contains fourteen applets.
-3. Historical release notes, archived audit records, and version-specific documentation may truthfully retain older counts and language boundaries; the currency scan must not rewrite history.
-4. Every learner applet claiming four-language support must expose EN/ZH/VI/ES in its declared localization metadata/catalog and pass its applicable state-preservation checks.
-5. A support page with only EN/ZH controls must not be described as itself four-language merely because it links to four-language applets.
-6. Activity Packs remain English-only until separately translated and verified.
-7. Quick Assign locale status is activity-specific. The first four canaries are intended to become EN/ZH/VI/ES in the v1.6.1 candidate, but this document records that as a gate rather than assuming it.
+2. Current public/generic documentation must not present a stale 12- or 14-applet product count as the current suite.
+3. Historical release notes, archived audit records, and version-specific documentation may truthfully retain older counts and language boundaries; current-document scans must not rewrite history.
+4. Every learner applet claiming four-language support must expose EN/ZH/VI/ES in its declared localization metadata/catalogue and pass its applicable state-preservation checks.
+5. Every Level-1 Quick Assign claiming four-language support must preserve activity prompts, required state, and learner-authored response text through locale changes.
+6. A support page with only EN/ZH controls must not be described as itself four-language merely because it links to four-language applets.
+7. Level-2 Activity Packs remain English-only until separately translated and verified.
+8. Automated semantic/state parity does not establish fluent-reader naturalness; human language review remains a separate evidence layer.
+
+## Historical rollout note
+
+v1.6.1 began with four early-course Quick Assign canaries. v1.7.0 promoted the remaining eleven after the all-lab assignment, localization/state, responsive, and release gates passed. That history should not be mistaken for the current four-activity boundary.
 
 ## Paper / external-communication wording
 
 Preferred:
 
-> AI Playgrounds v1.6 contains 15 learner applets with English, Simplified Chinese, Vietnamese, and Spanish support. The current educator/navigation pages have a narrower language boundary, and the first Activity Pack pilot is English-only.
+> AI Playgrounds v1.7.0 contains 15 learner applets and 15 Level-1 Quick Assigns with English, Simplified Chinese, Vietnamese, and Spanish support. The current educator/support surfaces and Level-2 Activity Pack pilot have narrower language boundaries.
 
 Avoid:
 
@@ -54,4 +60,8 @@ Avoid:
 
 > All teaching materials are available in four languages.
 
-Those stronger claims are not established by the current public surface.
+Avoid:
+
+> Four-language support demonstrates equitable access.
+
+Those stronger claims are not established by the current public surface or software evidence.
