@@ -54,9 +54,11 @@ def main() -> int:
 
     required = (
         'class="ap-modern-skip"', 'class="ap-standard-header page-header"',
-        'id="ap-modern-share"', 'id="ap-modern-embed"', 'class="ap-modern-tldr"',
+        'id="ap-modern-share"', 'id="ap-modern-more"', 'id="ap-modern-embed"',
+        'id="ap-modern-settings-json"', 'class="ap-modern-tldr"',
         'id="ap-modern-key-terms"', 'id="ap-modern-a11y"', 'id="ap-modern-fidelity"',
         'class="ap-standard-footer ap-modern-rich-footer"', 'id="v171-modern-parity-runtime"',
+        'id="v171-modern-toolbar-runtime"',
     )
     for slug in MODERN:
         source = (SITE / "playgrounds" / slug / "index.html").read_text(encoding="utf-8")
@@ -65,6 +67,8 @@ def main() -> int:
         count = qa_surface_count(source)
         check(f"{slug}: exactly one Quick Assign surface", count == 1, count)
         check(f"{slug}: no second assignment architecture", "Student response packet" not in source)
+        check(f"{slug}: no separate theme namespace", "ai-playgrounds-theme" not in source)
+        check(f"{slug}: settings export is local JSON", "new Blob([data],{type:'application/json'})" in source and "-settings.json" in source)
 
     try:
         from playwright.sync_api import sync_playwright
@@ -87,14 +91,21 @@ def main() -> int:
                     page.wait_for_selector("#ap-standard-language-select", timeout=5_000)
                     check(f"{slug} {width}: one visible public H1", page.locator("h1:visible").count() == 1, page.locator("h1:visible").count())
                     check(f"{slug} {width}: skip target exists", page.locator("#ap-modern-interactive-start").count() == 1)
-                    check(f"{slug} {width}: share and embed visible", page.locator("#ap-modern-share:visible").count() == 1 and page.locator("#ap-modern-embed:visible").count() == 1)
+                    check(f"{slug} {width}: Share / More / Reset visible", page.locator("#ap-modern-share:visible").count() == 1 and page.locator("#ap-modern-more>summary:visible").count() == 1 and page.locator("#ap-standard-reset:visible").count() == 1)
+                    check(f"{slug} {width}: secondary actions collapsed", page.locator("#ap-modern-embed:visible").count() == 0 and page.locator("#ap-modern-settings-json:visible").count() == 0)
+                    check(f"{slug} {width}: theme is a preference", page.locator(".header-prefs #ap-standard-theme:visible").count() == 1)
                     check(f"{slug} {width}: orientation visible", page.locator(".ap-modern-tldr:visible").count() == 1)
                     check(f"{slug} {width}: support panels exist", page.locator("#ap-modern-key-terms").count() == 1 and page.locator("#ap-modern-a11y").count() == 1 and page.locator("#ap-modern-fidelity").count() == 1)
                     check(f"{slug} {width}: rich footer visible", page.locator(".ap-modern-rich-footer:visible").count() == 1)
                     overflow = page.evaluate("()=>Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)-innerWidth")
                     check(f"{slug} {width}: page containment", overflow <= 1, overflow)
 
+                    page.locator("#ap-modern-more>summary").click()
+                    check(f"{slug} {width}: More reveals Embed + settings", page.locator("#ap-modern-embed:visible").count() == 1 and page.locator("#ap-modern-settings-json:visible").count() == 1)
+                    page.locator("#ap-modern-more>summary").click()
+
                     original_title = page.locator("#ap-standard-title").inner_text()
+                    original_doc_title = page.title()
                     original_big = page.locator(".ap-modern-tldr").inner_text()
                     for locale in ("vi", "es"):
                         page.select_option("#ap-standard-language-select", locale)
@@ -102,9 +113,11 @@ def main() -> int:
                         check(f"{slug}: parity copy switches to {locale}", page.locator(".ap-modern-tldr").inner_text() != original_big)
                         terms_text = page.locator("#ap-modern-terms-list").text_content() or ""
                         check(f"{slug}: key terms switch to {locale}", bool(terms_text.strip()), terms_text[:120])
+                        check(f"{slug}: browser title remains suite-qualified in {locale}", page.title().endswith(" | AI Playgrounds"), page.title())
                         page.select_option("#ap-standard-language-select", "en")
                         page.wait_for_timeout(100)
                         check(f"{slug}: EN title restores after {locale}", page.locator("#ap-standard-title").inner_text() == original_title)
+                        check(f"{slug}: EN document title restores after {locale}", page.title() == original_doc_title, {"expected": original_doc_title, "actual": page.title()})
                         check(f"{slug}: EN parity copy restores after {locale}", page.locator(".ap-modern-tldr").inner_text() == original_big)
 
                 context.close()
