@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-"""Compatibility entry point for the v1.7.1 modern-lab parity QA.
+"""Stable workflow entry point for the v1.7.1 modern-lab parity QA."""
 
-The initial harness used a textual Quick Assign token count. Keep the workflow
-name stable while delegating to the corrected DOM/start-tag-aware final gate.
-"""
+from test_v1_7_1_modern_parity_final import main as parity_main
+from test_v1_7_1_modern_provenance import main as provenance_main
 
-from test_v1_7_1_modern_parity_final import main
+
+def main() -> int:
+    result = parity_main()
+    if result:
+        return result
+    return provenance_main()
 
 
 if __name__ == "__main__":
