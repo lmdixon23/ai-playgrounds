@@ -3,23 +3,44 @@ from __future__ import annotations
 
 """Final-composition wrapper for the v1.7 all-lab Quick Assign candidate.
 
-The v1.7 behavior builder owns the assignment content. This wrapper adds only
-product-level composition fixes discovered by the integrated browser gate:
+The v1.7 behavior builder owns the assignment content. This wrapper contains
+only product-level composition fixes found by integrated QA:
 
-* canonical modern-lab Quick Assign URLs open their targeted response surface,
-  so a teacher's direct assignment link is immediately usable rather than
-  landing on a collapsed details element;
-* the Activity Pack pilot footer no longer hard-codes a separate "current suite
-  release" value, eliminating the provenance drift found by the v1.6.2 live
-  audit.
+* canonical modern-lab Quick Assign URLs open their targeted response surface;
+* a generated JavaScript newline escape is normalized before browser execution;
+* the modern response surface is explicitly contained at narrow viewports;
+* Activity Pack pilot footers do not hard-code a second current-suite version.
 """
-
-from pathlib import Path
 
 import build_site_v1_7_quick_assigns as quick
 
 SITE = quick.SITE
 MODERN_SLUGS = ("transformer-language-model", "agent-tool-context", "minimax-alpha-beta")
+
+MODERN_CONTAINMENT = r'''<style id="v17-modern-quick-assign-containment">
+.quick-assign-modern{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;overflow-wrap:anywhere}
+.quick-assign-modern-body,.qa-modern-field{min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+.quick-assign-modern .challenge-controls{display:flex!important;flex-wrap:wrap!important;min-width:0!important;max-width:100%!important}
+.quick-assign-modern textarea{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+.quick-assign-modern button{max-width:100%!important;white-space:normal!important}
+@media(max-width:480px){.quick-assign-modern{overflow:hidden}.quick-assign-modern .challenge-controls>*{flex:1 1 150px}}
+</style>'''
+
+
+def repair_modern_generated_runtime() -> None:
+    """Repair one Python-to-JS escape boundary in the generated modern layer."""
+    bad = "join('\n\n');try{await navigator.clipboard.writeText(text);}"
+    good = "join('\\\\n\\\\n');try{await navigator.clipboard.writeText(text);}"
+    for slug in MODERN_SLUGS:
+        path = SITE / "playgrounds" / slug / "index.html"
+        html = path.read_text(encoding="utf-8")
+        if bad not in html:
+            raise RuntimeError(f"Modern Quick Assign generated-runtime escape marker changed: {slug}")
+        html = html.replace(bad, good, 1)
+        if 'id="v17-modern-quick-assign-containment"' in html:
+            raise RuntimeError(f"Modern containment would be applied twice: {slug}")
+        html = html.replace("</head>", MODERN_CONTAINMENT + "\n</head>", 1)
+        path.write_text(html, encoding="utf-8")
 
 
 def patch_modern_direct_open() -> None:
@@ -65,6 +86,10 @@ def validate() -> None:
         html = (SITE / "playgrounds" / slug / "index.html").read_text(encoding="utf-8")
         if html.count('data-v17-quick-assign-direct-open="1"') != 1:
             raise RuntimeError(f"Modern Quick Assign direct-open contract missing: {slug}")
+        if html.count('id="v17-modern-quick-assign-containment"') != 1:
+            raise RuntimeError(f"Modern Quick Assign containment contract missing: {slug}")
+        if "join('\n\n');try{await navigator.clipboard.writeText(text);}" in html:
+            raise RuntimeError(f"Modern Quick Assign runtime still contains literal newline escape defect: {slug}")
     for path in sorted((SITE / "activities").glob("*.html")):
         html = path.read_text(encoding="utf-8")
         if "current suite release v1.6." in html:
@@ -74,10 +99,11 @@ def validate() -> None:
 
 def build_site() -> None:
     quick.build_site()
+    repair_modern_generated_runtime()
     patch_modern_direct_open()
     decouple_activity_pack_footer()
     validate()
-    print("Finalized v1.7 all-lab Quick Assign candidate with usable modern deep links and version-decoupled Activity Pack provenance")
+    print("Finalized v1.7 all-lab Quick Assign candidate with valid modern runtime, usable deep links, narrow-view containment, and version-decoupled Activity Pack provenance")
 
 
 if __name__ == "__main__":
