@@ -6,18 +6,18 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Hill Climbing and Simulated Annealing | AI Playgrounds</title>
 <link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E" rel="icon"/>
-<meta content="Compare local-search algorithms that improve one candidate at a time. Hill climbing accepts only better moves; simulated annealing can temporarily accept worse moves to escape a local optimum." name="description"/>
+<meta content="Compare local-search algorithms one run at a time or across matched seeded restarts, separating success frequency from final and best solution cost." name="description"/>
 <link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/hill-climbing/" rel="canonical"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/hill-climbing/?lang=en" hreflang="en" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/hill-climbing/?lang=zh" hreflang="zh-Hans" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/hill-climbing/?lang=vi" hreflang="vi" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/hill-climbing/?lang=es" hreflang="es" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/hill-climbing/?lang=en" hreflang="x-default" rel="alternate"/>
 <meta content="website" property="og:type"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/hill-climbing/" property="og:url"/>
 <meta content="Hill Climbing and Simulated Annealing | AI Playgrounds" property="og:title"/>
-<meta content="Compare local-search algorithms that improve one candidate at a time. Hill climbing accepts only better moves; simulated annealing can temporarily accept worse moves to escape a local optimum." property="og:description"/>
+<meta content="Compare local-search algorithms one run at a time or across matched seeded restarts, separating success frequency from final and best solution cost." property="og:description"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" property="og:image"/>
 <meta content="summary_large_image" name="twitter:card"/>
 <meta content="Hill Climbing and Simulated Annealing | AI Playgrounds" name="twitter:title"/>
-<meta content="Compare local-search algorithms that improve one candidate at a time. Hill climbing accepts only better moves; simulated annealing can temporarily accept worse moves to escape a local optimum." name="twitter:description"/>
+<meta content="Compare local-search algorithms one run at a time or across matched seeded restarts, separating success frequency from final and best solution cost." name="twitter:description"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" name="twitter:image"/>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Hill Climbing and Simulated Annealing | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/hill-climbing/","description":"Compare local-search algorithms that improve one candidate at a time. Hill climbing accepts only better moves; simulated annealing can temporarily accept worse moves to escape a local optimum.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh","vi","es"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Hill Climbing and Simulated Annealing | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/hill-climbing/","description":"Compare local-search algorithms one run at a time or across matched seeded restarts, separating success frequency from final and best solution cost.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh","vi","es"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
 <style>
   :root {
     --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #a16207;
@@ -506,7 +506,9 @@
 .learning-deck{display:contents!important}.learning-mode-shell{margin-top:16px;border-top:1px solid var(--border);padding-top:15px}.learning-mode-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px}.learning-mode-head h2{margin:0;font-size:1rem;color:var(--fg)}.learning-mode-head p{margin:2px 0 0;color:var(--muted);font-size:.82rem}.learning-mode-tools{display:flex;gap:8px;flex-wrap:wrap}.learning-mode-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:5px;background:var(--soft);border:1px solid var(--border);border-radius:14px}.learning-mode-tab{min-height:42px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-weight:750;padding:8px 10px}.learning-mode-tab[aria-selected="true"]{background:var(--card);color:var(--accent);box-shadow:0 3px 12px rgba(15,23,42,.08)}.learning-mode-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px;align-items:start}.learning-mode-panel[hidden]{display:none}.learning-mode-panel>details{margin:0!important;min-width:0}.learning-mode-panel>details.mode-wide{grid-column:1/-1}.learning-mode-panel>details>summary{background:var(--card)!important;border:1px solid var(--border)!important;border-left:4px solid color-mix(in srgb,var(--accent) 62%,var(--border))!important;border-radius:10px!important;color:var(--fg)!important;font-weight:750!important;padding:10px 12px!important}.learning-mode-panel>details[open]>summary{border-color:color-mix(in srgb,var(--accent) 55%,var(--border))!important}.learning-mode-panel .scenario-gallery-panel,.learning-mode-panel .accessibility-panel,.learning-mode-panel .classroom-lab .lab-panel{background:var(--card)!important}.scenario-card,.accessibility-card{background:color-mix(in srgb,var(--card) 97%,var(--accent))!important;box-shadow:none!important}.scenario-card.applied{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 78%,var(--accent)),color-mix(in srgb,var(--card) 88%,var(--accent-2,#6366f1)))!important;border-color:var(--accent)!important;box-shadow:0 12px 28px rgba(15,23,42,.10)!important}.signature-challenge>div,.signature-challenge .signature-challenge-panel{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 80%,var(--accent)),color-mix(in srgb,var(--card) 90%,var(--accent-2,#6366f1)))!important;border:1px solid color-mix(in srgb,var(--accent) 40%,var(--border))!important}.visual-card{background:linear-gradient(180deg,color-mix(in srgb,var(--card) 92%,var(--accent)),var(--card))!important}.featured-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.scenario-card button,.featured-actions button{border:0!important;border-radius:8px!important;background:var(--accent)!important;color:#fff!important;font-weight:750!important;padding:8px 11px!important}.scenario-card button:hover,.featured-actions button:hover{filter:brightness(1.05)}.copy-experiment{font-size:.82rem}.experiment-status{color:var(--muted);font-size:.78rem;min-height:1.2em;margin-top:6px}.mode-intro{grid-column:1/-1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--muted);font-size:.86rem}.mode-intro strong{color:var(--fg)}
 @container (min-width:980px){.scenario-card-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.visual-flow{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
 .interactive-inner{container-type:inline-size;max-width:min(1320px,100%)!important}
+.benchmark-panel{margin-top:12px}.benchmark-body{padding:13px 14px;background:var(--card);border:1px solid var(--border);border-radius:0 0 10px 10px}.benchmark-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.benchmark-controls input[type="number"]{width:92px;padding:6px 8px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--fg)}.benchmark-algorithms{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:10px 0}.benchmark-algorithms label{display:flex;align-items:flex-start;gap:6px;padding:7px 8px;border:1px solid var(--border);border-radius:8px;background:var(--soft)}.benchmark-results{overflow:auto;margin-top:10px}.benchmark-results table{width:100%;border-collapse:collapse;min-width:650px}.benchmark-results th,.benchmark-results td{padding:7px 8px;border-bottom:1px solid var(--border);text-align:right}.benchmark-results th:first-child,.benchmark-results td:first-child{text-align:left}.benchmark-rule{margin:8px 0;color:var(--muted);font-size:.82rem}.benchmark-status{min-height:1.3em;color:var(--muted);font-size:.82rem}.benchmark-results .best-row{background:color-mix(in srgb,var(--card) 88%,var(--accent))}
 @media(max-width:820px){.learning-mode-head{align-items:flex-start;flex-direction:column}.learning-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-mode-panel{grid-template-columns:1fr}.learning-mode-panel>details{grid-column:1!important}.copy-experiment{width:100%}}
+@media(max-width:700px){.benchmark-algorithms{grid-template-columns:1fr}.benchmark-controls label{flex:1 1 140px}}
 </style>
 <link href="../../assets/localization-r4.css" rel="stylesheet"/>
 </head>
@@ -631,6 +633,37 @@
 </div><!-- /.bento-cell (canvas pair) -->
 </div><!-- /.bento-main -->
 </div><!-- /.bento -->
+<details class="benchmark-panel" id="restartBenchmark" open="">
+<summary style="cursor:pointer; padding:9px 12px; background:var(--soft); border:1px solid var(--border); border-radius:8px; font-family:-apple-system,system-ui,sans-serif; font-size:0.9rem; color:var(--accent); font-weight:700;">
+<span data-i18n="bench-summary">📊 Repeated-restart benchmark</span>
+</summary>
+<div class="benchmark-body">
+<p class="benchmark-rule" data-i18n="bench-intro">Compare selected algorithms on the same problem instance and the same seeded starting state for every restart. Success frequency and solution cost are reported separately.</p>
+<p class="benchmark-rule"><strong data-i18n="bench-misread-label">Misread to avoid:</strong> <span data-i18n="bench-misread">A high success rate does not imply the lowest mean cost, and one excellent run does not imply reliable success.</span></p>
+<p class="benchmark-rule" data-i18n="bench-fidelity">Fidelity boundary: this benchmark uses bounded step budgets and seeded synthetic starts. It compares these teaching implementations; it is not a hardware-performance benchmark or a proof of asymptotic superiority.</p>
+<div class="benchmark-controls">
+<label><span data-i18n="bench-runs">Restarts</span> <input id="benchmarkRuns" max="100" min="2" step="1" type="number" value="20"/></label>
+<label><span data-i18n="bench-steps">Step budget</span> <input id="benchmarkSteps" max="500" min="10" step="10" type="number" value="120"/></label>
+<label><span data-i18n="bench-seed">Seed</span> <input id="benchmarkSeed" max="4294967295" min="0" step="1" type="number" value="1729"/></label>
+<button class="step-btn primary" data-i18n="bench-run" id="benchmarkRun" type="button">▶ Run benchmark</button>
+<button class="step-btn secondary" data-i18n="bench-reset" id="benchmarkReset" type="button">Reset benchmark</button>
+</div>
+<fieldset style="border:0;padding:0;margin:0;">
+<legend data-i18n="bench-algorithms" style="font-weight:700;margin-top:10px;">Algorithms to compare</legend>
+<div class="benchmark-algorithms">
+<label><input data-benchmark-algo="simple" type="checkbox"/> <span data-i18n="opt-simple">Simple HC (first improvement)</span></label>
+<label><input checked="" data-benchmark-algo="steepest" type="checkbox"/> <span data-i18n="opt-steepest">Best-improvement HC</span></label>
+<label><input data-benchmark-algo="stochastic" type="checkbox"/> <span data-i18n="opt-stochastic">Stochastic HC</span></label>
+<label><input data-benchmark-algo="firstchoice" type="checkbox"/> <span data-i18n="opt-firstchoice">First-choice HC</span></label>
+<label><input checked="" data-benchmark-algo="sa" type="checkbox"/> <span data-i18n="opt-sa">Simulated annealing</span></label>
+<label><input data-benchmark-algo="tabu" type="checkbox"/> <span data-i18n="opt-tabu">Tabu search</span></label>
+</div>
+</fieldset>
+<p class="benchmark-rule" id="benchmarkRule">Success rule appears after the benchmark runs.</p>
+<div aria-live="polite" class="benchmark-status" id="benchmarkStatus">No benchmark has run yet.</div>
+<div class="benchmark-results" id="benchmarkResults"></div>
+</div>
+</details>
 <!-- Scenario gallery. Visible, reusable entry points generated from the lesson-tour scenarios. -->
 <details class="scenario-gallery" open="" style="margin-top:12px;">
 <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
@@ -775,19 +808,19 @@
 <span data-lab-en="🧪 Student response packet" data-lab-zh="🧪 课堂实验模式">🧪 Student response packet</span>
 </summary>
 <div class="lab-panel">
-<p class="lab-intro" data-lab-en="Run a local-search strategy, watch its cost trajectory, then explain why it got stuck or escaped." data-lab-zh="运行一种局部搜索策略、观察代价轨迹，然后解释它为什么卡住或逃离。">Run a local-search strategy, watch its cost trajectory, then explain why it got stuck or escaped.</p>
+<p class="lab-intro" data-lab-en="Run one local-search trajectory or a matched seeded-restart benchmark, then explain why an algorithm gets stuck, escapes, or succeeds reliably." data-lab-zh="运行一次局部搜索轨迹或匹配的种子重启基准，然后解释算法为什么会卡住、逃离或稳定成功。">Run one local-search trajectory or a matched seeded-restart benchmark, then explain why an algorithm gets stuck, escapes, or succeeds reliably.</p>
 <div class="lab-grid">
 <div class="lab-field">
 <label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
-<textarea data-lab-answer="predict" data-lab-en="Before running, do you expect this strategy to improve steadily, get stuck, or sometimes accept worse moves? Why?" data-lab-zh="运行前，你预计这种策略会稳定改进、卡住，还是有时接受更差的移动？为什么？" id="lab-predict" placeholder="Before running, do you expect this strategy to improve steadily, get stuck, or sometimes accept worse moves? Why?"></textarea>
+<textarea data-lab-answer="predict" data-lab-en="Before running, which selected strategy do you expect to succeed most reliably, and which to reach the lowest cost? Why might those differ?" data-lab-zh="运行前，你预计哪种所选策略最稳定成功，哪种会达到最低成本？为什么两者可能不同？" id="lab-predict" placeholder="Before running, which selected strategy do you expect to succeed most reliably, and which to reach the lowest cost? Why might those differ?"></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
-<textarea data-lab-answer="observe" data-lab-en="Run or step the search. Record the problem, algorithm, current cost, best cost, and one trajectory feature." data-lab-zh="运行或单步搜索。记录问题、算法、当前代价、最佳代价和一个轨迹特征。" id="lab-observe" placeholder="Run or step the search. Record the problem, algorithm, current cost, best cost, and one trajectory feature."></textarea>
+<textarea data-lab-answer="observe" data-lab-en="Run a single search or the repeated-restart benchmark. Record the problem, algorithm, success rate, mean final cost, and mean best cost that apply." data-lab-zh="运行单次搜索或重复重启基准。记录适用的问题、算法、成功率、平均最终成本和平均最佳成本。" id="lab-observe" placeholder="Run a single search or the repeated-restart benchmark. Record the problem, algorithm, success rate, mean final cost, and mean best cost that apply."></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
-<textarea data-lab-answer="explain" data-lab-en="How did the search rule decide which neighboring state to accept?" data-lab-zh="搜索规则如何决定接受哪个邻近状态？" id="lab-explain" placeholder="How did the search rule decide which neighboring state to accept?"></textarea>
+<textarea data-lab-answer="explain" data-lab-en="How did the search rule choose moves, and why can success frequency and mean cost rank algorithms differently?" data-lab-zh="搜索规则如何选择移动？为什么成功频率和平均成本可能给算法不同的排序？" id="lab-explain" placeholder="How did the search rule choose moves, and why can success frequency and mean cost rank algorithms differently?"></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
@@ -973,6 +1006,12 @@
     en: {
       'title': 'Hill Climbing and Simulated Annealing',
       'back-link': '← Back to all playgrounds', 'reset-all': '↺ Reset all',
+      'bench-summary': '📊 Repeated-restart benchmark',
+      'bench-intro': 'Compare selected algorithms on the same problem instance and the same seeded starting state for every restart. Success frequency and solution cost are reported separately.',
+      'bench-runs': 'Restarts', 'bench-steps': 'Step budget', 'bench-seed': 'Seed',
+      'bench-run': '▶ Run benchmark', 'bench-reset': 'Reset benchmark', 'bench-algorithms': 'Algorithms to compare',
+      'bench-misread-label': 'Misread to avoid:', 'bench-misread': 'A high success rate does not imply the lowest mean cost, and one excellent run does not imply reliable success.',
+      'bench-fidelity': 'Fidelity boundary: this benchmark uses bounded step budgets and seeded synthetic starts. It compares these teaching implementations; it is not a hardware-performance benchmark or a proof of asymptotic superiority.',
       'footer-top': '↑ Back to top', 'footer-course': 'Made for the Introduction to AI course at Haidian Kaiwen Academy.', 'footer-portfolio': 'Portfolio', 'footer-project': 'AI Playgrounds', 'footer-source': 'Source', 'footer-issue': 'Report an issue',
       'prob-label': 'Problem:', 'algo-label': 'Algorithm:',
       'step-btn': '❘▶ Step', 'run-btn': '▶ Run / pause', 'restart-btn': 'Restart',
@@ -1059,6 +1098,12 @@
     zh: {
       'title': '爬山算法与模拟退火可视化',
       'back-link': '← 返回所有演示', 'reset-all': '↺ 全部重置',
+      'bench-summary': '📊 重复重启基准',
+      'bench-intro': '在同一问题实例上，为每次重启向所选算法提供相同的种子起始状态。成功频率与解的成本分开报告。',
+      'bench-runs': '重启次数', 'bench-steps': '步数预算', 'bench-seed': '种子',
+      'bench-run': '▶ 运行基准', 'bench-reset': '重置基准', 'bench-algorithms': '要比较的算法',
+      'bench-misread-label': '避免误读：', 'bench-misread': '成功率高并不意味着平均成本最低；一次特别好的运行也不意味着算法能稳定成功。',
+      'bench-fidelity': '保真边界：此基准使用有界步数预算和带种子的合成起点。它比较的是这些教学实现，并非硬件性能基准，也不能证明渐近优势。',
       'footer-top': '↑ 返回顶部', 'footer-course': '为海淀凯文学校《人工智能导论》课程制作。', 'footer-portfolio': '作品集', 'footer-project': 'AI Playgrounds', 'footer-source': '源代码', 'footer-issue': '反馈问题',
       'prob-label': '问题:', 'algo-label': '算法:',
       'step-btn': '❘▶ 单步', 'run-btn': '▶ 运行/暂停', 'restart-btn': '重启',
@@ -1528,6 +1573,209 @@
     return {randomState, neighbors, randomNeighbor, cost, draw, gaCrossover, gaMutate};
   })();
 
+  // ===== Deterministic repeated-restart benchmark =====
+  // This runner is deliberately separate from the animated state above. Every
+  // selected algorithm receives the same generated problem and the same start
+  // for restart r; only its own deterministic random stream can differ.
+  const BENCH_ALGOS = ['simple', 'steepest', 'stochastic', 'firstchoice', 'sa', 'tabu'];
+  const BENCH_COPY = {
+    en: {idle:'No benchmark has run yet.', choose:'Select at least one algorithm.', running:'Running bounded seeded trials…', done:'benchmark trials completed', seed:'seed', algorithm:'Algorithm', success:'Success rate', final:'Mean final cost', best:'Mean best cost', observed:'Best observed', completed:'Completed', ruleQueens:'Success = zero attacking queen pairs.', ruleLandscape:'Success = best cost at or below −0.95.', ruleTsp:'Success = best cost within 2% of the best result observed in this benchmark.', reproducible:'Same seed, problem, controls, and selected algorithms reproduce these values.'},
+    zh: {idle:'尚未运行基准。', choose:'请至少选择一种算法。', running:'正在运行有界的种子试验…', done:'次基准试验已完成', seed:'种子', algorithm:'算法', success:'成功率', final:'平均最终成本', best:'平均最佳成本', observed:'观测到的最佳值', completed:'已完成', ruleQueens:'成功 = 皇后互相攻击的对数为零。', ruleLandscape:'成功 = 最佳成本不高于 −0.95。', ruleTsp:'成功 = 最佳成本在本次基准观测到的最佳结果的 2% 以内。', reproducible:'相同种子、问题、控件和所选算法会复现这些数值。'},
+    vi: {idle:'Chưa chạy phép chuẩn nào.', choose:'Chọn ít nhất một thuật toán.', running:'Đang chạy các thử nghiệm có hạt giống và giới hạn…', done:'lượt thử chuẩn đã hoàn tất', seed:'hạt giống', algorithm:'Thuật toán', success:'Tỷ lệ thành công', final:'Chi phí cuối trung bình', best:'Chi phí tốt nhất trung bình', observed:'Tốt nhất quan sát được', completed:'Hoàn tất', ruleQueens:'Thành công = không có cặp hậu tấn công nhau.', ruleLandscape:'Thành công = chi phí tốt nhất không quá −0,95.', ruleTsp:'Thành công = chi phí tốt nhất nằm trong 2% kết quả tốt nhất quan sát được trong phép chuẩn này.', reproducible:'Cùng hạt giống, bài toán, điều khiển và thuật toán sẽ tái tạo các giá trị này.'},
+    es: {idle:'Todavía no se ha ejecutado el benchmark.', choose:'Seleccione al menos un algoritmo.', running:'Ejecutando ensayos acotados con semilla…', done:'ensayos del benchmark completados', seed:'semilla', algorithm:'Algoritmo', success:'Tasa de éxito', final:'Costo final medio', best:'Mejor costo medio', observed:'Mejor observado', completed:'Completados', ruleQueens:'Éxito = cero pares de reinas que se atacan.', ruleLandscape:'Éxito = mejor costo menor o igual que −0,95.', ruleTsp:'Éxito = mejor costo dentro del 2% del mejor resultado observado en este benchmark.', reproducible:'La misma semilla, problema, controles y algoritmos reproducen estos valores.'},
+  };
+  const BENCH_ALGO_LABELS={
+    en:{simple:'Simple HC (first improvement)',steepest:'Best-improvement HC',stochastic:'Stochastic HC',firstchoice:'First-choice HC',sa:'Simulated annealing',tabu:'Tabu search'},
+    zh:{simple:'简单爬山（首次改进）',steepest:'最佳改进爬山',stochastic:'随机爬山',firstchoice:'首选爬山',sa:'模拟退火',tabu:'禁忌搜索'},
+    vi:{simple:'Leo đồi đơn giản (cải thiện đầu tiên)',steepest:'Leo đồi cải thiện tốt nhất',stochastic:'Leo đồi ngẫu nhiên',firstchoice:'Leo đồi lựa chọn đầu tiên',sa:'Mô phỏng luyện kim',tabu:'Tìm kiếm tabu'},
+    es:{simple:'Escalada simple (primera mejora)',steepest:'Escalada de mejor mejora',stochastic:'Escalada estocástica',firstchoice:'Escalada de primera elección',sa:'Recocido simulado',tabu:'Búsqueda tabú'},
+  };
+  function benchmarkLocale() {
+    const lang = (document.documentElement.lang || 'en').toLowerCase();
+    return lang.startsWith('zh') ? 'zh' : lang.startsWith('vi') ? 'vi' : lang.startsWith('es') ? 'es' : 'en';
+  }
+  function seededRandom(seed) {
+    let value = (Number(seed) >>> 0) || 0x6d2b79f5;
+    return () => {
+      value = (value + 0x6d2b79f5) >>> 0;
+      let t = value;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function benchmarkHash(text) {
+    let hash = 2166136261;
+    for (const char of String(text)) { hash ^= char.charCodeAt(0); hash = Math.imul(hash, 16777619); }
+    return hash >>> 0;
+  }
+  function benchmarkSeed(base, ...parts) {
+    return parts.reduce((value, part) => (Math.imul(value ^ benchmarkHash(part), 2246822519) + 3266489917) >>> 0, Number(base) >>> 0);
+  }
+  function cloneBenchmarkState(value) {
+    return Array.isArray(value) ? value.slice() : {...value};
+  }
+  function createBenchmarkProblem(key, seed) {
+    if (key === 'tsp') {
+      const rng = seededRandom(benchmarkSeed(seed, 'tsp-geometry'));
+      const cities = Array.from({length:12}, () => ({x:40 + rng() * 340, y:30 + rng() * 220}));
+      return {
+        randomState(random) { const out = Array.from({length:12}, (_, i) => i); for (let i=out.length-1;i>0;i--) { const j=Math.floor(random()*(i+1)); [out[i],out[j]]=[out[j],out[i]]; } return out; },
+        cost(route) { let total=0; for (let i=0;i<route.length;i++) { const a=cities[route[i]], b=cities[route[(i+1)%route.length]]; total+=Math.hypot(a.x-b.x,a.y-b.y); } return total; },
+        neighbors(route) { const out=[]; for (let i=0;i<route.length-1;i++) for (let j=i+1;j<route.length;j++) { const next=route.slice(); let a=i,b=j; while(a<b){[next[a],next[b]]=[next[b],next[a]];a++;b--;} out.push(next); } return out; },
+        randomNeighbor(route, random) { let i=Math.floor(random()*route.length),j=Math.floor(random()*route.length); while(j===i)j=Math.floor(random()*route.length); const next=route.slice(); let a=Math.min(i,j),b=Math.max(i,j); while(a<b){[next[a],next[b]]=[next[b],next[a]];a++;b--;} return next; },
+      };
+    }
+    if (key === 'queens') {
+      const size = 8;
+      return {
+        randomState(random) { return Array.from({length:size}, () => Math.floor(random()*size)); },
+        cost(board) { let attacks=0; for(let i=0;i<size;i++)for(let j=i+1;j<size;j++)if(board[i]===board[j]||Math.abs(board[i]-board[j])===j-i)attacks++; return attacks; },
+        neighbors(board) { const out=[]; for(let col=0;col<size;col++)for(let row=0;row<size;row++)if(row!==board[col]){const next=board.slice();next[col]=row;out.push(next);} return out; },
+        randomNeighbor(board, random) { const col=Math.floor(random()*size);let row=Math.floor(random()*size);while(row===board[col])row=Math.floor(random()*size);const next=board.slice();next[col]=row;return next; },
+      };
+    }
+    const peaks = [{x:30,y:25,h:-1,s:12},{x:70,y:30,h:-.5,s:10},{x:50,y:70,h:-.6,s:14},{x:20,y:80,h:-.4,s:8},{x:85,y:80,h:-.55,s:11}];
+    const landscapeCost = point => peaks.reduce((sum,p) => sum + p.h*Math.exp(-((point.x-p.x)**2+(point.y-p.y)**2)/(2*p.s*p.s)),0);
+    return {
+      randomState(random) { return {x:random()*100,y:random()*100}; },
+      cost: landscapeCost,
+      neighbors(point) { const out=[];for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++)if(dx||dy)out.push({x:Math.max(0,Math.min(100,point.x+dx*3)),y:Math.max(0,Math.min(100,point.y+dy*3))});return out; },
+      randomNeighbor(point, random) { return {x:Math.max(0,Math.min(100,point.x+(random()-.5)*8)),y:Math.max(0,Math.min(100,point.y+(random()-.5)*8))}; },
+    };
+  }
+  function runBenchmarkTrial(problem, algorithm, initialState, random, stepBudget, t0, cooling) {
+    let current = cloneBenchmarkState(initialState);
+    let currentCost = problem.cost(current), bestCost = currentCost, steps = 0, temperature = t0;
+    const tabu = [];
+    for (; steps < stepBudget; steps++) {
+      let next = null, nextCost = currentCost;
+      if (algorithm === 'simple') {
+        for (const candidate of problem.neighbors(current)) { const cost=problem.cost(candidate); if(cost<currentCost){next=candidate;nextCost=cost;break;} }
+      } else if (algorithm === 'steepest') {
+        for (const candidate of problem.neighbors(current)) { const cost=problem.cost(candidate); if(cost<nextCost){next=candidate;nextCost=cost;} }
+      } else if (algorithm === 'stochastic') {
+        const improving=problem.neighbors(current).map(state=>({state,cost:problem.cost(state)})).filter(row=>row.cost<currentCost);
+        const total=improving.reduce((sum,row)=>sum+currentCost-row.cost,0); let pick=random()*total;
+        for(const row of improving){pick-=currentCost-row.cost;if(pick<=0){next=row.state;nextCost=row.cost;break;}}
+      } else if (algorithm === 'firstchoice') {
+        for(let attempt=0;attempt<100;attempt++){const candidate=problem.randomNeighbor(current,random),cost=problem.cost(candidate);if(cost<currentCost){next=candidate;nextCost=cost;break;}}
+      } else if (algorithm === 'sa') {
+        const candidate=problem.randomNeighbor(current,random),cost=problem.cost(candidate),delta=cost-currentCost;
+        if(delta<0||random()<Math.exp(-delta/Math.max(1e-9,temperature))){next=candidate;nextCost=cost;}
+        temperature*=cooling;
+      } else if (algorithm === 'tabu') {
+        const tabuSet=new Set(tabu), candidates=problem.neighbors(current).map(state=>({state,cost:problem.cost(state),key:JSON.stringify(state)})).sort((a,b)=>a.cost-b.cost);
+        const chosen=candidates.find(row=>!tabuSet.has(row.key)||row.cost<bestCost);
+        if(chosen){tabu.push(JSON.stringify(current));if(tabu.length>7)tabu.shift();next=chosen.state;nextCost=chosen.cost;}
+      }
+      if (!next) {
+        if (algorithm === 'sa') continue;
+        break;
+      }
+      current=next;currentCost=nextCost;if(currentCost<bestCost)bestCost=currentCost;
+    }
+    return {finalCost:currentCost,bestCost,steps};
+  }
+  function boundedBenchmarkNumber(value,min,max,fallback,integer=false) {
+    const numeric=Number(value);
+    if(!Number.isFinite(numeric))return fallback;
+    const normalized=integer?Math.trunc(numeric):numeric;
+    return Math.max(min,Math.min(max,normalized));
+  }
+  function prepareRestartBenchmark(config) {
+    const normalized={...config};
+    normalized.problem=['tsp','queens','landscape'].includes(config.problem)?config.problem:'tsp';
+    normalized.runs=boundedBenchmarkNumber(config.runs,2,100,20,true);
+    normalized.steps=boundedBenchmarkNumber(config.steps,10,500,120,true);
+    normalized.seed=boundedBenchmarkNumber(config.seed,0,4294967295,1729,true)>>>0;
+    normalized.t0=boundedBenchmarkNumber(config.t0,.1,50,10);
+    normalized.cooling=boundedBenchmarkNumber(config.cooling,.9,.999,.995);
+    const algorithms=[...new Set((config.algorithms||[]).filter(name=>BENCH_ALGOS.includes(name)))];
+    return {config:normalized,problem:createBenchmarkProblem(normalized.problem,normalized.seed),runs:normalized.runs,steps:normalized.steps,algorithms,trials:Object.fromEntries(algorithms.map(name=>[name,[]]))};
+  }
+  function runBenchmarkRestart(setup,run) {
+    const {config,problem,steps,algorithms,trials}=setup;
+    const startRandom=seededRandom(benchmarkSeed(config.seed,'start',run));
+    const start=problem.randomState(startRandom), startKey=JSON.stringify(start);
+    for(const algorithm of algorithms){
+      const random=seededRandom(benchmarkSeed(config.seed,'algorithm',algorithm,run));
+      trials[algorithm].push({...runBenchmarkTrial(problem,algorithm,start,random,steps,config.t0,config.cooling),startKey});
+    }
+  }
+  function finishRestartBenchmark(setup) {
+    const {config,runs,steps,algorithms,trials}=setup;
+    const all=Object.values(trials).flat();
+    const observedBest=all.length?Math.min(...all.map(row=>row.bestCost)):null;
+    const target=config.problem==='queens'?0:config.problem==='landscape'?-.95:observedBest===null?null:observedBest*1.02;
+    const summary=algorithms.map(algorithm=>{
+      const rows=trials[algorithm], sum=key=>rows.reduce((total,row)=>total+row[key],0);
+      const successes=rows.filter(row=>target!==null&&row.bestCost<=target+1e-9).length;
+      return {algorithm,completed:rows.length,successes,successRate:rows.length?successes/rows.length:0,meanFinal:rows.length?sum('finalCost')/rows.length:0,meanBest:rows.length?sum('bestCost')/rows.length:0,bestObserved:rows.length?Math.min(...rows.map(row=>row.bestCost)):null};
+    });
+    return {problem:config.problem,seed:Number(config.seed)>>>0,runs,steps,target,observedBest,algorithms,trials,summary};
+  }
+  function computeRestartBenchmark(config) {
+    const setup=prepareRestartBenchmark(config);
+    for(let run=0;run<setup.runs;run++)runBenchmarkRestart(setup,run);
+    return finishRestartBenchmark(setup);
+  }
+  async function computeRestartBenchmarkResponsive(config,onProgress,shouldCancel) {
+    const setup=prepareRestartBenchmark(config);
+    for(let run=0;run<setup.runs;run++){
+      if(shouldCancel&&shouldCancel())return null;
+      runBenchmarkRestart(setup,run);
+      if(onProgress)onProgress(run+1,setup.runs);
+      // Yield after every matched restart so transport, reset, and assistive
+      // technology updates remain responsive even at the maximum bounded size.
+      await new Promise(resolve=>setTimeout(resolve,0));
+    }
+    return shouldCancel&&shouldCancel()?null:finishRestartBenchmark(setup);
+  }
+  let lastBenchmark = null, benchmarkRunToken = 0;
+  function renderBenchmark(result) {
+    const copy=BENCH_COPY[benchmarkLocale()];
+    if(!result){$('benchmarkRule').textContent='';$('benchmarkStatus').textContent=copy.idle;$('benchmarkResults').innerHTML='';return;}
+    const rule=result.problem==='queens'?copy.ruleQueens:result.problem==='landscape'?copy.ruleLandscape:copy.ruleTsp;
+    $('benchmarkRule').textContent=rule+' '+copy.reproducible;
+    $('benchmarkStatus').textContent=`${result.runs*result.algorithms.length} ${copy.done} · ${copy.seed} ${result.seed}`;
+    const bestMean=Math.min(...result.summary.map(row=>row.meanBest));
+    const label=name=>BENCH_ALGO_LABELS[benchmarkLocale()]?.[name]||name;
+    const rows=result.summary.map(row=>`<tr${Math.abs(row.meanBest-bestMean)<1e-9?' class="best-row"':''}><td>${label(row.algorithm)}</td><td>${(row.successRate*100).toFixed(1)}% (${row.successes}/${row.completed})</td><td>${row.meanFinal.toFixed(3)}</td><td>${row.meanBest.toFixed(3)}</td><td>${row.bestObserved.toFixed(3)}</td><td>${row.completed}/${result.runs}</td></tr>`).join('');
+    $('benchmarkResults').innerHTML=`<table><thead><tr><th>${copy.algorithm}</th><th>${copy.success}</th><th>${copy.final}</th><th>${copy.best}</th><th>${copy.observed}</th><th>${copy.completed}</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+  function benchmarkConfigFromUi() {
+    return {problem:$('probSel').value,runs:+$('benchmarkRuns').value,steps:+$('benchmarkSteps').value,seed:+$('benchmarkSeed').value,t0:+$('t0').value,cooling:+$('cool').value,algorithms:[...document.querySelectorAll('[data-benchmark-algo]:checked')].map(el=>el.dataset.benchmarkAlgo)};
+  }
+  $('benchmarkRun').addEventListener('click',async()=>{
+    const config=benchmarkConfigFromUi(),copy=BENCH_COPY[benchmarkLocale()];
+    if(!config.algorithms.length){$('benchmarkStatus').textContent=copy.choose;return;}
+    const token=++benchmarkRunToken;
+    $('benchmarkStatus').textContent=copy.running;$('benchmarkRun').disabled=true;
+    try{
+      const result=await computeRestartBenchmarkResponsive(
+        config,
+        (done,total)=>{if(token===benchmarkRunToken)$('benchmarkStatus').textContent=`${copy.running} ${done}/${total}`;},
+        ()=>token!==benchmarkRunToken,
+      );
+      if(result&&token===benchmarkRunToken){lastBenchmark=result;renderBenchmark(lastBenchmark);}
+    }finally{if(token===benchmarkRunToken)$('benchmarkRun').disabled=false;}
+  });
+  $('benchmarkReset').addEventListener('click',()=>{benchmarkRunToken++;lastBenchmark=null;$('benchmarkRun').disabled=false;$('benchmarkRuns').value=20;$('benchmarkSteps').value=120;$('benchmarkSeed').value=1729;document.querySelectorAll('[data-benchmark-algo]').forEach(el=>el.checked=['steepest','sa'].includes(el.dataset.benchmarkAlgo));renderBenchmark(null);});
+  document.querySelectorAll('.lang-switch button').forEach(button=>button.addEventListener('click',()=>setTimeout(()=>renderBenchmark(lastBenchmark),0)));
+  // Render after the shared locale lifecycle finishes restoring/translating the
+  // surrounding document. A synchronous render can be overwritten by a later
+  // native-layer refresh during EN/ZH/VI/ES transitions.
+  window.addEventListener('r4languagechange',()=>setTimeout(()=>renderBenchmark(lastBenchmark),0));
+  window.__hillBenchmarkTest=()=>{
+    const config={problem:'queens',runs:6,steps:80,seed:1729,t0:10,cooling:.995,algorithms:['steepest','sa']};
+    const first=computeRestartBenchmark(config),second=computeRestartBenchmark(config);
+    const reproducible=JSON.stringify(first)===JSON.stringify(second);
+    const fair=Array.from({length:config.runs},(_,run)=>first.algorithms.every(name=>first.trials[name][run].startKey===first.trials[first.algorithms[0]][run].startKey)).every(Boolean);
+    return {pass:reproducible&&fair&&first.summary.every(row=>row.completed===config.runs),reproducible,fair,summary:first.summary};
+  };
+  renderBenchmark(null);
+
   let prob = null, problemKey = 'tsp';
   let state = null, bestState = null, bestCost = Infinity;
   // GA population. null = uninitialized; rebuilt on first GA step.
@@ -1855,7 +2103,7 @@
     console.log('[hill-climbing] CONTROLS ACCEPTANCE TEST ' + (pass ? 'passed' : 'FAILED'), r);
     return Object.assign({ pass }, r);
   };
-  $('probSel').addEventListener('change', () => { reset(); });
+  $('probSel').addEventListener('change', () => { reset(); benchmarkRunToken++; lastBenchmark = null; $('benchmarkRun').disabled=false; renderBenchmark(null); });
   // Click the landscape canvas to set the initial state. Lets students
   // deliberately start in a bad basin (vs the random reset) to see local-optimum
   // behavior reproducibly. Only active when problem === 'landscape'.
@@ -1892,6 +2140,7 @@
     $('algoHelp').textContent = HELP['steepest'];
     liveState = null; replayMode = false;
     document.getElementById('replayResume').disabled = true;
+    $('benchmarkReset').click();
     reset();
   });
   // Replay scrubber wiring.
@@ -1941,6 +2190,11 @@
     };
     setNum('t0', 't0', 0.1, 50);
     setNum('cool', 'cool', 0.9, 0.999);
+    setNum('benchRuns', 'benchmarkRuns', 2, 100);
+    setNum('benchSteps', 'benchmarkSteps', 10, 500);
+    setNum('benchSeed', 'benchmarkSeed', 0, 4294967295);
+    const benchAlgos = (sp.get('benchAlgos') || '').split(',').filter(name => BENCH_ALGOS.includes(name));
+    if (benchAlgos.length) document.querySelectorAll('[data-benchmark-algo]').forEach(el => { el.checked = benchAlgos.includes(el.dataset.benchmarkAlgo); });
   } catch (_) {}
   document.getElementById('shareLink').addEventListener('click', async () => {
     const params = new URLSearchParams();
@@ -1948,6 +2202,10 @@
     params.set('algo', $('algoSel').value);
     params.set('t0', $('t0').value);
     params.set('cool', $('cool').value);
+    params.set('benchRuns', $('benchmarkRuns').value);
+    params.set('benchSteps', $('benchmarkSteps').value);
+    params.set('benchSeed', $('benchmarkSeed').value);
+    params.set('benchAlgos', [...document.querySelectorAll('[data-benchmark-algo]:checked')].map(el => el.dataset.benchmarkAlgo).join(','));
     const url = `${location.origin}${location.pathname}?${params.toString()}`;
     try {
       await navigator.clipboard.writeText(url);
@@ -2163,7 +2421,7 @@
 </footer>
 <script>
 (function() {
-  const LAB_CONFIG = {"slug": "hill-climbing", "title": "Hill climbing and simulated annealing lab packet", "zhTitle": "爬山法与模拟退火实验包", "fields": [{"label": "Problem", "selector": "#probSel", "kind": "selected"}, {"label": "Algorithm", "selector": "#algoSel", "kind": "selected"}, {"label": "Iteration", "selector": "#iterV", "kind": "text"}, {"label": "Current cost", "selector": "#costV", "kind": "text"}, {"label": "Best cost", "selector": "#bestV", "kind": "text"}, {"label": "Temperature", "selector": "#tempV", "kind": "text"}, {"label": "Acceptance", "selector": "#acceptV", "kind": "text"}]};
+  const LAB_CONFIG = {"slug": "hill-climbing", "title": "Hill climbing and simulated annealing lab packet", "zhTitle": "爬山法与模拟退火实验包", "fields": [{"label": "Problem", "selector": "#probSel", "kind": "selected"}, {"label": "Algorithm", "selector": "#algoSel", "kind": "selected"}, {"label": "Iteration", "selector": "#iterV", "kind": "text"}, {"label": "Current cost", "selector": "#costV", "kind": "text"}, {"label": "Best cost", "selector": "#bestV", "kind": "text"}, {"label": "Temperature", "selector": "#tempV", "kind": "text"}, {"label": "Acceptance", "selector": "#acceptV", "kind": "text"}, {"label": "Benchmark restarts", "selector": "#benchmarkRuns", "kind": "value"}, {"label": "Benchmark step budget", "selector": "#benchmarkSteps", "kind": "value"}, {"label": "Benchmark seed", "selector": "#benchmarkSeed", "kind": "value"}, {"label": "Restart benchmark", "selector": "#benchmarkStatus", "kind": "text"}, {"label": "Benchmark results", "selector": "#benchmarkResults", "kind": "text"}]};
   const root = document.querySelector('.classroom-lab');
   if (!root) return;
   const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;

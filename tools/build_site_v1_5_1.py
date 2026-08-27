@@ -64,7 +64,19 @@ def patch_knn_touch_recovery() -> None:
     path = SITE / "playgrounds" / "knn-classifier" / "index.html"
     html = path.read_text(encoding="utf-8")
     old = '''  cv.addEventListener('click', e => {\n    const {x, y} = canvasCoords(e);\n    if (guided.active) {\n      if (guided.locked) return;\n      guided.query = {x, y};\n      guided.predictedNeighbors.clear();\n      guided.revealed = false; guided.actual = null;\n      updateGuidedUI(); render();\n      return;\n    }\n    points.push({x, y, c: addClass});\n    render();\n  });'''
+    feature_old = old.replace(
+        "points.push({x, y, c: addClass});",
+        "points.push({x, y, c: addClass, target: +$('targetValue').value});",
+    )
+    uses_regression_targets = feature_old in html
+    if uses_regression_targets:
+        old = feature_old
     new = '''  // v1.5.1 touch recovery: once a Guided Challenge query exists, a near-miss\n  // around a training point selects that point instead of unexpectedly moving the\n  // query and clearing the learner's prediction. Distances are measured in CSS\n  // pixels so the tolerance stays usable as the SVG scales on phones.\n  cv.addEventListener('click', e => {\n    const {x, y} = canvasCoords(e);\n    if (guided.active) {\n      if (guided.locked) return;\n      if (guided.query) {\n        const rect = cv.getBoundingClientRect();\n        let nearest = null;\n        points.forEach((p, idx) => {\n          const dx = (p.x - x) * rect.width / cv.width;\n          const dy = (p.y - y) * rect.height / cv.height;\n          const distance = Math.hypot(dx, dy);\n          if (!nearest || distance < nearest.distance) nearest = {idx, distance};\n        });\n        if (nearest && nearest.distance <= 22) {\n          handleGuidedNeighbor(nearest.idx);\n          return;\n        }\n      }\n      guided.query = {x, y};\n      guided.predictedNeighbors.clear();\n      guided.revealed = false; guided.actual = null;\n      updateGuidedUI(); render();\n      return;\n    }\n    points.push({x, y, c: addClass});\n    render();\n  });'''
+    if uses_regression_targets:
+        new = new.replace(
+            "points.push({x, y, c: addClass});",
+            "points.push({x, y, c: addClass, target: +$('targetValue').value});",
+        )
     if old not in html:
         raise RuntimeError("Could not locate KNN Guided Challenge canvas click handler")
     html = html.replace(old, new, 1)

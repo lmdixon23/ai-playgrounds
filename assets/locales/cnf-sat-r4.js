@@ -7,19 +7,31 @@
   "meta": {
     "en": {
       "title": "CNF and SAT Builder | AI Playgrounds",
-      "description": "Rewrite propositional logic into a standard clause form, test whether any assignment makes the formula true, and watch a solver remove impossible branches."
+      "description": "Rewrite propositional logic into CNF, then inspect either the original DPLL search or a bounded CDCL trace with reasons, learned clauses, and non-chronological backjumps."
     },
     "vi": {
       "title": "CNF and SAT Builder | AI Playgrounds",
-      "description": "Viết lại logic mệnh đề thành dạng mệnh đề tiêu chuẩn, kiểm tra xem liệu phép gán nào có làm cho công thức đúng hay không và xem trình giải loại bỏ các nhánh không thể thực hiện được."
+      "description": "Viết lại logic mệnh đề thành CNF, rồi xem tìm kiếm DPLL gốc hoặc vết CDCL có giới hạn với lý do, mệnh đề học được và bước nhảy lùi không theo thời gian."
     },
     "es": {
       "title": "CNF and SAT Builder | AI Playgrounds",
-      "description": "Reescribe la lógica proposicional en una forma de cláusula estándar, prueba si alguna asignación hace que la fórmula sea verdadera y observa cómo un solucionador elimina ramas imposibles."
+      "description": "Reescribe la lógica proposicional en CNF y examina la búsqueda DPLL original o una traza CDCL acotada con razones, cláusulas aprendidas y saltos no cronológicos."
     }
   },
   "vi": {
     "strings": {
+      "CDCL backjump": "CDCL nhảy lùi",
+      "A deterministic conflict that learns (¬A ∨ ¬C) and backjumps from decision level 3 to level 1.": "Một xung đột xác định học (¬A ∨ ¬C) rồi nhảy lùi từ mức quyết định 3 về mức 1.",
+      "Trace mode:": "Chế độ theo dõi:",
+      "DPLL branch trace": "Theo dõi nhánh DPLL",
+      "CDCL conflict-learning trace": "Theo dõi học xung đột CDCL",
+      "DPLL preserves the original branch-and-backtrack trace. CDCL adds implication reasons, first-UIP clause learning, and non-chronological backjumping.": "DPLL giữ nguyên vết phân nhánh và quay lui; CDCL bổ sung lý do suy diễn, học mệnh đề first-UIP và nhảy lùi không theo thời gian.",
+      "CDCL mode is a bounded educational first-UIP trace. It shows decisions, propagation, conflicts, learned clauses, and backjumps; production optimizations such as watched literals, restarts, activity heuristics, and clause deletion are intentionally omitted.": "Chế độ CDCL là vết first-UIP giáo dục có giới hạn. Nó hiển thị quyết định, lan truyền, xung đột, mệnh đề học được và bước nhảy lùi; các tối ưu hóa sản xuất như literal được theo dõi, khởi động lại, heuristic hoạt động và xóa mệnh đề được chủ ý lược bỏ.",
+      "Learning rule: start from the false conflict clause and repeatedly resolve on the latest current-level propagated literal until one current-level literal remains (the first UIP). Backjump to the highest decision level among the learned clause's other literals, or level 0 if there is none.": "Quy tắc học: bắt đầu từ mệnh đề xung đột đang sai và liên tục phân giải theo literal được lan truyền gần nhất ở mức hiện tại cho đến khi chỉ còn một literal ở mức hiện tại (UIP thứ nhất). Nhảy lùi đến mức quyết định cao nhất của các literal còn lại trong mệnh đề học được, hoặc mức 0 nếu không có literal nào.",
+      "Misread to avoid: a learned clause is a logical consequence of resolution, not a guessed shortcut; a backjump removes assignments above its target level but does not erase earlier decisions.": "Tránh hiểu sai: mệnh đề học được là hệ quả logic của phép phân giải, không phải lối tắt được đoán; bước nhảy lùi loại bỏ các phép gán trên mức đích nhưng không xóa các quyết định trước đó.",
+      "Convert a knowledge base, inspect DPLL or CDCL evidence, then explain what CNF, learned clauses, and backjumps establish.": "Chuyển một cơ sở tri thức, kiểm tra bằng chứng DPLL hoặc CDCL, rồi giải thích CNF, mệnh đề học được và bước nhảy lùi chứng minh điều gì.",
+      "Run conversion and inspect a DPLL or CDCL trace. Record the key CNF result and any decision, propagation, conflict, learned clause, or backjump.": "Chạy chuyển đổi và xem vết DPLL hoặc CDCL. Ghi lại kết quả CNF chính cùng mọi quyết định, lan truyền, xung đột, mệnh đề học được hoặc bước nhảy lùi.",
+      "What did CNF make easier to check? If using CDCL, why is the learned clause valid and the backjump level safe?": "CNF giúp kiểm tra điều gì dễ hơn, và nếu dùng CDCL, vì sao mệnh đề học được hợp lệ và mức nhảy lùi an toàn?",
       "#a11yStateSummary": "#a11yStateSummary",
       "#acceptV": "#acceptV",
       "#accV": "#accV",
@@ -218,6 +230,7 @@
       "Identify the exact set of requirements that cannot all be true at once.": "Xác định tập hợp chính xác các yêu cầu không thể đúng cùng một lúc.",
       "If a clause has one possible literal left, that literal must be true.": "Nếu một mệnh đề có thể còn lại một nghĩa đen thì nghĩa đen đó phải đúng.",
       "Input: P -> Q P CNF stage: Stage 0 / 5 CNF caption: Stage 0 · Original the conjunction of all your sentences, before any rewriting SAT output: ✓ SAT (1 model out of 4)PQTT DPLL step: Step 1 / 3": "Đầu vào: P -> Q P Giai đoạn CNF: Giai đoạn 0 / 5 Chú thích CNF: Giai đoạn 0 · Nguyên bản kết hợp của tất cả các câu của bạn, trước khi viết lại Đầu ra SAT: ✓ SAT (1 mô hình trên 4)Bước PQTT DPLL: Bước 1 / 3",
+      "Input: P -> Q P Trace mode: DPLL branch trace CNF stage: Stage 0 / 5 CNF caption: Stage 0 · Original the conjunction of all your sentences, before any rewriting SAT output: ✓ SAT (1 model out of 4)PQTT Solver step: Step 1 / 3": "Đầu vào: P -> Q P Chế độ truy vết: Truy vết nhánh DPLL Giai đoạn CNF: Giai đoạn 0 / 5 Chú thích CNF: Giai đoạn 0 · Nguyên bản là phép hội của tất cả các câu trước khi viết lại Đầu ra SAT: ✓ SAT (1 mô hình trên 4)PQTT Bước bộ giải: Bước 1 / 3",
       "Input: P -> Q P CNF stage: Stage 0 / 5 SAT output: ✓ SAT (1 model out of 4)PQTT DPLL step: Step 1 / 3": "Đầu vào: P -> Q P Giai đoạn CNF: Giai đoạn 0 / 5 Đầu ra SAT: ✓ SAT (1 trên 4 mẫu)Bước PQTT DPLL: Bước 1 / 3",
       "Inspect the revealed visual result.": "Kiểm tra kết quả trực quan được hiển thị.",
       "is an OR of literals. A formula is in": "là OR của chữ.Một công thức có trong",
@@ -235,6 +248,7 @@
       "Load the triangle three-coloring example and inspect the valid assignments.": "Tải ví dụ tô màu ba hình tam giác và kiểm tra các phép gán hợp lệ.",
       "Load the Wumpus breeze rule and step through the rewrite from a biconditional to conjunctive normal form (CNF).": "Tải quy tắc gió Wumpus và thực hiện từng bước viết lại từ dạng hai điều kiện sang dạng chuẩn kết hợp (CNF).",
       "Logan M. Dixon ·": "Logan M. Dixon ·",
+      "SAT solver search playback": "Phát lại quá trình tìm kiếm của bộ giải SAT",
       "Logic solvers work best when every formula has a predictable structure. The terms below separate the formula format, the decision question, and the search procedure.": "Bộ giải logic hoạt động tốt nhất khi mọi công thức đều có cấu trúc có thể dự đoán được.Các thuật ngữ bên dưới tách biệt định dạng công thức, câu hỏi quyết định và quy trình tìm kiếm.",
       "Made for the Introduction to AI course at Haidian Kaiwen Academy.": "Được tạo cho khóa học Giới thiệu về AI tại Học viện Haidian Kaiwen.",
       "Mechanism revealed. Compare the locked prediction with the actual applet state.": "Cơ chế được tiết lộ.So sánh dự đoán bị khóa với trạng thái applet thực tế.",
@@ -449,6 +463,18 @@
   },
   "es": {
     "strings": {
+      "CDCL backjump": "Salto atrás CDCL",
+      "A deterministic conflict that learns (¬A ∨ ¬C) and backjumps from decision level 3 to level 1.": "Un conflicto determinista que aprende (¬A ∨ ¬C) y salta del nivel de decisión 3 al nivel 1.",
+      "Trace mode:": "Modo de traza:",
+      "DPLL branch trace": "Traza de ramas DPLL",
+      "CDCL conflict-learning trace": "Traza de aprendizaje de conflictos CDCL",
+      "DPLL preserves the original branch-and-backtrack trace. CDCL adds implication reasons, first-UIP clause learning, and non-chronological backjumping.": "DPLL conserva la traza original de ramificación y retroceso; CDCL añade razones de implicación, aprendizaje de cláusulas de primer UIP y saltos atrás no cronológicos.",
+      "CDCL mode is a bounded educational first-UIP trace. It shows decisions, propagation, conflicts, learned clauses, and backjumps; production optimizations such as watched literals, restarts, activity heuristics, and clause deletion are intentionally omitted.": "El modo CDCL es una traza educativa acotada de primer UIP. Muestra decisiones, propagación, conflictos, cláusulas aprendidas y saltos atrás; se omiten deliberadamente optimizaciones de producción como literales vigilados, reinicios, heurísticas de actividad y eliminación de cláusulas.",
+      "Learning rule: start from the false conflict clause and repeatedly resolve on the latest current-level propagated literal until one current-level literal remains (the first UIP). Backjump to the highest decision level among the learned clause's other literals, or level 0 if there is none.": "Regla de aprendizaje: se parte de la cláusula de conflicto falsa y se resuelve repetidamente sobre el último literal propagado del nivel actual hasta que queda un solo literal de ese nivel (el primer UIP). Se salta al nivel de decisión más alto entre los demás literales de la cláusula aprendida, o al nivel 0 si no hay ninguno.",
+      "Misread to avoid: a learned clause is a logical consequence of resolution, not a guessed shortcut; a backjump removes assignments above its target level but does not erase earlier decisions.": "Evita esta interpretación: una cláusula aprendida es una consecuencia lógica de la resolución, no un atajo adivinado; el salto atrás elimina asignaciones por encima del nivel de destino, pero no borra decisiones anteriores.",
+      "Convert a knowledge base, inspect DPLL or CDCL evidence, then explain what CNF, learned clauses, and backjumps establish.": "Convierte una base de conocimiento, inspecciona evidencia DPLL o CDCL y explica qué establecen CNF, las cláusulas aprendidas y los saltos hacia atrás.",
+      "Run conversion and inspect a DPLL or CDCL trace. Record the key CNF result and any decision, propagation, conflict, learned clause, or backjump.": "Ejecute la conversión e inspeccione una traza DPLL o CDCL. Registre el resultado CNF clave y cualquier decisión, propagación, conflicto, cláusula aprendida o salto atrás.",
+      "What did CNF make easier to check? If using CDCL, why is the learned clause valid and the backjump level safe?": "¿Qué hizo CNF más fácil de comprobar y, si usa CDCL, por qué es válida la cláusula aprendida y seguro el nivel de salto atrás?",
       "#a11yStateSummary": "#a11yStateSummary",
       "#acceptV": "#acceptV",
       "#accV": "#accV",
@@ -647,6 +673,7 @@
       "Identify the exact set of requirements that cannot all be true at once.": "Identifique el conjunto exacto de requisitos que no pueden cumplirse todos a la vez.",
       "If a clause has one possible literal left, that literal must be true.": "Si a una cláusula le queda un posible literal, ese literal debe ser verdadero.",
       "Input: P -> Q P CNF stage: Stage 0 / 5 CNF caption: Stage 0 · Original the conjunction of all your sentences, before any rewriting SAT output: ✓ SAT (1 model out of 4)PQTT DPLL step: Step 1 / 3": "Entrada: P -> Q P Etapa CNF: Etapa 0 / 5 Leyenda CNF: Etapa 0 · Original la conjunción de todas tus oraciones, antes de cualquier reescritura Salida SAT: ✓ SAT (1 modelo de 4) Paso PQTT DPLL: Paso 1 / 3",
+      "Input: P -> Q P Trace mode: DPLL branch trace CNF stage: Stage 0 / 5 CNF caption: Stage 0 · Original the conjunction of all your sentences, before any rewriting SAT output: ✓ SAT (1 model out of 4)PQTT Solver step: Step 1 / 3": "Entrada: P -> Q P Modo de traza: Traza de ramificación DPLL Etapa CNF: Etapa 0 / 5 Leyenda CNF: Etapa 0 · Original, la conjunción de todas tus oraciones antes de reescribir Salida SAT: ✓ SAT (1 modelo de 4)PQTT Paso del solucionador: Paso 1 / 3",
       "Input: P -> Q P CNF stage: Stage 0 / 5 SAT output: ✓ SAT (1 model out of 4)PQTT DPLL step: Step 1 / 3": "Entrada: P -> Q P Etapa CNF: Etapa 0 / 5 Salida SAT: ✓ SAT (1 modelo de 4)PQTT Paso DPLL: Paso 1 / 3",
       "Inspect the revealed visual result.": "Inspeccione el resultado visual revelado.",
       "is an OR of literals. A formula is in": "es un O de literales.Una fórmula está en",
@@ -664,6 +691,7 @@
       "Load the triangle three-coloring example and inspect the valid assignments.": "Cargue el ejemplo de tres colores del triángulo e inspeccione las asignaciones válidas.",
       "Load the Wumpus breeze rule and step through the rewrite from a biconditional to conjunctive normal form (CNF).": "Cargue la regla de brisa de Wumpus y recorra la reescritura desde una forma normal bicondicional a conjuntiva (CNF).",
       "Logan M. Dixon ·": "Logan M. Dixon ·",
+      "SAT solver search playback": "Reproducción de la búsqueda del solucionador SAT",
       "Logic solvers work best when every formula has a predictable structure. The terms below separate the formula format, the decision question, and the search procedure.": "Los solucionadores lógicos funcionan mejor cuando cada fórmula tiene una estructura predecible.Los términos siguientes separan el formato de la fórmula, la pregunta de decisión y el procedimiento de búsqueda.",
       "Made for the Introduction to AI course at Haidian Kaiwen Academy.": "Creado para el curso de Introducción a la IA en la Academia Haidian Kaiwen.",
       "Mechanism revealed. Compare the locked prediction with the actual applet state.": "Mecanismo revelado.Compare la predicción bloqueada con el estado real del subprograma.",

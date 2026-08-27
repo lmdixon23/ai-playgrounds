@@ -1,6 +1,6 @@
 # AI Playgrounds Applet Design System and Minimum Feature Contract
 
-**Status:** active v1.7.2 contract
+**Status:** active v1.8.0 contract
 **Scope:** every current and future public learner applet unless a documented concept-specific exception is approved.
 **Purpose:** prevent visual, interaction, accessibility, localization, catalogue, and release drift as new labs are added.
 
