@@ -170,10 +170,21 @@ Object.defineProperty(navigator,'clipboard',{configurable:true,value:{
                 check("cnf-sat: inherited trace visualization accepts the CDCL schema", page.evaluate("() => window.__cnfDpllTreeExperience.getVisibleNodeCount()") >= 1)
                 check("cnf-sat: auxiliary trace presentation identifies CDCL mode", "CDCL" in page.locator("#cnf-eq-title").inner_text())
                 learn_index = actions.index("learn")
+                page.locator("#dpllReset").evaluate("el=>{el.disabled=false;el.click()}")
+                page.wait_for_function("() => window.__cnfDpllPresentationState.getIndex()===0")
                 for _ in range(learn_index):
                     page.locator("#dpllStep").evaluate("el=>{el.disabled=false;el.click()}")
-                page.wait_for_timeout(40)
-                check("cnf-sat: learned clause is visually identified", page.locator("#dpllClauses .clause-chip.learned").count() >= 1)
+                page.wait_for_function(
+                    "target => window.__cnfDpllPresentationState.getIndex()===target",
+                    arg=learn_index,
+                )
+                learned_chips = page.locator("#dpllClauses .clause-chip.learned")
+                learned_detail = {
+                    "index": page.evaluate("() => window.__cnfDpllPresentationState.getIndex()"),
+                    "action": page.locator("#dpllAction").inner_text(),
+                    "chips": learned_chips.all_inner_texts(),
+                }
+                check("cnf-sat: learned clause is visually identified", learned_chips.count() >= 1 and any("L1" in item for item in learned_detail["chips"]), learned_detail)
                 formula = page.locator("#input").input_value()
                 trace_before = page.evaluate("() => window.__cnfDpllPresentationState.getTrace()")
                 index_before = page.evaluate("() => window.__cnfDpllPresentationState.getIndex()")
@@ -224,6 +235,7 @@ Object.defineProperty(navigator,'clipboard',{configurable:true,value:{
                 acceptance = page.evaluate("() => window.__knnModeTest()")
                 check("knn-classifier: deterministic classification/regression contract", acceptance.get("pass") is True, acceptance)
                 responses = seed_responses(page, "knn")
+                page.locator("#knnGuided").evaluate("el=>el.open=true")
                 page.locator("#guidedStart").click()
                 page.locator("#cv").click(position={"x": 320, "y": 240})
                 set_locale(page, "zh")
@@ -313,7 +325,9 @@ Object.defineProperty(navigator,'clipboard',{configurable:true,value:{
                 check("hill-climbing: success frequency and cost appear in separate result columns", page.locator("#benchmarkResults thead th").count() == 6 and all(len(row) == 5 for row in numeric_rows), numeric_rows)
                 check("hill-climbing: benchmark reports completed runs and reproducibility seed", "4242" in status and all(row[-1] == "4/4" for row in numeric_rows), {"status": status, "rows": numeric_rows})
                 for locale in ("zh", "vi", "es"):
+                    stage = f"hill locale {locale}"
                     set_locale(page, locale)
+                    page.wait_for_function("() => document.querySelectorAll('#benchmarkResults tbody tr').length===3")
                     state = {
                         "runs": page.locator("#benchmarkRuns").input_value(),
                         "steps": page.locator("#benchmarkSteps").input_value(),
@@ -325,6 +339,7 @@ Object.defineProperty(navigator,'clipboard',{configurable:true,value:{
                     check(f"hill-climbing: EN->{locale} preserves benchmark/results/responses", state["runs"] == "4" and state["steps"] == "40" and state["seed"] == "4242" and state["rows"] == numeric_rows and state["responses"] == responses, state)
                     check(f"hill-climbing: benchmark headings localize in {locale}", state["firstHeading"] != "Algorithm", state["firstHeading"])
                     set_locale(page, "en")
+                    page.wait_for_function("() => document.querySelectorAll('#benchmarkResults tbody tr').length===3")
                     check(f"hill-climbing: {locale}->EN restores benchmark state", page.locator("#benchmarkRuns").input_value() == "4" and page.locator("#benchmarkResults tbody tr").count() == 3 and response_values(page) == responses)
                 stage = "hill share/reset"
                 page.locator("#shareLink").click()

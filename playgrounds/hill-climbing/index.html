@@ -1763,7 +1763,10 @@
   });
   $('benchmarkReset').addEventListener('click',()=>{benchmarkRunToken++;lastBenchmark=null;$('benchmarkRun').disabled=false;$('benchmarkRuns').value=20;$('benchmarkSteps').value=120;$('benchmarkSeed').value=1729;document.querySelectorAll('[data-benchmark-algo]').forEach(el=>el.checked=['steepest','sa'].includes(el.dataset.benchmarkAlgo));renderBenchmark(null);});
   document.querySelectorAll('.lang-switch button').forEach(button=>button.addEventListener('click',()=>setTimeout(()=>renderBenchmark(lastBenchmark),0)));
-  window.addEventListener('r4languagechange',()=>renderBenchmark(lastBenchmark));
+  // Render after the shared locale lifecycle finishes restoring/translating the
+  // surrounding document. A synchronous render can be overwritten by a later
+  // native-layer refresh during EN/ZH/VI/ES transitions.
+  window.addEventListener('r4languagechange',()=>setTimeout(()=>renderBenchmark(lastBenchmark),0));
   window.__hillBenchmarkTest=()=>{
     const config={problem:'queens',runs:6,steps:80,seed:1729,t0:10,cooling:.995,algorithms:['steepest','sa']};
     const first=computeRestartBenchmark(config),second=computeRestartBenchmark(config);
