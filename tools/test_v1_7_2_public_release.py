@@ -138,7 +138,8 @@ def main() -> int:
         and "setTimeout(wait,20)" not in agent_source
         and agent_source.count("document.addEventListener('DOMContentLoaded',init,{once:true})") == 2
         and agent_source.count("document.addEventListener('DOMContentLoaded',wait,{once:true})") == 1
-        and "if(mutating||active==='en')return" in agent_source,
+        and "if(mutating||active==='en')return" in agent_source
+        and "if(node.textContent!==next)node.textContent=next" in agent_source,
     )
 
     script_count = 0

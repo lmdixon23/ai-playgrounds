@@ -8,6 +8,7 @@ Detailed notes for the current release line live in the dedicated versioned file
 - Made final composition repeatable, added final inline JavaScript/JSON compilation and direct behavior coverage, and chained Pages deployment to a successful exact-sha Verify result.
 - Replaced Lab 14 and modern-shell unbounded startup polling with one event-driven retry and contract-based browser readiness checks.
 - Removed redundant Lab 14 document-wide mutation translation during native-English startup while preserving dynamic non-English localization.
+- Made Lab 14 translated-state writes idempotent to prevent a locale-switch feedback loop with the accessibility state mirror.
 - Reconciled the aggregate release indexes and current metadata. See [detailed v1.7.2 notes](docs/RELEASE_V1_7_2.md).
 
 ## [1.7.1] - 2026-08-27

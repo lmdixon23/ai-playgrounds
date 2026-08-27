@@ -127,7 +127,7 @@ function shouldSkip(node){
 }
 function translateState(){
   const node=document.getElementById('stateText');if(!node)return;
-  try{node.textContent=JSON.stringify(translateJsonValue(JSON.parse(node.textContent),active),null,2);}catch(_){}
+  try{const next=JSON.stringify(translateJsonValue(JSON.parse(node.textContent),active),null,2);if(node.textContent!==next)node.textContent=next;}catch(_){}
 }
 function observe(){if(observer)observer.observe(document.body,{subtree:true,childList:true,characterData:true});}
 function translateTree(root=document.body){
