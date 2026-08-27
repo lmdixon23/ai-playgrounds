@@ -84,7 +84,11 @@ def navigate_ready(page, url: str, feature: str):
     # controls (notably KNN) after initialization. Do not mutate applet state
     # until that final composition layer has completed its synchronous setup.
     page.wait_for_function("() => !!window.__suiteGuidedChallenge", timeout=12_000)
-    page.wait_for_timeout(100)
+    # Older applets still have deferred shell, localization, scenario-gallery,
+    # and guided-challenge initializers. Their public readiness objects can be
+    # available just before the last canonical-state restore runs, so allow the
+    # same bounded settle window used by their dedicated browser suites.
+    page.wait_for_timeout(600)
     return response
 
 
@@ -126,6 +130,16 @@ def wait_for_stable_benchmark(page, timeout: int = 20_000) -> dict:
           rows:[...document.querySelectorAll('#benchmarkResults tbody tr')].map(row=>[...row.cells].slice(1).map(cell=>cell.textContent.trim()))
         })"""
     )
+
+
+def advance_cnf_trace(page, target: int) -> None:
+    for expected in range(1, target + 1):
+        page.locator("#dpllStep").evaluate("el=>{el.disabled=false;el.click()}")
+        page.wait_for_function(
+            "expected => window.__cnfDpllPresentationState.getIndex()===expected",
+            arg=expected,
+            timeout=5_000,
+        )
 
 
 def seed_responses(page, slug: str) -> list[str]:
@@ -201,14 +215,11 @@ Object.defineProperty(navigator,'clipboard',{configurable:true,value:{
                 check("cnf-sat: inherited trace visualization accepts the CDCL schema", page.evaluate("() => window.__cnfDpllTreeExperience.getVisibleNodeCount()") >= 1)
                 check("cnf-sat: auxiliary trace presentation identifies CDCL mode", "CDCL" in page.locator("#cnf-eq-title").inner_text())
                 learn_index = actions.index("learn")
+                stage = "cnf trace reset"
                 page.locator("#dpllReset").evaluate("el=>{el.disabled=false;el.click()}")
-                page.wait_for_function("() => window.__cnfDpllPresentationState.getIndex()===0")
-                for _ in range(learn_index):
-                    page.locator("#dpllStep").evaluate("el=>{el.disabled=false;el.click()}")
-                page.wait_for_function(
-                    "target => window.__cnfDpllPresentationState.getIndex()===target",
-                    arg=learn_index,
-                )
+                page.wait_for_function("() => window.__cnfDpllPresentationState.getIndex()===0", timeout=20_000)
+                stage = "cnf trace seek"
+                advance_cnf_trace(page, learn_index)
                 learned_chips = page.locator("#dpllClauses .clause-chip.learned")
                 learned_detail = {
                     "index": page.evaluate("() => window.__cnfDpllPresentationState.getIndex()"),
@@ -365,13 +376,19 @@ Object.defineProperty(navigator,'clipboard',{configurable:true,value:{
                 check("hill-climbing: deterministic matched-start benchmark contract", acceptance.get("pass") is True, acceptance)
                 check("hill-climbing: original single-run control contract remains valid", original.get("pass") is True, original)
                 responses = seed_responses(page, "hill")
-                stage = "hill benchmark"
+                stage = "hill benchmark setup"
                 page.locator("#probSel").select_option("queens")
                 set_value(page, "#benchmarkRuns", "4")
                 set_value(page, "#benchmarkSteps", "40")
                 set_value(page, "#benchmarkSeed", "4242")
                 page.locator("[data-benchmark-algo]").evaluate_all("els=>els.forEach(el=>{el.checked=['simple','steepest','sa'].includes(el.dataset.benchmarkAlgo)})")
-                page.locator("#benchmarkRun").evaluate("el=>el.click()")
+                stage = "hill benchmark start"
+                page.locator("#benchmarkRun").evaluate("el=>{el.disabled=false;el.click()}")
+                page.wait_for_function(
+                    "() => document.getElementById('benchmarkRun').disabled || document.querySelectorAll('#benchmarkResults tbody tr').length===3",
+                    timeout=5_000,
+                )
+                stage = "hill benchmark finish"
                 benchmark = wait_for_stable_benchmark(page)
                 status = page.locator("#benchmarkStatus").inner_text()
                 numeric_rows = benchmark["rows"]
