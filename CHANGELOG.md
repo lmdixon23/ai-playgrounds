@@ -7,6 +7,7 @@ Detailed notes for the current release line live in the dedicated versioned file
 - Completed mature outer-shell, learner-support, Quick Assign packet, accessibility-text, provenance, and discovery-metadata parity for Labs 13-15 without changing their mechanisms or curriculum roles.
 - Made final composition repeatable, added final inline JavaScript/JSON compilation and direct behavior coverage, and chained Pages deployment to a successful exact-sha Verify result.
 - Replaced Lab 14 and modern-shell unbounded startup polling with one event-driven retry and contract-based browser readiness checks.
+- Removed redundant Lab 14 document-wide mutation translation during native-English startup while preserving dynamic non-English localization.
 - Reconciled the aggregate release indexes and current metadata. See [detailed v1.7.2 notes](docs/RELEASE_V1_7_2.md).
 
 ## [1.7.1] - 2026-08-27

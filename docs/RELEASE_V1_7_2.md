@@ -23,6 +23,7 @@ v1.7.2 is a product-consistency and release-assurance patch. It brings Labs 13-1
 - The v1.7.1 base build runs in a clean isolated workspace, making repeated v1.7.2 builds byte-for-byte deterministic even when ignored historical release evidence exists locally.
 - The one-time `ai-playgrounds-theme` migration from v1.7.1 remains intact; modern labs continue to read and write the canonical `theme` preference.
 - Lab 14 and the shared modern shell now defer at most once to `DOMContentLoaded` and fail visibly if an inherited runtime is unavailable, eliminating unbounded initializer polling that could starve browser lifecycle events.
+- Lab 14's document-wide localization observer skips mutation translation during the native English state; switching to ZH/VI/ES still translates the complete final document and observes later dynamic changes.
 - Deployment now follows a successful exact-main-sha Verify workflow instead of racing the complete release and browser checks.
 - Aggregate `CHANGELOG.md` and `RELEASE_NOTES.md` indexes are reconciled with the dedicated versioned release files without rewriting historical entries.
 
