@@ -105,6 +105,29 @@ def set_locale(page, locale: str) -> None:
     page.wait_for_timeout(120)
 
 
+def wait_for_stable_benchmark(page, timeout: int = 20_000) -> dict:
+    page.wait_for_function(
+        """() => {
+          const rows=[...document.querySelectorAll('#benchmarkResults tbody tr')];
+          const ready=!document.getElementById('benchmarkRun').disabled
+            && rows.length===3 && rows.every(row=>row.cells.length===6);
+          if(!ready){delete window.__v180BenchmarkStable;return false}
+          const key=rows.map(row=>row.textContent).join('|');
+          if(!window.__v180BenchmarkStable||window.__v180BenchmarkStable.key!==key){
+            window.__v180BenchmarkStable={key,at:performance.now()};return false;
+          }
+          return performance.now()-window.__v180BenchmarkStable.at>=300;
+        }""",
+        timeout=timeout,
+    )
+    return page.evaluate(
+        """() => ({
+          headings:[...document.querySelectorAll('#benchmarkResults thead th')].map(cell=>cell.textContent.trim()),
+          rows:[...document.querySelectorAll('#benchmarkResults tbody tr')].map(row=>[...row.cells].slice(1).map(cell=>cell.textContent.trim()))
+        })"""
+    )
+
+
 def seed_responses(page, slug: str) -> list[str]:
     fields = page.locator("[data-lab-answer]")
     values = []
@@ -164,8 +187,11 @@ Object.defineProperty(navigator,'clipboard',{configurable:true,value:{
                 check("cnf-sat: final artifact HTTP 200", response is not None and response.status == 200)
                 responses = seed_responses(page, "cnf")
                 stage = "cnf CDCL"
-                page.locator("#exCdcl").click()
-                page.wait_for_function("() => window.__cnfDpllPresentationState.getTrace().some(row=>row.action==='learn')")
+                page.locator("#exCdcl").evaluate("el=>el.click()")
+                page.wait_for_function(
+                    "() => document.getElementById('solverMode').value==='cdcl' && window.__cnfDpllPresentationState.getTrace().some(row=>row.action==='learn')",
+                    timeout=20_000,
+                )
                 acceptance = page.evaluate("() => window.__cdclModeTest()")
                 check("cnf-sat: deterministic CDCL acceptance contract", acceptance.get("pass") is True, acceptance)
                 trace = page.evaluate("() => window.__cnfDpllPresentationState.getTrace()")
@@ -338,28 +364,28 @@ Object.defineProperty(navigator,'clipboard',{configurable:true,value:{
                 set_value(page, "#benchmarkSteps", "40")
                 set_value(page, "#benchmarkSeed", "4242")
                 page.locator("[data-benchmark-algo]").evaluate_all("els=>els.forEach(el=>{el.checked=['simple','steepest','sa'].includes(el.dataset.benchmarkAlgo)})")
-                page.locator("#benchmarkRun").click()
-                page.wait_for_function("() => !document.getElementById('benchmarkRun').disabled && document.querySelectorAll('#benchmarkResults tbody tr').length===3", timeout=20_000)
+                page.locator("#benchmarkRun").evaluate("el=>el.click()")
+                benchmark = wait_for_stable_benchmark(page)
                 status = page.locator("#benchmarkStatus").inner_text()
-                numeric_rows = page.locator("#benchmarkResults tbody tr").evaluate_all("rows=>rows.map(row=>[...row.cells].slice(1).map(cell=>cell.textContent.trim()))")
-                check("hill-climbing: success frequency and cost appear in separate result columns", page.locator("#benchmarkResults thead th").count() == 6 and all(len(row) == 5 for row in numeric_rows), numeric_rows)
+                numeric_rows = benchmark["rows"]
+                check("hill-climbing: success frequency and cost appear in separate result columns", len(benchmark["headings"]) == 6 and all(len(row) == 5 for row in numeric_rows), benchmark)
                 check("hill-climbing: benchmark reports completed runs and reproducibility seed", "4242" in status and all(row[-1] == "4/4" for row in numeric_rows), {"status": status, "rows": numeric_rows})
                 for locale in ("zh", "vi", "es"):
                     stage = f"hill locale {locale}"
                     set_locale(page, locale)
-                    page.wait_for_function("() => document.querySelectorAll('#benchmarkResults tbody tr').length===3")
+                    localized_benchmark = wait_for_stable_benchmark(page)
                     state = {
                         "runs": page.locator("#benchmarkRuns").input_value(),
                         "steps": page.locator("#benchmarkSteps").input_value(),
                         "seed": page.locator("#benchmarkSeed").input_value(),
-                        "rows": page.locator("#benchmarkResults tbody tr").evaluate_all("rows=>rows.map(row=>[...row.cells].slice(1).map(cell=>cell.textContent.trim()))"),
+                        "rows": localized_benchmark["rows"],
                         "responses": response_values(page),
                         "firstHeading": page.locator("#benchmarkResults thead th").first.inner_text(),
                     }
                     check(f"hill-climbing: EN->{locale} preserves benchmark/results/responses", state["runs"] == "4" and state["steps"] == "40" and state["seed"] == "4242" and state["rows"] == numeric_rows and state["responses"] == responses, state)
                     check(f"hill-climbing: benchmark headings localize in {locale}", state["firstHeading"] != "Algorithm", state["firstHeading"])
                     set_locale(page, "en")
-                    page.wait_for_function("() => document.querySelectorAll('#benchmarkResults tbody tr').length===3")
+                    wait_for_stable_benchmark(page)
                     check(f"hill-climbing: {locale}->EN restores benchmark state", page.locator("#benchmarkRuns").input_value() == "4" and page.locator("#benchmarkResults tbody tr").count() == 3 and response_values(page) == responses)
                 stage = "hill share/reset"
                 page.locator("#shareLink").click()
