@@ -131,6 +131,13 @@ def main() -> int:
             "undefinedundefined" not in source and re.search(r">\s*undefined\s*<", source) is None,
         )
 
+    agent_source = (SITE / "playgrounds" / "agent-tool-context" / "index.html").read_text(encoding="utf-8")
+    check(
+        "agent startup has no unbounded zero-delay initializer polling",
+        "setTimeout(init,0)" not in agent_source
+        and agent_source.count("document.addEventListener('DOMContentLoaded',init,{once:true})") == 2,
+    )
+
     script_count = 0
     javascript: list[dict[str, str]] = []
     for path in sorted(SITE.rglob("*.html")):

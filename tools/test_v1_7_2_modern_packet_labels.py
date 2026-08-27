@@ -101,6 +101,15 @@ def state_text(page, source_id: str) -> str:
     )
 
 
+def navigate_ready(page, uri: str):
+    """Wait for the final app contract, not the incidental window-load event."""
+    response = page.goto(uri, wait_until="commit", timeout=20_000)
+    page.wait_for_selector("#ap-standard-language-select", timeout=20_000)
+    page.wait_for_selector("details[data-quick-assign-id]", timeout=20_000)
+    page.wait_for_selector("#ap-modern-a11y-state", timeout=20_000)
+    return response
+
+
 def change_mechanism_state(page, slug: str) -> tuple[str, str]:
     source_id = SOURCE_IDS[slug]
     before = state_text(page, source_id)
@@ -163,15 +172,8 @@ def main() -> int:
                 page.on("console", lambda msg, target=local_console_errors: target.append(msg.text) if msg.type == "error" else None)
                 stage = "navigate"
                 try:
-                    response = page.goto(
-                        f"{origin}/playgrounds/{slug}/index.html?lang=en",
-                        wait_until="load",
-                        timeout=20_000,
-                    )
+                    response = navigate_ready(page, f"{origin}/playgrounds/{slug}/index.html?lang=en")
                     check(f"{slug}: local artifact HTTP 200", response is not None and response.status == 200, None if response is None else response.status)
-                    page.wait_for_selector("#ap-standard-language-select")
-                    page.wait_for_selector("details[data-quick-assign-id]")
-                    page.wait_for_selector("#ap-modern-a11y-state")
                     qa = page.locator("details[data-quick-assign-id]")
                     qa.evaluate("el=>el.open=true")
 

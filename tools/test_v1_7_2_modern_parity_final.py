@@ -38,6 +38,14 @@ def qa_surface_count(source: str) -> int:
     return len(re.findall(r'<[^>]+\bdata-quick-assign-id\s*=', source, flags=re.I))
 
 
+def navigate_ready(page, uri: str):
+    """Wait for the final app contract, not the incidental window-load event."""
+    response = page.goto(uri, wait_until="commit", timeout=20_000)
+    page.wait_for_selector("#ap-standard-language-select", timeout=20_000)
+    page.wait_for_selector("details[data-quick-assign-id]", timeout=20_000)
+    return response
+
+
 class QuietHandler(http.server.SimpleHTTPRequestHandler):
     def log_message(self, _format: str, *args) -> None:
         return
@@ -121,8 +129,8 @@ def main() -> int:
                 page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
                 for slug in MODERN:
                     uri = f"{origin}/playgrounds/{slug}/index.html?lang=en"
-                    page.goto(uri, wait_until="load", timeout=20_000)
-                    page.wait_for_selector("#ap-standard-language-select", timeout=5_000)
+                    response = navigate_ready(page, uri)
+                    check(f"{slug} {width}: local artifact HTTP 200", response is not None and response.status == 200, None if response is None else response.status)
                     check(f"{slug} {width}: one visible public H1", page.locator("h1:visible").count() == 1, page.locator("h1:visible").count())
                     check(f"{slug} {width}: skip target exists", page.locator("#ap-modern-interactive-start").count() == 1)
                     check(f"{slug} {width}: Share / More / Reset visible", page.locator("#ap-modern-share:visible").count() == 1 and page.locator("#ap-modern-more>summary:visible").count() == 1 and page.locator("#ap-standard-reset:visible").count() == 1)
@@ -174,7 +182,7 @@ def main() -> int:
             embed_page = embed_context.new_page()
             for slug in MODERN:
                 uri = f"{origin}/playgrounds/{slug}/index.html?lang=en&embed=1"
-                embed_page.goto(uri, wait_until="load", timeout=20_000)
+                navigate_ready(embed_page, uri)
                 embed_page.wait_for_timeout(50)
                 check(f"{slug}: embed mode activates", "embed-mode" in (embed_page.locator("body").get_attribute("class") or ""))
                 check(f"{slug}: embed hides suite header", embed_page.locator(".ap-standard-header:visible").count() == 0)
