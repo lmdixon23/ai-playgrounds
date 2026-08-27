@@ -269,7 +269,14 @@ Object.defineProperty(navigator,'clipboard',{configurable:true,value:{
                 page.locator('[data-suite-mode="guided"]').click()
                 page.wait_for_selector("#guidedStart", state="visible")
                 page.locator("#guidedStart").click()
-                page.locator("#cv").click(position={"x": 320, "y": 240})
+                # The keyboard-accessible SVG overlay intentionally occupies
+                # the same visual plane as the canvas. Dispatch the canvas's
+                # native click contract at the requested point instead of
+                # asking Playwright to click through that overlay.
+                page.locator("#cv").evaluate(
+                    "(el,point)=>{const r=el.getBoundingClientRect();el.dispatchEvent(new MouseEvent('click',{bubbles:true,clientX:r.left+point.x,clientY:r.top+point.y}))}",
+                    {"x": 320, "y": 240},
+                )
                 set_locale(page, "zh")
                 set_locale(page, "en")
                 check("knn-classifier: classification guided query survives a locale round trip", "Step 2" in page.locator("#guidedStatus").inner_text())
