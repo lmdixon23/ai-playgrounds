@@ -105,7 +105,13 @@ def seed_responses(page, slug: str) -> list[str]:
     values = []
     for index in range(fields.count()):
         value = f"v180-{slug}-{index}"
-        fields.nth(index).fill(value)
+        # Quick Assign answer fields live inside a collapsed disclosure by
+        # default. Seed them through the same input/change contract so this
+        # state-preservation test does not depend on disclosure visibility.
+        fields.nth(index).evaluate(
+            "(el,value)=>{el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))}",
+            value,
+        )
         values.append(value)
     return values
 
