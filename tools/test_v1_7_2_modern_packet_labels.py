@@ -242,6 +242,18 @@ def main() -> int:
                                 page.locator("#ap-modern-a11y>summary").inner_text().strip() != english_summary,
                             )
 
+                    set_locale(page, "en")
+                    page.wait_for_function(
+                        "expected=>document.querySelector('[data-qa-answer=\"predict\"]')?.getAttribute('aria-label')===expected",
+                        arg=EXPECTED["en"]["predict"],
+                    )
+                    after = state_text(page, source_id)
+                    qa.locator('[data-qa-action="refresh-state"]').click()
+                    page.wait_for_function(
+                        "sid=>{const source=document.getElementById(sid);const packet=document.querySelector('[data-qa-modern-state]');return String(source?.value||source?.textContent||'').trim()===String(packet?.textContent||'').trim()}",
+                        arg=source_id,
+                    )
+
                     stage = "copy-share-embed"
                     qa.locator('[data-qa-action="copy"]').click()
                     page.wait_for_function("()=>!!window.__v172Clipboard")
