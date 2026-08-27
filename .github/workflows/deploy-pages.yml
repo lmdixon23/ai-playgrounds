@@ -1,12 +1,14 @@
 name: Deploy to GitHub Pages
 
 on:
-  push:
-    branches: [main]
+  workflow_run:
+    workflows: ["Verify"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
   contents: read
+  actions: read
   pages: write
   id-token: write
 
@@ -16,22 +18,50 @@ concurrency:
 
 jobs:
   deploy:
+    if: >-
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.conclusion == 'success')
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      DEPLOY_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+      GH_TOKEN: ${{ github.token }}
 
     steps:
-      - name: Checkout
+      - name: Checkout exact verified revision
         uses: actions/checkout@v6
-      - name: Release check
-        run: python tools/release_check.py
-      - name: Check v1.7.1 release metadata
-        run: python tools/check_release_metadata.py
-      - name: Build deterministic v1.7.1 public site
-        run: python tools/build_site_v1_7_1.py
+        with:
+          ref: ${{ env.DEPLOY_SHA }}
+          fetch-depth: 0
+      - name: Confirm exact current main revision
+        run: |
+          set -euo pipefail
+          git fetch origin main --quiet
+          test "$(git rev-parse HEAD)" = "$DEPLOY_SHA"
+          test "$(git rev-parse origin/main)" = "$DEPLOY_SHA"
+      - name: Require exact-sha Verify for manual deployment
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          set -euo pipefail
+          VERIFY_ID="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow Verify --commit "$DEPLOY_SHA" --event push --json databaseId,conclusion,status --jq 'map(select(.status == "completed" and .conclusion == "success"))[0].databaseId // empty')"
+          test -n "$VERIFY_ID"
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Release and metadata checks
+        run: |
+          python tools/release_check.py
+          python tools/check_release_metadata.py
+      - name: Build deterministic v1.7.2 public site
+        run: python tools/build_site_v1_7_2.py
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload minimal Pages artifact

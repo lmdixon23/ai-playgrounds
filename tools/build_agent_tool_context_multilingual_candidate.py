@@ -127,7 +127,7 @@ function shouldSkip(node){
 }
 function translateState(){
   const node=document.getElementById('stateText');if(!node)return;
-  try{node.textContent=JSON.stringify(translateJsonValue(JSON.parse(node.textContent),active),null,2);}catch(_){}
+  try{const next=JSON.stringify(translateJsonValue(JSON.parse(node.textContent),active),null,2);if(node.textContent!==next)node.textContent=next;}catch(_){}
 }
 function observe(){if(observer)observer.observe(document.body,{subtree:true,childList:true,characterData:true});}
 function translateTree(root=document.body){
@@ -149,7 +149,7 @@ function setLocale(locale){
 function getLocale(){return active;}
 for(const button of document.querySelectorAll('#lab14-locale-bar button[data-locale]'))button.addEventListener('click',()=>setLocale(button.dataset.locale));
 observer=new MutationObserver(records=>{
-  if(mutating)return;const roots=new Set();
+  if(mutating||active==='en')return;const roots=new Set();
   for(const record of records){
     for(const node of record.addedNodes){if(node.nodeType===Node.ELEMENT_NODE)roots.add(node);else if(node.nodeType===Node.TEXT_NODE&&node.parentElement)roots.add(node.parentElement);}
     if(record.type==='characterData'&&record.target.parentElement)roots.add(record.target.parentElement);

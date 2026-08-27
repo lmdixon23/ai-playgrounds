@@ -1,5 +1,32 @@
 # Changelog
 
+Detailed notes for the current release line live in the dedicated versioned files linked below. Historical entries remain in this aggregate unchanged.
+
+## [1.7.2] - 2026-08-27
+
+- Completed mature outer-shell, learner-support, Quick Assign packet, accessibility-text, provenance, and discovery-metadata parity for Labs 13-15 without changing their mechanisms or curriculum roles.
+- Made final composition repeatable, added final inline JavaScript/JSON compilation and direct behavior coverage, and chained Pages deployment to a successful exact-sha Verify result.
+- Replaced Lab 14 and modern-shell unbounded startup polling with one event-driven retry and contract-based browser readiness checks.
+- Removed redundant Lab 14 document-wide mutation translation during native-English startup while preserving dynamic non-English localization.
+- Made Lab 14 translated-state writes idempotent to prevent a locale-switch feedback loop with the accessibility state mirror.
+- Reconciled the aggregate release indexes and current metadata. See [detailed v1.7.2 notes](docs/RELEASE_V1_7_2.md).
+
+## [1.7.1] - 2026-08-27
+
+- Unified modern-lab theme persistence with the suite-wide `theme` preference and retained one-time migration from the temporary key. See [detailed v1.7.1 notes](docs/RELEASE_V1_7_1.md).
+
+## [1.7.0] - 2026-08-26
+
+- Activated one stable, four-locale Level-1 Quick Assign in every public applet while preserving local-only response handling. See [detailed v1.7.0 notes](docs/RELEASE_V1_7_0.md).
+
+## [1.6.2] - 2026-08-26
+
+- Normalized exact public-artifact version and analytics provenance while preserving the fifteen-lab boundary. See [detailed v1.6.2 notes](docs/RELEASE_V1_6_2.md).
+
+## [1.6.1] - 2026-08-26
+
+- Standardized the cross-suite applet contract and introduced the first Quick Assign canaries. See [detailed v1.6.1 notes](docs/RELEASE_V1_6_1.md).
+
 ## [1.6.0] - 2026-08-25
 
 ### Added

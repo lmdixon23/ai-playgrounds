@@ -105,8 +105,12 @@ function localizeExperience(){
 function installStateHooks(){
  for(const selector of ['#step','#reset','#scenario']){const el=$(selector);if(el)el.addEventListener(selector==='#scenario'?'change':'click',()=>queueMicrotask(renderJourney));}
 }
+let deferredInit=false;
 function init(){
- if(!window.Lab14Localization||!window.Lab14Prototype)return setTimeout(init,0);
+ if(!window.Lab14Localization||!window.Lab14Prototype){
+  if(document.readyState==='loading'&&!deferredInit){deferredInit=true;document.addEventListener('DOMContentLoaded',init,{once:true});return}
+  console.error('Lab 14 journey could not start because its localization or prototype runtime is unavailable');return;
+ }
  installLanguageSelect();installJourney();installStateHooks();localizeExperience();
  window.addEventListener('lab14localechange',()=>{updateUrl(locale());localizeExperience()});
  window.Lab14V14Experience={render:renderJourney};

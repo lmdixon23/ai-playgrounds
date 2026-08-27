@@ -1,8 +1,10 @@
 # AI Playgrounds Applet Design System and Minimum Feature Contract
 
-**Status:** v1.6.1 candidate contract  
-**Scope:** every current and future public learner applet unless a documented concept-specific exception is approved.  
+**Status:** active v1.7.2 contract
+**Scope:** every current and future public learner applet unless a documented concept-specific exception is approved.
 **Purpose:** prevent visual, interaction, accessibility, localization, catalogue, and release drift as new labs are added.
+
+The [v1.7.2 parity addendum](APPLET_DESIGN_SYSTEM_V1_7_2_ADDENDUM.md) is normative for mature header actions, Share/Embed, settings export, skip links, discovery metadata, shared theme migration, and the distinction between product-shell parity and concept-specific learning bodies.
 
 ## 1. Governing principle
 
