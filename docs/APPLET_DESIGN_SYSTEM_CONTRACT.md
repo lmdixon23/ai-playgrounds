@@ -1,10 +1,10 @@
 # AI Playgrounds Applet Design System and Minimum Feature Contract
 
-**Status:** active v1.8.0 contract
+**Status:** active v1.8.1 contract
 **Scope:** every current and future public learner applet unless a documented concept-specific exception is approved.
 **Purpose:** prevent visual, interaction, accessibility, localization, catalogue, and release drift as new labs are added.
 
-The [v1.7.2 parity addendum](APPLET_DESIGN_SYSTEM_V1_7_2_ADDENDUM.md) is normative for mature header actions, Share/Embed, settings export, skip links, discovery metadata, shared theme migration, and the distinction between product-shell parity and concept-specific learning bodies.
+The [v1.7.2 parity addendum](APPLET_DESIGN_SYSTEM_V1_7_2_ADDENDUM.md) remains normative for mature header actions, Share/Embed, settings export, skip links, discovery metadata, and shared theme migration. The [v1.8.1 learner-parity addendum](APPLET_DESIGN_SYSTEM_V1_8_1_ADDENDUM.md) supersedes its learning-body exceptions and requires comparable scenario-led teaching depth across all fifteen applets.
 
 ## 1. Governing principle
 
@@ -46,12 +46,12 @@ The *outer shell* is mandatory. Internal lab layouts may differ.
 Every public applet must expose the same conceptual header components in this order:
 
 1. **Back to AI Playgrounds** link.
-2. **Applet title** (`h1`).
-3. Optional one-sentence subtitle/descriptor when it materially helps orientation.
-4. **Language selector** using the shared native-select presentation.
-5. **Theme control** when dark mode is supported by the suite release.
-6. **Reset** action.
-7. Any applet-specific high-level action only after these shared controls.
+2. **Theme** and **language** preferences in the utility row.
+3. **Applet title** (`h1`) and an optional one-sentence descriptor.
+4. A visible action row with **Share**, **Embed**, a local mechanism export when supported, and **Reset**.
+5. Any additional applet-specific high-level action only after these shared controls.
+
+An applet may omit an export that has no honest representation for its mechanism. It may not hide otherwise shared actions behind an applet-generation-specific menu.
 
 The header should use the suite shell classes/tokens (`page-header`, header utility/main/action group or the current successor tokens) rather than creating an unrelated hero/navigation system.
 
@@ -88,7 +88,7 @@ Every applet must provide enough prose to explain:
 - at least one common misconception where relevant;
 - what the simplified model leaves out.
 
-The prose may be shorter for a very simple lab and longer for mechanisms such as Transformers or agent runtimes.
+The prose may be shorter for a very simple lab and longer for mechanisms such as Transformers or agent runtimes. A compact fidelity note or vocabulary disclosure is not a substitute for the complete learner explanation when the mechanism has several dependent stages.
 
 ## 3.5 Footer / provenance
 
@@ -233,6 +233,8 @@ Concept-specific colors are permitted inside a visualization. Shared controls/he
 
 Dark mode, when present, must preserve semantic distinctions and not rely on naïve inversion of canvas/SVG content.
 
+Every hard-coded light surface inside a themed applet—including SVG node fills, warnings, status pills, matrices, inputs, and comparison cards—must have an audited dark equivalent. Final browser QA targets at least 4.5:1 computed contrast for normal text on the representative tested surfaces; this engineering target is not a claim of WCAG conformance.
+
 ---
 
 # 7. Required learning components
@@ -258,7 +260,7 @@ A Guided Challenge should not merely be a multiple-choice quiz disconnected from
 
 ## 7.3 Scenario / example gallery
 
-Provide a small set of cases when contrasting scenarios meaningfully reveal the concept. Do not add a gallery solely for consistency if one carefully chosen initial state is better.
+Provide a small set of cases when contrasting scenarios meaningfully reveal the concept. For a multi-stage or multi-failure-mode mechanism, a selector alone is not the teaching sequence: expose approximately five plain-language cases with a core question, run-and-watch direction, prediction, explanation prompt, and a direct way to apply the state. A smaller set is acceptable only when the mechanism genuinely has fewer distinct teaching cases and the exception is documented.
 
 ## 7.4 Visual explanation
 
@@ -474,6 +476,9 @@ Minimum suite-level checks:
 11. **Local references:** all generated relative links/assets resolve.
 12. **Analytics coverage:** every public HTML surface expected to be measured has the privacy wrapper exactly once.
 13. **Version provenance:** current public surfaces expose the release version, not a prior current version.
+14. **Executable composition:** every final inline script compiles after all wrappers are inserted at structural document boundaries.
+15. **Curriculum depth:** each complex applet exposes a featured experiment, scenario-led cases, terminology primer, step-by-step explanation, and teacher prompts in every claimed learner locale.
+16. **Theme contrast:** representative shared, semantic, matrix, warning, input, and SVG surfaces remain legible in the final dark-theme composition.
 
 ---
 

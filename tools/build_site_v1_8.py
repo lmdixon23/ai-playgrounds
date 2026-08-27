@@ -65,8 +65,39 @@ def patch_release_identity() -> None:
         notes = notes.replace(anchor, section + anchor, 1)
     notes_path.write_text(notes, encoding="utf-8")
 
-    for name in ("codemeta.json", "CITATION.cff"):
-        shutil.copy2(ROOT / name, SITE / name)
+    # Keep this historical composition reproducible after repository-level
+    # citation metadata advances to a successor release.
+    shutil.copy2(ROOT / "codemeta.json", SITE / "codemeta.json")
+    codemeta_path = SITE / "codemeta.json"
+    codemeta = json.loads(codemeta_path.read_text(encoding="utf-8"))
+    codemeta["softwareVersion"] = VERSION
+    codemeta["identifier"] = "https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.8.0"
+    codemeta["description"] = (
+        "Fifteen multilingual, offline-ready interactive AI labs spanning thirteen "
+        "Foundations/course-track mechanisms and two Modern AI extensions. v1.8.0 "
+        "adds seeded repeated-restart benchmarking to Hill Climbing, continuous-target "
+        "regression to K-Nearest Neighbors, and a bounded first-UIP CDCL trace to "
+        "CNF/SAT while preserving all fifteen applets, assignments, languages, privacy "
+        "boundaries, and the original modes."
+    )
+    codemeta_path.write_text(json.dumps(codemeta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    shutil.copy2(ROOT / "CITATION.cff", SITE / "CITATION.cff")
+    citation_path = SITE / "CITATION.cff"
+    citation = citation_path.read_text(encoding="utf-8")
+    citation = re.sub(r"(?m)^version:\s*.*$", "version: '1.8.0'", citation, count=1)
+    citation = re.sub(
+        r"(?m)^abstract:\s*.*$",
+        "abstract: Fifteen multilingual, offline-ready interactive AI labs spanning "
+        "thirteen Foundations/course-track mechanisms and two Modern AI extensions. "
+        "v1.8.0 adds seeded repeated-restart benchmarking to Hill Climbing, "
+        "continuous-target regression to K-Nearest Neighbors, and a bounded first-UIP "
+        "CDCL trace to CNF/SAT while preserving all fifteen applets, assignments, "
+        "languages, privacy boundaries, and the original modes.",
+        citation,
+        count=1,
+    )
+    citation_path.write_text(citation, encoding="utf-8")
 
 
 def validate() -> None:

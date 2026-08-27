@@ -3,7 +3,7 @@
 **Parent contract:** `docs/APPLET_DESIGN_SYSTEM_CONTRACT.md`
 **Applies to:** all future public applets and any existing applet whose outer shell is materially revised.
 
-This addendum records cross-generation rules discovered by comparing the mature original twelve applets against Labs 13–15. It does not require identical learning bodies.
+This addendum records cross-generation shell rules discovered by comparing the mature original twelve applets against Labs 13–15. Its former learning-body exceptions are superseded by the [v1.8.1 learner-parity addendum](APPLET_DESIGN_SYSTEM_V1_8_1_ADDENDUM.md).
 
 ## 1. Header action hierarchy
 
@@ -114,15 +114,16 @@ Every public applet must expose the same minimum crawler/social contract:
 
 These fields should be generated from the final catalogue rather than hand-maintained separately per new lab whenever possible.
 
-## 9. Product-shell parity is not body uniformity
+## 9. Product-shell parity is not body uniformity (superseded in part by v1.8.1)
 
 The following remain concept-specific and must **not** be added simply to make counts match:
 
-- a scenario gallery when a specialized scenario/challenge selector is clearer;
 - a second learning-mode system when Guided Challenge + Quick Assign already covers the pedagogical states;
 - a second response packet;
 - CSV/PNG export without a meaningful tabular/visual artifact;
 - decorative animations or gamification.
+
+As of v1.8.1, a specialized scenario selector does not by itself replace the plain-language scenario-led curriculum. Complex labs still require a featured experiment and explicit predict–run–explain cases, though their interactive controls and visualization remain concept-specific.
 
 The burden is on a future integration PR to state whether each parent-contract capability is:
 

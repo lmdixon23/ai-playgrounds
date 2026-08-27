@@ -13,7 +13,7 @@ Fifteen multilingual, offline-ready interactive AI labs spanning thirteen Founda
 
 **Live site:** https://lmdixon23.github.io/ai-playgrounds/
 
-**Current release:** [v1.8.0](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.8.0)
+**Current release:** [v1.8.1](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.8.1)
 
 **Archived v1.0.1 DOI:** [10.5281/zenodo.21854217](https://doi.org/10.5281/zenodo.21854217) · **All-versions DOI:** [10.5281/zenodo.21854216](https://doi.org/10.5281/zenodo.21854216)
 
@@ -33,7 +33,7 @@ Each applet includes:
 
 - one focused AI concept,
 - multilingual learner-facing support across English, Simplified Chinese, Vietnamese, and Spanish,
-- a featured experiment and scenario gallery or equivalent prediction workflow,
+- a featured experiment and scenario-led prediction workflow,
 - visual and text-based explanations,
 - teacher notes and model limitations where appropriate,
 - keyboard guidance,
@@ -48,6 +48,14 @@ The Foundations track covers pathfinding, local search, Wumpus World, CNF/SAT, B
 
 The planning matrix in [docs/AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md](docs/AI_CURRICULUM_COVERAGE_MATRIX_2026-08-25.md) compares coverage against AIMA and the Spring 2026 CS50/CSCI E-80 AI curriculum.
 
+## v1.8.1: modern-lab learner parity
+
+v1.8.1 corrects an overly narrow earlier parity claim. Transformer Language Modeling, Agent Tool Use, and Minimax/Alpha-Beta already shared the release shell, but their learner-facing sequence was materially thinner than the first twelve applets.
+
+Each now has one featured experiment, five plain-language predict–run–explain scenarios, a terminology primer, a step-by-step mechanism explanation, and teacher prompts in EN/ZH/VI/ES. Scenario buttons apply the existing native controls; no second algorithm or simulation state was added.
+
+The patch also shortens their catalogue descriptions, exposes Share / Embed / JSON / Reset in the established action-row style, removes the always-open duplicate state mirror, makes Quick Assign state capture learner-triggered, and fixes dark-theme legibility for headings, actions, Transformer mask/warning surfaces, agent semantic states, and Minimax controls/cards/SVG nodes. See [the detailed v1.8.1 release notes](docs/RELEASE_V1_8_1.md).
+
 ## v1.8.0: algorithm modes and reproducible comparison
 
 v1.8.0 adds three opt-in mechanism modes while preserving the original behavior and the fifteen-lab curriculum boundary:
@@ -58,9 +66,9 @@ v1.8.0 adds three opt-in mechanism modes while preserving the original behavior 
 
 All three modes preserve shareable state, local-only Quick Assign responses, hard-reset recovery, and EN/ZH/VI/ES presentation. Their fidelity disclosures distinguish the inspectable teaching implementations from production solvers or hardware-performance benchmarks. See [the detailed v1.8.0 release notes](docs/RELEASE_V1_8_0.md).
 
-## v1.7.2: modern-lab parity and release assurance
+## v1.7.2: modern-lab shell parity and release assurance
 
-v1.7.2 completes mature product-shell and learner-support parity for Transformer Language Modeling, Agent Tool Use, and Minimax/Alpha-Beta while preserving their concept-specific mechanism bodies.
+v1.7.2 completed mature product-shell and assignment-support parity for Transformer Language Modeling, Agent Tool Use, and Minimax/Alpha-Beta while preserving their concept-specific mechanism bodies. v1.8.1 later corrected the remaining learner-curriculum depth gap.
 
 Labs 13-15 now share the established Share / More / Reset hierarchy, skip link, Big idea / What to watch orientation, local settings export, key terms, text-and-keyboard support, model-fidelity disclosure, suite provenance, and complete discovery metadata. Their existing Quick Assigns now refresh from the real text-equivalent mechanism state, copy state plus responses, print only the packet, and localize action/accessibility labels across EN/ZH/VI/ES without erasing learner text.
 
@@ -126,7 +134,7 @@ The lab includes editable terminal utilities, deterministic trace playback, save
 
 ## Product hardening inherited from v1.5 through v1.8
 
-v1.5 applied mechanism-first engagement improvements only where the Full Assurance Stack found a real missing relation. v1.5.1 added learner-centered HCI/adoption hardening, corrected privacy-minimized GoatCounter semantics, and the NN-1/CNN-1 Activity Pack canaries. v1.6.0 added Minimax/Alpha-Beta. v1.6.1 standardized cross-suite product contracts and introduced the first four Quick Assign canaries. v1.6.2 normalized current-version provenance in the exact deployed artifact. v1.7.0 promoted the Quick Assign layer to all fifteen labs. v1.7.1 aligned modern-shell theme persistence. v1.7.2 completed the remaining bounded product-shell parity and final-artifact assurance work. v1.8.0 adds three opt-in, deterministic mechanism modes without changing the applet, assignment, locale, or privacy boundaries.
+v1.5 applied mechanism-first engagement improvements only where the Full Assurance Stack found a real missing relation. v1.5.1 added learner-centered HCI/adoption hardening, corrected privacy-minimized GoatCounter semantics, and the NN-1/CNN-1 Activity Pack canaries. v1.6.0 added Minimax/Alpha-Beta. v1.6.1 standardized cross-suite product contracts and introduced the first four Quick Assign canaries. v1.6.2 normalized current-version provenance in the exact deployed artifact. v1.7.0 promoted the Quick Assign layer to all fifteen labs. v1.7.1 aligned modern-shell theme persistence. v1.7.2 completed bounded product-shell parity and final-artifact assurance. v1.8.0 added three opt-in deterministic mechanism modes. v1.8.1 completes the previously missing modern-lab learner sequence and dark-theme parity without changing the applet, assignment, locale, or privacy boundaries.
 
 ## Quick Assigns and Activity Packs
 
@@ -145,17 +153,17 @@ Responses remain local to the learner's browser unless the learner or teacher de
 
 ## Explore
 
-Build the deterministic v1.8.0 Pages artifact with:
+Build the deterministic v1.8.1 Pages artifact with:
 
 ```bash
-python tools/build_site_v1_8.py
+python tools/build_site_v1_8_1.py
 ```
 
 The deployed applets require no server, account, package manager, or backend. Labs 13, 14, and 15 are generated deterministically into the public artifact and remain self-contained offline HTML files after generation.
 
 ## Verification
 
-The release workflow retains the complete inherited suite and adds exact v1.8.0 final-composition, deterministic mechanism, localization/state, and browser-behavior gates:
+The release workflow retains the complete inherited suite and adds exact v1.8.1 learner-parity, deterministic composition, localization/state, contrast, and browser-behavior gates:
 
 ```bash
 python tools/release_check.py
@@ -179,10 +187,12 @@ python tools/test_v1_7_2_modern_parity.py
 python tools/test_v1_8_public_release.py
 python tools/test_v1_8_algorithm_modes.py
 python tools/test_v1_8_algorithm_modes_browser.py
+python tools/test_v1_8_1_modern_learner_parity.py
+python tools/test_v1_8_1_modern_learner_parity_browser.py
 python tools/browser_qa.py --no-screenshots
 ```
 
-The v1.8.0 public boundary remains 15 applets and 58 deployed files. The three Activity Pack pages remain the index, NN-1, and CNN-1. Every public HTML page receives the privacy-minimized analytics wrapper exactly once, while applet state, worksheet answers, Quick Assign responses, free text, and experiment values remain excluded from analytics requests.
+The v1.8.1 public boundary remains 15 applets and 58 deployed files. The three Activity Pack pages remain the index, NN-1, and CNN-1. Every public HTML page receives the privacy-minimized analytics wrapper exactly once, while applet state, worksheet answers, Quick Assign responses, free text, and experiment values remain excluded from analytics requests.
 
 ## Teaching materials
 
@@ -195,7 +205,7 @@ The v1.8.0 public boundary remains 15 applets and 58 deployed files. The three A
 
 ## Research status
 
-AI Playgrounds v1.8.0 is the current software release. The earlier v1.0.1 artifact remains immutable and archived at its version DOI. Its DOI should not be interpreted as a DOI for v1.8.0.
+AI Playgrounds v1.8.1 is the current software release. The earlier v1.0.1 artifact remains immutable and archived at its version DOI. Its DOI should not be interpreted as a DOI for v1.8.1.
 
 The deterministic/browser evidence supports implementation integrity and bounded design/interaction claims. It does not establish measured learning gains, universal learner preference, classroom adoption, or accessibility conformance. The human-usability protocol defines the evidence required for stronger claims.
 
@@ -211,7 +221,7 @@ The project is released under the MIT License.
 - [Public surface locale matrix](docs/PUBLIC_SURFACE_LOCALE_MATRIX.md)
 - [Contributing](CONTRIBUTING.md)
 - [Citation metadata](CITATION.cff)
-- [Release notes](docs/RELEASE_V1_8_0.md)
+- [Release notes](docs/RELEASE_V1_8_1.md)
 - [Localization standard](docs/LOCALIZATION.md)
 - [Analytics and privacy](docs/ANALYTICS_AND_PRIVACY.md)
 

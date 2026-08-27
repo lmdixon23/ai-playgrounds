@@ -1,6 +1,6 @@
 # Modern Lab Parity Audit
 
-**Baseline:** AI Playgrounds v1.7.1
+**Baseline:** AI Playgrounds v1.7.1; corrected at v1.8.1
 **Scope:** compare Labs 13–15 against the mature product-level affordances present in all original twelve applets.
 
 ## Finding
@@ -16,7 +16,7 @@ This audit distinguishes **shared-shell deficits** from **legitimate concept-spe
 | Skip-to-controls link | 12/12 | 0/3 | Add |
 | Share current link/state affordance | 12/12 | 0/3 | Add generic share/copy; do not pretend every modern state is URL-serialized |
 | Embed helper / `?embed=1` | 12/12 | 0/3 | Add generic embed mode |
-| Mature header hierarchy | Share · More · Reset | flatter modern action row | Align; put Theme beside language and secondary actions under More |
+| Mature header hierarchy | visible Share · Embed · local export(s) · Reset | flatter modern action row | **Corrected in v1.8.1:** v1.7.2 wrongly hid shared actions under More; expose Share · Embed · JSON · Reset |
 | Generic current-settings JSON | shared mature toolbar | 0/3 | Add local-only settings export; exclude learner responses |
 | TL;DR / Big idea orientation | 12/12 | 0/3 shared | Add concise concept-specific orientation |
 | Accessibility/text-state guidance layer | 12/12 | 0/3 shared | Add shared guidance, point to each lab's existing text/numeric state |
@@ -35,8 +35,8 @@ This audit distinguishes **shared-shell deficits** from **legitimate concept-spe
 | OpenGraph title/description/url/image | 12/12 | Labs 13–14 yes; Lab 15 incomplete | Normalize all three |
 | Twitter card/title/description/image | 12/12 | Labs 13–14 partial; Lab 15 absent | Normalize all three |
 | `hreflang` EN/ZH/VI/ES/x-default | 12/12 | Labs 13–14 yes; Lab 15 absent | Normalize all three |
-| Learning-mode shell | 12/12 | 0/3 | Do **not** duplicate; Guided Challenge + Quick Assign are the modern equivalent |
-| Scenario gallery | 12/12 | concept-specific selectors already exist | Do **not** duplicate |
+| Learning-mode shell | 12/12 | 0/3 | Keep concept-specific interactive bodies; add the shared learner sequence without duplicating a tab system |
+| Scenario gallery | 12/12 | concept-specific selectors already exist | **Corrected in v1.8.1:** selectors are controls, not curriculum; add five plain-language predict–run–explain cases |
 | Worksheet/response system | 12/12 | Quick Assign response layer exists | Do **not** duplicate |
 | Applet-specific CSV/PNG export | mixed, not universal | mixed/absent | Do **not** force; concept-specific |
 
@@ -59,18 +59,27 @@ The missing items chosen for v1.7.2 reduce product-learning friction without cha
 The following are intentionally **not** standardized into duplicate UI:
 
 - Explore/Guided/Classroom tabs, because Labs 13–15 already have explicit Guided Challenges and local Quick Assign surfaces;
-- scenario galleries, because the Transformer, agent-runtime, and game-tree bodies already expose concept-specific scenario/challenge selectors;
 - a second response packet, because v1.7.0 already gives every lab exactly one assignment surface;
 - CSV/PNG exports, because those are not universal even among the original twelve and should exist only where they support the mechanism.
 
 ## Approved concept-specific equivalents and exceptions
 
 - The modern labs' Guided Challenge plus Quick Assign path is the approved equivalent of adding another Explore / Guided / Classroom mode shell.
-- Existing scenario and challenge selectors are the approved equivalent of a second gallery component.
+- Existing scenario and challenge selectors remain the mechanism controls. They are no longer treated as an approved substitute for learner-facing scenario explanations.
 - Reset reloads the current modern mechanism while the separate local Quick Assign draft remains recoverable. The control is therefore labeled **Reset lab**, not **Reset all**.
 - The generic settings JSON is shared product chrome. Applet-specific CSV/PNG export remains optional and must be justified by the mechanism.
 
 No exception permits a second algorithm, simulation state, response packet, or assignment ID.
+
+## v1.8.1 correction
+
+The v1.7.2 ruling was too narrow. It established shell and release parity but overstated learner-facing parity by accepting a selector, compact key terms, and a fidelity note as equivalents for the original twelve applets' scenario-led curriculum. That decision produced three observable gaps:
+
+- the modern labs had no featured experiment or five-case predict–run–explain sequence;
+- their explanations and teacher prompts were materially thinner;
+- repeated generated state and dense catalogue copy made them harder, not easier, to enter.
+
+v1.8.1 corrects the boundary without forcing identical mechanism layouts. Labs 13–15 retain their native Transformer, agent-runtime, and game-tree controls, but now add the same learner sequence and depth in EN/ZH/VI/ES. The correction also exposes Share, Embed, JSON, and Reset as one visible action row, removes the always-open duplicate state mirror, leaves Quick Assign state empty until explicitly refreshed, and adds final dark-theme contrast checks for hard-coded light surfaces and accent text.
 
 ## Additional defects caught during the parity implementation
 

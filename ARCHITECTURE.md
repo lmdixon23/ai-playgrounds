@@ -16,13 +16,13 @@ The public catalogue contains **13 Foundations/course-track labs** and **2 Moder
 
 The original twelve applets share the established learning-mode architecture, including Explore, Understand, Use in class, and Text and keyboard surfaces plus local response-packet tooling.
 
-Labs 13–15 have concept-specific bodies because Transformer internals, agent-runtime gates, and game trees require different visual organizations. They nevertheless inherit the same public product contract: suite navigation, standardized outer shell/provenance, complete catalogue metadata, four-language learner support, bounded assignment surface, accessibility-oriented behavior, responsive containment, and exact release verification.
+Labs 13–15 have concept-specific interactive bodies because Transformer internals, agent-runtime gates, and game trees require different visual organizations. They nevertheless inherit the same public product and learning contract: suite navigation, standardized outer shell/provenance, concise catalogue metadata, one featured experiment, five predict–run–explain scenarios, terminology primer, step-by-step explanation, teacher prompts, four-language learner support, bounded assignment surface, accessibility-oriented behavior, responsive containment, and exact release verification.
 
-Consistency applies to what learners should not have to relearn; mechanism-specific bodies may differ when uniformity would distort the concept.
+Consistency applies both to what learners should not have to relearn and to the depth of instructional support. A mechanism-specific layout may differ when uniformity would distort the concept; it may not use that difference to omit the scenario-led teaching sequence.
 
 ## Shared learner contract
 
-Every released applet provides or has an explicit concept-specific equivalent for:
+Every released applet provides:
 
 1. one primary interactive mechanism;
 2. a meaningful initial or scenario state;
@@ -33,6 +33,8 @@ Every released applet provides or has an explicit concept-specific equivalent fo
 7. text/keyboard access to concept-defining state where feasible;
 8. one stable Level-1 Quick Assign;
 9. optional analytics restricted to the canonical hosted site and excluding learner-authored responses.
+
+Each applet also supplies a featured experiment, a small scenario sequence with explicit prediction and explanation prompts, prerequisite terms, a mechanism explanation, and teacher-facing prompts. The controls and visualization may remain concept-specific; the learning depth may not silently collapse into a selector plus a few labels.
 
 The original twelve reuse their established Student response packets for Quick Assigns. Labs 13–15 use thin local-only response surfaces aligned to their Guided Challenges. All Quick Assigns use the inquiry spine:
 
