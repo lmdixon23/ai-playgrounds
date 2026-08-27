@@ -2,7 +2,7 @@
 
 ## Current release boundary
 
-This checklist is for the **current v1.7.1 product**, not the original v1.0.x launch snapshot.
+This checklist is for the **current v1.7.2 product**, not the original v1.0.x launch snapshot.
 
 Current externally safe summary:
 
@@ -36,7 +36,7 @@ Explain:
 - the distinction between the original twelve learning-mode bodies and the concept-specific Transformer/agent/game-tree bodies inside the current shared shell;
 - the all-lab Quick Assign layer;
 - why public analytics count only coarse aggregate page/engagement/campaign signals and exclude learner answers/state;
-- that v1.7.1 is the current immutable release artifact after publication.
+- that v1.7.2 is the current immutable release artifact after publication.
 
 ## Anticipated critiques
 

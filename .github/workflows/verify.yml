@@ -151,3 +151,36 @@ jobs:
           path: release-evidence/
           if-no-files-found: ignore
           retention-days: 90
+
+  verify-v172:
+    name: v1.7.2 final artifact and behavior
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+      - name: Install browser QA dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Verify v1.7.2 metadata
+        run: python tools/check_release_metadata.py
+      - name: Run exact v1.7.2 composition and modern-lab behavior QA
+        run: python tools/test_v1_7_2_modern_parity.py
+      - name: Upload v1.7.2 verification evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ai-playgrounds-v1.7.2-verification-${{ github.run_id }}
+          path: release-evidence/
+          if-no-files-found: ignore
+          retention-days: 90

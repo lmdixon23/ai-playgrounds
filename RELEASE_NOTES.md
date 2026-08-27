@@ -1,5 +1,17 @@
 # Release notes
 
+## Current release index
+
+Dedicated versioned files are the source for detailed notes in the current release line. The older detailed entries below remain as historical material.
+
+| Release | Summary | Detailed notes |
+|---|---|---|
+| v1.7.2, 2026-08-27 | Modern-lab product parity and exact final-artifact release assurance | [docs/RELEASE_V1_7_2.md](docs/RELEASE_V1_7_2.md) |
+| v1.7.1, 2026-08-27 | Shared theme preference and one-time legacy migration | [docs/RELEASE_V1_7_1.md](docs/RELEASE_V1_7_1.md) |
+| v1.7.0, 2026-08-26 | One active four-locale Quick Assign for every lab | [docs/RELEASE_V1_7_0.md](docs/RELEASE_V1_7_0.md) |
+| v1.6.2, 2026-08-26 | Exact public-artifact provenance normalization | [docs/RELEASE_V1_6_2.md](docs/RELEASE_V1_6_2.md) |
+| v1.6.1, 2026-08-26 | Shared applet contract and Quick Assign canaries | [docs/RELEASE_V1_6_1.md](docs/RELEASE_V1_6_1.md) |
+
 ## v1.6.0, 2026-08-25
 
 ### Lab 15: Game Trees, Minimax, and Alpha-Beta Pruning

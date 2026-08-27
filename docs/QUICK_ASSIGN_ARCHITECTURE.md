@@ -1,7 +1,7 @@
 # Quick Assign Architecture
 
 Date: 2026-08-27
-Status: **active v1.7.1 contract**.
+Status: **active v1.7.2 contract**.
 
 ## Purpose
 
@@ -44,7 +44,7 @@ IDs are permanent once publicly released and are never silently reassigned.
 
 ## Current active Level-1 registry
 
-All fifteen public applets have one active v1.7.1 Quick Assign:
+All fifteen public applets have one active v1.7.2 Quick Assign:
 
 - `QA-SEARCH-01` — Pathfinding
 - `QA-LOCAL-01` — Hill Climbing / Simulated Annealing
@@ -62,7 +62,7 @@ All fifteen public applets have one active v1.7.1 Quick Assign:
 - `QA-TRANSFORMER-01` — Transformer Language Modeling
 - `QA-AGENT-01` — Agent Tool Use and Context Protocols
 
-The first four were the v1.6.1 rollout canaries. The remaining eleven were promoted in v1.7.0 after the all-lab assignment, localization/state, responsive, and release gates passed. v1.7.1 preserves that complete assignment layer unchanged.
+The first four were the v1.6.1 rollout canaries. The remaining eleven were promoted in v1.7.0 after the all-lab assignment, localization/state, responsive, and release gates passed. v1.7.1 preserved that complete assignment layer. v1.7.2 keeps one assignment surface per lab while bringing the three modern packets to the shared state-refresh, copy, print, accessibility-label, and four-locale action boundary.
 
 ## Level-1 interaction contract
 
