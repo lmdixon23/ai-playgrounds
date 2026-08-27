@@ -2,6 +2,14 @@
 
 Detailed notes for the current release line live in the dedicated versioned files linked below. Historical entries remain in this aggregate unchanged.
 
+## [1.8.0] - 2026-08-27
+
+- Added deterministic repeated-restart benchmarking to Hill Climbing / Simulated Annealing, with matched starts, bounded budgets, explicit success rules, and separate success/final/best-cost summaries.
+- Added a continuous-target KNN regression mode that preserves the existing neighbor, distance, scaling, and weighting semantics while replacing class voting with uniform or distance-weighted means.
+- Added an opt-in bounded CDCL trace to CNF/SAT with implication reasons, first-UIP clause learning, and non-chronological backjumping; DPLL remains the default.
+- Added EN/ZH/VI/ES state-preserving controls, share-state coverage, local-only packet integration, mechanism-fidelity disclosures, and exact final-artifact/browser gates for all three modes.
+- Preserved the 15-applet / 58-file public boundary and every previously released mode. See [detailed v1.8.0 notes](docs/RELEASE_V1_8_0.md).
+
 ## [1.7.2] - 2026-08-27
 
 - Completed mature outer-shell, learner-support, Quick Assign packet, accessibility-text, provenance, and discovery-metadata parity for Labs 13-15 without changing their mechanisms or curriculum roles.

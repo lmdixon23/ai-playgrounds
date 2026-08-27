@@ -7,19 +7,31 @@
   "meta": {
     "en": {
       "title": "CNF and SAT Builder | AI Playgrounds",
-      "description": "Rewrite propositional logic into a standard clause form, test whether any assignment makes the formula true, and watch a solver remove impossible branches."
+      "description": "Rewrite propositional logic into CNF, then inspect either the original DPLL search or a bounded CDCL trace with reasons, learned clauses, and non-chronological backjumps."
     },
     "vi": {
       "title": "CNF and SAT Builder | AI Playgrounds",
-      "description": "Viết lại logic mệnh đề thành dạng mệnh đề tiêu chuẩn, kiểm tra xem liệu phép gán nào có làm cho công thức đúng hay không và xem trình giải loại bỏ các nhánh không thể thực hiện được."
+      "description": "Viết lại logic mệnh đề thành CNF, rồi xem tìm kiếm DPLL gốc hoặc vết CDCL có giới hạn với lý do, mệnh đề học được và bước nhảy lùi không theo thời gian."
     },
     "es": {
       "title": "CNF and SAT Builder | AI Playgrounds",
-      "description": "Reescribe la lógica proposicional en una forma de cláusula estándar, prueba si alguna asignación hace que la fórmula sea verdadera y observa cómo un solucionador elimina ramas imposibles."
+      "description": "Reescribe la lógica proposicional en CNF y examina la búsqueda DPLL original o una traza CDCL acotada con razones, cláusulas aprendidas y saltos no cronológicos."
     }
   },
   "vi": {
     "strings": {
+      "CDCL backjump": "CDCL nhảy lùi",
+      "A deterministic conflict that learns (¬A ∨ ¬C) and backjumps from decision level 3 to level 1.": "Một xung đột xác định học (¬A ∨ ¬C) rồi nhảy lùi từ mức quyết định 3 về mức 1.",
+      "Trace mode:": "Chế độ theo dõi:",
+      "DPLL branch trace": "Theo dõi nhánh DPLL",
+      "CDCL conflict-learning trace": "Theo dõi học xung đột CDCL",
+      "DPLL preserves the original branch-and-backtrack trace. CDCL adds implication reasons, first-UIP clause learning, and non-chronological backjumping.": "DPLL giữ nguyên vết phân nhánh và quay lui; CDCL bổ sung lý do suy diễn, học mệnh đề first-UIP và nhảy lùi không theo thời gian.",
+      "CDCL mode is a bounded educational first-UIP trace. It shows decisions, propagation, conflicts, learned clauses, and backjumps; production optimizations such as watched literals, restarts, activity heuristics, and clause deletion are intentionally omitted.": "Chế độ CDCL là vết first-UIP giáo dục có giới hạn. Nó hiển thị quyết định, lan truyền, xung đột, mệnh đề học được và bước nhảy lùi; các tối ưu hóa sản xuất như literal được theo dõi, khởi động lại, heuristic hoạt động và xóa mệnh đề được chủ ý lược bỏ.",
+      "Learning rule: start from the false conflict clause and repeatedly resolve on the latest current-level propagated literal until one current-level literal remains (the first UIP). Backjump to the highest decision level among the learned clause's other literals, or level 0 if there is none.": "Quy tắc học: bắt đầu từ mệnh đề xung đột đang sai và liên tục phân giải theo literal được lan truyền gần nhất ở mức hiện tại cho đến khi chỉ còn một literal ở mức hiện tại (UIP thứ nhất). Nhảy lùi đến mức quyết định cao nhất của các literal còn lại trong mệnh đề học được, hoặc mức 0 nếu không có literal nào.",
+      "Misread to avoid: a learned clause is a logical consequence of resolution, not a guessed shortcut; a backjump removes assignments above its target level but does not erase earlier decisions.": "Tránh hiểu sai: mệnh đề học được là hệ quả logic của phép phân giải, không phải lối tắt được đoán; bước nhảy lùi loại bỏ các phép gán trên mức đích nhưng không xóa các quyết định trước đó.",
+      "Convert a knowledge base, inspect DPLL or CDCL evidence, then explain what CNF, learned clauses, and backjumps establish.": "Chuyển một cơ sở tri thức, kiểm tra bằng chứng DPLL hoặc CDCL, rồi giải thích CNF, mệnh đề học được và bước nhảy lùi chứng minh điều gì.",
+      "Run conversion and inspect a DPLL or CDCL trace. Record the key CNF result and any decision, propagation, conflict, learned clause, or backjump.": "Chạy chuyển đổi và xem vết DPLL hoặc CDCL. Ghi lại kết quả CNF chính cùng mọi quyết định, lan truyền, xung đột, mệnh đề học được hoặc bước nhảy lùi.",
+      "What did CNF make easier to check? If using CDCL, why is the learned clause valid and the backjump level safe?": "CNF giúp kiểm tra điều gì dễ hơn, và nếu dùng CDCL, vì sao mệnh đề học được hợp lệ và mức nhảy lùi an toàn?",
       "#a11yStateSummary": "#a11yStateSummary",
       "#acceptV": "#acceptV",
       "#accV": "#accV",
@@ -449,6 +461,18 @@
   },
   "es": {
     "strings": {
+      "CDCL backjump": "Salto atrás CDCL",
+      "A deterministic conflict that learns (¬A ∨ ¬C) and backjumps from decision level 3 to level 1.": "Un conflicto determinista que aprende (¬A ∨ ¬C) y salta del nivel de decisión 3 al nivel 1.",
+      "Trace mode:": "Modo de traza:",
+      "DPLL branch trace": "Traza de ramas DPLL",
+      "CDCL conflict-learning trace": "Traza de aprendizaje de conflictos CDCL",
+      "DPLL preserves the original branch-and-backtrack trace. CDCL adds implication reasons, first-UIP clause learning, and non-chronological backjumping.": "DPLL conserva la traza original de ramificación y retroceso; CDCL añade razones de implicación, aprendizaje de cláusulas de primer UIP y saltos atrás no cronológicos.",
+      "CDCL mode is a bounded educational first-UIP trace. It shows decisions, propagation, conflicts, learned clauses, and backjumps; production optimizations such as watched literals, restarts, activity heuristics, and clause deletion are intentionally omitted.": "El modo CDCL es una traza educativa acotada de primer UIP. Muestra decisiones, propagación, conflictos, cláusulas aprendidas y saltos atrás; se omiten deliberadamente optimizaciones de producción como literales vigilados, reinicios, heurísticas de actividad y eliminación de cláusulas.",
+      "Learning rule: start from the false conflict clause and repeatedly resolve on the latest current-level propagated literal until one current-level literal remains (the first UIP). Backjump to the highest decision level among the learned clause's other literals, or level 0 if there is none.": "Regla de aprendizaje: se parte de la cláusula de conflicto falsa y se resuelve repetidamente sobre el último literal propagado del nivel actual hasta que queda un solo literal de ese nivel (el primer UIP). Se salta al nivel de decisión más alto entre los demás literales de la cláusula aprendida, o al nivel 0 si no hay ninguno.",
+      "Misread to avoid: a learned clause is a logical consequence of resolution, not a guessed shortcut; a backjump removes assignments above its target level but does not erase earlier decisions.": "Evita esta interpretación: una cláusula aprendida es una consecuencia lógica de la resolución, no un atajo adivinado; el salto atrás elimina asignaciones por encima del nivel de destino, pero no borra decisiones anteriores.",
+      "Convert a knowledge base, inspect DPLL or CDCL evidence, then explain what CNF, learned clauses, and backjumps establish.": "Convierte una base de conocimiento, inspecciona evidencia DPLL o CDCL y explica qué establecen CNF, las cláusulas aprendidas y los saltos hacia atrás.",
+      "Run conversion and inspect a DPLL or CDCL trace. Record the key CNF result and any decision, propagation, conflict, learned clause, or backjump.": "Ejecute la conversión e inspeccione una traza DPLL o CDCL. Registre el resultado CNF clave y cualquier decisión, propagación, conflicto, cláusula aprendida o salto atrás.",
+      "What did CNF make easier to check? If using CDCL, why is the learned clause valid and the backjump level safe?": "¿Qué hizo CNF más fácil de comprobar y, si usa CDCL, por qué es válida la cláusula aprendida y seguro el nivel de salto atrás?",
       "#a11yStateSummary": "#a11yStateSummary",
       "#acceptV": "#acceptV",
       "#accV": "#accV",

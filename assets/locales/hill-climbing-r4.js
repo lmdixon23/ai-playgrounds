@@ -7,19 +7,36 @@
   "meta": {
     "en": {
       "title": "Hill Climbing and Simulated Annealing | AI Playgrounds",
-      "description": "Compare local-search algorithms that improve one candidate at a time. Hill climbing accepts only better moves; simulated annealing can temporarily accept worse moves to escape a local optimum."
+      "description": "Compare local-search algorithms one run at a time or across matched seeded restarts, separating success frequency from final and best solution cost."
     },
     "vi": {
       "title": "Hill Climbing and Simulated Annealing | AI Playgrounds",
-      "description": "So sánh các thuật toán tìm kiếm cục bộ giúp cải thiện từng ứng viên tại một thời điểm.Leo đồi chỉ chấp nhận những động tác tốt hơn;quá trình ủ mô phỏng có thể tạm thời chấp nhận những bước đi tồi tệ hơn để thoát khỏi mức tối ưu cục bộ."
+      "description": "So sánh các thuật toán tìm kiếm cục bộ theo từng lượt hoặc qua các lần khởi động lại được ghép cặp và có hạt giống, tách tần suất thành công khỏi chi phí cuối và tốt nhất."
     },
     "es": {
       "title": "Hill Climbing and Simulated Annealing | AI Playgrounds",
-      "description": "Compara algoritmos de búsqueda local que mejoran un candidato a la vez.Escalar colinas sólo acepta mejores movimientos;El recocido simulado puede aceptar temporalmente peores movimientos para escapar de un óptimo local."
+      "description": "Compara algoritmos de búsqueda local en una ejecución o mediante reinicios emparejados y con semilla, separando la frecuencia de éxito del coste final y del mejor coste."
     }
   },
   "vi": {
     "strings": {
+      "📊 Repeated-restart benchmark": "📊 Chuẩn đánh giá khởi động lại nhiều lần",
+      "Compare selected algorithms on the same problem instance and the same seeded starting state for every restart. Success frequency and solution cost are reported separately.": "So sánh các thuật toán đã chọn trên cùng một bài toán và cùng trạng thái khởi đầu có hạt giống cho mỗi lần khởi động lại. Tần suất thành công và chi phí lời giải được báo cáo riêng.",
+      "Restarts": "Số lần khởi động lại",
+      "Step budget": "Ngân sách bước",
+      "Seed": "Hạt giống",
+      "▶ Run benchmark": "▶ Chạy chuẩn đánh giá",
+      "Reset benchmark": "Đặt lại chuẩn đánh giá",
+      "Algorithms to compare": "Thuật toán cần so sánh",
+      "Success rule appears after the benchmark runs.": "Quy tắc thành công xuất hiện sau khi chạy chuẩn đánh giá.",
+      "No benchmark has run yet.": "Chưa chạy chuẩn đánh giá nào.",
+      "Misread to avoid:": "Cách hiểu sai cần tránh:",
+      "A high success rate does not imply the lowest mean cost, and one excellent run does not imply reliable success.": "Tỷ lệ thành công cao không đồng nghĩa với chi phí trung bình thấp nhất, và một lượt chạy xuất sắc không chứng minh thành công ổn định.",
+      "Fidelity boundary: this benchmark uses bounded step budgets and seeded synthetic starts. It compares these teaching implementations; it is not a hardware-performance benchmark or a proof of asymptotic superiority.": "Giới hạn mô phỏng: chuẩn đánh giá dùng ngân sách bước hữu hạn và điểm bắt đầu tổng hợp có hạt giống. Nó so sánh các triển khai giảng dạy này, không phải chuẩn hiệu năng phần cứng hay bằng chứng về ưu thế tiệm cận.",
+      "Run one local-search trajectory or a matched seeded-restart benchmark, then explain why an algorithm gets stuck, escapes, or succeeds reliably.": "Chạy một quỹ đạo tìm kiếm cục bộ hoặc benchmark khởi động lại có hạt giống và được ghép cặp, rồi giải thích vì sao thuật toán bị mắc kẹt, thoát ra hoặc thành công ổn định.",
+      "Before running, which selected strategy do you expect to succeed most reliably, and which to reach the lowest cost? Why might those differ?": "Trước khi chạy, bạn dự đoán chiến lược nào thành công ổn định nhất và chiến lược nào đạt chi phí thấp nhất? Vì sao hai kết quả có thể khác nhau?",
+      "Run a single search or the repeated-restart benchmark. Record the problem, algorithm, success rate, mean final cost, and mean best cost that apply.": "Chạy một lượt tìm kiếm hoặc chuẩn đánh giá khởi động lại nhiều lần. Ghi lại bài toán, thuật toán, tỷ lệ thành công, chi phí cuối trung bình và chi phí tốt nhất trung bình phù hợp.",
+      "How did the search rule choose moves, and why can success frequency and mean cost rank algorithms differently?": "Quy tắc tìm kiếm chọn bước đi như thế nào, và vì sao tần suất thành công cùng chi phí trung bình có thể xếp hạng thuật toán khác nhau?",
       "#a11yStateSummary": "#a11yStateSummary",
       "#acceptV": "#acceptV",
       "#accV": "#accV",
@@ -481,6 +498,23 @@
   },
   "es": {
     "strings": {
+      "📊 Repeated-restart benchmark": "📊 Benchmark de reinicios repetidos",
+      "Compare selected algorithms on the same problem instance and the same seeded starting state for every restart. Success frequency and solution cost are reported separately.": "Compare los algoritmos seleccionados en la misma instancia del problema y con el mismo estado inicial sembrado en cada reinicio. La frecuencia de éxito y el costo de la solución se informan por separado.",
+      "Restarts": "Reinicios",
+      "Step budget": "Presupuesto de pasos",
+      "Seed": "Semilla",
+      "▶ Run benchmark": "▶ Ejecutar benchmark",
+      "Reset benchmark": "Restablecer benchmark",
+      "Algorithms to compare": "Algoritmos para comparar",
+      "Success rule appears after the benchmark runs.": "La regla de éxito aparece después de ejecutar el benchmark.",
+      "No benchmark has run yet.": "Todavía no se ha ejecutado el benchmark.",
+      "Misread to avoid:": "Interpretación errónea que debe evitarse:",
+      "A high success rate does not imply the lowest mean cost, and one excellent run does not imply reliable success.": "Una tasa de éxito alta no implica el menor costo medio, y una ejecución excelente no implica éxito fiable.",
+      "Fidelity boundary: this benchmark uses bounded step budgets and seeded synthetic starts. It compares these teaching implementations; it is not a hardware-performance benchmark or a proof of asymptotic superiority.": "Límite de fidelidad: este benchmark usa presupuestos de pasos acotados e inicios sintéticos con semilla. Compara estas implementaciones didácticas; no es un benchmark de hardware ni una prueba de superioridad asintótica.",
+      "Run one local-search trajectory or a matched seeded-restart benchmark, then explain why an algorithm gets stuck, escapes, or succeeds reliably.": "Ejecuta una trayectoria de búsqueda local o un benchmark de reinicios emparejados y con semilla; explica por qué el algoritmo se atasca, escapa o tiene éxito de forma fiable.",
+      "Before running, which selected strategy do you expect to succeed most reliably, and which to reach the lowest cost? Why might those differ?": "Antes de ejecutar, ¿qué estrategia seleccionada tendrá éxito con mayor fiabilidad y cuál alcanzará el coste más bajo? ¿Por qué pueden diferir?",
+      "Run a single search or the repeated-restart benchmark. Record the problem, algorithm, success rate, mean final cost, and mean best cost that apply.": "Ejecute una búsqueda individual o el benchmark de reinicios repetidos. Registre el problema, el algoritmo, la tasa de éxito, el costo final medio y el mejor costo medio correspondientes.",
+      "How did the search rule choose moves, and why can success frequency and mean cost rank algorithms differently?": "¿Cómo eligió movimientos la regla de búsqueda y por qué la frecuencia de éxito y el costo medio pueden ordenar los algoritmos de manera distinta?",
       "#a11yStateSummary": "#a11yStateSummary",
       "#acceptV": "#acceptV",
       "#accV": "#accV",

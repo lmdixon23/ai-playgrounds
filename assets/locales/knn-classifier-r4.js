@@ -7,19 +7,36 @@
   "meta": {
     "en": {
       "title": "K-Nearest Neighbors | AI Playgrounds",
-      "description": "Classify a query by defining which labeled points count as nearest, then letting those selected neighbors vote. Change k, the closeness rule, feature scaling, and the voting rule to see how the result changes."
+      "description": "Use the same nearest-neighbor rule for classification or regression: vote over class labels, or average continuous targets with uniform or distance weighting."
     },
     "vi": {
       "title": "K-Nearest Neighbors | AI Playgrounds",
-      "description": "Phân loại truy vấn bằng cách xác định điểm được gắn nhãn nào được tính là gần nhất, sau đó để những điểm lân cận được chọn đó bỏ phiếu.Thay đổi k, quy tắc đóng, tỷ lệ đặc trưng và quy tắc biểu quyết để xem kết quả thay đổi như thế nào."
+      "description": "Dùng cùng quy tắc láng giềng gần nhất cho phân loại hoặc hồi quy: bỏ phiếu trên nhãn lớp hoặc lấy trung bình mục tiêu liên tục với trọng số đồng đều hay theo khoảng cách."
     },
     "es": {
       "title": "K-Nearest Neighbors | AI Playgrounds",
-      "description": "Clasifique una consulta definiendo qué puntos etiquetados cuentan como los más cercanos y luego permita que los vecinos seleccionados voten.Cambie k, la regla de cercanía, la escala de características y la regla de votación para ver cómo cambia el resultado."
+      "description": "Usa la misma regla de vecinos más cercanos para clasificación o regresión: vota etiquetas de clase o promedia objetivos continuos con ponderación uniforme o por distancia."
     }
   },
   "vi": {
     "strings": {
+      "Task:": "Tác vụ:",
+      "Switch between categorical voting and continuous-target averaging without reloading the applet.": "Chuyển giữa bỏ phiếu phân loại và lấy trung bình mục tiêu liên tục mà không tải lại applet.",
+      "Classification": "Phân loại",
+      "Regression": "Hồi quy",
+      "Click target:": "Mục tiêu khi nhấp:",
+      "Continuous target for a newly added point": "Mục tiêu liên tục cho điểm mới thêm",
+      "Low → high continuous target": "Mục tiêu liên tục thấp → cao",
+      "Regression neighbor calculation": "Phép tính láng giềng hồi quy",
+      "Hover over the canvas to inspect the selected targets and their mean.": "Di chuột trên vùng vẽ để xem các mục tiêu đã chọn và giá trị trung bình.",
+      "Classification combines categorical labels by voting. Regression combines continuous targets: uniform mode takes their arithmetic mean, while distance weighting takes a weighted mean.": "Phân loại kết hợp nhãn phân loại bằng biểu quyết. Hồi quy kết hợp mục tiêu liên tục: chế độ đồng đều dùng trung bình cộng, còn trọng số khoảng cách dùng trung bình có trọng số.",
+      "Misread to avoid:": "Cách hiểu sai cần tránh:",
+      "The colored surface is a field of local averages, not a fitted straight line or evidence that nearby targets cause the query value.": "Bề mặt màu là trường trung bình cục bộ, không phải đường thẳng đã khớp hay bằng chứng rằng các mục tiêu gần gây ra giá trị truy vấn.",
+      "Fidelity boundary: this two-feature teaching view scans stored points directly. Production regression still needs validation, scaling, missing-value handling, and an appropriate neighbor index.": "Giới hạn mô phỏng: khung dạy học hai đặc trưng này quét trực tiếp các điểm đã lưu. Hồi quy sản xuất vẫn cần xác thực, chuẩn hóa, xử lý giá trị thiếu và chỉ mục láng giềng phù hợp.",
+      "Compare classification voting with regression averaging while keeping the same k, metric, weighting, and selected neighbors.": "So sánh bỏ phiếu phân loại với lấy trung bình hồi quy trong khi giữ nguyên k, thước đo, trọng số và các láng giềng được chọn.",
+      "Before changing k, predict how the categorical vote or continuous average will change. Why?": "Trước khi thay đổi k, hãy dự đoán phiếu phân loại hoặc trung bình liên tục sẽ thay đổi thế nào. Vì sao?",
+      "Run at least two settings. Record task mode, k, distance metric, weighting, selected neighbors, and the resulting class or continuous prediction.": "Chạy ít nhất hai cấu hình. Ghi lại chế độ tác vụ, k, thước đo khoảng cách, trọng số, các láng giềng được chọn và dự đoán lớp hoặc giá trị liên tục.",
+      "Why does classification vote over labels while regression averages continuous targets, even though both select neighbors the same way?": "Vì sao phân loại bỏ phiếu trên nhãn còn hồi quy lấy trung bình mục tiêu liên tục, dù cả hai chọn láng giềng theo cùng một cách?",
       "#a11yStateSummary": "#a11yStateSummary",
       "#acceptV": "#acceptV",
       "#accV": "#accV",
@@ -177,7 +194,7 @@
       "Distance weighting changes a noisy vote": "Trọng số khoảng cách thay đổi một cuộc bỏ phiếu ồn ào",
       "Distance-weighted voting": "Bỏ phiếu theo trọng số khoảng cách",
       "Download the current points + decision boundary as a PNG.": "Tải xuống điểm hiện tại + ranh giới quyết định dưới dạng PNG.",
-      "Download the training points as a CSV file (x, y, class). Open in Excel/Sheets for follow-up homework.": "Tải điểm đào tạo xuống dưới dạng tệp CSV (x, y, class).Mở trong Excel/Trang tính để theo dõi bài tập về nhà.",
+      "Download the training points as a CSV file (x, y, class, continuous target). Open in Excel/Sheets for follow-up homework.": "Tải các điểm huấn luyện xuống dạng CSV (x, y, lớp, mục tiêu liên tục). Mở trong Excel/Sheets để làm bài tập tiếp theo.",
       "Embed or download the current experiment": "Nhúng hoặc tải xuống thử nghiệm hiện tại",
       "Enter the required mechanism prediction before locking.": "Nhập dự đoán cơ chế cần thiết trước khi khóa.",
       "Euclidean (L²)": "Euclide (L²)",
@@ -518,6 +535,23 @@
   },
   "es": {
     "strings": {
+      "Task:": "Tarea:",
+      "Switch between categorical voting and continuous-target averaging without reloading the applet.": "Cambia entre votación categórica y promedio de objetivos continuos sin recargar el applet.",
+      "Classification": "Clasificación",
+      "Regression": "Regresión",
+      "Click target:": "Objetivo al hacer clic:",
+      "Continuous target for a newly added point": "Objetivo continuo para un punto nuevo",
+      "Low → high continuous target": "Objetivo continuo bajo → alto",
+      "Regression neighbor calculation": "Cálculo de vecinos para regresión",
+      "Hover over the canvas to inspect the selected targets and their mean.": "Pase el cursor sobre el lienzo para inspeccionar los objetivos seleccionados y su media.",
+      "Classification combines categorical labels by voting. Regression combines continuous targets: uniform mode takes their arithmetic mean, while distance weighting takes a weighted mean.": "La clasificación combina etiquetas categóricas mediante votación. La regresión combina objetivos continuos: el modo uniforme usa la media aritmética y la ponderación por distancia usa una media ponderada.",
+      "Misread to avoid:": "Interpretación errónea que debe evitarse:",
+      "The colored surface is a field of local averages, not a fitted straight line or evidence that nearby targets cause the query value.": "La superficie coloreada es un campo de promedios locales, no una recta ajustada ni evidencia de que los objetivos cercanos causen el valor de consulta.",
+      "Fidelity boundary: this two-feature teaching view scans stored points directly. Production regression still needs validation, scaling, missing-value handling, and an appropriate neighbor index.": "Límite de fidelidad: esta vista didáctica de dos variables recorre directamente los puntos almacenados. La regresión de producción aún requiere validación, escalado, tratamiento de valores ausentes y un índice de vecinos adecuado.",
+      "Compare classification voting with regression averaging while keeping the same k, metric, weighting, and selected neighbors.": "Compara la votación de clasificación con el promedio de regresión manteniendo el mismo k, métrica, ponderación y vecinos seleccionados.",
+      "Before changing k, predict how the categorical vote or continuous average will change. Why?": "Antes de cambiar k, prediga cómo cambiará el voto categórico o el promedio continuo. ¿Por qué?",
+      "Run at least two settings. Record task mode, k, distance metric, weighting, selected neighbors, and the resulting class or continuous prediction.": "Ejecute al menos dos configuraciones. Registre el modo de tarea, k, la métrica de distancia, la ponderación, los vecinos seleccionados y la clase o predicción continua resultante.",
+      "Why does classification vote over labels while regression averages continuous targets, even though both select neighbors the same way?": "¿Por qué la clasificación vota sobre etiquetas mientras la regresión promedia objetivos continuos, aunque ambas seleccionen vecinos de la misma manera?",
       "#a11yStateSummary": "#a11yStateSummary",
       "#acceptV": "#acceptV",
       "#accV": "#accV",
@@ -675,7 +709,7 @@
       "Distance weighting changes a noisy vote": "La ponderación de distancia cambia una votación ruidosa",
       "Distance-weighted voting": "Voto ponderado por distancia",
       "Download the current points + decision boundary as a PNG.": "Descargue los puntos actuales + el límite de decisión como PNG.",
-      "Download the training points as a CSV file (x, y, class). Open in Excel/Sheets for follow-up homework.": "Descargue los puntos de entrenamiento como un archivo CSV (x, y, clase).Ábralo en Excel/Hojas de cálculo para realizar tareas de seguimiento.",
+      "Download the training points as a CSV file (x, y, class, continuous target). Open in Excel/Sheets for follow-up homework.": "Descarga los puntos de entrenamiento como CSV (x, y, clase, objetivo continuo). Ábrelo en Excel/Sheets para una actividad posterior.",
       "Embed or download the current experiment": "Insertar o descargar el experimento actual",
       "Enter the required mechanism prediction before locking.": "Ingrese la predicción del mecanismo requerido antes del bloqueo.",
       "Euclidean (L²)": "Euclidiano (L²)",

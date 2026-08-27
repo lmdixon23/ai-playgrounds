@@ -114,6 +114,19 @@ def patch_release_identity() -> None:
         notes = notes.replace(anchor, section + anchor, 1)
     notes_path.write_text(notes, encoding="utf-8")
 
+    # Keep this historical composition reproducible after later source releases
+    # advance repository-level citation metadata. The successor builder copies
+    # its own current metadata only after this v1.7.2 layer has validated.
+    codemeta_path = SITE / "codemeta.json"
+    codemeta = json.loads(codemeta_path.read_text(encoding="utf-8"))
+    codemeta["softwareVersion"] = "1.7.2"
+    codemeta["identifier"] = "https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.7.2"
+    codemeta_path.write_text(json.dumps(codemeta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    citation_path = SITE / "CITATION.cff"
+    citation = citation_path.read_text(encoding="utf-8")
+    citation = re.sub(r"(?m)^version:\s*.*$", "version: 1.7.2", citation, count=1)
+    citation_path.write_text(citation, encoding="utf-8")
+
 
 def validate() -> None:
     for slug in MODERN:

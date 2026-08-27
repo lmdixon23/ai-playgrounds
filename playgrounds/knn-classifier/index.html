@@ -6,18 +6,18 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>K-Nearest Neighbors | AI Playgrounds</title>
 <link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E" rel="icon"/>
-<meta content="Classify a query by defining which labeled points count as nearest, then letting those selected neighbors vote. Change k, the closeness rule, feature scaling, and the voting rule to see how the result changes." name="description"/>
+<meta content="Use the same nearest-neighbor rule for classification or regression: vote over class labels, or average continuous targets with uniform or distance weighting." name="description"/>
 <link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/" rel="canonical"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/?lang=en" hreflang="en" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/?lang=zh" hreflang="zh-Hans" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/?lang=vi" hreflang="vi" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/?lang=es" hreflang="es" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/?lang=en" hreflang="x-default" rel="alternate"/>
 <meta content="website" property="og:type"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/" property="og:url"/>
 <meta content="K-Nearest Neighbors | AI Playgrounds" property="og:title"/>
-<meta content="Classify a query by defining which labeled points count as nearest, then letting those selected neighbors vote. Change k, the closeness rule, feature scaling, and the voting rule to see how the result changes." property="og:description"/>
+<meta content="Use the same nearest-neighbor rule for classification or regression: vote over class labels, or average continuous targets with uniform or distance weighting." property="og:description"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" property="og:image"/>
 <meta content="summary_large_image" name="twitter:card"/>
 <meta content="K-Nearest Neighbors | AI Playgrounds" name="twitter:title"/>
-<meta content="Classify a query by defining which labeled points count as nearest, then letting those selected neighbors vote. Change k, the closeness rule, feature scaling, and the voting rule to see how the result changes." name="twitter:description"/>
+<meta content="Use the same nearest-neighbor rule for classification or regression: vote over class labels, or average continuous targets with uniform or distance weighting." name="twitter:description"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" name="twitter:image"/>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"K-Nearest Neighbors | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/","description":"Classify a query by defining which labeled points count as nearest, then letting those selected neighbors vote. Change k, the closeness rule, feature scaling, and the voting rule to see how the result changes.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh","vi","es"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"K-Nearest Neighbors | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/","description":"Use the same nearest-neighbor rule for classification or regression: vote over class labels, or average continuous targets with uniform or distance weighting.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh","vi","es"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
 <style>
   :root {
     --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #be123c;
@@ -505,6 +505,7 @@
 .learning-deck{display:contents!important}.learning-mode-shell{margin-top:16px;border-top:1px solid var(--border);padding-top:15px}.learning-mode-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px}.learning-mode-head h2{margin:0;font-size:1rem;color:var(--fg)}.learning-mode-head p{margin:2px 0 0;color:var(--muted);font-size:.82rem}.learning-mode-tools{display:flex;gap:8px;flex-wrap:wrap}.learning-mode-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:5px;background:var(--soft);border:1px solid var(--border);border-radius:14px}.learning-mode-tab{min-height:42px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-weight:750;padding:8px 10px}.learning-mode-tab[aria-selected="true"]{background:var(--card);color:var(--accent);box-shadow:0 3px 12px rgba(15,23,42,.08)}.learning-mode-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px;align-items:start}.learning-mode-panel[hidden]{display:none}.learning-mode-panel>details{margin:0!important;min-width:0}.learning-mode-panel>details.mode-wide{grid-column:1/-1}.learning-mode-panel>details>summary{background:var(--card)!important;border:1px solid var(--border)!important;border-left:4px solid color-mix(in srgb,var(--accent) 62%,var(--border))!important;border-radius:10px!important;color:var(--fg)!important;font-weight:750!important;padding:10px 12px!important}.learning-mode-panel>details[open]>summary{border-color:color-mix(in srgb,var(--accent) 55%,var(--border))!important}.learning-mode-panel .scenario-gallery-panel,.learning-mode-panel .accessibility-panel,.learning-mode-panel .classroom-lab .lab-panel{background:var(--card)!important}.scenario-card,.accessibility-card{background:color-mix(in srgb,var(--card) 97%,var(--accent))!important;box-shadow:none!important}.scenario-card.applied{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 78%,var(--accent)),color-mix(in srgb,var(--card) 88%,var(--accent-2,#6366f1)))!important;border-color:var(--accent)!important;box-shadow:0 12px 28px rgba(15,23,42,.10)!important}.signature-challenge>div,.signature-challenge .signature-challenge-panel{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 80%,var(--accent)),color-mix(in srgb,var(--card) 90%,var(--accent-2,#6366f1)))!important;border:1px solid color-mix(in srgb,var(--accent) 40%,var(--border))!important}.visual-card{background:linear-gradient(180deg,color-mix(in srgb,var(--card) 92%,var(--accent)),var(--card))!important}.featured-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.scenario-card button,.featured-actions button{border:0!important;border-radius:8px!important;background:var(--accent)!important;color:#fff!important;font-weight:750!important;padding:8px 11px!important}.scenario-card button:hover,.featured-actions button:hover{filter:brightness(1.05)}.copy-experiment{font-size:.82rem}.experiment-status{color:var(--muted);font-size:.78rem;min-height:1.2em;margin-top:6px}.mode-intro{grid-column:1/-1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--muted);font-size:.86rem}.mode-intro strong{color:var(--fg)}
 @container (min-width:980px){.scenario-card-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.visual-flow{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
 .interactive-inner{container-type:inline-size;max-width:min(1320px,100%)!important}
+.regression-inspector{margin-top:10px;padding:11px 12px;border:1px solid var(--border);border-radius:10px;background:var(--soft);font-size:.84rem;line-height:1.45}.regression-inspector[hidden]{display:none}.regression-inspector table{width:100%;border-collapse:collapse;margin-top:7px}.regression-inspector th,.regression-inspector td{padding:4px 6px;border-bottom:1px solid var(--border);text-align:right}.regression-inspector th:first-child,.regression-inspector td:first-child{text-align:left}.regression-equation{font-family:ui-monospace,monospace;color:var(--accent);font-weight:700;overflow-wrap:anywhere}.target-scale{display:inline-flex;align-items:center;gap:7px}.target-swatch{display:inline-block;width:72px;height:12px;border-radius:999px;background:linear-gradient(90deg,#2563eb,#22c55e,#f59e0b,#dc2626);border:1px solid var(--border)}
 @media(max-width:820px){.learning-mode-head{align-items:flex-start;flex-direction:column}.learning-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-mode-panel{grid-template-columns:1fr}.learning-mode-panel>details{grid-column:1!important}.copy-experiment{width:100%}}
 </style>
 <link href="../../assets/localization-r4.css" rel="stylesheet"/>
@@ -527,7 +528,7 @@
 <div class="header-actions">
 <button class="header-png" id="shareLink" title="Copy a URL that re-opens this k value and dataset in another browser.">🔗 Share</button>
 <button class="header-png" data-i18n-title="embed-title" id="embedLink" title="Copy an &lt;iframe&gt; snippet you can paste into an LMS (Canvas, Moodle, Schoology) or any HTML page. The embed strips the header and essay so only the interactive area shows.">📎 Embed</button>
-<button class="header-png" data-i18n-title="csv-title" id="csvExport" title="Download the training points as a CSV file (x, y, class). Open in Excel/Sheets for follow-up homework.">📊 CSV</button>
+<button class="header-png" data-i18n-title="csv-title" id="csvExport" title="Download the training points as a CSV file (x, y, class, continuous target). Open in Excel/Sheets for follow-up homework.">📊 CSV</button>
 <button class="header-png" id="exportPng" title="Download the current points + decision boundary as a PNG.">📷 PNG</button>
 <button class="header-reset" data-i18n="reset-all" id="hardReset" title="Reset everything to defaults: two-moons dataset, k=5, both visualizations on.">↺ Reset all</button>
 </div>
@@ -543,11 +544,23 @@
 <div class="bento-side"><!-- bento-side -->
 <div class="bento-cell">
 <div class="control-row">
+<label data-i18n="task-label" for="taskMode">Task:</label>
+<select id="taskMode" title="Switch between categorical voting and continuous-target averaging without reloading the applet.">
+<option data-i18n="task-classification" selected="" value="classification">Classification</option>
+<option data-i18n="task-regression" value="regression">Regression</option>
+</select>
+<span id="classAddControls" style="display:inline-flex;align-items:center;gap:6px;">
 <label data-i18n="click-adds">Click adds:</label>
 <div class="group mode-tabs">
 <button class="active" data-class="A" data-i18n="class-a" data-i18n-title="class-a-title" title="Future clicks on the canvas add Class A points (blue circles).">Class A (○ blue)</button>
 <button data-class="B" data-i18n="class-b" data-i18n-title="class-b-title" title="Future clicks on the canvas add Class B points (orange triangles).">Class B (△ orange)</button>
 </div>
+</span>
+<span class="target-scale" hidden="" id="regressionTargetControls">
+<label data-i18n="target-label" for="targetValue">Click target:</label>
+<input aria-label="Continuous target for a newly added point" id="targetValue" max="100" min="0" step="1" type="range" value="50"/>
+<output class="kval" id="targetValueV">50.0</output>
+</span>
 <label data-i18n="k-label">k:</label>
 <input aria-label="Number of neighbors (k)" aria-valuetext="k equals 5" data-i18n-title="k-slider-title" id="k" max="25" min="1" title="Number of neighbors to consult. k=1 hugs every point; large k smooths everything into one prediction." type="range" value="5"/>
 <span class="kval" id="kV">5</span>
@@ -558,7 +571,7 @@
 <option data-i18n="m-chebyshev" value="chebyshev">Chebyshev (L∞)</option>
 </select>
 <!-- weighting toggle. -->
-<label data-i18n="weight-label" style="margin-left:12px;">Voting rule:</label>
+<label data-i18n="weight-label" id="weightLabel" style="margin-left:12px;">Voting rule:</label>
 <select data-i18n-title="weight-title" id="weightSel" title="This setting acts only after the k neighbors have been selected. Equal voting gives each selected neighbor one vote. Closeness-weighted voting gives nearer selected neighbors more influence.">
 <option data-i18n="w-uniform" selected="" value="uniform">Uniform (1 vote each)</option>
 <option data-i18n="w-distance" value="distance">Closer neighbors count more (1/d)</option>
@@ -597,9 +610,17 @@
 <svg id="cvOverlay" preserveaspectratio="none" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none;" viewbox="0 0 640 480"></svg>
 </div>
 <div class="legend-strip">
-<span><span class="sw" style="background:var(--classA)"></span><span data-i18n="legend-a">Class A</span></span>
-<span><span class="sw" style="background:var(--classB)"></span><span data-i18n="legend-b">Class B</span></span>
-<span data-i18n="legend-hint" style="color:var(--muted)">Hover anywhere to see how k neighbors vote.</span>
+<span id="classLegend"><span><span class="sw" style="background:var(--classA)"></span><span data-i18n="legend-a">Class A</span></span> <span><span class="sw" style="background:var(--classB)"></span><span data-i18n="legend-b">Class B</span></span></span>
+<span hidden="" id="regressionLegend"><span class="target-swatch"></span> <span data-i18n="legend-target">Low → high continuous target</span></span>
+<span data-i18n="legend-hint" id="legendHint" style="color:var(--muted)">Hover anywhere to see how k neighbors vote.</span>
+</div>
+<div aria-live="polite" class="regression-inspector" hidden="" id="regressionInspector">
+<strong data-i18n="reg-inspector-title">Regression neighbor calculation</strong>
+<p data-i18n="reg-explainer" style="margin:5px 0;">Classification combines categorical labels by voting. Regression combines continuous targets: uniform mode takes their arithmetic mean, while distance weighting takes a weighted mean.</p>
+<p style="margin:5px 0;color:var(--muted);"><strong data-i18n="reg-misread-label">Misread to avoid:</strong> <span data-i18n="reg-misread">The colored surface is a field of local averages, not a fitted straight line or evidence that nearby targets cause the query value.</span></p>
+<p data-i18n="reg-fidelity" style="margin:5px 0;color:var(--muted);">Fidelity boundary: this two-feature teaching view scans stored points directly. Production regression still needs validation, scaling, missing-value handling, and an appropriate neighbor index.</p>
+<div data-i18n="reg-inspector-empty" id="regressionEquation">Hover over the canvas to inspect the selected targets and their mean.</div>
+<div id="regressionNeighborTable"></div>
 </div>
 </div><!-- /.bento-cell canvas -->
 <details class="guided-challenge" id="knnGuided">
@@ -797,19 +818,19 @@
 <span data-lab-en="🧪 Student response packet" data-lab-zh="🧪 课堂实验模式">🧪 Student response packet</span>
 </summary>
 <div class="lab-panel">
-<p class="lab-intro" data-lab-en="Adjust k, metric, and weighting, then explain how local neighbors reshape the decision boundary." data-lab-zh="调整 k、距离度量和加权方式，然后解释局部邻居如何重塑决策边界。">Adjust k, metric, and weighting, then explain how local neighbors reshape the decision boundary.</p>
+<p class="lab-intro" data-lab-en="Compare classification voting with regression averaging while keeping the same k, metric, weighting, and selected neighbors." data-lab-zh="在保持相同 k、距离度量、加权方式和所选邻居的情况下，比较分类投票与回归平均。">Compare classification voting with regression averaging while keeping the same k, metric, weighting, and selected neighbors.</p>
 <div class="lab-grid">
 <div class="lab-field">
 <label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
-<textarea data-lab-answer="predict" data-lab-en="Before changing k, will the boundary become smoother or more jagged? Why?" data-lab-zh="改变 k 之前，决策边界会变得更平滑还是更曲折？为什么？" id="lab-predict" placeholder="Before changing k, will the boundary become smoother or more jagged? Why?"></textarea>
+<textarea data-lab-answer="predict" data-lab-en="Before changing k, predict how the categorical vote or continuous average will change. Why?" data-lab-zh="改变 k 之前，预测类别投票或连续平均值会如何变化。为什么？" id="lab-predict" placeholder="Before changing k, predict how the categorical vote or continuous average will change. Why?"></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
-<textarea data-lab-answer="observe" data-lab-en="Run at least two settings. Record k, distance metric, weighting, and one boundary change." data-lab-zh="至少运行两种设置。记录 k、距离度量、加权方式和一个边界变化。" id="lab-observe" placeholder="Run at least two settings. Record k, distance metric, weighting, and one boundary change."></textarea>
+<textarea data-lab-answer="observe" data-lab-en="Run at least two settings. Record task mode, k, distance metric, weighting, selected neighbors, and the resulting class or continuous prediction." data-lab-zh="至少运行两种设置。记录任务模式、k、距离度量、加权方式、选中的邻居以及所得类别或连续预测值。" id="lab-observe" placeholder="Run at least two settings. Record task mode, k, distance metric, weighting, selected neighbors, and the resulting class or continuous prediction."></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
-<textarea data-lab-answer="explain" data-lab-en="Why does the prediction depend so strongly on nearby training examples?" data-lab-zh="为什么预测会如此依赖附近的训练样本？" id="lab-explain" placeholder="Why does the prediction depend so strongly on nearby training examples?"></textarea>
+<textarea data-lab-answer="explain" data-lab-en="Why does classification vote over labels while regression averages continuous targets, even though both select neighbors the same way?" data-lab-zh="为什么分类对标签投票，而回归对连续目标值取平均，即使两者选择邻居的方式相同？" id="lab-explain" placeholder="Why does classification vote over labels while regression averages continuous targets, even though both select neighbors the same way?"></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
@@ -988,9 +1009,16 @@
       'guided-key': 'In challenge mode, click the canvas to place the query; click training points to select predicted neighbors.',
       'guided-class-label': 'Predicted class:', 'guided-lock': 'Lock prediction',
       'guided-reveal': 'Reveal actual neighbors',
+      'task-label': 'Task:', 'task-classification': 'Classification', 'task-regression': 'Regression',
+      'target-label': 'Click target:', 'legend-target': 'Low → high continuous target',
+      'reg-inspector-title': 'Regression neighbor calculation',
+      'reg-inspector-empty': 'Hover over the canvas to inspect the selected targets and their mean.',
+      'reg-explainer': 'Classification combines categorical labels by voting. Regression combines continuous targets: uniform mode takes their arithmetic mean, while distance weighting takes a weighted mean.',
+      'reg-misread-label': 'Misread to avoid:', 'reg-misread': 'The colored surface is a field of local averages, not a fitted straight line or evidence that nearby targets cause the query value.',
+      'reg-fidelity': 'Fidelity boundary: this two-feature teaching view scans stored points directly. Production regression still needs validation, scaling, missing-value handling, and an appropriate neighbor index.',
       'click-adds': 'Click adds:', 'k-label': 'k:', 'dataset-label': 'Dataset:',
       'embed-title': 'Copy an <iframe> snippet you can paste into an LMS (Canvas, Moodle, Schoology) or any HTML page. The embed strips the header and essay so only the interactive area shows.',
-      'csv-title': 'Download the training points as a CSV file (x, y, class). Open in Excel/Sheets for follow-up homework.',
+      'csv-title': 'Download the training points as a CSV file (x, y, class, continuous target). Open in Excel/Sheets for follow-up homework.',
       'ws-summary': '📝 Worksheet (3 questions)',
       'ws-check': 'Check',
       'ws-pick': 'Pick an answer first.',
@@ -1085,9 +1113,16 @@
       'guided-key': '挑战模式中，点击画布放置查询点；点击训练点选择你预测的邻居。',
       'guided-class-label': '预测类别：', 'guided-lock': '锁定预测',
       'guided-reveal': '揭示实际邻居',
+      'task-label': '任务：', 'task-classification': '分类', 'task-regression': '回归',
+      'target-label': '点击目标值：', 'legend-target': '低 → 高连续目标值',
+      'reg-inspector-title': '回归近邻计算',
+      'reg-inspector-empty': '将指针悬停在画布上，查看选中的目标值及其平均值。',
+      'reg-explainer': '分类通过投票组合类别标签。回归组合连续目标值：均匀模式取算术平均值，距离加权模式取加权平均值。',
+      'reg-misread-label': '避免误读：', 'reg-misread': '彩色表面表示局部平均值场，并不是拟合直线，也不能证明邻近目标值导致了查询值。',
+      'reg-fidelity': '保真边界：这个双特征教学视图会直接扫描已存储点。生产回归仍需验证、缩放、缺失值处理和合适的近邻索引。',
       'click-adds': '点击添加:', 'k-label': 'k:', 'dataset-label': '数据集:',
       'embed-title': '复制可粘贴到 LMS(Canvas、Moodle、Schoology)或任意网页的 <iframe> 代码。嵌入模式会去掉页头和说明,只显示交互区。',
-      'csv-title': '把训练点导出为 CSV 文件(x, y, 类别)。可在 Excel/Sheets 中打开做后续作业。',
+      'csv-title': '把训练点导出为 CSV 文件（x、y、类别、连续目标值）。可在 Excel/Sheets 中打开做后续作业。',
       'ws-summary': '📝 练习题(3 题)',
       'ws-check': '核对',
       'ws-pick': '请先选择一个答案。',
@@ -1282,6 +1317,41 @@
   let points = [];
   let addClass = 'A';
   let hover = null;
+  const modeCopy = {
+    en: {weightClass:'Voting rule:', weightReg:'Averaging rule:', hintClass:'Hover anywhere to see how k neighbors vote.', hintReg:'Hover anywhere to inspect the k selected targets and their average.', prediction:'Predicted value', distance:'distance', targetHeader:'target y', weightHeader:'weight', taskTitle:'Switch between categorical voting and continuous-target averaging without reloading the applet.', targetAria:'Continuous target for a newly added point', pointDescription:(i,target,x,y)=>`Training point ${i}: target ${target} at coordinates ${x}, ${y}.`, tldrClass:'KNN first defines which training points count as nearest under the selected distance rule and feature scaling. Then k selects the voters, and the voting rule determines how strongly they count.', tldrReg:'KNN regression selects the k nearest examples, then predicts a continuous value by averaging their targets. Distance weighting gives closer targets more influence.'},
+    zh: {weightClass:'投票规则：', weightReg:'平均规则：', hintClass:'悬停画布查看 k 个邻居如何投票。', hintReg:'悬停画布查看选中的 k 个目标值及其平均值。', prediction:'预测值', distance:'距离', targetHeader:'目标 y', weightHeader:'权重', taskTitle:'无需重新加载即可在类别投票与连续目标平均之间切换。', targetAria:'新添加点的连续目标值', pointDescription:(i,target,x,y)=>`训练点 ${i}：目标值 ${target}，坐标 ${x}, ${y}。`, tldrClass:'K-近邻先依据所选距离规则和特征缩放定义哪些训练点算最近，再由 k 选出投票者，并由投票规则决定它们各自的影响。', tldrReg:'KNN 回归选择 k 个最近样本，再通过平均其连续目标值进行预测。距离加权让更近目标值的影响更大。'},
+    vi: {weightClass:'Quy tắc bỏ phiếu:', weightReg:'Quy tắc lấy trung bình:', hintClass:'Di chuột để xem k láng giềng bỏ phiếu.', hintReg:'Di chuột để xem k giá trị mục tiêu đã chọn và giá trị trung bình.', prediction:'Giá trị dự đoán', distance:'khoảng cách', targetHeader:'mục tiêu y', weightHeader:'trọng số', taskTitle:'Chuyển giữa bỏ phiếu phân loại và lấy trung bình mục tiêu liên tục mà không tải lại applet.', targetAria:'Mục tiêu liên tục cho điểm mới thêm', pointDescription:(i,target,x,y)=>`Điểm huấn luyện ${i}: mục tiêu ${target} tại tọa độ ${x}, ${y}.`, tldrClass:'KNN xác định các điểm gần nhất, chọn k láng giềng rồi kết hợp phiếu của chúng.', tldrReg:'Hồi quy KNN chọn k ví dụ gần nhất rồi dự đoán giá trị liên tục bằng cách lấy trung bình các mục tiêu; trọng số khoảng cách tăng ảnh hưởng của mục tiêu gần.'},
+    es: {weightClass:'Regla de votación:', weightReg:'Regla de promedio:', hintClass:'Pase el cursor para ver cómo votan k vecinos.', hintReg:'Pase el cursor para inspeccionar los k objetivos seleccionados y su promedio.', prediction:'Valor predicho', distance:'distancia', targetHeader:'objetivo y', weightHeader:'peso', taskTitle:'Cambia entre votación categórica y promedio de objetivos continuos sin recargar el applet.', targetAria:'Objetivo continuo para un punto nuevo', pointDescription:(i,target,x,y)=>`Punto de entrenamiento ${i}: objetivo ${target} en las coordenadas ${x}, ${y}.`, tldrClass:'KNN define qué puntos son más cercanos, selecciona k vecinos y combina sus votos.', tldrReg:'La regresión KNN selecciona los k ejemplos más cercanos y predice un valor continuo promediando sus objetivos; la ponderación por distancia da más influencia a los cercanos.'},
+  };
+  function taskMode() { return $('taskMode') && $('taskMode').value === 'regression' ? 'regression' : 'classification'; }
+  function activeCopy() {
+    const lang = (document.documentElement.lang || 'en').toLowerCase();
+    return modeCopy[lang.startsWith('zh') ? 'zh' : lang.startsWith('vi') ? 'vi' : lang.startsWith('es') ? 'es' : 'en'];
+  }
+  function targetFor(x, y) {
+    const value = 18 + 0.075 * x + 0.055 * (H - y) + 14 * Math.sin(x / 82) - 8 * Math.cos(y / 68);
+    return Math.max(0, Math.min(100, value));
+  }
+  function regressionColor(value, alpha = 1) {
+    const t = Math.max(0, Math.min(1, Number(value) / 100));
+    const hue = 225 - 225 * t;
+    return `hsla(${hue}, 72%, 48%, ${alpha})`;
+  }
+  function updateTaskModeUI() {
+    const regression = taskMode() === 'regression';
+    $('classAddControls').hidden = regression;
+    $('regressionTargetControls').hidden = !regression;
+    $('classLegend').hidden = regression;
+    $('regressionLegend').hidden = !regression;
+    $('regressionInspector').hidden = !regression;
+    $('knnGuided').hidden = regression;
+    $('weightLabel').textContent = regression ? activeCopy().weightReg : activeCopy().weightClass;
+    $('legendHint').textContent = regression ? activeCopy().hintReg : activeCopy().hintClass;
+    $('taskMode').title = activeCopy().taskTitle;
+    $('targetValue').setAttribute('aria-label', activeCopy().targetAria);
+    document.querySelector('.tldr span').textContent = regression ? activeCopy().tldrReg : activeCopy().tldrClass;
+    render();
+  }
   const guided = {
     active: false, locked: false, revealed: false, query: null,
     predictedNeighbors: new Set(), predictedClass: null, actual: null,
@@ -1348,7 +1418,7 @@
       updateGuidedUI(); render();
       return;
     }
-    points.push({x, y, c: addClass});
+    points.push({x, y, c: addClass, target: +$('targetValue').value});
     render();
   });
   cv.addEventListener('mousemove', e => { hover = canvasCoords(e); render(); });
@@ -1387,6 +1457,14 @@
   }
   // Kept as an alias for any caller still referencing distSq; routes through the metric.
   function distSq(a, b) { return distMetric(a, b); }
+  function aggregateRegressionTargets(targets, weights = null) {
+    if (!targets.length) return 0;
+    const actualWeights = weights || targets.map(() => 1);
+    const totalWeight = actualWeights.reduce((sum, value) => sum + value, 0);
+    return totalWeight > 0
+      ? targets.reduce((sum, target, index) => sum + target * actualWeights[index], 0) / totalWeight
+      : 0;
+  }
   function knnPredict(p, k) {
     if (!points.length) return null;
     const sorted = points.map((q, idx) => ({...q, _idx: idx, d: distSq(p, q)}))
@@ -1396,6 +1474,17 @@
     // so the 1/d scaling is in true pixel units across all metric choices.
     const wSel = $('weightSel');
     const weighted = wSel && wSel.value === 'distance';
+    if (taskMode() === 'regression') {
+      let totalWeight = 0;
+      const weights = [];
+      for (const q of sorted) {
+        const w = weighted ? 1 / (distActual(p, q) + 1e-6) : 1;
+        totalWeight += w;
+        q._weight = w; weights.push(w);
+      }
+      return { prediction: aggregateRegressionTargets(sorted.map(q => q.target), weights),
+               neighbors: sorted, weighted, totalWeight };
+    }
     const votes = {A: 0, B: 0};
     let totalWeight = 0;
     for (const q of sorted) {
@@ -1420,16 +1509,22 @@
         for (let y = 0; y < H; y += STEP) {
           const pred = knnPredict({x: x + STEP/2, y: y + STEP/2}, k);
           if (!pred) continue;
-          const base = pred.label === 'A' ? [37, 99, 235] : [217, 119, 6];
-          const alpha = 0.10 + 0.20 * pred.confidence;
-          ctx.fillStyle = `rgba(${base[0]},${base[1]},${base[2]},${alpha})`;
+          if (taskMode() === 'regression') {
+            ctx.fillStyle = regressionColor(pred.prediction, 0.24);
+          } else {
+            const base = pred.label === 'A' ? [37, 99, 235] : [217, 119, 6];
+            const alpha = 0.10 + 0.20 * pred.confidence;
+            ctx.fillStyle = `rgba(${base[0]},${base[1]},${base[2]},${alpha})`;
+          }
           ctx.fillRect(x, y, STEP, STEP);
         }
       }
     }
     if (hover && points.length > 0 && $('showNeighbors').checked) {
       const pred = knnPredict(hover, k);
-      ctx.strokeStyle = pred.label === 'A' ? getCSS('--classA') : getCSS('--classB');
+      ctx.strokeStyle = taskMode() === 'regression'
+        ? regressionColor(pred.prediction)
+        : (pred.label === 'A' ? getCSS('--classA') : getCSS('--classB'));
       ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
       for (const n of pred.neighbors) {
         ctx.beginPath(); ctx.moveTo(hover.x, hover.y); ctx.lineTo(n.x, n.y); ctx.stroke();
@@ -1438,13 +1533,24 @@
       ctx.beginPath(); ctx.arc(hover.x, hover.y, 8, 0, Math.PI * 2);
       ctx.strokeStyle = '#333'; ctx.lineWidth = 2; ctx.stroke();
       ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#e2e8f0' : '#333'; ctx.font = 'bold 13px system-ui';
-      ctx.fillText(`Predicted: ${pred.label} (${Math.round(pred.confidence * 100)}%)`,
-                    hover.x + 14, hover.y - 10);
+      const predictionText = taskMode() === 'regression'
+        ? `${activeCopy().prediction}: ${pred.prediction.toFixed(2)}`
+        : `Predicted: ${pred.label} (${Math.round(pred.confidence * 100)}%)`;
+      ctx.fillText(predictionText, hover.x + 14, hover.y - 10);
+      renderRegressionInspector(pred);
+    } else if (taskMode() === 'regression') {
+      renderRegressionInspector(null);
     }
     // Shape+color for accessibility: A = circle, B = triangle.
     for (const p of points) {
-      const color = p.c === 'A' ? getCSS('--classA') : getCSS('--classB');
-      drawClassPoint(ctx, p.x, p.y, p.c, color, 'white');
+      if (taskMode() === 'regression') {
+        ctx.fillStyle = regressionColor(p.target);
+        ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = 'white'; ctx.lineWidth = 2; ctx.stroke();
+      } else {
+        const color = p.c === 'A' ? getCSS('--classA') : getCSS('--classB');
+        drawClassPoint(ctx, p.x, p.y, p.c, color, 'white');
+      }
     }
     if (guided.active && guided.query) {
       const actualIds = new Set(guided.revealed && guided.actual ? guided.actual.neighbors.map(n => n._idx) : []);
@@ -1469,6 +1575,22 @@
     }
     // D3/SVG hybrid: rebuild a11y overlay (one tabbable hit-target per training point).
     updateOverlay();
+  }
+  function renderRegressionInspector(pred) {
+    if (taskMode() !== 'regression') return;
+    const equation = $('regressionEquation'), table = $('regressionNeighborTable');
+    if (!pred || !pred.neighbors) {
+      equation.textContent = activeCopy().hintReg;
+      table.innerHTML = '';
+      return;
+    }
+    const values = pred.neighbors.map(q => q.target.toFixed(1));
+    equation.textContent = pred.weighted
+      ? `ŷ = Σ(wᵢyᵢ) / Σwᵢ = ${pred.prediction.toFixed(2)},  wᵢ = 1/(dᵢ + ε)`
+      : `ŷ = (${values.join(' + ')}) / ${values.length} = ${pred.prediction.toFixed(2)}`;
+    const rows = pred.neighbors.map((q, i) => `<tr><td>${i + 1}</td><td>${distActual(hover, q).toFixed(2)}</td><td>${q.target.toFixed(2)}</td><td>${pred.weighted ? q._weight.toFixed(4) : '1'}</td></tr>`).join('');
+    const copy=activeCopy();
+    table.innerHTML = `<table><thead><tr><th>#</th><th>${copy.distance}</th><th>${copy.targetHeader}</th><th>${copy.weightHeader}</th></tr></thead><tbody>${rows}</tbody></table>`;
   }
   // D3-style enter/update/exit overlay. Preserves SVG element identity
   // across renders so focused points don't lose focus, CSS transitions are
@@ -1500,9 +1622,11 @@
       }
       el.dataset.pointIndex = String(idx);
       el.setAttribute('cx', p.x); el.setAttribute('cy', p.y);
-      el.setAttribute('aria-label',
-        `Training point ${idx + 1}: class ${p.c} at coordinates ${Math.round(p.x)}, ${Math.round(p.y)}.`);
-      el.firstChild.textContent = `Class ${p.c} at (${Math.round(p.x)}, ${Math.round(p.y)})`;
+      const description = taskMode() === 'regression'
+        ? activeCopy().pointDescription(idx + 1,p.target.toFixed(1),Math.round(p.x),Math.round(p.y))
+        : `Training point ${idx + 1}: class ${p.c} at coordinates ${Math.round(p.x)}, ${Math.round(p.y)}.`;
+      el.setAttribute('aria-label', description);
+      el.firstChild.textContent = description;
     });
     // Exit phase: remove circles for indices no longer in `points`.
     for (let i = points.length; i < existing.length; i++) existing[i].remove();
@@ -1512,35 +1636,39 @@
   function genBlobs() {
     points = [];
     for (let i = 0; i < 35; i++) {
-      points.push({x: 200 + randn() * 50, y: 200 + randn() * 50, c: 'A'});
-      points.push({x: 440 + randn() * 50, y: 280 + randn() * 50, c: 'B'});
+      const a = {x: 200 + randn() * 50, y: 200 + randn() * 50, c: 'A'};
+      const b = {x: 440 + randn() * 50, y: 280 + randn() * 50, c: 'B'};
+      a.target = targetFor(a.x, a.y); b.target = targetFor(b.x, b.y); points.push(a, b);
     }
   }
   function genMoons() {
     points = [];
     for (let i = 0; i < 60; i++) {
       const t = Math.PI * i / 60;
-      points.push({x: 200 + 160 * Math.cos(t) + randn() * 12,
-                   y: 280 - 100 * Math.sin(t) + randn() * 12, c: 'A'});
-      points.push({x: 360 + 160 * Math.cos(t + Math.PI) + randn() * 12,
-                   y: 200 + 100 * Math.sin(t + Math.PI) + randn() * 12, c: 'B'});
+      const a = {x: 200 + 160 * Math.cos(t) + randn() * 12,
+                 y: 280 - 100 * Math.sin(t) + randn() * 12, c: 'A'};
+      const b = {x: 360 + 160 * Math.cos(t + Math.PI) + randn() * 12,
+                 y: 200 + 100 * Math.sin(t + Math.PI) + randn() * 12, c: 'B'};
+      a.target = targetFor(a.x, a.y); b.target = targetFor(b.x, b.y); points.push(a, b);
     }
   }
   function genSpiral() {
     points = [];
     for (let i = 0; i < 80; i++) {
       const t = 0.05 * i; const r = 10 + 5 * i;
-      points.push({x: W/2 + r * Math.cos(t) + randn() * 5,
-                   y: H/2 + r * Math.sin(t) + randn() * 5, c: 'A'});
-      points.push({x: W/2 + r * Math.cos(t + Math.PI) + randn() * 5,
-                   y: H/2 + r * Math.sin(t + Math.PI) + randn() * 5, c: 'B'});
+      const a = {x: W/2 + r * Math.cos(t) + randn() * 5,
+                 y: H/2 + r * Math.sin(t) + randn() * 5, c: 'A'};
+      const b = {x: W/2 + r * Math.cos(t + Math.PI) + randn() * 5,
+                 y: H/2 + r * Math.sin(t + Math.PI) + randn() * 5, c: 'B'};
+      a.target = targetFor(a.x, a.y); b.target = targetFor(b.x, b.y); points.push(a, b);
     }
   }
   function genNoise() {
     points = [];
     for (let i = 0; i < 70; i++) {
-      points.push({x: 220 + randn() * 90, y: 240 + randn() * 90, c: 'A'});
-      points.push({x: 420 + randn() * 90, y: 240 + randn() * 90, c: 'B'});
+      const a = {x: 220 + randn() * 90, y: 240 + randn() * 90, c: 'A'};
+      const b = {x: 420 + randn() * 90, y: 240 + randn() * 90, c: 'B'};
+      a.target = targetFor(a.x, a.y); b.target = targetFor(b.x, b.y); points.push(a, b);
     }
   }
   function randn() {
@@ -1557,6 +1685,12 @@
   $('k').addEventListener('input', render);
   $('metricSel').addEventListener('change', render);
   $('weightSel').addEventListener('change', render);
+  $('taskMode').addEventListener('change', updateTaskModeUI);
+  $('targetValue').addEventListener('input', () => {
+    $('targetValueV').textContent = (+$('targetValue').value).toFixed(1);
+  });
+  document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(updateTaskModeUI, 70)));
+  window.addEventListener('r4languagechange', () => { updateTaskModeUI(); updateGuidedUI(); });
   $('xScale').addEventListener('input', () => {
     $('xScaleV').textContent = (+$('xScale').value).toFixed(1) + '×';
     render();
@@ -1587,7 +1721,7 @@
       `你选中了 ${overlap}/${guidedNeed()} 个实际邻居。预测类别为 ${guided.predictedClass}，实际类别为 ${guided.actual.label}${classMatch ? '（一致）' : '（不一致）'}。比较在当前接近规则和缩放下，哪些点的距离排序与你预期不同。`);
     updateGuidedUI(); render();
   });
-  ['k', 'metricSel', 'weightSel', 'xScale'].forEach(id => $(id).addEventListener('change', () => {
+  ['k', 'metricSel', 'weightSel', 'xScale', 'taskMode'].forEach(id => $(id).addEventListener('change', () => {
     if (guided.active) resetGuided();
   }));
   ['loadBlobs', 'loadMoons', 'loadSpiral', 'loadNoise', 'clearBtn'].forEach(id => $(id).addEventListener('click', () => {
@@ -1600,12 +1734,14 @@
     document.querySelectorAll('.mode-tabs button').forEach(x =>
       x.classList.toggle('active', x.dataset.class === 'A'));
     addClass = 'A'; $('k').value = 5; $('kV').textContent = 5;
+    $('taskMode').value = 'classification';
+    $('targetValue').value = 50; $('targetValueV').textContent = '50.0';
     $('metricSel').value = 'euclidean';
     $('weightSel').value = 'uniform';
     $('xScale').value = 1; $('xScaleV').textContent = '1.0×';
     $('showBoundary').checked = true; $('showNeighbors').checked = true;
     guided.active = false; guided.locked = false; guided.revealed = false; guided.query = null; guided.predictedNeighbors.clear(); guided.predictedClass = null; guided.actual = null;
-    genMoons(); updateGuidedUI(); render();
+    currentDataset = 'moons'; genMoons(); updateGuidedUI(); updateTaskModeUI();
   });
 
   // touch support: synthesize mouse events from touch events for tablet use.
@@ -1640,7 +1776,7 @@
   $('loadSpiral').addEventListener('click', () => { currentDataset = 'spiral'; });
   $('loadNoise').addEventListener('click', () => { currentDataset = 'noise'; });
 
-  // URL-shareable config: k value + dataset choice.
+  // URL-shareable config: task mode plus every mechanism control and dataset choice.
   try {
     const sp = new URLSearchParams(location.search);
     const urlK = parseInt(sp.get('k'), 10);
@@ -1654,11 +1790,30 @@
       // Defer to after genMoons default so it overrides.
       queueMicrotask(() => $(dsMap[urlDs]).click());
     }
+    if (sp.get('task') === 'regression') $('taskMode').value = 'regression';
+    const metric = sp.get('metric');
+    if (['euclidean', 'manhattan', 'chebyshev'].includes(metric)) $('metricSel').value = metric;
+    const weight = sp.get('weight');
+    if (['uniform', 'distance'].includes(weight)) $('weightSel').value = weight;
+    const scale = parseFloat(sp.get('scale'));
+    if (!Number.isNaN(scale) && scale >= 0.2 && scale <= 5) {
+      $('xScale').value = scale; $('xScaleV').textContent = scale.toFixed(1) + '×';
+    }
+    const target = parseFloat(sp.get('target'));
+    if (!Number.isNaN(target) && target >= 0 && target <= 100) {
+      $('targetValue').value = target; $('targetValueV').textContent = target.toFixed(1);
+    }
+    updateTaskModeUI();
   } catch (_) {}
   document.getElementById('shareLink').addEventListener('click', async () => {
     const params = new URLSearchParams();
     params.set('k', $('k').value);
     params.set('ds', currentDataset);
+    params.set('task', taskMode());
+    params.set('metric', $('metricSel').value);
+    params.set('weight', $('weightSel').value);
+    params.set('scale', $('xScale').value);
+    params.set('target', $('targetValue').value);
     const url = `${location.origin}${location.pathname}?${params.toString()}`;
     try {
       await navigator.clipboard.writeText(url);
@@ -1834,6 +1989,7 @@
   }
   function runKnnCV() {
     const f = +$('cvFolds').value, kMax = +$('cvKmax').value;
+    const regression = taskMode() === 'regression';
     const stats = $('cvStats');
     if (points.length < Math.max(10, f * 2)) {
       stats.innerHTML = `<span style="color:#dc2626;">Need at least ${Math.max(10, f * 2)} points for ${f}-fold CV.</span>`;
@@ -1842,7 +1998,7 @@
     // Stash global state and use a deterministic shuffle of points.
     const originalPoints = points.slice();
     const shuffled = shuffleCopy(originalPoints);
-    const accByK = []; // index = k-1, value = avg accuracy over folds.
+    const scoreByK = []; // classification accuracy or regression RMSE.
     // Pre-build the f folds. Last fold absorbs the remainder so all points are used exactly once.
     const foldSize = Math.floor(shuffled.length / f);
     const folds = [];
@@ -1853,7 +2009,7 @@
     }
     try {
       for (let k = 1; k <= kMax; k++) {
-        let correct = 0, total = 0;
+        let correct = 0, squaredError = 0, total = 0;
         for (let valIdx = 0; valIdx < f; valIdx++) {
           // Train on all OTHER folds; validate on fold[valIdx].
           const train = [];
@@ -1864,26 +2020,30 @@
           for (const p of val) {
             if (train.length === 0) continue;
             const pred = knnPredict(p, k);
-            if (pred && pred.label === p.c) correct++;
+            if (regression) squaredError += (pred.prediction - p.target) ** 2;
+            else if (pred && pred.label === p.c) correct++;
             total++;
           }
         }
-        accByK.push(total > 0 ? correct / total : 0);
+        scoreByK.push(total > 0 ? (regression ? Math.sqrt(squaredError / total) : correct / total) : 0);
       }
     } finally {
       // Always restore: leaving the global mutated would break the main viz.
       points.length = 0; points.push(...originalPoints);
       render();
     }
-    drawCvChart(accByK);
-    // Find best k. Break ties toward larger k (less overfit).
-    let bestK = 1, bestAcc = accByK[0];
-    for (let i = 1; i < accByK.length; i++) {
-      if (accByK[i] >= bestAcc) { bestAcc = accByK[i]; bestK = i + 1; }
+    drawCvChart(scoreByK, regression);
+    // Find best k. Break exact ties toward larger k (less variance).
+    let bestK = 1, bestScore = scoreByK[0];
+    for (let i = 1; i < scoreByK.length; i++) {
+      if ((regression && scoreByK[i] <= bestScore) || (!regression && scoreByK[i] >= bestScore)) {
+        bestScore = scoreByK[i]; bestK = i + 1;
+      }
     }
+    const scoreText = regression ? `CV RMSE = <strong>${bestScore.toFixed(2)}</strong>` : `CV accuracy = <strong>${(bestScore * 100).toFixed(1)}%</strong>`;
     stats.innerHTML =
       `<span>Best k = <strong style="color:var(--accent);">${bestK}</strong> ` +
-      `(CV accuracy = <strong>${(bestAcc * 100).toFixed(1)}%</strong>, ` +
+      `(${scoreText}, ` +
       `${f}-fold, ${originalPoints.length} points). ` +
       `Click "Apply best k" to update the main viz: ` +
       `<button class="step-btn" id="cvApplyBtn" style="padding:2px 8px; font-size:0.8rem;">Apply best k</button></span>`;
@@ -1891,7 +2051,7 @@
     const ab = document.getElementById('cvApplyBtn');
     if (ab) ab.addEventListener('click', () => { $('k').value = bestK; render(); });
   }
-  function drawCvChart(accByK) {
+  function drawCvChart(accByK, regression = false) {
     const cv = $('cvCv');
     const W = cv.width, H = cv.height;
     const ctx = cv.getContext('2d');
@@ -1900,8 +2060,9 @@
     const pad = { l: 40, r: 12, t: 12, b: 26 };
     const innerW = W - pad.l - pad.r, innerH = H - pad.t - pad.b;
     // Y-axis: accuracy in [floor, 1] for tight zoom.
-    const minAcc = Math.min(...accByK);
-    const yMin = Math.max(0, Math.floor(minAcc * 10) / 10 - 0.05);
+    const minAcc = Math.min(...accByK), maxAcc = Math.max(...accByK);
+    const yMin = regression ? 0 : Math.max(0, Math.floor(minAcc * 10) / 10 - 0.05);
+    const yMax = regression ? Math.max(1, Math.ceil(maxAcc * 10) / 10) : 1;
     const xMax = accByK.length;
     // Grid + axes.
     const muted = document.body.classList.contains('dark-mode') ? '#475569' : '#cbd5e1';
@@ -1910,9 +2071,10 @@
     // Y ticks every 0.1.
     ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#94a3b8' : '#475569';
     ctx.font = '10px ui-monospace, monospace';
-    for (let y = yMin; y <= 1.001; y += 0.1) {
-      const py = pad.t + innerH - ((y - yMin) / (1 - yMin)) * innerH;
-      ctx.fillText(y.toFixed(1), 6, py + 3);
+    for (let tick = 0; tick <= 5; tick++) {
+      const y = yMin + (yMax - yMin) * tick / 5;
+      const py = pad.t + innerH - ((y - yMin) / Math.max(1e-9, yMax - yMin)) * innerH;
+      ctx.fillText(y.toFixed(regression ? 1 : 1), 6, py + 3);
       ctx.beginPath(); ctx.moveTo(pad.l, py); ctx.lineTo(pad.l + innerW, py); ctx.strokeStyle = muted + '55'; ctx.stroke();
     }
     // X ticks every 5.
@@ -1926,7 +2088,7 @@
     ctx.beginPath();
     for (let i = 0; i < accByK.length; i++) {
       const px = pad.l + ((i + 1) / xMax) * innerW;
-      const py = pad.t + innerH - ((accByK[i] - yMin) / (1 - yMin)) * innerH;
+      const py = pad.t + innerH - ((accByK[i] - yMin) / Math.max(1e-9, yMax - yMin)) * innerH;
       if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
     }
     ctx.stroke();
@@ -1934,7 +2096,7 @@
     ctx.fillStyle = '#7c3aed';
     for (let i = 0; i < accByK.length; i++) {
       const px = pad.l + ((i + 1) / xMax) * innerW;
-      const py = pad.t + innerH - ((accByK[i] - yMin) / (1 - yMin)) * innerH;
+      const py = pad.t + innerH - ((accByK[i] - yMin) / Math.max(1e-9, yMax - yMin)) * innerH;
       ctx.beginPath(); ctx.arc(px, py, 3, 0, Math.PI * 2); ctx.fill();
     }
     // Axis labels.
@@ -1943,15 +2105,15 @@
     ctx.fillText('k', W / 2, H - 1);
     ctx.save();
     ctx.translate(10, H / 2); ctx.rotate(-Math.PI / 2);
-    ctx.textAlign = 'center'; ctx.fillText('CV accuracy', 0, 0);
+    ctx.textAlign = 'center'; ctx.fillText(regression ? 'CV RMSE' : 'CV accuracy', 0, 0);
     ctx.restore();
   }
   $('cvRunBtn').addEventListener('click', runKnnCV);
 
   // CSV export. Downloads current training points as CSV.
   document.getElementById('csvExport').addEventListener('click', () => {
-    const rows = ['x,y,class'];
-    for (const p of points) rows.push(`${p.x.toFixed(3)},${p.y.toFixed(3)},${p.c}`);
+    const rows = ['x,y,class,target'];
+    for (const p of points) rows.push(`${p.x.toFixed(3)},${p.y.toFixed(3)},${p.c},${p.target.toFixed(3)}`);
     const blob = new Blob([rows.join('\n')], {type: 'text/csv'});
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
@@ -1960,7 +2122,40 @@
     URL.revokeObjectURL(link.href);
   });
 
-  genMoons(); render();
+  window.__knnModeTest = function () {
+    const originalPoints = points;
+    const originalMode = $('taskMode').value;
+    const originalWeight = $('weightSel').value;
+    const originalScale = $('xScale').value;
+    try {
+      points = [
+        {x:0, y:0, c:'A', target:10},
+        {x:2, y:0, c:'B', target:20},
+        {x:4, y:0, c:'B', target:40},
+      ];
+      $('xScale').value = 1; $('weightSel').value = 'uniform'; $('taskMode').value = 'regression';
+      const regression = knnPredict({x:1, y:0}, 2);
+      $('weightSel').value = 'distance';
+      const weighted = knnPredict({x:.5, y:0}, 2);
+      $('taskMode').value = 'classification';
+      $('weightSel').value = 'uniform';
+      const classification = knnPredict({x:0.1, y:0}, 1);
+      const tie = knnPredict({x:1, y:0}, 2);
+      const emptyMean = aggregateRegressionTargets([]);
+      const weightedExpected = aggregateRegressionTargets([10,20],[1/(.5+1e-6),1/(1.5+1e-6)]);
+      const pass = regression.neighbors.length === 2
+        && regression.neighbors.map(n=>n.target).join(',') === '10,20'
+        && Math.abs(regression.prediction - 15) < 1e-9
+        && Math.abs(weighted.prediction - weightedExpected) < 1e-9
+        && classification.label === 'A' && tie.label === 'A' && emptyMean === 0;
+      return {pass, regressionPrediction: regression.prediction, regressionNeighbors: regression.neighbors.map(n => n.target), weightedPrediction:weighted.prediction, weightedExpected, classificationLabel:classification.label, classificationTie:tie.label, emptyMean};
+    } finally {
+      points = originalPoints; $('taskMode').value = originalMode; $('weightSel').value = originalWeight; $('xScale').value = originalScale;
+      updateTaskModeUI();
+    }
+  };
+
+  genMoons(); updateTaskModeUI();
 })();
 </script>
 <footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
@@ -1970,7 +2165,7 @@
 </footer>
 <script>
 (function() {
-  const LAB_CONFIG = {"slug": "knn-classifier", "title": "K-nearest neighbors lab packet", "zhTitle": "K 近邻实验包", "fields": [{"label": "k", "selector": "#kV", "kind": "text"}, {"label": "Metric", "selector": "#metricSel", "kind": "selected"}, {"label": "Weighting", "selector": "#weightSel", "kind": "selected"}, {"label": "X scale", "selector": "#xScaleV", "kind": "text"}, {"label": "Boundary visible", "selector": "#showBoundary", "kind": "checked"}, {"label": "Neighbors visible", "selector": "#showNeighbors", "kind": "checked"}, {"label": "Cross-validation stats", "selector": "#cvStats", "kind": "text"}]};
+  const LAB_CONFIG = {"slug": "knn-classifier", "title": "K-nearest neighbors lab packet", "zhTitle": "K 近邻实验包", "fields": [{"label": "Task mode", "selector": "#taskMode", "kind": "selected"}, {"label": "k", "selector": "#kV", "kind": "text"}, {"label": "Metric", "selector": "#metricSel", "kind": "selected"}, {"label": "Weighting", "selector": "#weightSel", "kind": "selected"}, {"label": "X scale", "selector": "#xScaleV", "kind": "text"}, {"label": "New-point target", "selector": "#targetValue", "kind": "value"}, {"label": "Regression equation", "selector": "#regressionEquation", "kind": "text"}, {"label": "Regression neighbors", "selector": "#regressionNeighborTable", "kind": "text"}, {"label": "Boundary visible", "selector": "#showBoundary", "kind": "checked"}, {"label": "Neighbors visible", "selector": "#showNeighbors", "kind": "checked"}, {"label": "Cross-validation stats", "selector": "#cvStats", "kind": "text"}]};
   const root = document.querySelector('.classroom-lab');
   if (!root) return;
   const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;

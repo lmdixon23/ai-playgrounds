@@ -6,18 +6,18 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>CNF and SAT Builder | AI Playgrounds</title>
 <link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E" rel="icon"/>
-<meta content="Rewrite propositional logic into a standard clause form, test whether any assignment makes the formula true, and watch a solver remove impossible branches." name="description"/>
+<meta content="Rewrite propositional logic into CNF, then inspect either the original DPLL search or a bounded CDCL trace with reasons, learned clauses, and non-chronological backjumps." name="description"/>
 <link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/cnf-sat/" rel="canonical"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/cnf-sat/?lang=en" hreflang="en" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/cnf-sat/?lang=zh" hreflang="zh-Hans" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/cnf-sat/?lang=vi" hreflang="vi" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/cnf-sat/?lang=es" hreflang="es" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/cnf-sat/?lang=en" hreflang="x-default" rel="alternate"/>
 <meta content="website" property="og:type"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/cnf-sat/" property="og:url"/>
 <meta content="CNF and SAT Builder | AI Playgrounds" property="og:title"/>
-<meta content="Rewrite propositional logic into a standard clause form, test whether any assignment makes the formula true, and watch a solver remove impossible branches." property="og:description"/>
+<meta content="Rewrite propositional logic into CNF, then inspect either the original DPLL search or a bounded CDCL trace with reasons, learned clauses, and non-chronological backjumps." property="og:description"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" property="og:image"/>
 <meta content="summary_large_image" name="twitter:card"/>
 <meta content="CNF and SAT Builder | AI Playgrounds" name="twitter:title"/>
-<meta content="Rewrite propositional logic into a standard clause form, test whether any assignment makes the formula true, and watch a solver remove impossible branches." name="twitter:description"/>
+<meta content="Rewrite propositional logic into CNF, then inspect either the original DPLL search or a bounded CDCL trace with reasons, learned clauses, and non-chronological backjumps." name="twitter:description"/>
 <meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" name="twitter:image"/>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"CNF and SAT Builder | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/cnf-sat/","description":"Rewrite propositional logic into a standard clause form, test whether any assignment makes the formula true, and watch a solver remove impossible branches.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh","vi","es"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"CNF and SAT Builder | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/cnf-sat/","description":"Rewrite propositional logic into CNF, then inspect either the original DPLL search or a bounded CDCL trace with reasons, learned clauses, and non-chronological backjumps.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh","vi","es"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
 <style>
   :root {
     --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #6d28d9;
@@ -168,6 +168,11 @@
   .assign-chip.u { color: var(--muted); }
   .dpll-action { display: inline-block; font-weight: 700; padding: 2px 8px; border-radius: 5px; font-size: 0.82rem; margin: 2px 0; }
   .dpll-detail { font-size: 0.88rem; margin: 6px 0; }
+  .clause-chip.learned { border-color:#7c3aed; background:rgba(124,58,237,.10); box-shadow:inset 0 0 0 1px rgba(124,58,237,.18); }
+  .implication-trail { display:flex; flex-wrap:wrap; gap:5px; margin:7px 0; font-size:.78rem; color:var(--muted); }
+  .implication-trail span { padding:3px 6px; border:1px solid var(--border); border-radius:999px; background:var(--soft); }
+  .solver-mode-row { display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:9px 0; }
+  .solver-fidelity { color:var(--muted);font-size:.82rem;line-height:1.45;margin:5px 0 9px; }
   body.dark-mode .assign-chip.t { background: rgba(22,163,74,0.25); }
   body.dark-mode .assign-chip.f { background: rgba(220,38,38,0.25); }
   @media (prefers-reduced-motion: reduce) {
@@ -611,6 +616,7 @@ P</textarea>
 <button class="step-btn" data-i18n="ex-color" data-i18n-title="ex-color-title" id="ex3" title="3-coloring a triangle. SAT problem from graph theory.">3-coloring</button>
 <button class="step-btn" data-i18n="ex-xor" data-i18n-title="ex-xor-title" id="ex4" title="A trio that pairwise differs but you try to assert all three true. UNSAT.">Conflicting XOR (UNSAT)</button>
 <button class="step-btn" data-i18n="ex-demorgan" data-i18n-title="ex-demorgan-title" id="ex5" title="De Morgan's law as a tautology: every row is a model.">De Morgan</button>
+<button class="step-btn" data-i18n="ex-cdcl" data-i18n-title="ex-cdcl-title" id="exCdcl" title="A deterministic conflict that learns (¬A ∨ ¬C) and backjumps from decision level 3 to level 1.">CDCL backjump</button>
 </div>
 <div class="panel">
 <h3 data-i18n="step1-h3">1. Parsed input</h3>
@@ -645,8 +651,18 @@ P</textarea>
 <h3 data-i18n="step3-h3">3. Satisfiability: exhaustive reference check</h3>
 <div class="sub"><span data-i18n="step3-sub">Exhaustive enumeration of all 2</span><sup>n</sup><span data-i18n="step3-sub2"> assignments (cap n = 12).</span></div>
 <div id="satOut"></div>
+<div class="solver-mode-row">
+<label data-i18n="solver-mode-label" for="solverMode">Trace mode:</label>
+<select data-i18n-title="solver-mode-title" id="solverMode" title="DPLL preserves the original branch-and-backtrack trace. CDCL adds implication reasons, first-UIP clause learning, and non-chronological backjumping.">
+<option data-i18n="solver-dpll" selected="" value="dpll">DPLL branch trace</option>
+<option data-i18n="solver-cdcl" value="cdcl">CDCL conflict-learning trace</option>
+</select>
+</div>
+<p class="solver-fidelity" data-i18n="cdcl-fidelity">CDCL mode is a bounded educational first-UIP trace. It shows decisions, propagation, conflicts, learned clauses, and backjumps; production optimizations such as watched literals, restarts, activity heuristics, and clause deletion are intentionally omitted.</p>
+<p class="solver-fidelity" data-i18n="cdcl-rule">Learning rule: start from the false conflict clause and repeatedly resolve on the latest current-level propagated literal until one current-level literal remains (the first UIP). Backjump to the highest decision level among the learned clause's other literals, or level 0 if there is none.</p>
+<p class="solver-fidelity" data-i18n="cdcl-misread">Misread to avoid: a learned clause is a logical consequence of resolution, not a guessed shortcut; a backjump removes assignments above its target level but does not erase earlier decisions.</p>
 <div class="player" id="dpllPlayer">
-<div aria-label="DPLL search playback" class="transport" id="dpllTransport" role="group">
+<div aria-label="SAT solver search playback" class="transport" id="dpllTransport" role="group">
 <button class="tp-btn" id="dpllReset" title="Back to first step">↺</button>
 <button class="tp-btn" id="dpllBack" title="Previous step">◀❘</button>
 <button aria-pressed="false" class="tp-btn tp-play" id="dpllPlay" title="Play / pause the search">▶</button>
@@ -658,6 +674,7 @@ P</textarea>
 <div class="assign-chips" id="dpllAssign"></div>
 <div id="dpllAction"></div>
 <div class="dpll-detail" id="dpllDetail"></div>
+<div aria-label="Implication trail" class="implication-trail" id="dpllTrail"></div>
 <div class="stage-line-label" id="dpllClausesLabel">working clause set</div>
 <div class="clause-chips" id="dpllClauses"></div>
 </div>
@@ -819,7 +836,7 @@ P</textarea>
 <span data-lab-en="🧪 Student response packet" data-lab-zh="🧪 课堂实验模式">🧪 Student response packet</span>
 </summary>
 <div class="lab-panel">
-<p class="lab-intro" data-lab-en="Convert a knowledge base, inspect satisfiability, then explain why CNF and resolution reveal entailment." data-lab-zh="转换一个知识库、检查可满足性，然后解释 CNF 和归结如何揭示蕴含关系。">Convert a knowledge base, inspect satisfiability, then explain why CNF and resolution reveal entailment.</p>
+<p class="lab-intro" data-lab-en="Convert a knowledge base, inspect DPLL or CDCL evidence, then explain what CNF, learned clauses, and backjumps establish." data-lab-zh="转换知识库，检查 DPLL 或 CDCL 证据，再解释 CNF、学习子句和回跳能说明什么。">Convert a knowledge base, inspect DPLL or CDCL evidence, then explain what CNF, learned clauses, and backjumps establish.</p>
 <div class="lab-grid">
 <div class="lab-field">
 <label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
@@ -827,11 +844,11 @@ P</textarea>
 </div>
 <div class="lab-field">
 <label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
-<textarea data-lab-answer="observe" data-lab-en="Run conversion and at least one SAT or resolution check. Record the key CNF or DPLL result." data-lab-zh="运行转换，并至少进行一次 SAT 或归结检查。记录关键的 CNF 或 DPLL 结果。" id="lab-observe" placeholder="Run conversion and at least one SAT or resolution check. Record the key CNF or DPLL result."></textarea>
+<textarea data-lab-answer="observe" data-lab-en="Run conversion and inspect a DPLL or CDCL trace. Record the key CNF result and any decision, propagation, conflict, learned clause, or backjump." data-lab-zh="运行转换并检查 DPLL 或 CDCL 跟踪。记录关键 CNF 结果以及出现的决策、传播、冲突、学习子句或回跳。" id="lab-observe" placeholder="Run conversion and inspect a DPLL or CDCL trace. Record the key CNF result and any decision, propagation, conflict, learned clause, or backjump."></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
-<textarea data-lab-answer="explain" data-lab-en="What did rewriting to CNF make easier for the solver to check?" data-lab-zh="改写为 CNF 后，求解器更容易检查什么？" id="lab-explain" placeholder="What did rewriting to CNF make easier for the solver to check?"></textarea>
+<textarea data-lab-answer="explain" data-lab-en="What did CNF make easier to check? If using CDCL, why is the learned clause valid and the backjump level safe?" data-lab-zh="CNF 让哪些检查更容易？如果使用 CDCL，为什么学习子句有效且回跳层级安全？" id="lab-explain" placeholder="What did CNF make easier to check? If using CDCL, why is the learned clause valid and the backjump level safe?"></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
@@ -1036,6 +1053,13 @@ P</textarea>
       'title': 'CNF and SAT Builder', 'back-link': '← Back to all playgrounds',
       'footer-top': '↑ Back to top', 'footer-course': 'Made for the Introduction to AI course at Haidian Kaiwen Academy.', 'footer-portfolio': 'Portfolio', 'footer-project': 'AI Playgrounds', 'footer-source': 'Source', 'footer-issue': 'Report an issue',
       'reset-all': '↺ Reset all', 'convert-btn': '▶ Convert + check SAT',
+      'solver-mode-label': 'Trace mode:', 'solver-dpll': 'DPLL branch trace', 'solver-cdcl': 'CDCL conflict-learning trace',
+      'solver-mode-title': 'DPLL preserves the original branch-and-backtrack trace. CDCL adds implication reasons, first-UIP clause learning, and non-chronological backjumping.',
+      'cdcl-fidelity': 'CDCL mode is a bounded educational first-UIP trace. It shows decisions, propagation, conflicts, learned clauses, and backjumps; production optimizations such as watched literals, restarts, activity heuristics, and clause deletion are intentionally omitted.',
+      'cdcl-rule': "Learning rule: start from the false conflict clause and repeatedly resolve on the latest current-level propagated literal until one current-level literal remains (the first UIP). Backjump to the highest decision level among the learned clause's other literals, or level 0 if there is none.",
+      'cdcl-misread': 'Misread to avoid: a learned clause is a logical consequence of resolution, not a guessed shortcut; a backjump removes assignments above its target level but does not erase earlier decisions.',
+      'ex-cdcl': 'CDCL backjump',
+      'ex-cdcl-title': 'A deterministic conflict that learns (¬A ∨ ¬C) and backjumps from decision level 3 to level 1.',
       'tldr-strong': 'The big idea',
       'tldr-body': 'Every SAT solver in the world wants Conjunctive Normal Form. Watch ↔ → ¬ get distributed away in five mechanical steps, then brute-force-enumerate every satisfying assignment.',
       'input-h3': 'Propositional sentences (one per line)',
@@ -1120,6 +1144,13 @@ P</textarea>
       'title': 'CNF and SAT Builder', 'back-link': '← 返回所有演示',
       'footer-top': '↑ 返回顶部', 'footer-course': '为海淀凯文学校《人工智能导论》课程制作。', 'footer-portfolio': '作品集', 'footer-project': 'AI Playgrounds', 'footer-source': '源代码', 'footer-issue': '反馈问题',
       'reset-all': '↺ 全部重置', 'convert-btn': '▶ 转换 + 检查可满足性',
+      'solver-mode-label': '跟踪模式：', 'solver-dpll': 'DPLL 分支跟踪', 'solver-cdcl': 'CDCL 冲突学习跟踪',
+      'solver-mode-title': 'DPLL 保留原有分支与回溯跟踪；CDCL 增加蕴含原因、第一 UIP 子句学习和非按时间顺序回跳。',
+      'cdcl-fidelity': 'CDCL 模式是一个有界的教学型第一 UIP 跟踪。它展示决策、传播、冲突、学习子句和回跳；监视文字、重启、活动度启发式和子句删除等生产优化被有意省略。',
+      'cdcl-rule': '学习规则：从为假的冲突子句开始，反复在当前层最近传播的文字上进行归结，直到只剩一个当前层文字（第一 UIP）。回跳到学习子句中其他文字的最高决策层；若没有其他文字，则回到第 0 层。',
+      'cdcl-misread': '避免误读：学习子句是归结得到的逻辑后果，不是猜出的捷径；回跳会删除目标层以上的赋值，但不会抹去更早的决策。',
+      'ex-cdcl': 'CDCL 回跳',
+      'ex-cdcl-title': '一个确定性冲突：学习 (¬A ∨ ¬C)，并从决策层 3 回跳到层 1。',
       'tldr-strong': '核心思想',
       'tldr-body': '世界上每一个 SAT 求解器都需要合取范式作为输入。看 ↔ → ¬ 如何在五个机械的步骤里被消除,然后暴力枚举所有满足赋值。',
       'input-h3': '命题语句(每行一条)',
@@ -1555,8 +1586,8 @@ P</textarea>
     }
     $('satOut').innerHTML = satHtml;
 
-    // DPLL trace. Shows the step-by-step decision/propagation tree.
-    renderDpllTrace(clauses, varList);
+    // The original DPLL trace remains the default; CDCL is an opt-in teaching mode.
+    renderSolverTrace(clauses, varList);
   }
 
   // ===== DPLL with trace =====
@@ -1645,6 +1676,131 @@ P</textarea>
     const final = solve(initialClauses, 0);
     return {trace, final};
   }
+  // ===== Bounded educational CDCL trace (first-UIP learning) =====
+  const CDCL_COPY = {
+    en: {
+      title: rows => `CDCL records implication reasons and can jump over irrelevant decisions; exhaustive enumeration would inspect ${rows} rows.`,
+      decision: s => `Decision level ${s.level}: choose ${s.variable} = ${s.value ? 'T' : 'F'}.`,
+      propagation: s => `${s.variable} = ${s.value ? 'T' : 'F'} is forced by ${s.reason}.`,
+      conflict: s => `${s.clause} is false under the current trail, so it is the conflict clause.`,
+      learn: s => `Resolve toward the first UIP and learn ${s.learned}. ${s.chain}`,
+      backjump: s => `Backjump non-chronologically from level ${s.from} to level ${s.to}; assignments above level ${s.to} are removed.`,
+      sat: () => 'Every clause is satisfied by the current trail.',
+      unsat: () => 'A conflict at decision level 0 proves the formula UNSAT.',
+    },
+    zh: {
+      title: rows => `CDCL 记录蕴含原因，并能跳过无关决策；穷举需要检查 ${rows} 行。`,
+      decision: s => `决策层 ${s.level}：选择 ${s.variable} = ${s.value ? 'T' : 'F'}。`,
+      propagation: s => `${s.reason} 强制 ${s.variable} = ${s.value ? 'T' : 'F'}。`,
+      conflict: s => `${s.clause} 在当前轨迹下为假，因此它是冲突子句。`,
+      learn: s => `向第一 UIP 归结并学习 ${s.learned}。${s.chain}`,
+      backjump: s => `从第 ${s.from} 层非按时间顺序回跳到第 ${s.to} 层；删除高于第 ${s.to} 层的赋值。`,
+      sat: () => '当前轨迹满足所有子句。',
+      unsat: () => '决策层 0 的冲突证明公式不可满足。',
+    },
+    vi: {
+      title: rows => `CDCL ghi lại lý do suy ra và có thể bỏ qua quyết định không liên quan; liệt kê vét cạn sẽ xét ${rows} hàng.`,
+      decision: s => `Mức quyết định ${s.level}: chọn ${s.variable} = ${s.value ? 'T' : 'F'}.`,
+      propagation: s => `${s.variable} = ${s.value ? 'T' : 'F'} được bắt buộc bởi ${s.reason}.`,
+      conflict: s => `${s.clause} sai theo vết hiện tại, nên đây là mệnh đề xung đột.`,
+      learn: s => `Phân giải về UIP thứ nhất và học ${s.learned}. ${s.chain}`,
+      backjump: s => `Nhảy lùi không theo thời gian từ mức ${s.from} về mức ${s.to}; xóa các gán trên mức ${s.to}.`,
+      sat: () => 'Vết hiện tại thỏa mãn mọi mệnh đề.',
+      unsat: () => 'Xung đột ở mức quyết định 0 chứng minh công thức UNSAT.',
+    },
+    es: {
+      title: rows => `CDCL registra las razones de implicación y puede saltar decisiones irrelevantes; la enumeración exhaustiva revisaría ${rows} filas.`,
+      decision: s => `Nivel de decisión ${s.level}: elegir ${s.variable} = ${s.value ? 'T' : 'F'}.`,
+      propagation: s => `${s.variable} = ${s.value ? 'T' : 'F'} es forzado por ${s.reason}.`,
+      conflict: s => `${s.clause} es falsa bajo la traza actual, por lo que es la cláusula de conflicto.`,
+      learn: s => `Resolver hacia el primer UIP y aprender ${s.learned}. ${s.chain}`,
+      backjump: s => `Saltar de forma no cronológica del nivel ${s.from} al ${s.to}; se eliminan las asignaciones superiores al nivel ${s.to}.`,
+      sat: () => 'La traza actual satisface todas las cláusulas.',
+      unsat: () => 'Un conflicto en el nivel de decisión 0 demuestra que la fórmula es UNSAT.',
+    },
+  };
+  function solverLocale() {
+    const lang=(document.documentElement.lang||'en').toLowerCase();
+    return lang.startsWith('zh')?'zh':lang.startsWith('vi')?'vi':lang.startsWith('es')?'es':'en';
+  }
+  function formatClauseLits(lits) { return lits.length ? '('+lits.map(l=>(l.neg?'¬':'')+l.name).join(' ∨ ')+')' : '□'; }
+  function cdclTrace(initialClauses, vars, eventLimit = 500) {
+    const clauses=initialClauses.map((lits,index)=>({id:`C${index+1}`,lits:lits.map(l=>({...l})),learned:false}));
+    const assignment={};
+    const trail=[];
+    const trace=[];
+    let decisionLevel=0, learnedCount=0, order=0;
+    const literalValue=lit=>assignment[lit.name]===undefined?null:(assignment[lit.name].value!==lit.neg);
+    const assignmentValues=()=>Object.fromEntries(Object.entries(assignment).map(([name,row])=>[name,row.value]));
+    const snapshot=(action,data={})=>{
+      trace.push({action,depth:decisionLevel,level:decisionLevel,data,detail:'',assign:assignmentValues(),assignmentMeta:Object.fromEntries(Object.entries(assignment).map(([name,row])=>[name,{level:row.level,reason:row.reason===null?null:clauses[row.reason]?.id||null}])),trail:trail.map(row=>({variable:row.variable,value:row.value,level:row.level,reason:row.reason===null?null:clauses[row.reason]?.id||null})),struct:clauses.map(row=>row.lits.map(l=>({...l}))),learnedFlags:clauses.map(row=>row.learned),clauseIds:clauses.map(row=>row.id)});
+    };
+    const assign=(lit,level,reason)=>{
+      const value=!lit.neg,existing=assignment[lit.name];
+      if(existing)return existing.value===value;
+      const row={value,level,reason,order:order++};assignment[lit.name]=row;trail.push({variable:lit.name,...row});return true;
+    };
+    const propagate=()=>{
+      while(trace.length<eventLimit){
+        let changed=false;
+        for(let index=0;index<clauses.length;index++){
+          const clause=clauses[index];
+          if(clause.lits.some(lit=>literalValue(lit)===true))continue;
+          const open=clause.lits.filter(lit=>literalValue(lit)===null);
+          if(open.length===0)return index;
+          if(open.length===1){
+            const lit=open[0];
+            if(!assign(lit,decisionLevel,index))return index;
+            snapshot('propagation',{variable:lit.name,value:!lit.neg,reason:clause.id});
+            changed=true;break;
+          }
+        }
+        if(!changed)return null;
+      }
+      return null;
+    };
+    const normalize=lits=>{const seen=new Set(),out=[];for(const lit of lits){const key=(lit.neg?'¬':'')+lit.name;if(!seen.has(key)){seen.add(key);out.push({...lit});}}return out.sort((a,b)=>a.name.localeCompare(b.name)||(Number(a.neg)-Number(b.neg)));};
+    const resolveOn=(left,right,variable)=>normalize([...left.filter(l=>l.name!==variable),...right.filter(l=>l.name!==variable)]);
+    const analyze=conflictIndex=>{
+      let learned=normalize(clauses[conflictIndex].lits),chain=[];
+      const atCurrent=()=>learned.filter(l=>assignment[l.name]?.level===decisionLevel);
+      while(atCurrent().length>1){
+        const names=new Set(atCurrent().map(l=>l.name));
+        const pivot=[...trail].reverse().find(row=>row.level===decisionLevel&&names.has(row.variable)&&row.reason!==null);
+        if(!pivot)break;
+        const reason=clauses[pivot.reason];
+        chain.push(`${formatClauseLits(learned)} ⊗${pivot.variable} ${formatClauseLits(reason.lits)}`);
+        learned=resolveOn(learned,reason.lits,pivot.variable);
+      }
+      const uip=atCurrent()[0]||null;
+      const otherLevels=learned.filter(l=>!uip||l.name!==uip.name).map(l=>assignment[l.name]?.level||0);
+      return {learned,backjump:otherLevels.length?Math.max(...otherLevels):0,chain};
+    };
+    while(trace.length<eventLimit){
+      const conflict=propagate();
+      if(conflict!==null){
+        snapshot('conflict',{clause:clauses[conflict].id});
+        if(decisionLevel===0){snapshot('unsat',{});return {trace,final:{sat:false},clauses};}
+        const analysis=analyze(conflict);
+        const learnedId=`L${++learnedCount}`;
+        clauses.push({id:learnedId,lits:analysis.learned.map(l=>({...l})),learned:true});
+        snapshot('learn',{learned:formatClauseLits(analysis.learned),learnedId,chain:analysis.chain.join(' → ')});
+        const from=decisionLevel,to=analysis.backjump;
+        for(let i=trail.length-1;i>=0;i--){if(trail[i].level>to){delete assignment[trail[i].variable];trail.splice(i,1);}}
+        decisionLevel=to;
+        snapshot('backjump',{from,to,learned:learnedId});
+        continue;
+      }
+      const everyClauseSatisfied=clauses.every(clause=>clause.lits.some(lit=>literalValue(lit)===true));
+      if(everyClauseSatisfied){snapshot('sat',{});return {trace,final:{sat:true,model:assignmentValues()},clauses};}
+      const variable=vars.find(name=>assignment[name]===undefined);
+      if(!variable){snapshot('unsat',{});return {trace,final:{sat:false},clauses};}
+      decisionLevel++;
+      assign({name:variable,neg:false},decisionLevel,null);
+      snapshot('decision',{variable,value:true,level:decisionLevel});
+    }
+    throw new Error(`Educational CDCL trace exceeded ${eventLimit} events`);
+  }
   // Persist the DPLL trace and hand it to the step-player (rendered by renderDpllStep).
   function renderDpllTrace(clauses, vars) {
     const deep = clauses.map(c => c.map(l => ({...l})));
@@ -1653,6 +1809,15 @@ P</textarea>
     dpllVarList = vars.slice();
     dpllRows = vars.length <= 30 ? Math.pow(2, vars.length) : Infinity;
     if (dpllStepper) dpllStepper.go(0);
+  }
+  function renderCdclTrace(clauses, vars) {
+    const deep=clauses.map(c=>c.map(l=>({...l})));
+    const {trace}=cdclTrace(deep,vars);
+    dpllSteps=trace;dpllVarList=vars.slice();dpllRows=vars.length<=30?Math.pow(2,vars.length):Infinity;
+    if(dpllStepper)dpllStepper.go(0);
+  }
+  function renderSolverTrace(clauses, vars) {
+    if($('solverMode')?.value==='cdcl')renderCdclTrace(clauses,vars);else renderDpllTrace(clauses,vars);
   }
 
   // ===== Shared step-through controller (one transport bar, reused by both players) =====
@@ -1727,24 +1892,37 @@ P</textarea>
 
   // ----- DPLL search player -----
   const DPLL_COLORS = { unit: '#0284c7', pure: '#9333ea', 'branch+': 'var(--fg)',
-                        'branch-': '#b45309', sat: '#16a34a', unsat: '#dc2626' };
+                        'branch-': '#b45309', decision:'var(--fg)', propagation:'#0284c7',
+                        conflict:'#dc2626', learn:'#7c3aed', backjump:'#b45309', sat: '#16a34a', unsat: '#dc2626' };
   function renderDpllStep(i) {
     const actEl = $('dpllAction'); if (!actEl) return;
-    const titleEl = $('dpllTitle'), assignEl = $('dpllAssign'), detEl = $('dpllDetail'), clsEl = $('dpllClauses');
-    const lang = document.documentElement.lang === 'zh' ? 'zh' : 'en';
-    const labels = lang === 'zh'
-      ? {unit:'单元传播', pure:'纯文字消去', 'branch+':'分支:试 T', 'branch-':'回溯:试 F', sat:'✓ SAT', unsat:'✗ 冲突'}
-      : {unit:'unit-propagation', pure:'pure-literal', 'branch+':'branch: try T', 'branch-':'backtrack: try F', sat:'✓ SAT', unsat:'✗ conflict'};
+    const titleEl = $('dpllTitle'), assignEl = $('dpllAssign'), detEl = $('dpllDetail'), clsEl = $('dpllClauses'), trailEl=$('dpllTrail');
+    const lang = solverLocale();
+    const actionLabels = {
+      en:{unit:'unit-propagation',pure:'pure-literal','branch+':'branch: try T','branch-':'backtrack: try F',decision:'decision',propagation:'propagation',conflict:'conflict',learn:'learn clause',backjump:'backjump',sat:'✓ SAT',unsat:'✗ UNSAT'},
+      zh:{unit:'单元传播',pure:'纯文字消去','branch+':'分支：试 T','branch-':'回溯：试 F',decision:'决策',propagation:'传播',conflict:'冲突',learn:'学习子句',backjump:'回跳',sat:'✓ SAT',unsat:'✗ UNSAT'},
+      vi:{unit:'lan truyền đơn vị',pure:'literal thuần','branch+':'nhánh: thử T','branch-':'quay lui: thử F',decision:'quyết định',propagation:'lan truyền',conflict:'xung đột',learn:'học mệnh đề',backjump:'nhảy lùi',sat:'✓ SAT',unsat:'✗ UNSAT'},
+      es:{unit:'propagación unitaria',pure:'literal puro','branch+':'rama: probar T','branch-':'retroceso: probar F',decision:'decisión',propagation:'propagación',conflict:'conflicto',learn:'aprender cláusula',backjump:'salto atrás',sat:'✓ SAT',unsat:'✗ UNSAT'},
+    };
+    const labels=actionLabels[lang];
+    const trailCopy={
+      en:{label:'Implication trail',decision:'decision',level:'level',satisfied:'all clauses satisfied'},
+      zh:{label:'蕴含轨迹',decision:'决策',level:'层级',satisfied:'所有子句已满足'},
+      vi:{label:'Vết suy diễn',decision:'quyết định',level:'mức',satisfied:'mọi mệnh đề đã được thỏa mãn'},
+      es:{label:'Traza de implicación',decision:'decisión',level:'nivel',satisfied:'todas las cláusulas están satisfechas'},
+    }[lang];
+    if(trailEl)trailEl.setAttribute('aria-label',trailCopy.label);
     if (!dpllSteps.length) {
       actEl.innerHTML = ''; if (detEl) detEl.textContent = '';
-      if (assignEl) assignEl.innerHTML = ''; if (clsEl) clsEl.innerHTML = '';
+      if (assignEl) assignEl.innerHTML = ''; if (clsEl) clsEl.innerHTML = ''; if(trailEl)trailEl.innerHTML='';
       if (titleEl) titleEl.textContent = ''; return;
     }
     const s = dpllSteps[Math.max(0, Math.min(dpllSteps.length - 1, i))];
     const rowsTxt = dpllRows === Infinity ? '2^' + dpllVarList.length : dpllRows;
-    if (titleEl) titleEl.textContent = lang === 'zh'
+    const cdcl=$('solverMode')?.value==='cdcl';
+    if (titleEl) titleEl.textContent = cdcl ? CDCL_COPY[lang].title(rowsTxt) : (lang === 'zh'
       ? `DPLL 在剪枝:这条搜索路径只触及少数赋值,而暴力枚举要查 ${rowsTxt} 行。`
-      : `DPLL prunes: this path touches a few assignments vs. ${rowsTxt} brute-force rows.`;
+      : `DPLL prunes: this path touches a few assignments vs. ${rowsTxt} brute-force rows.`);
     if (assignEl) assignEl.innerHTML = dpllVarList.map(v => {
       const a = s.assign && (v in s.assign) ? s.assign[v] : undefined;
       const cls = a === true ? 't' : a === false ? 'f' : 'u';
@@ -1752,18 +1930,20 @@ P</textarea>
       return `<span class="assign-chip ${cls}">${escHtml(v)} = ${val}</span>`;
     }).join('');
     const color = DPLL_COLORS[s.action] || 'var(--fg)';
-    actEl.innerHTML = `<span class="dpll-action" style="background:color-mix(in oklab, ${color} 16%, transparent); color:${color};">[${labels[s.action] || s.action}] · depth ${s.depth}</span>`;
-    if (detEl) detEl.textContent = s.detail || '';
+    actEl.innerHTML = `<span class="dpll-action" style="background:color-mix(in oklab, ${color} 16%, transparent); color:${color};">[${labels[s.action] || s.action}] · ${cdcl?trailCopy.level:'depth'} ${s.level ?? s.depth}</span>`;
+    if (detEl) detEl.textContent = cdcl && CDCL_COPY[lang][s.action] ? CDCL_COPY[lang][s.action](s.data||{}) : (s.detail || '');
+    if(trailEl)trailEl.innerHTML=(s.trail||[]).map(row=>`<span>${escHtml(row.variable)}=${row.value?'T':'F'} @${row.level}${row.reason?' ← '+escHtml(row.reason):' · '+trailCopy.decision}</span>`).join('');
     const struct = s.struct || [];
     if (clsEl) {
       if (!struct.length) {
-        clsEl.innerHTML = `<span class="clause-chip" style="color:var(--true); border-color:var(--true);">⊤ ${lang === 'zh' ? '所有子句已满足' : 'all clauses satisfied'}</span>`;
+        clsEl.innerHTML = `<span class="clause-chip" style="color:var(--true); border-color:var(--true);">⊤ ${trailCopy.satisfied}</span>`;
       } else {
-        clsEl.innerHTML = struct.map(cl => {
+        clsEl.innerHTML = struct.map((cl,index) => {
           const isEmpty = cl.length === 0, isUnit = cl.length === 1;
-          const cn = 'clause-chip' + (isEmpty ? ' conflict' : isUnit ? ' unit' : '');
+          const cn = 'clause-chip' + (isEmpty ? ' conflict' : isUnit ? ' unit' : '') + (s.learnedFlags?.[index] ? ' learned' : '');
           const body = isEmpty ? '□' : '(' + cl.map(l => (l.neg ? '¬' : '') + escHtml(l.name)).join(' ∨ ') + ')';
-          return `<span class="${cn}">${body}</span>`;
+          const id=s.clauseIds?.[index];
+          return `<span class="${cn}">${id?escHtml(id)+': ':''}${body}</span>`;
         }).join('');
       }
     }
@@ -1788,7 +1968,25 @@ P</textarea>
     return Object.assign({ pass }, r);
   };
 
+  window.__cdclModeTest = function () {
+    const clauses = [
+      [{name:'A',neg:true},{name:'C',neg:true},{name:'D',neg:false}],
+      [{name:'C',neg:true},{name:'D',neg:true}],
+      [{name:'B',neg:false},{name:'B',neg:true}],
+    ];
+    const first=cdclTrace(clauses,['A','B','C','D']);
+    const second=cdclTrace(clauses,['A','B','C','D']);
+    const learned=first.trace.find(step=>step.action==='learn');
+    const jump=first.trace.find(step=>step.action==='backjump'&&step.data.from-step.data.to>1);
+    const dpll=dpllTrace([[{name:'P',neg:true},{name:'Q',neg:false}],[{name:'P',neg:false}]],['P','Q']);
+    const pass=JSON.stringify(first)===JSON.stringify(second)&&learned?.data.learned==='(¬A ∨ ¬C)'&&jump?.data.from===3&&jump?.data.to===1&&dpll.final.sat===true;
+    return {pass,learned:learned?.data.learned||null,backjump:jump?.data||null,cdclSat:first.final.sat,dpllSat:dpll.final.sat,actions:first.trace.map(step=>step.action)};
+  };
+
   $('convertBtn').addEventListener('click', run);
+  $('solverMode').addEventListener('change', run);
+  document.querySelectorAll('.lang-switch button').forEach(button=>button.addEventListener('click',()=>setTimeout(()=>dpllStepper?.refresh(),0)));
+  window.addEventListener('r4languagechange',()=>dpllStepper?.refresh());
 
   // ===== Resolution refutation =====
   // To prove KB ⊨ α: convert (KB ∧ ¬α) to CNF, apply resolution until empty clause or saturation.
@@ -1985,21 +2183,25 @@ P</textarea>
     ex3: '# Color 3 nodes (a, b, c) red, green, or blue.\n# Edges: a-b, b-c, a-c (triangle).\n# Each node must be exactly one color.\n(Ra | Ga | Ba) & (Rb | Gb | Bb) & (Rc | Gc | Bc)\n~(Ra & Ga) & ~(Ra & Ba) & ~(Ga & Ba)\n~(Ra & Rb) & ~(Ga & Gb) & ~(Ba & Bb)',
     ex4: '# Each pair must differ; assert all three true → UNSAT.\nA -> ~B\nB -> ~C\nC -> ~A\nA & B & C',
     ex5: '# De Morgan: ~(A & B) <-> (~A | ~B). Tautology.\n~(A & B) <-> (~A | ~B)',
+    exCdcl: '# CDCL first-UIP example: C=T creates a conflict at level 3.\n# Resolving on D learns (~A | ~C), then backjumps over B from level 3 to level 1.\n(~A | ~C | D)\n(~C | ~D)\n(B | ~B)',
   };
   Object.keys(EX).forEach(k => $(k).addEventListener('click', () => {
+    if(k==='exCdcl')$('solverMode').value='cdcl';
     $('input').value = EX[k]; run();
   }));
   $('hardReset').addEventListener('click', () => {
-    $('input').value = EX.ex1; run();
+    $('solverMode').value='dpll'; $('input').value = EX.ex1; run();
   });
 
   // URL-shareable config: formula (base64-encoded since it has special chars).
   try {
-    const f = new URLSearchParams(location.search).get('f');
+    const params=new URLSearchParams(location.search);
+    const f = params.get('f');
     if (f) {
       const decoded = decodeURIComponent(escape(atob(f.replace(/-/g, '+').replace(/_/g, '/'))));
       $('input').value = decoded;
     }
+    if(params.get('solver')==='cdcl')$('solverMode').value='cdcl';
   } catch (_) {}
   document.getElementById('shareLink').addEventListener('click', async () => {
     const formula = $('input').value;
@@ -2008,6 +2210,7 @@ P</textarea>
       .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     const params = new URLSearchParams();
     params.set('f', b64);
+    params.set('solver', $('solverMode').value);
     const url = `${location.origin}${location.pathname}?${params.toString()}`;
     try {
       await navigator.clipboard.writeText(url);
@@ -2181,7 +2384,7 @@ P</textarea>
 </footer>
 <script>
 (function() {
-  const LAB_CONFIG = {"slug": "cnf-sat", "title": "CNF and SAT lab packet", "zhTitle": "CNF 与 SAT 实验包", "fields": [{"label": "Input", "selector": "#input", "kind": "value"}, {"label": "CNF stage", "selector": "#cnfCount", "kind": "text"}, {"label": "CNF caption", "selector": "#cnfCaption", "kind": "text"}, {"label": "SAT output", "selector": "#satOut", "kind": "text"}, {"label": "DPLL step", "selector": "#dpllCount", "kind": "text"}, {"label": "Resolution output", "selector": "#resolveOut", "kind": "text"}]};
+  const LAB_CONFIG = {"slug": "cnf-sat", "title": "CNF and SAT lab packet", "zhTitle": "CNF 与 SAT 实验包", "fields": [{"label": "Input", "selector": "#input", "kind": "value"}, {"label": "Trace mode", "selector": "#solverMode", "kind": "selected"}, {"label": "CNF stage", "selector": "#cnfCount", "kind": "text"}, {"label": "CNF caption", "selector": "#cnfCaption", "kind": "text"}, {"label": "SAT output", "selector": "#satOut", "kind": "text"}, {"label": "Solver step", "selector": "#dpllCount", "kind": "text"}, {"label": "Resolution output", "selector": "#resolveOut", "kind": "text"}]};
   const root = document.querySelector('.classroom-lab');
   if (!root) return;
   const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;
