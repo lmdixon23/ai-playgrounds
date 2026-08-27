@@ -248,18 +248,32 @@ Object.defineProperty(navigator,'clipboard',{configurable:true,value:{
                 set_locale(page, "en")
                 check("knn-classifier: classification guided query survives a locale round trip", "Step 2" in page.locator("#guidedStatus").inner_text())
                 page.locator("#guidedReset").click()
-                stage = "knn regression"
+                stage = "knn regression mode"
                 page.locator("#taskMode").select_option("regression")
                 page.locator("#metricSel").select_option("manhattan")
                 page.locator("#weightSel").select_option("distance")
                 set_value(page, "#k", "7")
                 set_value(page, "#xScale", "2")
                 set_value(page, "#targetValue", "73")
-                page.wait_for_function("() => !document.getElementById('regressionInspector').hidden && document.getElementById('knnGuided').hidden")
+                mode_state = page.evaluate(
+                    "() => ({task:document.getElementById('taskMode').value,inspectorHidden:document.getElementById('regressionInspector').hidden,guidedHidden:document.getElementById('knnGuided').hidden})"
+                )
+                check(
+                    "knn-classifier: regression mode exposes its inspector and hides the classification challenge",
+                    mode_state["task"] == "regression" and mode_state["inspectorHidden"] is False and mode_state["guidedHidden"] is True,
+                    mode_state,
+                )
+                stage = "knn regression hover"
                 box = page.locator("#cv").bounding_box()
                 if box is None:
                     raise RuntimeError("KNN canvas has no bounding box")
-                page.mouse.move(box["x"] + box["width"] * 0.52, box["y"] + box["height"] * 0.47)
+                # Dispatch the canvas's real mousemove contract directly. A
+                # physical page.mouse move is nondeterministic in a touch-enabled
+                # Chromium context and occasionally fails to emit hover state.
+                page.locator("#cv").evaluate(
+                    "(el,point)=>{const r=el.getBoundingClientRect();el.dispatchEvent(new MouseEvent('mousemove',{bubbles:true,clientX:r.left+r.width*point.x,clientY:r.top+r.height*point.y}))}",
+                    {"x": 0.52, "y": 0.47},
+                )
                 page.wait_for_function("() => document.querySelectorAll('#regressionNeighborTable tbody tr').length===7")
                 equation = page.locator("#regressionEquation").inner_text()
                 check("knn-classifier: selected neighbors and weighted mean are inspectable", "Σ(wᵢyᵢ)" in equation and page.locator("#regressionNeighborTable tbody tr").count() == 7, equation)
