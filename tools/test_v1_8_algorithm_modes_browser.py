@@ -80,6 +80,11 @@ def navigate_ready(page, url: str, feature: str):
     page.wait_for_function("() => !!window.__r4Localization && window.__r4Localization.ready()", timeout=12_000)
     page.wait_for_function(f"() => typeof window.{feature} === 'function'", timeout=12_000)
     page.wait_for_selector("details[data-quick-assign-id]", state="attached", timeout=12_000)
+    # The shared guided-challenge bundle is deferred and owns some native
+    # controls (notably KNN) after initialization. Do not mutate applet state
+    # until that final composition layer has completed its synchronous setup.
+    page.wait_for_function("() => !!window.__suiteGuidedChallenge", timeout=12_000)
+    page.wait_for_timeout(100)
     return response
 
 
@@ -235,7 +240,8 @@ Object.defineProperty(navigator,'clipboard',{configurable:true,value:{
                 acceptance = page.evaluate("() => window.__knnModeTest()")
                 check("knn-classifier: deterministic classification/regression contract", acceptance.get("pass") is True, acceptance)
                 responses = seed_responses(page, "knn")
-                page.locator("#knnGuided").evaluate("el=>el.open=true")
+                page.locator('[data-suite-mode="guided"]').click()
+                page.wait_for_selector("#guidedStart", state="visible")
                 page.locator("#guidedStart").click()
                 page.locator("#cv").click(position={"x": 320, "y": 240})
                 set_locale(page, "zh")
