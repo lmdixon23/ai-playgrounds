@@ -135,7 +135,9 @@ def main() -> int:
     check(
         "agent startup has no unbounded zero-delay initializer polling",
         "setTimeout(init,0)" not in agent_source
-        and agent_source.count("document.addEventListener('DOMContentLoaded',init,{once:true})") == 2,
+        and "setTimeout(wait,20)" not in agent_source
+        and agent_source.count("document.addEventListener('DOMContentLoaded',init,{once:true})") == 2
+        and agent_source.count("document.addEventListener('DOMContentLoaded',wait,{once:true})") == 1,
     )
 
     script_count = 0
