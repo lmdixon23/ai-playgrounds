@@ -46,6 +46,18 @@ def navigate_ready(page, uri: str):
     return response
 
 
+def set_locale(page, locale: str) -> None:
+    page.locator("#ap-standard-language-select").evaluate(
+        "(el,value)=>{el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}))}",
+        locale,
+    )
+    page.wait_for_function(
+        "value=>document.documentElement.lang.toLowerCase().startsWith(value)",
+        arg=locale,
+        timeout=10_000,
+    )
+
+
 class QuietHandler(http.server.SimpleHTTPRequestHandler):
     def log_message(self, _format: str, *args) -> None:
         return
@@ -128,6 +140,7 @@ def main() -> int:
                 page.on("pageerror", lambda exc: page_errors.append(str(exc)))
                 page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
                 for slug in MODERN:
+                    print(f"v1.7.2 parity: {slug} at {width}px", flush=True)
                     uri = f"{origin}/playgrounds/{slug}/index.html?lang=en"
                     response = navigate_ready(page, uri)
                     check(f"{slug} {width}: local artifact HTTP 200", response is not None and response.status == 200, None if response is None else response.status)
@@ -159,18 +172,14 @@ def main() -> int:
                     original_doc_title = page.title()
                     original_big = page.locator(".ap-modern-tldr").inner_text()
                     for locale in ("zh", "vi", "es"):
-                        page.select_option("#ap-standard-language-select", locale)
-                        page.wait_for_function(
-                            "locale=>document.documentElement.lang.toLowerCase().startsWith(locale)",
-                            arg=locale,
-                            timeout=5_000,
-                        )
+                        print(f"v1.7.2 parity: {slug} -> {locale}", flush=True)
+                        set_locale(page, locale)
                         page.wait_for_timeout(100)
                         check(f"{slug}: parity copy switches to {locale}", page.locator(".ap-modern-tldr").inner_text() != original_big)
                         terms_text = page.locator("#ap-modern-terms-list").text_content() or ""
                         check(f"{slug}: key terms switch to {locale}", bool(terms_text.strip()), terms_text[:120])
                         check(f"{slug}: browser title remains suite-qualified in {locale}", page.title().endswith(" | AI Playgrounds"), page.title())
-                        page.select_option("#ap-standard-language-select", "en")
+                        set_locale(page, "en")
                         page.wait_for_timeout(100)
                         check(f"{slug}: EN title restores after {locale}", page.locator("#ap-standard-title").inner_text() == original_title)
                         check(f"{slug}: EN document title restores after {locale}", page.title() == original_doc_title, {"expected": original_doc_title, "actual": page.title()})

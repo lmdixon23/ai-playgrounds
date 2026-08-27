@@ -110,6 +110,18 @@ def navigate_ready(page, uri: str):
     return response
 
 
+def set_locale(page, locale: str) -> None:
+    page.locator("#ap-standard-language-select").evaluate(
+        "(el,value)=>{el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}))}",
+        locale,
+    )
+    page.wait_for_function(
+        "value=>document.documentElement.lang.toLowerCase().startsWith(value)",
+        arg=locale,
+        timeout=10_000,
+    )
+
+
 def change_mechanism_state(page, slug: str) -> tuple[str, str]:
     source_id = SOURCE_IDS[slug]
     before = state_text(page, source_id)
@@ -158,6 +170,7 @@ def main() -> int:
         browser = launch(playwright)
         try:
             for slug in MODERN:
+                print(f"v1.7.2 behavior: {slug}", flush=True)
                 context = browser.new_context(
                     viewport={"width": 390, "height": 844},
                     reduced_motion="reduce",
@@ -203,11 +216,8 @@ def main() -> int:
                         qa.locator(f'[data-qa-answer="{key}"]').fill(value)
                     english_summary = page.locator("#ap-modern-a11y>summary").inner_text().strip()
                     for locale in ("en", "zh", "vi", "es"):
-                        page.select_option("#ap-standard-language-select", locale)
-                        page.wait_for_function(
-                            "loc=>document.documentElement.lang.toLowerCase().startsWith(loc)",
-                            arg=locale,
-                        )
+                        print(f"v1.7.2 behavior: {slug} -> {locale}", flush=True)
+                        set_locale(page, locale)
                         page.wait_for_function(
                             "expected=>document.querySelector('[data-qa-answer=\"predict\"]')?.getAttribute('aria-label')===expected",
                             arg=EXPECTED[locale]["predict"],
