@@ -1,7 +1,7 @@
 # Public Surface Locale Matrix
 
 Date: 2026-08-27
-Status: **current v1.8.0 claim-scoping control**.
+Status: **current v1.8.1 claim-scoping control**.
 
 ## Why this exists
 
@@ -9,7 +9,7 @@ A green localization test for learner applets does not imply that every public s
 
 The canonical safe statement at the current boundary is:
 
-> **AI Playgrounds v1.8.0 contains 15 learner applets and 15 Level-1 Quick Assigns with English, Simplified Chinese, Vietnamese, and Spanish support. Some educator/support surfaces and the Level-2 Activity Pack pilot have narrower language boundaries.**
+> **AI Playgrounds v1.8.1 contains 15 learner applets and 15 Level-1 Quick Assigns with English, Simplified Chinese, Vietnamese, and Spanish support. Some educator/support surfaces and the Level-2 Activity Pack pilot have narrower language boundaries.**
 
 Do not shorten that to the whole AI Playgrounds website is available in four languages unless every public support and educator surface is separately brought to that boundary and verified.
 
@@ -44,13 +44,13 @@ Do not shorten that to the whole AI Playgrounds website is available in four lan
 
 ## Historical rollout note
 
-v1.6.1 began with four early-course Quick Assign canaries. v1.7.0 promoted the remaining eleven after the all-lab assignment, localization/state, responsive, and release gates passed. v1.7.1 aligned modern-shell theme persistence. v1.7.2 localized the remaining modern Quick Assign packet actions and accessible field names. v1.8.0 preserves those assignment and locale boundaries while adding three translated, state-preserving mechanism modes inside existing labs.
+v1.6.1 began with four early-course Quick Assign canaries. v1.7.0 promoted the remaining eleven after the all-lab assignment, localization/state, responsive, and release gates passed. v1.7.1 aligned modern-shell theme persistence. v1.7.2 localized the remaining modern Quick Assign packet actions and accessible field names. v1.8.0 preserved those assignment and locale boundaries while adding three translated, state-preserving mechanism modes inside existing labs. v1.8.1 adds the complete modern-lab featured/scenario/explanation/teacher sequence in the same four locales without changing assignment IDs or algorithm state.
 
 ## Paper / external-communication wording
 
 Preferred:
 
-> AI Playgrounds v1.8.0 contains 15 learner applets and 15 Level-1 Quick Assigns with English, Simplified Chinese, Vietnamese, and Spanish support. The current educator/support surfaces and Level-2 Activity Pack pilot have narrower language boundaries.
+> AI Playgrounds v1.8.1 contains 15 learner applets and 15 Level-1 Quick Assigns with English, Simplified Chinese, Vietnamese, and Spanish support. The current educator/support surfaces and Level-2 Activity Pack pilot have narrower language boundaries.
 
 Avoid:
 

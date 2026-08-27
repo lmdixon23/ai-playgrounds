@@ -6,6 +6,7 @@ Dedicated versioned files are the source for detailed notes in the current relea
 
 | Release | Summary | Detailed notes |
 |---|---|---|
+| v1.8.1, 2026-08-27 | Modern-lab scenario curriculum, concise copy, aligned controls, and dark-theme legibility | [docs/RELEASE_V1_8_1.md](docs/RELEASE_V1_8_1.md) |
 | v1.8.0, 2026-08-27 | Three opt-in algorithm modes with deterministic comparison and exact behavior gates | [docs/RELEASE_V1_8_0.md](docs/RELEASE_V1_8_0.md) |
 | v1.7.2, 2026-08-27 | Modern-lab product parity and exact final-artifact release assurance | [docs/RELEASE_V1_7_2.md](docs/RELEASE_V1_7_2.md) |
 | v1.7.1, 2026-08-27 | Shared theme preference and one-time legacy migration | [docs/RELEASE_V1_7_1.md](docs/RELEASE_V1_7_1.md) |

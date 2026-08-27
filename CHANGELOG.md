@@ -2,6 +2,15 @@
 
 Detailed notes for the current release line live in the dedicated versioned files linked below. Historical entries remain in this aggregate unchanged.
 
+## [1.8.1] - 2026-08-27
+
+- Corrected the learner-facing parity boundary for Labs 13–15 with one featured experiment, five predict–run–explain scenarios, terminology primers, full step-by-step explanations, and teacher prompts in EN/ZH/VI/ES.
+- Replaced dense modern-lab catalogue copy with concise change-and-watch descriptions and exposed Share, Embed, JSON, and Reset in the established visible action-row style.
+- Fixed dark-theme legibility across Transformer warning/mask surfaces, agent semantic states, and Minimax controls, cards, tree canvas, and SVG nodes.
+- Removed the always-open duplicate state mirror and made Quick Assign state capture learner-triggered while preserving the native canonical text state.
+- Added deterministic final-script compilation and browser gates for scenario application, four-locale response preservation, responsive containment, header geometry, dark-theme contrast, and embed mode.
+- Made the historical v1.8.0 builder independent of current repository citation metadata. See [detailed v1.8.1 notes](docs/RELEASE_V1_8_1.md).
+
 ## [1.8.0] - 2026-08-27
 
 - Added deterministic repeated-restart benchmarking to Hill Climbing / Simulated Annealing, with matched starts, bounded budgets, explicit success rules, and separate success/final/best-cost summaries.

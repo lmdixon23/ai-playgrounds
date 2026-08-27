@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "1.8.0"
+VERSION = "1.8.1"
 TAG = f"v{VERSION}"
 RELEASE_DATE = "2026-08-27"
 R6_BROWSER_FREEZE = "07f89d13269041d9ed66de2362bf84c288bb86de"
@@ -18,6 +18,7 @@ RELEASE_170 = ROOT / "docs" / "RELEASE_V1_7_0.md"
 RELEASE_171 = ROOT / "docs" / "RELEASE_V1_7_1.md"
 RELEASE_172 = ROOT / "docs" / "RELEASE_V1_7_2.md"
 RELEASE_180 = ROOT / "docs" / "RELEASE_V1_8_0.md"
+RELEASE_181 = ROOT / "docs" / "RELEASE_V1_8_1.md"
 QUICK_V1 = ROOT / "tools" / "quick_assigns_v1.json"
 QUICK_V2 = ROOT / "tools" / "quick_assigns_v2.json"
 
@@ -53,16 +54,17 @@ def main() -> int:
     require(codemeta.get("identifier", "").endswith(f"/releases/tag/{TAG}"), "CodeMeta release identifier mismatch")
     require(yaml_scalar(cff, "version", VERSION) and yaml_scalar(cff, "date-released", RELEASE_DATE), "CITATION.cff version/date mismatch")
     require("10.5281/zenodo.21854217" not in cff, f"Archived v1.0.1 DOI must not be attached to {TAG}")
-    require(f"releases/tag/{TAG}" in readme and "AI Playgrounds v1.8.0 is the current software release" in readme, "README current-release boundary mismatch")
+    require(f"releases/tag/{TAG}" in readme and "AI Playgrounds v1.8.1 is the current software release" in readme, "README current-release boundary mismatch")
     require("Archived v1.0.1 DOI" in readme and "10.5281/zenodo.21854217" in readme, "README historical DOI boundary missing")
     require(RELEASE_170.is_file() and "# AI Playgrounds v1.7.0" in RELEASE_170.read_text(encoding="utf-8"), "historical v1.7.0 release notes missing")
     require(RELEASE_171.is_file() and "# AI Playgrounds v1.7.1" in RELEASE_171.read_text(encoding="utf-8"), "v1.7.1 release notes missing")
     require(RELEASE_172.is_file() and "# AI Playgrounds v1.7.2" in RELEASE_172.read_text(encoding="utf-8"), "v1.7.2 release notes missing")
     require(RELEASE_180.is_file() and "# AI Playgrounds v1.8.0" in RELEASE_180.read_text(encoding="utf-8"), "v1.8.0 release notes missing")
+    require(RELEASE_181.is_file() and "# AI Playgrounds v1.8.1" in RELEASE_181.read_text(encoding="utf-8"), "v1.8.1 release notes missing")
 
     for index_name in ("CHANGELOG.md", "RELEASE_NOTES.md"):
         release_index = read(index_name)
-        for version in ("1.6.1", "1.6.2", "1.7.0", "1.7.1", "1.7.2", "1.8.0"):
+        for version in ("1.6.1", "1.6.2", "1.7.0", "1.7.1", "1.7.2", "1.8.0", "1.8.1"):
             target = f"docs/RELEASE_V{version.replace('.', '_')}.md"
             require(target in release_index, f"{index_name} missing dedicated-note link for v{version}")
 
@@ -86,30 +88,34 @@ def main() -> int:
         "tools/test_v1_7_1_public_release.py", "tools/test_minimax_alpha_beta.py", "tools/test_transformer_language_model.py",
         "tools/test_agent_tool_context.py", "tools/test_v1_7_2_modern_parity.py", "tools/test_v1_7_2_public_release.py",
         "tools/build_site_v1_8.py", "tools/test_v1_8_public_release.py", "tools/test_v1_8_algorithm_modes.py",
-        "tools/test_v1_8_algorithm_modes_browser.py",
-        "docs/APPLET_DESIGN_SYSTEM_V1_7_2_ADDENDUM.md", "docs/MODERN_LAB_PARITY_AUDIT.md",
+        "tools/test_v1_8_algorithm_modes_browser.py", "tools/build_site_v1_8_1.py",
+        "tools/modern_learning_v1_8_1.py", "tools/test_v1_8_1_modern_learner_parity.py",
+        "tools/test_v1_8_1_modern_learner_parity_browser.py",
+        "docs/APPLET_DESIGN_SYSTEM_V1_7_2_ADDENDUM.md", "docs/APPLET_DESIGN_SYSTEM_V1_8_1_ADDENDUM.md",
+        "docs/MODERN_LAB_PARITY_AUDIT.md",
         ".github/workflows/publish-v1.7.2.yml", ".github/workflows/publish-v1.8.0.yml",
+        ".github/workflows/publish-v1.8.1.yml",
     )
     for relative in required_files:
         require((ROOT / relative).is_file(), f"Required release artifact missing: {relative}")
     require(not (ROOT / ".github/workflows/publish-v1.7.1.yml").exists(), "Obsolete v1.7.1 publisher was not retired")
     deploy_workflow = read(".github/workflows/deploy-pages.yml")
-    publisher_workflow = read(".github/workflows/publish-v1.8.0.yml")
-    require('workflows: ["Verify"]' in deploy_workflow and "build_site_v1_8.py" in deploy_workflow, "Pages deployment is not chained to Verify and v1.8.0 composition")
-    require("TAG: v1.8.0" in publisher_workflow and "test_v1_8_public_release.py" in publisher_workflow, "v1.8.0 publisher boundary is incomplete")
+    publisher_workflow = read(".github/workflows/publish-v1.8.1.yml")
+    require('workflows: ["Verify"]' in deploy_workflow and "build_site_v1_8_1.py" in deploy_workflow, "Pages deployment is not chained to Verify and v1.8.1 composition")
+    require("TAG: v1.8.1" in publisher_workflow and "test_v1_8_1_modern_learner_parity.py" in publisher_workflow, "v1.8.1 publisher boundary is incomplete")
 
     for path in (ANALYTICS_SPEC, DESIGN_SYSTEM, LOCALE_MATRIX, QUICK_ASSIGN_ARCH):
         require(path.is_file(), f"Required documentation missing: {path.name}")
-    require("**Release:** v1.8.0" in ANALYTICS_SPEC.read_text(encoding="utf-8"), "Analytics specification is not rebound to v1.8.0")
-    require("**Status:** active v1.8.0 contract" in DESIGN_SYSTEM.read_text(encoding="utf-8"), "Design-system contract is not rebound to v1.8.0")
+    require("**Release:** v1.8.1" in ANALYTICS_SPEC.read_text(encoding="utf-8"), "Analytics specification is not rebound to v1.8.1")
+    require("**Status:** active v1.8.1 contract" in DESIGN_SYSTEM.read_text(encoding="utf-8"), "Design-system contract is not rebound to v1.8.1")
 
     v1 = json.loads(QUICK_V1.read_text(encoding="utf-8"))["activities"]
     v2 = json.loads(QUICK_V2.read_text(encoding="utf-8"))["activities"]
     require(len(v1) == 15 and len({r["id"] for r in v1}) == 15, "Historical v1 Quick Assign registry changed shape")
     require([r["id"] for r in v1 if r.get("status") == "active"] == ["QA-SEARCH-01", "QA-LOCAL-01", "QA-WUMPUS-01", "QA-SAT-01"], "Historical v1 Quick Assign active set changed")
     require(len(v2) == 15 and len({r["id"] for r in v2}) == 15, "v2 Quick Assign registry must have 15 unique IDs")
-    require(all(r.get("status") == "active" for r in v2), "v1.8.0 requires all 15 Quick Assigns active")
-    require(all(r.get("locales") == ["en", "zh", "vi", "es"] for r in v2), "v1.8.0 Quick Assign locale contract changed")
+    require(all(r.get("status") == "active" for r in v2), "v1.8.1 requires all 15 Quick Assigns active")
+    require(all(r.get("locales") == ["en", "zh", "vi", "es"] for r in v2), "v1.8.1 Quick Assign locale contract changed")
 
     for relative in ("activities/index.html", "activities/nn-1.html", "activities/cnn-1.html"):
         require((ROOT / relative).is_file(), f"Activity Pack source missing: {relative}")
