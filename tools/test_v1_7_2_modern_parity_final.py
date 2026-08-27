@@ -38,11 +38,12 @@ def qa_surface_count(source: str) -> int:
     return len(re.findall(r'<[^>]+\bdata-quick-assign-id\s*=', source, flags=re.I))
 
 
-def navigate_ready(page, uri: str):
+def navigate_ready(page, uri: str, *, chrome_visible: bool = True):
     """Wait for the final app contract, not the incidental window-load event."""
     response = page.goto(uri, wait_until="commit", timeout=20_000)
-    page.wait_for_selector("#ap-standard-language-select", timeout=20_000)
-    page.wait_for_selector("details[data-quick-assign-id]", timeout=20_000)
+    state = "visible" if chrome_visible else "attached"
+    page.wait_for_selector("#ap-standard-language-select", state=state, timeout=20_000)
+    page.wait_for_selector("details[data-quick-assign-id]", state="attached", timeout=20_000)
     return response
 
 
@@ -144,6 +145,7 @@ def main() -> int:
                     uri = f"{origin}/playgrounds/{slug}/index.html?lang=en"
                     response = navigate_ready(page, uri)
                     check(f"{slug} {width}: local artifact HTTP 200", response is not None and response.status == 200, None if response is None else response.status)
+                    check(f"{slug} {width}: language preference visible", page.locator("#ap-standard-language-select:visible").count() == 1)
                     check(f"{slug} {width}: one visible public H1", page.locator("h1:visible").count() == 1, page.locator("h1:visible").count())
                     check(f"{slug} {width}: skip target exists", page.locator("#ap-modern-interactive-start").count() == 1)
                     check(f"{slug} {width}: Share / More / Reset visible", page.locator("#ap-modern-share:visible").count() == 1 and page.locator("#ap-modern-more>summary:visible").count() == 1 and page.locator("#ap-standard-reset:visible").count() == 1)
@@ -190,8 +192,9 @@ def main() -> int:
             embed_context = browser.new_context(viewport={"width": 1024, "height": 768}, reduced_motion="reduce")
             embed_page = embed_context.new_page()
             for slug in MODERN:
+                print(f"v1.7.2 parity: {slug} embed", flush=True)
                 uri = f"{origin}/playgrounds/{slug}/index.html?lang=en&embed=1"
-                navigate_ready(embed_page, uri)
+                navigate_ready(embed_page, uri, chrome_visible=False)
                 embed_page.wait_for_timeout(50)
                 check(f"{slug}: embed mode activates", "embed-mode" in (embed_page.locator("body").get_attribute("class") or ""))
                 check(f"{slug}: embed hides suite header", embed_page.locator(".ap-standard-header:visible").count() == 0)
