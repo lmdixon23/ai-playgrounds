@@ -109,6 +109,13 @@ def main() -> int:
         and "check_portfolio_freshness.py" in publisher_workflow,
         "v1.8.1 publisher boundary is incomplete",
     )
+    release_probe = publisher_workflow.find('if gh release view "$TAG"')
+    unpublished_tag_probe = publisher_workflow.find('elif git ls-remote --exit-code --tags origin')
+    require(
+        0 <= release_probe < unpublished_tag_probe
+        and "--json targetCommitish" in publisher_workflow,
+        "v1.8.1 publisher must short-circuit an existing release before comparing an unpublished tag to current main",
+    )
 
     for path in (ANALYTICS_SPEC, DESIGN_SYSTEM, LOCALE_MATRIX, QUICK_ASSIGN_ARCH):
         require(path.is_file(), f"Required documentation missing: {path.name}")
