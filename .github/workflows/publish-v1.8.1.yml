@@ -46,15 +46,16 @@ jobs:
           PUBLISH="$(cat /tmp/v181-intent)"
           CREATE_TAG=false
           if [ "$PUBLISH" = true ]; then
-            if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+              git fetch origin "refs/tags/$TAG:refs/tags/$TAG" --force --quiet
+              RELEASE_TARGET="$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json targetCommitish --jq .targetCommitish)"
+              test "$(git rev-list -n 1 "$TAG")" = "$RELEASE_TARGET"
+              PUBLISH=false
+            elif git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
               git fetch origin "refs/tags/$TAG:refs/tags/$TAG" --force --quiet
               test "$(git rev-list -n 1 "$TAG")" = "$RELEASE_SHA"
             else
               CREATE_TAG=true
-            fi
-            if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-              PUBLISH=false
-              CREATE_TAG=false
             fi
           fi
           echo "publish=$PUBLISH" >> "$GITHUB_OUTPUT"
