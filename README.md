@@ -168,6 +168,7 @@ The release workflow retains the complete inherited suite and adds exact v1.8.1 
 ```bash
 python tools/release_check.py
 python tools/test_current_docs_consistency.py
+python tools/test_portfolio_freshness.py
 python tools/check_release_metadata.py
 python tools/run_algorithm_tests.py
 python tools/test_minimax_alpha_beta.py
@@ -191,6 +192,8 @@ python tools/test_v1_8_1_modern_learner_parity.py
 python tools/test_v1_8_1_modern_learner_parity_browser.py
 python tools/browser_qa.py --no-screenshots
 ```
+
+Published releases also check the public portfolio case study, homepage card, README, sitemap date, and matching SHA-256 records. The release publisher runs the check directly; a release-event workflow and six-hour scheduled backstop keep the cross-repository boundary observable without a long-lived dispatch token.
 
 The v1.8.1 public boundary remains 15 applets and 58 deployed files. The three Activity Pack pages remain the index, NN-1, and CNN-1. Every public HTML page receives the privacy-minimized analytics wrapper exactly once, while applet state, worksheet answers, Quick Assign responses, free text, and experiment values remain excluded from analytics requests.
 

@@ -146,3 +146,7 @@ jobs:
             release-evidence/v1.8.1-publication-receipt.txt
             release-evidence/v1.8.1-release-notes.md
           retention-days: 90
+
+      - name: Check synchronized portfolio release boundary
+        if: steps.intent.outputs.publish == 'true'
+        run: python tools/check_portfolio_freshness.py --release-tag "$TAG"
