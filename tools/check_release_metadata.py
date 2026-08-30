@@ -90,7 +90,8 @@ def main() -> int:
         "tools/build_site_v1_8.py", "tools/test_v1_8_public_release.py", "tools/test_v1_8_algorithm_modes.py",
         "tools/test_v1_8_algorithm_modes_browser.py", "tools/build_site_v1_8_1.py",
         "tools/modern_learning_v1_8_1.py", "tools/test_v1_8_1_modern_learner_parity.py",
-        "tools/test_v1_8_1_modern_learner_parity_browser.py",
+        "tools/test_v1_8_1_modern_learner_parity_browser.py", "tools/check_portfolio_freshness.py",
+        "tools/test_portfolio_freshness.py", ".github/workflows/portfolio-freshness.yml",
         "docs/APPLET_DESIGN_SYSTEM_V1_7_2_ADDENDUM.md", "docs/APPLET_DESIGN_SYSTEM_V1_8_1_ADDENDUM.md",
         "docs/MODERN_LAB_PARITY_AUDIT.md",
         ".github/workflows/publish-v1.7.2.yml", ".github/workflows/publish-v1.8.0.yml",
@@ -102,7 +103,12 @@ def main() -> int:
     deploy_workflow = read(".github/workflows/deploy-pages.yml")
     publisher_workflow = read(".github/workflows/publish-v1.8.1.yml")
     require('workflows: ["Verify"]' in deploy_workflow and "build_site_v1_8_1.py" in deploy_workflow, "Pages deployment is not chained to Verify and v1.8.1 composition")
-    require("TAG: v1.8.1" in publisher_workflow and "test_v1_8_1_modern_learner_parity.py" in publisher_workflow, "v1.8.1 publisher boundary is incomplete")
+    require(
+        "TAG: v1.8.1" in publisher_workflow
+        and "test_v1_8_1_modern_learner_parity.py" in publisher_workflow
+        and "check_portfolio_freshness.py" in publisher_workflow,
+        "v1.8.1 publisher boundary is incomplete",
+    )
 
     for path in (ANALYTICS_SPEC, DESIGN_SYSTEM, LOCALE_MATRIX, QUICK_ASSIGN_ARCH):
         require(path.is_file(), f"Required documentation missing: {path.name}")
