@@ -7,6 +7,7 @@ from pathlib import Path
 
 from build_site_v1_8_1 import build_site as build_legacy_v181
 import page_components
+import design_tokens
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "_site"
@@ -19,8 +20,9 @@ R0_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r0.json"
 R1_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r1.json"
 R2_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r2.json"
 R3_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r3.json"
+R4A_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r4a.json"
 BASELINE_SHA = "d1c72e10e6c5bf64b9a4bbed578b2305d1c988d0"
-CURRENT_PHASE = "v1.9-r3-shared-page-components"
+CURRENT_PHASE = "v1.9-r4a-design-token-contract"
 R2_PEER_SLUGS = (
     "transformer-language-model",
     "agent-tool-context",
@@ -138,21 +140,22 @@ def validate_product_model() -> dict[str, object]:
     quick = load_json(QUICK_ASSIGNS)
     catalogue = load_canonical_catalogue()
     pages = page_components.load_and_validate()
+    token_contract = design_tokens.validate_contract()
 
     if release.get("architecture_phase") != CURRENT_PHASE:
         raise RuntimeError(f"Current architecture phase must be {CURRENT_PHASE}")
     if release.get("public_release") != "v1.8.1" or release.get("software_version") != "1.8.1":
-        raise RuntimeError("R3 must remain bound to exact public v1.8.1")
+        raise RuntimeError("R4a must remain bound to exact public v1.8.1")
     if release.get("baseline_source_sha") != BASELINE_SHA:
-        raise RuntimeError("R3 baseline source SHA changed")
+        raise RuntimeError("R4a baseline source SHA changed")
     if release.get("public_file_count") != 58 or release.get("applet_count") != 15:
-        raise RuntimeError("R3 public boundary must remain 58 files / 15 applets")
+        raise RuntimeError("R4a public boundary must remain 58 files / 15 applets")
     if release.get("foundations_count") != 13 or release.get("modern_extension_count") != 2:
-        raise RuntimeError("R3 curriculum track-count boundary changed")
+        raise RuntimeError("R4a curriculum track-count boundary changed")
     if release.get("learner_locales") != ["en", "zh", "vi", "es"]:
-        raise RuntimeError("R3 learner locale order changed")
+        raise RuntimeError("R4a learner locale order changed")
     if release.get("quick_assign_count") != 15:
-        raise RuntimeError("R3 Quick Assign count changed")
+        raise RuntimeError("R4a Quick Assign count changed")
     expected_release_fields = {
         "canonical_catalogue": "src/product/catalogue.json",
         "canonical_page_component_manifest": "src/product/page-components.json",
@@ -161,10 +164,14 @@ def validate_product_model() -> dict[str, object]:
         "canonical_page_count": 15,
         "canonical_component_count": 17,
         "canonical_deduplicated_bytes": page_components.EXPECTED_DEDUPLICATED_BYTES,
+        "design_token_contract": "src/design/ai-playgrounds.tokens.json",
+        "design_token_bindings": "src/design/current-bindings.json",
+        "design_token_format": "DTCG 2025.10",
+        "design_token_phase": "contract-first-frozen-output-binding",
     }
     for key, expected in expected_release_fields.items():
         if release.get(key) != expected:
-            raise RuntimeError(f"R3 release source boundary drift for {key}: {release.get(key)!r} != {expected!r}")
+            raise RuntimeError(f"R4a release source boundary drift for {key}: {release.get(key)!r} != {expected!r}")
 
     if not isinstance(labs, list) or len(labs) != 15:
         raise RuntimeError("Canonical lab manifest must contain exactly 15 labs")
@@ -224,6 +231,7 @@ def validate_product_model() -> dict[str, object]:
         "labs": labs,
         "catalogue": catalogue,
         "page_components": pages,
+        "design_tokens": token_contract,
         "lab_count": len(labs),
         "foundation_count": len(foundations),
         "modern_extension_count": len(modern_extensions),
@@ -363,7 +371,7 @@ def build_current() -> None:
         "artifact": comparison,
     })
     write_evidence(R3_EVIDENCE, {
-        "phase": CURRENT_PHASE,
+        "phase": "v1.9-r3-shared-page-components",
         "baseline_source_sha": BASELINE_SHA,
         "canonical_catalogue": "src/product/catalogue.json",
         "canonical_page_component_manifest": "src/product/page-components.json",
@@ -377,14 +385,46 @@ def build_current() -> None:
         "artifact": comparison,
     })
 
+    write_evidence(R4A_EVIDENCE, {
+        "phase": CURRENT_PHASE,
+        "baseline_source_sha": BASELINE_SHA,
+        "design_token_contract": "src/design/ai-playgrounds.tokens.json",
+        "design_token_bindings": "src/design/current-bindings.json",
+        "design_token_schema": model["design_tokens"]["schema"],
+        "design_token_format": model["design_tokens"]["format"],
+        "token_count": model["design_tokens"]["token_count"],
+        "alias_count": model["design_tokens"]["alias_count"],
+        "type_counts": model["design_tokens"]["type_counts"],
+        "theme_profiles": {
+            "profiles": model["design_tokens"]["theme_profiles"]["profiles"],
+            "slugs": model["design_tokens"]["theme_profiles"]["slugs"],
+            "checks": model["design_tokens"]["theme_profiles"]["checks"],
+            "pass": model["design_tokens"]["theme_profiles"]["pass"],
+        },
+        "accent_bindings": {
+            "slugs": model["design_tokens"]["accents"]["slugs"],
+            "checks": model["design_tokens"]["accents"]["checks"],
+            "minimaxMismatchPreserved": model["design_tokens"]["accents"]["minimaxMismatchPreserved"],
+            "pass": model["design_tokens"]["accents"]["pass"],
+        },
+        "component_literal_bindings": {
+            "bindings": model["design_tokens"]["component_literal_bindings"]["bindings"],
+            "pass": model["design_tokens"]["component_literal_bindings"]["pass"],
+        },
+        "page_graph": model["design_tokens"]["page_graph"],
+        "model": common_model,
+        "catalogue": catalogue_check,
+        "artifact": comparison,
+    })
+
     if not comparison["pass"]:
         raise RuntimeError(
-            "R3 current build differs from frozen v1.8.1 byte oracle: "
+            "R4a current build differs from frozen v1.8.1 byte oracle: "
             f"added={comparison['added']}, removed={comparison['removed']}, changed={comparison['changed']}"
         )
 
     print(
-        "v1.9 R3 current build: PASS — canonical catalogue plus 15 template/component pages own final public bytes; "
+        "v1.9 R4a current build: PASS — DTCG token contract validated before canonical page/catalogue handoff; "
         f"{comparison['actual_files']} files remain byte-identical to frozen v1.8.1"
     )
 
