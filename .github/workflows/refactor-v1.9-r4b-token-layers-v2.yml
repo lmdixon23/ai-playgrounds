@@ -1,0 +1,35 @@
+name: Refactor v1.9 R4b token layers v2
+
+on:
+  push:
+    branches:
+      - refactor/v1.9-token-owned-components-r4b
+
+permissions:
+  contents: write
+
+jobs:
+  refactor-token-layers:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: refactor/v1.9-token-owned-components-r4b
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Refactor higher-order design-token validator
+        run: python tools/refactor_v1_9_r4b_token_layers.py
+      - name: Verify both token layers
+        run: |
+          python tools/design_tokens.py
+          python tools/token_components.py
+      - name: Commit token-layer refactor
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tools/design_tokens.py
+          git commit -m 'v1.9 R4b: share one low-level DTCG token engine'
+          git push origin HEAD:refactor/v1.9-token-owned-components-r4b
