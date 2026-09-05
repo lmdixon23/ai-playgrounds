@@ -1,0 +1,57 @@
+name: Fix v1.9 R3 legacy provenance
+
+on:
+  push:
+    branches:
+      - refactor/v1.9-shared-page-components-r3
+
+permissions:
+  contents: write
+
+jobs:
+  fix-provenance:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: refactor/v1.9-shared-page-components-r3
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Replace superseded R2 full-page pointers with historical generator provenance
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path('src/product/labs.json')
+          payload = json.loads(path.read_text(encoding='utf-8'))
+          target = {'transformer-language-model', 'agent-tool-context', 'minimax-alpha-beta'}
+          seen = set()
+          for lab in payload['labs']:
+              if lab['slug'] not in target:
+                  continue
+              seen.add(lab['slug'])
+              old = lab['implementation']['legacy_equivalence']
+              if old.get('kind') != 'canonical-current-page-with-legacy-equivalence':
+                  raise SystemExit(f"unexpected R2 legacy wrapper for {lab['slug']}: {old.get('kind')}")
+              lab['implementation']['legacy_equivalence'] = {
+                  'kind': 'generated-source-plus-release-transforms',
+                  'primary_builder': old['legacy_builder'],
+                  'release_manifest_source': old['legacy_release_manifest_source'],
+                  'learner_parity_source': old['legacy_learner_parity_source'],
+                  'current_release_patch': old['legacy_current_release_patch'],
+              }
+          if seen != target:
+              raise SystemExit(f'missing target labs: {sorted(target - seen)}')
+          path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          PY
+      - name: Commit provenance correction
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/product/labs.json
+          git commit -m 'v1.9 R3: correct superseded peer-page legacy provenance'
+          git push origin HEAD:refactor/v1.9-shared-page-components-r3
