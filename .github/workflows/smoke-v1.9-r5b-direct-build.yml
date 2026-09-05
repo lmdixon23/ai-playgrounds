@@ -11,25 +11,11 @@ permissions:
 jobs:
   direct-build:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
         with:
           python-version: '3.13'
-      - name: Build complete current site directly from canonical sources twice
-        run: |
-          python - <<'PY'
-          import sys
-          from pathlib import Path
-          sys.path.insert(0, str(Path('tools').resolve()))
-          import direct_current_site
-          a = direct_current_site.build_direct()
-          first = a['hashes']
-          b = direct_current_site.build_direct()
-          second = b['hashes']
-          diff = direct_current_site.compare_hash_maps(first, second)
-          if not diff['pass']:
-              raise SystemExit(f"R5b direct-build determinism failed: {diff}")
-          print(f"R5b direct-build smoke: PASS — {len(first)} files / two identical direct builds")
-          PY
+      - name: Run complete R5b direct-build independence gate
+        run: python tools/test_v1_9_direct_canonical_build_r5b.py
