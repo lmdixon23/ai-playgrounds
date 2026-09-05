@@ -18,8 +18,29 @@ def require(condition: bool, message: str) -> None:
         raise AssertionError(message)
 
 
-def main() -> int:
+def test_hash_comparator() -> int:
     checks = 0
+    exact = current.compare_hash_maps({"a": "1", "b": "2"}, {"a": "1", "b": "2"})
+    require(exact["pass"], "exact hash maps should pass")
+    require(exact["added"] == [] and exact["removed"] == [] and exact["changed"] == [], "exact comparison diagnostics wrong")
+    checks += 1
+
+    changed = current.compare_hash_maps({"a": "1"}, {"a": "9"})
+    require(not changed["pass"] and changed["changed"] == ["a"], "changed byte must fail")
+    checks += 1
+
+    added = current.compare_hash_maps({"a": "1"}, {"a": "1", "b": "2"})
+    require(not added["pass"] and added["added"] == ["b"], "added artifact must fail")
+    checks += 1
+
+    removed = current.compare_hash_maps({"a": "1", "b": "2"}, {"a": "1"})
+    require(not removed["pass"] and removed["removed"] == ["b"], "removed artifact must fail")
+    checks += 1
+    return checks
+
+
+def main() -> int:
+    checks = test_hash_comparator()
 
     catalogue = current.load_canonical_catalogue()
     require(catalogue["serializer_roundtrip"] is True, "canonical catalogue serializer roundtrip failed")
