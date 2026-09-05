@@ -1,0 +1,50 @@
+name: Bootstrap v1.9 R3 shared page components v2
+
+on:
+  push:
+    branches:
+      - refactor/v1.9-shared-page-components-r3
+
+permissions:
+  contents: write
+
+jobs:
+  materialize-page-components:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout R3 branch
+        uses: actions/checkout@v6
+        with:
+          ref: refactor/v1.9-shared-page-components-r3
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Build exact byte-locked R2 product
+        run: python tools/build_current.py
+
+      - name: Materialize canonical templates and exact shared components
+        run: python tools/bootstrap_v1_9_r3_components.py
+
+      - name: Remove superseded full peer-page snapshots
+        run: |
+          git rm -f \
+            src/labs/transformer-language-model/index.html \
+            src/labs/agent-tool-context/index.html \
+            src/labs/minimax-alpha-beta/index.html
+
+      - name: Commit canonical templates and components
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/labs src/ui/components src/product/page-components.json
+          if git diff --cached --quiet; then
+            echo 'R3 canonical templates/components already materialized; no commit needed.'
+            exit 0
+          fi
+          git commit -m 'v1.9 R3: materialize shared page templates and components'
+          git push origin HEAD:refactor/v1.9-shared-page-components-r3
