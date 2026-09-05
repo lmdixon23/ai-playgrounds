@@ -1,0 +1,38 @@
+name: Verify v1.9 R0
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-v19-r0-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  canonical-source-r0:
+    name: Canonical source byte equivalence
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Verify canonical source model and frozen 58-file artifact
+        run: python tools/test_v1_9_canonical_source_r0.py
+      - name: Upload R0 evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ai-playgrounds-v1.9-r0-${{ github.run_id }}
+          path: release-evidence/v1.9-canonical-source-r0.json
+          if-no-files-found: error
+          retention-days: 90
