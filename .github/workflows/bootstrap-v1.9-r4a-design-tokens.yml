@@ -1,0 +1,37 @@
+name: Bootstrap v1.9 R4a design-token contract
+
+on:
+  push:
+    branches:
+      - refactor/v1.9-design-token-contract-r4a
+
+permissions:
+  contents: write
+
+jobs:
+  materialize-design-token-contract:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout R4a branch
+        uses: actions/checkout@v6
+        with:
+          ref: refactor/v1.9-design-token-contract-r4a
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Materialize DTCG token contract and current bindings
+        run: python tools/bootstrap_v1_9_r4a_tokens.py
+      - name: Commit token contract
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/design/ai-playgrounds.tokens.json src/design/current-bindings.json
+          if git diff --cached --quiet; then
+            echo 'R4a token contract already materialized; no commit needed.'
+            exit 0
+          fi
+          git commit -m 'v1.9 R4a: materialize DTCG design-token contract'
+          git push origin HEAD:refactor/v1.9-design-token-contract-r4a
