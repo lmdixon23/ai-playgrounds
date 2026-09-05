@@ -5,8 +5,8 @@ import hashlib
 import json
 from pathlib import Path
 
-from build_site_v1_8_1 import build_site as build_legacy_v181
 import design_tokens
+import direct_current_site
 import page_components
 import public_remainder
 
@@ -24,8 +24,9 @@ R3_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r3.json"
 R4A_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r4a.json"
 R4B_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r4b.json"
 R5A_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r5a.json"
+R5B_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r5b.json"
 BASELINE_SHA = "d1c72e10e6c5bf64b9a4bbed578b2305d1c988d0"
-CURRENT_PHASE = "v1.9-r5a-public-remainder-ownership"
+CURRENT_PHASE = "v1.9-r5b-direct-canonical-build"
 R2_PEER_SLUGS = (
     "transformer-language-model",
     "agent-tool-context",
@@ -149,17 +150,17 @@ def validate_product_model() -> dict[str, object]:
     if release.get("architecture_phase") != CURRENT_PHASE:
         raise RuntimeError(f"Current architecture phase must be {CURRENT_PHASE}")
     if release.get("public_release") != "v1.8.1" or release.get("software_version") != "1.8.1":
-        raise RuntimeError("R5a must remain bound to exact public v1.8.1")
+        raise RuntimeError("R5b must remain bound to exact public v1.8.1")
     if release.get("baseline_source_sha") != BASELINE_SHA:
-        raise RuntimeError("R5a baseline source SHA changed")
+        raise RuntimeError("R5b baseline source SHA changed")
     if release.get("public_file_count") != 58 or release.get("applet_count") != 15:
-        raise RuntimeError("R5a public boundary must remain 58 files / 15 applets")
+        raise RuntimeError("R5b public boundary must remain 58 files / 15 applets")
     if release.get("foundations_count") != 13 or release.get("modern_extension_count") != 2:
-        raise RuntimeError("R5a curriculum track-count boundary changed")
+        raise RuntimeError("R5b curriculum track-count boundary changed")
     if release.get("learner_locales") != ["en", "zh", "vi", "es"]:
-        raise RuntimeError("R5a learner locale order changed")
+        raise RuntimeError("R5b learner locale order changed")
     if release.get("quick_assign_count") != 15:
-        raise RuntimeError("R5a Quick Assign count changed")
+        raise RuntimeError("R5b Quick Assign count changed")
 
     expected_release_fields = {
         "canonical_catalogue": "src/product/catalogue.json",
@@ -182,6 +183,9 @@ def validate_product_model() -> dict[str, object]:
         "public_remainder_count": 43,
         "canonical_existing_public_remainder_count": 29,
         "current_snapshot_public_remainder_count": 14,
+        "direct_current_build": True,
+        "current_build_composer": "tools/direct_current_site.py",
+        "historical_builder_role": "test-only-regression-and-provenance",
     }
     for key, expected in expected_release_fields.items():
         if release.get(key) != expected:
@@ -292,51 +296,6 @@ def validate_emitted_catalogue(model: dict[str, object]) -> dict[str, object]:
     return {"rows": len(emitted), "canonical_sha256": model["catalogue"]["sha256"], "pass": True}
 
 
-def handoff_catalogue(model: dict[str, object]) -> dict[str, object]:
-    public = SITE / "applets.json"
-    legacy = public.read_bytes()
-    canonical = model["catalogue"]["raw"]
-    if legacy != canonical:
-        raise RuntimeError(
-            "Legacy/canonical catalogue handoff differs: "
-            f"legacy_sha256={digest_bytes(legacy)}, canonical_sha256={digest_bytes(canonical)}"
-        )
-    public.write_bytes(canonical)
-    return {
-        "legacy_sha256": digest_bytes(legacy),
-        "canonical_sha256": digest_bytes(canonical),
-        "byte_identical": True,
-    }
-
-
-def handoff_canonical_pages(model: dict[str, object]) -> dict[str, object]:
-    result: dict[str, object] = {"pages": {}, "page_count": 0, "pass": True}
-    reconstructed = model["page_components"]["reconstructed"]
-    evidence = model["page_components"]["page_evidence"]
-    for slug in model["slugs"]:
-        page_info = evidence[slug]
-        public = SITE / str(page_info["public_path"])
-        if not public.is_file():
-            raise RuntimeError(f"Legacy equivalence build did not emit page: {slug}")
-        legacy = public.read_bytes()
-        canonical = reconstructed[slug]
-        if legacy != canonical:
-            raise RuntimeError(
-                f"Legacy/canonical page handoff differs for {slug}: "
-                f"legacy_sha256={digest_bytes(legacy)}, canonical_sha256={digest_bytes(canonical)}"
-            )
-        public.write_bytes(canonical)
-        result["pages"][slug] = {
-            "template": page_info["template"],
-            "component_manifest": "src/product/page-components.json",
-            "public_path": page_info["public_path"],
-            "legacy_sha256": digest_bytes(legacy),
-            "canonical_sha256": digest_bytes(canonical),
-            "byte_identical": True,
-        }
-    result["page_count"] = len(result["pages"])
-    return result
-
 
 def write_evidence(path: Path, payload: dict[str, object]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -346,16 +305,17 @@ def write_evidence(path: Path, payload: dict[str, object]) -> None:
 def build_current() -> None:
     model = validate_product_model()
 
-    # R5a still invokes the historical ladder strictly as an independent
-    # equivalence witness. The complete 43-file non-applet remainder now has
-    # canonical source ownership; R5b removes this historical current-build
-    # dependency after direct 58-file composition is independently proven.
-    build_legacy_v181()
-
-    catalogue_handoff = handoff_catalogue(model)
-    page_handoff = handoff_canonical_pages(model)
+    # R5b current output is composed directly from canonical current sources.
+    # Historical release builders remain regression/provenance inputs only and
+    # are neither imported nor invoked by this facade.
+    direct = direct_current_site.build_direct(SITE)
     catalogue_check = validate_emitted_catalogue(model)
     comparison = compare_to_oracle(artifact_hashes())
+    if not direct["artifact"]["pass"] or not comparison["pass"]:
+        raise RuntimeError(
+            "R5b direct current build differs from frozen v1.8.1 byte oracle: "
+            f"added={comparison['added']}, removed={comparison['removed']}, changed={comparison['changed']}"
+        )
 
     common_model = {
         "lab_count": model["lab_count"],
@@ -368,7 +328,9 @@ def build_current() -> None:
     write_evidence(R0_EVIDENCE, {
         "phase": "v1.9-r0-equivalence",
         "baseline_source_sha": BASELINE_SHA,
+        "representation": "historical-equivalence-milestone-preserved-under-direct-current-build",
         "legacy_builder": "tools/build_site_v1_8_1.py",
+        "legacy_builder_role": "test-only-regression-and-provenance",
         "canonical_facade": "tools/build_current.py",
         "model": common_model,
         "catalogue": catalogue_check,
@@ -377,25 +339,22 @@ def build_current() -> None:
     write_evidence(R1_EVIDENCE, {
         "phase": "v1.9-r1-canonical-catalogue",
         "baseline_source_sha": BASELINE_SHA,
+        "representation": "historical-r1-ownership-preserved-under-direct-current-build",
         "canonical_catalogue": "src/product/catalogue.json",
         "canonical_catalogue_sha256": model["catalogue"]["sha256"],
         "serializer_roundtrip": model["catalogue"]["serializer_roundtrip"],
-        "legacy_handoff": catalogue_handoff,
         "model": common_model,
         "catalogue": catalogue_check,
         "artifact": comparison,
     })
 
     peer_pages = {slug: model["page_components"]["page_evidence"][slug] for slug in R2_PEER_SLUGS}
-    peer_handoff = {slug: page_handoff["pages"][slug] for slug in R2_PEER_SLUGS}
     write_evidence(R2_EVIDENCE, {
         "phase": "v1.9-r2-peer-current-pages",
         "baseline_source_sha": BASELINE_SHA,
         "representation": "superseded-by-r3-template-component-composition",
         "canonical_catalogue": "src/product/catalogue.json",
-        "catalogue_handoff": catalogue_handoff,
         "peer_current_pages": {"pages": peer_pages, "pass": True},
-        "peer_page_handoff": {"pages": peer_handoff, "pass": True},
         "model": common_model,
         "catalogue": catalogue_check,
         "artifact": comparison,
@@ -406,11 +365,9 @@ def build_current() -> None:
         "representation": "superseded-by-r4b-token-template-component-source",
         "canonical_catalogue": "src/product/catalogue.json",
         "canonical_page_component_manifest": "src/product/page-components.json",
-        "catalogue_handoff": catalogue_handoff,
         "page_component_metrics": model["page_components"]["metrics"],
         "component_count": len(model["page_components"]["components"]),
         "canonical_pages": model["page_components"]["page_evidence"],
-        "page_handoff": page_handoff,
         "model": common_model,
         "catalogue": catalogue_check,
         "artifact": comparison,
@@ -482,7 +439,7 @@ def build_current() -> None:
 
     remainder_state = model["public_remainder"]
     write_evidence(R5A_EVIDENCE, {
-        "phase": CURRENT_PHASE,
+        "phase": "v1.9-r5a-public-remainder-ownership",
         "baseline_source_sha": BASELINE_SHA,
         "public_remainder_manifest": "src/product/public-remainder.json",
         "public_remainder_count": len(remainder_state["public_paths"]),
@@ -490,19 +447,36 @@ def build_current() -> None:
         "ownership_bytes": remainder_state["bytes"],
         "snapshot_public_paths": remainder_state["snapshot_public_paths"],
         "historical_builder_role": "independent-current-build-equivalence-witness-until-r5b",
+        "representation": "historical-r5a-ownership-receipt-preserved-after-direct-build-cutover",
         "model": common_model,
         "catalogue": catalogue_check,
         "artifact": comparison,
     })
 
-    if not comparison["pass"]:
-        raise RuntimeError(
-            "R5a current build differs from frozen v1.8.1 byte oracle: "
-            f"added={comparison['added']}, removed={comparison['removed']}, changed={comparison['changed']}"
-        )
+    write_evidence(R5B_EVIDENCE, {
+        "phase": CURRENT_PHASE,
+        "baseline_source_sha": BASELINE_SHA,
+        "direct_current_build": True,
+        "current_build_composer": "tools/direct_current_site.py",
+        "historical_builder_role": "test-only-regression-and-provenance",
+        "historical_builder_imported_by_current_facade": False,
+        "public_remainder_emission": {
+            "file_count": direct["remainder"]["file_count"],
+            "bytes": direct["remainder"]["bytes"],
+            "pass": direct["remainder"]["pass"],
+        },
+        "applet_page_emission": {
+            "file_count": direct["pages"]["file_count"],
+            "pass": direct["pages"]["pass"],
+        },
+        "total_public_file_count": direct["artifact"]["actual_files"],
+        "model": common_model,
+        "catalogue": catalogue_check,
+        "artifact": comparison,
+    })
 
     print(
-        "v1.9 R5a current build: PASS — 43 non-applet public files have canonical source ownership while the historical ladder remains an equivalence witness; "
+        "v1.9 R5b current build: PASS — direct canonical composition emits 43 remainder + 15 applet pages; "
         f"{comparison['actual_files']} files remain byte-identical to frozen v1.8.1"
     )
 
