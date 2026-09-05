@@ -1,0 +1,21 @@
+name: Smoke v1.9 R5a public remainder
+
+on:
+  push:
+    branches:
+      - refactor/v1.9-public-remainder-ownership-r5a
+
+permissions:
+  contents: read
+
+jobs:
+  validate-public-remainder:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Validate exact source ownership for all 43 non-applet public files
+        run: python tools/public_remainder.py
