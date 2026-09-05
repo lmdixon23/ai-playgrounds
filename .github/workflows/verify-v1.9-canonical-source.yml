@@ -1,0 +1,40 @@
+name: Verify v1.9 canonical source
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-v19-canonical-source-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  canonical-source:
+    name: Canonical source equivalence and ownership
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Verify canonical catalogue ownership and frozen 58-file artifact
+        run: python tools/test_v1_9_canonical_source_r1.py
+      - name: Upload current canonical-source evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ai-playgrounds-v1.9-canonical-source-${{ github.run_id }}
+          path: |
+            release-evidence/v1.9-canonical-source-r0.json
+            release-evidence/v1.9-canonical-source-r1.json
+          if-no-files-found: error
+          retention-days: 90
