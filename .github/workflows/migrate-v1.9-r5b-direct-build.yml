@@ -1,0 +1,32 @@
+name: Migrate v1.9 R5b direct canonical build
+
+on:
+  push:
+    branches:
+      - refactor/v1.9-direct-canonical-build-r5b
+
+permissions:
+  contents: write
+
+jobs:
+  migrate-direct-build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: refactor/v1.9-direct-canonical-build-r5b
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Remove historical current-build dependency and switch to direct composition
+        run: python tools/migrate_v1_9_r5b_direct_build.py
+      - name: Commit migrated current facade
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/build_current.py
+          git diff --cached --quiet && exit 0
+          git commit -m "v1.9 R5b: make current build fully direct"
+          git push origin HEAD:refactor/v1.9-direct-canonical-build-r5b
