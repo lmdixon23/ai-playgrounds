@@ -1,0 +1,20 @@
+name: Smoke v1.9 R4b token components
+
+on:
+  push:
+    branches:
+      - refactor/v1.9-token-owned-components-r4b
+
+permissions:
+  contents: read
+
+jobs:
+  validate-token-components:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Prove token templates render exact current raw components
+        run: python tools/token_components.py
