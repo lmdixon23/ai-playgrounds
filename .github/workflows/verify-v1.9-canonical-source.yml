@@ -26,8 +26,8 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.13"
-      - name: Verify canonical catalogue ownership and frozen 58-file artifact
-        run: python tools/test_v1_9_canonical_source_r1.py
+      - name: Verify peer current-page ownership and frozen 58-file artifact
+        run: python tools/test_v1_9_canonical_source_r2.py
       - name: Upload current canonical-source evidence
         if: always()
         uses: actions/upload-artifact@v7
@@ -36,5 +36,6 @@ jobs:
           path: |
             release-evidence/v1.9-canonical-source-r0.json
             release-evidence/v1.9-canonical-source-r1.json
+            release-evidence/v1.9-canonical-source-r2.json
           if-no-files-found: error
           retention-days: 90
