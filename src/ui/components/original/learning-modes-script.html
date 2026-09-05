@@ -1,0 +1,144 @@
+<script id="learning-modes-script">
+(() => {
+  const slug = location.pathname.split('/').filter(Boolean).slice(-2,-1)[0] || 'applet';
+  const inner = document.querySelector('.interactive-inner');
+  if (!inner || inner.querySelector('.learning-mode-shell')) return;
+  const oldDeck = [...inner.children].find(el => el.classList && el.classList.contains('learning-deck'));
+  if (oldDeck) { [...oldDeck.children].forEach(el => inner.insertBefore(el, oldDeck)); oldDeck.remove(); }
+  const details = [...inner.children].filter(el => el.tagName === 'DETAILS');
+  if (!details.length) return;
+
+  const modeFor = d => {
+    if (d.matches('.visual-explanation,.lesson-tour,.key-terms')) return 'understand';
+    if (d.matches('.worksheet,.classroom-lab')) return 'classroom';
+    if (d.matches('.accessibility-layer')) return 'access';
+    return 'explore';
+  };
+  const lang = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const labels = {explore:['Explore','探索'],understand:['Understand','理解'],classroom:['Use in class','课堂使用'],access:['Text and keyboard','文本与键盘']};
+  const intros = {
+    explore:['Start with the featured experiment, then use the scenarios to test a prediction.','从精选实验开始，再使用情境检验预测。'],
+    understand:['Open the mechanism view and lesson sequence when you need to explain why the result changed.','需要解释结果为什么变化时，打开机制视图和课程序列。'],
+    classroom:['Collect reasoning with the worksheet or the local student response packet.','使用练习题或本地学生回答包收集推理。'],
+    access:['Use the text-state description and keyboard guidance when the visual display is not enough.','当可视显示不足时，使用文本状态说明和键盘指导。']
+  };
+  const ui = {
+    en:{copy:'Copy this experiment',copied:'Experiment link copied.',copyPrompt:'Copy this experiment URL',featuredSummary:'✨ Featured experiment',featuredPrefix:'Featured experiment',featuredQuestion:'Core question',featuredRun:'Run and watch',start:'Start featured experiment',shell:'Applet learning modes'},
+    zh:{copy:'复制此实验',copied:'实验链接已复制。',copyPrompt:'复制此实验链接',featuredSummary:'✨ 精选实验',featuredPrefix:'精选实验',featuredQuestion:'核心问题',featuredRun:'运行并观察',start:'开始精选实验',shell:'交互工具学习模式'}
+  };
+  const featuredIndex={"search-pathfinding":0,"bayes-classifier":0,"overfitting":1,"knn-classifier":4,"wumpus-world":4,"cnf-sat":2,"bayes-network":1,"hill-climbing":1,"kmeans":4,"neural-network":1,"convolution":4,"q-learning-gridworld":2};
+
+  const shell=document.createElement('section');
+  shell.className='learning-mode-shell';
+  shell.innerHTML='<div class="learning-mode-head"><div><h2 data-mode-heading></h2><p data-mode-copy></p></div><div class="learning-mode-tools"><button type="button" class="copy-experiment" data-copy-experiment></button></div></div><div class="learning-mode-tabs" role="tablist"></div><div class="experiment-status" aria-live="polite"></div>';
+  const tabs=shell.querySelector('.learning-mode-tabs');
+  const panels={};
+  Object.keys(labels).forEach(key=>{
+    const b=document.createElement('button');b.type='button';b.className='learning-mode-tab';b.role='tab';b.dataset.mode=key;b.id='mode-tab-'+key;b.setAttribute('aria-controls','mode-panel-'+key);tabs.appendChild(b);
+    const p=document.createElement('div');p.className='learning-mode-panel';p.id='mode-panel-'+key;p.role='tabpanel';p.setAttribute('aria-labelledby',b.id);p.innerHTML='<div class="mode-intro"></div>';shell.appendChild(p);panels[key]=p;
+  });
+  inner.insertBefore(shell,details[0]);
+  details.forEach(d=>{const mode=modeFor(d);if(d.matches('.scenario-gallery,.visual-explanation,.classroom-lab,.accessibility-layer,.signature-challenge'))d.classList.add('mode-wide');panels[mode].appendChild(d)});
+
+  const sig=panels.explore.querySelector('.signature-challenge');
+  if(sig){
+    panels.explore.insertBefore(sig,panels.explore.querySelector('.mode-intro').nextSibling);
+    sig.open=true;
+    const body=sig.querySelector('.signature-challenge-panel')||sig.querySelector(':scope > div');
+    if(body&&!body.querySelector('.featured-actions')){const actions=document.createElement('div');actions.className='featured-actions';actions.innerHTML='<button type="button" class="step-btn" data-start-featured></button>';body.appendChild(actions)}
+  }
+  let active=new URL(location.href).searchParams.get('mode')||'explore';if(!panels[active])active='explore';
+  let restoring=true;
+
+  function profileScenario(){
+    const profile=window.APPLET_LEARNER_PROFILE||{};
+    const locale=lang();
+    const items=(profile[locale]&&profile[locale].scenarios)||[];
+    return items[featuredIndex[slug]??0]||items[0]||{};
+  }
+  function renderFeatured(){
+    if(!sig)return;
+    const c=ui[lang()],item=profileScenario();
+    const summary=sig.querySelector('summary span,summary');if(summary)summary.textContent=c.featuredSummary;
+    const body=sig.querySelector('.signature-challenge-panel')||sig.querySelector(':scope > div');if(!body)return;
+    let strong=body.querySelector(':scope > strong');if(!strong){strong=document.createElement('strong');body.prepend(strong)}
+    strong.textContent=item.title||c.featuredPrefix;
+    let paras=[...body.querySelectorAll(':scope > p')];
+    while(paras.length<2){const p=document.createElement('p');body.insertBefore(p,body.querySelector('.featured-actions'));paras.push(p)}
+    paras[0].innerHTML='<b>'+c.featuredQuestion+':</b> '+(item.question||'');
+    paras[1].innerHTML='<em><b>'+c.featuredRun+':</b> '+(item.run||'')+'</em>';
+    const start=body.querySelector('[data-start-featured]');if(start)start.textContent=c.start;
+  }
+  function renderModeChrome(){
+    const locale=lang(),c=ui[locale];
+    shell.setAttribute('aria-label',c.shell);
+    shell.querySelector('[data-copy-experiment]').textContent=c.copy;
+    shell.querySelectorAll('.learning-mode-tab').forEach(b=>b.textContent=labels[b.dataset.mode][locale==='zh'?1:0]);
+    const heading=shell.querySelector('[data-mode-heading]'),copy=shell.querySelector('[data-mode-copy]');
+    heading.textContent=labels[active][locale==='zh'?1:0];copy.textContent=intros[active][locale==='zh'?1:0];
+    panels[active].querySelector('.mode-intro').innerHTML='<strong>'+labels[active][locale==='zh'?1:0]+'.</strong> '+intros[active][locale==='zh'?1:0];
+    renderFeatured();
+  }
+  function setMode(mode,write=true){
+    active=mode;
+    Object.entries(panels).forEach(([k,p])=>p.hidden=k!==mode);
+    shell.querySelectorAll('.learning-mode-tab').forEach(b=>{const on=b.dataset.mode===mode;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});
+    renderModeChrome();
+    if(write){const u=new URL(location.href);u.searchParams.set('mode',mode);history.replaceState(null,'',u)}
+  }
+  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
+
+  function statePayload(){
+    const out={};
+    inner.querySelectorAll('select,input').forEach(el=>{
+      if(!el.id||el.closest('.classroom-lab')||['button','submit'].includes(el.type))return;
+      if(el.type==='radio'){if(el.checked)out[el.id]=el.value;return}
+      out[el.id]=el.type==='checkbox'?el.checked:el.value;
+    });
+    return out;
+  }
+  function encode(obj){return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))}
+  function decode(s){try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch{return null}}
+  function currentExperimentUrl(){
+    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',lang());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
+  }
+  window.__buildExperimentUrl=()=>currentExperimentUrl().href;
+  const status=shell.querySelector('.experiment-status');
+  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(ui[lang()].copyPrompt,u.href)}};
+
+  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','')});
+  document.addEventListener('click',e=>{const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode','explore');u.searchParams.set('lang',lang());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
+
+  let urlSyncTimer=0;
+  function scheduleUrlState(e){
+    if(restoring)return;
+    const el=e.target;if(!el||!inner.contains(el)||el.closest('.classroom-lab')||!el.matches('input,select'))return;
+    clearTimeout(urlSyncTimer);urlSyncTimer=setTimeout(()=>{const u=currentExperimentUrl();history.replaceState(null,'',u)},80);
+  }
+  document.addEventListener('input',scheduleUrlState,true);document.addEventListener('change',scheduleUrlState,true);
+
+  function applyState(obj){
+    if(!obj)return;
+    Object.entries(obj).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else if(el.type==='radio')el.checked=String(el.value)===String(value);else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});
+  }
+  function restore(){
+    const p=new URL(location.href).searchParams;restoring=true;
+    const n=Number(p.get('scenario'));if(Number.isInteger(n))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
+    applyState(decode(p.get('state')||''));
+    if(p.get('featured')==='1')sig?.setAttribute('open','');
+    restoring=false;
+  }
+  function refineCards(){
+    const profile=window.APPLET_LEARNER_PROFILE||{},locale=lang(),items=(profile[locale]&&profile[locale].scenarios)||[];
+    const labels2=locale==='zh'?['核心问题','运行并观察','先预测','运行后解释']:['Core question','Run and watch','Predict first','Explain afterward'];
+    panels.explore.querySelectorAll('.scenario-card').forEach((card,i)=>{const item=items[i]||{},h=card.querySelector('h3');if(h&&item.title)h.textContent=(locale==='zh'?'情境 ':'Scenario ')+(i+1)+': '+item.title;const metas=card.querySelectorAll('.scenario-meta'),values=[item.question,item.run,item.predict,item.explain];metas.forEach((meta,j)=>{if(!values[j])return;const strong=meta.querySelector('strong');if(strong)strong.textContent=labels2[j]+': ';let node=strong?strong.nextSibling:null;if(node)node.textContent=' '+values[j];else meta.appendChild(document.createTextNode(' '+values[j]))});const button=card.querySelector('button');if(button&&!button.textContent.startsWith('✓'))button.textContent=locale==='zh'?'应用并比较':'Apply and compare'});
+  }
+  function ensureExploreContent(){
+    const hasContent=panels.explore.querySelector('details,.scenario-card');
+    if(!hasContent){details.filter(d=>modeFor(d)==='explore').forEach(d=>panels.explore.appendChild(d))}
+  }
+  setMode(active,false);ensureExploreContent();
+  setTimeout(()=>{refineCards();window.renderAppletKeyTerms?.();restore();renderModeChrome()},250);
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',lang());history.replaceState(null,'',u)},25)));
+})();
+</script>

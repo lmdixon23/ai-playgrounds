@@ -1,0 +1,2502 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Overfitting Explorer | AI Playgrounds</title>
+<link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E" rel="icon"/>
+<meta content="Increase model complexity and compare performance on training data with performance on repeatedly viewed validation data. Find the point where a better fit becomes a worse model." name="description"/>
+<link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/overfitting/" rel="canonical"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/overfitting/?lang=en" hreflang="en" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/overfitting/?lang=zh" hreflang="zh-Hans" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/overfitting/?lang=vi" hreflang="vi" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/overfitting/?lang=es" hreflang="es" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/overfitting/?lang=en" hreflang="x-default" rel="alternate"/>
+<meta content="website" property="og:type"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/overfitting/" property="og:url"/>
+<meta content="Overfitting Explorer | AI Playgrounds" property="og:title"/>
+<meta content="Increase model complexity and compare performance on training data with performance on repeatedly viewed validation data. Find the point where a better fit becomes a worse model." property="og:description"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" property="og:image"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="Overfitting Explorer | AI Playgrounds" name="twitter:title"/>
+<meta content="Increase model complexity and compare performance on training data with performance on repeatedly viewed validation data. Find the point where a better fit becomes a worse model." name="twitter:description"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" name="twitter:image"/>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Overfitting Explorer | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/overfitting/","description":"Increase model complexity and compare performance on training data with performance on repeatedly viewed validation data. Find the point where a better fit becomes a worse model.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh","vi","es"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
+<style>
+  :root {
+    --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #047857;
+    --card: #fff; --border: #e5e7eb; --soft: #f9fafb;
+    --truth: #94a3b8; --fit: #ec4899; --train: #2563eb; --test: #f97316;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", Arial, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; }
+  .page-header { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 24px; }
+  .header-utility { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .header-prefs { display: flex; align-items: center; gap: 8px; }
+  .header-main { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .header-actions { display: flex; align-items: center; gap: 8px; font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem; }
+  .header-actions .header-reset { margin-left: 12px; }
+  .page-header h1 { margin: 0; font-size: 1.5rem; }
+  .page-header .back { color: var(--accent); text-decoration: none; font-size: 0.9rem; font-family: -apple-system, system-ui, sans-serif; }
+  .lang-switch { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .lang-switch button { padding: 4px 10px; background: white; color: var(--muted);
+                          border: none; cursor: pointer; font: inherit; font-size: 0.78rem; }
+  .lang-switch button.active { background: var(--accent); color: white; font-weight: 600; }
+  .header-reset { padding: 6px 12px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font: inherit; font-size: 0.82rem; }
+  .header-reset:hover { background: var(--soft); }
+  .tldr { max-width: 820px; margin: 16px auto 0;
+           background: var(--accent); color: white;
+           border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; font-weight: 500;
+           font-family: -apple-system, system-ui, sans-serif; line-height: 1.45; }
+  .tldr strong { color: rgba(255,255,255,0.85); font-size: 0.72rem; letter-spacing: 0.08em;
+                  text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px; }
+  .interactive { background: var(--card); padding: 24px; border-bottom: 1px solid var(--border); }
+  .interactive-inner { max-width: min(1280px, 100%); margin: 0 auto;
+                         font-family: -apple-system, system-ui, sans-serif; }
+  .bento { display: grid; grid-template-columns: minmax(300px, 360px) minmax(0, 1fr); gap: 16px; align-items: start; margin-bottom: 14px; }
+  .bento-side, .bento-main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .bento-cell { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+  .bento-cell > :first-child { margin-top: 0 !important; }
+  @media (max-width: 860px) { .bento { grid-template-columns: 1fr; gap: 12px; } }
+  /* Phones: slider fields (label + value + help text) need full width to stay legible. */
+  @media (max-width: 480px) { .sliders-grid { grid-template-columns: 1fr; } }
+  .sliders-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px;
+                    margin-bottom: 16px; font-size: 0.88rem; }
+  .slider-field { display: flex; flex-direction: column; gap: 4px; }
+  .slider-field .row { display: flex; justify-content: space-between; }
+  .slider-field .lbl { color: var(--muted); }
+  .slider-field .val { color: var(--accent); font-weight: 700; font-family: monospace; }
+  .slider-field input[type=range] { width: 100%; }
+  .slider-field .help { color: var(--muted); font-size: 0.78rem; font-style: italic; }
+  .control-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+                  margin-bottom: 14px; font-size: 0.88rem; }
+  .control-row label { color: var(--muted); }
+  .control-row select { padding: 6px 10px; border: 1px solid var(--border);
+                          border-radius: 6px; font: inherit; background: white; }
+  .control-row .step-btn { padding: 7px 14px; background: white; color: var(--fg);
+                            border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                            font: inherit; font-size: 0.85rem; }
+  .canvas-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 14px; }
+  .canvas-card { background: white; border: 1px solid var(--border);
+                   border-radius: 8px; padding: 10px; }
+  .canvas-card h3 { margin: 0 0 6px; font-size: 0.85rem; color: var(--accent);
+                      text-transform: uppercase; letter-spacing: 0.05em; }
+  canvas { display: block; width: 100%; height: 280px; background: white; border-radius: 4px; }
+  .err-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .err-card { background: var(--soft); border: 1px solid var(--border);
+                border-radius: 8px; padding: 14px; }
+  .err-card .lbl { color: var(--muted); font-size: 0.75rem;
+                     text-transform: uppercase; letter-spacing: 0.05em; }
+  .err-card .num { font-family: monospace; font-size: 1.8rem; font-weight: 700; }
+  .err-card.train .num { color: var(--train); }
+  .err-card.test .num { color: var(--test); }
+  .jump-link { display: inline-block; margin-top: 14px;
+                padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px;
+                background: white; color: var(--accent); text-decoration: none;
+                font-family: -apple-system, system-ui, sans-serif; font-size: 0.82rem;
+                font-weight: 600; }
+  .jump-link:hover { background: var(--soft); }
+  .jump-anchor { text-align: center; }
+  .essay { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; font-size: 1.05rem; }
+  .essay h2 { font-size: 1.5rem; margin-top: 36px; margin-bottom: 12px; color: var(--accent); }
+  .essay h3 { font-size: 1.15rem; margin-top: 24px; margin-bottom: 8px; }
+  .essay .lede { font-size: 1.15rem; color: #374151; }
+  .essay .aha { background: #d1fae5; border-left: 4px solid #059669;
+                 padding: 12px 18px; margin: 18px 0; border-radius: 0 6px 6px 0;
+                 font-style: italic; color: #064e3b; }
+  .essay code { background: var(--soft); padding: 1px 6px; border-radius: 4px;
+                 font-family: 'SF Mono', Consolas, monospace; font-size: 0.92em; }
+  .essay ul li { margin-bottom: 6px; }
+  .essay .for-teachers { background: var(--soft); border: 1px solid var(--border);
+                          border-radius: 8px; padding: 20px 24px; margin-top: 36px;
+                          font-family: -apple-system, system-ui, sans-serif; font-size: 0.95rem; }
+  .essay .for-teachers h3 { font-family: -apple-system, system-ui, sans-serif;
+                              color: var(--accent); font-size: 0.9rem;
+                              text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+  /* Touch devices: comfortable tap targets without changing desktop layout. */
+  @media (pointer: coarse) {
+    button, .step-btn, .tp-btn, select, summary { min-height: 44px; }
+  }
+  /* === dark mode === */
+  body.dark-mode {
+    --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8;
+    --card: #1e293b; --border: #334155; --soft: #1e293b;
+  }
+  body.dark-mode .essay .lede { color: #cbd5e1; }
+  body.dark-mode .essay .for-teachers { background: #0f172a; }
+  /* True canvas dark mode: render fn picks bg directly. */
+  body.dark-mode .header-reset,
+  body.dark-mode .lang-switch button:not(.active),
+  body.dark-mode .header-theme,
+  body.dark-mode .control-row select,
+  body.dark-mode .control-row .step-btn,
+  body.dark-mode .canvas-card,
+  body.dark-mode .err-card { background: var(--card); color: var(--fg); }
+  .header-theme { padding: 6px 10px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font-size: 1rem; line-height: 1; font-family: inherit; }
+  .header-theme:hover { background: var(--soft); }
+  .header-png { padding: 6px 10px; background: white; color: var(--fg);
+                  border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                  font-size: 0.85rem; font-family: inherit; }
+  .header-png:hover { background: var(--soft); }
+  body.dark-mode .header-png { background: var(--card); color: var(--fg); }
+  /* ===== Slider styling: native themed control via accent-color (consistent across browsers) ===== */
+  input[type="range"] { accent-color: var(--accent); height: 28px; cursor: pointer; }
+  /* embed mode. Strip chrome so the applet fits cleanly in an LMS iframe. */
+  body.embed-mode .page-header,
+  body.embed-mode aside.tldr,
+  body.embed-mode article.essay,
+  body.embed-mode .jump-anchor { display: none !important; }
+  body.embed-mode .interactive { padding: 12px; border-bottom: none; }
+  /* ===== Shared a11y + contrast tokens (keyboard focus and contrast tokens) ===== */
+  button:focus-visible, a:focus-visible, select:focus-visible,
+  input:focus-visible, textarea:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+  .tldr { background: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), var(--accent); }
+  .tldr strong { color: #fff; }
+
+  /* Student response packet: local-only assignment packet across the applet family. */
+  .classroom-lab .lab-panel { margin-top:8px; padding:14px; background:var(--card); border:1px solid var(--border); border-radius:8px; }
+  .classroom-lab .lab-intro { margin:0 0 12px; color:var(--muted); font-size:0.88rem; line-height:1.5; }
+  .classroom-lab .lab-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+  .classroom-lab .lab-field { display:flex; flex-direction:column; gap:4px; }
+  .classroom-lab .lab-field label { font-family:-apple-system,system-ui,sans-serif; font-size:0.82rem; font-weight:700; color:var(--accent); }
+  .classroom-lab textarea { min-height:86px; resize:vertical; width:100%; border:1px solid var(--border); border-radius:6px; padding:8px; font:inherit; color:var(--fg); background:var(--bg); }
+  .classroom-lab .lab-state { margin-top:12px; padding:10px 12px; border:1px dashed var(--border); border-radius:8px; background:var(--soft); color:var(--muted); font-family:ui-monospace,monospace; font-size:0.78rem; white-space:pre-wrap; }
+  .classroom-lab .lab-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; align-items:center; }
+  .classroom-lab .lab-status { color:var(--muted); font-size:0.82rem; min-height:1.2em; }
+  @media (max-width:480px) { .classroom-lab .lab-grid { grid-template-columns:1fr; } .classroom-lab .lab-actions button { width:100%; } }
+
+
+  /* Scenario Gallery: visible, reusable entry points generated from the lesson-tour scenarios. */
+  .scenario-gallery-panel {
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .scenario-gallery-intro {
+    margin: 0 0 10px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .scenario-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .scenario-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--card) 88%, var(--soft));
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 100%;
+  }
+  .scenario-card h3 {
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.98rem;
+    line-height: 1.25;
+  }
+  .scenario-card p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .scenario-card .scenario-meta {
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  .scenario-card .scenario-meta strong { color: var(--fg); }
+  .scenario-card button {
+    margin-top: auto;
+    align-self: flex-start;
+  }
+  @media (max-width: 480px) {
+    .scenario-card-grid { grid-template-columns: 1fr; }
+    .scenario-card button { width: 100%; }
+  }
+
+
+
+  /* Supporting learning components. */
+  .visual-explanation-panel {
+    margin-top: 8px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .visual-explanation-intro {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .visual-flow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+  }
+  .visual-card {
+    position: relative;
+    min-height: 132px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, var(--accent)), var(--card));
+    overflow: hidden;
+  }
+  .visual-card::before {
+    content: attr(data-step);
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    color: color-mix(in srgb, var(--accent) 62%, transparent);
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+  .visual-card h4 {
+    margin: 0 28px 8px 0;
+    color: var(--accent);
+    font-size: 0.9rem;
+    line-height: 1.25;
+  }
+  .visual-card p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .visual-live {
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 8px;
+    background: var(--soft);
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.74rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .visual-live strong { color: var(--accent); font-family: -apple-system, system-ui, sans-serif; font-size: 0.72rem; }
+  .visual-watch-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .visual-snapshot, .visual-misread {
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: var(--soft);
+  }
+  .visual-snapshot strong, .visual-misread strong {
+    display: block;
+    color: var(--accent);
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 0.78rem;
+    margin-bottom: 6px;
+  }
+  .visual-snapshot pre {
+    margin: 0;
+    white-space: pre-wrap;
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+  .visual-misread p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  @media (max-width: 620px) {
+    .visual-watch-grid { grid-template-columns: 1fr; }
+  }
+
+
+
+  /* Supporting learning components. */
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 10px;
+    z-index: 10000;
+    padding: 10px 14px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 8px;
+    font-family: -apple-system, system-ui, sans-serif;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .skip-link:focus { left: 12px; }
+  :focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+  [tabindex="-1"]:focus { outline: none; }
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+  .accessibility-layer {
+    margin-top: 12px;
+  }
+  .accessibility-panel {
+    margin-top: 8px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .accessibility-intro {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .accessibility-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .accessibility-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--card) 92%, var(--soft));
+    padding: 12px;
+  }
+  .accessibility-card h3 {
+    margin: 0 0 8px;
+    color: var(--accent);
+    font-size: 0.92rem;
+  }
+  .accessibility-card p,
+  .accessibility-card li {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .accessibility-card ul {
+    margin: 0;
+    padding-left: 1.15rem;
+  }
+  .a11y-state-grid {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 6px 10px;
+    margin: 0;
+    font-size: 0.84rem;
+  }
+  .a11y-state-grid dt {
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .a11y-state-grid dd {
+    margin: 0;
+    color: var(--fg);
+    overflow-wrap: anywhere;
+  }
+  .accessibility-note {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+  @media (max-width: 620px) {
+    .accessibility-grid { grid-template-columns: 1fr; }
+    .a11y-state-grid { grid-template-columns: 1fr; }
+    .a11y-state-grid dt { margin-top: 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html:focus-within { scroll-behavior: auto !important; }
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+
+
+  /* Supporting learning components. */
+  .interactive-inner { max-width: min(1280px, 100%); }
+  .scenario-card,
+  .accessibility-card,
+  .classroom-lab .lab-panel,
+  .accessibility-panel,
+  .signature-challenge-panel {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, var(--soft)), var(--card));
+  }
+  .signature-challenge-panel {
+    margin-top: 12px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .signature-challenge-panel strong { display:block; color:var(--accent); margin-bottom:4px; }
+  .signature-challenge-panel p { margin: 6px 0 0; color: var(--muted); font-size: 0.88rem; line-height: 1.5; }
+
+
+  /* Supporting learning components. */
+  .learning-deck { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:12px; align-items:start; }
+  .learning-deck > details { margin-top:0 !important; min-width:0; }
+  .learning-deck > .scenario-gallery,
+  .learning-deck > .visual-explanation,
+  .learning-deck > .classroom-lab,
+  .learning-deck > .accessibility-layer { grid-column:1 / -1; }
+  .learning-deck > details > summary { background:var(--card) !important; }
+  .scenario-gallery-panel, .scenario-card, .accessibility-panel, .accessibility-card,
+  .classroom-lab .lab-panel, .signature-challenge-panel {
+    background:linear-gradient(180deg,color-mix(in srgb,var(--card) 90%,var(--accent)),var(--card)) !important;
+  }
+  .scenario-card { box-shadow:0 6px 18px rgba(15,23,42,.05); transition:border-color .16s, box-shadow .16s, transform .16s; }
+  .scenario-card.applied { border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 22%,transparent),0 10px 24px rgba(15,23,42,.08); transform:translateY(-1px); }
+  .scenario-card .scenario-meta:last-of-type { margin-bottom:2px; }
+  @media (max-width:900px) { .learning-deck { grid-template-columns:1fr; } .learning-deck > details { grid-column:1 !important; } }
+
+</style>
+<!-- AI_PLAYGROUNDS_COMPONENT:original/learner-interface-style -->
+<!-- AI_PLAYGROUNDS_COMPONENT:original/learning-modes-style-common -->
+<link href="../../assets/localization-r4.css" rel="stylesheet"/>
+<meta name="ai-playgrounds-version" content="1.8.1">
+
+<!-- AI_PLAYGROUNDS_COMPONENT:original/v14-version-provenance-style -->
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to applet controls</a>
+<header class="page-header">
+<div class="header-utility">
+<a class="back" data-i18n="back-link" href="../../index.html">← Back to all playgrounds</a>
+<div class="header-prefs">
+<button aria-label="Toggle dark or light theme" class="header-theme" id="themeToggle" title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
+<div class="lang-switch" title="Switch interface language">
+<button class="active" data-lang="en">EN</button>
+<button data-lang="zh">中文</button>
+</div>
+</div>
+</div>
+<div class="header-main">
+<h1 data-i18n="title">Overfitting Explorer</h1>
+<div class="header-actions">
+<button class="header-png" id="shareLink" title="Copy a URL that re-opens this truth / degree / n / noise / λ in another browser.">🔗 Share</button>
+<button class="header-png" id="embedLink" title="Copy an &lt;iframe&gt; snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
+<button class="header-png" id="csvExport" title="Download training + validation datasets and the per-degree MSE table as CSV.">📊 CSV</button>
+<button class="header-png" id="exportPng" title="Download the fit canvas as a PNG.">📷 PNG</button>
+<button class="header-reset" data-i18n="reset-all" id="hardReset" title="Reset everything: sin truth, n=20 points, σ=0.2 noise, degree 3, λ=0.">↺ Reset all</button>
+</div>
+</div>
+</header>
+<aside class="tldr">
+<strong data-i18n="tldr-strong">The big idea</strong>
+<span data-i18n="tldr-body">Slide degree from 1 → 20. Train error drops to zero. Validation error can rise sharply. That gap is overfitting, and the U-shape is the bias-variance trade-off.</span>
+</aside>
+<section class="interactive" id="main" role="main" tabindex="-1">
+<div class="interactive-inner">
+<div class="bento">
+<div class="bento-side"><!-- bento-side -->
+<div class="bento-cell">
+<div class="sliders-grid">
+<div class="slider-field">
+<div class="row">
+<span class="lbl" data-i18n="deg-label">Polynomial degree</span>
+<span class="val" id="degV">3</span>
+</div>
+<input aria-label="Polynomial degree" data-i18n-title="deg-slider-title" id="deg" max="20" min="1" title="Model capacity. Higher degree = more wiggle room = easier to overfit." type="range" value="3"/>
+<div class="help" data-i18n="deg-help">More wiggle room. Watch validation error change after the useful region in this generated sample.</div>
+</div>
+<div class="slider-field">
+<div class="row">
+<span class="lbl" data-i18n="lam-label">Reg. λ</span>
+<span class="val" id="lamV">0.000</span>
+</div>
+<input aria-label="Regularization strength (lambda)" data-i18n-title="lam-slider-title" id="lam" max="5" min="0" step="0.001" title="Regularization strength. With Ridge, adds λ‖w‖² to the loss; with Lasso, adds λ‖w‖₁. Set λ=0 to disable." type="range" value="0"/>
+<div class="help">
+<select data-i18n-title="reg-title" id="regSel" style="padding:2px 4px; font:inherit; border:1px solid var(--border); border-radius:4px;" title="Ridge (L2): shrinks all weights smoothly. Lasso (L1): drives some weights exactly to zero: automatic feature selection. Toggle to compare.">
+<option data-i18n="reg-ridge" selected="" value="ridge">Ridge (L2)</option>
+<option data-i18n="reg-lasso" value="lasso">Lasso (L1)</option>
+</select>
+<span data-i18n="lam-help">Penalty on large weights. Tames high-degree wiggle.</span>
+</div>
+</div>
+<div class="slider-field">
+<div class="row">
+<span class="lbl" data-i18n="n-label">Train points (n)</span>
+<span class="val" id="nV">20</span>
+</div>
+<input aria-label="Number of training samples" data-i18n-title="n-slider-title" id="n" max="100" min="5" title="Size of the training set. More data often constrains a flexible fit, but does not guarantee generalization." type="range" value="20"/>
+<div class="help" data-i18n="n-help">More data can reduce variance at the same degree, but does not guarantee good generalization.</div>
+</div>
+<div class="slider-field">
+<div class="row">
+<span class="lbl" data-i18n="sig-label">Noise σ</span>
+<span class="val" id="sigV">0.20</span>
+</div>
+<input aria-label="Noise standard deviation (sigma)" data-i18n-title="sig-slider-title" id="sig" max="1" min="0" step="0.01" title="Standard deviation of Gaussian noise added to each training point. Setting σ=0 removes observation noise, but finite samples and model mismatch can still produce poor generalization." type="range" value="0.2"/>
+<div class="help" data-i18n="sig-help">Set σ=0. Does the train-validation gap disappear for every target and degree?</div>
+</div>
+</div>
+<div class="control-row">
+<label data-i18n="truth-label">True function:</label>
+<select data-i18n-title="truth-sel-title" id="truthSel" title="The 'real' function the model is trying to recover from noisy samples.">
+<option data-i18n="opt-sin" value="sin">sin(2πx): smooth periodic</option>
+<option data-i18n="opt-cubic" value="cubic">3x³ − x: smooth polynomial</option>
+<option data-i18n="opt-step" value="step">step at x=0.5: discontinuous</option>
+<option data-i18n="opt-linear" value="linear">1.5x: degree 1 is enough</option>
+</select>
+<button class="step-btn" data-i18n="resample-btn" data-i18n-title="resample-title" id="resampleBtn" title="Re-draw new random noise around the true function.">↻ Resample noise</button>
+<!-- train/test/CV visibility toggles. -->
+<label data-i18n-title="show-test-title" style="margin-left:12px;" title="Show the validation points as open circles on the fit chart. Watch them stay near the truth while train points are perfectly fit on the high-degree polynomial.">
+<input id="showTest" type="checkbox"/> <span data-i18n="show-test">Show validation points</span></label>
+<label data-i18n-title="show-cv-title" title="Add a k-fold cross-validation curve to the error chart. Cross-validation is one tool for comparing candidate settings. A final untouched test set is still needed after model selection.">
+<input id="showCv" type="checkbox"/> <span data-i18n="show-cv">Add 5-fold CV curve</span></label>
+</div>
+<div class="err-row">
+<div class="err-card train">
+<div class="lbl" data-i18n="train-mse">Train MSE</div>
+<div class="num" id="trainMse">-</div>
+</div>
+<div class="err-card test">
+<div class="lbl" data-i18n="test-mse">Validation MSE (repeatedly viewed)</div>
+<div class="num" id="testMse">-</div>
+</div>
+</div>
+</div><!-- /.bento-cell controls -->
+</div><!-- /.bento-side -->
+<div class="bento-main"><!-- bento-main -->
+<div class="bento-cell">
+<div class="canvas-pair">
+<div class="canvas-card">
+<h3 data-i18n="fit-h3">Fit on training data</h3>
+<div style="position:relative;">
+<canvas aria-label="Polynomial fit canvas showing training points, true function, and fitted curve." height="280" id="fitCv" role="img" style="width: 100%; max-width: 420px; height: auto; aspect-ratio: 420 / 280;" width="420"></canvas>
+<!-- D3/SVG hybrid: a11y overlay with one focusable element per training point.
+                 Same visual stays in canvas; SVG adds keyboard nav + tooltips. -->
+<svg id="fitOverlay" preserveaspectratio="none" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none;" viewbox="0 0 420 280"></svg>
+</div>
+</div>
+<div class="canvas-card">
+<h3 data-i18n="err-h3">MSE vs degree (this λ, this dataset)</h3>
+<canvas aria-label="Training versus validation MSE plotted against polynomial degree." height="280" id="errCv" role="img" style="width: 100%; max-width: 420px; height: auto; aspect-ratio: 420 / 280;" width="420"></canvas>
+</div>
+</div>
+</div><!-- /.bento-cell charts -->
+<div class="bento-cell">
+<!-- Learning curves. Fix degree+λ, vary n; chart train/validation MSE vs n.
+           Diagnoses bias vs variance vs need-more-data. -->
+<details class="lc-panel" style="margin-top:0;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="lc-summary">📈 Learning curves (vary n at fixed degree)</span>
+</summary>
+<div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem;">
+<p data-i18n="lc-hint" style="margin:0 0 8px; color:var(--muted); font-size:0.82rem;">
+            Fixes the current degree, λ, regularizer, and noise; varies n from 5 → n_max. For each n, draws a fresh sample of n training points and computes train and validation MSE. Plots both curves. Diagnostic: if train ≈ validation and both high → possible underfitting; if train low + validation high (gap) → possible overfitting; if both converge low → better evidence of generalization on this validation sample.
+          </p>
+<div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
+<label data-i18n="lc-nmax-label">n_max:</label>
+<input id="lcNmax" max="300" min="20" step="10" style="width:160px;" type="range" value="150"/>
+<span id="lcNmaxV" style="font-family:ui-monospace,monospace; color:var(--accent); font-weight:700;">150</span>
+<label data-i18n="lc-trials-label" style="margin-left:10px;">Avg over runs:</label>
+<input id="lcTrials" max="10" min="1" style="width:120px;" type="range" value="3"/>
+<span id="lcTrialsV" style="font-family:ui-monospace,monospace; color:var(--accent); font-weight:700;">3</span>
+<button class="step-btn" data-i18n="lc-run" id="lcRunBtn">▶ Run learning curves</button>
+</div>
+<canvas height="220" id="lcCv" style="border:1px solid var(--border); width:100%; height:auto; background:var(--card);" width="560"></canvas>
+<div id="lcStats" style="font-family:ui-monospace,monospace; font-size:0.82rem; color:var(--muted); margin-top:6px; min-height:1.4em;">
+<span data-i18n="lc-empty" style="font-style:italic;">(click "Run learning curves")</span>
+</div>
+</div>
+</details>
+</div><!-- /.bento-cell lc-panel -->
+</div><!-- /.bento-main -->
+</div><!-- /.bento -->
+<!-- Scenario gallery. Visible, reusable entry points generated from the lesson-tour scenarios. -->
+<details class="scenario-gallery" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="sg-summary">🎯 Try these scenarios first</span>
+</summary>
+<div class="scenario-gallery-panel">
+<p class="scenario-gallery-intro" data-i18n="sg-intro">Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.</p>
+<div aria-live="polite" class="scenario-card-grid" id="scenarioGalleryCards">
+<article class="scenario-card" data-scenario-index="0">
+<h3>Scenario 1: A straight line underfits a curved pattern</h3>
+<p class="scenario-meta"><strong>Core question: </strong> How can both training and validation error remain high?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Fit a degree-one polynomial to the sine-shaped data and compare both errors.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict whether collecting more training time alone can make a straight line bend.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain why the model lacks the flexibility to represent the main pattern.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="1">
+<h3>Scenario 2: A moderate-complexity model reaches the useful region</h3>
+<p class="scenario-meta"><strong>Core question: </strong> What does a good balance between fit and generalization look like?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Use degree five in this generated setting and compare the training and validation errors. Treat degree five as one observed candidate, not a universal sweet spot.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict whether the two errors should be identical or simply both low.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain why a small gap can remain even when the model generalizes well.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="2">
+<h3>Scenario 3: A high-degree model memorizes a small sample</h3>
+<p class="scenario-meta"><strong>Core question: </strong> Why can zero training error accompany poor test performance?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Use degree twenty with only twenty training points and inspect the curve between samples.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict which error will continue falling and which may rise.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain how the flexible curve follows noise that does not repeat in new data.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="3">
+<h3>Scenario 4: Regularization restrains a flexible model</h3>
+<p class="scenario-meta"><strong>Core question: </strong> How can the same model class generalize better without reducing its degree?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Keep degree twenty, increase regularization, and compare the curve and validation error.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict whether the training error must rise slightly for the validation error to fall.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain how shrinking extreme coefficients reduces unnecessary oscillation.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="4">
+<h3>Scenario 5: More data can constrain memorization</h3>
+<p class="scenario-meta"><strong>Core question: </strong> Why can a complex model behave better when it sees more examples?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Keep degree twenty with no regularization, then increase the training-sample size.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict whether the gap between training and validation error will widen or narrow.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain how more observations constrain the curve between points.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+</div>
+</div>
+</details>
+<!-- Signature challenge. A one-move comparison that gives this applet a memorable first task. -->
+<details class="signature-challenge" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span>✨ Featured comparison</span>
+</summary>
+<div class="signature-challenge-panel">
+<strong>Featured comparison</strong>
+<p>Push model complexity until training error looks great, then check validation error. The best-looking fit is often the least useful model.</p>
+<p><em>Increase complexity, then compare training error, validation error, and the visible curve.</em></p>
+</div>
+</details>
+<!-- Supporting learning component. -->
+<details class="visual-explanation" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-visual-en="🧭 Visual explanation" data-visual-zh="🧭 可视化解释镜头">🧭 Visual explanation</span>
+</summary>
+<div class="visual-explanation-panel">
+<p class="visual-explanation-intro" data-visual-intro=""></p>
+<div class="visual-flow" data-visual-flow=""></div>
+<div class="visual-watch-grid">
+<div class="visual-snapshot">
+<strong data-visual-en="Live state to watch" data-visual-zh="要观察的实时状态">Live state to watch</strong>
+<pre data-visual-snapshot="">No state captured yet. Run or adjust the applet first.</pre>
+</div>
+<div class="visual-misread">
+<strong data-visual-en="Misread to avoid" data-visual-zh="避免的误读">Misread to avoid</strong>
+<p data-visual-misread=""></p>
+</div>
+</div>
+</div>
+</details>
+<!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
+<details class="lesson-tour" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="tour-summary">📚 Lesson tour (5 steps)</span>
+</summary>
+<div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+<div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+<strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
+<strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">-</strong>
+</div>
+<p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">-</p>
+<div style="display:flex; gap:8px; align-items:center;">
+<button class="step-btn secondary" data-i18n="tour-prev" id="tourPrev">← Prev</button>
+<button class="step-btn" data-i18n="tour-apply" id="tourApply">▶ Apply this scenario</button>
+<button class="step-btn secondary" data-i18n="tour-next" id="tourNext">Next →</button>
+</div>
+</div>
+</details>
+<!-- Worksheet/lab mode. 3 questions per applet with instant check. -->
+<details class="worksheet" style="margin-top:8px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="ws-summary">📝 Worksheet (3 questions)</span>
+</summary>
+<div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem; line-height:1.5;">
+<div class="ws-q" id="ws1">
+<p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">Set degree=20, n=20, λ=0, sine truth. The train MSE is approximately:</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="0"/> <span data-i18n="ws1o0">Near zero: 21 free coefficients can pass through all 20 training points.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="1"/> <span data-i18n="ws1o1">High: a degree-20 curve is too wiggly to fit the training points.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="2"/> <span data-i18n="ws1o2">About the same as the validation MSE: train and validation error always match.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws1btn">Check</button>
+<span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+<div class="ws-q" id="ws2" style="margin-top:10px;">
+<p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Same settings as Q1. The validation MSE (vs train MSE) is:</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="0"/> <span data-i18n="ws2o0">Lower: fitting the training points perfectly also fits unseen points.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="1"/> <span data-i18n="ws2o1">About the same: train MSE is a reliable estimate of validation MSE.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="2"/> <span data-i18n="ws2o2">Much higher: the wild wiggles that hit every train point can miss the validation points.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws2btn">Check</button>
+<span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+<div class="ws-q" id="ws3" style="margin-top:10px;">
+<p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Keep degree=20. Now raise λ from 0 to 0.5. Validation MSE goes:</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="0"/> <span data-i18n="ws3o0">Up: any penalty on the weights can only hurt accuracy.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="1"/> <span data-i18n="ws3o1">Down: shrinking the coefficients smooths the curve and improves generalization.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="2"/> <span data-i18n="ws3o2">Stays the same: λ changes the weights but not the validation error.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws3btn">Check</button>
+<span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+</div>
+</details>
+<!-- Student response packet. Local-only: students copy or print their own response packet; the site stores nothing on a server. -->
+<details class="classroom-lab quick-assign" id="quick-assign-qa-overfit-01" data-quick-assign-id="QA-OVERFIT-01" style="margin-top:8px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-lab-en="🧪 Quick Assign · QA-OVERFIT-01 · 10–15 min" data-lab-zh="🧪 快速任务 · QA-OVERFIT-01 · 10–15 分钟">🧪 Quick Assign · QA-OVERFIT-01 · 10–15 min</span>
+</summary>
+<div class="lab-panel"><div class="quick-assign-meta" data-r4-no-translate="1" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong>QA-OVERFIT-01</strong> · Level 1 · 10–15 min<br><span>Fit the training set, fail the future</span></div>
+<p class="lab-intro" data-lab-en="Predict which model will fit training data best, compare train and validation error, then explain why generalization can fail." data-lab-zh="先预测哪个模型最能拟合训练数据，再比较训练误差和验证误差，然后解释泛化为什么会失败。">Predict which model will fit training data best, compare train and validation error, then explain why generalization can fail.</p>
+<div class="lab-grid">
+<div class="lab-field">
+<label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
+<textarea data-lab-answer="predict" data-lab-en="Which degree will have the lowest training error? Which degree should generalize best?" data-lab-zh="哪个次数的训练误差最低？哪个次数最可能泛化得最好？" id="lab-predict" placeholder="Which degree will have the lowest training error? Which degree should generalize best?"></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
+<textarea data-lab-answer="observe" data-lab-en="Compare train and validation MSE for a low, medium, and high polynomial degree." data-lab-zh="比较低、中、高三个多项式次数的训练 MSE 和验证 MSE。" id="lab-observe" placeholder="Compare train and validation MSE for a low, medium, and high polynomial degree."></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
+<textarea data-lab-answer="explain" data-lab-en="Why can training MSE improve while validation MSE gets worse?" data-lab-zh="为什么训练 MSE 可以变好，而验证 MSE 变差？" id="lab-explain" placeholder="Why can training MSE improve while validation MSE gets worse?"></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
+<textarea data-lab-answer="transfer" data-lab-en="Name an ML task where a perfect training score could be misleading." data-lab-zh="举一个机器学习任务，说明完美训练分数为什么可能误导。" id="lab-transfer" placeholder="Name an ML task where a perfect training score could be misleading."></textarea>
+</div>
+</div>
+<div aria-live="polite" class="lab-state" data-lab-state="">State snapshot appears here.</div>
+<div class="lab-actions">
+<button class="step-btn" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态" type="button">↻ Refresh state</button>
+<button class="step-btn" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包" type="button">📋 Copy packet</button>
+<button class="step-btn secondary" data-lab-action="print" data-lab-en="🖨 Print packet" data-lab-zh="🖨 打印实验包" type="button">🖨 Print packet</button>
+<button class="step-btn secondary" data-lab-action="clear" data-lab-en="Clear local draft" data-lab-zh="清除本地草稿" type="button">Clear local draft</button>
+<span aria-live="polite" class="lab-status"></span>
+</div>
+</div>
+</details>
+<!-- Supporting learning component. -->
+<details class="accessibility-layer" open="">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-a11y-en="♿ Text and keyboard support" data-a11y-zh="♿ 无障碍和文本状态层">♿ Text and keyboard support</span>
+</summary>
+<div aria-labelledby="a11yLayerTitle" class="accessibility-panel" role="region">
+<h2 class="sr-only" data-a11y-title="" id="a11yLayerTitle">Text and keyboard support</h2>
+<p class="accessibility-intro" data-a11y-intro=""></p>
+<div class="accessibility-grid">
+<section aria-labelledby="a11yKeyboardTitle" class="accessibility-card">
+<h3 data-a11y-keyboard-title="" id="a11yKeyboardTitle">Keyboard path</h3>
+<ul>
+<li data-a11y-keyboard-1="">Use Tab and Shift+Tab to move through controls.</li>
+<li data-a11y-keyboard-2="">Use Enter or Space on buttons, and arrow keys on sliders or select controls.</li>
+<li data-a11y-keyboard-3="">The visual region is focusable and described by the state summary below.</li>
+</ul>
+</section>
+<section aria-labelledby="a11yStateTitle" class="accessibility-card">
+<h3 data-a11y-state-title="" id="a11yStateTitle">Text state summary</h3>
+<dl class="a11y-state-grid" data-a11y-state-grid="" id="a11yStateSummary"></dl>
+</section>
+<section aria-labelledby="a11yMotionTitle" class="accessibility-card">
+<h3 data-a11y-motion-title="" id="a11yMotionTitle">Reduced motion and non-visual support</h3>
+<p data-a11y-motion-copy="">Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.</p>
+</section>
+</div>
+<p class="accessibility-note" data-a11y-note="">Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.</p>
+<div aria-atomic="true" aria-live="polite" class="sr-only" id="a11yLiveRegion" role="status"></div>
+</div>
+</details>
+<div class="jump-anchor"><a class="jump-link" data-i18n="jump-link" href="#essay">↓ Read the explanation</a></div>
+</div>
+</section>
+<article class="essay" id="essay">
+<section data-essay-lang="en">
+<p class="lede">
+    A model can perform extremely well on the data used to fit it and still fail on new cases.
+    This applet separates those two questions by displaying training error and error on fresh
+    test points.
+  </p>
+<h2>Polynomial fitting as a laboratory</h2>
+<p>
+    The applet samples training points from a selected target function, adds Gaussian noise, and
+    fits a polynomial of degree <code>d</code>. A degree-one polynomial is a line. A degree-20
+    polynomial has 21 coefficients, including the constant term, so it has enough flexibility to
+    form many bends. The left chart shows the target function, sampled training points, and fitted
+    curve. The right chart compares mean squared error, or MSE, across degrees.
+  </p>
+<h2>Why training error usually falls</h2>
+<p>
+    Polynomial model classes are nested: every degree-<code>d</code> polynomial is also available
+    inside the degree-<code>d+1</code> class by setting the new coefficient to zero. With the same
+    loss, no regularization, and an optimizer that reaches the best fit, the minimum training error
+    therefore cannot increase as degree rises. If <code>n</code> training inputs are distinct, a
+    degree <code>n−1</code> polynomial can interpolate all <code>n</code> points, although numerical
+    instability may prevent an exact zero in a computer implementation.
+  </p>
+<h2>Why new-data error can have a sweet spot</h2>
+<p>
+    A very simple model may miss stable structure, producing high bias. A very flexible model may
+    react strongly to the particular sample and its noise, producing high variance. In many finite,
+    noisy problems, test or validation error falls and then rises as complexity increases. The
+    resulting U-shape is a useful teaching pattern, not a law that every dataset must follow.
+  </p>
+<div class="aha">
+    Training error answers how closely the model fits known examples. Generalization error asks how
+    well it predicts new examples drawn from the relevant population. Model selection should be based
+    on the second question, using data that did not determine the fitted coefficients.
+  </div>
+<h2>Ridge regression and the formula <code>λ‖w‖²</code></h2>
+<p>
+<strong>Ridge regression</strong> is polynomial or linear regression with an added penalty on
+    large coefficients. Let <code>w</code> be the vector of fitted coefficients. The expression
+    <code>‖w‖² = w₀² + w₁² + …</code> is their squared Euclidean length. The training objective becomes
+    <code>MSE + λ‖w‖²</code>. The nonnegative number <code>λ</code>, pronounced lambda, controls the
+    penalty strength: <code>λ = 0</code> gives the unregularized fit, while larger values push the
+    coefficients toward smaller magnitudes.
+  </p>
+<p>
+    Set a high degree and increase <code>λ</code>. The polynomial still has the same number of
+    coefficients, but their allowable influence is reduced. The curve often becomes smoother and
+    new-data error may improve. This is why parameter count alone does not determine effective model
+    capacity.
+  </p>
+<h2>What happens when noise is zero</h2>
+<p>
+    Setting <code>σ = 0</code> removes the random vertical noise added to sampled points. It often
+    narrows the gap between training and validation error, but it does not make overfitting mathematically
+    impossible. A flexible polynomial can still behave poorly between a small number of samples,
+    and a polynomial may approximate a discontinuous target such as a step function badly near the
+    discontinuity. Noise is one important source of overfitting, not its complete definition.
+  </p>
+<h2>Validation, testing, and other simplifications</h2>
+<p>
+    In a full workflow, a validation set or cross-validation is used to choose degree and
+    regularization. A final held-out test set is then used once to estimate performance after those
+    choices are fixed. Because this applet lets the learner repeatedly inspect the same comparison set while changing model settings, that displayed set functions as validation data, not as an untouched final test set. Other forms of regularization include L1 penalties, early stopping, dropout,
+    weight decay, and data augmentation. Modern models can also show more complicated behavior than
+    a single U-shaped curve, so the applet should be read as a controlled introduction to
+    generalization rather than a universal performance law.
+  </p>
+<div class="for-teachers">
+<h3>For teachers</h3>
+<p><strong>Curriculum:</strong> Training, validation, testing, underfitting, overfitting,
+      generalization, model capacity, and L2 regularization.</p>
+<p><strong>Pre-exploration prompts:</strong></p>
+<ul>
+<li>Does perfect performance on studied examples establish good performance on new examples?</li>
+<li>Why should data used for final evaluation not determine the fitted model or its hyperparameters?</li>
+<li>What is the difference between fitting signal and reacting to a particular sample?</li>
+</ul>
+<p><strong>Post-exploration prompts:</strong></p>
+<ul>
+<li>Increase degree. Which error changes first, and where do the curves begin to separate?</li>
+<li>Set a high degree and increase <code>λ</code>. Describe what changes in the curve, coefficients, and errors.</li>
+<li>Increase the number of training points while keeping degree fixed. Why can more data stabilize the fit?</li>
+<li>Set noise to zero and test both a smooth target and the step target. Does zero noise guarantee identical train and test behavior?</li>
+</ul>
+<p><strong>Misconceptions to test:</strong> lower training error always means a better model;
+      degree 20 has 20 coefficients; zero noise makes overfitting impossible; cross-validation replaces
+      the need for a final held-out test set.</p>
+</div>
+</section>
+<section data-essay-lang="zh" hidden="" lang="zh">
+<p class="lede">
+    一个模型可能在用于拟合的数据上表现极好，却在新样本上失败。本工具通过同时显示训练误差和新测试点上的误差，把这两个问题明确分开。
+  </p>
+<h2>把多项式拟合作为实验环境</h2>
+<p>
+    本工具从选定的目标函数中抽取训练点，加入高斯噪声，再拟合次数为 <code>d</code> 的多项式。一次多项式是一条直线。20 次多项式包含 21 个系数，其中包括常数项，因此能够形成许多弯曲。左图显示目标函数、训练样本点和拟合曲线；右图比较不同次数下的均方误差 MSE。
+  </p>
+<h2>为什么训练误差通常会下降</h2>
+<p>
+    多项式模型类别具有嵌套关系：任何 <code>d</code> 次多项式都包含在 <code>d+1</code> 次模型中，只要把新增系数设为零即可。在损失函数相同、没有正则化且优化器找到最佳拟合的条件下，提高次数后最小训练误差不会上升。如果 <code>n</code> 个训练输入彼此不同，那么 <code>n−1</code> 次多项式可以插值通过全部 <code>n</code> 个点，不过计算机中的数值不稳定可能使误差无法精确等于零。
+  </p>
+<h2>为什么新数据误差可能存在最佳区间</h2>
+<p>
+    过于简单的模型可能遗漏稳定结构，从而产生较高偏差。过于灵活的模型可能对当前样本及其噪声反应过强，从而产生较高方差。在许多有限且含噪的问题中，验证误差可能随着复杂度先下降再上升。由此形成的 U 形曲线是有用的教学模式，并不是每个数据集都必须遵守的定律。
+  </p>
+<div class="aha">
+    训练误差回答模型对已知样本拟合得多紧密。泛化误差回答模型对来自相关总体的新样本预测得多好。模型选择应依据第二个问题，并使用没有参与确定拟合系数的数据。
+  </div>
+<h2>岭回归与公式 <code>λ‖w‖²</code></h2>
+<p>
+<strong>岭回归</strong>是在多项式回归或线性回归的目标中加入大系数惩罚。令 <code>w</code> 表示全部拟合系数组成的向量。表达式 <code>‖w‖² = w₀² + w₁² + …</code> 是这些系数的平方欧几里得长度。训练目标变为 <code>MSE + λ‖w‖²</code>。非负数 <code>λ</code> 读作 lambda，用来控制惩罚强度：<code>λ = 0</code> 得到未正则化的拟合，更大的值会把系数推向更小的幅度。
+  </p>
+<p>
+    把多项式次数设得较高，再增大 <code>λ</code>。模型仍有相同数量的系数，但每个系数能够产生的影响受到限制。曲线通常会变得更平滑，新数据误差也可能改善。因此，参数数量本身并不能完全决定模型的有效容量。
+  </p>
+<h2>噪声为零时会发生什么</h2>
+<p>
+    把 <code>σ = 0</code> 会移除添加到样本点上的随机纵向噪声。这通常会缩小训练误差与验证误差之间的差距，但并不会从数学上使过拟合不可能发生。灵活的多项式仍可能在少量样本点之间表现很差；对于阶跃函数等不连续目标，多项式也可能在不连续点附近产生较差近似。噪声是过拟合的重要来源之一，并不是过拟合的完整定义。
+  </p>
+<h2>验证、测试与其他简化</h2>
+<p>
+    在完整工作流程中，应使用验证集或交叉验证选择多项式次数和正则化强度。完成这些选择后，再使用最终保留的测试集一次性估计性能。其他正则化方法包括 L1 惩罚、提前停止、dropout、权重衰减和数据增强。现代模型还可能呈现比单一 U 形曲线更复杂的行为，因此本工具应被理解为泛化问题的受控入门，而不是普遍性能定律。
+  </p>
+<div class="for-teachers">
+<h3>教师指导</h3>
+<p><strong>课程目标：</strong>训练、验证、测试、欠拟合、过拟合、泛化、模型容量与 L2 正则化。</p>
+<p><strong>探索前问题：</strong></p>
+<ul>
+<li>在已经学习过的样本上达到完美表现，能否说明模型在新样本上也会表现良好？</li>
+<li>为什么最终评估数据不应参与确定模型系数或超参数？</li>
+<li>拟合稳定信号与对某一个具体样本作出反应有什么不同？</li>
+</ul>
+<p><strong>探索后问题：</strong></p>
+<ul>
+<li>提高次数。哪种误差先发生变化，两条曲线从哪里开始分离？</li>
+<li>设置较高次数并增大 <code>λ</code>。描述曲线、系数和误差分别发生了什么变化。</li>
+<li>保持次数不变并增加训练点数量。更多数据为什么可能使拟合更稳定？</li>
+<li>把噪声设为零，并分别测试平滑目标和阶跃目标。零噪声是否保证训练与测试行为完全相同？</li>
+</ul>
+<p><strong>需要检验的误解：</strong>训练误差越低模型一定越好；20 次多项式只有 20 个系数；零噪声会使过拟合不可能发生；交叉验证可以取代最终保留测试集。</p>
+</div>
+</section>
+</article>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+
+  // ===== i18n strings =====
+  const STRINGS = {
+    en: {
+      'title': 'Overfitting Explorer', 'back-link': '← Back to all playgrounds',
+      'footer-top': '↑ Back to top', 'footer-course': 'Made for the Introduction to AI course at Haidian Kaiwen Academy.', 'footer-portfolio': 'Portfolio', 'footer-project': 'AI Playgrounds', 'footer-source': 'Source', 'footer-issue': 'Report an issue',
+      'reset-all': '↺ Reset all', 'truth-label': 'True function:',
+      'tldr-strong': 'The big idea',
+      'tldr-body': 'Slide degree from 1 → 20. Train error drops to zero. Validation error can rise sharply. That gap is overfitting, and the U-shape is the bias-variance trade-off.',
+      'deg-label': 'Polynomial degree',
+      'deg-help': 'More wiggle room. Watch validation error change after the useful region in this generated sample.',
+      'lam-label': 'Reg. λ',
+      'lam-help': 'Penalty on large weights. Tames high-degree wiggle.',
+      'reg-ridge': 'Ridge (L2)', 'reg-lasso': 'Lasso (L1)',
+      'reg-title': 'Ridge (L2): shrinks all weights smoothly. Lasso (L1): drives some weights exactly to zero: automatic feature selection. Toggle to compare.',
+      'n-label': 'Train points (n)',
+      'n-help': 'More data can reduce variance at the same degree, but does not guarantee good generalization.',
+      'sig-label': 'Noise σ',
+      'sig-help': "Set σ=0. Does the train-validation gap disappear for every target and degree?",
+      'opt-sin': 'sin(2πx): smooth periodic',
+      'opt-cubic': '3x³ − x: smooth polynomial',
+      'opt-step': 'step at x=0.5: discontinuous',
+      'opt-linear': '1.5x: degree 1 is enough',
+      'resample-btn': '↻ Resample noise',
+      'show-test': 'Show validation points',
+      'show-test-title': 'Show validation points as open circles on the fit chart. Compare them with the training fit; a near-perfect training fit does not guarantee that validation points stay near the underlying function.',
+      'show-cv': 'Add 5-fold CV curve',
+      'show-cv-title': "Add a k-fold cross-validation curve to the error chart. Cross-validation is one tool for comparing candidate settings. A final untouched test set is still needed after model selection.",
+      'fit-h3': 'Fit on training data',
+      'err-h3': 'MSE vs degree (this λ, this dataset)',
+      'train-mse': 'Train MSE', 'test-mse': 'Validation MSE (repeatedly viewed)',
+      'jump-link': '↓ Read the explanation',
+      'tour-summary': '📚 Lesson tour (5 steps)',
+      'tour-step': 'Step',
+      'tour-prev': '← Prev', 'tour-next': 'Next →', 'tour-apply': '▶ Apply this scenario',
+      'sg-summary': '🎯 Try these scenarios first',
+      'sg-intro': 'Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.',
+      'sg-card-prefix': 'Scenario',
+      'sg-concept-label': 'Concept',
+      'sg-observe-label': 'What to watch',
+      'sg-misconception-label': 'Predict before applying',
+      'sg-misconception-text': 'Which visible result should change most, and why? Commit to an answer before applying.',
+      'sg-teacher-label': 'Teacher use',
+      'sg-teacher-text': 'Use as a 2–3 minute predict → run → explain prompt.',
+      'sg-apply': 'Apply and compare',
+      'ws-summary': '📝 Worksheet (3 questions)',
+      'ws-check': 'Check',
+      'ws-pick': 'Pick an answer first.',
+      'ws1q': 'Set degree=20, n=20, λ=0, sine truth. The train MSE is approximately:',
+      'ws2q': 'Same settings as Q1. The validation MSE (vs train MSE) is:',
+      'ws3q': 'Keep degree=20. Now raise λ from 0 to 0.5. Validation MSE goes:',
+      // --- MCQ: worksheet option labels (ws{n}o{i}) ---
+      'ws1o0': 'Near zero: 21 free coefficients can pass through all 20 training points.',
+      'ws1o1': 'High: a degree-20 curve is too wiggly to fit the training points.',
+      'ws1o2': 'About the same as the validation MSE: train and validation error always match.',
+      'ws2o0': 'Lower: fitting the training points perfectly also fits unseen points.',
+      'ws2o1': 'About the same: train MSE is a reliable estimate of validation MSE.',
+      'ws2o2': 'Much higher: the wild wiggles that hit every train point can fit the repeatedly viewed validation points poorly.',
+      'ws3o0': 'Up: any penalty on the weights can only hurt accuracy.',
+      'ws3o1': 'Down: shrinking the coefficients smooths the curve and improves generalization.',
+      'ws3o2': 'Stays the same: λ changes the weights but not the validation error.',
+      // lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
+      'tour0name': 'Underfit (degree 1, sine truth)',
+      'tour0desc': "Polynomial of degree 1 trying to fit a sine. Train AND validation error are both high: this is high bias. The model literally can't bend enough.",
+      'tour1name': 'One useful setting on this sample (degree 5)',
+      'tour1desc': 'Same generated setting, degree 5. Training and validation error happen to be low and fairly close here. Treat this as one useful sample outcome, not a universal optimal degree.',
+      'tour2name': 'Severe overfit (degree 20, n=20)',
+      'tour2desc': 'Degree 20 with only 20 training points. Train error → 0 (the curve passes through every dot). Validation error can rise sharply. Classic overfitting.',
+      'tour3name': 'Ridge can reduce this overfit',
+      'tour3desc': 'Still degree 20, but now λ=0.5. In this generated sample the penalty shrinks extreme high-order coefficients and can lower validation error without changing the polynomial degree.',
+      'tour4name': 'More data can reduce variance',
+      'tour4desc': 'Degree 20, λ=0, but n=100 instead of 20. In this generated sample, more data constrains the flexible fit and may reduce validation error, but it does not guarantee good generalization. Use the CV curve toggle.',
+      // worksheet answer-feedback (ws{n}ok / ws{n}no) ---
+      'ws1ok': 'Correct. A degree-20 polynomial has 21 free parameters; with only 20 training points, it has enough freedom to literally pass through every dot. Train MSE ≈ 0.',
+      'ws1no': "Try 'zero' or 'near zero'. 21 free coefficients can fit 20 arbitrary points exactly: degrees of freedom math.",
+      'ws2ok': 'Yes. Training error can approach zero while repeatedly viewed validation error rises sharply; that generalization gap is evidence of overfitting in this sample.',
+      'ws2no': "Hint: zero train error + held-out validation error are very different. Try 'much higher'.",
+      'ws3ok': 'Correct for this generated sample. The Ridge (L2) penalty λ‖w‖² shrinks large coefficients, suppresses extreme oscillation, and here lowers validation error without changing the polynomial degree.',
+      'ws3no': "Try 'down' for this sample. Penalizing large weights can suppress extreme high-order oscillation that contributes to the train-validation gap.",
+      // tooltip translations for main sliders + selectors.
+      'deg-slider-title': 'Model capacity. Higher degree = more wiggle room = easier to overfit.',
+      'lam-slider-title': 'Regularization strength. With Ridge, adds λ‖w‖² to the loss; with Lasso, adds λ‖w‖₁. Set λ=0 to disable.',
+      'n-slider-title': 'Size of the training set. More data often constrains a flexible fit, but does not guarantee generalization.',
+      'sig-slider-title': 'Standard deviation of Gaussian noise added to each training point. Setting σ=0 removes observation noise, but finite samples and model mismatch can still produce poor generalization.',
+      'truth-sel-title': "The 'real' function the model is trying to recover from noisy samples.",
+      'resample-title': 'Re-draw new random noise around the true function.',
+      'lc-summary': '📈 Learning curves (vary n at fixed degree)',
+      'lc-hint': 'Fixes the current degree, λ, regularizer, and noise; varies n from 5 → n_max. For each n, draws a fresh sample of n training points and computes train and validation MSE. Plots both curves. Diagnostic: if train ≈ validation and both high → possible underfitting; if train low + validation high (gap) → possible overfitting; if both converge low → better evidence of generalization on this validation sample.',
+      'lc-nmax-label': 'n_max:', 'lc-trials-label': 'Avg over runs:',
+      'lc-run': '▶ Run learning curves',
+      'lc-empty': '(click "Run learning curves")',
+    },
+    zh: {
+      'title': '过拟合可视化', 'back-link': '← 返回所有演示',
+      'footer-top': '↑ 返回顶部', 'footer-course': '为海淀凯文学校《人工智能导论》课程制作。', 'footer-portfolio': '作品集', 'footer-project': 'AI Playgrounds', 'footer-source': '源代码', 'footer-issue': '反馈问题',
+      'reset-all': '↺ 全部重置', 'truth-label': '真实函数:',
+      'tldr-strong': '核心思想',
+      'tldr-body': '将多项式次数从 1 拉到 20。训练误差降到零,验证误差却暴涨。这个差距就是过拟合,U 形曲线就是偏差-方差权衡。',
+      'deg-label': '多项式次数',
+      'deg-help': '次数越高,模型越灵活。这个生成样本中,验证误差可能在某个范围后上升,但不存在普适的"甜点"次数。',
+      'lam-label': '正则化 λ',
+      'lam-help': '对大权重的惩罚。能驯服高次项的剧烈摆动。',
+      'reg-ridge': '岭回归 (L2)', 'reg-lasso': '套索 (L1)',
+      'reg-title': '岭回归(L2):平滑地缩小所有权重。套索(L1):把部分权重精确推到零--自动特征选择。切换比较。',
+      'n-label': '训练点数 (n)',
+      'n-help': '在相同次数下,更多数据常会约束灵活拟合并降低方差,但不保证泛化良好。',
+      'sig-label': '噪声 σ',
+      'sig-help': '把 σ 设为 0。训练-验证差距会在所有目标函数和次数下都消失吗?',
+      'opt-sin': 'sin(2πx): 平滑周期函数',
+      'opt-cubic': '3x³ − x: 平滑多项式',
+      'opt-step': 'x=0.5 处阶跃: 不连续',
+      'opt-linear': '1.5x: 一次就够',
+      'resample-btn': '↻ 重新采样噪声',
+      'show-test': '显示验证点',
+      'show-test-title': '在拟合图上以空心圆显示验证点。比较它们与训练拟合;训练误差很低并不能保证验证点贴近真实函数。',
+      'show-cv': '加入 5 折 CV 曲线',
+      'show-cv-title': '在误差图中加入 k 折交叉验证曲线。交叉验证可用于比较候选设置;模型选择完成后仍需要最终未触碰的测试集。',
+      'fit-h3': '训练数据上的拟合',
+      'err-h3': '均方误差 vs 多项式次数(当前 λ 与数据集)',
+      'train-mse': '训练 MSE', 'test-mse': '验证 MSE（反复查看的留出集）',
+      'jump-link': '↓ 阅读说明',
+      'tour-summary': '📚 课程导览(5 步)',
+      'tour-step': '步骤',
+      'tour-prev': '← 上一步', 'tour-next': '下一步 →', 'tour-apply': '▶ 应用此场景',
+      'sg-summary': '🎯 先试这些场景',
+      'sg-intro': '先选择一个场景并预测结果,再应用它,然后把运行结果与你的预测进行比较。',
+      'sg-card-prefix': '场景',
+      'sg-concept-label': '概念',
+      'sg-observe-label': '预期观察',
+      'sg-misconception-label': '误区检查',
+      'sg-misconception-text': '初学者的第一反应可能会漏掉或过度简化什么?',
+      'sg-teacher-label': '教师用法',
+      'sg-teacher-text': '用作 2–3 分钟的“预测 → 运行 → 解释”活动。',
+      'sg-apply': '应用场景',
+      'ws-summary': '📝 练习题(3 题)',
+      'ws-check': '核对',
+      'ws-pick': '请先选择一个答案。',
+      'ws1q': '设 degree=20、n=20、λ=0、正弦真值。训练 MSE 大约是:',
+      'ws2q': '与 Q1 相同的设置。验证 MSE（相对训练 MSE）是:',
+      'ws3q': '保持 degree=20。现在把 λ 从 0 提高到 0.5。验证 MSE 会:',
+      // --- MCQ: 练习题选项(ws{n}o{i})---
+      'ws1o0': '接近零--21 个自由系数可以穿过全部 20 个训练点。',
+      'ws1o1': '很高--20 次曲线太过摆动,无法拟合训练点。',
+      'ws1o2': '与验证 MSE 大致相同--训练误差和验证误差总是一致。',
+      'ws2o0': '更低--完美拟合训练点也会拟合未见过的点。',
+      'ws2o1': '大致相同--训练 MSE 是验证 MSE 的可靠估计。',
+      'ws2o2': '高得多--为击中每个训练点而产生的剧烈摆动可能在验证点上表现很差。',
+      'ws3o0': '上升--对权重的任何惩罚只会损害准确率。',
+      'ws3o1': '下降--缩小系数会平滑曲线,改善泛化。',
+      'ws3o2': '保持不变--λ 改变权重,但不改变验证误差。',
+      // 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
+      'tour0name': '欠拟合(1 次,正弦真值)',
+      'tour0desc': '用 1 次多项式去拟合正弦。训练误差和验证误差都很高--这是高偏差。模型根本弯不够。',
+      'tour1name': '这个样本中的一个有用设置(5 次)',
+      'tour1desc': '同样的生成设置,5 次。这里训练误差和验证误差恰好都较低且彼此接近;把它看作这个样本的一个有用结果,而不是普适最优次数。',
+      'tour2name': '严重过拟合(20 次,n=20)',
+      'tour2desc': '20 次多项式而只有 20 个训练点。训练误差 → 0(曲线穿过每一个点)。验证误差暴涨。典型的过拟合。',
+      'tour3name': '岭回归在这个示例中可缓解过拟合',
+      'tour3desc': '仍是 20 次，但现在 λ=0.5。在这个生成样本中，惩罚项会缩小极端高次系数，并可能降低验证误差，而多项式次数并未改变。',
+      'tour4name': '更多数据在这个示例中可降低方差',
+      'tour4desc': '20 次、λ=0，但 n=100 而非 20。在这个生成样本中，更多数据会约束这个高容量拟合并可能改善泛化；更多数据本身并不能保证任何模型都会泛化。',
+      // 练习题答案反馈(ws{n}ok / ws{n}no)---
+      'ws1ok': '正确。20 次多项式有 21 个自由参数;只有 20 个训练点时,它有足够的自由度精确穿过每一个点。训练 MSE ≈ 0。',
+      'ws1no': '试试"zero"或"near zero"。21 个自由系数可以精确拟合 20 个任意点--自由度的数学。',
+      'ws2ok': '对。在这个样本中，训练误差可以接近 0，而反复查看的验证误差明显升高；这种泛化差距是过拟合的证据。',
+      'ws2no': '提示:零训练误差和留出验证误差差别很大。试试"much higher"。',
+      'ws3ok': '正确。岭回归(L2)惩罚 λ‖w‖² 缩小大系数。20 次多项式仍有 21 个参数,但现在它们都很小--曲线被迫平滑,泛化得好得多。',
+      'ws3no': '试试"down"。λ 惩罚大权重,扼杀那些造成过拟合的高频摆动。',
+      // 主要滑块和选择器的提示翻译。
+      'deg-slider-title': '模型容量。次数越高,摆动空间越大,越容易过拟合。',
+      'lam-slider-title': '正则化强度。岭回归在损失中加入 λ‖w‖²;套索加入 λ‖w‖₁。设 λ=0 关闭正则化。',
+      'n-slider-title': '训练集规模。更多数据通常会约束灵活拟合,但不能保证良好泛化。',
+      'sig-slider-title': '每个训练点的高斯噪声标准差。σ=0 只移除了这里注入的随机噪声；有限样本、模型错配或反复调参仍可能产生较差泛化。',
+      'truth-sel-title': '模型试图从带噪样本中恢复的"真实"函数。',
+      'resample-title': '在真实函数周围重新采样新的随机噪声。',
+      'lc-summary': '📈 学习曲线(固定阶数,改变 n)',
+      'lc-hint': '固定当前的阶数、λ、正则化和噪声;让 n 从 5 变到 n_最大值。对每个 n，重新采样 n 个训练点并计算训练和验证 MSE。绘制两条曲线。诊断:训练≈验证且都很高 → 可能欠拟合;训练低 + 验证高(有缺口)→ 可能过拟合;两者都收敛到低值 → 对这个验证样本的泛化证据更好。',
+      'lc-nmax-label': 'n_最大值:', 'lc-trials-label': '平均次数:',
+      'lc-run': '▶ 运行学习曲线',
+      'lc-empty': '(点击"运行学习曲线")',
+    },
+  };
+  function setLang(lang) {
+    if (!STRINGS[lang]) lang = 'en';
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.dataset.i18n;
+      if (STRINGS[lang][k]) el.textContent = STRINGS[lang][k];
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const k = el.dataset.i18nTitle;
+      if (STRINGS[lang][k]) el.title = STRINGS[lang][k];
+    });
+    document.querySelectorAll('.lang-switch button').forEach(b =>
+      b.classList.toggle('active', b.dataset.lang === lang));
+    try { localStorage.setItem('ai-playgrounds-lang', lang); localStorage.setItem('lang', lang); } catch (_) {}
+  }
+  document.querySelectorAll('.lang-switch button').forEach(b =>
+    b.addEventListener('click', () => {
+      setLang(b.dataset.lang);
+      // re-render the tour in the new language. Safe here: this click handler
+      // only runs post-init, after LESSON_TOUR (a late `const`) is initialized, so
+      // there is no temporal-dead-zone risk (unlike calling it from inside setLang).
+      try { if (typeof renderTour === 'function') renderTour(); } catch (_) {}
+      try { if (typeof renderScenarioGallery === 'function') renderScenarioGallery(); } catch (_) {}
+    }));
+  let initialLang = 'en';
+  try { initialLang = new URLSearchParams(location.search).get('lang') || localStorage.getItem('ai-playgrounds-lang') || localStorage.getItem('lang') || 'en'; } catch (_) {}
+  setLang(initialLang);
+
+  function setTheme(t) {
+    document.body.classList.toggle('dark-mode', t === 'dark');
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+    try { localStorage.setItem('theme', t); } catch (_) {}
+  }
+  let initialTheme = 'light';
+  try {
+    initialTheme = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  } catch (_) {}
+  setTheme(initialTheme);
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    setTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark');
+    if (typeof render === 'function') render();
+  });
+
+  // For-teachers is hidden by default (cognitive-load floor). User toggles persist.
+  // `?teacher=1` opens on load. `?teacher=0` hides completely (no toggle, for projection).
+  try {
+    const tp = new URLSearchParams(location.search).get('teacher');
+    if (tp === '0') {
+      document.querySelectorAll('.for-teachers').forEach(el => el.style.display = 'none');
+    } else {
+      const style = document.createElement('style');
+      style.textContent = '.for-teachers-expander{margin-top:36px}.for-teachers-expander>summary{cursor:pointer;padding:12px 16px;background:var(--soft);border:1px solid var(--border);border-radius:8px;font-family:-apple-system,system-ui,sans-serif;font-size:0.9rem;color:var(--accent);font-weight:600;list-style:none;user-select:none}.for-teachers-expander>summary::-webkit-details-marker{display:none}.for-teachers-expander[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius:0}.for-teachers-expander>.for-teachers{margin-top:0;border-top:0;border-top-left-radius:0;border-top-right-radius:0}';
+      document.head.appendChild(style);
+      document.querySelectorAll('.for-teachers').forEach(div => {
+        const details = document.createElement('details');
+        details.className = 'for-teachers-expander';
+        const summary = document.createElement('summary');
+        summary.textContent = '▸ Show teacher notes (discussion prompts + curriculum)';
+        div.parentNode.insertBefore(details, div);
+        details.appendChild(summary);
+        details.appendChild(div);
+      });
+      const saved = (() => { try { return localStorage.getItem('teacher-notes-open'); } catch (_) { return null; } })();
+      const shouldOpen = tp === '1' || saved === '1';
+      document.querySelectorAll('details.for-teachers-expander').forEach(d => {
+        d.open = shouldOpen;
+        d.addEventListener('toggle', () => {
+          try { localStorage.setItem('teacher-notes-open', d.open ? '1' : '0'); } catch (_) {}
+        });
+      });
+    }
+  } catch (_) {}
+  document.getElementById('exportPng').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'overfitting.png';
+    link.href = document.getElementById('fitCv').toDataURL('image/png');
+    link.click();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.code === 'Space' &&
+        e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' &&
+        e.target.tagName !== 'SELECT') {
+      e.preventDefault();
+      document.getElementById('resampleBtn').click();
+    }
+  });
+
+  const fitCv = $('fitCv'); const fitCtx = fitCv.getContext('2d');
+  const errCv = $('errCv'); const errCtx = errCv.getContext('2d');
+
+  // Resize canvases for crisp drawing
+  function resizeCv(cv) {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = cv.getBoundingClientRect();
+    cv.width = rect.width * dpr; cv.height = rect.height * dpr;
+    cv.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  let trainData = [], testData = [];
+  const truthFns = {
+    sin: x => Math.sin(2 * Math.PI * x),
+    cubic: x => 3 * x * x * x - x,
+    step: x => x > 0.5 ? 1 : -1,
+    linear: x => 1.5 * x,
+  };
+  function randn() {
+    let u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+  function regenData() {
+    const n = +$('n').value;
+    const sigma = +$('sig').value;
+    const fn = truthFns[$('truthSel').value];
+    trainData = []; testData = [];
+    for (let i = 0; i < n; i++) {
+      const x = Math.random();
+      trainData.push({x, y: fn(x) + randn() * sigma});
+    }
+    for (let i = 0; i < 200; i++) {
+      const x = i / 199;
+      testData.push({x, y: fn(x) + randn() * sigma});
+    }
+  }
+
+  function fitPoly(data, degree, lambda) {
+    // dispatch on regularizer choice. Ridge keeps the closed-form path;
+    // Lasso uses coordinate descent (no closed form for L1).
+    const regSel = document.getElementById('regSel');
+    const reg = regSel ? regSel.value : 'ridge';
+    if (reg === 'lasso' && lambda > 0) return fitPolyLasso(data, degree, lambda);
+    return fitPolyRidge(data, degree, lambda);
+  }
+  function fitPolyRidge(data, degree, lambda) {
+    const n = data.length;
+    const k = degree + 1;
+    const X = data.map(d => {
+      const row = new Array(k); let p = 1;
+      for (let i = 0; i < k; i++) { row[i] = p; p *= d.x; }
+      return row;
+    });
+    const y = data.map(d => d.y);
+    const XtX = mat(k, k, 0);
+    for (let i = 0; i < k; i++)
+      for (let j = 0; j < k; j++)
+        for (let r = 0; r < n; r++) XtX[i][j] += X[r][i] * X[r][j];
+    for (let i = 1; i < k; i++) XtX[i][i] += lambda;
+    const Xty = new Array(k).fill(0);
+    for (let i = 0; i < k; i++)
+      for (let r = 0; r < n; r++) Xty[i] += X[r][i] * y[r];
+    return solve(XtX, Xty);
+  }
+  // Lasso (L1) via coordinate descent. Minimizes (1/2n)‖Xw − y‖² + λ‖w‖₁.
+  // Standard soft-thresholding update for one coordinate at a time. Excludes the
+  // intercept (j=0) from the penalty, matching scikit-learn convention.
+  function fitPolyLasso(data, degree, lambda) {
+    const n = data.length;
+    const k = degree + 1;
+    // Build Vandermonde matrix X (n × k).
+    const X = data.map(d => {
+      const row = new Array(k); let p = 1;
+      for (let i = 0; i < k; i++) { row[i] = p; p *= d.x; }
+      return row;
+    });
+    const y = data.map(d => d.y);
+    // Precompute column-wise X²·X (i.e. ΣX_rj² per column j).
+    const colSq = new Array(k).fill(0);
+    for (let j = 0; j < k; j++) for (let r = 0; r < n; r++) colSq[j] += X[r][j] * X[r][j];
+    // Warm-start from Ridge with the same λ (helps convergence).
+    let w = fitPolyRidge(data, degree, lambda);
+    // Residual r = y − Xw, maintained incrementally.
+    const resid = new Array(n).fill(0);
+    for (let r = 0; r < n; r++) {
+      let pred = 0;
+      for (let j = 0; j < k; j++) pred += X[r][j] * w[j];
+      resid[r] = y[r] - pred;
+    }
+    const soft = (z, t) => z > t ? z - t : (z < -t ? z + t : 0);
+    const MAX_ITERS = 200;
+    const TOL = 1e-6;
+    for (let iter = 0; iter < MAX_ITERS; iter++) {
+      let maxDelta = 0;
+      for (let j = 0; j < k; j++) {
+        if (colSq[j] === 0) continue;
+        // ρ_j = X_j · (resid + X_j · w_j) = X_j·resid + colSq[j]·w_j
+        let rho = 0;
+        for (let r = 0; r < n; r++) rho += X[r][j] * resid[r];
+        rho += colSq[j] * w[j];
+        const wNew = (j === 0)
+          ? rho / colSq[j]                       // intercept: unpenalized
+          : soft(rho, lambda * n) / colSq[j];    // λ scaled by n to match Ridge λ semantics
+        const delta = wNew - w[j];
+        if (delta !== 0) {
+          for (let r = 0; r < n; r++) resid[r] -= X[r][j] * delta;
+          w[j] = wNew;
+          maxDelta = Math.max(maxDelta, Math.abs(delta));
+        }
+      }
+      if (maxDelta < TOL) break;
+    }
+    return w;
+  }
+  function mat(r, c, v) { return Array.from({length: r}, () => new Array(c).fill(v)); }
+  function solve(A, b) {
+    const n = A.length;
+    const M = A.map((row, i) => [...row, b[i]]);
+    for (let i = 0; i < n; i++) {
+      let piv = i;
+      for (let r = i + 1; r < n; r++) if (Math.abs(M[r][i]) > Math.abs(M[piv][i])) piv = r;
+      [M[i], M[piv]] = [M[piv], M[i]];
+      if (Math.abs(M[i][i]) < 1e-12) M[i][i] = 1e-12;
+      for (let r = i + 1; r < n; r++) {
+        const f = M[r][i] / M[i][i];
+        for (let c = i; c <= n; c++) M[r][c] -= f * M[i][c];
+      }
+    }
+    const x = new Array(n).fill(0);
+    for (let i = n - 1; i >= 0; i--) {
+      let s = M[i][n];
+      for (let c = i + 1; c < n; c++) s -= M[i][c] * x[c];
+      x[i] = s / M[i][i];
+    }
+    return x;
+  }
+  function evalPoly(w, x) {
+    let s = 0, p = 1;
+    for (let i = 0; i < w.length; i++) { s += w[i] * p; p *= x; }
+    return s;
+  }
+  function mse(data, w) {
+    let s = 0;
+    for (const d of data) { const e = evalPoly(w, d.x) - d.y; s += e * e; }
+    return s / data.length;
+  }
+
+  function fitToView(x, y, xmin, xmax, ymin, ymax, W, H, pad) {
+    return {
+      x: pad + (x - xmin) / (xmax - xmin) * (W - 2 * pad),
+      y: H - pad - (y - ymin) / (ymax - ymin) * (H - 2 * pad),
+    };
+  }
+  function drawFit(w) {
+    const ctx = fitCtx;
+    const rect = fitCv.getBoundingClientRect();
+    const W = rect.width, H = rect.height, pad = 30;
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : 'white'; ctx.fillRect(0, 0, W, H);
+    const ymin = -2.5, ymax = 2.5, xmin = 0, xmax = 1;
+    ctx.strokeStyle = document.body.classList.contains('dark-mode') ? '#475569' : '#cbd5e1'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad, H - pad); ctx.lineTo(W - pad, H - pad);
+    ctx.moveTo(pad, pad); ctx.lineTo(pad, H - pad);
+    ctx.stroke();
+    const fn = truthFns[$('truthSel').value];
+    ctx.strokeStyle = getCSS('--truth'); ctx.lineWidth = 1.5; ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    for (let i = 0; i <= 200; i++) {
+      const x = xmin + (xmax - xmin) * i / 200;
+      const y = fn(x);
+      const p = fitToView(x, y, xmin, xmax, ymin, ymax, W, H, pad);
+      if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle = getCSS('--fit'); ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let i = 0; i <= 400; i++) {
+      const x = xmin + (xmax - xmin) * i / 400;
+      const y = evalPoly(w, x);
+      const yc = Math.max(ymin, Math.min(ymax, y));
+      const p = fitToView(x, yc, xmin, xmax, ymin, ymax, W, H, pad);
+      if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+    }
+    ctx.stroke();
+    ctx.fillStyle = getCSS('--train');
+    for (const d of trainData) {
+      const p = fitToView(d.x, d.y, xmin, xmax, ymin, ymax, W, H, pad);
+      ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fill();
+    }
+    // test points as open circles. Shows what the model is being evaluated AGAINST.
+    if ($('showTest') && $('showTest').checked) {
+      ctx.strokeStyle = getCSS('--test'); ctx.lineWidth = 1.5;
+      for (const d of testData) {
+        const p = fitToView(d.x, d.y, xmin, xmax, ymin, ymax, W, H, pad);
+        ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.stroke();
+      }
+    }
+    ctx.font = '11px system-ui';
+    ctx.fillStyle = getCSS('--truth'); ctx.fillText('- truth', W - 110, pad + 12);
+    ctx.fillStyle = getCSS('--fit'); ctx.fillText('- fitted model', W - 110, pad + 26);
+    ctx.fillStyle = getCSS('--train'); ctx.fillText('• train points', W - 110, pad + 40);
+    if ($('showTest') && $('showTest').checked) {
+      ctx.fillStyle = getCSS('--test'); ctx.fillText('○ test points', W - 110, pad + 54);
+    }
+
+    // D3/SVG hybrid: rebuild a11y overlay (one tabbable circle per train point).
+    updateFitOverlay(w, W, H, pad, xmin, xmax, ymin, ymax);
+  }
+
+  // D3-style enter/update/exit overlay. Preserves SVG element identity
+  // across renders so focused points don't lose focus when sliders change.
+  const NS_OVL = 'http://www.w3.org/2000/svg';
+  function updateFitOverlay(w, W, H, pad, xmin, xmax, ymin, ymax) {
+    const svg = document.getElementById('fitOverlay');
+    if (!svg) return;
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    const existing = Array.from(svg.querySelectorAll('circle[data-role="trainpt"]'));
+    trainData.forEach((d, idx) => {
+      const p = fitToView(d.x, d.y, xmin, xmax, ymin, ymax, W, H, pad);
+      const fit = evalPoly(w, d.x);
+      const residual = (d.y - fit).toFixed(3);
+      let el = existing[idx];
+      if (!el) {
+        el = document.createElementNS(NS_OVL, 'circle');
+        el.setAttribute('data-role', 'trainpt');
+        el.setAttribute('r', 10);
+        el.setAttribute('fill', 'transparent');
+        el.setAttribute('tabindex', 0);
+        el.setAttribute('role', 'graphics-symbol');
+        el.style.pointerEvents = 'auto';
+        el.style.cursor = 'help';
+        el.style.transition = 'cx 150ms ease, cy 150ms ease';
+        const t = document.createElementNS(NS_OVL, 'title');
+        el.appendChild(t);
+        svg.appendChild(el);
+      }
+      el.setAttribute('cx', p.x); el.setAttribute('cy', p.y);
+      el.setAttribute('aria-label',
+        `Training point ${idx + 1} at x=${d.x.toFixed(3)}, y=${d.y.toFixed(3)}. Residual ${residual}.`);
+      el.firstChild.textContent = `(${d.x.toFixed(2)}, ${d.y.toFixed(2)})  residual=${residual}`;
+    });
+    for (let i = trainData.length; i < existing.length; i++) existing[i].remove();
+  }
+
+  // K-fold cross-validation MSE. Splits trainData into K folds, fits on K-1,
+  // evaluates on the held-out fold, averages. Returns mean CV MSE for the given degree.
+  function cvMse(degree, lambda, K) {
+    if (trainData.length < K) return NaN;
+    const folds = Array.from({length: K}, () => []);
+    // Deterministic split: interleave so each fold gets a representative sample.
+    trainData.forEach((d, i) => folds[i % K].push(d));
+    let total = 0, count = 0;
+    for (let k = 0; k < K; k++) {
+      const train = folds.filter((_, i) => i !== k).flat();
+      const test = folds[k];
+      if (!train.length || !test.length) continue;
+      const w = fitPoly(train, degree, lambda);
+      total += mse(test, w);
+      count++;
+    }
+    return count > 0 ? total / count : NaN;
+  }
+  function drawErrCurve(curDegree) {
+    const ctx = errCtx;
+    const rect = errCv.getBoundingClientRect();
+    const W = rect.width, H = rect.height, pad = 36;
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : 'white'; ctx.fillRect(0, 0, W, H);
+    const lambda = +$('lam').value;
+    const maxDeg = 20;
+    const trainErrs = [], testErrs = [], cvErrs = [];
+    const showCv = $('showCv') && $('showCv').checked;
+    for (let d = 1; d <= maxDeg; d++) {
+      const w = fitPoly(trainData, d, lambda);
+      trainErrs.push(Math.min(2, mse(trainData, w)));
+      testErrs.push(Math.min(2, mse(testData, w)));
+      if (showCv) cvErrs.push(Math.min(2, cvMse(d, lambda, 5)));
+    }
+    const all = [...trainErrs, ...testErrs, ...(showCv ? cvErrs : [])].filter(v => !isNaN(v));
+    const ymax = Math.max(0.5, Math.max(...all));
+    const ymin = 0;
+    ctx.strokeStyle = document.body.classList.contains('dark-mode') ? '#475569' : '#cbd5e1';
+    ctx.beginPath(); ctx.moveTo(pad, pad); ctx.lineTo(pad, H - pad);
+    ctx.lineTo(W - pad, H - pad); ctx.stroke();
+    ctx.fillStyle = getCSS('--muted'); ctx.font = '11px system-ui';
+    ctx.fillText('MSE', 4, pad + 10);
+    ctx.fillText('polynomial degree →', W - 130, H - 8);
+    function plot(arr, color) {
+      ctx.strokeStyle = color; ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let d = 1; d <= maxDeg; d++) {
+        const x = pad + (d - 1) / (maxDeg - 1) * (W - 2 * pad);
+        const y = H - pad - (arr[d-1] - ymin) / (ymax - ymin) * (H - 2 * pad);
+        if (d === 1) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    plot(trainErrs, getCSS('--train'));
+    plot(testErrs, getCSS('--test'));
+    if (showCv) {
+      ctx.setLineDash([5, 3]);
+      plot(cvErrs, '#9333ea'); // purple dashed for CV
+      ctx.setLineDash([]);
+    }
+    const x = pad + (curDegree - 1) / (maxDeg - 1) * (W - 2 * pad);
+    ctx.strokeStyle = '#111'; ctx.setLineDash([3, 3]);
+    ctx.beginPath(); ctx.moveTo(x, pad); ctx.lineTo(x, H - pad); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = getCSS('--muted');
+    for (let d = 1; d <= maxDeg; d += 2) {
+      const tx = pad + (d - 1) / (maxDeg - 1) * (W - 2 * pad);
+      ctx.fillText(d, tx - 4, H - pad + 14);
+    }
+    ctx.fillStyle = getCSS('--train'); ctx.fillText('- train MSE', W - 100, pad + 12);
+    ctx.fillStyle = getCSS('--test'); ctx.fillText('- validation MSE', W - 100, pad + 26);
+  }
+
+  function getCSS(v) {
+    return getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  }
+  function render() {
+    $('degV').textContent = $('deg').value;
+    $('lamV').textContent = (+$('lam').value).toFixed(3);
+    $('nV').textContent = $('n').value;
+    $('sigV').textContent = (+$('sig').value).toFixed(2);
+    const deg = +$('deg').value;
+    const lam = +$('lam').value;
+    const w = fitPoly(trainData, deg, lam);
+    drawFit(w);
+    drawErrCurve(deg);
+    $('trainMse').textContent = mse(trainData, w).toFixed(4);
+    $('testMse').textContent = mse(testData, w).toFixed(4);
+  }
+
+  ['deg','lam','n','sig'].forEach(id => $(id).addEventListener('input', () => {
+    if (id === 'n' || id === 'sig') regenData();
+    render();
+  }));
+  $('truthSel').addEventListener('change', () => { regenData(); render(); });
+  $('regSel').addEventListener('change', render); // switch Ridge ↔ Lasso live.
+  $('resampleBtn').addEventListener('click', () => { regenData(); render(); });
+  $('showTest').addEventListener('change', render);
+  $('showCv').addEventListener('change', render);
+  $('hardReset').addEventListener('click', () => {
+    $('deg').value = 3; $('lam').value = 0; $('n').value = 20; $('sig').value = 0.2;
+    $('truthSel').value = 'sin';
+    regenData(); render();
+  });
+  window.addEventListener('resize', () => {
+    resizeCv(fitCv); resizeCv(errCv); render();
+  });
+
+  // Lesson tour. Five canonical scenarios for an in-class walkthrough.
+  const LESSON_TOUR = [
+    { name: 'Underfit (degree 1, sine truth)',
+      description: "Polynomial of degree 1 trying to fit a sine. Train AND validation error are both high: this is high bias. The model literally can't bend enough.",
+      apply: () => { $('truthSel').value = 'sin'; $('deg').value = 1; $('lam').value = 0; $('n').value = 20; $('sig').value = 0.2; regenData(); render(); } },
+    { name: 'One useful setting on this sample (degree 5)',
+      description: "Same generated setting, degree 5. Training and validation error happen to be low and fairly close here. Treat this as one useful sample outcome, not a universal optimal degree.",
+      apply: () => { $('truthSel').value = 'sin'; $('deg').value = 5; $('lam').value = 0; $('n').value = 20; $('sig').value = 0.2; regenData(); render(); } },
+    { name: 'Severe overfit (degree 20, n=20)',
+      description: "Degree 20 with only 20 training points. Train error → 0 (the curve passes through every dot). Validation error can rise sharply. Classic overfitting.",
+      apply: () => { $('truthSel').value = 'sin'; $('deg').value = 20; $('lam').value = 0; $('n').value = 20; $('sig').value = 0.2; regenData(); render(); } },
+    { name: 'Ridge can reduce this overfit',
+      description: "Still degree 20, but now λ=0.5. In this generated sample the penalty shrinks extreme high-order coefficients and can lower validation error without changing the polynomial degree.",
+      apply: () => { $('truthSel').value = 'sin'; $('deg').value = 20; $('lam').value = 0.5; $('n').value = 20; $('sig').value = 0.2; regenData(); render(); } },
+    { name: 'More data can reduce variance',
+      description: "Degree 20, λ=0, but n=100 instead of 20. With more data, this particular high-capacity fit is more constrained and may generalize better. More data does not force every model to generalize. Use CV curve toggle.",
+      apply: () => { $('truthSel').value = 'sin'; $('deg').value = 20; $('lam').value = 0; $('n').value = 100; $('sig').value = 0.2; $('showCv').checked = true; regenData(); render(); } },
+  ];
+  let tourIdx = 0;
+  function renderTour() {
+    if (!$('tourName')) return;
+    const s = LESSON_TOUR[tourIdx];
+    // Bilingual: look up tour{i}name / tour{i}desc with English inline fallback.
+    const L = (document.documentElement.lang || 'en');
+    const S = STRINGS[L] || STRINGS.en;
+    $('tourName').textContent = S['tour' + tourIdx + 'name'] || s.name;
+    $('tourDesc').textContent = S['tour' + tourIdx + 'desc'] || s.description;
+    $('tourPos').textContent = `${tourIdx + 1}/${LESSON_TOUR.length}`;
+    $('tourPrev').disabled = (tourIdx === 0);
+    $('tourNext').disabled = (tourIdx === LESSON_TOUR.length - 1);
+  }
+  $('tourApply').addEventListener('click', () => LESSON_TOUR[tourIdx].apply());
+  $('tourPrev').addEventListener('click', () => { if (tourIdx > 0) { tourIdx--; renderTour(); } });
+  $('tourNext').addEventListener('click', () => { if (tourIdx < LESSON_TOUR.length - 1) { tourIdx++; renderTour(); } });
+  renderTour();
+
+
+  function scenarioGalleryText(key, fallback) {
+    const L = document.documentElement.lang || 'en';
+    const S = STRINGS[L] || STRINGS.en;
+    return S[key] || fallback;
+  }
+  function localizedScenarioField(index, field, fallback) {
+    const L = document.documentElement.lang || 'en';
+    const S = STRINGS[L] || STRINGS.en;
+    return S['tour' + index + field] || fallback || '';
+  }
+  function appendScenarioMeta(card, label, text) {
+    const p = document.createElement('p');
+    p.className = 'scenario-meta';
+    const strong = document.createElement('strong');
+    strong.textContent = label + ': ';
+    p.appendChild(strong);
+    p.appendChild(document.createTextNode(text));
+    card.appendChild(p);
+  }
+  function renderScenarioGallery() {
+    const root = $('scenarioGalleryCards');
+    if (!root || typeof LESSON_TOUR === 'undefined') return;
+    root.innerHTML = '';
+    LESSON_TOUR.forEach((scenario, index) => {
+      const title = localizedScenarioField(index, 'name', scenario.name || (scenarioGalleryText('sg-card-prefix', 'Scenario') + ' ' + (index + 1)));
+      const description = localizedScenarioField(index, 'desc', scenario.description || '');
+      const card = document.createElement('article');
+      card.className = 'scenario-card';
+      card.setAttribute('data-scenario-index', String(index));
+
+      const h = document.createElement('h3');
+      h.textContent = `${scenarioGalleryText('sg-card-prefix', 'Scenario')} ${index + 1}: ${title}`;
+      card.appendChild(h);
+
+      appendScenarioMeta(card, scenarioGalleryText('sg-concept-label', 'Concept'), title);
+      appendScenarioMeta(card, scenarioGalleryText('sg-observe-label', 'What to watch'), description);
+      appendScenarioMeta(card, scenarioGalleryText('sg-misconception-label', 'Predict before applying'), scenarioGalleryText('sg-misconception-text', 'Which visible result should change most, and why? Commit to an answer before applying.'));
+      appendScenarioMeta(card, scenarioGalleryText('sg-teacher-label', 'Teacher use'), scenarioGalleryText('sg-teacher-text', 'Use as a 2–3 minute predict → run → explain prompt.'));
+
+      const btn = document.createElement('button');
+      btn.className = 'step-btn';
+      btn.type = 'button';
+      btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare');
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('.scenario-card').forEach(item => item.classList.remove('applied'));
+        tourIdx = index;
+        renderTour();
+        scenario.apply();
+        card.classList.add('applied');
+        btn.textContent = '✓ ' + scenarioGalleryText('sg-applied', 'Applied; compare the result');
+        setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
+      });
+      card.appendChild(btn);
+      root.appendChild(card);
+    });
+  }
+  renderScenarioGallery();
+
+  // Worksheet/lab mode: 3 questions with instant ✓/✗ feedback.
+  // Bilingual feedback helper: ws{n}ok / ws{n}no with English inline fallback.
+  function wsMsg(key, en) {
+    const L = (document.documentElement.lang || 'en');
+    return (STRINGS[L] && STRINGS[L][key]) || en;
+  }
+  // MCQ: each question is graded by the selected radio's index, not typed text.
+  // `correct` is the index of the right option (language-agnostic). ok/no are the
+  // existing bilingual feedback keys, with an English inline fallback via wsMsg.
+  const WORKSHEET = [
+    { correct: 0,
+      ok:  ['ws1ok', "Correct. A degree-20 polynomial has 21 free parameters; with only 20 training points, it has enough freedom to literally pass through every dot. Train MSE ≈ 0."],
+      no:  ['ws1no', "Try 'zero' or 'near zero'. 21 free coefficients can fit 20 arbitrary points exactly: degrees of freedom math."] },
+    { correct: 2,
+      ok:  ['ws2ok', "Yes. Training error can approach zero while repeatedly viewed validation error rises sharply; that generalization gap is evidence of overfitting in this sample."],
+      no:  ['ws2no', "Hint: zero train error + held-out validation error are very different. Try 'much higher'."] },
+    { correct: 1,
+      ok:  ['ws3ok', "Correct. Ridge (L2) penalty λ‖w‖² shrinks large coefficients. The degree-20 polynomial still has 21 params, but they are now small: the curve is forced to be smooth and generalizes much better."],
+      no:  ['ws3no', "Try 'down'. λ penalizes large weights, killing the high-frequency wiggles that overfit."] },
+  ];
+  WORKSHEET.forEach((q, i) => {
+    const n = i + 1;
+    $(`ws${n}btn`).addEventListener('click', () => {
+      const fb = $(`ws${n}fb`);
+      const picked = document.querySelector(`input[name="ws${n}"]:checked`);
+      if (!picked) {
+        fb.textContent = wsMsg('ws-pick', 'Pick an answer first.');
+        fb.style.color = 'var(--muted)';
+        return;
+      }
+      const ok = Number(picked.value) === q.correct;
+      const [key, en] = ok ? q.ok : q.no;
+      fb.textContent = (ok ? '✓ ' : '✗ ') + wsMsg(key, en);
+      fb.style.color = ok ? '#16a34a' : '#dc2626';
+    });
+  });
+
+  // Learning curves. Holds degree, λ, regularizer, truth, sigma constant;
+  // sweeps n from 5 to n_max. For each n, runs `trials` independent samples and
+  // averages the train + validation MSE. The shape of the two curves diagnoses the model:
+  //   • Both high, train ≈ test  → underfitting; raise capacity (degree) or features.
+  //   • Train low + test high (large gap)  → overfitting; more data, more reg, or less capacity.
+  //   • Both converging to a low plateau  → well-fit.
+  $('lcNmax').addEventListener('input', () => { $('lcNmaxV').textContent = $('lcNmax').value; });
+  $('lcTrials').addEventListener('input', () => { $('lcTrialsV').textContent = $('lcTrials').value; });
+  function runLearningCurves() {
+    const nMax = +$('lcNmax').value;
+    const trials = +$('lcTrials').value;
+    const degree = +$('deg').value;
+    const lambda = +$('lam').value;
+    const sigma = +$('sig').value;
+    const fn = truthFns[$('truthSel').value];
+    // Sample n values log-ish for nice spacing on small n.
+    const ns = [];
+    for (let n = 5; n <= nMax; n += Math.max(2, Math.floor(n * 0.15))) ns.push(n);
+    if (ns[ns.length - 1] !== nMax) ns.push(nMax);
+    // Pre-build a single fixed test set so validation MSE comparisons across n are apples-to-apples.
+    const fixedTest = [];
+    for (let i = 0; i < 200; i++) {
+      const x = i / 199;
+      fixedTest.push({ x, y: fn(x) + randn() * sigma });
+    }
+    const trainMse = [], testMse = [];
+    for (const n of ns) {
+      let tr = 0, te = 0;
+      for (let t = 0; t < trials; t++) {
+        const sample = [];
+        for (let i = 0; i < n; i++) {
+          const x = Math.random();
+          sample.push({ x, y: fn(x) + randn() * sigma });
+        }
+        const w = fitPoly(sample, degree, lambda);
+        tr += mse(sample, w);
+        te += mse(fixedTest, w);
+      }
+      trainMse.push(tr / trials);
+      testMse.push(te / trials);
+    }
+    drawLearningCurves(ns, trainMse, testMse);
+    // Diagnosis text.
+    const finalTrain = trainMse[trainMse.length - 1];
+    const finalTest = testMse[testMse.length - 1];
+    const gap = finalTest - finalTrain;
+    let diagnosis;
+    if (finalTest > 0.5 && finalTrain > 0.5 && gap < 0.3) {
+      diagnosis = "Both train and test stay high: underfitting. Raise degree or add features.";
+    } else if (gap > 0.5) {
+      diagnosis = "Big train/test gap: overfitting. Try more data, raise λ, or lower degree.";
+    } else {
+      diagnosis = "Train and test converge to a low plateau: looks healthy.";
+    }
+    $('lcStats').innerHTML =
+      `<span>Final n=${nMax}: train MSE=<strong>${finalTrain.toFixed(3)}</strong>, ` +
+      `validation MSE=<strong>${finalTest.toFixed(3)}</strong>, gap=<strong>${gap.toFixed(3)}</strong>. ` +
+      `<em style="color:var(--accent);">${diagnosis}</em></span>`;
+  }
+  function drawLearningCurves(ns, trainMse, testMse) {
+    const cv = $('lcCv');
+    const W = cv.width, H = cv.height;
+    const ctx = cv.getContext('2d');
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : 'white';
+    ctx.fillRect(0, 0, W, H);
+    const pad = { l: 44, r: 90, t: 12, b: 28 };
+    const innerW = W - pad.l - pad.r, innerH = H - pad.t - pad.b;
+    const all = trainMse.concat(testMse);
+    const yMax = Math.max(0.01, Math.max(...all) * 1.1);
+    const yMin = 0;
+    const xMax = ns[ns.length - 1];
+    // Frame.
+    const muted = document.body.classList.contains('dark-mode') ? '#475569' : '#cbd5e1';
+    ctx.strokeStyle = muted; ctx.lineWidth = 1;
+    ctx.strokeRect(pad.l, pad.t, innerW, innerH);
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#94a3b8' : '#475569';
+    ctx.font = '10px ui-monospace, monospace';
+    // Y ticks.
+    for (let i = 0; i <= 4; i++) {
+      const yv = yMin + (yMax - yMin) * (1 - i / 4);
+      const py = pad.t + (i / 4) * innerH;
+      ctx.fillText(yv.toFixed(2), 4, py + 3);
+      if (i > 0 && i < 4) {
+        ctx.beginPath(); ctx.moveTo(pad.l, py); ctx.lineTo(pad.l + innerW, py);
+        ctx.strokeStyle = muted + '55'; ctx.stroke();
+      }
+    }
+    // X ticks at sampled n values (sparsely).
+    const tickEvery = Math.ceil(ns.length / 6);
+    for (let i = 0; i < ns.length; i += tickEvery) {
+      const px = pad.l + (ns[i] / xMax) * innerW;
+      ctx.fillText(ns[i], px - 6, H - 10);
+    }
+    // Plot helper.
+    function plot(arr, color) {
+      ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.beginPath();
+      for (let i = 0; i < ns.length; i++) {
+        const px = pad.l + (ns[i] / xMax) * innerW;
+        const py = pad.t + (1 - (arr[i] - yMin) / (yMax - yMin)) * innerH;
+        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+      ctx.fillStyle = color;
+      for (let i = 0; i < ns.length; i++) {
+        const px = pad.l + (ns[i] / xMax) * innerW;
+        const py = pad.t + (1 - (arr[i] - yMin) / (yMax - yMin)) * innerH;
+        ctx.beginPath(); ctx.arc(px, py, 2.5, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+    plot(trainMse, '#0284c7');  // blue
+    plot(testMse,  '#dc2626');   // red
+    // Legend in right margin.
+    ctx.font = '11px -apple-system, system-ui, sans-serif';
+    ctx.fillStyle = '#0284c7'; ctx.fillRect(pad.l + innerW + 8, pad.t + 6, 12, 2);
+    ctx.fillText('train MSE', pad.l + innerW + 24, pad.t + 10);
+    ctx.fillStyle = '#dc2626'; ctx.fillRect(pad.l + innerW + 8, pad.t + 22, 12, 2);
+    ctx.fillText('validation MSE',  pad.l + innerW + 24, pad.t + 26);
+    // Axis labels.
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#cbd5e1' : '#334155';
+    ctx.fillText('n (training set size)', W / 2 - 50, H - 1);
+    ctx.save();
+    ctx.translate(12, H / 2); ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center'; ctx.fillText('MSE', 0, 0);
+    ctx.restore();
+  }
+  $('lcRunBtn').addEventListener('click', runLearningCurves);
+
+  // URL-shareable config: truth function, degree, n, sigma, lambda.
+  try {
+    const sp = new URLSearchParams(location.search);
+    const t = sp.get('truth');
+    if (t) {
+      const opt = Array.from($('truthSel').options).find(o => o.value === t);
+      if (opt) $('truthSel').value = t;
+    }
+    const setNum = (key, id, min, max) => {
+      const v = parseFloat(sp.get(key));
+      if (!Number.isNaN(v) && v >= min && v <= max) $(id).value = v;
+    };
+    setNum('deg', 'deg', 1, 20);
+    setNum('lam', 'lam', 0, 5);
+    setNum('n', 'n', 5, 100);
+    setNum('sig', 'sig', 0, 1);
+  } catch (_) {}
+  document.getElementById('shareLink').addEventListener('click', async () => {
+    const params = new URLSearchParams();
+    params.set('truth', $('truthSel').value);
+    params.set('deg', $('deg').value);
+    params.set('lam', $('lam').value);
+    params.set('n', $('n').value);
+    params.set('sig', $('sig').value);
+    const url = `${location.origin}${location.pathname}?${params.toString()}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      const btn = document.getElementById('shareLink');
+      const orig = btn.textContent; btn.textContent = '✓ Copied';
+      setTimeout(() => btn.textContent = orig, 1500);
+    } catch (_) { prompt('Copy this URL:', url); }
+  });
+
+  // CSV export: train + validation datasets and per-degree MSE table.
+  document.getElementById('csvExport').addEventListener('click', () => {
+    const lam = +$('lam').value;
+    const lines = ['# Overfitting export', '# Section 1: train data', 'x,y'];
+    for (const d of trainData) lines.push(`${d.x.toFixed(4)},${d.y.toFixed(4)}`);
+    lines.push('', '# Section 2: validation data (repeatedly inspected in this applet)', 'x,y');
+    for (const d of testData) lines.push(`${d.x.toFixed(4)},${d.y.toFixed(4)}`);
+    lines.push('', `# Section 3: MSE table (lambda = ${lam})`, 'degree,train_mse,test_mse');
+    for (let d = 1; d <= 20; d++) {
+      const w = fitPoly(trainData, d, lam);
+      lines.push(`${d},${mse(trainData, w).toFixed(4)},${mse(testData, w).toFixed(4)}`);
+    }
+    const blob = new Blob([lines.join('\n')], {type: 'text/csv'});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `overfitting-${$('truthSel').value}-n${trainData.length}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  });
+
+  resizeCv(fitCv); resizeCv(errCv);
+  regenData(); render();
+})();
+</script>
+<!-- Embed mode handler (shared pattern across all 12 applets). -->
+<script>
+(() => {
+  try {
+    if (new URLSearchParams(location.search).get('embed') === '1') {
+      document.body.classList.add('embed-mode');
+    }
+  } catch (_) {}
+  const btn = document.getElementById('embedLink');
+  if (!btn) return;
+  btn.addEventListener('click', async () => {
+    const url = new URL(location.href);
+    url.searchParams.set('embed', '1');
+    const snippet = `<iframe src="${url.toString()}" width="100%" height="720" frameborder="0" style="border:1px solid #e5e7eb; border-radius:8px;" loading="lazy"></iframe>`;
+    try {
+      await navigator.clipboard.writeText(snippet);
+      const orig = btn.textContent; btn.textContent = '✓ Copied iframe';
+      setTimeout(() => btn.textContent = orig, 1800);
+    } catch (_) { prompt('Copy this iframe snippet:', snippet); }
+  });
+})();
+</script>
+<footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
+<p style="margin:0 0 6px;"><a data-i18n="footer-top" href="#top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
+<p style="margin:0;"><span data-i18n="footer-course">Made for the Introduction to AI course at Haidian Kaiwen Academy.</span></p>
+<p style="margin:6px 0 0;">© <span data-current-year="">2026</span> Logan M. Dixon · <a data-i18n="footer-portfolio" href="https://lmdixon23.github.io/" style="color:var(--accent,#0891b2);">Portfolio</a> · <a data-i18n="footer-project" href="../../index.html" style="color:var(--accent,#0891b2);">AI Playgrounds</a> · <a data-i18n="footer-source" href="https://github.com/lmdixon23/ai-playgrounds" style="color:var(--accent,#0891b2);">Source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a data-i18n="footer-issue" href="https://github.com/lmdixon23/ai-playgrounds/issues" style="color:var(--accent,#0891b2);">Report an issue</a> · <a href="https://orcid.org/0009-0001-0592-462X" rel="me" style="color:var(--accent,#0891b2);">ORCID</a></p>
+</footer>
+<script>
+(function() {
+  const LAB_CONFIG = {"slug": "overfitting", "title": "Overfitting lab packet", "zhTitle": "过拟合实验包", "fields": [{"label": "Degree", "selector": "#degV", "kind": "text"}, {"label": "Regularization", "selector": "#regSel", "kind": "selected"}, {"label": "Lambda", "selector": "#lam", "kind": "value"}, {"label": "Sample size", "selector": "#n", "kind": "value"}, {"label": "Noise", "selector": "#sig", "kind": "value"}, {"label": "True function", "selector": "#truthSel", "kind": "selected"}, {"label": "Train MSE", "selector": "#trainMse", "kind": "text"}, {"label": "Validation MSE", "selector": "#testMse", "kind": "text"}]};
+  const root = document.querySelector('.classroom-lab');
+  if (!root) return;
+  const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;
+  const qs = (sel) => root.querySelector(sel);
+  function currentLang() {
+    const raw = String(document.documentElement.lang || 'en').toLowerCase();
+    if (raw.startsWith('zh')) return 'zh';
+    if (raw.startsWith('vi')) return 'vi';
+    if (raw.startsWith('es')) return 'es';
+    return 'en';
+  }
+  function textFor(el, lang) {
+    if ((lang === 'vi' || lang === 'es') && window.__r4Localization) {
+      const source = el.getAttribute('data-lab-en') || el.textContent;
+      return window.__r4Localization.translateString(source, lang);
+    }
+    return el.getAttribute(lang === 'zh' ? 'data-lab-zh' : 'data-lab-en') || el.textContent;
+  }
+  function applyLabLang() {
+    const lang = currentLang();
+    root.querySelectorAll('[data-lab-en]').forEach(el => {
+      const value = textFor(el, lang);
+      if (el.tagName === 'TEXTAREA') el.placeholder = value;
+      else el.textContent = value;
+    });
+  }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? 'on' : 'off';
+    else if (field.kind === 'text') value = el.textContent.trim();
+    else value = el.value;
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    const label = ((currentLang() === 'vi' || currentLang() === 'es') && window.__r4Localization) ? window.__r4Localization.translateString(field.label, currentLang()) : field.label;
+    return value ? label + ': ' + value : null;
+  }
+  function snapshot() {
+    const lines = LAB_CONFIG.fields.map(readField).filter(Boolean);
+    return lines.length ? lines.join('\n') : 'No state captured yet. Run or adjust the applet first.';
+  }
+  function answers() {
+    const data = {};
+    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => data[area.getAttribute('data-lab-answer')] = area.value.trim());
+    return data;
+  }
+  function saveDraft() { try { localStorage.setItem(storageKey, JSON.stringify(answers())); } catch (_) {} }
+  function loadDraft() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      root.querySelectorAll('textarea[data-lab-answer]').forEach(area => { const key = area.getAttribute('data-lab-answer'); if (saved[key]) area.value = saved[key]; });
+    } catch (_) {}
+  }
+  function packet() {
+    const lang = currentLang();
+    const baseLabels = {title: LAB_CONFIG.title, state:'State snapshot', predict:'Predict', observe:'Observe', explain:'Explain', transfer:'Transfer'};
+    const labels = lang === 'zh' ? {title: LAB_CONFIG.zhTitle, state:'状态记录', predict:'预测', observe:'观察', explain:'解释', transfer:'迁移'} : ((lang === 'vi' || lang === 'es') && window.__r4Localization ? Object.fromEntries(Object.entries(baseLabels).map(([k,v]) => [k, window.__r4Localization.translateString(v, lang)])) : baseLabels);
+    const a = answers();
+    return [
+      '# ' + labels.title,
+      '',
+      '- Applet: ' + (document.querySelector('h1') ? document.querySelector('h1').textContent.trim() : document.title),
+      '- Date: ' + new Date().toLocaleString(),
+      '',
+      '## ' + labels.state,
+      snapshot(),
+      '',
+      '## ' + labels.predict,
+      a.predict || '',
+      '',
+      '## ' + labels.observe,
+      a.observe || '',
+      '',
+      '## ' + labels.explain,
+      a.explain || '',
+      '',
+      '## ' + labels.transfer,
+      a.transfer || ''
+    ].join('\n');
+  }
+  function setStatus(en, zh) { const el = qs('.lab-status'); if (el) el.textContent = currentLang() === 'zh' ? zh : en; }
+  function refreshState() { const el = qs('[data-lab-state]'); if (el) el.textContent = snapshot(); }
+  async function copyPacket(btn) {
+    const text = packet();
+    try { await navigator.clipboard.writeText(text); setStatus('Copied local lab packet.', '已复制本地实验包。'); }
+    catch (_) { window.prompt('Copy this lab packet:', text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
+  }
+
+  function markdownToPrintableHtml(markdown) {
+    const escape = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const inline = value => escape(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    const lines = String(markdown).split(/\r?\n/);
+    let html = '', inList = false, inState = false;
+    const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
+    for (const raw of lines) {
+      const line = raw.trimEnd();
+      if (line.startsWith('# ')) { closeList(); html += '<h1>' + inline(line.slice(2)) + '</h1>'; inState=false; }
+      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = /state snapshot|状态记录/i.test(title); }
+      else if (line.startsWith('- ')) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inline(line.slice(2)) + '</li>'; }
+      else if (!line.trim()) { closeList(); }
+      else { closeList(); html += inState ? '<pre class="state">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
+    }
+    closeList(); return html;
+  }
+
+  function printPacket() {
+    const w = window.open('', '_blank');
+    if (!w) { setStatus('Popup blocked. Copy the packet instead.', '弹窗被拦截。请改用复制实验包。'); return; }
+    const rendered = markdownToPrintableHtml(packet());
+    const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+    setStatus('Print page opened.', '打印页面已打开。');
+  }
+  function clearDraft() {
+    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.value = '');
+    try { localStorage.removeItem(storageKey); } catch (_) {}
+    refreshState(); setStatus('Local draft cleared.', '本地草稿已清除。');
+  }
+  root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.addEventListener('input', saveDraft));
+  root.querySelector('[data-lab-action="copy"]')?.addEventListener('click', copyPacket);
+  root.querySelector('[data-lab-action="print"]')?.addEventListener('click', printPacket);
+  root.querySelector('[data-lab-action="refresh"]')?.addEventListener('click', () => { refreshState(); setStatus('State refreshed.', '状态已更新。'); });
+  root.querySelector('[data-lab-action="clear"]')?.addEventListener('click', clearDraft);
+  document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(applyLabLang, 0)));
+  window.addEventListener('r4languagechange', () => setTimeout(applyLabLang, 0));
+  
+  document.addEventListener('change', refreshState);
+  document.addEventListener('click', (event) => { if (!(event.target instanceof HTMLTextAreaElement)) setTimeout(refreshState, 0); }, true);
+  loadDraft(); applyLabLang(); refreshState();
+})();
+</script>
+<script>
+(function() {
+  const VISUAL_CONFIG = {"intro":"The visual target is the generalization gap: training error can fall while validation error rises when the model follows noise instead of structure.","zhIntro":"可视化目标是泛化差距：当模型追随噪声而不是结构时，训练误差可能下降，但验证误差上升。","misread":"A curve that passes close to every training point is not necessarily the best model.","zhMisread":"穿过几乎所有训练点的曲线不一定是最好的模型。","steps":[{"label":"Data signal","zhLabel":"数据信号","text":"Sample size and noise decide how clearly the underlying pattern appears.","zhText":"样本量和噪声决定底层模式有多清楚。","selector":"#n","kind":"value","liveLabel":"Samples","zhLiveLabel":"样本"},{"label":"Model capacity","zhLabel":"模型容量","text":"Degree controls how much the curve can bend to fit details.","zhText":"次数控制曲线可以弯曲到什么程度以拟合细节。","selector":"#degV","kind":"text","liveLabel":"Degree","zhLiveLabel":"次数"},{"label":"Regularization brake","zhLabel":"正则化刹车","text":"Regularization penalizes overly flexible curves and can reduce validation error.","zhText":"正则化惩罚过于灵活的曲线，并可能降低验证误差。","selector":"#regSel","kind":"selected","liveLabel":"Reg","zhLiveLabel":"正则化"},{"label":"Generalization check","zhLabel":"泛化检查","text":"Compare train MSE and validation MSE to see whether fitting improved prediction.","zhText":"比较训练 MSE 和验证 MSE，观察拟合是否真的改善对未用于拟合的数据的预测。","selector":"#testMse","kind":"text","liveLabel":"Validation MSE","zhLiveLabel":"验证 MSE"}],"fields":[{"label":"Degree","zhLabel":"次数","selector":"#degV","kind":"text"},{"label":"Regularization","zhLabel":"正则化","selector":"#regSel","kind":"selected"},{"label":"Sample size","zhLabel":"样本量","selector":"#n","kind":"value"},{"label":"Train MSE","zhLabel":"训练 MSE","selector":"#trainMse","kind":"text"},{"label":"Validation MSE","zhLabel":"验证 MSE","selector":"#testMse","kind":"text"}]};
+  const root = document.querySelector('.visual-explanation');
+  if (!root) return;
+  const flow = root.querySelector('[data-visual-flow]');
+  const intro = root.querySelector('[data-visual-intro]');
+  const snapshotBox = root.querySelector('[data-visual-snapshot]');
+  const misreadBox = root.querySelector('[data-visual-misread]');
+  function currentLang() { return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en'; }
+  function t(obj, key) { const lang = currentLang(); return (lang === 'zh' && obj['zh' + key[0].toUpperCase() + key.slice(1)]) || obj[key] || ''; }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? 'on' : 'off';
+    else if (field.kind === 'value') value = el.value;
+    else value = el.textContent.trim();
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? { label: field.label, zhLabel: field.zhLabel || field.label, value } : null;
+  }
+  function liveValue(step) {
+    if (!step.selector) return '';
+    const field = readField({ selector: step.selector, kind: step.kind || 'text', label: step.liveLabel || 'Live', zhLabel: step.zhLiveLabel || '实时' });
+    return field ? field.value : (step.fallback || '');
+  }
+  function renderVisualExplanation() {
+    const lang = currentLang();
+    root.querySelectorAll('[data-visual-en]').forEach(el => {
+      el.textContent = el.getAttribute(lang === 'zh' ? 'data-visual-zh' : 'data-visual-en') || el.textContent;
+    });
+    intro.textContent = lang === 'zh' ? VISUAL_CONFIG.zhIntro : VISUAL_CONFIG.intro;
+    misreadBox.textContent = lang === 'zh' ? VISUAL_CONFIG.zhMisread : VISUAL_CONFIG.misread;
+    flow.innerHTML = VISUAL_CONFIG.steps.map((step, idx) => {
+      const title = lang === 'zh' ? step.zhLabel : step.label;
+      const body = lang === 'zh' ? step.zhText : step.text;
+      const liveLabel = lang === 'zh' ? (step.zhLiveLabel || '实时') : (step.liveLabel || 'Live');
+      const live = liveValue(step);
+      const liveHtml = live ? '<span class="visual-live"><strong>' + escapeHtml(liveLabel) + '</strong><span>' + escapeHtml(live) + '</span></span>' : '';
+      return '<article class="visual-card" data-step="' + String(idx + 1).padStart(2, '0') + '"><h4>' + escapeHtml(title) + '</h4><p>' + escapeHtml(body) + '</p>' + liveHtml + '</article>';
+    }).join('');
+    const lines = (VISUAL_CONFIG.fields || []).map(readField).filter(Boolean).map(f => (lang === 'zh' ? f.zhLabel : f.label) + ': ' + f.value);
+    snapshotBox.textContent = lines.length ? lines.join('\n') : (lang === 'zh' ? '还没有捕捉到状态。请先运行或调整小程序。' : 'No state captured yet. Run or adjust the applet first.');
+  }
+  function escapeHtml(text) { return String(text).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+  let visualTimer = null;
+  function scheduleVisualRender() {
+    if (visualTimer) cancelAnimationFrame(visualTimer);
+    visualTimer = requestAnimationFrame(renderVisualExplanation);
+  }
+  document.addEventListener('change', scheduleVisualRender);
+  document.addEventListener('input', scheduleVisualRender);
+  document.addEventListener('click', () => setTimeout(scheduleVisualRender, 0), true);
+  document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(scheduleVisualRender, 0)));
+  setInterval(renderVisualExplanation, 1200);
+  renderVisualExplanation();
+})();
+</script>
+<!-- Privacy-friendly analytics: GoatCounter, cookieless. -->
+
+<script>
+(function() {
+  const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "Degree", "zhLabel": "次数", "selector": "#degV", "kind": "text"}, {"label": "Regularization", "zhLabel": "正则化", "selector": "#regSel", "kind": "selected"}, {"label": "Sample size", "zhLabel": "样本量", "selector": "#n", "kind": "value"}, {"label": "Train MSE", "zhLabel": "训练 MSE", "selector": "#trainMse", "kind": "text"}, {"label": "Validation MSE", "zhLabel": "验证 MSE", "selector": "#testMse", "kind": "text"}]};
+  const layer = document.querySelector('.accessibility-layer');
+  if (!layer) return;
+  const intro = layer.querySelector('[data-a11y-intro]');
+  const stateGrid = layer.querySelector('[data-a11y-state-grid]');
+  const liveRegion = layer.querySelector('#a11yLiveRegion');
+  let renderTimer = 0;
+  let lastSummary = '';
+  function currentLang() {
+    return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+  }
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+  function localized(obj, key) {
+    const lang = currentLang();
+    const zhKey = 'zh' + key[0].toUpperCase() + key.slice(1);
+    return (lang === 'zh' && obj[zhKey]) || obj[key] || '';
+  }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? (currentLang() === 'zh' ? '开' : 'on') : (currentLang() === 'zh' ? '关' : 'off');
+    else if (field.kind === 'value') value = el.value;
+    else value = el.textContent.trim();
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? { label: localized(field, 'label'), value } : null;
+  }
+  function renderAccessibilityLayer(options = {}) {
+    const lang = currentLang();
+    layer.querySelectorAll('[data-a11y-en]').forEach(el => {
+      el.textContent = el.getAttribute(lang === 'zh' ? 'data-a11y-zh' : 'data-a11y-en') || el.textContent;
+    });
+    const copy = A11Y_CONFIG.copy[lang] || A11Y_CONFIG.copy.en;
+    intro.textContent = copy.intro;
+    layer.querySelector('[data-a11y-title]').textContent = copy.title;
+    layer.querySelector('[data-a11y-keyboard-title]').textContent = copy.keyboardTitle;
+    layer.querySelector('[data-a11y-keyboard-1]').textContent = copy.keyboard1;
+    layer.querySelector('[data-a11y-keyboard-2]').textContent = copy.keyboard2;
+    layer.querySelector('[data-a11y-keyboard-3]').textContent = copy.keyboard3;
+    layer.querySelector('[data-a11y-state-title]').textContent = copy.stateTitle;
+    layer.querySelector('[data-a11y-motion-title]').textContent = copy.motionTitle;
+    layer.querySelector('[data-a11y-motion-copy]').textContent = copy.motionCopy;
+    layer.querySelector('[data-a11y-note]').textContent = copy.note;
+    const fields = A11Y_CONFIG.fields.map(readField).filter(Boolean);
+    if (fields.length) {
+      stateGrid.innerHTML = fields.map(field => '<dt>' + escapeHtml(field.label) + '</dt><dd>' + escapeHtml(field.value) + '</dd>').join('');
+    } else {
+      stateGrid.innerHTML = '<dt>' + escapeHtml(copy.emptyLabel) + '</dt><dd>' + escapeHtml(copy.emptyValue) + '</dd>';
+    }
+    const summary = fields.map(field => field.label + ': ' + field.value).join('; ') || copy.emptyValue;
+    if (options.announce && liveRegion && summary !== lastSummary) {
+      liveRegion.textContent = copy.livePrefix + summary;
+    }
+    lastSummary = summary;
+  }
+  function markVisualRegions() {
+    const descriptionId = 'a11yStateSummary';
+    document.querySelectorAll('canvas, svg, [role="img"]').forEach((el, index) => {
+      if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+      if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', A11Y_CONFIG.copy.en.visualLabel + ' ' + (index + 1));
+      const describedBy = (el.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+      if (!describedBy.includes(descriptionId)) {
+        describedBy.push(descriptionId);
+        el.setAttribute('aria-describedby', describedBy.join(' '));
+      }
+    });
+  }
+  function scheduleAccessibilityRender(announce = true) {
+    clearTimeout(renderTimer);
+    renderTimer = setTimeout(() => renderAccessibilityLayer({ announce }), 100);
+  }
+  document.addEventListener('input', () => scheduleAccessibilityRender(true), true);
+  document.addEventListener('change', () => scheduleAccessibilityRender(true), true);
+  document.addEventListener('click', event => {
+    if (event.target && event.target.closest && event.target.closest('button, [role="button"], canvas, svg, select, input')) {
+      scheduleAccessibilityRender(true);
+    }
+  }, true);
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ' || event.key.startsWith('Arrow') || event.key === 'Tab') {
+      scheduleAccessibilityRender(false);
+    }
+  }, true);
+  setInterval(() => {
+    if (!document.hidden) renderAccessibilityLayer({ announce: false });
+  }, 1500);
+  markVisualRegions();
+  renderAccessibilityLayer({ announce: false });
+  window.renderAccessibilityLayer = renderAccessibilityLayer;
+})();
+</script>
+<script>
+(function () {
+  document.querySelectorAll('[data-current-year]').forEach(el => { el.textContent = new Date().getFullYear(); });
+})();
+</script>
+<script id="learner-content-system">
+(() => {
+  const profile = {"slug":"overfitting","en":{"title":"Overfitting Explorer","big":"Increase model complexity and compare performance on training data with performance on repeatedly viewed validation data. Find the point where a better fit becomes a worse model.","primer":"A model should learn the underlying pattern, not every accidental detail in its training sample. The terms below separate fitting the known data from generalizing to new data.","terms":[{"term":"Training data","definition":"Examples used to fit the model."},{"term":"Validation data","definition":"Separate examples used to estimate performance on new cases."},{"term":"Model complexity","definition":"How flexible the model is when fitting patterns."},{"term":"Underfitting","definition":"The model is too simple to capture the main pattern."},{"term":"Overfitting","definition":"The model fits training details that do not generalize to new data."},{"term":"Regularization","definition":"A penalty or constraint that discourages unnecessarily complex fits."},{"term":"Mean squared error (MSE)","definition":"The average squared difference between predictions and target values."},{"term":"Coefficient","definition":"A learned multiplier on one polynomial term."},{"term":"Ridge regression (L2)","definition":"A fitting method that adds a squared-coefficient penalty to discourage extreme weights."},{"term":"Regularization strength (λ)","definition":"A nonnegative value that controls how strongly the penalty affects fitting."}],"scenarios":[{"title":"A straight line underfits a curved pattern","question":"How can both training and validation error remain high?","run":"Fit a degree-one polynomial to the sine-shaped data and compare both errors.","predict":"Predict whether collecting more training time alone can make a straight line bend.","explain":"Explain why the model lacks the flexibility to represent the main pattern."},{"title":"A moderate-complexity model reaches the useful region","question":"What does a good balance between fit and generalization look like?","run":"Use degree five in this generated setting and compare the training and validation errors. Treat degree five as one observed candidate, not a universal sweet spot.","predict":"Predict whether the two errors should be identical or simply both low.","explain":"Explain why a small gap can remain even when the model generalizes well."},{"title":"A high-degree model memorizes a small sample","question":"Why can zero training error accompany poor test performance?","run":"Use degree twenty with only twenty training points and inspect the curve between samples.","predict":"Predict which error will continue falling and which may rise.","explain":"Explain how the flexible curve follows noise that does not repeat in new data."},{"title":"Regularization restrains a flexible model","question":"How can the same model class generalize better without reducing its degree?","run":"Keep degree twenty, increase regularization, and compare the curve and validation error.","predict":"Predict whether the training error must rise slightly for the validation error to fall.","explain":"Explain how shrinking extreme coefficients reduces unnecessary oscillation."},{"title":"More data can constrain memorization","question":"Why can a complex model behave better when it sees more examples?","run":"Keep degree twenty with no regularization, then increase the training-sample size.","predict":"Predict whether the gap between training and validation error will widen or narrow.","explain":"Explain how more observations constrain the curve between points."}]},"zh":{"title":"过拟合探索器","big":"提高模型复杂度，并比较训练数据与反复查看的验证数据上的表现。找到拟合更好却模型更差的转折点。","primer":"模型应该学习底层规律，而不是训练样本中的每个偶然细节。下面的术语区分拟合已知数据与推广到新数据。","terms":[{"term":"训练数据","definition":"用于拟合模型的示例。"},{"term":"验证数据","definition":"用于估计模型在新情况上表现的独立示例。"},{"term":"模型复杂度","definition":"模型拟合模式时的灵活程度。"},{"term":"欠拟合","definition":"模型过于简单，无法捕捉主要规律。"},{"term":"过拟合","definition":"模型拟合了无法推广到新数据的训练细节。"},{"term":"正则化","definition":"抑制不必要复杂拟合的惩罚或约束。"},{"term":"均方误差（MSE）","definition":"预测值与目标值之差的平方的平均值。"},{"term":"系数","definition":"多项式中某一项前面学习得到的乘数。"},{"term":"岭回归（L2）","definition":"在拟合目标中加入系数平方惩罚，以抑制极端权重的方法。"},{"term":"正则化强度（λ）","definition":"控制惩罚对拟合影响程度的非负数值。"}],"scenarios":[{"title":"直线对弯曲规律欠拟合","question":"为什么训练误差和验证误差都可能很高？","run":"用一次多项式拟合正弦形数据并比较两种误差。","predict":"预测仅增加训练时间能否让直线弯曲。","explain":"解释模型为什么缺乏表示主要规律的灵活性。"},{"title":"中等复杂度进入有效区域","question":"拟合与推广之间的良好平衡是什么样？","run":"使用五次多项式并比较训练误差与验证误差的距离。","predict":"预测两种误差应完全相同，还是只需都较低。","explain":"解释模型推广良好时为什么仍可能存在小差距。"},{"title":"高次模型记住小样本","question":"为什么训练误差为零时，测试表现仍可能很差？","run":"使用二十次多项式和二十个训练点，观察样本之间的曲线。","predict":"预测哪个误差会继续下降，哪个可能上升。","explain":"解释灵活曲线如何跟随不会在新数据中重复的噪声。"},{"title":"正则化约束灵活模型","question":"不降低次数，如何让同一模型类别推广更好？","run":"保持二十次多项式，提高正则化，并比较曲线和验证误差。","predict":"预测验证误差下降时，训练误差是否需要略微上升。","explain":"解释缩小极端系数如何减少不必要振荡。"},{"title":"更多数据可以约束记忆","question":"复杂模型看到更多示例后为什么可能表现更好？","run":"保持二十次且无正则化，然后增加训练样本数量。","predict":"预测训练与验证误差的差距会扩大还是缩小。","explain":"解释更多观察如何约束样本点之间的曲线。"}]}};
+  window.APPLET_LEARNER_PROFILE = profile;
+  const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;
+  try {
+    STRINGS.en.title = profile.en.title; STRINGS.zh.title = profile.zh.title;
+    STRINGS.en['tldr-strong'] = 'What this applet shows'; STRINGS.zh['tldr-strong'] = '这个工具展示什么';
+    STRINGS.en['tldr-body'] = profile.en.big; STRINGS.zh['tldr-body'] = profile.zh.big;
+    profile.en.scenarios.forEach((item,i) => { STRINGS.en['tour'+i+'name']=item.title; STRINGS.en['tour'+i+'desc']=item.run; if (typeof LESSON_TOUR !== 'undefined' && LESSON_TOUR[i]) { LESSON_TOUR[i].name=item.title; LESSON_TOUR[i].description=item.run; } });
+    profile.zh.scenarios.forEach((item,i) => { STRINGS.zh['tour'+i+'name']=item.title; STRINGS.zh['tour'+i+'desc']=item.run; });
+  } catch (_) {}
+  function applyCoreCopy(){
+    const c=copy();
+    document.title=c.title+' | AI Playgrounds';
+    const h=document.querySelector('.header-main h1'); if(h) h.textContent=c.title;
+    const strong=document.querySelector('.tldr strong'); if(strong) strong.textContent=currentLocale()==='zh'?'这个工具展示什么':'What this applet shows';
+    const body=document.querySelector('.tldr span'); if(body) body.textContent=c.big;
+    const jump=document.querySelector('.jump-link'); if(jump) jump.textContent=currentLocale()==='zh'?'↓ 阅读分步解释':'↓ Read the step-by-step explanation';
+  }
+  function stateData(){
+    const values={};
+    document.querySelectorAll('#main input,#main select,#main textarea').forEach(el=>{
+      if(!el.id||el.closest('.classroom-lab'))return;
+      if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;
+      values[el.id]=el.type==='checkbox'?el.checked:el.value;
+    });
+    return {applet:profile.en.title,slug:profile.slug,exported_at:new Date().toISOString(),values};
+  }
+  function toolbar(){
+    const actions=document.querySelector('.header-actions'); if(!actions||actions.dataset.standardized==='1')return;
+    const share=document.getElementById('shareLink'), embed=document.getElementById('embedLink'), reset=document.getElementById('hardReset');
+    const csv=document.getElementById('csvExport'), png=document.getElementById('exportPng');
+    const more=document.createElement('details'); more.className='header-more';
+    const summary=document.createElement('summary'); summary.className='header-png'; summary.setAttribute('aria-haspopup','menu'); more.appendChild(summary);
+    const menu=document.createElement('div'); menu.className='header-more-menu'; menu.setAttribute('role','menu'); more.appendChild(menu);
+    if(embed){embed.textContent='📎 Embed in LMS';menu.appendChild(embed)}
+    const jsonBtn=document.createElement('button');jsonBtn.type='button';jsonBtn.className='header-png';jsonBtn.dataset.exportState='';menu.appendChild(jsonBtn);
+    if(csv){csv.textContent='📊 Data table (.csv)';menu.appendChild(csv)}
+    if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
+    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
+    actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
+    window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';if(share){share.textContent=zh?'🔗 分享':'🔗 Share';share.title=zh?'复制可在另一浏览器中重新打开当前设置的链接。':'Copy a link that reopens the current settings in another browser.';}summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
+    window.refreshAppletToolbar();
+    document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
+  }
+  function terms(){
+    const inner=document.querySelector('.interactive-inner'); if(!inner||inner.querySelector('.key-terms'))return;
+    const d=document.createElement('details');d.className='key-terms';d.open=true;
+    d.innerHTML='<summary><span data-key-summary></span></summary><div class="key-terms-panel"><p class="key-terms-intro" data-key-intro></p><dl class="key-terms-grid" data-key-grid></dl></div>';
+    const first=inner.querySelector(':scope > details');inner.insertBefore(d,first||inner.firstChild);
+    window.renderAppletKeyTerms=()=>{const c=copy();d.querySelector('[data-key-summary]').textContent=currentLocale()==='zh'?'🔑 先学这些术语':'🔑 Key terms before the explanation';d.querySelector('[data-key-intro]').textContent=c.primer;d.querySelector('[data-key-grid]').innerHTML=c.terms.map(x=>'<div class="key-term"><dt>'+x.term+'</dt><dd>'+x.definition+'</dd></div>').join('')};
+    window.renderAppletKeyTerms();
+  }
+  function essayPrimer(){
+    const essay=document.querySelector('article#essay');if(!essay||essay.querySelector('.essay-primer'))return;
+    const box=document.createElement('section');box.className='essay-primer';essay.insertBefore(box,essay.firstChild);
+    window.renderEssayPrimer=()=>{const c=copy();const heading=currentLocale()==='zh'?'阅读前先准备':'Before you read';const termHeading=currentLocale()==='zh'?'本页会使用的术语':'Terms used in this explanation';box.innerHTML='<h2>'+heading+'</h2><p>'+c.primer+'</p><h3>'+termHeading+'</h3><dl class="essay-primer-terms">'+c.terms.map(x=>'<div><dt>'+x.term+'</dt><dd>'+x.definition+'</dd></div>').join('')+'</dl>'};window.renderEssayPrimer();
+  }
+  function patchScenarioData(){
+    try{if(typeof renderScenarioGallery==='function')renderScenarioGallery();if(typeof renderTour==='function')renderTour()}catch(_){}
+  }
+  window.refreshLearnerContent=()=>{applyCoreCopy();window.renderAppletKeyTerms?.();window.renderEssayPrimer?.();window.refreshAppletToolbar?.()};
+  applyCoreCopy();toolbar();terms();essayPrimer();patchScenarioData();
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(window.refreshLearnerContent,20)));
+})();
+</script>
+<!-- AI_PLAYGROUNDS_COMPONENT:original/essay-language-script -->
+<!-- AI_PLAYGROUNDS_COMPONENT:original/learning-modes-script -->
+<script id="applet-translation-completion">
+(() => {
+  const exact = {"Skip to applet controls":"跳到交互控件","▸ Show teacher notes (discussion prompts + curriculum)":"▸ 展开教师说明（讨论提示与课程联系）","▾ Hide teacher notes (discussion prompts + curriculum)":"▾ 收起教师说明（讨论提示与课程联系）","idle":"空闲","(empty)":"（空）","(no actions yet)":"（尚无动作）","exploring":"探索中"};
+  const rules = [["^(\\([^)]+\\))\\s+residual=([-0-9.]+)$","\\1　残差=\\2"]].map(([source,target])=>[new RegExp(source),target]);
+  const currentLanguage=()=>((document.documentElement.lang||'en').startsWith('zh')?'zh':'en');
+  const excluded=node=>node.parentElement && node.parentElement.closest('script,style,noscript,[data-essay-lang="en"]');
+  const applyRule=text=>{
+    if(Object.prototype.hasOwnProperty.call(exact,text))return exact[text];
+    for(const [pattern,target] of rules){if(pattern.test(text)){pattern.lastIndex=0;return text.replace(pattern,target)}}
+    return null;
+  };
+  function translateNode(node){
+    if(excluded(node))return;
+    const raw=node.nodeValue||'',trimmed=raw.trim();if(!trimmed)return;
+    if(currentLanguage()==='en'){
+      if(node.__appletEnglish!==undefined){const start=raw.indexOf(trimmed);node.nodeValue=raw.slice(0,start)+node.__appletEnglish+raw.slice(start+trimmed.length);delete node.__appletEnglish}
+      return;
+    }
+    const translated=applyRule(trimmed);if(translated===null||translated===trimmed)return;
+    node.__appletEnglish=trimmed;const start=raw.indexOf(trimmed);node.nodeValue=raw.slice(0,start)+translated+raw.slice(start+trimmed.length);
+  }
+  function translateAttribute(el,attr){
+    const value=el.getAttribute(attr);if(!value)return;
+    const prop='__appletEnglish_'+attr;
+    if(currentLanguage()==='en'){
+      if(el[prop]!==undefined){el.setAttribute(attr,el[prop]);delete el[prop]}
+      return;
+    }
+    const translated=applyRule(value.trim());if(translated===null||translated===value.trim())return;
+    el[prop]=value;el.setAttribute(attr,translated);
+  }
+  function refresh(root=document){
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);nodes.forEach(translateNode);
+    const elements=(root.querySelectorAll?root.querySelectorAll('[title],[aria-label],[placeholder]'):[]);elements.forEach(el=>['title','aria-label','placeholder'].forEach(a=>{if(el.hasAttribute(a))translateAttribute(el,a)}));
+  }
+  let queued=false;const schedule=()=>{if(queued)return;queued=true;queueMicrotask(()=>{queued=false;refresh()})};
+  const observer=new MutationObserver(mutations=>{if(currentLanguage()!=='zh')return;for(const m of mutations){if(m.type==='characterData'||m.addedNodes.length){schedule();break}}});
+  observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+  document.querySelectorAll('button[data-lang]').forEach(button=>button.addEventListener('click',()=>setTimeout(()=>refresh(),45)));
+  refresh();
+  window.refreshAppletTranslationCompletion=refresh;
+})();
+</script>
+<!-- suite-guided-challenge-v2:start -->
+<link href="../../assets/guided-challenges.css" rel="stylesheet"/>
+<script defer src="../../assets/guided-challenges.js"></script>
+<!-- suite-guided-challenge-v2:end -->
+<script src="../../assets/locales/overfitting-r4.js"></script>
+<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["overfitting"];if(!row)return;Object.assign(row.vi.strings,{"🧪 Quick Assign · QA-OVERFIT-01 · 10–15 min": "🧪 Bài tập nhanh · QA-OVERFIT-01 · 10–15 phút", "Fit the training set, fail the future": "Khớp dữ liệu huấn luyện, thất bại trên dữ liệu mới", "Predict which model will fit training data best, compare train and validation error, then explain why generalization can fail.": "Tăng độ phức tạp mô hình, so sánh lỗi huấn luyện với lỗi kiểm tra và tìm điểm mà khớp tốt hơn không còn có nghĩa tổng quát hóa tốt hơn.", "Which degree will have the lowest training error? Which degree should generalize best?": "Khi độ phức tạp tăng, bạn dự đoán lỗi huấn luyện và lỗi kiểm tra sẽ thay đổi thế nào?", "Compare train and validation MSE for a low, medium, and high polynomial degree.": "Ghi lại ít nhất ba mức độ phức tạp cùng lỗi huấn luyện và kiểm tra tương ứng.", "Why can training MSE improve while validation MSE gets worse?": "Dấu hiệu nào cho thấy mô hình bắt đầu overfit thay vì chỉ cải thiện?", "Name an ML task where a perfect training score could be misleading.": "Nếu có nhiều dữ liệu huấn luyện hơn, bạn dự đoán điểm bắt đầu overfit sẽ thay đổi như thế nào?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"🧪 Quick Assign · QA-OVERFIT-01 · 10–15 min": "🧪 Tarea rápida · QA-OVERFIT-01 · 10–15 min", "Fit the training set, fail the future": "Ajusta el entrenamiento, falla en datos nuevos", "Predict which model will fit training data best, compare train and validation error, then explain why generalization can fail.": "Aumenta la complejidad, compara error de entrenamiento y prueba y encuentra cuándo un mejor ajuste deja de significar mejor generalización.", "Which degree will have the lowest training error? Which degree should generalize best?": "Al aumentar la complejidad, ¿cómo esperas que cambien los errores de entrenamiento y prueba?", "Compare train and validation MSE for a low, medium, and high polynomial degree.": "Registra al menos tres niveles de complejidad con sus errores de entrenamiento y prueba.", "Why can training MSE improve while validation MSE gets worse?": "¿Qué patrón muestra que el modelo empieza a sobreajustar en vez de simplemente mejorar?", "Name an ML task where a perfect training score could be misleading.": "Si hubiera más datos de entrenamiento, ¿cómo esperas que cambiara el punto en que comienza el sobreajuste?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script src="../../assets/localization-r4.js"></script>
+<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.8.1</div>
+
+<!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
+<script data-ai-playgrounds-analytics="v1.8.1">
+(function () {
+  'use strict';
+  var CANONICAL_HOST = 'lmdixon23.github.io';
+  var ENDPOINT = 'https://lmdixon23.goatcounter.com/count';
+  var PAGE_KIND = 'applet';
+  var PAGE_SLUG = 'overfitting';
+  var SOURCE_ALLOWLIST = new Set(['hn','linkedin','csta','sigcse','oercommons','merlot','reddit','bluesky','mastodon','devto','hashnode','github','email','school','portfolio','resume','zenodo','jose']);
+  var liveImages = [];
+
+  function storageGet(storage, key) { try { return storage.getItem(key); } catch (_) { return null; } }
+  function storageSet(storage, key, value) { try { storage.setItem(key, value); } catch (_) {} }
+  function privacySignal() {
+    return navigator.globalPrivacyControl === true || navigator.doNotTrack === '1' ||
+      navigator.doNotTrack === 'yes' || window.doNotTrack === '1';
+  }
+  function clean(value) {
+    return String(value || '').toLowerCase().replace(/[^a-z0-9._/-]+/g, '-').replace(/-+/g, '-').replace(/^\/+|\/+$/g, '').slice(0, 80);
+  }
+  function normalizePath(path) {
+    var value = String(path || '/');
+    value = value.replace(/\/index\.html$/, '/');
+    if (value === '/ai-playgrounds') value = '/ai-playgrounds/';
+    return value || '/';
+  }
+  function canonicalPath() {
+    var link = document.querySelector('link[rel="canonical"]');
+    if (link && link.href) {
+      try { return normalizePath(new URL(link.href, location.href).pathname); } catch (_) {}
+    }
+    return normalizePath(location.pathname || '/ai-playgrounds/');
+  }
+
+  var params = new URLSearchParams(location.search);
+  var optedOut = params.get('analytics') === 'off' || storageGet(localStorage, 'ai-playgrounds-analytics') === 'off';
+  var enabled = location.hostname === CANONICAL_HOST && !privacySignal() && !optedOut;
+
+  function transmit(query) {
+    if (!enabled) return;
+    var img = new Image(1, 1);
+    img.referrerPolicy = 'no-referrer';
+    img.onload = img.onerror = function () {
+      var i = liveImages.indexOf(img);
+      if (i >= 0) liveImages.splice(i, 1);
+    };
+    img.src = ENDPOINT + '?' + query.toString();
+    liveImages.push(img);
+  }
+
+  function campaignQuery() {
+    var source = clean(params.get('ap_src'));
+    if (!SOURCE_ALLOWLIST.has(source)) return '';
+    var q = new URLSearchParams();
+    q.set('utm_campaign', 'ai-playgrounds');
+    q.set('utm_source', source);
+    return q.toString();
+  }
+
+  function sendPage() {
+    var query = new URLSearchParams();
+    query.set('p', canonicalPath());
+    query.set('t', document.title || 'AI Playgrounds');
+    var campaign = campaignQuery();
+    if (campaign) query.set('q', campaign);
+    transmit(query);
+  }
+
+  function sendEvent(name, title) {
+    var eventName = clean(name);
+    if (!eventName) return;
+    var query = new URLSearchParams();
+    query.set('p', 'event/' + eventName);
+    query.set('t', title || ('AI Playgrounds event: ' + eventName));
+    query.set('e', '1');
+    transmit(query);
+  }
+
+  window.aiPlaygroundsAnalytics = {
+    enabled: enabled,
+    optOut: function () { storageSet(localStorage, 'ai-playgrounds-analytics', 'off'); location.reload(); },
+    optIn: function () { storageSet(localStorage, 'ai-playgrounds-analytics', 'on'); location.reload(); },
+    count: function (name, title) { sendEvent(name, title); }
+  };
+
+  document.addEventListener('click', function (event) {
+    var out = event.target.closest('#analytics-opt-out');
+    var inn = event.target.closest('#analytics-opt-in');
+    if (out) { event.preventDefault(); window.aiPlaygroundsAnalytics.optOut(); return; }
+    if (inn) { event.preventDefault(); window.aiPlaygroundsAnalytics.optIn(); return; }
+    if (!enabled) return;
+
+    var link = event.target.closest('a[href]');
+    if (link) {
+      var href = link.getAttribute('href') || '';
+      var app = href.match(/playgrounds\/([^/?#]+)\/?/i);
+      if (app) sendEvent('launch/' + clean(app[1]), 'Launch applet: ' + clean(app[1]));
+      else if (/\.(pdf|zip|md|docx?|pptx?|csv)(?:[?#]|$)/i.test(href)) sendEvent('resource/' + clean((href.split('/').pop() || 'download').split(/[?#]/)[0]), 'Resource download');
+      else if (/github\.com\/lmdixon23\/ai-playgrounds/i.test(href)) sendEvent('outbound/github', 'Open AI Playgrounds on GitHub');
+    }
+
+    if (PAGE_KIND === 'applet') {
+      var control = event.target.closest('main button, main [role="button"], .workspace button, .controls button');
+      if (control && !control.closest('header, nav, footer, .toolbar')) {
+        var key = 'ai-playgrounds-engaged-' + PAGE_SLUG;
+        if (storageGet(sessionStorage, key) !== '1') {
+          storageSet(sessionStorage, key, '1');
+          sendEvent('engaged/' + clean(PAGE_SLUG), 'First substantive applet interaction: ' + clean(PAGE_SLUG));
+        }
+      }
+    }
+  }, true);
+
+  if (!enabled) return;
+  sendPage();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2947 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Wumpus World | AI Playgrounds</title>
+<link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E" rel="icon"/>
+<meta content="Follow a logical agent as it turns breezes and stenches into beliefs about nearby danger. Distinguish what is true, what is proven, and what remains unknown." name="description"/>
+<link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/" rel="canonical"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/?lang=en" hreflang="en" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/?lang=zh" hreflang="zh-Hans" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/?lang=vi" hreflang="vi" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/?lang=es" hreflang="es" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/?lang=en" hreflang="x-default" rel="alternate"/>
+<meta content="website" property="og:type"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/" property="og:url"/>
+<meta content="Wumpus World | AI Playgrounds" property="og:title"/>
+<meta content="Follow a logical agent as it turns breezes and stenches into beliefs about nearby danger. Distinguish what is true, what is proven, and what remains unknown." property="og:description"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" property="og:image"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="Wumpus World | AI Playgrounds" name="twitter:title"/>
+<meta content="Follow a logical agent as it turns breezes and stenches into beliefs about nearby danger. Distinguish what is true, what is proven, and what remains unknown." name="twitter:description"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" name="twitter:image"/>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Wumpus World | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/","description":"Follow a logical agent as it turns breezes and stenches into beliefs about nearby danger. Distinguish what is true, what is proven, and what remains unknown.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh","vi","es"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
+<style>
+  :root {
+    --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #c2410c;
+    --card: #fff; --border: #e5e7eb; --soft: #f9fafb;
+    --agent: #2563eb;
+    --safe: #16a34a; --safe-bg: #dcfce7;
+    --danger: #dc2626; --danger-bg: #fee2e2;
+    --maybe: #d97706; --maybe-bg: #fef3c7;
+    --unknown: #94a3b8; --unknown-bg: #f1f5f9;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", Arial, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; }
+  .page-header { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 24px; }
+  .header-utility { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .header-prefs { display: flex; align-items: center; gap: 8px; }
+  .header-main { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .header-actions { display: flex; align-items: center; gap: 8px; font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem; }
+  .header-actions .header-reset { margin-left: 12px; }
+  .page-header h1 { margin: 0; font-size: 1.5rem; }
+  .page-header .back { color: var(--accent); text-decoration: none; font-size: 0.9rem; font-family: -apple-system, system-ui, sans-serif; }
+  .lang-switch { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .lang-switch button { padding: 4px 10px; background: white; color: var(--muted);
+                          border: none; cursor: pointer; font: inherit; font-size: 0.78rem; }
+  .lang-switch button.active { background: var(--accent); color: white; font-weight: 600; }
+  .header-reset { padding: 6px 12px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font: inherit; font-size: 0.82rem; }
+  .header-reset:hover { background: var(--soft); }
+  .tldr { max-width: 820px; margin: 16px auto 0;
+           background: var(--accent); color: white;
+           border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; font-weight: 500;
+           font-family: -apple-system, system-ui, sans-serif; line-height: 1.45; }
+  .tldr strong { color: rgba(255,255,255,0.85); font-size: 0.72rem; letter-spacing: 0.08em;
+                  text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px; }
+  .interactive { background: var(--card); padding: 24px; border-bottom: 1px solid var(--border); }
+  .interactive-inner { max-width: min(1280px, 100%); margin: 0 auto;
+                         font-family: -apple-system, system-ui, sans-serif; }
+  .bento { display: grid; grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+           grid-template-areas: "controls maps" "analysis maps"; gap: 16px; align-items: start; margin-bottom: 14px; }
+  .bento > .cell-controls { grid-area: controls; }
+  .bento > .cell-maps     { grid-area: maps; }
+  .bento > .cell-analysis { grid-area: analysis; }
+  .bento-cell { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+  .bento-cell > :first-child { margin-top: 0 !important; }
+  @media (max-width: 860px) { .bento { grid-template-columns: 1fr; grid-template-areas: "controls" "maps" "analysis"; gap: 12px; } }
+  .tp-scrub { min-width: 0; }
+  .control-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+                  margin-bottom: 14px; font-size: 0.88rem; }
+  .control-row label { color: var(--muted); }
+  .control-row .step-btn { padding: 7px 14px; background: white; color: var(--fg);
+                            border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                            font: inherit; font-size: 0.85rem; }
+  .control-row .step-btn.primary { background: var(--accent); color: white;
+                                      border-color: var(--accent); font-weight: 600; }
+  .canvas-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 14px; }
+  .canvas-card { background: white; border: 1px solid var(--border);
+                   border-radius: 8px; padding: 10px; text-align: center; }
+  .canvas-card h3 { margin: 0 0 6px; font-size: 0.85rem; color: var(--accent);
+                      text-transform: uppercase; letter-spacing: 0.05em; }
+  .canvas-card p.sub { color: var(--muted); font-size: 0.78rem; margin: 4px 0 0; font-style: italic; }
+  canvas { display: block; margin: 0 auto; background: white;
+            border: 1px solid var(--border); border-radius: 4px; }
+  #worldCv, #kbCv { width: 100%; max-width: 400px; height: auto; aspect-ratio: 400 / 400; }
+  .legend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 0.82rem;
+                   max-width: 380px; margin: 0 auto 14px; }
+  .legend-grid .sw { display: inline-block; width: 12px; height: 12px;
+                      vertical-align: middle; margin-right: 4px; border-radius: 3px;
+                      border: 1px solid; }
+  .stats-strip { display: flex; gap: 24px; justify-content: center;
+                   font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem;
+                   margin-bottom: 12px; flex-wrap: wrap; }
+  .stat-item .label { color: var(--muted); font-size: 0.72rem;
+                       text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-item .val { font-weight: 600; font-family: monospace; font-size: 1.1rem; color: var(--fg); }
+  .log-panel { background: var(--soft); border: 1px solid var(--border); border-radius: 8px;
+                 max-height: 220px; overflow-y: auto; padding: 10px 14px;
+                 font-family: 'SF Mono', Consolas, monospace; font-size: 0.82rem; }
+  .log-panel h3 { margin: 0 0 6px; font-family: -apple-system, system-ui, sans-serif;
+                    font-size: 0.85rem; color: var(--accent);
+                    text-transform: uppercase; letter-spacing: 0.05em; }
+  .log-panel .entry { padding: 3px 0; border-bottom: 1px solid var(--border); }
+  .log-panel .entry .step { color: var(--accent); font-weight: 600; }
+  .log-panel .entry .percept { color: var(--maybe); }
+  .log-panel .entry .infer { color: var(--safe); }
+  .log-panel .entry .action { color: var(--agent); }
+  .log-panel .entry .death { color: var(--danger); font-weight: 600; }
+  .log-panel .entry .win { color: #ca8a04; font-weight: 700; }
+  .jump-link { display: inline-block; margin-top: 14px;
+                padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px;
+                background: white; color: var(--accent); text-decoration: none;
+                font-family: -apple-system, system-ui, sans-serif; font-size: 0.82rem;
+                font-weight: 600; }
+  .jump-link:hover { background: var(--soft); }
+  .jump-anchor { text-align: center; }
+  .essay { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; font-size: 1.05rem; }
+  .essay h2 { font-size: 1.5rem; margin-top: 36px; margin-bottom: 12px; color: var(--accent); }
+  .essay h3 { font-size: 1.15rem; margin-top: 24px; margin-bottom: 8px; }
+  .essay .lede { font-size: 1.15rem; color: #374151; }
+  .essay .aha { background: #fed7aa; border-left: 4px solid #ea580c;
+                 padding: 12px 18px; margin: 18px 0; border-radius: 0 6px 6px 0;
+                 font-style: italic; color: #7c2d12; }
+  .essay code { background: var(--soft); padding: 1px 6px; border-radius: 4px;
+                 font-family: 'SF Mono', Consolas, monospace; font-size: 0.92em; }
+  .essay ul li { margin-bottom: 6px; }
+  .essay .for-teachers { background: var(--soft); border: 1px solid var(--border);
+                          border-radius: 8px; padding: 20px 24px; margin-top: 36px;
+                          font-family: -apple-system, system-ui, sans-serif; font-size: 0.95rem; }
+  .essay .for-teachers h3 { font-family: -apple-system, system-ui, sans-serif;
+                              color: var(--accent); font-size: 0.9rem;
+                              text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0; }
+  /* ===== Unified transport bar (shared playback controls across stepped applets) ===== */
+  .transport { display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+               padding: 8px 10px; margin: 10px 0; border: 1px solid var(--border);
+               border-radius: 8px; background: var(--soft); }
+  .tp-btn { font: inherit; font-size: 0.9rem; cursor: pointer; border: 1px solid var(--border);
+            background: var(--card); color: var(--fg); border-radius: 6px; padding: 6px 12px; min-width: 40px; line-height: 1; }
+  .tp-btn:hover { background: var(--soft); }
+  .tp-speed { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--muted); }
+  .tp-speed input { accent-color: var(--accent); }
+  .tp-count { margin-left: auto; font-family: ui-monospace, monospace; font-size: 0.82rem;
+              color: var(--muted); font-variant-numeric: tabular-nums; min-width: 128px; text-align: right; }
+  .tp-btn:disabled { opacity: 0.45; cursor: default; }  /* reserve layout space; signal unavailable instead of vanishing */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+  /* Touch devices: comfortable tap targets without changing desktop layout. */
+  @media (pointer: coarse) {
+    button, .step-btn, .tp-btn, select, summary { min-height: 44px; }
+  }
+  /* === dark mode === */
+  body.dark-mode {
+    --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8;
+    --card: #1e293b; --border: #334155; --soft: #1e293b;
+  }
+  body.dark-mode .essay .lede { color: #cbd5e1; }
+  body.dark-mode .essay .for-teachers { background: #0f172a; }
+  /* True canvas dark mode: render fn picks bg directly. */
+  body.dark-mode .header-reset,
+  body.dark-mode .lang-switch button:not(.active),
+  body.dark-mode .header-theme,
+  body.dark-mode .control-row .step-btn:not(.primary),
+  body.dark-mode .canvas-card,
+  body.dark-mode .log-panel { background: var(--card); color: var(--fg); }
+  .header-theme { padding: 6px 10px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font-size: 1rem; line-height: 1; font-family: inherit; }
+  .header-theme:hover { background: var(--soft); }
+  .header-png { padding: 6px 10px; background: white; color: var(--fg);
+                  border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                  font-size: 0.85rem; font-family: inherit; }
+  .header-png:hover { background: var(--soft); }
+  body.dark-mode .header-png { background: var(--card); color: var(--fg); }
+  /* embed mode. Strip chrome so the applet fits cleanly in an LMS iframe. */
+  body.embed-mode .page-header,
+  body.embed-mode aside.tldr,
+  body.embed-mode article.essay,
+  body.embed-mode .jump-anchor { display: none !important; }
+  body.embed-mode .interactive { padding: 12px; border-bottom: none; }
+  /* ===== Shared a11y + contrast tokens (keyboard focus and contrast tokens) ===== */
+  button:focus-visible, a:focus-visible, select:focus-visible,
+  input:focus-visible, textarea:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+  .tldr { background: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), var(--accent); }
+  .tldr strong { color: #fff; }
+
+
+  /* Student response packet: local-only assignment packet across the applet family. */
+  .classroom-lab .lab-panel { margin-top:8px; padding:14px; background:var(--card); border:1px solid var(--border); border-radius:8px; }
+  .classroom-lab .lab-intro { margin:0 0 12px; color:var(--muted); font-size:0.88rem; line-height:1.5; }
+  .classroom-lab .lab-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+  .classroom-lab .lab-field { display:flex; flex-direction:column; gap:4px; }
+  .classroom-lab .lab-field label { font-family:-apple-system,system-ui,sans-serif; font-size:0.82rem; font-weight:700; color:var(--accent); }
+  .classroom-lab textarea { min-height:86px; resize:vertical; width:100%; border:1px solid var(--border); border-radius:6px; padding:8px; font:inherit; color:var(--fg); background:var(--bg); }
+  .classroom-lab .lab-state { margin-top:12px; padding:10px 12px; border:1px dashed var(--border); border-radius:8px; background:var(--soft); color:var(--muted); font-family:ui-monospace,monospace; font-size:0.78rem; white-space:pre-wrap; }
+  .classroom-lab .lab-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; align-items:center; }
+  .classroom-lab .lab-status { color:var(--muted); font-size:0.82rem; min-height:1.2em; }
+  @media (max-width:480px) { .classroom-lab .lab-grid { grid-template-columns:1fr; } .classroom-lab .lab-actions button { width:100%; } }
+
+  /* Scenario Gallery: visible, reusable entry points generated from the lesson-tour scenarios. */
+  .scenario-gallery-panel {
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .scenario-gallery-intro {
+    margin: 0 0 10px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .scenario-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .scenario-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--card) 88%, var(--soft));
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 100%;
+  }
+  .scenario-card h3 {
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.98rem;
+    line-height: 1.25;
+  }
+  .scenario-card p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .scenario-card .scenario-meta {
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  .scenario-card .scenario-meta strong { color: var(--fg); }
+  .scenario-card button {
+    margin-top: auto;
+    align-self: flex-start;
+  }
+  @media (max-width: 480px) {
+    .scenario-card-grid { grid-template-columns: 1fr; }
+    .scenario-card button { width: 100%; }
+  }
+
+
+
+  /* Supporting learning components. */
+  .visual-explanation-panel {
+    margin-top: 8px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .visual-explanation-intro {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .visual-flow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+  }
+  .visual-card {
+    position: relative;
+    min-height: 132px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, var(--accent)), var(--card));
+    overflow: hidden;
+  }
+  .visual-card::before {
+    content: attr(data-step);
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    color: color-mix(in srgb, var(--accent) 62%, transparent);
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+  .visual-card h4 {
+    margin: 0 28px 8px 0;
+    color: var(--accent);
+    font-size: 0.9rem;
+    line-height: 1.25;
+  }
+  .visual-card p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .visual-live {
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 8px;
+    background: var(--soft);
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.74rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .visual-live strong { color: var(--accent); font-family: -apple-system, system-ui, sans-serif; font-size: 0.72rem; }
+  .visual-watch-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .visual-snapshot, .visual-misread {
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: var(--soft);
+  }
+  .visual-snapshot strong, .visual-misread strong {
+    display: block;
+    color: var(--accent);
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 0.78rem;
+    margin-bottom: 6px;
+  }
+  .visual-snapshot pre {
+    margin: 0;
+    white-space: pre-wrap;
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+  .visual-misread p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  @media (max-width: 620px) {
+    .visual-watch-grid { grid-template-columns: 1fr; }
+  }
+
+
+
+  /* Supporting learning components. */
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 10px;
+    z-index: 10000;
+    padding: 10px 14px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 8px;
+    font-family: -apple-system, system-ui, sans-serif;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .skip-link:focus { left: 12px; }
+  :focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+  [tabindex="-1"]:focus { outline: none; }
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+  .accessibility-layer {
+    margin-top: 12px;
+  }
+  .accessibility-panel {
+    margin-top: 8px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .accessibility-intro {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .accessibility-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .accessibility-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--card) 92%, var(--soft));
+    padding: 12px;
+  }
+  .accessibility-card h3 {
+    margin: 0 0 8px;
+    color: var(--accent);
+    font-size: 0.92rem;
+  }
+  .accessibility-card p,
+  .accessibility-card li {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .accessibility-card ul {
+    margin: 0;
+    padding-left: 1.15rem;
+  }
+  .a11y-state-grid {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 6px 10px;
+    margin: 0;
+    font-size: 0.84rem;
+  }
+  .a11y-state-grid dt {
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .a11y-state-grid dd {
+    margin: 0;
+    color: var(--fg);
+    overflow-wrap: anywhere;
+  }
+  .accessibility-note {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+  @media (max-width: 620px) {
+    .accessibility-grid { grid-template-columns: 1fr; }
+    .a11y-state-grid { grid-template-columns: 1fr; }
+    .a11y-state-grid dt { margin-top: 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html:focus-within { scroll-behavior: auto !important; }
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+
+
+  /* Supporting learning components. */
+  .interactive-inner { max-width: min(1280px, 100%); }
+  .scenario-card,
+  .accessibility-card,
+  .classroom-lab .lab-panel,
+  .accessibility-panel,
+  .signature-challenge-panel {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, var(--soft)), var(--card));
+  }
+  .signature-challenge-panel {
+    margin-top: 12px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .signature-challenge-panel strong { display:block; color:var(--accent); margin-bottom:4px; }
+  .signature-challenge-panel p { margin: 6px 0 0; color: var(--muted); font-size: 0.88rem; line-height: 1.5; }
+
+
+  /* Supporting learning components. */
+  .learning-deck { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:12px; align-items:start; }
+  .learning-deck > details { margin-top:0 !important; min-width:0; }
+  .learning-deck > .scenario-gallery,
+  .learning-deck > .visual-explanation,
+  .learning-deck > .classroom-lab,
+  .learning-deck > .accessibility-layer { grid-column:1 / -1; }
+  .learning-deck > details > summary { background:var(--card) !important; }
+  .scenario-gallery-panel, .scenario-card, .accessibility-panel, .accessibility-card,
+  .classroom-lab .lab-panel, .signature-challenge-panel {
+    background:linear-gradient(180deg,color-mix(in srgb,var(--card) 90%,var(--accent)),var(--card)) !important;
+  }
+  .scenario-card { box-shadow:0 6px 18px rgba(15,23,42,.05); transition:border-color .16s, box-shadow .16s, transform .16s; }
+  .scenario-card.applied { border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 22%,transparent),0 10px 24px rgba(15,23,42,.08); transform:translateY(-1px); }
+  .scenario-card .scenario-meta:last-of-type { margin-bottom:2px; }
+  @media (max-width:900px) { .learning-deck { grid-template-columns:1fr; } .learning-deck > details { grid-column:1 !important; } }
+
+</style>
+<!-- AI_PLAYGROUNDS_COMPONENT:original/learner-interface-style -->
+<!-- AI_PLAYGROUNDS_COMPONENT:original/learning-modes-style-common -->
+<link href="../../assets/localization-r4.css" rel="stylesheet"/>
+<meta name="ai-playgrounds-version" content="1.8.1">
+
+<!-- AI_PLAYGROUNDS_COMPONENT:original/v14-version-provenance-style -->
+
+<style id="v161-localized-select-containment">@media(max-width:640px){#strategySel{width:100%!important;max-width:100%!important;min-width:0!important;}}</style></head>
+<body>
+<a class="skip-link" href="#main">Skip to applet controls</a>
+<header class="page-header">
+<div class="header-utility">
+<a class="back" data-i18n="back-link" href="../../index.html">← Back to all playgrounds</a>
+<div class="header-prefs">
+<button aria-label="Toggle dark or light theme" class="header-theme" id="themeToggle" title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
+<div class="lang-switch" title="Switch interface language">
+<button class="active" data-lang="en">EN</button>
+<button data-lang="zh">中文</button>
+</div>
+</div>
+</div>
+<div class="header-main">
+<h1 data-i18n="title">Wumpus World</h1>
+<div class="header-actions">
+<button class="header-png" id="shareLink" title="Copy a URL that re-opens this strategy + world seed in another browser.">🔗 Share</button>
+<button class="header-png" id="embedLink" title="Copy an &lt;iframe&gt; snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
+<button class="header-png" id="exportPng" title="Download the world view as a PNG.">📷 PNG</button>
+<button class="header-reset" data-i18n="reset-all" id="hardReset" title="Generate a new random world, clear the log, reset score.">↺ New world</button>
+</div>
+</div>
+</header>
+<aside class="tldr">
+<strong data-i18n="tldr-strong">The big idea</strong>
+<span data-i18n="tldr-body">A logical agent infers safe squares from percepts. Watch its knowledge map fill in next to the ground truth: the difference between "I haven't seen it" and "I've proved it's not there."</span>
+</aside>
+<section class="interactive" id="main" role="main" tabindex="-1">
+<div class="interactive-inner">
+<div class="bento">
+<div class="bento-cell cell-controls">
+<div class="control-row">
+<label data-i18n="strategy-label">Agent strategy:</label>
+<select id="strategySel" title="Pure logic = conservative baseline (stop when stuck). AIMA-inspired hybrid = simplified shoot / heuristic-risk / climb policy. Probabilistic = simplified possible-world pit-risk ranking under this applet's explicit prior assumptions.">
+<option data-i18n="strat-logic" selected="" value="logic">Pure logic (stop when stuck)</option>
+<option data-i18n="strat-hybrid" value="hybrid">AIMA-inspired hybrid (shoot + gamble + climb home)</option>
+<option data-i18n="strat-prob" value="prob">Probabilistic (lowest pit-probability)</option>
+</select>
+</div>
+<div class="control-row">
+<!-- Step / Play / Speed relocated to the unified transport bar below. -->
+<label data-i18n-title="reveal-title" style="margin-left:8px;" title="Reveal what's actually in every cell. Off by default so students see only what the agent knows.">
+<input id="revealChk" type="checkbox"/> <span data-i18n="reveal-label">Reveal hidden world (teacher view)</span>
+</label>
+<label data-i18n-title="edit-title" style="margin-left:8px;" title="Edit mode: click cells to cycle empty → pit → wumpus → gold. Use this to set up specific worksheet problems. The agent's run is reset.">
+<input id="editChk" type="checkbox"/> <span data-i18n="edit-label">Edit world (teacher mode)</span>
+</label>
+</div>
+<!-- Unified transport bar (shared playback controls; Step/Play/Speed relocated here). -->
+<div aria-label="Playback controls" class="transport" id="transport" role="group">
+<button class="tp-btn" data-i18n-title="restart-title" id="restartBtn" title="Restart the agent on the same world (keeps the layout).">↺</button>
+<button class="tp-btn" data-i18n-title="back-title" id="backBtn" title="Step one action backward through the run.">◀❘</button>
+<button aria-pressed="false" class="tp-btn" data-i18n="play-btn" data-i18n-title="play-title" id="playBtn" title="Auto-play continuously at the current speed. Click again to pause.">▶ Play / pause</button>
+<button class="tp-btn" data-i18n="step-btn" data-i18n-title="step-title" id="stepBtn" title="Run one action by the agent.">❘▶ One action</button>
+<label class="tp-speed"><span data-i18n="speed-label">Speed:</span>
+<input aria-label="Auto-play speed" data-i18n-title="speed-title" id="speedSlider" max="100" min="0" title="Higher = faster. Adjustable while running." type="range" value="40"/></label>
+<span class="tp-scrub" id="wScrubGroup" style="display:inline-flex; visibility:hidden; align-items:center; gap:8px; flex:1 1 220px; min-width:150px;">
+<span style="color:var(--accent); font-weight:600; font-size:0.82rem;" title="History">⏪</span>
+<input aria-label="Scrub through past steps" id="replaySlider" max="0" min="0" step="1" style="flex:1; min-width:110px;" type="range" value="0"/>
+<span id="replayLabel" style="display:none"></span>
+<label style="color:var(--muted); display:flex; align-items:center; gap:4px; font-size:0.8rem;"><span>step</span>
+<input aria-label="Jump to step" id="wJump" min="0" style="width:64px; padding:3px 6px; border:1px solid var(--border); border-radius:4px; font:inherit;" type="number"/></label>
+<button class="tp-btn" data-i18n="return-live" disabled="" id="replayResume" style="padding:4px 10px; font-size:0.8rem;">Jump to latest</button>
+</span>
+<span class="tp-count" data-i18n="tp-idle" id="tpCount">idle</span>
+</div>
+</div><!-- /.bento-cell controls -->
+<div class="bento-cell cell-maps">
+<div class="canvas-pair">
+<div class="canvas-card">
+<h3 data-i18n="world-h3">The world</h3>
+<canvas aria-label="The Wumpus world ground truth. Visited cells reveal their contents." height="400" id="worldCv" role="img" width="400"></canvas>
+<p class="sub" data-i18n="world-sub">What's actually there. Visited cells revealed unless teacher view is on.</p>
+</div>
+<div class="canvas-card">
+<h3 data-i18n="kb-h3">Agent's knowledge map</h3>
+<canvas aria-label="Agent's knowledge map showing inferred safe, deadly, and possibly deadly cells." height="400" id="kbCv" role="img" width="400"></canvas>
+<p class="sub" data-i18n="kb-sub">What the agent has inferred from percepts so far.</p>
+</div>
+</div>
+<div class="legend-grid">
+<div><span class="sw" style="background:var(--safe-bg); border-color:var(--safe);"></span><span data-i18n="leg-safe">Inferred safe</span></div>
+<div><span class="sw" style="background:var(--danger-bg); border-color:var(--danger);"></span><span data-i18n="leg-danger">Inferred deadly</span></div>
+<div><span class="sw" style="background:var(--maybe-bg); border-color:var(--maybe);"></span><span data-i18n="leg-maybe">Possibly deadly</span></div>
+<div><span class="sw" style="background:var(--unknown-bg); border-color:var(--unknown);"></span><span data-i18n="leg-unknown">Unknown</span></div>
+</div>
+</div><!-- /.bento-cell maps -->
+<div class="bento-cell cell-analysis">
+<div class="stats-strip">
+<div class="stat-item"><div class="label" data-i18n="stat-score">Score</div><div class="val" id="scoreV">0</div></div>
+<div class="stat-item"><div class="label" data-i18n="stat-step">Step</div><div class="val" id="stepV">0</div></div>
+<div class="stat-item"><div class="label" data-i18n="stat-gold">Carrying</div><div class="val" id="goldV">-</div></div>
+<div class="stat-item" id="arrowsStatItem"><div class="label" data-i18n="stat-arrows">Arrows</div><div class="val" id="arrowsV">1</div></div>
+<div class="stat-item"><div class="label" data-i18n="stat-status">Status</div><div class="val" id="statV">alive</div></div>
+</div>
+<!-- Itemized score breakdown. Shows where the agent's score came from
+           (per-step penalty vs. gold vs. arrow vs. death). AIMA Wumpus scoring:
+           −1 per action, −10 per arrow, +1000 grab gold, −1000 die. -->
+<div class="score-breakdown" style="margin-top:8px; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:8px; font-family:ui-monospace,monospace; font-size:0.84rem;">
+<strong data-i18n="score-bd-label" style="color:var(--accent); font-family:-apple-system,system-ui,sans-serif;">Score breakdown:</strong>
+<span id="scoreBreakdown" style="margin-left:8px;"><span style="color:var(--muted); font-style:italic;">(no actions yet)</span></span>
+</div>
+<div class="log-panel">
+<h3 data-i18n="log-h3">Reasoning log</h3>
+<div aria-label="Agent reasoning log" aria-live="polite" aria-relevant="additions" id="log" role="log"></div>
+</div>
+<!-- per-cell resolution trace. Hover/tap a cell on the knowledge map to
+           see the inference chain that classified it. -->
+<div class="why-panel" style="margin-top:12px; padding:12px 16px; background:var(--soft); border:1px solid var(--border); border-radius:8px;">
+<h3 data-i18n="why-title" style="margin:0 0 6px; font-size:0.95rem; color:var(--accent);">🔎 Why this cell?: click the knowledge map</h3>
+<p data-i18n="why-hint" style="margin:0 0 8px; color:var(--muted); font-size:0.82rem;">
+          Hover over a cell in the knowledge map (right). The agent's inference chain for that cell appears here.
+        </p>
+<div id="whyPanel" style="font-family:ui-monospace,monospace; font-size:0.85rem; min-height:1.4em; line-height:1.6;">
+<span data-i18n="why-empty" style="color:var(--muted); font-style:italic;">Click any cell on the knowledge map to see the inference chain.</span>
+</div>
+</div>
+</div><!-- /.bento-cell analysis -->
+</div><!-- /.bento -->
+<!-- Scenario gallery. Visible, reusable entry points generated from the lesson-tour scenarios. -->
+<details class="scenario-gallery" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="sg-summary">🎯 Try these scenarios first</span>
+</summary>
+<div class="scenario-gallery-panel">
+<p class="scenario-gallery-intro" data-i18n="sg-intro">Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.</p>
+<div aria-live="polite" class="scenario-card-grid" id="scenarioGalleryCards">
+<article class="scenario-card" data-scenario-index="0">
+<h3>Scenario 1: Pure logic moves only into proven-safe squares</h3>
+<p class="scenario-meta"><strong>Core question: </strong> What can a cautious agent do when the evidence does not prove a safe next move?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Use the pure-logic strategy on a fresh hidden world and step until the agent stops or exits.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict whether stopping means every remaining square is dangerous.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain the difference between lacking a proof of safety and proving danger.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="1">
+<h3>Scenario 2: The hybrid agent can shoot, gamble, or leave</h3>
+<p class="scenario-meta"><strong>Core question: </strong> When should an agent act under uncertainty instead of waiting for certainty?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Switch to the hybrid strategy and compare its actions with pure logic on the same type of world.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict which new action will appear when the safe frontier is empty.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain what extra assumption or risk rule allows the hybrid agent to continue.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="2">
+<h3>Scenario 3: Probability ranks unresolved risks</h3>
+<p class="scenario-meta"><strong>Core question: </strong> How can an agent choose among several squares that are all uncertain?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Use the probabilistic strategy and inspect the estimated pit probability for frontier cells.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict whether the agent should choose the most familiar square or the lowest estimated risk.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain how ranking uncertainty differs from proving a square safe.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="3">
+<h3>Scenario 4: Reveal the world and compare truth with belief</h3>
+<p class="scenario-meta"><strong>Core question: </strong> Why can the agent’s knowledge differ from the hidden ground truth?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Turn on the teacher view, step slowly, and compare hidden hazards with the knowledge map.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict one fact that is true but the agent cannot yet know.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Use the reasoning log to identify exactly which percept or rule is missing.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="4">
+<h3>Scenario 5: Unknown does not mean safe</h3>
+<p class="scenario-meta"><strong>Core question: </strong> What evidence is required before a square can be labeled safe?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Hide the world, use pure logic, and stop when the agent reaches an unresolved frontier.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict which neighboring percept would be needed to rule out each hazard.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain why absence of knowledge is not evidence of absence.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+</div>
+</div>
+</details>
+<!-- Signature challenge. A one-move comparison that gives this applet a memorable first task. -->
+<details class="signature-challenge" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span>✨ Featured comparison</span>
+</summary>
+<div class="signature-challenge-panel">
+<strong>Featured comparison</strong>
+<p>Add percepts until the agent knows a square is safe, then contrast that with a square it merely suspects. Logic distinguishes certainty from risk.</p>
+<p><em>Step through a board and separate guaranteed-safe moves from probability-shaped guesses.</em></p>
+</div>
+</details>
+<!-- Supporting learning component. -->
+<details class="visual-explanation" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-visual-en="🧭 Visual explanation" data-visual-zh="🧭 可视化解释镜头">🧭 Visual explanation</span>
+</summary>
+<div class="visual-explanation-panel">
+<p class="visual-explanation-intro" data-visual-intro=""></p>
+<div class="visual-flow" data-visual-flow=""></div>
+<div class="visual-watch-grid">
+<div class="visual-snapshot">
+<strong data-visual-en="Live state to watch" data-visual-zh="要观察的实时状态">Live state to watch</strong>
+<pre data-visual-snapshot="">No state captured yet. Run or adjust the applet first.</pre>
+</div>
+<div class="visual-misread">
+<strong data-visual-en="Misread to avoid" data-visual-zh="避免的误读">Misread to avoid</strong>
+<p data-visual-misread=""></p>
+</div>
+</div>
+</div>
+</details>
+<!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
+<details class="lesson-tour" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="tour-summary">📚 Lesson tour (5 steps)</span>
+</summary>
+<div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+<div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+<strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
+<strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">-</strong>
+</div>
+<p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">-</p>
+<div style="display:flex; gap:8px; align-items:center;">
+<button class="step-btn secondary" data-i18n="tour-prev" id="tourPrev">← Prev</button>
+<button class="step-btn" data-i18n="tour-apply" id="tourApply">▶ Apply this scenario</button>
+<button class="step-btn secondary" data-i18n="tour-next" id="tourNext">Next →</button>
+</div>
+</div>
+</details>
+<!-- Worksheet/lab mode. 3 questions per applet with instant check. -->
+<details class="worksheet" style="margin-top:8px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="ws-summary">📝 Worksheet (3 questions)</span>
+</summary>
+<div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem; line-height:1.5;">
+<div class="ws-q" id="ws1">
+<p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">"Pure logic" strategy. Generate several new worlds and let the agent run. Does the pure-logic agent ALWAYS retrieve the gold?</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="0"/> <span data-i18n="ws1o0">Yes: once it has the safety rules, the logic always finds a proven-safe path to the gold.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="1"/> <span data-i18n="ws1o1">No: in many worlds the gold is only reachable through cells it can't prove safe, so it climbs out empty-handed.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="2"/> <span data-i18n="ws1o2">Yes: it just keeps exploring until every cell is visited, so it never misses the gold.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws1btn">Check</button>
+<span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+<div class="ws-q" id="ws2" style="margin-top:10px;">
+<p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Switch to "AIMA-inspired hybrid" strategy. Compared to pure logic across many runs, the score variance (some win big, some die) is:</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="0"/> <span data-i18n="ws2o0">Lower: taking the arrow shot and gambling removes uncertainty, so outcomes get more consistent.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="1"/> <span data-i18n="ws2o1">Same: the scoring rules don't change, so the spread of scores is identical.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="2"/> <span data-i18n="ws2o2">Higher: gambling on uncertain cells means it sometimes wins big and sometimes dies.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws2btn">Check</button>
+<span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+<div class="ws-q" id="ws3" style="margin-top:10px;">
+<p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">What is the per-step score penalty in the AIMA-style scoring (just the magnitude, no sign)?</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="0"/> <span data-i18n="ws3o0">1: each action costs −1, which rewards finding short paths.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="1"/> <span data-i18n="ws3o1">10: that's the per-step penalty (it matches the arrow cost).</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="2"/> <span data-i18n="ws3o2">1000: every step costs the same as dying.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws3btn">Check</button>
+<span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+</div>
+</details>
+<!-- Student response packet. Local-only: students copy or print their own response packet; the site stores nothing on a server. -->
+<details class="classroom-lab quick-assign" id="quick-assign-qa-wumpus-01" data-quick-assign-id="QA-WUMPUS-01" style="margin-top:8px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-lab-en="🧪 Quick Assign · QA-WUMPUS-01 · 10–15 min" data-lab-zh="🧪 快速任务 · QA-WUMPUS-01 · 10–15 分钟">🧪 Quick Assign · QA-WUMPUS-01 · 10–15 min</span>
+</summary>
+<div class="lab-panel"><div class="quick-assign-meta" data-r4-no-translate="1" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong>QA-WUMPUS-01</strong> · Level 1 · 10–15 min<br><span>Safe, risky, or unknown?</span></div>
+<p class="lab-intro" data-lab-en="Run an agent strategy, inspect the world and knowledge map, then explain how percepts support safe action." data-lab-zh="运行智能体策略、检查世界图和知识图，然后解释感知如何支持安全行动。">Run an agent strategy, inspect the world and knowledge map, then explain how percepts support safe action.</p>
+<div class="lab-grid">
+<div class="lab-field">
+<label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
+<textarea data-lab-answer="predict" data-lab-en="Before stepping, which square or action should be safe, risky, or unknown? Why?" data-lab-zh="单步运行前，哪个格子或动作应该是安全、有风险或未知？为什么？" id="lab-predict" placeholder="Before stepping, which square or action should be safe, risky, or unknown? Why?"></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
+<textarea data-lab-answer="observe" data-lab-en="Step the agent. Record score, step count, status, and one inference from the knowledge map." data-lab-zh="单步运行智能体。记录分数、步数、状态和知识图中的一个推理。" id="lab-observe" placeholder="Step the agent. Record score, step count, status, and one inference from the knowledge map."></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
+<textarea data-lab-answer="explain" data-lab-en="How did the percepts justify the agent's next action or avoid a dangerous square?" data-lab-zh="感知如何证明智能体的下一步行动合理，或帮助它避开危险格？" id="lab-explain" placeholder="How did the percepts justify the agent's next action or avoid a dangerous square?"></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
+<textarea data-lab-answer="transfer" data-lab-en="Where else would an AI agent need to act under partial information?" data-lab-zh="还有哪些情境中 AI 智能体需要在部分信息下行动？" id="lab-transfer" placeholder="Where else would an AI agent need to act under partial information?"></textarea>
+</div>
+</div>
+<div aria-live="polite" class="lab-state" data-lab-state="">State snapshot appears here.</div>
+<div class="lab-actions">
+<button class="step-btn" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态" type="button">↻ Refresh state</button>
+<button class="step-btn" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包" type="button">📋 Copy packet</button>
+<button class="step-btn secondary" data-lab-action="print" data-lab-en="🖨 Print packet" data-lab-zh="🖨 打印实验包" type="button">🖨 Print packet</button>
+<button class="step-btn secondary" data-lab-action="clear" data-lab-en="Clear local draft" data-lab-zh="清除本地草稿" type="button">Clear local draft</button>
+<span aria-live="polite" class="lab-status"></span>
+</div>
+</div>
+</details>
+<!-- Supporting learning component. -->
+<details class="accessibility-layer" open="">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-a11y-en="♿ Text and keyboard support" data-a11y-zh="♿ 无障碍和文本状态层">♿ Text and keyboard support</span>
+</summary>
+<div aria-labelledby="a11yLayerTitle" class="accessibility-panel" role="region">
+<h2 class="sr-only" data-a11y-title="" id="a11yLayerTitle">Text and keyboard support</h2>
+<p class="accessibility-intro" data-a11y-intro=""></p>
+<div class="accessibility-grid">
+<section aria-labelledby="a11yKeyboardTitle" class="accessibility-card">
+<h3 data-a11y-keyboard-title="" id="a11yKeyboardTitle">Keyboard path</h3>
+<ul>
+<li data-a11y-keyboard-1="">Use Tab and Shift+Tab to move through controls.</li>
+<li data-a11y-keyboard-2="">Use Enter or Space on buttons, and arrow keys on sliders or select controls.</li>
+<li data-a11y-keyboard-3="">The visual region is focusable and described by the state summary below.</li>
+</ul>
+</section>
+<section aria-labelledby="a11yStateTitle" class="accessibility-card">
+<h3 data-a11y-state-title="" id="a11yStateTitle">Text state summary</h3>
+<dl class="a11y-state-grid" data-a11y-state-grid="" id="a11yStateSummary"></dl>
+</section>
+<section aria-labelledby="a11yMotionTitle" class="accessibility-card">
+<h3 data-a11y-motion-title="" id="a11yMotionTitle">Reduced motion and non-visual support</h3>
+<p data-a11y-motion-copy="">Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.</p>
+</section>
+</div>
+<p class="accessibility-note" data-a11y-note="">Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.</p>
+<div aria-atomic="true" aria-live="polite" class="sr-only" id="a11yLiveRegion" role="status"></div>
+</div>
+</details>
+<div class="jump-anchor"><a class="jump-link" data-i18n="jump-link" href="#essay">↓ Read the explanation</a></div>
+</div>
+</section>
+<article class="essay" id="essay">
+<section data-essay-lang="en">
+<p class="lede">
+    Wumpus World is a compact environment for studying the difference between hidden truth, evidence,
+    logical consequence, and action under uncertainty. The agent senses only its current square. A
+    breeze indicates at least one adjacent pit, a stench indicates an adjacent Wumpus, and glitter
+    indicates gold in the current square.
+  </p>
+<h2>The percept-knowledge-action loop</h2>
+<p>
+    After each percept, the agent adds facts to a knowledge base and derives consequences. No breeze
+    rules out pits in adjacent cells. No stench rules out the Wumpus in adjacent cells. If both hazards
+    have been ruled out for a cell, the cell is proven safe. Positive percepts create disjunctive
+    constraints: a breeze says at least one adjacent cell has a pit, not which one.
+  </p>
+<h2>True, false, and unknown</h2>
+<p>
+    A fact can be true in the hidden world without being derivable from the agent's current knowledge.
+    An unknown square is therefore not the same as a dangerous square, and failure to prove danger is
+    not proof of safety. This is open-world reasoning: absence of a fact from the knowledge base is not
+    automatically treated as evidence that the fact is false.
+  </p>
+<div class="aha">
+    Logical entailment is stronger than plausibility. A conclusion is entailed only when it is true in
+    every possible world consistent with the knowledge base.
+  </div>
+<h2>Three action strategies</h2>
+<ul>
+<li><strong>Pure logic:</strong> moves only through squares proven safe. It may stop even when a
+      safe route exists, because the available evidence does not entail that route's safety.</li>
+<li><strong>Hybrid:</strong> uses logical conclusions first, then may shoot, leave, or take a
+      heuristic risk when no safe frontier remains.</li>
+<li><strong>Probabilistic:</strong> enumerates frontier pit configurations consistent with the current breeze evidence, weights them using the applet's explicit per-cell prior, and ranks unresolved frontier cells by the resulting estimated pit probability. Lowest estimated
+      risk is still not the same as proven safety.</li>
+</ul>
+<h2>How the simplified inference works</h2>
+<p>
+    The local rule engine repeatedly performs hazard elimination, unique-candidate inference, and safe
+    consolidation. These rules are sound for the patterns they encode but weaker than complete
+    propositional inference. Some conclusions require combining several constraints through resolution,
+    model checking, or a SAT solver. The teacher view reveals the hidden world only for comparison; it
+    is not information the agent normally receives.
+  </p>
+<h2>What this model leaves out</h2>
+<p>
+    Full Wumpus agents can represent orientation, forward motion, turning, shooting, bumps, screams,
+    action costs, and utility-sensitive planning. A probabilistic agent needs a prior over hazard layouts and a decision rule that balances survival probability against reward. This applet uses a simplified independent per-cell pit prior for its frontier calculation; changing that prior would change the estimates. This applet separates
+    those layers so learners can see where deduction ends and additional risk assumptions begin.
+  </p>
+<div class="for-teachers">
+<h3>For teachers</h3>
+<p><strong>Curriculum:</strong> Percepts, knowledge bases, entailment, possible worlds,
+      sound inference, unknown versus false, logical agents, probability under uncertainty, and action selection.</p>
+<p><strong>Pre-exploration prompts:</strong></p>
+<ul>
+<li>What does one breeze establish, and what does it leave unresolved?</li>
+<li>Can a square be safe in reality while the agent cannot prove it safe?</li>
+<li>What additional assumption is needed to choose among several unknown squares?</li>
+</ul>
+<p><strong>Post-exploration prompts:</strong></p>
+<ul>
+<li>Run pure logic until it stops. Does stopping establish that every frontier cell is dangerous?</li>
+<li>Reveal the world and identify one true fact that the agent cannot yet derive.</li>
+<li>Compare hybrid and probabilistic risk choices. Which rule ranks or selects uncertainty?</li>
+<li>Find a conclusion the local rules miss. What combination of constraints would a complete solver need?</li>
+</ul>
+<p><strong>Misconceptions to test:</strong> the agent sees the board; unknown means dangerous;
+      missing knowledge means false; pure logic deliberately gambles; a probability estimate proves safety.</p>
+</div>
+</section>
+<section data-essay-lang="zh" hidden="" lang="zh">
+<p class="lede">
+    Wumpus 世界是研究隐藏真相、证据、逻辑后果和不确定行动之间区别的紧凑环境。智能体只能感知当前格子。微风表示至少一个相邻格子有陷阱，臭味表示相邻处有 Wumpus，闪光表示当前格子有金子。
+  </p>
+<h2>感知、知识与行动循环</h2>
+<p>
+    每次获得感知后，智能体把事实加入知识库并推出结论。没有微风会排除相邻格子的陷阱，没有臭味会排除相邻格子的 Wumpus。如果某格子的两种危险都被排除，该格子就被证明安全。正向感知产生析取约束：有微风表示至少一个相邻格子有陷阱，却不说明具体是哪一个。
+  </p>
+<h2>真、假与未知</h2>
+<p>
+    一个事实可能在隐藏世界中为真，却无法从智能体当前知识中推出。因此，未知格子不等于危险格子，无法证明危险也不等于证明安全。这属于开放世界推理：知识库中没有某个事实，不会被自动视为该事实为假的证据。
+  </p>
+<div class="aha">
+    逻辑蕴含比可能性更强。只有当某结论在所有与知识库一致的可能世界中都为真时，它才被知识库蕴含。
+  </div>
+<h2>三种行动策略</h2>
+<ul>
+<li><strong>纯逻辑：</strong>只进入已证明安全的格子。即使真实世界中存在安全路线，如果当前证据不能蕴含其安全性，智能体仍可能停止。</li>
+<li><strong>混合策略：</strong>先使用逻辑结论，在没有安全前沿时可能射击、离开或依据启发式承担风险。</li>
+<li><strong>概率策略：</strong>枚举与当前约束一致的危险配置，并按估计陷阱概率对未解决前沿格子排序。风险最低仍不等于已证明安全。</li>
+</ul>
+<h2>简化推理如何运行</h2>
+<p>
+    局部规则引擎会反复执行危险排除、唯一候选推理和安全合并。这些规则对自身编码的模式是可靠的，但弱于完整命题推理。有些结论需要通过归结、模型检查或 SAT 求解器组合多个约束。教师视图只用于比较而揭示隐藏世界，并不是智能体通常能够获得的信息。
+  </p>
+<h2>这个模型省略了什么</h2>
+<p>
+    完整 Wumpus 智能体还可以表示方向、前进、转向、射箭、撞墙、尖叫、动作成本和考虑效用的规划。概率智能体还需要危险布局的先验分布，以及在生存概率和奖励之间权衡的决策规则。本工具把这些层分开，让学习者看到演绎推理在哪里结束，额外风险假设从哪里开始。
+  </p>
+<div class="for-teachers">
+<h3>教师指导</h3>
+<p><strong>课程目标：</strong>感知、知识库、蕴含、可能世界、可靠推理、未知与假的区别、逻辑智能体、不确定性概率和行动选择。</p>
+<p><strong>探索前问题：</strong></p>
+<ul>
+<li>一次微风能确定什么，又留下什么未解决？</li>
+<li>一个格子能否在真实世界中安全，而智能体无法证明它安全？</li>
+<li>在多个未知格子之间选择，需要增加什么假设？</li>
+</ul>
+<p><strong>探索后问题：</strong></p>
+<ul>
+<li>运行纯逻辑直到停止。停止是否说明每个前沿格子都危险？</li>
+<li>揭示世界，找出一个真实但智能体尚无法推出的事实。</li>
+<li>比较混合策略和概率策略的风险选择。哪条规则负责排列或选择不确定性？</li>
+<li>找出局部规则遗漏的一个结论。完整求解器需要组合哪些约束？</li>
+</ul>
+<p><strong>需要检验的误解：</strong>智能体能看到整个棋盘；未知等于危险；知识缺失等于假；纯逻辑会主动赌博；概率估计能够证明安全。</p>
+</div>
+</section>
+</article>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+
+  // ===== i18n strings =====
+  const STRINGS = {
+    en: {
+      'title': 'Wumpus World', 'back-link': '← Back to all playgrounds',
+      'footer-top': '↑ Back to top', 'footer-course': 'Made for the Introduction to AI course at Haidian Kaiwen Academy.', 'footer-portfolio': 'Portfolio', 'footer-project': 'AI Playgrounds', 'footer-source': 'Source', 'footer-issue': 'Report an issue',
+      'reset-all': '↺ New world', 'strategy-label': 'Agent strategy:',
+      'step-btn': '❘▶ One action', 'play-btn': '▶ Play / pause',
+      'restart-title': 'Restart the agent on the same world (keeps the layout).',
+      'back-title': 'Step one action backward through the run.',
+      'tp-idle': 'idle',
+      'speed-label': 'Speed:',
+      'step-title': 'Run one action by the agent.',
+      'play-title': 'Auto-play continuously at the current speed. Click again to pause.',
+      'speed-title': 'Higher = faster. Adjustable while running.',
+      'tldr-strong': 'The big idea',
+      'tldr-body': 'A logical agent infers safe squares from percepts. Watch its knowledge map fill in next to the ground truth: the difference between "I haven\'t seen it" and "I\'ve proved it\'s not there."',
+      'strat-logic': 'Pure logic (stop when stuck)',
+      'strat-hybrid': 'AIMA-inspired hybrid (shoot + gamble + climb home)',
+      'strat-prob': 'Probabilistic (lowest pit-probability)',
+      'reveal-label': 'Reveal hidden world (teacher view)',
+      'reveal-title': "Reveal what's actually in every cell. Off by default so students see only what the agent knows.",
+      'edit-label': 'Edit world (teacher mode)',
+      'edit-title': 'Edit mode: click cells to cycle empty → pit → wumpus → gold. Use this to set up specific worksheet problems. The agent\'s run is reset.',
+      'world-h3': 'The world',
+      'world-sub': "What's actually there. Visited cells revealed unless teacher view is on.",
+      'kb-h3': "Agent's knowledge map",
+      'kb-sub': 'What the agent has inferred from percepts so far.',
+      'leg-safe': 'Inferred safe', 'leg-danger': 'Inferred deadly',
+      'leg-maybe': 'Possibly deadly', 'leg-unknown': 'Unknown',
+      'stat-score': 'Score', 'stat-step': 'Step', 'stat-gold': 'Carrying',
+      'stat-arrows': 'Arrows', 'stat-status': 'Status',
+      'log-h3': 'Reasoning log',
+      'why-h3': '🔎 Why does the agent think this?',
+      'why-title': '🔎 Why this cell?: click the knowledge map',
+      'why-hint': "Hover over a cell in the knowledge map (right). The agent's inference chain for that cell appears here.",
+      'why-empty': 'Click any cell on the knowledge map to see the inference chain.',
+      'why-cell': 'Cell',
+      'why-none': 'No inference yet. Visit adjacent cells to gather percepts.',
+      'why-no-proof': 'No proof yet: the agent hasn\'t gathered enough percepts to decide. (Unknown ≠ safe.)',
+      's-safe': '✓ safe', 's-pit': '☠ pit', 's-wumpus': '👹 wumpus',
+      's-no-pit': 'not a pit', 's-no-wum': 'not the wumpus', 's-unknown': 'unknown',
+      'jump-link': '↓ Read the explanation',
+      'tour-summary': '📚 Lesson tour (5 steps)',
+      'tour-step': 'Step',
+      'tour-prev': '← Prev', 'tour-next': 'Next →', 'tour-apply': '▶ Apply this scenario',
+      'sg-summary': '🎯 Try these scenarios first',
+      'sg-intro': 'Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.',
+      'sg-card-prefix': 'Scenario',
+      'sg-concept-label': 'Concept',
+      'sg-observe-label': 'What to watch',
+      'sg-misconception-label': 'Predict before applying',
+      'sg-misconception-text': 'Which visible result should change most, and why? Commit to an answer before applying.',
+      'sg-teacher-label': 'Teacher use',
+      'sg-teacher-text': 'Use as a 2–3 minute predict → run → explain prompt.',
+      'sg-apply': 'Apply and compare',
+      'ws-summary': '📝 Worksheet (3 questions)',
+      'ws-check': 'Check',
+      'ws-pick': 'Pick an answer first.',
+      // worksheet question prompts (data-i18n spans) ---
+      'ws1q': '"Pure logic" strategy. Generate several new worlds and let the agent run. Does the pure-logic agent ALWAYS retrieve the gold?',
+      'ws2q': 'Switch to "AIMA-inspired hybrid" strategy. Compared to pure logic across many runs, the score variance (some win big, some die) is:',
+      'ws3q': 'What is the per-step score penalty in the AIMA-style scoring (just the magnitude, no sign)?',
+      // --- MCQ option text (data-i18n spans) ---
+      'ws1o0': 'Yes: once it has the safety rules, the logic always finds a proven-safe path to the gold.',
+      'ws1o1': "No: in many worlds the gold is only reachable through cells it can't prove safe, so it climbs out empty-handed.",
+      'ws1o2': 'Yes: it just keeps exploring until every cell is visited, so it never misses the gold.',
+      'ws2o0': 'Lower: taking the arrow shot and gambling removes uncertainty, so outcomes get more consistent.',
+      'ws2o1': "Same: the scoring rules don't change, so the spread of scores is identical.",
+      'ws2o2': 'Higher: gambling on uncertain cells means it sometimes wins big and sometimes dies.',
+      'ws3o0': '1: each action costs −1, which rewards finding short paths.',
+      'ws3o1': '10: that\'s the per-step penalty (it matches the arrow cost).',
+      'ws3o2': '1000: every step costs the same as dying.',
+      // lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
+      'tour0name': 'Pure logic: safe inference only',
+      'tour0desc': "Default 'Pure logic' strategy on a fresh world. The agent only enters cells it can PROVE are safe from percepts (breeze/stench). When uncertain, it stops. Often climbs out without gold: that's the point.",
+      'tour1name': 'AIMA-inspired hybrid: shoot + gamble + climb out',
+      'tour1desc': "Switch to 'AIMA-inspired hybrid'. This agent uses the arrow on inferred Wumpus locations and, when no proven-safe frontier remains, may take a heuristic risk on an unresolved admissible cell. This heuristic fallback is not a probability-ranked safety guarantee.",
+      'tour2name': 'Probabilistic: rank by pit-probability',
+      'tour2desc': "The AIMA-inspired probabilistic strategy estimates pit risk over frontier cells under this applet's stated prior assumptions and chooses the lowest estimated risk. The hybrid uses a simpler heuristic fallback; neither rule proves the selected cell safe.",
+      'tour3name': 'Reveal world + read the reasoning log',
+      'tour3desc': "Turn ON 'Reveal hidden world' (teacher view). Now you can see the hidden ground truth versus what this simplified inference system has derived. Step slowly and watch the reasoning log fill in: 'Breeze at (1,2), so a pit is in {(1,3), (2,2)}'.",
+      // worksheet answer-feedback (ws{n}ok / ws{n}no) ---
+      'ws1ok': "Correct. Pure logic only moves to cells it can PROVE are safe from percepts. Many worlds force the agent to gamble (the gold is reachable only through unprovably-safe cells). The pure-logic agent climbs out empty-handed in those worlds: that's the limitation.",
+      'ws1no': "Try 'no'. Sometimes the gold is only reachable through cells the agent can't prove safe. Pure logic climbs out empty-handed in those worlds.",
+      'ws2ok': 'Correct. The hybrid agent takes risks: gambles on uncertain cells, fires the arrow. Sometimes it scores +1000 (gold + climb out); sometimes it dies (−1000). The wider score range comes from taking risks. Whether expected value is higher depends on the assumed distribution of worlds and the utility or scoring model.',
+      'ws2no': "Try 'higher'. Hybrid takes risks: sometimes scores big, sometimes dies. Pure logic is conservative and often returns without gold. Its expected value cannot be ranked without a distribution over worlds and an explicit utility model.",
+      'ws3ok': 'Correct. AIMA Wumpus scoring: −1 per action (so 1 is the magnitude), +1000 for grabbing gold, −1000 for dying. The per-step penalty incentivizes finding short paths.',
+      'ws3no': 'Try 1. AIMA standard: −1 per step, +1000 for gold, −1000 for death.',
+      'score-bd-label': 'Score breakdown:',
+      'replay-label': '⏪ Replay',
+      'return-live': 'Jump to latest',
+    },
+    zh: {
+      'title': '伍姆普斯世界可视化', 'back-link': '← 返回所有演示',
+      'footer-top': '↑ 返回顶部', 'footer-course': '为海淀凯文学校《人工智能导论》课程制作。', 'footer-portfolio': '作品集', 'footer-project': 'AI Playgrounds', 'footer-source': '源代码', 'footer-issue': '反馈问题',
+      'reset-all': '↺ 新世界', 'strategy-label': '智能体策略:',
+      'step-btn': '❘▶ 单步', 'play-btn': '▶ 播放/暂停',
+      'restart-title': '在同一个世界中重启智能体(保留布局)。',
+      'back-title': '在运行中后退一步。',
+      'tp-idle': '空闲',
+      'speed-label': '速度:',
+      'step-title': '让智能体执行一步动作。',
+      'play-title': '按当前速度自动连续播放。再点一次暂停。',
+      'speed-title': '越高越快。播放过程中可调整。',
+      'tldr-strong': '核心思想',
+      'tldr-body': '逻辑智能体从感知信息推断哪些格子是安全的。观察它的知识地图与真实世界并排成长--"我没看到"与"我已证明它不在那里"的差别就在这里。',
+      'strat-logic': '纯逻辑(卡住即停)',
+      'strat-hybrid': 'AIMA 启发的混合(射箭 + 冒险 + 爬出)',
+      'strat-prob': '概率(选陷阱概率最低的)',
+      'reveal-label': '显示隐藏的真实世界(教师视角)',
+      'reveal-title': '显示每个格子的真实内容。默认关闭,学生只能看到智能体已知的部分。',
+      'edit-label': '编辑世界(教师模式)',
+      'edit-title': '编辑模式:点击格子循环切换 空 → 陷阱 → 吴普士 → 金子。用来搭建特定的习题情境。点击后智能体的当前回合会被重置。',
+      'world-h3': '世界',
+      'world-sub': '真实的内容。除非开启教师视角,否则只显示已访问的格子。',
+      'kb-h3': '智能体的知识地图',
+      'kb-sub': '智能体到目前为止从感知中推断出的内容。',
+      'leg-safe': '已推断为安全', 'leg-danger': '已推断为致命',
+      'leg-maybe': '可能致命', 'leg-unknown': '未知',
+      'stat-score': '得分', 'stat-step': '步数', 'stat-gold': '携带物',
+      'stat-arrows': '箭', 'stat-status': '状态',
+      'log-h3': '推理日志',
+      'why-h3': '🔎 智能体为什么这样判断?',
+      'why-title': '🔎 为什么是这个格子?--点击知识地图',
+      'why-hint': '将鼠标悬停在右侧知识地图上的格子。该格子的推理链会显示在这里。',
+      'why-empty': '点击知识地图上的任意格子,查看推理链。',
+      'why-cell': '格子',
+      'why-none': '尚无推理。访问相邻格子以收集感知信息。',
+      'why-no-proof': '尚无证明--智能体还没收集到足够的感知来判断。(未知 ≠ 安全。)',
+      's-safe': '✓ 安全', 's-pit': '☠ 陷阱', 's-wumpus': '👹 吴普士',
+      's-no-pit': '不是陷阱', 's-no-wum': '不是吴普士', 's-unknown': '未知',
+      'jump-link': '↓ 阅读说明',
+      'tour-summary': '📚 课程导览(5 步)',
+      'tour-step': '步骤',
+      'tour-prev': '← 上一步', 'tour-next': '下一步 →', 'tour-apply': '▶ 应用此场景',
+      'sg-summary': '🎯 先试这些场景',
+      'sg-intro': '先选择一个场景并预测结果,再应用它,然后把运行结果与你的预测进行比较。',
+      'sg-card-prefix': '场景',
+      'sg-concept-label': '概念',
+      'sg-observe-label': '预期观察',
+      'sg-misconception-label': '误区检查',
+      'sg-misconception-text': '初学者的第一反应可能会漏掉或过度简化什么?',
+      'sg-teacher-label': '教师用法',
+      'sg-teacher-text': '用作 2–3 分钟的“预测 → 运行 → 解释”活动。',
+      'sg-apply': '应用场景',
+      'ws-summary': '📝 练习题(3 题)',
+      'ws-check': '核对',
+      'ws-pick': '请先选择一个答案。',
+      // 练习题题干(data-i18n span)---
+      'ws1q': '"纯逻辑"策略。生成若干个新世界并让智能体运行。纯逻辑智能体总能取回金子吗?',
+      'ws2q': '切换到"AIMA 启发的混合"策略。与纯逻辑相比,多次运行下来,得分的方差(有的赢得多、有的死掉)是:',
+      'ws3q': '在 AIMA 式计分中,每走一步的扣分是多少(只填数值大小,不带符号)?',
+      // --- MCQ 选项文本(data-i18n span)---
+      'ws1o0': '能--只要掌握了安全规则,逻辑总能找到一条已证明安全的路径取到金子。',
+      'ws1o1': '不能--在许多世界里,金子只能经由无法证明安全的方格到达,因此它只能空手爬出。',
+      'ws1o2': '能--它会一直探索到访问完每个方格,所以绝不会错过金子。',
+      'ws2o0': '更低--射箭并冒险消除了不确定性,因此结果更稳定一致。',
+      'ws2o1': '相同--计分规则没有改变,所以得分的分布完全一样。',
+      'ws2o2': '更高--在不确定的方格上冒险意味着它有时赢得多、有时送命。',
+      'ws3o0': '1--每个动作扣 −1,这促使智能体寻找更短的路径。',
+      'ws3o1': '10--这是每步的扣分(与射箭的代价相同)。',
+      'ws3o2': '1000--每走一步的代价都和死亡一样。',
+      // 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
+      'tour0name': '纯逻辑:只做安全推理',
+      'tour0desc': '在全新世界上使用默认的"纯逻辑"策略。智能体只进入能从感知(微风/臭味)中证明为安全的方格。当无法确定时,它就停下。常常空手爬出--这正是要点。',
+      'tour1name': 'AIMA 启发的混合:射箭 + 冒险 + 爬出',
+      'tour1desc': '切换到“AIMA 启发的混合”。这个智能体会朝推断出的 Wumpus 位置射箭；当没有已证明安全的前沿时，它可能按启发式规则选择一个尚未解决但可选的方格冒险。这个回退规则不是按概率排序的安全保证。',
+      'tour2name': '概率:按陷阱概率排序',
+      'tour2desc': 'AIMA 启发的概率策略在本工具明确的先验假设下估计前沿方格的陷阱风险，并选择估计风险最低者。混合策略使用更简单的启发式回退；两者都不能证明所选方格安全。',
+      'tour3name': '显示真实世界 + 阅读推理日志',
+      'tour3desc': '打开“显示隐藏的真实世界”(教师视角)。现在你能比较隐藏真相与这个简化推理系统目前实际推出的结论。慢慢单步,看推理日志逐步填充:"在 (1,2) 感到微风,所以陷阱位于 {(1,3), (2,2)}"。',
+      // 练习题答案反馈(ws{n}ok / ws{n}no)---
+      'ws1ok': '正确。纯逻辑只移动到能从感知中证明为安全的方格。许多世界会迫使智能体冒险(金子只能经由无法证明安全的方格到达)。在那些世界里纯逻辑智能体空手爬出--这就是它的局限。',
+      'ws1no': '试试"no"。有时金子只能经由智能体无法证明安全的方格到达。在那些世界里纯逻辑会空手爬出。',
+      'ws2ok': '正确。混合智能体会冒险--在不确定的方格上赌一把、射出箭。有时得 +1000(取金 + 爬出);有时送命(−1000)。更宽的得分范围来自冒险;期望收益是否更高取决于世界分布以及采用的效用或计分模型。',
+      'ws2no': '试试"higher"。混合策略会冒险:有时得分很高,有时送命。纯逻辑较保守并常常空手返回;若没有世界分布和明确的效用模型,不能直接比较两者的期望收益。',
+      'ws3ok': '正确。AIMA Wumpus 计分:每个动作 −1(所以数值大小是 1),抓到金子 +1000,死亡 −1000。每步扣分促使智能体寻找更短的路径。',
+      'ws3no': '试试 1。AIMA 标准:每步 −1,取金 +1000,死亡 −1000。',
+      'score-bd-label': '得分分解:',
+      'replay-label': '⏪ 回放',
+      'return-live': '跳到最新',
+    },
+  };
+  function setLang(lang) {
+    if (!STRINGS[lang]) lang = 'en';
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.dataset.i18n;
+      if (STRINGS[lang][k]) el.textContent = STRINGS[lang][k];
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const k = el.dataset.i18nTitle;
+      if (STRINGS[lang][k]) el.title = STRINGS[lang][k];
+    });
+    document.querySelectorAll('.lang-switch button').forEach(b =>
+      b.classList.toggle('active', b.dataset.lang === lang));
+    try { localStorage.setItem('ai-playgrounds-lang', lang); localStorage.setItem('lang', lang); } catch (_) {}
+  }
+  document.querySelectorAll('.lang-switch button').forEach(b =>
+    b.addEventListener('click', () => {
+      setLang(b.dataset.lang);
+      // re-render the tour in the new language. Safe here: this click handler
+      // only runs post-init, after LESSON_TOUR (a late `const`) is initialized, so
+      // there is no temporal-dead-zone risk (unlike calling it from inside setLang).
+      try { if (typeof renderTour === 'function') renderTour(); } catch (_) {}
+      try { if (typeof renderScenarioGallery === 'function') renderScenarioGallery(); } catch (_) {}
+    }));
+  let initialLang = 'en';
+  try { initialLang = new URLSearchParams(location.search).get('lang') || localStorage.getItem('ai-playgrounds-lang') || localStorage.getItem('lang') || 'en'; } catch (_) {}
+  setLang(initialLang);
+  // worksheet/feedback i18n helper: returns the localized string for `key`,
+  // falling back to the supplied English `en` when the key is missing in a language.
+  function wsMsg(key, en) {
+    const lang = document.documentElement.lang || 'en';
+    return (STRINGS[lang] && STRINGS[lang][key]) || en;
+  }
+
+  function setTheme(t) {
+    document.body.classList.toggle('dark-mode', t === 'dark');
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+    try { localStorage.setItem('theme', t); } catch (_) {}
+  }
+  let initialTheme = 'light';
+  try {
+    initialTheme = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  } catch (_) {}
+  setTheme(initialTheme);
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    setTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark');
+    if (typeof render === 'function') render();
+  });
+
+  // For-teachers is hidden by default (cognitive-load floor). User toggles persist.
+  // `?teacher=1` opens on load. `?teacher=0` hides completely (no toggle, for projection).
+  try {
+    const tp = new URLSearchParams(location.search).get('teacher');
+    if (tp === '0') {
+      document.querySelectorAll('.for-teachers').forEach(el => el.style.display = 'none');
+    } else {
+      const style = document.createElement('style');
+      style.textContent = '.for-teachers-expander{margin-top:36px}.for-teachers-expander>summary{cursor:pointer;padding:12px 16px;background:var(--soft);border:1px solid var(--border);border-radius:8px;font-family:-apple-system,system-ui,sans-serif;font-size:0.9rem;color:var(--accent);font-weight:600;list-style:none;user-select:none}.for-teachers-expander>summary::-webkit-details-marker{display:none}.for-teachers-expander[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius:0}.for-teachers-expander>.for-teachers{margin-top:0;border-top:0;border-top-left-radius:0;border-top-right-radius:0}';
+      document.head.appendChild(style);
+      document.querySelectorAll('.for-teachers').forEach(div => {
+        const details = document.createElement('details');
+        details.className = 'for-teachers-expander';
+        const summary = document.createElement('summary');
+        summary.textContent = '▸ Show teacher notes (discussion prompts + curriculum)';
+        div.parentNode.insertBefore(details, div);
+        details.appendChild(summary);
+        details.appendChild(div);
+      });
+      const saved = (() => { try { return localStorage.getItem('teacher-notes-open'); } catch (_) { return null; } })();
+      const shouldOpen = tp === '1' || saved === '1';
+      document.querySelectorAll('details.for-teachers-expander').forEach(d => {
+        d.open = shouldOpen;
+        d.addEventListener('toggle', () => {
+          try { localStorage.setItem('teacher-notes-open', d.open ? '1' : '0'); } catch (_) {}
+        });
+      });
+    }
+  } catch (_) {}
+  document.getElementById('exportPng').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'wumpus.png';
+    link.href = document.getElementById('worldCv').toDataURL('image/png');
+    link.click();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.code === 'Space' &&
+        e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' &&
+        e.target.tagName !== 'SELECT') {
+      e.preventDefault();
+      document.getElementById('stepBtn').click();
+    }
+  });
+
+  const SIZE = 4;
+  const CELL = 100;
+  // HiDPI / Retina scaling: render at devicePixelRatio so text and shapes are crisp.
+  function setupCanvas(cv) {
+    const dpr = window.devicePixelRatio || 1;
+    const logicalSize = SIZE * CELL;
+    cv.width = logicalSize * dpr;
+    cv.height = logicalSize * dpr;
+    // No inline cv.style.width/height: let the responsive CSS (#worldCv,#kbCv:
+    // width:100%; max-width; aspect-ratio) size the display so the maps scale with
+    // their column. The dpr-boosted internal buffer downscales crisply.
+    const ctx = cv.getContext('2d');
+    ctx.scale(dpr, dpr);
+    return ctx;
+  }
+  const worldCv = $('worldCv');
+  const kbCv = $('kbCv');
+  const wctx = setupCanvas(worldCv);
+  const kctx = setupCanvas(kbCv);
+
+  const DIRS = [[0,1],[1,0],[0,-1],[-1,0]];
+  const DIR_NAME = ['right', 'up', 'left', 'down'];
+
+  let world = null;
+  let agent = null;
+  let kb = null;
+  let log = [];
+  let score = 0;
+  let stepCount = 0;
+  let status = 'alive';
+  // itemized score breakdown. Tracks each contribution separately so
+  // students can see WHY the score is what it is, not just the final number.
+  let scoreItems = { moves: 0, arrows: 0, gold: 0, deaths: 0 };
+  // replay snapshots. Each entry = deep-cloned (agent, kb, score, status,
+  // scoreItems, log-length, world.visited, world.percepts) at the END of one
+  // actOne() call. Drag the scrubber to inspect any past step.
+  let snapshots = [];
+  const SNAPSHOT_CAP = 500; // hard cap; older snapshots are dropped FIFO
+  let replayMode = false;
+  let liveSnapshot = null;   // stash of live state while scrubbing
+
+  function inBounds(r, c) { return r >= 0 && r < SIZE && c >= 0 && c < SIZE; }
+  function key(r, c) { return r * SIZE + c; }
+
+  function generateWorld() {
+    world = { pits: new Set(), wumpus: null, gold: null,
+               visited: new Set([key(0, 0)]), percepts: new Map() };
+    const occupied = new Set([key(0, 0)]);
+    const pickFree = () => {
+      while (true) {
+        const r = Math.floor(Math.random() * SIZE);
+        const c = Math.floor(Math.random() * SIZE);
+        const k = key(r, c);
+        if (!occupied.has(k)) { occupied.add(k); return [r, c]; }
+      }
+    };
+    for (let i = 0; i < 3; i++) {
+      const [r, c] = pickFree();
+      world.pits.add(key(r, c));
+    }
+    const [wr, wc] = pickFree(); world.wumpus = {r: wr, c: wc, alive: true};
+    const [gr, gc] = pickFree(); world.gold = {r: gr, c: gc, taken: false};
+
+    agent = {r: 0, c: 0, dir: 0, alive: true, hasGold: false, arrows: 1, climbedOut: false};
+    kb = {
+      pit: new Map(), wumpus: new Map(), safe: new Map(),
+      visited: new Set([key(0, 0)]), wumpusAlive: true,
+      reason: new Map(),
+    };
+    for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) {
+      kb.pit.set(key(r, c), 'unknown');
+      kb.wumpus.set(key(r, c), 'unknown');
+      kb.safe.set(key(r, c), 'unknown');
+    }
+    kb.pit.set(key(0, 0), 'no');
+    kb.wumpus.set(key(0, 0), 'no');
+    kb.safe.set(key(0, 0), 'yes');
+    kb.reason.set(key(0, 0), ['(1,1) is the start cell: known safe by definition.']);
+
+    score = 0; stepCount = 0; status = 'alive'; log = [];
+    scoreItems = { moves: 0, arrows: 0, gold: 0, deaths: 0 };
+    // reset replay state on new world.
+    snapshots = []; replayMode = false; liveSnapshot = null;
+    if ($('wScrubGroup')) $('wScrubGroup').style.visibility = 'hidden';
+    if ($('replayResume')) $('replayResume').disabled = true;
+    sense();
+    infer();
+    addLog('step', 'New world. Agent at (1,1) facing right.');
+    addLog('percept', perceptString());
+    render();
+    pushSnapshot(); // seed at step 0 so scrubber covers the initial state.
+  }
+
+  // replay snapshot helpers. Deep-clones the small pieces of state
+  // that change per step. The world layout (pits/wumpus/gold positions) is
+  // immutable mid-game, so we don't clone it: just the agent + kb + score.
+  function cloneKb(k) {
+    return {
+      pit: new Map(k.pit), wumpus: new Map(k.wumpus), safe: new Map(k.safe),
+      visited: new Set(k.visited), wumpusAlive: k.wumpusAlive,
+      reason: new Map([...k.reason].map(([k, v]) => [k, v.slice()])),
+    };
+  }
+  function pushSnapshot() {
+    snapshots.push({
+      agent: {...agent},
+      kb: cloneKb(kb),
+      score, stepCount, status,
+      scoreItems: {...scoreItems},
+      logLen: log.length,
+      worldVisited: new Set(world.visited),
+      worldWumpusAlive: world.wumpus.alive,
+      worldGoldTaken: world.gold.taken,
+    });
+    if (snapshots.length > SNAPSHOT_CAP) snapshots.shift();
+    // Show the scrub group once we have at least 2 snapshots (step 0 + step 1).
+    const strip = $('wScrubGroup');
+    if (strip && snapshots.length >= 2) {
+      strip.style.visibility = 'visible';
+      const slider = $('replaySlider');
+      slider.max = snapshots.length - 1;
+      if (!replayMode) {
+        slider.value = snapshots.length - 1;
+        $('replayLabel').textContent = 'live';
+      }
+    }
+  }
+  function applySnapshot(snap) {
+    agent = {...snap.agent};
+    kb = cloneKb(snap.kb);
+    score = snap.score; stepCount = snap.stepCount; status = snap.status;
+    scoreItems = {...snap.scoreItems};
+    world.visited = new Set(snap.worldVisited);
+    world.wumpus.alive = snap.worldWumpusAlive;
+    world.gold.taken = snap.worldGoldTaken;
+    render();
+  }
+  function resumeLive() {
+    if (!replayMode || !liveSnapshot) return;
+    applySnapshot(liveSnapshot);
+    replayMode = false; liveSnapshot = null;
+    $('replayResume').disabled = true;
+    $('replayLabel').textContent = 'live';
+    { const tc = $('tpCount'); if (tc) tc.textContent = 'live'; }
+    $('replaySlider').value = snapshots.length - 1;
+  }
+
+  function sense() {
+    const {r, c} = agent;
+    const percept = { breeze: false, stench: false, glitter: false, bump: false, scream: false };
+    for (const [dr, dc] of DIRS) {
+      const nr = r + dr, nc = c + dc;
+      if (!inBounds(nr, nc)) continue;
+      if (world.pits.has(key(nr, nc))) percept.breeze = true;
+      if (world.wumpus.alive && world.wumpus.r === nr && world.wumpus.c === nc) percept.stench = true;
+    }
+    if (world.gold.r === r && world.gold.c === c && !world.gold.taken) percept.glitter = true;
+    world.percepts.set(key(r, c), percept);
+    return percept;
+  }
+  function perceptString() {
+    const p = world.percepts.get(key(agent.r, agent.c)) || {};
+    const parts = [];
+    if (p.breeze) parts.push('breeze'); else parts.push('-no breeze');
+    if (p.stench) parts.push('stench'); else parts.push('-no stench');
+    if (p.glitter) parts.push('GLITTER!');
+    return `(${agent.c+1},${agent.r+1}): ${parts.join(', ')}`;
+  }
+
+  function neighbors(r, c) {
+    const out = [];
+    for (const [dr, dc] of DIRS) {
+      const nr = r + dr, nc = c + dc;
+      if (inBounds(nr, nc)) out.push([nr, nc]);
+    }
+    return out;
+  }
+  // Resolution-trace mode. kb.reason maps cell key → array of inference steps
+  // showing how the agent concluded the cell's pit/wumpus/safe status. Each step is a
+  // human-readable string citing the source percept and the rule (AIMA Ch 7.5 style).
+  function pos(k) { const r = Math.floor(k/SIZE), c = k%SIZE; return `(${c+1},${r+1})`; }
+  function pushReason(k, msg) {
+    if (!kb.reason) kb.reason = new Map();
+    if (!kb.reason.has(k)) kb.reason.set(k, []);
+    const arr = kb.reason.get(k);
+    if (!arr.includes(msg)) arr.push(msg);
+  }
+  function infer() {
+    if (!kb.reason) kb.reason = new Map();
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const k of kb.visited) {
+        const r = Math.floor(k / SIZE), c = k % SIZE;
+        const p = world.percepts.get(k);
+        if (!p) continue;
+        for (const [nr, nc] of neighbors(r, c)) {
+          const nk = key(nr, nc);
+          if (!p.breeze && kb.pit.get(nk) !== 'no') {
+            kb.pit.set(nk, 'no'); changed = true;
+            pushReason(nk, `No breeze at ${pos(k)} → ${pos(nk)} is not a pit (rule: breeze ⇔ adjacent pit).`);
+          }
+          if (!p.stench && kb.wumpus.get(nk) !== 'no') {
+            kb.wumpus.set(nk, 'no'); changed = true;
+            pushReason(nk, `No stench at ${pos(k)} → ${pos(nk)} is not the wumpus (rule: stench ⇔ adjacent wumpus).`);
+          }
+        }
+      }
+      for (const k of kb.visited) {
+        const r = Math.floor(k / SIZE), c = k % SIZE;
+        const p = world.percepts.get(k);
+        if (!p || !p.breeze) continue;
+        const candidates = neighbors(r, c).filter(([nr, nc]) => kb.pit.get(key(nr, nc)) !== 'no');
+        if (candidates.length === 1) {
+          const [pr, pc] = candidates[0];
+          const pk = key(pr, pc);
+          if (kb.pit.get(pk) !== 'yes') {
+            kb.pit.set(pk, 'yes'); changed = true;
+            pushReason(pk, `Breeze at ${pos(k)} and only ${pos(pk)} among adjacent cells is not yet ruled out → ${pos(pk)} IS a pit (unique candidate).`);
+          }
+        }
+      }
+      for (const k of kb.visited) {
+        const r = Math.floor(k / SIZE), c = k % SIZE;
+        const p = world.percepts.get(k);
+        if (!p || !p.stench || !kb.wumpusAlive) continue;
+        const candidates = neighbors(r, c).filter(([nr, nc]) => kb.wumpus.get(key(nr, nc)) !== 'no');
+        if (candidates.length === 1) {
+          const [wr, wc] = candidates[0];
+          const wk = key(wr, wc);
+          if (kb.wumpus.get(wk) !== 'yes') {
+            kb.wumpus.set(wk, 'yes'); changed = true;
+            pushReason(wk, `Stench at ${pos(k)} and only ${pos(wk)} among adjacent cells is not yet ruled out → ${pos(wk)} IS the wumpus (unique candidate).`);
+          }
+        }
+      }
+      for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) {
+        const k = key(r, c);
+        if (kb.pit.get(k) === 'no' && kb.wumpus.get(k) === 'no' && kb.safe.get(k) !== 'yes') {
+          kb.safe.set(k, 'yes'); changed = true;
+          pushReason(k, `${pos(k)} is not a pit AND not the wumpus → safe.`);
+        }
+        if ((kb.pit.get(k) === 'yes' || (kb.wumpus.get(k) === 'yes' && kb.wumpusAlive))
+            && kb.safe.get(k) !== 'no') {
+          kb.safe.set(k, 'no'); changed = true;
+          pushReason(k, `${pos(k)} is a known hazard → not safe.`);
+        }
+      }
+    }
+  }
+
+  function bfsPath(toCell) {
+    const start = key(agent.r, agent.c);
+    if (start === toCell) return [[agent.r, agent.c]];
+    const parent = new Map(); parent.set(start, null);
+    const q = [start];
+    while (q.length) {
+      const u = q.shift();
+      const ur = Math.floor(u / SIZE), uc = u % SIZE;
+      for (const [nr, nc] of neighbors(ur, uc)) {
+        const nk = key(nr, nc);
+        if (parent.has(nk)) continue;
+        if (kb.safe.get(nk) !== 'yes') continue;
+        parent.set(nk, [ur, uc]);
+        if (nk === toCell) {
+          const path = [];
+          let cur = nk;
+          while (cur !== null) {
+            const cr = Math.floor(cur / SIZE), cc = cur % SIZE;
+            path.push([cr, cc]);
+            const par = parent.get(cur);
+            cur = par === null ? null : key(par[0], par[1]);
+          }
+          return path.reverse();
+        }
+        q.push(nk);
+      }
+    }
+    return null;
+  }
+  // ===== Probabilistic helpers (Ch 13.6) =====
+  // Estimate P(pit) for each unknown cell by enumerating all possible pit configurations
+  // consistent with the breeze evidence at visited cells.
+  function pitProbability(targetKey) {
+    // Collect "frontier" cells (unknown, adjacent to visited) and "breeze constraints".
+    const frontier = [];
+    for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) {
+      const k = key(r, c);
+      if (kb.visited.has(k)) continue;
+      if (kb.pit.get(k) === 'yes') return targetKey === k ? 1.0 : null;
+      if (kb.pit.get(k) === 'no') continue;
+      const adjVisited = neighbors(r, c).some(([nr, nc]) => kb.visited.has(key(nr, nc)));
+      if (adjVisited) frontier.push(k);
+    }
+    if (frontier.length === 0 || frontier.length > 12) return 0.5;
+    if (!frontier.includes(targetKey)) {
+      // Target isn't even adjacent to visited; use prior 0.2 (3 pits / 15 non-(0,0) cells).
+      return 0.2;
+    }
+    // For each subset of frontier as the "pit set", check consistency with all breeze percepts.
+    let countAll = 0, countWithTarget = 0;
+    const prior = 0.2;  // per-cell pit prior
+    for (let m = 0; m < (1 << frontier.length); m++) {
+      const pits = new Set();
+      for (let i = 0; i < frontier.length; i++) if (m & (1 << i)) pits.add(frontier[i]);
+      // Consistency: every visited cell with breeze must have ≥1 adjacent pit, and
+      // every visited cell WITHOUT breeze must have NO adjacent pit.
+      let consistent = true;
+      for (const vk of kb.visited) {
+        const vr = Math.floor(vk / SIZE), vc = vk % SIZE;
+        const p = world.percepts.get(vk);
+        if (!p) continue;
+        const adjPits = neighbors(vr, vc).filter(([nr, nc]) =>
+          pits.has(key(nr, nc)) || kb.pit.get(key(nr, nc)) === 'yes').length;
+        if (p.breeze && adjPits === 0) { consistent = false; break; }
+        if (!p.breeze && adjPits > 0) { consistent = false; break; }
+      }
+      if (!consistent) continue;
+      // Weight by prior^|pits| * (1-prior)^(|frontier| - |pits|).
+      const weight = Math.pow(prior, pits.size) *
+                     Math.pow(1 - prior, frontier.length - pits.size);
+      countAll += weight;
+      if (pits.has(targetKey)) countWithTarget += weight;
+    }
+    return countAll > 0 ? countWithTarget / countAll : 0.5;
+  }
+
+  // Pick a shoot direction that lines up a possible-wumpus cell through known-safe cells.
+  function pickShootDir() {
+    if (!kb.wumpusAlive || agent.arrows <= 0) return null;
+    const candidates = [];
+    for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) {
+      const k = key(r, c);
+      if (kb.wumpus.get(k) !== 'no' && !kb.visited.has(k)) candidates.push([r, c]);
+    }
+    for (const [wr, wc] of candidates) {
+      // Same row to the right
+      if (wr === agent.r && wc > agent.c) return {dir: 0, target: [wr, wc]};
+      // Same col above (in our coords, r > agent.r is up)
+      if (wc === agent.c && wr > agent.r) return {dir: 1, target: [wr, wc]};
+      if (wr === agent.r && wc < agent.c) return {dir: 2, target: [wr, wc]};
+      if (wc === agent.c && wr < agent.r) return {dir: 3, target: [wr, wc]};
+    }
+    return null;
+  }
+
+  function pickAction() {
+    const strategy = $('strategySel').value;
+    const p = world.percepts.get(key(agent.r, agent.c));
+    // Step 1: glitter → grab.
+    if (p && p.glitter && !agent.hasGold) return {kind: 'grab'};
+    // Step 2: have gold + at (1,1) → climb.
+    if (agent.hasGold && agent.r === 0 && agent.c === 0) return {kind: 'climb'};
+    // Step 3: planned safe move (every strategy does this).
+    if (agent.hasGold) {
+      const path = bfsPath(key(0, 0));
+      if (path && path.length > 1) return {kind: 'go', target: path[1]};
+    } else {
+      let target = null;
+      for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) {
+        const k = key(r, c);
+        if (kb.safe.get(k) === 'yes' && !kb.visited.has(k)) {
+          const path = bfsPath(k);
+          if (path) {
+            if (!target || path.length < target.path.length) target = {k, path};
+          }
+        }
+      }
+      if (target && target.path.length > 1) return {kind: 'go', target: target.path[1]};
+    }
+    // === Strategy-specific fallbacks ===
+    if (strategy === 'logic') return {kind: 'stop'};
+
+    // Hybrid (AIMA Ch 7.7) + Probabilistic (Ch 13.6) both add: shoot → gamble → climb home.
+    // 3b. Shoot the arrow if we have one and there's a possible-wumpus cell in line.
+    const shot = pickShootDir();
+    if (shot) return {kind: 'shoot', dir: shot.dir, target: shot.target};
+    // 3c. Take a calculated risk on a "not unsafe" cell.
+    const candidates = [];
+    for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) {
+      const k = key(r, c);
+      if (kb.visited.has(k)) continue;
+      if (kb.safe.get(k) === 'no') continue;  // skip proven deadly
+      if (kb.pit.get(k) === 'yes') continue;
+      if (kb.wumpus.get(k) === 'yes' && kb.wumpusAlive) continue;
+      const adjVisited = neighbors(r, c).some(([nr, nc]) => kb.visited.has(key(nr, nc)));
+      if (adjVisited) candidates.push([r, c, k]);
+    }
+    if (candidates.length > 0) {
+      let pick;
+      if (strategy === 'prob') {
+        // Rank candidates by P(pit) ascending; take lowest.
+        candidates.forEach(c => { c.push(pitProbability(c[2])); });
+        candidates.sort((a, b) => a[3] - b[3]);
+        pick = candidates[0];
+        addLog('infer', `Probabilistic gamble: ${candidates.map(c =>
+          `P(pit at (${c[1]+1},${c[0]+1})) = ${(c[3]*100).toFixed(0)}%`).join(', ')}. Picking lowest P(pit).`);
+      } else {
+        pick = candidates[0];
+        addLog('infer', `AIMA-inspired hybrid: forced gamble on (${pick[1]+1},${pick[0]+1}).`);
+      }
+      return {kind: 'go', target: [pick[0], pick[1]], gambling: true};
+    }
+    // 3d. Nothing left to try: climb out alive.
+    const pathHome = bfsPath(key(0, 0));
+    if (pathHome && pathHome.length > 1) return {kind: 'go', target: pathHome[1]};
+    return {kind: 'climb'};
+  }
+  function turnTowards(tr, tc) {
+    if (tc > agent.c) return 0;
+    if (tr > agent.r) return 1;
+    if (tc < agent.c) return 2;
+    return 3;
+  }
+  function actOne() {
+    // if we're scrubbing in replay mode, "act" means resume to live first.
+    if (replayMode) { resumeLive(); }
+    const result = actOneInternal();
+    pushSnapshot();
+    return result;
+  }
+  function actOneInternal() {
+    if (status !== 'alive') return false;
+    stepCount++;
+    const action = pickAction();
+    if (action.kind === 'shoot') {
+      // Shoot the arrow in `dir`. Fly until hit a wumpus or wall.
+      agent.arrows -= 1;
+      agent.dir = action.dir;
+      score -= 10;  // arrow cost (AIMA convention)
+      scoreItems.arrows += 1;
+      const [dr, dc] = DIRS[action.dir];
+      let hit = false;
+      let cr = agent.r, cc = agent.c;
+      while (true) {
+        cr += dr; cc += dc;
+        if (!inBounds(cr, cc)) break;
+        if (world.wumpus.alive && world.wumpus.r === cr && world.wumpus.c === cc) {
+          world.wumpus.alive = false;
+          kb.wumpusAlive = false;
+          // Every cell's wumpus flag becomes 'no' once the wumpus is dead.
+          for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) {
+            kb.wumpus.set(key(r, c), 'no');
+          }
+          hit = true;
+          break;
+        }
+      }
+      if (hit) {
+        addLog('win', `🏹 SHOOT ${DIR_NAME[action.dir]} → SCREAM! Wumpus is dead. (-10 for arrow)`);
+        infer();
+        reportInferences();
+      } else {
+        addLog('action', `🏹 SHOOT ${DIR_NAME[action.dir]} → arrow lost in the dark. (-10)`);
+      }
+      render();
+      return true;
+    } else if (action.kind === 'grab') {
+      agent.hasGold = true; world.gold.taken = true;
+      score += 1000; scoreItems.gold += 1;
+      addLog('action', 'GRAB the gold (+1000).');
+    } else if (action.kind === 'climb') {
+      agent.climbedOut = true;
+      status = agent.hasGold ? 'won' : 'left without gold';
+      addLog('win', agent.hasGold ? 'Agent CLIMBS OUT with gold. Win!' : 'Agent climbed out empty-handed.');
+    } else if (action.kind === 'go') {
+      const [tr, tc] = action.target;
+      agent.dir = turnTowards(tr, tc);
+      agent.r = tr; agent.c = tc;
+      score -= 1; scoreItems.moves += 1;
+      const gambleTag = action.gambling ? ' ⚠ GAMBLING' : '';
+      addLog('action', `Move to (${tc+1},${tr+1}) facing ${DIR_NAME[agent.dir]}.${gambleTag}`);
+      if (world.pits.has(key(tr, tc))) {
+        status = 'dead-pit'; score -= 1000; scoreItems.deaths += 1;
+        addLog('death', 'Agent fell into a PIT (-1000).');
+        return false;
+      }
+      if (world.wumpus.alive && world.wumpus.r === tr && world.wumpus.c === tc) {
+        status = 'dead-wumpus'; score -= 1000; scoreItems.deaths += 1;
+        addLog('death', 'Agent eaten by WUMPUS (-1000).');
+        return false;
+      }
+      kb.visited.add(key(tr, tc));
+      world.visited.add(key(tr, tc));
+      sense();
+      addLog('percept', perceptString());
+      infer();
+      reportInferences();
+    } else {
+      status = 'stuck';
+      addLog('action', 'Agent refuses to gamble: no known-safe move available.');
+      return false;
+    }
+    render();
+    return status === 'alive';
+  }
+
+  let lastReport = new Set();
+  function reportInferences() {
+    const newSafe = [], newPit = [], newWumpus = [];
+    for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) {
+      const k = key(r, c);
+      const tag = `${k}:${kb.safe.get(k)}:${kb.pit.get(k)}:${kb.wumpus.get(k)}`;
+      if (lastReport.has(tag)) continue;
+      lastReport.add(tag);
+      if (kb.safe.get(k) === 'yes' && !kb.visited.has(k)) newSafe.push(`(${c+1},${r+1})`);
+      if (kb.pit.get(k) === 'yes') newPit.push(`(${c+1},${r+1})`);
+      if (kb.wumpus.get(k) === 'yes') newWumpus.push(`(${c+1},${r+1})`);
+    }
+    if (newSafe.length) addLog('infer', `Inferred SAFE: ${newSafe.join(', ')}`);
+    if (newPit.length) addLog('infer', `Inferred PIT: ${newPit.join(', ')}`);
+    if (newWumpus.length) addLog('infer', `Inferred WUMPUS: ${newWumpus.join(', ')}`);
+  }
+  const LOG_CAP = 200;
+  function addLog(kind, msg) {
+    log.push({kind, msg, step: stepCount});
+    const div = document.createElement('div');
+    div.className = 'entry';
+    div.innerHTML = `<span class="step">[${stepCount}]</span> <span class="${kind}">${msg}</span>`;
+    const container = $('log');
+    container.appendChild(div);
+    // Cap log to prevent DOM bloat over long auto-run sessions.
+    while (container.childElementCount > LOG_CAP) {
+      container.removeChild(container.firstChild);
+    }
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function drawGrid(ctx, drawCell) {
+    const logical = SIZE * CELL;
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : 'white';
+    ctx.fillRect(0, 0, logical, logical);
+    for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) {
+      const x = c * CELL, y = (SIZE - 1 - r) * CELL;
+      drawCell(ctx, r, c, x, y);
+      ctx.strokeStyle = document.body.classList.contains('dark-mode') ? '#475569' : '#cbd5e1'; ctx.lineWidth = 1;
+      ctx.strokeRect(x, y, CELL, CELL);
+      ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#cbd5e1' : '#475569';
+      ctx.font = 'bold 12px ui-monospace, Consolas, monospace';
+      ctx.fillText(`(${c+1},${r+1})`, x + 5, y + 14);
+    }
+  }
+  function drawWorld() {
+    const reveal = $('revealChk').checked;
+    drawGrid(wctx, (ctx, r, c, x, y) => {
+      const k = key(r, c);
+      const visible = reveal || kb.visited.has(k);
+      if (!visible) {
+        ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : '#f1f5f9';
+        ctx.fillRect(x, y, CELL, CELL);
+        return;
+      }
+      if (world.pits.has(k)) {
+        ctx.fillStyle = '#fecaca';
+        ctx.fillRect(x, y, CELL, CELL);
+        // Pit icon: a dark radial-gradient "abyss" with a skull: no text label.
+        const pcx = x + CELL/2, pcy = y + CELL/2;
+        const pg = ctx.createRadialGradient(pcx, pcy, 2, pcx, pcy, 23);
+        pg.addColorStop(0, '#111827'); pg.addColorStop(0.7, '#450a0a'); pg.addColorStop(1, 'rgba(127,29,29,0)');
+        ctx.fillStyle = pg;
+        ctx.beginPath(); ctx.arc(pcx, pcy, 23, 0, Math.PI * 2); ctx.fill();
+        ctx.font = '18px -apple-system, system-ui, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('☠️', pcx, pcy);
+        ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+      }
+      if (world.wumpus.r === r && world.wumpus.c === c) {
+        ctx.fillStyle = world.wumpus.alive ? '#e9d5ff' : '#cbd5e1';
+        ctx.fillRect(x + 8, y + 8, CELL - 16, CELL - 16);
+        // Wumpus icon: emoji only (😈 alive, 💀 dead): no text label.
+        ctx.font = '30px -apple-system, system-ui, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.globalAlpha = world.wumpus.alive ? 1 : 0.5;
+        ctx.fillText(world.wumpus.alive ? '👹' : '💀', x + CELL/2, y + CELL/2);
+        ctx.globalAlpha = 1;
+        ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+      }
+      if (world.gold.r === r && world.gold.c === c && !world.gold.taken) {
+        ctx.beginPath();
+        ctx.arc(x + CELL/2, y + CELL/2, 16, 0, Math.PI * 2);
+        ctx.fillStyle = '#fde047'; ctx.fill();
+        ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.fillStyle = '#7c2d12';
+        ctx.font = 'bold 16px -apple-system, system-ui, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('G', x + CELL/2, y + CELL/2);
+        ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+      } else if (world.gold.r === r && world.gold.c === c && world.gold.taken) {
+        // Residual marker tucked into the cell's TOP-RIGHT corner: the gold is gone,
+        // but mark its origin cell while keeping the centre clear for the agent.
+        ctx.fillStyle = '#a16207';
+        ctx.font = '600 11px -apple-system, system-ui, sans-serif';
+        ctx.textAlign = 'right'; ctx.textBaseline = 'top';
+        ctx.fillText('G (taken)', x + CELL - 6, y + 6);
+        ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+      }
+      const p = world.percepts.get(k);
+      if (p) {
+        // Percept icons: a compact row of emoji (breeze 🌬 · stench 👃 · glitter ✨): no words.
+        ctx.font = '15px -apple-system, system-ui, sans-serif';
+        ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+        let xo = x + 6;
+        if (p.breeze)  { ctx.fillText('🌬', xo, y + CELL - 6); xo += 19; }
+        if (p.stench)  { ctx.fillText('👃', xo, y + CELL - 6); xo += 19; }
+        if (p.glitter) { ctx.fillText('✨', xo, y + CELL - 6); xo += 19; }
+        ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+      }
+    });
+    const ax = agent.c * CELL + CELL/2;
+    const ay = (SIZE - 1 - agent.r) * CELL + CELL/2;
+    // Gold halo (drawn under the agent body so the agent still reads clearly).
+    if (agent.hasGold) {
+      wctx.strokeStyle = '#fde047'; wctx.lineWidth = 5;
+      wctx.beginPath(); wctx.arc(ax, ay, 22, 0, Math.PI * 2); wctx.stroke();
+    }
+    // Agent icon: a directional "dart" that points the way the agent faces
+    // (replaces the old circle + line). Canvas y is down, so negate dy.
+    const [dx, dy] = DIRS[agent.dir];
+    wctx.save();
+    wctx.translate(ax, ay);
+    wctx.rotate(Math.atan2(-dy, dx));
+    wctx.fillStyle = getCSS('--agent');
+    wctx.strokeStyle = '#fff'; wctx.lineWidth = 2; wctx.lineJoin = 'round';
+    wctx.beginPath();
+    wctx.moveTo(17, 0);      // nose (facing direction)
+    wctx.lineTo(-12, -12);   // back-left wing
+    wctx.lineTo(-5, 0);      // tail notch
+    wctx.lineTo(-12, 12);    // back-right wing
+    wctx.closePath();
+    wctx.fill(); wctx.stroke();
+    wctx.restore();
+    // Gold "G" badge in the upper-right of the agent.
+    if (agent.hasGold) {
+      wctx.beginPath(); wctx.arc(ax + 14, ay - 14, 10, 0, Math.PI * 2);
+      wctx.fillStyle = '#fde047'; wctx.fill();
+      wctx.strokeStyle = '#ca8a04'; wctx.lineWidth = 2; wctx.stroke();
+      wctx.fillStyle = '#7c2d12'; wctx.font = 'bold 12px system-ui';
+      wctx.textAlign = 'center'; wctx.textBaseline = 'middle';
+      wctx.fillText('G', ax + 14, ay - 14);
+      wctx.textAlign = 'start'; wctx.textBaseline = 'alphabetic';
+    }
+  }
+  function drawKB() {
+    drawGrid(kctx, (ctx, r, c, x, y) => {
+      const k = key(r, c);
+      let bg = '--unknown-bg', border = '--unknown', label = '?';
+      if (kb.safe.get(k) === 'yes') { bg = '--safe-bg'; border = '--safe'; label = 'safe'; }
+      if (kb.pit.get(k) === 'yes') { bg = '--danger-bg'; border = '--danger'; label = '☠ PIT'; }
+      if (kb.wumpus.get(k) === 'yes' && kb.wumpusAlive) { bg = '--danger-bg'; border = '--danger'; label = '👹 WUMPUS'; }
+      const pit = kb.pit.get(k), wum = kb.wumpus.get(k);
+      if (kb.safe.get(k) !== 'yes' && (pit === 'unknown' || wum === 'unknown')
+          && pit !== 'yes' && wum !== 'yes') {
+        const adjVisited = neighbors(r, c).some(([nr, nc]) => kb.visited.has(key(nr, nc)));
+        if (adjVisited) { bg = '--maybe-bg'; border = '--maybe'; label = '? maybe'; }
+      }
+      if (kb.visited.has(k)) { bg = '--safe-bg'; border = '--safe'; label = '✓ visited'; }
+      ctx.fillStyle = getCSS(bg); ctx.fillRect(x, y, CELL, CELL);
+      ctx.strokeStyle = getCSS(border); ctx.lineWidth = 2;
+      ctx.strokeRect(x + 2, y + 2, CELL - 4, CELL - 4);
+      ctx.fillStyle = getCSS(border);
+      ctx.font = 'bold 14px -apple-system, system-ui, sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(label, x + CELL/2, y + CELL/2);
+      ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+    });
+    const ax = agent.c * CELL + CELL/2;
+    const ay = (SIZE - 1 - agent.r) * CELL + CELL/2;
+    if (agent.hasGold) {
+      kctx.strokeStyle = '#fde047'; kctx.lineWidth = 4;
+      kctx.beginPath(); kctx.arc(ax, ay, 18, 0, Math.PI * 2); kctx.stroke();
+    }
+    kctx.fillStyle = getCSS('--agent');
+    kctx.beginPath(); kctx.arc(ax, ay, 12, 0, Math.PI * 2); kctx.fill();
+    kctx.strokeStyle = '#fff'; kctx.lineWidth = 2; kctx.stroke();
+    if (agent.hasGold) {
+      kctx.beginPath(); kctx.arc(ax + 11, ay - 11, 8, 0, Math.PI * 2);
+      kctx.fillStyle = '#fde047'; kctx.fill();
+      kctx.strokeStyle = '#ca8a04'; kctx.lineWidth = 2; kctx.stroke();
+      kctx.fillStyle = '#7c2d12'; kctx.font = 'bold 10px system-ui';
+      kctx.textAlign = 'center'; kctx.textBaseline = 'middle';
+      kctx.fillText('G', ax + 11, ay - 11);
+      kctx.textAlign = 'start'; kctx.textBaseline = 'alphabetic';
+    }
+  }
+  function getCSS(v) {
+    return getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  }
+  // Map raw status to a human-readable phrase.
+  function statusLabel() {
+    if (status === 'alive') return agent.hasGold ? '🏆 exploring (has gold)' : 'exploring';
+    if (status === 'won') return '✓ won (climbed out with gold)';
+    if (status === 'left without gold') return 'climbed out empty-handed';
+    if (status === 'dead-pit') return '☠ fell into pit';
+    if (status === 'dead-wumpus') return '☠ eaten by wumpus';
+    if (status === 'stuck') return 'stuck (no safe move)';
+    return status;
+  }
+  function render() {
+    drawWorld(); drawKB();
+    $('scoreV').textContent = score;
+    $('stepV').textContent = stepCount;
+    if (!replayMode) { const tc = $('tpCount'); if (tc) tc.textContent = stepCount > 0 ? `step ${stepCount}` : 'idle'; }
+    $('goldV').textContent = agent.hasGold ? '🏆 gold' : '-';
+    $('arrowsV').textContent = agent.arrows;
+    // Arrows only matter under hybrid/prob strategies that may shoot. Hide for pure-logic;
+    // dim once depleted so students see the resource was consumed.
+    const stratNow = ($('strategySel') && $('strategySel').value) || 'logic';
+    const arrowsItem = $('arrowsStatItem');
+    if (arrowsItem) {
+      arrowsItem.style.display = (stratNow === 'logic') ? 'none' : '';
+      arrowsItem.style.opacity = (agent.arrows === 0) ? '0.45' : '1';
+    }
+    $('statV').textContent = statusLabel();
+    // itemized score breakdown.
+    const sb = $('scoreBreakdown');
+    if (sb) {
+      const items = [];
+      if (scoreItems.moves > 0) items.push(`<span style="color:#dc2626;">${scoreItems.moves} move${scoreItems.moves === 1 ? '' : 's'}: −${scoreItems.moves}</span>`);
+      if (scoreItems.arrows > 0) items.push(`<span style="color:#dc2626;">${scoreItems.arrows} arrow${scoreItems.arrows === 1 ? '' : 's'}: −${10 * scoreItems.arrows}</span>`);
+      if (scoreItems.gold > 0) items.push(`<span style="color:#16a34a;">gold: +1000</span>`);
+      if (scoreItems.deaths > 0) items.push(`<span style="color:#dc2626;">death: −1000</span>`);
+      sb.innerHTML = items.length
+        ? items.join(' · ') + ` <span style="color:var(--muted);">= <strong>${score}</strong></span>`
+        : '<span style="color:var(--muted); font-style:italic;">(no actions yet)</span>';
+    }
+  }
+
+  window.__wumpusGuidedStep = () => {
+    const before = stepCount;
+    actOne();
+    return stepCount > before;
+  };
+
+  $('stepBtn').addEventListener('click', () => {
+    if (replayMode) {
+      // While scrubbed back, ❘▶ walks forward through history; resume live once caught up.
+      if (parseInt($('replaySlider').value, 10) < snapshots.length - 1) { replayStep(1); return; }
+      resumeLive(); return;
+    }
+    actOne();
+  });
+  // replay scrubber wiring.
+  $('replaySlider').addEventListener('input', () => {
+    if (snapshots.length < 2) return;
+    const idx = parseInt($('replaySlider').value, 10);
+    if (!replayMode) {
+      // Stash the current live state so we can return to it.
+      liveSnapshot = {
+        agent: {...agent}, kb: cloneKb(kb),
+        score, stepCount, status, scoreItems: {...scoreItems},
+        logLen: log.length,
+        worldVisited: new Set(world.visited),
+        worldWumpusAlive: world.wumpus.alive,
+        worldGoldTaken: world.gold.taken,
+      };
+      replayMode = true;
+      $('replayResume').disabled = false;
+    }
+    applySnapshot(snapshots[idx]);
+    $('replayLabel').textContent = (idx === snapshots.length - 1) ? 'live' : `step ${idx}`;
+    { const tc = $('tpCount'); if (tc) tc.textContent = (idx === snapshots.length - 1) ? 'live' : `step ${idx} of ${snapshots.length - 1}`; }
+  });
+  $('replayResume').addEventListener('click', resumeLive);
+  // ===== Unified transport bar: universal step-back + same-world restart =====
+  function replayStep(delta) {
+    if (playing) return;                  // don't scrub during auto-play
+    if (snapshots.length < 2) return;
+    const s = $('replaySlider');
+    let idx = parseInt(s.value, 10);
+    if (Number.isNaN(idx)) idx = snapshots.length - 1;
+    idx = Math.max(0, Math.min(snapshots.length - 1, idx + delta));
+    s.value = idx;
+    s.dispatchEvent(new Event('input'));   // reuse the existing replay-restore handler
+  }
+  $('backBtn').addEventListener('click', () => replayStep(-1));
+  $('restartBtn').addEventListener('click', () => { stopPlay(); resetAgentAfterEdit(); });
+  // Numeric jump-to-step input. Clamp to [0, slider.max], set slider, fire input event.
+  $('wJump').addEventListener('change', () => {
+    const slider = $('replaySlider');
+    const max = parseInt(slider.max, 10) || 0;
+    const val = Math.max(0, Math.min(max, parseInt($('wJump').value, 10) || 0));
+    slider.value = val;
+    slider.dispatchEvent(new Event('input'));
+  });
+  window.__wScrubTest = function(){ const g=document.getElementById('wScrubGroup'); const inBar=!!(g&&g.closest('#transport')); const r={scrubInBar:inBar, jump:!!document.getElementById('wJump'), slider:!!document.getElementById('replaySlider')}; const pass=r.scrubInBar&&r.jump&&r.slider; console.log('[wumpus] SCRUB-IN-BAR '+(pass?'passed':'FAILED'), r); return Object.assign({pass},r); };
+  window.__wumpusAcceptanceTest = function () {
+    const sp = $('speedSlider');
+    const r = { transportBar: !!$('transport'), backBtn: !!$('backBtn'),
+                restartBtn: !!$('restartBtn'), speedInBar: !!(sp && sp.closest('#transport')),
+                snapshots: snapshots.length };
+    const pass = r.transportBar && r.backBtn && r.restartBtn && r.speedInBar;
+    console.log('[wumpus] CONTROLS ACCEPTANCE TEST ' + (pass ? 'passed' : 'FAILED'), r);
+    return Object.assign({ pass }, r);
+  };
+  $('hardReset').addEventListener('click', () => {
+    $('log').innerHTML = ''; lastReport = new Set(); generateWorld();
+  });
+  $('revealChk').addEventListener('change', render);
+
+  // Editable world (teacher mode).
+  // When the edit checkbox is on, clicking a cell on the world canvas cycles its contents:
+  // empty → pit → wumpus → gold → empty. Clamps to a single wumpus and single gold globally.
+  // The agent's run is reset (agent back to (0,0), score/step zeroed) after any edit so the
+  // world stays internally consistent.
+  function cellFromWorldClick(e) {
+    const rect = worldCv.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (SIZE * CELL / rect.width);
+    const y = (e.clientY - rect.top)  * (SIZE * CELL / rect.height);
+    // SVG rows are bottom-up (row 0 at bottom of canvas) per drawGrid logic.
+    const c = Math.floor(x / CELL);
+    const r = SIZE - 1 - Math.floor(y / CELL);
+    return {r, c};
+  }
+  function resetAgentAfterEdit() {
+    agent = {r: 0, c: 0, dir: 0, alive: true, hasGold: false, arrows: 1, climbedOut: false};
+    kb = { pit: new Map(), wumpus: new Map(), safe: new Map(),
+           visited: new Set([key(0, 0)]), wumpusAlive: world.wumpus.alive,
+           reason: new Map() };
+    for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) {
+      kb.pit.set(key(r, c), 'unknown');
+      kb.wumpus.set(key(r, c), 'unknown');
+      kb.safe.set(key(r, c), 'unknown');
+    }
+    kb.pit.set(key(0, 0), 'no');
+    kb.wumpus.set(key(0, 0), 'no');
+    kb.safe.set(key(0, 0), 'yes');
+    kb.reason.set(key(0, 0), ['(1,1) is the start cell: known safe by definition.']);
+    score = 0; stepCount = 0; status = 'alive';
+    scoreItems = { moves: 0, arrows: 0, gold: 0, deaths: 0 };
+    // reset replay state after teacher-mode edits too.
+    snapshots = []; replayMode = false; liveSnapshot = null;
+    if ($('wScrubGroup')) $('wScrubGroup').style.visibility = 'hidden';
+    if ($('replayResume')) $('replayResume').disabled = true;
+    world.percepts.clear();
+    world.visited = new Set([key(0, 0)]);
+    sense(); infer(); render();
+    pushSnapshot();
+  }
+  worldCv.addEventListener('click', e => {
+    if (!$('editChk').checked) return;
+    const {r, c} = cellFromWorldClick(e);
+    if (!inBounds(r, c)) return;
+    if (r === 0 && c === 0) return; // never edit the agent's start cell
+    const k = key(r, c);
+    // Cycle order: determine current contents.
+    const isPit = world.pits.has(k);
+    const isWumpus = world.wumpus.r === r && world.wumpus.c === c;
+    const isGold = world.gold.r === r && world.gold.c === c && !world.gold.taken;
+    // Empty → Pit → Wumpus → Gold → Empty
+    if (!isPit && !isWumpus && !isGold) {
+      // Empty → Pit
+      world.pits.add(k);
+    } else if (isPit) {
+      // Pit → Wumpus (move wumpus here; clear pit)
+      world.pits.delete(k);
+      world.wumpus = {r, c, alive: true};
+    } else if (isWumpus) {
+      // Wumpus → Gold (park wumpus elsewhere off-grid? we need a non-overlapping spot)
+      // Move wumpus to a free cell, place gold here.
+      const free = findFreeCell([k]);
+      if (free) world.wumpus = {r: free.r, c: free.c, alive: true};
+      world.gold = {r, c, taken: false};
+    } else if (isGold) {
+      // Gold → Empty (move gold to a free cell so it still exists in the world)
+      const free = findFreeCell([k]);
+      if (free) world.gold = {r: free.r, c: free.c, taken: false};
+    }
+    resetAgentAfterEdit();
+  });
+  function findFreeCell(exclude) {
+    const ex = new Set(exclude || []);
+    ex.add(key(0, 0));
+    for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) {
+      const k = key(r, c);
+      if (ex.has(k)) continue;
+      if (world.pits.has(k)) continue;
+      if (world.wumpus.r === r && world.wumpus.c === c) continue;
+      if (world.gold.r === r && world.gold.c === c) continue;
+      return {r, c};
+    }
+    return null;
+  }
+  // Edit mode visual hint: cursor changes on the world canvas.
+  $('editChk').addEventListener('change', () => {
+    worldCv.style.cursor = $('editChk').checked ? 'crosshair' : '';
+    // Turn on reveal automatically: editing is pointless without seeing the world.
+    if ($('editChk').checked) { $('revealChk').checked = true; }
+    render();
+  });
+
+  // hover handler on the KB canvas → show resolution trace for that cell.
+  function cellFromKBClick(e) {
+    const rect = kbCv.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (SIZE * CELL / rect.width);
+    const y = (e.clientY - rect.top)  * (SIZE * CELL / rect.height);
+    const c = Math.floor(x / CELL);
+    const r = SIZE - 1 - Math.floor(y / CELL);
+    return {r, c};
+  }
+  function renderWhy(r, c) {
+    const panel = $('whyPanel');
+    if (!inBounds(r, c)) { panel.innerHTML = ''; return; }
+    const k = key(r, c);
+    const lang = document.documentElement.lang || 'en';
+    const T = (STRINGS[lang] && STRINGS[lang]) || STRINGS.en;
+    const reasons = kb.reason ? kb.reason.get(k) : null;
+    const header = `<strong>${T['why-cell'] || 'Cell'} (${c+1},${r+1})</strong>`;
+    // Current status summary.
+    const statusBits = [];
+    const pitS = kb.pit.get(k), wumS = kb.wumpus.get(k), safeS = kb.safe.get(k);
+    if (safeS === 'yes') statusBits.push(`<span style="color:#16a34a;">${T['s-safe'] || '✓ safe'}</span>`);
+    else if (pitS === 'yes') statusBits.push(`<span style="color:#dc2626;">${T['s-pit'] || '☠ pit'}</span>`);
+    else if (wumS === 'yes') statusBits.push(`<span style="color:#7c3aed;">${T['s-wumpus'] || '👹 wumpus'}</span>`);
+    else if (pitS === 'no' && wumS === 'no') statusBits.push(`<span style="color:#16a34a;">${T['s-safe'] || '✓ safe'}</span>`);
+    else if (pitS === 'no') statusBits.push(`<span style="color:var(--muted);">${T['s-no-pit'] || 'not a pit'}</span>`);
+    else if (wumS === 'no') statusBits.push(`<span style="color:var(--muted);">${T['s-no-wum'] || 'not the wumpus'}</span>`);
+    else statusBits.push(`<span style="color:var(--muted);">${T['s-unknown'] || 'unknown'}</span>`);
+    let html = `${header}: ${statusBits.join(' · ')}<br>`;
+    if (reasons && reasons.length) {
+      html += '<ol style="margin:4px 0 0 18px; padding:0;">';
+      for (const r of reasons) html += `<li>${r}</li>`;
+      html += '</ol>';
+    } else {
+      html += `<span style="color:var(--muted); font-style:italic;">${T['why-no-proof'] || 'No proof yet: the agent hasn\'t gathered enough percepts to decide. (Unknown ≠ safe.)'}</span>`;
+    }
+    panel.innerHTML = html;
+  }
+  kbCv.style.cursor = 'help';
+  kbCv.addEventListener('mousemove', e => {
+    const {r, c} = cellFromKBClick(e);
+    renderWhy(r, c);
+  });
+  kbCv.addEventListener('mouseleave', () => {
+    const lang = document.documentElement.lang || 'en';
+    const T = (STRINGS[lang] && STRINGS[lang]) || STRINGS.en;
+    $('whyPanel').innerHTML = `<span style="color:var(--muted); font-style:italic;">${T['why-empty'] || '(hover a cell to see its reasoning)'}</span>`;
+  });
+  // Touch: tap a cell to pin its reasoning (since hover doesn't work on tablets).
+  kbCv.addEventListener('click', e => {
+    const {r, c} = cellFromKBClick(e);
+    renderWhy(r, c);
+  });
+  // single live-adjustable auto-play. Uses a self-rescheduling setTimeout (not
+  // setInterval) so the delay refreshes from the slider on every tick: moving the slider
+  // mid-run takes effect immediately. Map slider [0,100] → delay [800ms, 30ms].
+  let timer = null;
+  let playing = false;
+  function speedToDelay() {
+    const s = +$('speedSlider').value; // 0..100
+    return Math.max(30, Math.round(800 - s * 7.7));
+  }
+  function tick() {
+    if (!playing) return;
+    const alive = actOne();
+    if (!alive) { stopPlay(); return; }
+    timer = setTimeout(tick, speedToDelay());
+  }
+  function startPlay() {
+    if (playing) return;
+    playing = true;
+    $('playBtn').textContent = '⏸ Pause';
+    $('playBtn').setAttribute('aria-pressed', 'true');
+    timer = setTimeout(tick, speedToDelay());
+  }
+  function stopPlay() {
+    playing = false;
+    if (timer) { clearTimeout(timer); timer = null; }
+    const lang = document.documentElement.lang || 'en';
+    const T = (STRINGS[lang] && STRINGS[lang]) || STRINGS.en;
+    $('playBtn').textContent = T['play-btn'] || '▶▶ Play / pause';
+    $('playBtn').setAttribute('aria-pressed', 'false');
+  }
+  $('playBtn').addEventListener('click', () => {
+    if (playing) stopPlay(); else startPlay();
+  });
+
+  // ?strategy=logic|hybrid|prob URL param picks default agent strategy.
+  try {
+    const sp = new URLSearchParams(location.search).get('strategy');
+    if (sp && ['logic', 'hybrid', 'prob'].includes(sp)) $('strategySel').value = sp;
+  } catch (_) {}
+  // URL-shareable config. Encodes strategy + a deterministic seed for the random world.
+  // Note: world generation uses Math.random globally; for a fully reproducible world we'd need
+  // a seedable PRNG. This v1 only shares the strategy choice; world replay is a follow-up.
+  document.getElementById('shareLink').addEventListener('click', async () => {
+    const params = new URLSearchParams();
+    params.set('strategy', $('strategySel').value);
+    const url = `${location.origin}${location.pathname}?${params.toString()}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      const btn = document.getElementById('shareLink');
+      const orig = btn.textContent; btn.textContent = '✓ Copied';
+      setTimeout(() => btn.textContent = orig, 1500);
+    } catch (_) { prompt('Copy this URL:', url); }
+  });
+  $('strategySel').addEventListener('change', () => {
+    // When user switches mid-game, log the strategy change so it's visible.
+    addLog('infer', `Strategy switched to: ${$('strategySel').selectedOptions[0].textContent}`);
+    render(); // Re-render so Arrows stat shows/hides for the new strategy.
+  });
+
+  generateWorld();
+
+  // Lesson tour. Five canonical scenarios contrasting agent strategies.
+  const LESSON_TOUR = [
+    { name: 'Pure logic: safe inference only',
+      description: "Default 'Pure logic' strategy on a fresh world. The agent only enters cells it can PROVE are safe from percepts (breeze/stench). When uncertain, it stops. Often climbs out without gold: that's the point.",
+      apply: () => { $('strategySel').value = 'logic'; $('strategySel').dispatchEvent(new Event('change')); $('hardReset').click(); } },
+    { name: 'AIMA-inspired hybrid: shoot + gamble + climb out',
+      description: "Switch to 'AIMA-inspired hybrid'. This agent uses the arrow on inferred Wumpus locations and, when no proven-safe frontier remains, may take a heuristic risk on an unresolved admissible cell. This heuristic fallback is not a probability-ranked safety guarantee.",
+      apply: () => { $('strategySel').value = 'hybrid'; $('strategySel').dispatchEvent(new Event('change')); $('hardReset').click(); } },
+    { name: 'Probabilistic: rank by pit-probability',
+      description: "The AIMA-inspired probabilistic strategy estimates pit risk over frontier cells under this applet's stated prior assumptions and chooses the lowest estimated risk. The hybrid uses a simpler heuristic fallback; neither rule proves the selected cell safe.",
+      apply: () => { $('strategySel').value = 'prob'; $('strategySel').dispatchEvent(new Event('change')); $('hardReset').click(); } },
+    { name: 'Reveal world + read the reasoning log',
+      description: "Turn ON 'Reveal hidden world' (teacher view). Now you can see the hidden ground truth versus what this simplified inference system has derived. Step slowly and watch the reasoning log fill in: 'Breeze at (1,2), so a pit is in {(1,3), (2,2)}'.",
+      apply: () => { $('revealChk').checked = true; $('strategySel').value = 'logic'; $('strategySel').dispatchEvent(new Event('change')); $('hardReset').click(); } },
+    { name: 'Unknown is not safe',
+      description: 'Hide the world and use pure logic. Step until the agent stops, then inspect the knowledge map. Unknown cells are not safe cells; the agent needs a proof before moving.',
+      apply: () => { $('revealChk').checked = false; $('strategySel').value = 'logic'; $('strategySel').dispatchEvent(new Event('change')); $('hardReset').click(); } },
+  ];
+  let tourIdx = 0;
+  function renderTour() {
+    if (!$('tourName')) return;
+    const s = LESSON_TOUR[tourIdx];
+    // localized scenario name/description with graceful English fallback to the
+    // inline LESSON_TOUR strings (which remain the source-of-truth fallback).
+    const lang = document.documentElement.lang || 'en';
+    const L = STRINGS[lang] || {};
+    $('tourName').textContent = L['tour' + tourIdx + 'name'] || s.name;
+    $('tourDesc').textContent = L['tour' + tourIdx + 'desc'] || s.description;
+    $('tourPos').textContent = `${tourIdx + 1}/${LESSON_TOUR.length}`;
+    $('tourPrev').disabled = (tourIdx === 0);
+    $('tourNext').disabled = (tourIdx === LESSON_TOUR.length - 1);
+  }
+  $('tourApply').addEventListener('click', () => LESSON_TOUR[tourIdx].apply());
+  $('tourPrev').addEventListener('click', () => { if (tourIdx > 0) { tourIdx--; renderTour(); } });
+  $('tourNext').addEventListener('click', () => { if (tourIdx < LESSON_TOUR.length - 1) { tourIdx++; renderTour(); } });
+  renderTour();
+
+
+  function scenarioGalleryText(key, fallback) {
+    const L = document.documentElement.lang || 'en';
+    const S = STRINGS[L] || STRINGS.en;
+    return S[key] || fallback;
+  }
+  function localizedScenarioField(index, field, fallback) {
+    const L = document.documentElement.lang || 'en';
+    const S = STRINGS[L] || STRINGS.en;
+    return S['tour' + index + field] || fallback || '';
+  }
+  function appendScenarioMeta(card, label, text) {
+    const p = document.createElement('p');
+    p.className = 'scenario-meta';
+    const strong = document.createElement('strong');
+    strong.textContent = label + ': ';
+    p.appendChild(strong);
+    p.appendChild(document.createTextNode(text));
+    card.appendChild(p);
+  }
+  function renderScenarioGallery() {
+    const root = $('scenarioGalleryCards');
+    if (!root || typeof LESSON_TOUR === 'undefined') return;
+    root.innerHTML = '';
+    LESSON_TOUR.forEach((scenario, index) => {
+      const title = localizedScenarioField(index, 'name', scenario.name || (scenarioGalleryText('sg-card-prefix', 'Scenario') + ' ' + (index + 1)));
+      const description = localizedScenarioField(index, 'desc', scenario.description || '');
+      const card = document.createElement('article');
+      card.className = 'scenario-card';
+      card.setAttribute('data-scenario-index', String(index));
+
+      const h = document.createElement('h3');
+      h.textContent = `${scenarioGalleryText('sg-card-prefix', 'Scenario')} ${index + 1}: ${title}`;
+      card.appendChild(h);
+
+      appendScenarioMeta(card, scenarioGalleryText('sg-concept-label', 'Concept'), title);
+      appendScenarioMeta(card, scenarioGalleryText('sg-observe-label', 'What to watch'), description);
+      appendScenarioMeta(card, scenarioGalleryText('sg-misconception-label', 'Predict before applying'), scenarioGalleryText('sg-misconception-text', 'Which visible result should change most, and why? Commit to an answer before applying.'));
+      appendScenarioMeta(card, scenarioGalleryText('sg-teacher-label', 'Teacher use'), scenarioGalleryText('sg-teacher-text', 'Use as a 2–3 minute predict → run → explain prompt.'));
+
+      const btn = document.createElement('button');
+      btn.className = 'step-btn';
+      btn.type = 'button';
+      btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare');
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('.scenario-card').forEach(item => item.classList.remove('applied'));
+        tourIdx = index;
+        renderTour();
+        scenario.apply();
+        card.classList.add('applied');
+        btn.textContent = '✓ ' + scenarioGalleryText('sg-applied', 'Applied; compare the result');
+        setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
+      });
+      card.appendChild(btn);
+      root.appendChild(card);
+    });
+  }
+  renderScenarioGallery();
+
+  // Worksheet/lab mode: 3 questions with instant ✓/✗ feedback.
+  // MCQ: each question is graded by the selected radio's index, not typed text.
+  // `correct` is the index of the right option (language-agnostic). ok/no are the
+  // existing bilingual feedback keys, with an English inline fallback via wsMsg.
+  const WORKSHEET = [
+    { correct: 1,
+      ok:  ['ws1ok', "Correct. Pure logic only moves to cells it can PROVE are safe from percepts. Many worlds force the agent to gamble (the gold is reachable only through unprovably-safe cells). The pure-logic agent climbs out empty-handed in those worlds: that's the limitation."],
+      no:  ['ws1no', "Try 'no'. Sometimes the gold is only reachable through cells the agent can't prove safe. Pure logic climbs out empty-handed in those worlds."] },
+    { correct: 2,
+      ok:  ['ws2ok', "Correct. The hybrid agent takes risks: gambles on uncertain cells, fires the arrow. Sometimes it scores +1000 (gold + climb out); sometimes it dies (−1000). The wider score range comes from taking risks. Whether expected value is higher depends on the assumed distribution of worlds and the utility or scoring model."],
+      no:  ['ws2no', "Try 'higher'. Hybrid takes risks: sometimes scores big, sometimes dies. Pure logic is conservative and often returns without gold. Its expected value cannot be ranked without a distribution over worlds and an explicit utility model."] },
+    { correct: 0,
+      ok:  ['ws3ok', "Correct. AIMA Wumpus scoring: −1 per action (so 1 is the magnitude), +1000 for grabbing gold, −1000 for dying. The per-step penalty incentivizes finding short paths."],
+      no:  ['ws3no', "Try 1. AIMA standard: −1 per step, +1000 for gold, −1000 for death."] },
+  ];
+  WORKSHEET.forEach((q, i) => {
+    const n = i + 1;
+    $(`ws${n}btn`).addEventListener('click', () => {
+      const fb = $(`ws${n}fb`);
+      const picked = document.querySelector(`input[name="ws${n}"]:checked`);
+      if (!picked) {
+        fb.textContent = wsMsg('ws-pick', 'Pick an answer first.');
+        fb.style.color = 'var(--muted)';
+        return;
+      }
+      const ok = Number(picked.value) === q.correct;
+      const [key, en] = ok ? q.ok : q.no;
+      fb.textContent = (ok ? '✓ ' : '✗ ') + wsMsg(key, en);
+      fb.style.color = ok ? '#16a34a' : '#dc2626';
+    });
+  });
+  window.__inferTest = function(){ const r = { panel: !!document.getElementById('whyPanel') }; const pass = r.panel; console.log('[wumpus] INFERENCE-TRACE ' + (pass?'passed':'FAILED'), r); return Object.assign({pass}, r); };
+})();
+</script>
+<!-- Embed mode handler (shared pattern across all 12 applets). -->
+<script>
+(() => {
+  try {
+    if (new URLSearchParams(location.search).get('embed') === '1') {
+      document.body.classList.add('embed-mode');
+    }
+  } catch (_) {}
+  const btn = document.getElementById('embedLink');
+  if (!btn) return;
+  btn.addEventListener('click', async () => {
+    const url = new URL(location.href);
+    url.searchParams.set('embed', '1');
+    const snippet = `<iframe src="${url.toString()}" width="100%" height="720" frameborder="0" style="border:1px solid #e5e7eb; border-radius:8px;" loading="lazy"></iframe>`;
+    try {
+      await navigator.clipboard.writeText(snippet);
+      const orig = btn.textContent; btn.textContent = '✓ Copied iframe';
+      setTimeout(() => btn.textContent = orig, 1800);
+    } catch (_) { prompt('Copy this iframe snippet:', snippet); }
+  });
+})();
+</script>
+<footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
+<p style="margin:0 0 6px;"><a data-i18n="footer-top" href="#top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
+<p style="margin:0;"><span data-i18n="footer-course">Made for the Introduction to AI course at Haidian Kaiwen Academy.</span></p>
+<p style="margin:6px 0 0;">© <span data-current-year="">2026</span> Logan M. Dixon · <a data-i18n="footer-portfolio" href="https://lmdixon23.github.io/" style="color:var(--accent,#0891b2);">Portfolio</a> · <a data-i18n="footer-project" href="../../index.html" style="color:var(--accent,#0891b2);">AI Playgrounds</a> · <a data-i18n="footer-source" href="https://github.com/lmdixon23/ai-playgrounds" style="color:var(--accent,#0891b2);">Source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a data-i18n="footer-issue" href="https://github.com/lmdixon23/ai-playgrounds/issues" style="color:var(--accent,#0891b2);">Report an issue</a> · <a href="https://orcid.org/0009-0001-0592-462X" rel="me" style="color:var(--accent,#0891b2);">ORCID</a></p>
+</footer>
+<script>
+(function() {
+  const LAB_CONFIG = {"slug": "wumpus-world", "title": "Wumpus World lab packet", "zhTitle": "Wumpus 世界实验包", "fields": [{"label": "Strategy", "selector": "#strategySel", "kind": "selected"}, {"label": "Reveal hidden world", "selector": "#revealChk", "kind": "checked"}, {"label": "Score", "selector": "#scoreV", "kind": "text"}, {"label": "Step", "selector": "#stepV", "kind": "text"}, {"label": "Carrying gold", "selector": "#goldV", "kind": "text"}, {"label": "Arrows", "selector": "#arrowsV", "kind": "text"}, {"label": "Status", "selector": "#statV", "kind": "text"}, {"label": "Reasoning", "selector": "#whyPanel", "kind": "text"}]};
+  const root = document.querySelector('.classroom-lab');
+  if (!root) return;
+  const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;
+  const qs = (sel) => root.querySelector(sel);
+  function currentLang() {
+    const raw = String(document.documentElement.lang || 'en').toLowerCase();
+    if (raw.startsWith('zh')) return 'zh';
+    if (raw.startsWith('vi')) return 'vi';
+    if (raw.startsWith('es')) return 'es';
+    return 'en';
+  }
+  function textFor(el, lang) {
+    if ((lang === 'vi' || lang === 'es') && window.__r4Localization) {
+      const source = el.getAttribute('data-lab-en') || el.textContent;
+      return window.__r4Localization.translateString(source, lang);
+    }
+    return el.getAttribute(lang === 'zh' ? 'data-lab-zh' : 'data-lab-en') || el.textContent;
+  }
+  function applyLabLang() {
+    const lang = currentLang();
+    root.querySelectorAll('[data-lab-en]').forEach(el => {
+      const value = textFor(el, lang);
+      if (el.tagName === 'TEXTAREA') el.placeholder = value;
+      else el.textContent = value;
+    });
+  }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? 'on' : 'off';
+    else if (field.kind === 'text') value = el.textContent.trim();
+    else value = el.value;
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    const label = ((currentLang() === 'vi' || currentLang() === 'es') && window.__r4Localization) ? window.__r4Localization.translateString(field.label, currentLang()) : field.label;
+    return value ? label + ': ' + value : null;
+  }
+  function snapshot() {
+    const lines = LAB_CONFIG.fields.map(readField).filter(Boolean);
+    return lines.length ? lines.join('\n') : 'No state captured yet. Run or adjust the applet first.';
+  }
+  function answers() {
+    const data = {};
+    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => data[area.getAttribute('data-lab-answer')] = area.value.trim());
+    return data;
+  }
+  function saveDraft() { try { localStorage.setItem(storageKey, JSON.stringify(answers())); } catch (_) {} }
+  function loadDraft() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      root.querySelectorAll('textarea[data-lab-answer]').forEach(area => { const key = area.getAttribute('data-lab-answer'); if (saved[key]) area.value = saved[key]; });
+    } catch (_) {}
+  }
+  function packet() {
+    const lang = currentLang();
+    const baseLabels = {title: LAB_CONFIG.title, state:'State snapshot', predict:'Predict', observe:'Observe', explain:'Explain', transfer:'Transfer'};
+    const labels = lang === 'zh' ? {title: LAB_CONFIG.zhTitle, state:'状态记录', predict:'预测', observe:'观察', explain:'解释', transfer:'迁移'} : ((lang === 'vi' || lang === 'es') && window.__r4Localization ? Object.fromEntries(Object.entries(baseLabels).map(([k,v]) => [k, window.__r4Localization.translateString(v, lang)])) : baseLabels);
+    const a = answers();
+    return [
+      '# ' + labels.title,
+      '',
+      '- Applet: ' + (document.querySelector('h1') ? document.querySelector('h1').textContent.trim() : document.title),
+      '- Date: ' + new Date().toLocaleString(),
+      '',
+      '## ' + labels.state,
+      snapshot(),
+      '',
+      '## ' + labels.predict,
+      a.predict || '',
+      '',
+      '## ' + labels.observe,
+      a.observe || '',
+      '',
+      '## ' + labels.explain,
+      a.explain || '',
+      '',
+      '## ' + labels.transfer,
+      a.transfer || ''
+    ].join('\n');
+  }
+  function setStatus(en, zh) { const el = qs('.lab-status'); if (el) el.textContent = currentLang() === 'zh' ? zh : en; }
+  function refreshState() { const el = qs('[data-lab-state]'); if (el) el.textContent = snapshot(); }
+  async function copyPacket() {
+    const text = packet();
+    try { await navigator.clipboard.writeText(text); setStatus('Copied local lab packet.', '已复制本地实验包。'); }
+    catch (_) { window.prompt('Copy this lab packet:', text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
+  }
+
+  function markdownToPrintableHtml(markdown) {
+    const escape = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const inline = value => escape(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    const lines = String(markdown).split(/\r?\n/);
+    let html = '', inList = false, inState = false;
+    const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
+    for (const raw of lines) {
+      const line = raw.trimEnd();
+      if (line.startsWith('# ')) { closeList(); html += '<h1>' + inline(line.slice(2)) + '</h1>'; inState=false; }
+      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = /state snapshot|状态记录/i.test(title); }
+      else if (line.startsWith('- ')) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inline(line.slice(2)) + '</li>'; }
+      else if (!line.trim()) { closeList(); }
+      else { closeList(); html += inState ? '<pre class="state">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
+    }
+    closeList(); return html;
+  }
+
+  function printPacket() {
+    const w = window.open('', '_blank');
+    if (!w) { setStatus('Popup blocked. Copy the packet instead.', '弹窗被拦截。请改用复制实验包。'); return; }
+    const rendered = markdownToPrintableHtml(packet());
+    const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+    setStatus('Print page opened.', '打印页面已打开。');
+  }
+  function clearDraft() {
+    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.value = '');
+    try { localStorage.removeItem(storageKey); } catch (_) {}
+    refreshState(); setStatus('Local draft cleared.', '本地草稿已清除。');
+  }
+  root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.addEventListener('input', saveDraft));
+  root.querySelector('[data-lab-action="copy"]')?.addEventListener('click', copyPacket);
+  root.querySelector('[data-lab-action="print"]')?.addEventListener('click', printPacket);
+  root.querySelector('[data-lab-action="refresh"]')?.addEventListener('click', () => { refreshState(); setStatus('State refreshed.', '状态已更新。'); });
+  root.querySelector('[data-lab-action="clear"]')?.addEventListener('click', clearDraft);
+  document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(applyLabLang, 0)));
+  window.addEventListener('r4languagechange', () => setTimeout(applyLabLang, 0));
+  
+  document.addEventListener('change', refreshState);
+  document.addEventListener('click', (event) => { if (!(event.target instanceof HTMLTextAreaElement)) setTimeout(refreshState, 0); }, true);
+  loadDraft(); applyLabLang(); refreshState();
+})();
+</script>
+<script>
+(function() {
+  const VISUAL_CONFIG = {"intro":"Wumpus World is a reasoning display: percepts constrain what can be true, inference marks safe and risky squares, and action choice tests the agent's belief state.","zhIntro":"Wumpus 世界是推理展示：感知限制可能为真的情况，推理标记安全和危险格子，动作选择检验智能体的信念状态。","misread":"Revealing the hidden world is useful for checking reasoning, but the agent normally acts from percepts and beliefs, not hidden truth.","zhMisread":"显示隐藏世界有助于检查推理，但智能体通常根据感知和信念行动，而不是根据隐藏真相行动。","steps":[{"label":"Percepts","zhLabel":"感知","text":"Breeze, stench, glitter, bump, and scream are local evidence, not direct global knowledge.","zhText":"微风、臭味、闪光、撞墙和尖叫是局部证据，不是直接的全局知识。","selector":"#statV","kind":"text","liveLabel":"Status","zhLiveLabel":"状态"},{"label":"Belief update","zhLabel":"信念更新","text":"The agent converts percepts into possible pit, Wumpus, safe, or unknown squares.","zhText":"智能体把感知转换成可能有坑、可能有 Wumpus、安全或未知的格子。","selector":"#whyPanel","kind":"text","liveLabel":"Reasoning","zhLiveLabel":"推理"},{"label":"Risk choice","zhLabel":"风险选择","text":"The strategy decides whether to explore, shoot, grab, climb, or avoid danger.","zhText":"策略决定是探索、射箭、拿金子、爬出，还是避开危险。","selector":"#strategySel","kind":"selected","liveLabel":"Strategy","zhLiveLabel":"策略"},{"label":"Outcome evidence","zhLabel":"结果证据","text":"Score, survival, arrows, and gold show how reasoning affected action quality.","zhText":"分数、生存状态、箭和金子显示推理如何影响动作质量。","selector":"#scoreV","kind":"text","liveLabel":"Score","zhLiveLabel":"分数"}],"fields":[{"label":"Strategy","zhLabel":"策略","selector":"#strategySel","kind":"selected"},{"label":"Score","zhLabel":"分数","selector":"#scoreV","kind":"text"},{"label":"Step","zhLabel":"步数","selector":"#stepV","kind":"text"},{"label":"Gold","zhLabel":"金子","selector":"#goldV","kind":"text"},{"label":"Status","zhLabel":"状态","selector":"#statV","kind":"text"},{"label":"Reasoning","zhLabel":"推理","selector":"#whyPanel","kind":"text"}]};
+  const root = document.querySelector('.visual-explanation');
+  if (!root) return;
+  const flow = root.querySelector('[data-visual-flow]');
+  const intro = root.querySelector('[data-visual-intro]');
+  const snapshotBox = root.querySelector('[data-visual-snapshot]');
+  const misreadBox = root.querySelector('[data-visual-misread]');
+  function currentLang() { return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en'; }
+  function t(obj, key) { const lang = currentLang(); return (lang === 'zh' && obj['zh' + key[0].toUpperCase() + key.slice(1)]) || obj[key] || ''; }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? 'on' : 'off';
+    else if (field.kind === 'value') value = el.value;
+    else value = el.textContent.trim();
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? { label: field.label, zhLabel: field.zhLabel || field.label, value } : null;
+  }
+  function liveValue(step) {
+    if (!step.selector) return '';
+    const field = readField({ selector: step.selector, kind: step.kind || 'text', label: step.liveLabel || 'Live', zhLabel: step.zhLiveLabel || '实时' });
+    return field ? field.value : (step.fallback || '');
+  }
+  function renderVisualExplanation() {
+    const lang = currentLang();
+    root.querySelectorAll('[data-visual-en]').forEach(el => {
+      el.textContent = el.getAttribute(lang === 'zh' ? 'data-visual-zh' : 'data-visual-en') || el.textContent;
+    });
+    intro.textContent = lang === 'zh' ? VISUAL_CONFIG.zhIntro : VISUAL_CONFIG.intro;
+    misreadBox.textContent = lang === 'zh' ? VISUAL_CONFIG.zhMisread : VISUAL_CONFIG.misread;
+    flow.innerHTML = VISUAL_CONFIG.steps.map((step, idx) => {
+      const title = lang === 'zh' ? step.zhLabel : step.label;
+      const body = lang === 'zh' ? step.zhText : step.text;
+      const liveLabel = lang === 'zh' ? (step.zhLiveLabel || '实时') : (step.liveLabel || 'Live');
+      const live = liveValue(step);
+      const liveHtml = live ? '<span class="visual-live"><strong>' + escapeHtml(liveLabel) + '</strong><span>' + escapeHtml(live) + '</span></span>' : '';
+      return '<article class="visual-card" data-step="' + String(idx + 1).padStart(2, '0') + '"><h4>' + escapeHtml(title) + '</h4><p>' + escapeHtml(body) + '</p>' + liveHtml + '</article>';
+    }).join('');
+    const lines = (VISUAL_CONFIG.fields || []).map(readField).filter(Boolean).map(f => (lang === 'zh' ? f.zhLabel : f.label) + ': ' + f.value);
+    snapshotBox.textContent = lines.length ? lines.join('\n') : (lang === 'zh' ? '还没有捕捉到状态。请先运行或调整小程序。' : 'No state captured yet. Run or adjust the applet first.');
+  }
+  function escapeHtml(text) { return String(text).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+  let visualTimer = null;
+  function scheduleVisualRender() {
+    if (visualTimer) cancelAnimationFrame(visualTimer);
+    visualTimer = requestAnimationFrame(renderVisualExplanation);
+  }
+  document.addEventListener('change', scheduleVisualRender);
+  document.addEventListener('input', scheduleVisualRender);
+  document.addEventListener('click', () => setTimeout(scheduleVisualRender, 0), true);
+  document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(scheduleVisualRender, 0)));
+  setInterval(renderVisualExplanation, 1200);
+  renderVisualExplanation();
+})();
+</script>
+<!-- Privacy-friendly analytics: GoatCounter, cookieless. -->
+
+<script>
+(function() {
+  const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "Strategy", "zhLabel": "策略", "selector": "#strategySel", "kind": "selected"}, {"label": "Score", "zhLabel": "分数", "selector": "#scoreV", "kind": "text"}, {"label": "Step", "zhLabel": "步数", "selector": "#stepV", "kind": "text"}, {"label": "Gold", "zhLabel": "金子", "selector": "#goldV", "kind": "text"}, {"label": "Status", "zhLabel": "状态", "selector": "#statV", "kind": "text"}, {"label": "Reasoning", "zhLabel": "推理", "selector": "#whyPanel", "kind": "text"}]};
+  const layer = document.querySelector('.accessibility-layer');
+  if (!layer) return;
+  const intro = layer.querySelector('[data-a11y-intro]');
+  const stateGrid = layer.querySelector('[data-a11y-state-grid]');
+  const liveRegion = layer.querySelector('#a11yLiveRegion');
+  let renderTimer = 0;
+  let lastSummary = '';
+  function currentLang() {
+    return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+  }
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+  function localized(obj, key) {
+    const lang = currentLang();
+    const zhKey = 'zh' + key[0].toUpperCase() + key.slice(1);
+    return (lang === 'zh' && obj[zhKey]) || obj[key] || '';
+  }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? (currentLang() === 'zh' ? '开' : 'on') : (currentLang() === 'zh' ? '关' : 'off');
+    else if (field.kind === 'value') value = el.value;
+    else value = el.textContent.trim();
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? { label: localized(field, 'label'), value } : null;
+  }
+  function renderAccessibilityLayer(options = {}) {
+    const lang = currentLang();
+    layer.querySelectorAll('[data-a11y-en]').forEach(el => {
+      el.textContent = el.getAttribute(lang === 'zh' ? 'data-a11y-zh' : 'data-a11y-en') || el.textContent;
+    });
+    const copy = A11Y_CONFIG.copy[lang] || A11Y_CONFIG.copy.en;
+    intro.textContent = copy.intro;
+    layer.querySelector('[data-a11y-title]').textContent = copy.title;
+    layer.querySelector('[data-a11y-keyboard-title]').textContent = copy.keyboardTitle;
+    layer.querySelector('[data-a11y-keyboard-1]').textContent = copy.keyboard1;
+    layer.querySelector('[data-a11y-keyboard-2]').textContent = copy.keyboard2;
+    layer.querySelector('[data-a11y-keyboard-3]').textContent = copy.keyboard3;
+    layer.querySelector('[data-a11y-state-title]').textContent = copy.stateTitle;
+    layer.querySelector('[data-a11y-motion-title]').textContent = copy.motionTitle;
+    layer.querySelector('[data-a11y-motion-copy]').textContent = copy.motionCopy;
+    layer.querySelector('[data-a11y-note]').textContent = copy.note;
+    const fields = A11Y_CONFIG.fields.map(readField).filter(Boolean);
+    if (fields.length) {
+      stateGrid.innerHTML = fields.map(field => '<dt>' + escapeHtml(field.label) + '</dt><dd>' + escapeHtml(field.value) + '</dd>').join('');
+    } else {
+      stateGrid.innerHTML = '<dt>' + escapeHtml(copy.emptyLabel) + '</dt><dd>' + escapeHtml(copy.emptyValue) + '</dd>';
+    }
+    const summary = fields.map(field => field.label + ': ' + field.value).join('; ') || copy.emptyValue;
+    if (options.announce && liveRegion && summary !== lastSummary) {
+      liveRegion.textContent = copy.livePrefix + summary;
+    }
+    lastSummary = summary;
+  }
+  function markVisualRegions() {
+    const descriptionId = 'a11yStateSummary';
+    document.querySelectorAll('canvas, svg, [role="img"]').forEach((el, index) => {
+      if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+      if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', A11Y_CONFIG.copy.en.visualLabel + ' ' + (index + 1));
+      const describedBy = (el.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+      if (!describedBy.includes(descriptionId)) {
+        describedBy.push(descriptionId);
+        el.setAttribute('aria-describedby', describedBy.join(' '));
+      }
+    });
+  }
+  function scheduleAccessibilityRender(announce = true) {
+    clearTimeout(renderTimer);
+    renderTimer = setTimeout(() => renderAccessibilityLayer({ announce }), 100);
+  }
+  document.addEventListener('input', () => scheduleAccessibilityRender(true), true);
+  document.addEventListener('change', () => scheduleAccessibilityRender(true), true);
+  document.addEventListener('click', event => {
+    if (event.target && event.target.closest && event.target.closest('button, [role="button"], canvas, svg, select, input')) {
+      scheduleAccessibilityRender(true);
+    }
+  }, true);
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ' || event.key.startsWith('Arrow') || event.key === 'Tab') {
+      scheduleAccessibilityRender(false);
+    }
+  }, true);
+  setInterval(() => {
+    if (!document.hidden) renderAccessibilityLayer({ announce: false });
+  }, 1500);
+  markVisualRegions();
+  renderAccessibilityLayer({ announce: false });
+  window.renderAccessibilityLayer = renderAccessibilityLayer;
+})();
+</script>
+<script>
+(function () {
+  document.querySelectorAll('[data-current-year]').forEach(el => { el.textContent = new Date().getFullYear(); });
+})();
+</script>
+<script id="learner-content-system">
+(() => {
+  const profile = {"slug":"wumpus-world","en":{"title":"Wumpus World","big":"Follow a logical agent as it turns breezes and stenches into beliefs about nearby danger. Distinguish what is true, what is proven, and what remains unknown.","primer":"The agent cannot see the hidden world. It must update a knowledge base from percepts and act only on what the evidence supports.","terms":[{"term":"Percept","definition":"A signal the agent senses in its current square, such as a breeze or stench."},{"term":"Knowledge base (KB)","definition":"Stored statements representing what the agent currently knows."},{"term":"Entailment","definition":"A conclusion that must be true if every statement in the knowledge base is true."},{"term":"Safe","definition":"The agent has ruled out both a pit and the Wumpus in that square."},{"term":"Unknown","definition":"The agent lacks enough evidence to prove the square safe or dangerous."},{"term":"Logical agent","definition":"An agent that selects actions from conclusions supported by its knowledge base."},{"term":"Possible world","definition":"One complete assignment of hazards and facts that is consistent with the current knowledge."},{"term":"Inference rule","definition":"A valid pattern for deriving a new conclusion from known statements."}],"scenarios":[{"title":"Pure logic moves only into proven-safe squares","question":"What can a cautious agent do when the evidence does not prove a safe next move?","run":"Use the pure-logic strategy on a fresh hidden world and step until the agent stops or exits.","predict":"Predict whether stopping means every remaining square is dangerous.","explain":"Explain the difference between lacking a proof of safety and proving danger."},{"title":"The hybrid agent can shoot, gamble, or leave","question":"When should an agent act under uncertainty instead of waiting for certainty?","run":"Switch to the hybrid strategy and compare its actions with pure logic on the same type of world.","predict":"Predict which new action will appear when the safe frontier is empty.","explain":"Explain what extra assumption or risk rule allows the hybrid agent to continue."},{"title":"Probability ranks unresolved risks","question":"How can an agent choose among several squares that are all uncertain?","run":"Use the probabilistic strategy and inspect the estimated pit probability for frontier cells.","predict":"Predict whether the agent should choose the most familiar square or the lowest estimated risk.","explain":"Explain how ranking uncertainty differs from proving a square safe."},{"title":"Reveal the world and compare truth with belief","question":"Why can the agent’s knowledge differ from the hidden ground truth?","run":"Turn on the teacher view, step slowly, and compare hidden hazards with the knowledge map.","predict":"Predict one fact that is true but the agent cannot yet know.","explain":"Use the reasoning log to identify exactly which percept or rule is missing."},{"title":"Unknown does not mean safe","question":"What evidence is required before a square can be labeled safe?","run":"Hide the world, use pure logic, and stop when the agent reaches an unresolved frontier.","predict":"Predict which neighboring percept would be needed to rule out each hazard.","explain":"Explain why absence of knowledge is not evidence of absence."}]},"zh":{"title":"Wumpus 世界","big":"跟随逻辑智能体，把微风和恶臭转化为对附近危险的信念。区分真实情况、已经证明的内容与仍然未知的内容。","primer":"智能体看不到隐藏世界。它必须根据感知更新知识库，并只依据证据支持的内容行动。","terms":[{"term":"感知","definition":"智能体在当前格子感受到的信号，例如微风或恶臭。"},{"term":"知识库（KB）","definition":"表示智能体当前知识的已存陈述。"},{"term":"蕴含","definition":"如果知识库中所有陈述为真，则必然为真的结论。"},{"term":"安全","definition":"智能体已经排除该格子中存在坑或 Wumpus。"},{"term":"未知","definition":"智能体没有足够证据证明格子安全或危险。"},{"term":"逻辑智能体","definition":"依据知识库支持的结论选择动作的智能体。"},{"term":"可能世界","definition":"与当前知识一致的一种完整危险与事实配置。"},{"term":"推理规则","definition":"从已知陈述推出新结论的有效模式。"}],"scenarios":[{"title":"纯逻辑只进入已证明安全的格子","question":"证据无法证明下一步安全时，谨慎智能体能做什么？","run":"在新的隐藏世界中使用纯逻辑策略，逐步运行到智能体停止或离开。","predict":"预测停止是否意味着所有剩余格子都危险。","explain":"解释没有安全证明与证明危险之间的区别。"},{"title":"混合智能体可以射击、冒险或离开","question":"什么时候智能体应在不确定下行动，而不是等待确定性？","run":"切换到混合策略，并与纯逻辑在同类世界中的动作比较。","predict":"预测安全前沿为空时会出现哪种新动作。","explain":"解释什么额外假设或风险规则让混合智能体继续。"},{"title":"概率对未解决风险排序","question":"多个格子都不确定时，智能体如何选择？","run":"使用概率策略并检查前沿格子的估计坑概率。","predict":"预测智能体应选最熟悉格子还是估计风险最低格子。","explain":"解释给不确定性排序与证明格子安全有什么不同。"},{"title":"揭示世界并比较真相与信念","question":"为什么智能体知识可能与隐藏真相不同？","run":"打开教师视图，缓慢逐步运行，并比较隐藏危险与知识地图。","predict":"预测一个真实但智能体尚无法知道的事实。","explain":"用推理日志指出缺少哪一个感知或规则。"},{"title":"未知不等于安全","question":"格子被标为安全前需要什么证据？","run":"隐藏世界，使用纯逻辑，并在智能体到达未解决前沿时停止。","predict":"预测需要哪个邻近感知才能排除每种危险。","explain":"解释缺少知识为什么不是不存在危险的证据。"}]}};
+  window.APPLET_LEARNER_PROFILE = profile;
+  const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;
+  try {
+    STRINGS.en.title = profile.en.title; STRINGS.zh.title = profile.zh.title;
+    STRINGS.en['tldr-strong'] = 'What this applet shows'; STRINGS.zh['tldr-strong'] = '这个工具展示什么';
+    STRINGS.en['tldr-body'] = profile.en.big; STRINGS.zh['tldr-body'] = profile.zh.big;
+    profile.en.scenarios.forEach((item,i) => { STRINGS.en['tour'+i+'name']=item.title; STRINGS.en['tour'+i+'desc']=item.run; if (typeof LESSON_TOUR !== 'undefined' && LESSON_TOUR[i]) { LESSON_TOUR[i].name=item.title; LESSON_TOUR[i].description=item.run; } });
+    profile.zh.scenarios.forEach((item,i) => { STRINGS.zh['tour'+i+'name']=item.title; STRINGS.zh['tour'+i+'desc']=item.run; });
+  } catch (_) {}
+  function applyCoreCopy(){
+    const c=copy();
+    document.title=c.title+' | AI Playgrounds';
+    const h=document.querySelector('.header-main h1'); if(h) h.textContent=c.title;
+    const strong=document.querySelector('.tldr strong'); if(strong) strong.textContent=currentLocale()==='zh'?'这个工具展示什么':'What this applet shows';
+    const body=document.querySelector('.tldr span'); if(body) body.textContent=c.big;
+    const jump=document.querySelector('.jump-link'); if(jump) jump.textContent=currentLocale()==='zh'?'↓ 阅读分步解释':'↓ Read the step-by-step explanation';
+  }
+  function stateData(){
+    const values={};
+    document.querySelectorAll('#main input,#main select,#main textarea').forEach(el=>{
+      if(!el.id||el.closest('.classroom-lab'))return;
+      if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;
+      values[el.id]=el.type==='checkbox'?el.checked:el.value;
+    });
+    return {applet:profile.en.title,slug:profile.slug,exported_at:new Date().toISOString(),values};
+  }
+  function toolbar(){
+    const actions=document.querySelector('.header-actions'); if(!actions||actions.dataset.standardized==='1')return;
+    const share=document.getElementById('shareLink'), embed=document.getElementById('embedLink'), reset=document.getElementById('hardReset');
+    const csv=document.getElementById('csvExport'), png=document.getElementById('exportPng');
+    const more=document.createElement('details'); more.className='header-more';
+    const summary=document.createElement('summary'); summary.className='header-png'; summary.setAttribute('aria-haspopup','menu'); more.appendChild(summary);
+    const menu=document.createElement('div'); menu.className='header-more-menu'; menu.setAttribute('role','menu'); more.appendChild(menu);
+    if(embed){embed.textContent='📎 Embed in LMS';menu.appendChild(embed)}
+    const jsonBtn=document.createElement('button');jsonBtn.type='button';jsonBtn.className='header-png';jsonBtn.dataset.exportState='';menu.appendChild(jsonBtn);
+    if(csv){csv.textContent='📊 Data table (.csv)';menu.appendChild(csv)}
+    if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
+    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
+    actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
+    window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';if(share){share.textContent=zh?'🔗 分享':'🔗 Share';share.title=zh?'复制可在另一浏览器中重新打开当前设置的链接。':'Copy a link that reopens the current settings in another browser.';}summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
+    window.refreshAppletToolbar();
+    document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
+  }
+  function terms(){
+    const inner=document.querySelector('.interactive-inner'); if(!inner||inner.querySelector('.key-terms'))return;
+    const d=document.createElement('details');d.className='key-terms';d.open=true;
+    d.innerHTML='<summary><span data-key-summary></span></summary><div class="key-terms-panel"><p class="key-terms-intro" data-key-intro></p><dl class="key-terms-grid" data-key-grid></dl></div>';
+    const first=inner.querySelector(':scope > details');inner.insertBefore(d,first||inner.firstChild);
+    window.renderAppletKeyTerms=()=>{const c=copy();d.querySelector('[data-key-summary]').textContent=currentLocale()==='zh'?'🔑 先学这些术语':'🔑 Key terms before the explanation';d.querySelector('[data-key-intro]').textContent=c.primer;d.querySelector('[data-key-grid]').innerHTML=c.terms.map(x=>'<div class="key-term"><dt>'+x.term+'</dt><dd>'+x.definition+'</dd></div>').join('')};
+    window.renderAppletKeyTerms();
+  }
+  function essayPrimer(){
+    const essay=document.querySelector('article#essay');if(!essay||essay.querySelector('.essay-primer'))return;
+    const box=document.createElement('section');box.className='essay-primer';essay.insertBefore(box,essay.firstChild);
+    window.renderEssayPrimer=()=>{const c=copy();const heading=currentLocale()==='zh'?'阅读前先准备':'Before you read';const termHeading=currentLocale()==='zh'?'本页会使用的术语':'Terms used in this explanation';box.innerHTML='<h2>'+heading+'</h2><p>'+c.primer+'</p><h3>'+termHeading+'</h3><dl class="essay-primer-terms">'+c.terms.map(x=>'<div><dt>'+x.term+'</dt><dd>'+x.definition+'</dd></div>').join('')+'</dl>'};window.renderEssayPrimer();
+  }
+  function patchScenarioData(){
+    try{if(typeof renderScenarioGallery==='function')renderScenarioGallery();if(typeof renderTour==='function')renderTour()}catch(_){}
+  }
+  window.refreshLearnerContent=()=>{applyCoreCopy();window.renderAppletKeyTerms?.();window.renderEssayPrimer?.();window.refreshAppletToolbar?.()};
+  applyCoreCopy();toolbar();terms();essayPrimer();patchScenarioData();
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(window.refreshLearnerContent,20)));
+})();
+</script>
+<!-- AI_PLAYGROUNDS_COMPONENT:original/essay-language-script -->
+<!-- AI_PLAYGROUNDS_COMPONENT:original/learning-modes-script -->
+<script id="applet-translation-completion">
+(() => {
+  const exact = {"Skip to applet controls":"跳到交互控件","▸ Show teacher notes (discussion prompts + curriculum)":"▸ 展开教师说明（讨论提示与课程联系）","▾ Hide teacher notes (discussion prompts + curriculum)":"▾ 收起教师说明（讨论提示与课程联系）","idle":"空闲","(empty)":"（空）","(no actions yet)":"（尚无动作）","exploring":"探索中"};
+  const rules = [["^New world\\. Agent at \\(([0-9]+),([0-9]+)\\) facing right\\.$","新世界。智能体位于（\\1,\\2），面向右。"],["^New world\\. Agent at \\(([0-9]+),([0-9]+)\\) facing left\\.$","新世界。智能体位于（\\1,\\2），面向左。"],["^New world\\. Agent at \\(([0-9]+),([0-9]+)\\) facing up\\.$","新世界。智能体位于（\\1,\\2），面向上。"],["^New world\\. Agent at \\(([0-9]+),([0-9]+)\\) facing down\\.$","新世界。智能体位于（\\1,\\2），面向下。"],["^\\(([0-9]+),([0-9]+)\\): -no breeze, -no stench$","（\\1,\\2）：无微风，无臭味"],["^\\(([0-9]+),([0-9]+)\\): breeze, -no stench$","（\\1,\\2）：有微风，无臭味"],["^\\(([0-9]+),([0-9]+)\\): -no breeze, stench$","（\\1,\\2）：无微风，有臭味"],["^\\(([0-9]+),([0-9]+)\\): breeze, stench$","（\\1,\\2）：有微风，有臭味"]].map(([source,target])=>[new RegExp(source),target]);
+  const currentLanguage=()=>((document.documentElement.lang||'en').startsWith('zh')?'zh':'en');
+  const excluded=node=>node.parentElement && node.parentElement.closest('script,style,noscript,[data-essay-lang="en"]');
+  const applyRule=text=>{
+    if(Object.prototype.hasOwnProperty.call(exact,text))return exact[text];
+    for(const [pattern,target] of rules){if(pattern.test(text)){pattern.lastIndex=0;return text.replace(pattern,target)}}
+    return null;
+  };
+  function translateNode(node){
+    if(excluded(node))return;
+    const raw=node.nodeValue||'',trimmed=raw.trim();if(!trimmed)return;
+    if(currentLanguage()==='en'){
+      if(node.__appletEnglish!==undefined){const start=raw.indexOf(trimmed);node.nodeValue=raw.slice(0,start)+node.__appletEnglish+raw.slice(start+trimmed.length);delete node.__appletEnglish}
+      return;
+    }
+    const translated=applyRule(trimmed);if(translated===null||translated===trimmed)return;
+    node.__appletEnglish=trimmed;const start=raw.indexOf(trimmed);node.nodeValue=raw.slice(0,start)+translated+raw.slice(start+trimmed.length);
+  }
+  function translateAttribute(el,attr){
+    const value=el.getAttribute(attr);if(!value)return;
+    const prop='__appletEnglish_'+attr;
+    if(currentLanguage()==='en'){
+      if(el[prop]!==undefined){el.setAttribute(attr,el[prop]);delete el[prop]}
+      return;
+    }
+    const translated=applyRule(value.trim());if(translated===null||translated===value.trim())return;
+    el[prop]=value;el.setAttribute(attr,translated);
+  }
+  function refresh(root=document){
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);nodes.forEach(translateNode);
+    const elements=(root.querySelectorAll?root.querySelectorAll('[title],[aria-label],[placeholder]'):[]);elements.forEach(el=>['title','aria-label','placeholder'].forEach(a=>{if(el.hasAttribute(a))translateAttribute(el,a)}));
+  }
+  let queued=false;const schedule=()=>{if(queued)return;queued=true;queueMicrotask(()=>{queued=false;refresh()})};
+  const observer=new MutationObserver(mutations=>{if(currentLanguage()!=='zh')return;for(const m of mutations){if(m.type==='characterData'||m.addedNodes.length){schedule();break}}});
+  observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+  document.querySelectorAll('button[data-lang]').forEach(button=>button.addEventListener('click',()=>setTimeout(()=>refresh(),45)));
+  refresh();
+  window.refreshAppletTranslationCompletion=refresh;
+})();
+</script>
+<!-- suite-guided-challenge-v2:start -->
+<link href="../../assets/guided-challenges.css" rel="stylesheet"/>
+<script defer src="../../assets/guided-challenges.js"></script>
+<!-- suite-guided-challenge-v2:end -->
+<script src="../../assets/locales/wumpus-world-r4.js"></script>
+<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["wumpus-world"];if(!row)return;Object.assign(row.vi.strings,{"🧪 Quick Assign · QA-WUMPUS-01 · 10–15 min": "🧪 Bài tập nhanh · QA-WUMPUS-01 · 10–15 phút", "Safe, risky, or unknown?": "An toàn, rủi ro hay chưa biết?", "Run an agent strategy, inspect the world and knowledge map, then explain how percepts support safe action.": "Chạy một chiến lược tác tử, kiểm tra thế giới và bản đồ tri thức rồi giải thích cách percept hỗ trợ hành động an toàn.", "Before stepping, which square or action should be safe, risky, or unknown? Why?": "Trước khi bước tiếp, ô hoặc hành động nào nên được xem là an toàn, rủi ro hay chưa biết? Vì sao?", "Step the agent. Record score, step count, status, and one inference from the knowledge map.": "Bước tác tử. Ghi lại điểm, số bước, trạng thái và một suy luận từ bản đồ tri thức.", "How did the percepts justify the agent's next action or avoid a dangerous square?": "Các percept biện minh cho hành động tiếp theo hoặc giúp tác tử tránh một ô nguy hiểm như thế nào?", "Where else would an AI agent need to act under partial information?": "Ở đâu khác một tác tử AI phải hành động khi chỉ có thông tin một phần?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"🧪 Quick Assign · QA-WUMPUS-01 · 10–15 min": "🧪 Tarea rápida · QA-WUMPUS-01 · 10–15 min", "Safe, risky, or unknown?": "¿Seguro, arriesgado o desconocido?", "Run an agent strategy, inspect the world and knowledge map, then explain how percepts support safe action.": "Ejecuta una estrategia del agente, inspecciona el mundo y el mapa de conocimiento y explica cómo las percepciones justifican una acción segura.", "Before stepping, which square or action should be safe, risky, or unknown? Why?": "Antes de avanzar, ¿qué casilla o acción debería ser segura, arriesgada o desconocida? ¿Por qué?", "Step the agent. Record score, step count, status, and one inference from the knowledge map.": "Avanza el agente. Registra la puntuación, el número de pasos, el estado y una inferencia del mapa de conocimiento.", "How did the percepts justify the agent's next action or avoid a dangerous square?": "¿Cómo justificaron las percepciones la siguiente acción del agente o evitaron una casilla peligrosa?", "Where else would an AI agent need to act under partial information?": "¿En qué otros contextos tendría que actuar un agente de IA con información parcial?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script src="../../assets/localization-r4.js"></script>
+<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.8.1</div>
+
+<!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
+<script data-ai-playgrounds-analytics="v1.8.1">
+(function () {
+  'use strict';
+  var CANONICAL_HOST = 'lmdixon23.github.io';
+  var ENDPOINT = 'https://lmdixon23.goatcounter.com/count';
+  var PAGE_KIND = 'applet';
+  var PAGE_SLUG = 'wumpus-world';
+  var SOURCE_ALLOWLIST = new Set(['hn','linkedin','csta','sigcse','oercommons','merlot','reddit','bluesky','mastodon','devto','hashnode','github','email','school','portfolio','resume','zenodo','jose']);
+  var liveImages = [];
+
+  function storageGet(storage, key) { try { return storage.getItem(key); } catch (_) { return null; } }
+  function storageSet(storage, key, value) { try { storage.setItem(key, value); } catch (_) {} }
+  function privacySignal() {
+    return navigator.globalPrivacyControl === true || navigator.doNotTrack === '1' ||
+      navigator.doNotTrack === 'yes' || window.doNotTrack === '1';
+  }
+  function clean(value) {
+    return String(value || '').toLowerCase().replace(/[^a-z0-9._/-]+/g, '-').replace(/-+/g, '-').replace(/^\/+|\/+$/g, '').slice(0, 80);
+  }
+  function normalizePath(path) {
+    var value = String(path || '/');
+    value = value.replace(/\/index\.html$/, '/');
+    if (value === '/ai-playgrounds') value = '/ai-playgrounds/';
+    return value || '/';
+  }
+  function canonicalPath() {
+    var link = document.querySelector('link[rel="canonical"]');
+    if (link && link.href) {
+      try { return normalizePath(new URL(link.href, location.href).pathname); } catch (_) {}
+    }
+    return normalizePath(location.pathname || '/ai-playgrounds/');
+  }
+
+  var params = new URLSearchParams(location.search);
+  var optedOut = params.get('analytics') === 'off' || storageGet(localStorage, 'ai-playgrounds-analytics') === 'off';
+  var enabled = location.hostname === CANONICAL_HOST && !privacySignal() && !optedOut;
+
+  function transmit(query) {
+    if (!enabled) return;
+    var img = new Image(1, 1);
+    img.referrerPolicy = 'no-referrer';
+    img.onload = img.onerror = function () {
+      var i = liveImages.indexOf(img);
+      if (i >= 0) liveImages.splice(i, 1);
+    };
+    img.src = ENDPOINT + '?' + query.toString();
+    liveImages.push(img);
+  }
+
+  function campaignQuery() {
+    var source = clean(params.get('ap_src'));
+    if (!SOURCE_ALLOWLIST.has(source)) return '';
+    var q = new URLSearchParams();
+    q.set('utm_campaign', 'ai-playgrounds');
+    q.set('utm_source', source);
+    return q.toString();
+  }
+
+  function sendPage() {
+    var query = new URLSearchParams();
+    query.set('p', canonicalPath());
+    query.set('t', document.title || 'AI Playgrounds');
+    var campaign = campaignQuery();
+    if (campaign) query.set('q', campaign);
+    transmit(query);
+  }
+
+  function sendEvent(name, title) {
+    var eventName = clean(name);
+    if (!eventName) return;
+    var query = new URLSearchParams();
+    query.set('p', 'event/' + eventName);
+    query.set('t', title || ('AI Playgrounds event: ' + eventName));
+    query.set('e', '1');
+    transmit(query);
+  }
+
+  window.aiPlaygroundsAnalytics = {
+    enabled: enabled,
+    optOut: function () { storageSet(localStorage, 'ai-playgrounds-analytics', 'off'); location.reload(); },
+    optIn: function () { storageSet(localStorage, 'ai-playgrounds-analytics', 'on'); location.reload(); },
+    count: function (name, title) { sendEvent(name, title); }
+  };
+
+  document.addEventListener('click', function (event) {
+    var out = event.target.closest('#analytics-opt-out');
+    var inn = event.target.closest('#analytics-opt-in');
+    if (out) { event.preventDefault(); window.aiPlaygroundsAnalytics.optOut(); return; }
+    if (inn) { event.preventDefault(); window.aiPlaygroundsAnalytics.optIn(); return; }
+    if (!enabled) return;
+
+    var link = event.target.closest('a[href]');
+    if (link) {
+      var href = link.getAttribute('href') || '';
+      var app = href.match(/playgrounds\/([^/?#]+)\/?/i);
+      if (app) sendEvent('launch/' + clean(app[1]), 'Launch applet: ' + clean(app[1]));
+      else if (/\.(pdf|zip|md|docx?|pptx?|csv)(?:[?#]|$)/i.test(href)) sendEvent('resource/' + clean((href.split('/').pop() || 'download').split(/[?#]/)[0]), 'Resource download');
+      else if (/github\.com\/lmdixon23\/ai-playgrounds/i.test(href)) sendEvent('outbound/github', 'Open AI Playgrounds on GitHub');
+    }
+
+    if (PAGE_KIND === 'applet') {
+      var control = event.target.closest('main button, main [role="button"], .workspace button, .controls button');
+      if (control && !control.closest('header, nav, footer, .toolbar')) {
+        var key = 'ai-playgrounds-engaged-' + PAGE_SLUG;
+        if (storageGet(sessionStorage, key) !== '1') {
+          storageSet(sessionStorage, key, '1');
+          sendEvent('engaged/' + clean(PAGE_SLUG), 'First substantive applet interaction: ' + clean(PAGE_SLUG));
+        }
+      }
+    }
+  }, true);
+
+  if (!enabled) return;
+  sendPage();
+})();
+</script>
+</body>
+</html>

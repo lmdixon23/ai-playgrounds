@@ -1,0 +1,35 @@
+<script id="v172-modern-packet-label-runtime" data-v172-stable-lifecycle="true">
+(()=>{'use strict';
+const COPY={"en":{"predict":"Predict","observe":"Observe","explain":"Explain","transfer":"Transfer","refresh":"Refresh state","copy":"Copy packet","print":"Print packet","clear":"Clear local draft","state":"State snapshot"},"zh":{"predict":"预测","observe":"观察","explain":"解释","transfer":"迁移","refresh":"更新状态","copy":"复制实验包","print":"打印实验包","clear":"清除本地草稿","state":"状态记录"},"vi":{"predict":"Dự đoán","observe":"Quan sát","explain":"Giải thích","transfer":"Chuyển giao","refresh":"Làm mới trạng thái","copy":"Sao chép gói bài","print":"In gói bài","clear":"Xóa bản nháp cục bộ","state":"Ảnh chụp trạng thái"},"es":{"predict":"Predecir","observe":"Observar","explain":"Explicar","transfer":"Transferir","refresh":"Actualizar estado","copy":"Copiar paquete","print":"Imprimir paquete","clear":"Borrar borrador local","state":"Captura del estado"}};
+const SOURCE_ID="stateText";
+const norm=v=>{v=String(v||'').toLowerCase();return v.startsWith('zh')?'zh':v.startsWith('vi')?'vi':v.startsWith('es')?'es':'en'};
+const locale=()=>norm(document.documentElement.lang);
+const root=()=>document.querySelector('[data-quick-assign-id]');
+const source=()=>document.getElementById(SOURCE_ID);
+function sourceText(){const s=source();return s?String(s.value||s.textContent||'').trim():''}
+function syncAccessibleState(){
+  const out=document.getElementById('ap-modern-a11y-state');if(!out)return;
+  const packet=root()?.querySelector('[data-qa-modern-state]');
+  const next=sourceText()||String(packet?.textContent||'').trim();
+  if(!next)return;
+  if(out.textContent!==next){out.textContent=next;const live=document.getElementById('ap-modern-a11y-live');if(live)live.textContent=next.slice(0,500)}
+}
+function paintLabels(){
+  const qa=root(),l=COPY[locale()]||COPY.en;if(!qa){syncAccessibleState();return}
+  qa.querySelectorAll('[data-qa-answer]').forEach(el=>{const key=el.dataset.qaAnswer;if(l[key])el.setAttribute('aria-label',l[key])});
+  for(const key of ['refresh','copy','print','clear']){const action=key==='refresh'?'refresh-state':key;const button=qa.querySelector('[data-qa-action="'+action+'"]');if(!button)continue;const label=l[key]||COPY.en[key];button.textContent=(key==='refresh'?'↻ ':'')+label;button.setAttribute('aria-label',label)}
+  const state=qa.querySelector('[data-qa-modern-state]');if(state)state.setAttribute('aria-label',l.state||COPY.en.state);
+  syncAccessibleState();
+}
+let repaintGeneration=0;
+function schedulePaint(){
+  const generation=++repaintGeneration;
+  const run=()=>{if(generation===repaintGeneration)paintLabels()};
+  run();queueMicrotask(run);if(window.requestAnimationFrame)requestAnimationFrame(run);
+  setTimeout(run,40);setTimeout(run,110);setTimeout(run,180);
+}
+const src=source();if(src){new MutationObserver(syncAccessibleState).observe(src,{childList:true,subtree:true,characterData:true,attributes:true});src.addEventListener?.('input',syncAccessibleState);src.addEventListener?.('change',syncAccessibleState)}
+new MutationObserver(schedulePaint).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+window.addEventListener('lab13localechange',schedulePaint);window.addEventListener('lab14localechange',schedulePaint);window.addEventListener('lab15localechange',schedulePaint);
+schedulePaint();syncAccessibleState();
+})();</script>

@@ -1,0 +1,3020 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pathfinding Visualizer | AI Playgrounds</title>
+<link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E" rel="icon"/>
+<meta content="Compare four ways to search the same map. Watch how each algorithm chooses the next cell, how much work it does, and whether it finds the least-cost path." name="description"/>
+<link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/" rel="canonical"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/?lang=en" hreflang="en" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/?lang=zh" hreflang="zh-Hans" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/?lang=vi" hreflang="vi" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/?lang=es" hreflang="es" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/?lang=en" hreflang="x-default" rel="alternate"/>
+<meta content="website" property="og:type"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/" property="og:url"/>
+<meta content="Pathfinding Visualizer | AI Playgrounds" property="og:title"/>
+<meta content="Compare four ways to search the same map. Watch how each algorithm chooses the next cell, how much work it does, and whether it finds the least-cost path." property="og:description"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" property="og:image"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="Pathfinding Visualizer | AI Playgrounds" name="twitter:title"/>
+<meta content="Compare four ways to search the same map. Watch how each algorithm chooses the next cell, how much work it does, and whether it finds the least-cost path." name="twitter:description"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" name="twitter:image"/>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Pathfinding Visualizer | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/","description":"Compare four ways to search the same map. Watch how each algorithm chooses the next cell, how much work it does, and whether it finds the least-cost path.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh","vi","es"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
+<style>
+  :root {
+    --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #2563eb;
+    --card: #fff; --border: #e5e7eb; --soft: #f9fafb;
+    --empty: white; --wall: #475569; --start: #16a34a; --goal: #dc2626;
+    --visited: #c7d2fe; --frontier: #fde68a; --path: #2563eb;
+    /* weighted terrain palette. Mud is cost 3, water is cost 5. */
+    --mud: #d6a76a; --water: #7dd3fc;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", Arial, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; }
+  .page-header { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 24px; }
+  .header-utility { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .header-prefs { display: flex; align-items: center; gap: 8px; }
+  .header-main { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .header-actions { display: flex; align-items: center; gap: 8px; font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem; }
+  .header-actions .header-reset { margin-left: 12px; }
+  .page-header h1 { margin: 0; font-size: 1.5rem; }
+  .page-header .back { color: var(--accent); text-decoration: none; font-size: 0.9rem; font-family: -apple-system, system-ui, sans-serif; }
+  .tldr { max-width: 820px; margin: 16px auto 0;
+           background: var(--accent); color: white;
+           border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; font-weight: 500;
+           font-family: -apple-system, system-ui, sans-serif; line-height: 1.45; }
+  .tldr strong { color: rgba(255,255,255,0.85); font-size: 0.72rem; letter-spacing: 0.08em;
+                  text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px; }
+  .jump-link { display: inline-block; margin-top: 14px;
+                padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px;
+                background: white; color: var(--accent); text-decoration: none;
+                font-family: -apple-system, system-ui, sans-serif; font-size: 0.82rem;
+                font-weight: 600; transition: background 0.15s; }
+  .jump-link:hover { background: var(--soft); }
+  .jump-anchor { text-align: center; }
+
+  .interactive { background: var(--card); padding: 24px; border-bottom: 1px solid var(--border); }
+  .interactive-inner { max-width: min(1280px, 100%); margin: 0 auto; }
+  .control-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+                  margin-bottom: 14px; font-family: -apple-system, system-ui, sans-serif;
+                  font-size: 0.88rem; }
+  .control-row label { color: var(--muted); }
+  .control-row select, .control-row input[type=range] {
+    padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px;
+    font: inherit; background: white;
+  }
+  .control-row input[type=range] { padding: 0; min-width: 140px; }
+  .control-row .step-btn { padding: 8px 14px; background: var(--accent); color: white;
+                            border: none; border-radius: 6px; cursor: pointer; font: inherit;
+                            font-weight: 600; font-size: 0.88rem; }
+  .control-row .step-btn.secondary { background: white; color: var(--fg);
+                                       border: 1px solid var(--border); font-weight: normal; }
+  canvas { display: block; margin: 0 auto; background: var(--empty);
+            border: 1px solid var(--border); border-radius: 6px;
+            cursor: crosshair; max-width: 100%; }
+  .hint { text-align: center; color: var(--muted); font-size: 0.85rem;
+           font-family: -apple-system, system-ui, sans-serif; margin: 10px 0 0;
+           font-style: italic; }
+  .stats-strip { display: flex; gap: 18px; justify-content: center; margin-top: 12px;
+                   font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem; }
+  .stat-item .label { color: var(--muted); font-size: 0.72rem;
+                       text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-item .val { font-weight: 600; font-family: monospace; font-size: 1rem; color: var(--fg); }
+  .legend-strip { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+                    margin-top: 10px; font-family: -apple-system, system-ui, sans-serif;
+                    font-size: 0.78rem; color: var(--muted); }
+  .legend-strip .sw { display: inline-block; width: 12px; height: 12px;
+                       vertical-align: middle; margin-right: 4px; border-radius: 2px; }
+
+  .essay { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; font-size: 1.05rem; }
+  .essay h2 { font-size: 1.5rem; margin-top: 36px; margin-bottom: 12px; color: var(--accent); }
+  .essay h3 { font-size: 1.15rem; margin-top: 24px; margin-bottom: 8px; }
+  .essay .lede { font-size: 1.15rem; color: #374151; }
+  .essay .aha { background: #dbeafe; border-left: 4px solid #2563eb;
+                 padding: 12px 18px; margin: 18px 0; border-radius: 0 6px 6px 0;
+                 font-style: italic; color: #1e40af; }
+  .essay code { background: var(--soft); padding: 1px 6px; border-radius: 4px;
+                 font-family: 'SF Mono', Consolas, monospace; font-size: 0.92em; }
+  .essay ul li { margin-bottom: 6px; }
+  .essay .for-teachers { background: var(--soft); border: 1px solid var(--border);
+                          border-radius: 8px; padding: 20px 24px; margin-top: 36px;
+                          font-family: -apple-system, system-ui, sans-serif; font-size: 0.95rem; }
+  .essay .for-teachers h3 { font-family: -apple-system, system-ui, sans-serif;
+                              color: var(--accent); font-size: 0.9rem;
+                              text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0; }
+  /* === header tools + reduced motion === */
+  .lang-switch { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .lang-switch button { padding: 4px 10px; background: white; color: var(--muted);
+                          border: none; cursor: pointer; font: inherit; font-size: 0.78rem; }
+  .lang-switch button.active { background: var(--accent); color: white; font-weight: 600; }
+  .header-reset { padding: 6px 12px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font: inherit; font-size: 0.82rem; }
+  .header-reset:hover { background: var(--soft); }
+  /* ===== Unified transport bar (shared playback controls across stepped applets) ===== */
+  .transport { display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+               padding: 8px 10px; margin: 10px 0; border: 1px solid var(--border);
+               border-radius: 8px; background: var(--soft); }
+  .tp-btn { font: inherit; font-size: 0.9rem; cursor: pointer; border: 1px solid var(--border);
+            background: var(--card); color: var(--fg); border-radius: 6px; padding: 6px 12px; min-width: 40px; line-height: 1; }
+  .tp-btn:hover { background: var(--soft); }
+  .tp-speed { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--muted); }
+  .tp-speed input { accent-color: var(--accent); }
+  .tp-count { margin-left: auto; font-family: ui-monospace, monospace; font-size: 0.82rem;
+              color: var(--muted); font-variant-numeric: tabular-nums; min-width: 128px; text-align: right; }
+  .tp-btn:disabled { opacity: 0.45; cursor: default; }
+  /* Scrollable list/table region: show everything in a fixed height instead of truncating with "N more not shown". */
+  .list-scroll { overflow: auto; }
+  .list-scroll thead th { position: sticky; top: 0; background: var(--soft); z-index: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+  /* Touch devices: comfortable tap targets without changing desktop layout. */
+  @media (pointer: coarse) {
+    button, .step-btn, .tp-btn, select, summary { min-height: 44px; }
+  }
+  /* Phones: reduce chrome and keep transport/table controls inside a 360px viewport. */
+  @media (max-width: 480px) {
+    .page-header { padding-left: 16px; padding-right: 16px; }
+    .interactive { padding: 16px; }
+    .control-row, .transport { gap: 8px; }
+    .control-row select, .control-row .step-btn, .tp-btn { flex: 1 1 auto; }
+    .tp-count { margin-left: 0; text-align: left; flex: 1 1 100%; }
+    .stats-strip { gap: 10px; }
+    #frontierTable { min-width: 0 !important; font-size: 0.78rem !important; }
+  }
+  /* === dark mode === */
+  body.dark-mode {
+    --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8;
+    --card: #1e293b; --border: #334155; --soft: #1e293b;
+  }
+  body.dark-mode .essay .lede { color: #cbd5e1; }
+  body.dark-mode .essay .for-teachers { background: #0f172a; }
+  body.dark-mode canvas { filter: brightness(0.92); }
+  body.dark-mode .header-reset,
+  body.dark-mode .lang-switch button:not(.active),
+  body.dark-mode .header-theme,
+  body.dark-mode .control-row select,
+  body.dark-mode .control-row .step-btn { background: var(--card); color: var(--fg); }
+  .header-theme { padding: 6px 10px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font-size: 1rem; line-height: 1; font-family: inherit; }
+  .header-theme:hover { background: var(--soft); }
+  .header-png { padding: 6px 10px; background: white; color: var(--fg);
+                  border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                  font-size: 0.85rem; font-family: inherit; }
+  .header-png:hover { background: var(--soft); }
+  body.dark-mode .header-png { background: var(--card); color: var(--fg); }
+  /* ===== Slider styling: native themed control via accent-color (consistent across browsers) ===== */
+  input[type="range"] { accent-color: var(--accent); height: 28px; cursor: pointer; }
+  /* embed mode. Strip chrome so the applet fits cleanly in an LMS iframe. */
+  body.embed-mode .page-header,
+  body.embed-mode aside.tldr,
+  body.embed-mode article.essay,
+  body.embed-mode .jump-anchor { display: none !important; }
+  body.embed-mode .interactive { padding: 12px; border-bottom: none; }
+  /* ===== Shared a11y + contrast tokens (keyboard focus and contrast tokens) ===== */
+  button:focus-visible, a:focus-visible, select:focus-visible,
+  input:focus-visible, textarea:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+  .tldr { background: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), var(--accent); }
+  .tldr strong { color: #fff; }
+
+  /* Student response packet: local-only assignment packet across the applet family. */
+  .classroom-lab .lab-panel { margin-top:8px; padding:14px; background:var(--card); border:1px solid var(--border); border-radius:8px; }
+  .classroom-lab .lab-intro { margin:0 0 12px; color:var(--muted); font-size:0.88rem; line-height:1.5; }
+  .classroom-lab .lab-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+  .classroom-lab .lab-field { display:flex; flex-direction:column; gap:4px; }
+  .classroom-lab .lab-field label { font-family:-apple-system,system-ui,sans-serif; font-size:0.82rem; font-weight:700; color:var(--accent); }
+  .classroom-lab textarea { min-height:86px; resize:vertical; width:100%; border:1px solid var(--border); border-radius:6px; padding:8px; font:inherit; color:var(--fg); background:var(--bg); }
+  .classroom-lab .lab-state { margin-top:12px; padding:10px 12px; border:1px dashed var(--border); border-radius:8px; background:var(--soft); color:var(--muted); font-family:ui-monospace,monospace; font-size:0.78rem; white-space:pre-wrap; }
+  .classroom-lab .lab-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; align-items:center; }
+  .classroom-lab .lab-status { color:var(--muted); font-size:0.82rem; min-height:1.2em; }
+  @media (max-width:480px) { .classroom-lab .lab-grid { grid-template-columns:1fr; } .classroom-lab .lab-actions button { width:100%; } }
+
+
+  /* Scenario Gallery: visible, reusable entry points generated from the lesson-tour scenarios. */
+  .scenario-gallery-panel {
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .scenario-gallery-intro {
+    margin: 0 0 10px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .scenario-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .scenario-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--card) 88%, var(--soft));
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 100%;
+  }
+  .scenario-card h3 {
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.98rem;
+    line-height: 1.25;
+  }
+  .scenario-card p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .scenario-card .scenario-meta {
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  .scenario-card .scenario-meta strong { color: var(--fg); }
+  .scenario-card button {
+    margin-top: auto;
+    align-self: flex-start;
+  }
+  @media (max-width: 480px) {
+    .scenario-card-grid { grid-template-columns: 1fr; }
+    .scenario-card button { width: 100%; }
+  }
+
+
+
+  /* Supporting learning components. */
+  .visual-explanation-panel {
+    margin-top: 8px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .visual-explanation-intro {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .visual-flow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+  }
+  .visual-card {
+    position: relative;
+    min-height: 132px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, var(--accent)), var(--card));
+    overflow: hidden;
+  }
+  .visual-card::before {
+    content: attr(data-step);
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    color: color-mix(in srgb, var(--accent) 62%, transparent);
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+  .visual-card h4 {
+    margin: 0 28px 8px 0;
+    color: var(--accent);
+    font-size: 0.9rem;
+    line-height: 1.25;
+  }
+  .visual-card p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .visual-live {
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 8px;
+    background: var(--soft);
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.74rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .visual-live strong { color: var(--accent); font-family: -apple-system, system-ui, sans-serif; font-size: 0.72rem; }
+  .visual-watch-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .visual-snapshot, .visual-misread {
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: var(--soft);
+  }
+  .visual-snapshot strong, .visual-misread strong {
+    display: block;
+    color: var(--accent);
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 0.78rem;
+    margin-bottom: 6px;
+  }
+  .visual-snapshot pre {
+    margin: 0;
+    white-space: pre-wrap;
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+  .visual-misread p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  @media (max-width: 620px) {
+    .visual-watch-grid { grid-template-columns: 1fr; }
+  }
+
+
+
+  /* Supporting learning components. */
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 10px;
+    z-index: 10000;
+    padding: 10px 14px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 8px;
+    font-family: -apple-system, system-ui, sans-serif;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .skip-link:focus { left: 12px; }
+  :focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+  [tabindex="-1"]:focus { outline: none; }
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+  .accessibility-layer {
+    margin-top: 12px;
+  }
+  .accessibility-panel {
+    margin-top: 8px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .accessibility-intro {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .accessibility-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .accessibility-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--card) 92%, var(--soft));
+    padding: 12px;
+  }
+  .accessibility-card h3 {
+    margin: 0 0 8px;
+    color: var(--accent);
+    font-size: 0.92rem;
+  }
+  .accessibility-card p,
+  .accessibility-card li {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .accessibility-card ul {
+    margin: 0;
+    padding-left: 1.15rem;
+  }
+  .a11y-state-grid {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 6px 10px;
+    margin: 0;
+    font-size: 0.84rem;
+  }
+  .a11y-state-grid dt {
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .a11y-state-grid dd {
+    margin: 0;
+    color: var(--fg);
+    overflow-wrap: anywhere;
+  }
+  .accessibility-note {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+  @media (max-width: 620px) {
+    .accessibility-grid { grid-template-columns: 1fr; }
+    .a11y-state-grid { grid-template-columns: 1fr; }
+    .a11y-state-grid dt { margin-top: 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html:focus-within { scroll-behavior: auto !important; }
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+
+
+  /* Supporting learning components. */
+  .interactive-inner { max-width: min(1280px, 100%); }
+  .scenario-card,
+  .accessibility-card,
+  .classroom-lab .lab-panel,
+  .accessibility-panel,
+  .signature-challenge-panel {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, var(--soft)), var(--card));
+  }
+  .signature-challenge-panel {
+    margin-top: 12px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .signature-challenge-panel strong { display:block; color:var(--accent); margin-bottom:4px; }
+  .signature-challenge-panel p { margin: 6px 0 0; color: var(--muted); font-size: 0.88rem; line-height: 1.5; }
+
+
+  /* Supporting learning components. */
+  .learning-deck { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:12px; align-items:start; }
+  .learning-deck > details { margin-top:0 !important; min-width:0; }
+  .learning-deck > .scenario-gallery,
+  .learning-deck > .visual-explanation,
+  .learning-deck > .classroom-lab,
+  .learning-deck > .accessibility-layer { grid-column:1 / -1; }
+  .learning-deck > details > summary { background:var(--card) !important; }
+  .scenario-gallery-panel, .scenario-card, .accessibility-panel, .accessibility-card,
+  .classroom-lab .lab-panel, .signature-challenge-panel {
+    background:linear-gradient(180deg,color-mix(in srgb,var(--card) 90%,var(--accent)),var(--card)) !important;
+  }
+  .scenario-card { box-shadow:0 6px 18px rgba(15,23,42,.05); transition:border-color .16s, box-shadow .16s, transform .16s; }
+  .scenario-card.applied { border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 22%,transparent),0 10px 24px rgba(15,23,42,.08); transform:translateY(-1px); }
+  .scenario-card .scenario-meta:last-of-type { margin-bottom:2px; }
+  @media (max-width:900px) { .learning-deck { grid-template-columns:1fr; } .learning-deck > details { grid-column:1 !important; } }
+
+</style>
+<!-- AI_PLAYGROUNDS_COMPONENT:original/learner-interface-style -->
+<!-- AI_PLAYGROUNDS_COMPONENT:original/learning-modes-style-common -->
+<link href="../../assets/localization-r4.css" rel="stylesheet"/>
+<meta name="ai-playgrounds-version" content="1.8.1">
+
+<!-- AI_PLAYGROUNDS_COMPONENT:original/v14-version-provenance-style -->
+
+<style id="v161-localized-select-containment">@media(max-width:640px){#algoSel{width:100%!important;max-width:100%!important;min-width:0!important;}}</style></head>
+<body>
+<a class="skip-link" href="#main">Skip to applet controls</a>
+<header class="page-header">
+<div class="header-utility">
+<a class="back" data-i18n="back-link" href="../../index.html">← Back to all playgrounds</a>
+<div class="header-prefs">
+<button aria-label="Toggle dark or light theme" class="header-theme" id="themeToggle" title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
+<div class="lang-switch" title="Switch interface language">
+<button class="active" data-lang="en">EN</button>
+<button data-lang="zh">中文</button>
+</div>
+</div>
+</div>
+<div class="header-main">
+<h1 data-i18n="title">Pathfinding Visualizer</h1>
+<div class="header-actions">
+<button class="header-png" id="shareLink" title="Copy a URL that re-opens this algorithm choice in another browser.">🔗 Share</button>
+<button class="header-png" id="embedLink" title="Copy an &lt;iframe&gt; snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
+<button class="header-png" id="csvExport" title="Download grid + search results (path coordinates, nodes visited, frontier snapshot) as CSV.">📊 CSV</button>
+<button class="header-png" id="exportPng" title="Download the current grid + search trace as a PNG.">📷 PNG</button>
+<button class="header-reset" data-i18n="reset-all" id="hardReset" title="Reset everything to defaults: empty grid, A*, default start and goal positions.">↺ Reset all</button>
+</div>
+</div>
+</header>
+<aside class="tldr">
+<strong data-i18n="tldr-strong">The big idea</strong>
+<span data-i18n="tldr-body">A* finds the shortest path between two points while exploring far fewer squares than BFS, because it uses an estimate of remaining distance to focus the search.</span>
+</aside>
+<section class="interactive" id="main" role="main" tabindex="-1">
+<div class="interactive-inner">
+<div class="control-row">
+<label data-i18n="algo-label">Algorithm:</label>
+<select data-i18n-title="algo-title" id="algoSel" title="Choose which search algorithm to run. Each visits cells in a different order.">
+<option data-i18n="opt-bfs" value="bfs">Breadth-first search (BFS)</option>
+<option data-i18n="opt-dfs" value="dfs">Depth-first search (DFS)</option>
+<option data-i18n="opt-astar" selected="" value="astar">A* (heuristic-guided)</option>
+<option data-i18n="opt-dijkstra" value="dijkstra">Dijkstra (uniform cost)</option>
+<option data-i18n="opt-bidi" value="bidi">Bidirectional BFS (search from both ends)</option>
+<option data-i18n="opt-idastar" value="idastar">IDA* (iterative deepening A*)</option>
+</select>
+<label data-i18n="size-label">Grid size:</label>
+<select data-i18n-title="size-title" id="sizeSel" title="Smaller grids fit on one screen and are easier to inspect step-by-step. Large grids show the algorithms' asymptotic behavior.">
+<option data-i18n="size-small" selected="" value="small">Small (20 × 14)</option>
+<option data-i18n="size-medium" value="medium">Medium (35 × 25)</option>
+<option data-i18n="size-large" value="large">Large (50 × 35)</option>
+</select>
+<label data-i18n="heur-label">A* heuristic:</label>
+<select data-i18n-title="heur-title" id="heurSel" title="Manhattan is admissible (never overestimates) on a 4-connected grid → A* finds shortest path. 1.5× Manhattan is inadmissible → A* gets faster but no longer guarantees optimality.">
+<option data-i18n="h-manhattan" selected="" value="manhattan">Manhattan (admissible)</option>
+<option data-i18n="h-euclidean" value="euclidean">Euclidean (admissible)</option>
+<option data-i18n="h-overestimate" value="manhattan15">1.5× Manhattan (INadmissible)</option>
+<option data-i18n="h-zero" value="zero">Zero (= Dijkstra)</option>
+</select>
+<!-- Speed / Run / Step relocated to the unified transport bar above the canvas. -->
+<button class="step-btn secondary" data-i18n="maze-btn" data-i18n-title="maze-title" id="mazeBtn" title="Generate a random wall pattern (~28% wall density). Great for comparing algorithms.">Random walls</button>
+<button class="step-btn secondary" data-i18n="truemaze-btn" data-i18n-title="truemaze-title" id="trueMazeBtn" title="Generate a recursive-division maze with a wall border. Iconic, and great for seeing BFS flood vs. DFS snake: though one path between cells flattens the optimality differences the obstacle layout shows.">Maze</button>
+<button class="step-btn secondary" data-i18n="clear-btn" data-i18n-title="clear-title" id="clearBtn" title="Remove all walls. Keeps start and goal where they are.">Clear walls</button>
+<button class="step-btn secondary" data-i18n="reset-btn" data-i18n-title="reset-title" id="resetBtn" title="Clear walls AND return start/goal to their default positions.">Reset</button>
+</div>
+<!-- terrain paint mode. Click cycles through Wall / Road / Mud / Water. -->
+<div class="control-row">
+<label data-i18n="paint-label">Paint with:</label>
+<select data-i18n-title="paint-title" id="paintSel" title="Click on the canvas paints with the selected terrain. Costs: Road 1, Mud 3, Water 5, Wall impassable. BFS/DFS ignore costs; Dijkstra and A* use them.">
+<option data-i18n="p-wall" selected="" value="wall">🟪 Wall (impassable)</option>
+<option data-i18n="p-road" value="road">⬜ Road (cost 1)</option>
+<option data-i18n="p-mud" value="mud">🟫 Mud (cost 3)</option>
+<option data-i18n="p-water" value="water">🟦 Water (cost 5)</option>
+</select>
+<span data-i18n="paint-hint" style="color:var(--muted); font-size:0.8rem;">
+      Weighted terrain only affects Dijkstra &amp; A*. BFS/DFS treat all passable cells as cost 1.
+    </span>
+</div>
+<p class="hint" id="algoHelp">A* uses an estimate of remaining distance to focus the search.</p>
+<!-- Unified transport bar (shared playback controls; Speed/Run/Step relocated here). -->
+<div aria-label="Playback controls" class="transport" id="transport" role="group">
+<button class="tp-btn" data-i18n-title="restart-title" id="restartBtn" title="Restart the search from the beginning (keeps walls, start, and goal).">↺</button>
+<button class="tp-btn" data-i18n-title="back-title" id="backBtn" title="Step one expansion backward through the search.">◀❘</button>
+<button aria-pressed="false" class="tp-btn" data-i18n="run-btn" data-i18n-title="run-title" id="runBtn" title="Run the selected algorithm from start to goal. Becomes Pause while running.">▶ Run search</button>
+<button class="tp-btn" data-i18n="step-btn" data-i18n-title="step-title" id="stepBtn" title="Expand one frontier node. Lets the class discuss each expansion before the next.">❘▶ Step</button>
+<label class="tp-speed"><span data-i18n="speed-label">Speed:</span>
+<input aria-label="Animation speed" data-i18n-title="speed-title" id="speedSlider" max="100" min="0" title="How quickly the search visualization advances. Slower = easier to follow the frontier expansion. Adjustable live during a run." type="range" value="50"/></label>
+<span class="tp-scrub" id="pfScrubGroup" style="display:inline-flex; visibility:hidden; align-items:center; gap:8px; flex:1 1 220px; min-width:150px;">
+<span style="color:var(--accent); font-weight:600; font-size:0.82rem;" title="History">⏪</span>
+<input aria-label="Scrub through search history" id="replaySlider" max="0" min="0" step="1" style="flex:1; min-width:110px;" type="range" value="0"/>
+<span id="replayCount" style="display:none;"></span>
+<label style="color:var(--muted); display:flex; align-items:center; gap:4px; font-size:0.8rem;"><span>step</span>
+<input aria-label="Jump to step" id="pfJump" min="0" style="width:64px; padding:3px 6px; border:1px solid var(--border); border-radius:4px; font:inherit;" type="number"/></label>
+<button class="tp-btn" data-i18n="return-live" disabled="" id="pfLive" style="padding:4px 10px; font-size:0.8rem;">Jump to latest</button>
+</span>
+<span class="tp-count" data-i18n="tp-idle" id="tpCount">idle</span>
+</div>
+<canvas aria-label="Grid pathfinding visualization. Click to add walls, drag start or goal." height="500" id="grid" role="img" width="700"></canvas>
+<div class="stats-strip">
+<div class="stat-item"><div class="label" data-i18n="stat-visited">Nodes visited</div><div class="val" id="nVis">0</div></div>
+<div class="stat-item"><div class="label" data-i18n="stat-path">Path length</div><div class="val" id="nPath">-</div></div>
+<div class="stat-item"><div class="label" data-i18n="stat-status">Status</div><div class="val" id="status">idle</div></div>
+</div>
+<div class="legend-strip">
+<span><span class="sw" style="background:var(--start)"></span><span data-i18n="leg-start">Start</span></span>
+<span><span class="sw" style="background:var(--goal)"></span><span data-i18n="leg-goal">Goal</span></span>
+<span><span class="sw" style="background:var(--wall)"></span><span data-i18n="leg-wall">Wall</span></span>
+<span><span class="sw" style="background:var(--mud)"></span><span data-i18n="leg-mud">Mud (3)</span></span>
+<span><span class="sw" style="background:var(--water)"></span><span data-i18n="leg-water">Water (5)</span></span>
+<span><span class="sw" style="background:var(--visited)"></span><span data-i18n="leg-visited">Visited</span></span>
+<span><span class="sw" style="background:var(--frontier)"></span><span data-i18n="leg-frontier">Frontier</span></span>
+<span><span class="sw" style="background:var(--path)"></span><span data-i18n="leg-path">Path</span></span>
+</div>
+<p class="hint" data-i18n="hint-instr">Click empty squares to draw walls. Drag the green start or red goal to move them.</p>
+<!-- Frontier inspection table: shows what's actually in the data structure. -->
+<details class="frontier-details" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="frontier-summary">📋 Open frontier (data structure contents)</span>
+<span id="frontierCount" style="color:var(--muted); font-weight:400; margin-left:6px;"></span>
+</summary>
+<div class="list-scroll" style="max-height:230px; margin-top:6px;">
+<table id="frontierTable" style="border-collapse:collapse; font-family:ui-monospace,monospace; font-size:0.85rem; width:100%; min-width:340px;">
+<thead>
+<tr style="background:var(--soft);">
+<th data-i18n="ft-pos" style="text-align:left; padding:4px 8px; border-bottom:1px solid var(--border);">Position (r,c)</th>
+<th data-i18n="ft-g" style="text-align:right; padding:4px 8px; border-bottom:1px solid var(--border);">g (cost from start)</th>
+<th data-i18n="ft-h" style="text-align:right; padding:4px 8px; border-bottom:1px solid var(--border);">h (heuristic)</th>
+<th data-i18n="ft-f" style="text-align:right; padding:4px 8px; border-bottom:1px solid var(--border);">f = g + h</th>
+<th data-i18n="ft-note" style="text-align:left; padding:4px 8px; border-bottom:1px solid var(--border);">Note</th>
+</tr>
+</thead>
+<tbody id="frontierTbody"></tbody>
+</table>
+<p data-i18n="ft-hint" style="color:var(--muted); font-size:0.78rem; margin-top:6px; font-style:italic;">
+        BFS/DFS don't use g/h/f: they pop by FIFO/LIFO order. Dijkstra uses g only. A* sorts by f.
+      </p>
+</div>
+</details>
+<!-- Scenario gallery. Visible, reusable entry points generated from the lesson-tour scenarios. -->
+<details class="scenario-gallery" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="sg-summary">🎯 Try these scenarios first</span>
+</summary>
+<div class="scenario-gallery-panel">
+<p class="scenario-gallery-intro" data-i18n="sg-intro">Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.</p>
+<div aria-live="polite" class="scenario-card-grid" id="scenarioGalleryCards">
+<article class="scenario-card" data-scenario-index="0">
+<h3>Scenario 1: Breadth-first search and A* on the same maze</h3>
+<p class="scenario-meta"><strong>Core question: </strong> How much work can a useful estimate save without changing the shortest path?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Run breadth-first search (BFS), record the path length and visited nodes, then run A* search on the unchanged maze.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Will A* visit fewer nodes, the same number, or more? Will the path length change?</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Use the frontier and visited counts to explain how the heuristic focuses A*.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="1">
+<h3>Scenario 2: Depth-first search can find the wrong kind of success</h3>
+<p class="scenario-meta"><strong>Core question: </strong> Why is finding a path different from finding the shortest path?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Run depth-first search (DFS), then compare its path length with breadth-first search (BFS) on the same grid.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> With this fixed grid and neighbor order, which search will expand fewer nodes before reaching the goal, and which will produce the shorter path?</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain how following one branch deeply can reach the goal after relatively few expansions yet still produce a longer route. One trace is not a general runtime ranking.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="2">
+<h3>Scenario 3: A* with a safe Manhattan-distance estimate</h3>
+<p class="scenario-meta"><strong>Core question: </strong> How can A* reduce work while keeping the shortest-path guarantee?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Run A* with the Manhattan-distance heuristic, then compare its path and visited nodes with breadth-first search (BFS).</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict whether the path length will match BFS and where the visited cells will concentrate.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Connect the estimate to the narrower search pattern without claiming the estimate knows the route.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="3">
+<h3>Scenario 4: Weighted A* trades a guarantee for stronger focus</h3>
+<p class="scenario-meta"><strong>Core question: </strong> What changes when the estimate is allowed to overstate the remaining distance?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Run A* with 1.5 times the Manhattan estimate and compare it with standard A*.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict which version will visit fewer nodes and whether both must return the same path cost.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain why stronger heuristic weighting can remove the optimal-path guarantee without implying a general runtime speedup.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="4">
+<h3>Scenario 5: Breadth-first search counts steps; Dijkstra counts cost</h3>
+<p class="scenario-meta"><strong>Core question: </strong> Why can two paths with the same number of steps have different total costs?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Paint a muddy corridor, run breadth-first search (BFS), then run Dijkstra's algorithm without changing the map.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict whether the algorithms will choose the same route through the weighted terrain.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Use step count and terrain cost to explain the different choices.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+</div>
+</div>
+</details>
+<!-- Signature challenge. A one-move comparison that gives this applet a memorable first task. -->
+<details class="signature-challenge" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span>✨ Featured comparison</span>
+</summary>
+<div class="signature-challenge-panel">
+<strong>Featured comparison</strong>
+<p>Race A* against BFS on the same maze. Watch the frontier, visited count, and path length before deciding which algorithm actually did less work.</p>
+<p><em>Open the race panel after the main grid, then compare A* and BFS on the exact same obstacle layout.</em></p>
+</div>
+</details>
+<!-- Race mode: two algorithms search the SAME maze, side by side. -->
+<details id="raceDetails" style="margin-top:14px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.9rem; color:var(--accent); font-weight:600;">
+<span data-i18n="race-summary">🏁 Race two algorithms on the same maze</span>
+</summary>
+<div style="margin-top:10px; padding:14px; background:var(--card); border:1px solid var(--border); border-radius:8px;">
+<p data-i18n="race-intro" style="color:var(--muted); font-size:0.85rem; margin:0 0 12px;">Both algorithms search the maze you built above, one node-expansion per tick. Watch how many cells each opens before reaching the goal: that's why "A* explores fewer nodes than BFS" is a measured result, not a slogan.</p>
+<div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:12px; font-family:-apple-system,system-ui,sans-serif; font-size:0.85rem;">
+<label><span data-i18n="race-left">Left</span>
+<select id="raceAlgoA" style="padding:3px 6px; border:1px solid var(--border); border-radius:4px; font:inherit;">
+<option selected="" value="astar">A*</option><option value="bfs">BFS</option><option value="dijkstra">Dijkstra</option><option value="greedy">Greedy best-first</option><option value="dfs">DFS</option>
+</select></label>
+<span data-i18n="race-vs" style="color:var(--muted); font-weight:600;">vs</span>
+<label><span data-i18n="race-right">Right</span>
+<select id="raceAlgoB" style="padding:3px 6px; border:1px solid var(--border); border-radius:4px; font:inherit;">
+<option value="astar">A*</option><option selected="" value="bfs">BFS</option><option value="dijkstra">Dijkstra</option><option value="greedy">Greedy best-first</option><option value="dfs">DFS</option>
+</select></label>
+<button class="tp-btn" data-i18n="race-btn" id="raceBtn">▶ Race</button>
+<button class="tp-btn" data-i18n="race-reset" id="raceReset">↺ Reset</button>
+</div>
+<div style="display:flex; gap:14px; flex-wrap:wrap; justify-content:center;">
+<div style="text-align:center;">
+<div style="font-size:0.82rem; margin-bottom:4px; font-family:ui-monospace,monospace;"><b id="raceLabelA" style="color:var(--accent);">A*</b> · <span data-i18n="race-nodes">nodes</span> <b id="raceNA">0</b> <span id="raceStatA" style="color:var(--muted);"></span></div>
+<canvas height="224" id="raceCvA" style="border:1px solid var(--border); border-radius:6px; background:var(--card); max-width:100%;" width="320"></canvas>
+</div>
+<div style="text-align:center;">
+<div style="font-size:0.82rem; margin-bottom:4px; font-family:ui-monospace,monospace;"><b id="raceLabelB" style="color:var(--accent);">BFS</b> · <span data-i18n="race-nodes">nodes</span> <b id="raceNB">0</b> <span id="raceStatB" style="color:var(--muted);"></span></div>
+<canvas height="224" id="raceCvB" style="border:1px solid var(--border); border-radius:6px; background:var(--card); max-width:100%;" width="320"></canvas>
+</div>
+</div>
+<div id="raceResult" style="margin-top:12px; text-align:center; font-size:0.92rem; font-weight:600; min-height:1.4em;"></div>
+</div>
+</details>
+<!-- Supporting learning component. -->
+<details class="visual-explanation" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-visual-en="🧭 Visual explanation" data-visual-zh="🧭 可视化解释镜头">🧭 Visual explanation</span>
+</summary>
+<div class="visual-explanation-panel">
+<p class="visual-explanation-intro" data-visual-intro=""></p>
+<div class="visual-flow" data-visual-flow=""></div>
+<div class="visual-watch-grid">
+<div class="visual-snapshot">
+<strong data-visual-en="Live state to watch" data-visual-zh="要观察的实时状态">Live state to watch</strong>
+<pre data-visual-snapshot="">No state captured yet. Run or adjust the applet first.</pre>
+</div>
+<div class="visual-misread">
+<strong data-visual-en="Misread to avoid" data-visual-zh="避免的误读">Misread to avoid</strong>
+<p data-visual-misread=""></p>
+</div>
+</div>
+</div>
+</details>
+<!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
+<details class="lesson-tour" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="tour-summary">📚 Lesson tour (5 steps)</span>
+</summary>
+<div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+<div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+<strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
+<strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">-</strong>
+</div>
+<p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">-</p>
+<div style="display:flex; gap:8px; align-items:center;">
+<button class="step-btn secondary" data-i18n="tour-prev" id="tourPrev">← Prev</button>
+<button class="step-btn" data-i18n="tour-apply" id="tourApply">▶ Apply this scenario</button>
+<button class="step-btn secondary" data-i18n="tour-next" id="tourNext">Next →</button>
+</div>
+</div>
+</details>
+<!-- Worksheet/lab mode. 3 questions per applet with instant check. -->
+<details class="worksheet" style="margin-top:8px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="ws-summary">📝 Worksheet (3 questions)</span>
+</summary>
+<div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem; line-height:1.5;">
+<div class="ws-q" id="ws1">
+<p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">BFS on the demo maze. Is the path BFS finds always the shortest?</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="0"/> <span data-i18n="ws1o0">No: BFS finds a path quickly, but not necessarily the shortest one.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="1"/> <span data-i18n="ws1o1">Yes: BFS expands in rings by distance, so it reaches the goal by a shortest path on an unweighted grid.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="2"/> <span data-i18n="ws1o2">Only when the maze has no walls: walls break BFS's guarantee.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws1btn">Check</button>
+<span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+<div class="ws-q" id="ws2" style="margin-top:10px;">
+<p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Same maze, DFS. Compared to BFS's path length, DFS finds a path that is:</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="0"/> <span data-i18n="ws2o0">Always shorter: diving deep reaches the goal by a more direct route.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="1"/> <span data-i18n="ws2o1">The same length: any path-finder returns the same path on one maze.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="2"/> <span data-i18n="ws2o2">Often longer: DFS commits to one direction, so its first path is rarely shortest.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws2btn">Check</button>
+<span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+<div class="ws-q" id="ws3" style="margin-top:10px;">
+<p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">A* with admissible Manhattan heuristic vs BFS on the same maze. Number of nodes visited by A* is:</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="0"/> <span data-i18n="ws3o0">Fewer: the heuristic steers A* toward the goal, so it wastes less exploration.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="1"/> <span data-i18n="ws3o1">More: computing the heuristic forces A* to examine extra nodes.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="2"/> <span data-i18n="ws3o2">The same: A* and BFS both visit every reachable cell.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws3btn">Check</button>
+<span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+</div>
+</details>
+<!-- Student response packet. Local-only: students copy or print their own response packet; the site stores nothing on a server. -->
+<details class="classroom-lab quick-assign" id="quick-assign-qa-search-01" data-quick-assign-id="QA-SEARCH-01" style="margin-top:8px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-lab-en="🧪 Quick Assign · QA-SEARCH-01 · 10–15 min" data-lab-zh="🧪 快速任务 · QA-SEARCH-01 · 10–15 分钟">🧪 Quick Assign · QA-SEARCH-01 · 10–15 min</span>
+</summary>
+<div class="lab-panel"><div class="quick-assign-meta" data-r4-no-translate="1" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong>QA-SEARCH-01</strong> · Level 1 · 10–15 min<br><span>A* vs BFS: same goal, different work</span></div>
+<p class="lab-intro" data-lab-en="Predict which search will do less work, run a comparison, then explain how the frontier and heuristic changed the result." data-lab-zh="先预测哪种搜索工作量更小，再运行比较，然后解释搜索前沿和启发式如何改变结果。">Predict which search will do less work, run a comparison, then explain how the frontier and heuristic changed the result.</p>
+<div class="lab-grid">
+<div class="lab-field">
+<label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
+<textarea data-lab-answer="predict" data-lab-en="Before running, which algorithm will visit fewer cells on this maze, and why?" data-lab-zh="运行前，哪种算法会访问更少格子？为什么？" id="lab-predict" placeholder="Before running, which algorithm will visit fewer cells on this maze, and why?"></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
+<textarea data-lab-answer="observe" data-lab-en="Run at least two algorithms. Record path length, visited nodes, and one visible frontier pattern." data-lab-zh="至少运行两种算法。记录路径长度、访问节点数，以及一个可见的前沿模式。" id="lab-observe" placeholder="Run at least two algorithms. Record path length, visited nodes, and one visible frontier pattern."></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
+<textarea data-lab-answer="explain" data-lab-en="What did the heuristic change in the search process?" data-lab-zh="启发式在搜索过程中改变了什么？" id="lab-explain" placeholder="What did the heuristic change in the search process?"></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
+<textarea data-lab-answer="transfer" data-lab-en="When would BFS be safer than greedy best-first search or weighted A*?" data-lab-zh="什么时候 BFS 会比贪心最佳优先搜索或加权 A* 更安全？" id="lab-transfer" placeholder="When would BFS be safer than greedy best-first search or weighted A*?"></textarea>
+</div>
+</div>
+<div aria-live="polite" class="lab-state" data-lab-state="">State snapshot appears here.</div>
+<div class="lab-actions">
+<button class="step-btn" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态" type="button">↻ Refresh state</button>
+<button class="step-btn" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包" type="button">📋 Copy packet</button>
+<button class="step-btn secondary" data-lab-action="print" data-lab-en="🖨 Print packet" data-lab-zh="🖨 打印实验包" type="button">🖨 Print packet</button>
+<button class="step-btn secondary" data-lab-action="clear" data-lab-en="Clear local draft" data-lab-zh="清除本地草稿" type="button">Clear local draft</button>
+<span aria-live="polite" class="lab-status"></span>
+</div>
+</div>
+</details>
+<!-- Supporting learning component. -->
+<details class="accessibility-layer" open="">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-a11y-en="♿ Text and keyboard support" data-a11y-zh="♿ 无障碍和文本状态层">♿ Text and keyboard support</span>
+</summary>
+<div aria-labelledby="a11yLayerTitle" class="accessibility-panel" role="region">
+<h2 class="sr-only" data-a11y-title="" id="a11yLayerTitle">Text and keyboard support</h2>
+<p class="accessibility-intro" data-a11y-intro=""></p>
+<div class="accessibility-grid">
+<section aria-labelledby="a11yKeyboardTitle" class="accessibility-card">
+<h3 data-a11y-keyboard-title="" id="a11yKeyboardTitle">Keyboard path</h3>
+<ul>
+<li data-a11y-keyboard-1="">Use Tab and Shift+Tab to move through controls.</li>
+<li data-a11y-keyboard-2="">Use Enter or Space on buttons, and arrow keys on sliders or select controls.</li>
+<li data-a11y-keyboard-3="">The visual region is focusable and described by the state summary below.</li>
+</ul>
+</section>
+<section aria-labelledby="a11yStateTitle" class="accessibility-card">
+<h3 data-a11y-state-title="" id="a11yStateTitle">Text state summary</h3>
+<dl class="a11y-state-grid" data-a11y-state-grid="" id="a11yStateSummary"></dl>
+</section>
+<section aria-labelledby="a11yMotionTitle" class="accessibility-card">
+<h3 data-a11y-motion-title="" id="a11yMotionTitle">Reduced motion and non-visual support</h3>
+<p data-a11y-motion-copy="">Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.</p>
+</section>
+</div>
+<p class="accessibility-note" data-a11y-note="">Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.</p>
+<div aria-atomic="true" aria-live="polite" class="sr-only" id="a11yLiveRegion" role="status"></div>
+</div>
+</details>
+<div class="jump-anchor"><a class="jump-link" data-i18n="jump-link" href="#essay">↓ Read the explanation</a></div>
+</div>
+</section>
+<article class="essay" id="essay">
+<section data-essay-lang="en">
+<p class="lede">
+    Pathfinding turns a map into a graph of states and connections, then searches for a route from
+    a start state to a goal. Breadth-first search, depth-first search, Dijkstra's algorithm, and A*
+    are foundational strategies whose guarantees depend on edge costs, data structures, and heuristic properties.
+  </p>
+<h2>Breadth-first and depth-first search</h2>
+<p>
+<strong>BFS</strong> uses a first-in, first-out frontier and expands states by increasing number
+    of edges from the start. On an unweighted graph, or one where every edge has the same cost, the
+    first discovered goal path is shortest in edge count when duplicate-state handling is correct.
+  </p>
+<p>
+<strong>DFS</strong> follows one branch deeply before backtracking. It can use little frontier
+    memory and is useful for reachability or exhaustive traversal, but it does not generally return
+    a shortest path. On an infinite or cyclic space it also needs appropriate depth limits or visited-state handling.
+  </p>
+<h2>Dijkstra and A*</h2>
+<p>
+<strong>Dijkstra's algorithm</strong> expands the state with the smallest known path cost
+    <code>g(n)</code>. It generalizes BFS to graphs with nonnegative, unequal edge costs.
+    <strong>A*</strong> expands according to <code>f(n) = g(n) + h(n)</code>, where <code>h(n)</code>
+    estimates the remaining cost to the goal.
+  </p>
+<div class="aha">
+    The heuristic does not replace path cost. It adds a goal-directed estimate to the cost already
+    paid. When <code>h = 0</code>, A* reduces to Dijkstra's expansion rule.
+  </div>
+<p>
+    On this four-neighbor unit-cost grid, Manhattan distance is admissible because it never exceeds
+    the shortest path length when walls can only force extra steps. It is also consistent, so standard
+    graph-search A* returns an optimal path. A heuristic that overestimates can be faster in some cases
+    but gives up the usual optimality guarantee.
+  </p>
+<h2>When informed search helps</h2>
+<p>
+    In open space, Manhattan distance strongly directs A* toward the goal, often reducing expansions
+    relative to BFS. In a maze that forces long detours, the heuristic may provide little useful
+    discrimination and A* can expand nearly as much as Dijkstra or BFS. The gain is not exactly
+    proportional to one heuristic score; it depends on how the estimates order the frontier across
+    the entire problem.
+  </p>
+<h2>What this model leaves out</h2>
+<p>
+    Real routing includes weighted travel times, turn restrictions, dynamic traffic, multiple modes,
+    and hierarchical maps. Robotics may use continuous geometry and collision checking. Games often
+    search navigation meshes or grids and may add jump-point search, hierarchical planning, or path
+    smoothing. These techniques preserve the central separation between accumulated cost, a frontier,
+    duplicate-state control, and optional heuristic guidance.
+  </p>
+<div class="for-teachers">
+<h3>For teachers</h3>
+<p><strong>Curriculum:</strong> State-space graphs, frontier discipline, explored sets,
+      path cost, completeness, optimality, admissible and consistent heuristics, and weighted edges.</p>
+<p><strong>Pre-exploration prompts:</strong></p>
+<ul>
+<li>What must be true for the fewest edges to equal the lowest path cost?</li>
+<li>Why are a frontier and an explored set different?</li>
+<li>What information does A* use that Dijkstra does not?</li>
+</ul>
+<p><strong>Post-exploration prompts:</strong></p>
+<ul>
+<li>Build a case where DFS returns a longer route than BFS.</li>
+<li>Compare BFS and Dijkstra before and after adding unequal terrain costs.</li>
+<li>Build an open map and a detour maze. How does heuristic usefulness change the explored count?</li>
+<li>Explain why an overestimating heuristic can change the optimality conclusion.</li>
+</ul>
+<p><strong>Misconceptions to test:</strong> DFS is a shortest-path algorithm; finishing first in one animation proves an algorithm is generally faster; BFS minimizes weighted path cost; Dijkstra only works on weighted graphs; A* is always faster; any heuristic preserves optimality; BFS simply becomes Dijkstra rather than being a special uniform-cost case.</p>
+</div>
+</section>
+<section data-essay-lang="zh" hidden="" lang="zh">
+<p class="lede">
+    寻路把地图转换为由状态和连接组成的图，再从起始状态搜索到目标的路线。广度优先搜索、深度优先搜索、Dijkstra 算法和 A* 都是基础策略，它们的保证取决于边成本、数据结构和启发式性质。
+  </p>
+<h2>广度优先与深度优先搜索</h2>
+<p>
+<strong>BFS</strong> 使用先进先出的前沿，按照距离起点的边数逐层扩展状态。在无权图或每条边成本相同的图中，只要重复状态处理正确，第一次找到的目标路径在边数上最短。
+  </p>
+<p>
+<strong>DFS</strong> 会沿一个分支深入，再回溯。它可以使用较少的前沿内存，适合可达性检查或穷尽遍历，但通常不返回最短路径。在无限或含环空间中，还需要适当的深度限制或已访问状态处理。
+  </p>
+<h2>Dijkstra 与 A*</h2>
+<p>
+<strong>Dijkstra 算法</strong>扩展已知路径成本 <code>g(n)</code> 最小的状态。它把 BFS 推广到具有非负且不相等边成本的图。<strong>A*</strong> 按照 <code>f(n) = g(n) + h(n)</code> 扩展，其中 <code>h(n)</code> 估计到目标的剩余成本。
+  </p>
+<div class="aha">
+    启发式不会取代路径成本，而是在已经付出的成本上加入朝向目标的估计。当 <code>h = 0</code> 时，A* 的扩展规则退化为 Dijkstra。
+  </div>
+<p>
+    在这个四方向单位成本网格中，曼哈顿距离是可采纳的，因为墙壁只会迫使路径增加步数，不会让真实最短路径短于曼哈顿距离。它也具有一致性，因此标准图搜索 A* 会返回最优路径。高估的启发式在某些情况下可能更快，但会放弃通常的最优性保证。
+  </p>
+<h2>有信息搜索何时有帮助</h2>
+<p>
+    在开放空间中，曼哈顿距离会明显把 A* 引向目标，通常比 BFS 扩展更少状态。在迫使长距离绕行的迷宫中，启发式可能几乎无法区分候选状态，A* 的扩展数量可能接近 Dijkstra 或 BFS。收益并不与某一个启发式分数严格成比例，而取决于估计如何在整个问题中排列前沿。
+  </p>
+<h2>这个模型省略了什么</h2>
+<p>
+    真实路线规划包含加权行程时间、转弯限制、动态交通、多种交通方式和分层地图。机器人路径规划还可能使用连续几何和碰撞检测。游戏通常在导航网格或规则网格上搜索，并可能加入跳点搜索、分层规划或路径平滑。这些技术仍保留几个核心部分：累计成本、前沿、重复状态控制，以及可选的启发式引导。
+  </p>
+<div class="for-teachers">
+<h3>教师指导</h3>
+<p><strong>课程目标：</strong>状态空间图、前沿规则、已探索集合、路径成本、完备性、最优性、可采纳与一致启发式，以及加权边。</p>
+<p><strong>探索前问题：</strong></p>
+<ul>
+<li>边数最少要等于路径成本最低，需要满足什么条件？</li>
+<li>前沿与已探索集合为什么不同？</li>
+<li>A* 使用了 Dijkstra 没有使用的什么信息？</li>
+</ul>
+<p><strong>探索后问题：</strong></p>
+<ul>
+<li>构造一个 DFS 返回路线比 BFS 更长的情况。</li>
+<li>在加入不等地形成本前后比较 BFS 与 Dijkstra。</li>
+<li>分别构造开放地图和绕行迷宫。启发式有用程度如何改变探索数量？</li>
+<li>解释高估启发式为什么会改变最优性结论。</li>
+</ul>
+<p><strong>需要检验的误解：</strong>DFS 是最短路径算法；Dijkstra 只能用于加权图；A* 总是更快；任何启发式都保持最优性；BFS 只是变成 Dijkstra，而不是 Dijkstra 在单位成本下的特殊情况。</p>
+</div>
+</section>
+</article>
+<script>
+(() => {
+  // Local $ helper: used throughout this IIFE (URL share, CSV export, lesson tour, worksheet).
+  // Previously the $ identifier appeared at call sites without ever being declared, relying on
+  // those code paths never executing (try/catch around URL params, etc.). Now declared properly.
+  const $ = id => document.getElementById(id);
+
+  // ===== bilingual + reduced-motion + hard reset =====
+  const STRINGS = {
+    en: {
+      'title': 'Pathfinding Visualizer', 'back-link': '← Back to all playgrounds',
+      'footer-top': '↑ Back to top', 'footer-course': 'Made for the Introduction to AI course at Haidian Kaiwen Academy.', 'footer-portfolio': 'Portfolio', 'footer-project': 'AI Playgrounds', 'footer-source': 'Source', 'footer-issue': 'Report an issue',
+      'reset-all': '↺ Reset all',
+      'algo-label': 'Algorithm:', 'speed-label': 'Speed:',
+      'run-btn': '▶ Run search', 'pause-btn': '⏸ Pause search', 'resume-btn': '▶ Resume',
+      'step-btn': '❘▶ Step', 'maze-btn': 'Random walls', 'truemaze-btn': 'Maze',
+      'restart-title': 'Restart the search from the beginning (keeps walls, start, and goal).',
+      'back-title': 'Step one expansion backward through the search.',
+      'tp-idle': 'idle',
+      'return-live': 'Jump to latest',
+      'race-summary': '🏁 Race two algorithms on the same maze',
+      'race-intro': 'Both algorithms search the maze you built above, one node-expansion per tick. Watch how many cells each opens before reaching the goal: that is why "A* explores fewer nodes than BFS" is a measured result, not a slogan.',
+      'race-left': 'Left', 'race-right': 'Right', 'race-vs': 'vs',
+      'race-btn': '▶ Race', 'race-reset': '↺ Reset', 'race-nodes': 'nodes',
+      'clear-btn': 'Clear walls', 'reset-btn': 'Reset',
+      'size-label': 'Grid size:',
+      'size-small': 'Small (20 × 14)', 'size-medium': 'Medium (35 × 25)', 'size-large': 'Large (50 × 35)',
+      'heur-label': 'A* heuristic:',
+      'h-manhattan': 'Manhattan (admissible)',
+      'h-euclidean': 'Euclidean (admissible)',
+      'h-overestimate': '1.5× Manhattan (INadmissible)',
+      'h-zero': 'Zero (= Dijkstra)',
+      'heur-title': 'Manhattan is admissible (never overestimates) on a 4-connected grid → A* finds shortest path. 1.5× Manhattan is inadmissible → A* gets faster but no longer guarantees optimality.',
+      'opt-astar': 'A* (heuristic-guided)',
+      'opt-bidi': 'Bidirectional BFS (search from both ends)',
+      'opt-idastar': 'IDA* (iterative deepening A*)',
+      'paint-label': 'Paint with:',
+      'p-wall': '🟪 Wall (impassable)', 'p-road': '⬜ Road (cost 1)',
+      'p-mud': '🟫 Mud (cost 3)', 'p-water': '🟦 Water (cost 5)',
+      'paint-title': 'Click on the canvas paints with the selected terrain. Costs: Road 1, Mud 3, Water 5, Wall impassable. BFS/DFS ignore costs; Dijkstra and A* use them.',
+      'paint-hint': 'Weighted terrain only affects Dijkstra & A*. BFS/DFS treat all passable cells as cost 1.',
+      'leg-mud': 'Mud (3)', 'leg-water': 'Water (5)',
+      'replay-label': '⏪ Replay',
+      'frontier-summary': '📋 Open frontier (data structure contents)',
+      'ft-pos': 'Position (r,c)', 'ft-g': 'g (cost from start)',
+      'ft-h': 'h (heuristic)', 'ft-f': 'f = g + h', 'ft-note': 'Note',
+      'ft-hint': "BFS/DFS don't use g/h/f: they pop by FIFO/LIFO order. Dijkstra uses g only. A* sorts by f.",
+      'tldr-strong': 'The big idea',
+      'tldr-body': 'A* finds the shortest path between two points while exploring far fewer squares than BFS, because it uses an estimate of remaining distance to focus the search.',
+      'opt-bfs': 'Breadth-first search (BFS)',
+      'opt-dfs': 'Depth-first search (DFS)',
+      'opt-astar': 'A* (Manhattan heuristic)',
+      'opt-dijkstra': 'Dijkstra (uniform cost)',
+      'stat-visited': 'Nodes visited', 'stat-path': 'Path length', 'stat-status': 'Status',
+      'leg-start': 'Start', 'leg-goal': 'Goal', 'leg-wall': 'Wall',
+      'leg-visited': 'Visited', 'leg-frontier': 'Frontier', 'leg-path': 'Path',
+      'hint-instr': 'Click empty squares to draw walls. Drag the green start or red goal to move them.',
+      'jump-link': '↓ Read the explanation',
+      'tour-summary': '📚 Lesson tour (5 steps)',
+      'tour-step': 'Step',
+      'tour-prev': '← Prev', 'tour-next': 'Next →', 'tour-apply': '▶ Apply this scenario',
+      'sg-summary': '🎯 Try these scenarios first',
+      'sg-intro': 'Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.',
+      'sg-card-prefix': 'Scenario',
+      'sg-concept-label': 'Concept',
+      'sg-observe-label': 'What to watch',
+      'sg-misconception-label': 'Predict before applying',
+      'sg-misconception-text': 'Which visible result should change most, and why? Commit to an answer before applying.',
+      'sg-teacher-label': 'Teacher use',
+      'sg-teacher-text': 'Use as a 2–3 minute predict → run → explain prompt.',
+      'sg-apply': 'Apply and compare',
+      'ws-summary': '📝 Worksheet (3 questions)',
+      'ws-check': 'Check',
+      'ws-pick': 'Pick an answer first.',
+      'ws1q': 'BFS on the demo maze. Is the path BFS finds always the shortest?',
+      'ws2q': 'Same maze, DFS. Compared to BFS\'s path length, DFS finds a path that is:',
+      'ws3q': 'A* with admissible Manhattan heuristic vs BFS on the same maze. Number of nodes visited by A* is:',
+      // --- MCQ: worksheet option labels (ws{n}o{i}) ---
+      'ws1o0': 'No: BFS finds a path quickly, but not necessarily the shortest one.',
+      'ws1o1': 'Yes: BFS expands in rings by distance, so it reaches the goal by a shortest path on an unweighted grid.',
+      'ws1o2': 'Only when the maze has no walls: walls break BFS\'s guarantee.',
+      'ws2o0': 'Always shorter: diving deep reaches the goal by a more direct route.',
+      'ws2o1': 'The same length: any path-finder returns the same path on one maze.',
+      'ws2o2': 'Often longer: DFS commits to one direction, so its first path is rarely shortest.',
+      'ws3o0': 'Fewer: the heuristic steers A* toward the goal, so it wastes less exploration.',
+      'ws3o1': 'More: computing the heuristic forces A* to examine extra nodes.',
+      'ws3o2': 'The same: A* and BFS both visit every reachable cell.',
+      // lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
+      'tour0name': 'BFS vs A*: same maze, different work',
+      'tour0desc': 'Small grid, demo maze, BFS. Run once, record visited nodes, then switch to A* on the same maze. The paths stay optimal, but the frontier work changes dramatically.',
+      'tour1name': 'DFS trap: fast path is not best path',
+      'tour1desc': "Small grid, maze layout, DFS. Run after BFS and compare path length. On this fixed grid and neighbor order, DFS can reach the goal after relatively few expansions while returning a longer route. That does not make DFS generally faster.",
+      'tour2name': 'A* focus: heuristic saves work without losing optimality',
+      'tour2desc': 'Small grid, demo maze, A* with Manhattan. Compare path length and visited nodes against BFS. The heuristic focuses work while preserving the shortest-path guarantee.',
+      'tour3name': 'Weighted A*: may focus more, no longer guaranteed',
+      'tour3desc': 'Medium grid, A* with 1.5× Manhattan. The search may visit fewer cells, but overestimation removes the guarantee that the returned path has minimum cost.',
+      'tour4name': 'Weighted terrain: BFS ignores cost, Dijkstra does not',
+      'tour4desc': 'Small grid, zero heuristic, mud paint selected. Add a mud corridor and compare BFS with Dijkstra. BFS counts steps; Dijkstra counts cost.',
+      // worksheet answer-feedback (ws{n}ok / ws{n}no) ---
+      'ws1ok': "Correct. BFS explores in concentric rings (FIFO queue). The first time it reaches the goal, the path length equals the minimum number of edges from start. On uniform-cost grids, that's the shortest path: guaranteed.",
+      'ws1no': "Try 'yes'. BFS expands by distance from start, so the first time it touches the goal, that's the shortest path on an unweighted graph.",
+      'ws2ok': "Correct. DFS uses a stack (LIFO) and commits to one direction until it hits a dead end. The first path it finds is usually NOT shortest: DFS isn't designed for optimality, just for finding a path quickly.",
+      'ws2no': "Try 'often longer'. DFS dives deep along one direction first; the first path it finds is rarely the shortest.",
+      'ws3ok': "Right. A* uses f = g + h to focus exploration toward the goal. With an admissible heuristic, it still finds the shortest path (like BFS) but visits far fewer 'wasted' nodes in the wrong direction.",
+      'ws3no': "Try 'fewer'. A*'s heuristic biases exploration toward the goal: same correctness as BFS, much less wasted work.",
+      // tooltip translations (via data-i18n-title)
+      'algo-title': 'Choose which search algorithm to run. Each visits cells in a different order.',
+      'size-title': 'Smaller grids fit on one screen and are easier to inspect step-by-step. Large grids show the algorithms\' asymptotic behavior.',
+      'speed-title': 'How quickly the search visualization advances. Slower = easier to follow the frontier expansion. Adjustable live during a run.',
+      'run-title': 'Run the selected algorithm from start to goal. Becomes Pause while running.',
+      'step-title': 'Expand one frontier node. Lets the class discuss each expansion before the next.',
+      'maze-title': 'Generate a random wall pattern (~28% wall density). Great for comparing algorithms.',
+      'truemaze-title': 'Generate a recursive-division maze with a wall border. Iconic, and great for BFS-flood vs DFS-snake: but one path between cells flattens the optimality differences the obstacle layout shows.',
+      'clear-title': 'Remove all walls. Keeps start and goal where they are.',
+      'reset-title': 'Clear walls AND return start/goal to their default positions.',
+    },
+    zh: {
+      'title': '路径搜索可视化', 'back-link': '← 返回所有演示',
+      'footer-top': '↑ 返回顶部', 'footer-course': '为海淀凯文学校《人工智能导论》课程制作。', 'footer-portfolio': '作品集', 'footer-project': 'AI Playgrounds', 'footer-source': '源代码', 'footer-issue': '反馈问题',
+      'reset-all': '↺ 全部重置',
+      'algo-label': '算法:', 'speed-label': '速度:',
+      'run-btn': '▶ 运行搜索', 'pause-btn': '⏸ 暂停搜索', 'resume-btn': '▶ 继续',
+      'step-btn': '❘▶ 单步', 'maze-btn': '随机墙壁', 'truemaze-btn': '迷宫',
+      'restart-title': '从头重新开始搜索(保留墙、起点和终点)。',
+      'back-title': '在搜索中后退一步。',
+      'tp-idle': '空闲',
+      'return-live': '跳到最新',
+      'race-summary': '🏁 让两个算法在同一迷宫上赛跑',
+      'race-intro': '两个算法都在你上面搭好的迷宫里搜索,每帧各扩展一个节点。看看各自到达终点前打开了多少格子--这正是为什么"A* 比 BFS 探索更少节点"是可测量的结果,而不是口号。',
+      'race-left': '左', 'race-right': '右', 'race-vs': '对',
+      'race-btn': '▶ 开始赛跑', 'race-reset': '↺ 重置', 'race-nodes': '节点',
+      'clear-btn': '清除墙壁', 'reset-btn': '重置',
+      'size-label': '网格尺寸:',
+      'size-small': '小 (20 × 14)', 'size-medium': '中 (35 × 25)', 'size-large': '大 (50 × 35)',
+      'heur-label': 'A* 启发式:',
+      'h-manhattan': '曼哈顿(可行)',
+      'h-euclidean': '欧几里得(可行)',
+      'h-overestimate': '1.5× 曼哈顿(不可行)',
+      'h-zero': '零(= 迪杰斯特拉)',
+      'heur-title': '曼哈顿在 4-连通网格上是可行启发式(永不高估)--A* 能找到最短路径。1.5× 曼哈顿是不可行的--A* 更快,但不再保证最优。',
+      'opt-astar': 'A*(启发式引导)',
+      'opt-bidi': '双向 BFS(从两端搜索)',
+      'opt-idastar': 'IDA*(迭代加深 A*)',
+      'paint-label': '绘制:',
+      'p-wall': '🟪 墙(不可通行)', 'p-road': '⬜ 道路(代价 1)',
+      'p-mud': '🟫 泥地(代价 3)', 'p-water': '🟦 水域(代价 5)',
+      'paint-title': '点击画布以所选地形作画。代价:道路 1,泥地 3,水域 5,墙不可通行。BFS/DFS 忽略代价;Dijkstra 和 A* 使用代价。',
+      'paint-hint': '加权地形只影响 Dijkstra 和 A*。BFS/DFS 把所有可通行格子视作代价 1。',
+      'leg-mud': '泥地 (3)', 'leg-water': '水域 (5)',
+      'replay-label': '⏪ 回放',
+      'frontier-summary': '📋 开放边界(数据结构内容)',
+      'ft-pos': '位置 (r,c)', 'ft-g': 'g(从起点的代价)',
+      'ft-h': 'h(启发式)', 'ft-f': 'f = g + h', 'ft-note': '说明',
+      'ft-hint': 'BFS/DFS 不使用 g/h/f--它们按 FIFO/LIFO 顺序弹出。Dijkstra 只用 g。A* 按 f 排序。',
+      'tldr-strong': '核心思想',
+      'tldr-body': 'A* 能在两点之间找到最短路径,而探索的格子比广度优先少得多--因为它用剩余距离的估计来引导搜索。',
+      'opt-bfs': '广度优先搜索 (BFS)',
+      'opt-dfs': '深度优先搜索 (DFS)',
+      'opt-astar': 'A*(曼哈顿启发式)',
+      'opt-dijkstra': '迪杰斯特拉(均匀代价)',
+      'stat-visited': '已访问节点', 'stat-path': '路径长度', 'stat-status': '状态',
+      'leg-start': '起点', 'leg-goal': '终点', 'leg-wall': '墙壁',
+      'leg-visited': '已访问', 'leg-frontier': '边界', 'leg-path': '路径',
+      'hint-instr': '点击空格画墙。拖动绿色起点或红色终点可移动位置。',
+      'jump-link': '↓ 阅读说明',
+      'tour-summary': '📚 课程导览(5 步)',
+      'tour-step': '步骤',
+      'tour-prev': '← 上一步', 'tour-next': '下一步 →', 'tour-apply': '▶ 应用此场景',
+      'sg-summary': '🎯 先试这些场景',
+      'sg-intro': '先选择一个场景并预测结果,再应用它,然后把运行结果与你的预测进行比较。',
+      'sg-card-prefix': '场景',
+      'sg-concept-label': '概念',
+      'sg-observe-label': '预期观察',
+      'sg-misconception-label': '误区检查',
+      'sg-misconception-text': '初学者的第一反应可能会漏掉或过度简化什么?',
+      'sg-teacher-label': '教师用法',
+      'sg-teacher-text': '用作 2–3 分钟的“预测 → 运行 → 解释”活动。',
+      'sg-apply': '应用场景',
+      'ws-summary': '📝 练习题(3 题)',
+      'ws-check': '核对',
+      'ws-pick': '请先选择一个答案。',
+      'ws1q': 'BFS 在示例迷宫上运行。BFS 找到的路径总是最短的吗?',
+      'ws2q': '同一迷宫,改用 DFS。与 BFS 的路径长度相比,DFS 找到的路径:',
+      'ws3q': '在同一迷宫上,使用可行(admissible)曼哈顿启发式的 A* 对比 BFS。A* 访问的节点数:',
+      // --- MCQ: 练习题选项(ws{n}o{i})---
+      'ws1o0': '不--BFS 能快速找到一条路径,但不一定是最短的。',
+      'ws1o1': '是--BFS 按距离一圈圈向外扩展,所以在无权网格上它会沿最短路径到达终点。',
+      'ws1o2': '只有迷宫没有墙时才是--墙会破坏 BFS 的保证。',
+      'ws2o0': '总是更短--一头扎到底会沿更直接的路线到达终点。',
+      'ws2o1': '长度相同--在同一个迷宫上任何寻路算法都返回相同的路径。',
+      'ws2o2': '通常更长--DFS 锁定一个方向,所以它的第一条路很少是最短的。',
+      'ws3o0': '更少--启发式把 A* 引向终点,所以浪费的探索更少。',
+      'ws3o1': '更多--计算启发式迫使 A* 检查额外的节点。',
+      'ws3o2': '相同--A* 和 BFS 都会访问每一个可达的格子。',
+      // 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
+      'tour0name': 'BFS 在小网格上:最短路径,但工作量大',
+      'tour0desc': '小网格,示例迷宫,BFS。点击"运行搜索"。BFS 以起点为中心一圈圈向外探索,直到碰到终点。它保证最短路径,但会访问很多节点。',
+      'tour1name': 'DFS 能找到一条路,但常常是糟糕的',
+      'tour1desc': '同一网格,DFS。运行。在固定网格和邻居顺序下，DFS 可能在扩展较少节点后到达目标，却返回更长路线。这不表示 DFS 一般更快；它找到的是一条路，不一定是最短路。',
+      'tour2name': 'A* 配曼哈顿:聚焦搜索,且最优',
+      'tour2desc': '使用可行(admissible)曼哈顿启发式的 A*。访问的节点比 BFS 少得多,同时仍能找到最短路径。启发式把搜索朝终点方向裁剪。',
+      'tour3name': '加权 A*：可能更聚焦，但不再保证最优',
+      'tour3desc': '同样的 A*,但启发式 = 1.5× 曼哈顿(会高估)。它可能访问更少节点，但返回路径不再保证具有最低代价。最优性保证要求满足相应的启发式条件。',
+      'tour4name': '迪杰斯特拉 = 零启发式的 A*',
+      'tour4desc': 'A* 中把启发式设为零就成了纯粹的 Dijkstra。在无权网格上它表现得像 BFS。试着画一些泥地(代价 3)--Dijkstra 会绕开它,而 BFS 不会。',
+      // 练习题答案反馈(ws{n}ok / ws{n}no)---
+      'ws1ok': '正确。BFS 以一圈圈同心环的方式探索(FIFO 队列)。它第一次到达终点时,路径长度就等于从起点出发的最少边数。在均匀代价网格上,这就是最短路径--有保证。',
+      'ws1no': '试试"yes"。BFS 按到起点的距离扩展,所以它第一次碰到终点时,在无权图上那就是最短路径。',
+      'ws2ok': '正确。DFS 使用栈(LIFO),会沿一个方向一直走到死路。它找到的第一条路通常不是最短的--DFS 的设计目标不是最优,而是快速找到一条路。',
+      'ws2no': '试试"often longer"。DFS 先沿一个方向一头扎到底;它找到的第一条路很少是最短的。',
+      'ws3ok': '对。A* 用 f = g + h 把探索聚焦到终点方向。在启发式可行(admissible)时,它仍能找到最短路径(像 BFS 一样),但在错误方向上访问的"浪费"节点要少得多。',
+      'ws3no': '试试"fewer"。A* 的启发式让探索偏向终点--与 BFS 同样正确,却少了很多无用功。',
+      // tooltip translations
+      'algo-title': '选择要运行的搜索算法。每种算法访问格子的顺序不同。',
+      'size-title': '小网格能在一屏内显示完整,便于逐步检查。大网格更能展示算法的渐近行为。',
+      'speed-title': '可视化推进的速度。越慢越容易跟随边界扩展。运行时可实时调整。',
+      'run-title': '运行所选算法,从起点到终点。运行时变为"暂停"。',
+      'step-title': '展开一个边界节点。让课堂在下一步之前讨论这次展开。',
+      'maze-title': '生成随机墙壁(约 28% 墙密度)。很适合比较不同算法。',
+      'truemaze-title': '生成递归分割迷宫(带边界墙)。经典样式,适合观察 BFS 泛洪与 DFS 蜿蜒的差异--但单元格之间只有一条路径,会削弱障碍布局所展示的最优性差异。',
+      'clear-title': '清除所有墙壁。起点和终点保持原位。',
+      'reset-title': '清除墙壁并把起点/终点恢复到默认位置。',
+    },
+  };
+  function setLang(lang) {
+    if (!STRINGS[lang]) lang = 'en';
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.dataset.i18n;
+      if (STRINGS[lang][k]) el.textContent = STRINGS[lang][k];
+    });
+    // Also translate hover tooltips (title attribute): keyed via data-i18n-title.
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const k = el.dataset.i18nTitle;
+      if (STRINGS[lang][k]) el.title = STRINGS[lang][k];
+    });
+    document.querySelectorAll('.lang-switch button').forEach(b =>
+      b.classList.toggle('active', b.dataset.lang === lang));
+    try { localStorage.setItem('ai-playgrounds-lang', lang); localStorage.setItem('lang', lang); } catch (_) {}
+    // Re-apply the run-button label since some of its labels are language-dependent.
+    // try/catch because refreshRunBtn reads `running` (a let), and during initial setLang
+    // we're in the temporal dead zone for that binding: the catch swallows that one
+    // initial call and later calls (from language-switch clicks) work normally.
+    try { if (typeof refreshRunBtn === 'function') refreshRunBtn(); } catch (_) {}
+  }
+  document.querySelectorAll('.lang-switch button').forEach(b =>
+    b.addEventListener('click', () => {
+      setLang(b.dataset.lang);
+      // re-render the tour in the new language. Safe here: this click handler
+      // only runs post-init, after LESSON_TOUR (a late `const`) is initialized, so
+      // there is no temporal-dead-zone risk (unlike calling it from inside setLang).
+      try { if (typeof renderTour === 'function') renderTour(); } catch (_) {}
+      try { if (typeof renderScenarioGallery === 'function') renderScenarioGallery(); } catch (_) {}
+    }));
+  let initialLang = 'en';
+  try { initialLang = new URLSearchParams(location.search).get('lang') || localStorage.getItem('ai-playgrounds-lang') || localStorage.getItem('lang') || 'en'; } catch (_) {}
+  setLang(initialLang);
+
+  function setTheme(t) {
+    document.body.classList.toggle('dark-mode', t === 'dark');
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+    try { localStorage.setItem('theme', t); } catch (_) {}
+  }
+  let initialTheme = 'light';
+  try {
+    initialTheme = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  } catch (_) {}
+  setTheme(initialTheme);
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    setTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark');
+  });
+
+  // For-teachers is hidden by default (cognitive-load floor). User toggles persist.
+  // `?teacher=1` opens on load. `?teacher=0` hides completely (no toggle, for projection).
+  try {
+    const tp = new URLSearchParams(location.search).get('teacher');
+    if (tp === '0') {
+      document.querySelectorAll('.for-teachers').forEach(el => el.style.display = 'none');
+    } else {
+      const style = document.createElement('style');
+      style.textContent = '.for-teachers-expander{margin-top:36px}.for-teachers-expander>summary{cursor:pointer;padding:12px 16px;background:var(--soft);border:1px solid var(--border);border-radius:8px;font-family:-apple-system,system-ui,sans-serif;font-size:0.9rem;color:var(--accent);font-weight:600;list-style:none;user-select:none}.for-teachers-expander>summary::-webkit-details-marker{display:none}.for-teachers-expander[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius:0}.for-teachers-expander>.for-teachers{margin-top:0;border-top:0;border-top-left-radius:0;border-top-right-radius:0}';
+      document.head.appendChild(style);
+      document.querySelectorAll('.for-teachers').forEach(div => {
+        const details = document.createElement('details');
+        details.className = 'for-teachers-expander';
+        const summary = document.createElement('summary');
+        summary.textContent = '▸ Show teacher notes (discussion prompts + curriculum)';
+        div.parentNode.insertBefore(details, div);
+        details.appendChild(summary);
+        details.appendChild(div);
+      });
+      const saved = (() => { try { return localStorage.getItem('teacher-notes-open'); } catch (_) { return null; } })();
+      const shouldOpen = tp === '1' || saved === '1';
+      document.querySelectorAll('details.for-teachers-expander').forEach(d => {
+        d.open = shouldOpen;
+        d.addEventListener('toggle', () => {
+          try { localStorage.setItem('teacher-notes-open', d.open ? '1' : '0'); } catch (_) {}
+        });
+      });
+    }
+  } catch (_) {}
+  document.getElementById('exportPng').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'pathfinding.png';
+    link.href = document.getElementById('grid').toDataURL('image/png');
+    link.click();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.code === 'Space' &&
+        e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' &&
+        e.target.tagName !== 'SELECT') {
+      e.preventDefault();
+      document.getElementById('runBtn').click();
+    }
+  });
+
+  // Grid dimensions are now mutable: the user can switch sizes mid-session.
+  const SIZE_PRESETS = {
+    small:  { COLS: 20, ROWS: 14, CELL: 28, start: {r: 3, c: 3},  goal: {r: 11, c: 16} },
+    medium: { COLS: 35, ROWS: 25, CELL: 20, start: {r: 5, c: 5},  goal: {r: 19, c: 29} },
+    large:  { COLS: 50, ROWS: 35, CELL: 14, start: {r: 5, c: 5},  goal: {r: 29, c: 44} },
+  };
+  let COLS = SIZE_PRESETS.small.COLS, ROWS = SIZE_PRESETS.small.ROWS, CELL = SIZE_PRESETS.small.CELL;
+  const canvas = document.getElementById('grid');
+  canvas.width = COLS * CELL; canvas.height = ROWS * CELL;
+  const ctx = canvas.getContext('2d');
+
+  const EMPTY = 0, WALL = 1, START = 2, GOAL = 3, MUD = 4, WATER = 5;
+  // weighted-terrain cost lookup. Walls return Infinity (impassable).
+  // BFS/DFS ignore this (they treat passable cells uniformly); Dijkstra/A* use it.
+  function cellCost(r, c) {
+    const v = grid[r][c];
+    if (v === WALL) return Infinity;
+    if (v === MUD) return 3;
+    if (v === WATER) return 5;
+    return 1; // EMPTY, START, GOAL all act as Road
+  }
+  function isPassable(r, c) { return grid[r][c] !== WALL; }
+  let grid = Array.from({length: ROWS}, () => Array(COLS).fill(EMPTY));
+  let start = {...SIZE_PRESETS.small.start}, goal = {...SIZE_PRESETS.small.goal};
+  grid[start.r][start.c] = START;
+  grid[goal.r][goal.c] = GOAL;
+
+  let visited = new Set();
+  let frontier = new Set();
+  // frontierData mirrors what the active algorithm has in its data structure (in pop-order).
+  // Each entry: {r, c, g, h, f, note}. UI reads this to render the inspection table.
+  let frontierData = { algo: '', entries: [] };
+  // Snapshots for the replay scrubber: one entry per yielded step.
+  let history = []; // each entry: {visited:Set, frontier:Set, path:[], frontierEntries, nVis}
+  let path = [];
+  let running = false;
+  let dragMode = null;
+
+  function key(r, c) { return r * COLS + c; }
+  function inBounds(r, c) { return r >= 0 && r < ROWS && c >= 0 && c < COLS; }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const cell = grid[r][c];
+        let color = getCSS('--empty');
+        if (cell === WALL) color = getCSS('--wall');
+        else if (cell === MUD) color = getCSS('--mud');
+        else if (cell === WATER) color = getCSS('--water');
+        else if (cell === START) color = getCSS('--start');
+        else if (cell === GOAL) color = getCSS('--goal');
+        // Visited/frontier overlays: but only over passable cells; preserve terrain hue
+        // by mixing instead of replacing. Quick approach: keep terrain color underneath
+        // via fillRect, then a translucent overlay for visited/frontier.
+        const vis = visited.has(key(r, c));
+        const fro = frontier.has(key(r, c)) && cell !== START && cell !== GOAL;
+        if (vis && cell !== WALL && cell !== START && cell !== GOAL) {
+          // Terrain-aware: still show terrain hue under the visited overlay (drawn below).
+        } else if (fro) {
+          color = getCSS('--frontier');
+        }
+        ctx.fillStyle = color;
+        ctx.fillRect(c * CELL, r * CELL, CELL, CELL);
+        // Translucent visited overlay preserves terrain hue underneath.
+        if (vis && cell !== WALL && cell !== START && cell !== GOAL && !fro) {
+          ctx.fillStyle = 'rgba(199, 210, 254, 0.6)';
+          ctx.fillRect(c * CELL, r * CELL, CELL, CELL);
+        }
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.strokeRect(c * CELL, r * CELL, CELL, CELL);
+      }
+    }
+    if (path.length > 1) {
+      ctx.strokeStyle = getCSS('--path');
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      for (let i = 0; i < path.length; i++) {
+        const [r, c] = path[i];
+        const x = c * CELL + CELL/2, y = r * CELL + CELL/2;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    drawSpecial(start, getCSS('--start'));
+    drawSpecial(goal, getCSS('--goal'));
+  }
+  function drawSpecial(p, color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(p.c * CELL + 2, p.r * CELL + 2, CELL - 4, CELL - 4);
+  }
+  function getCSS(v) {
+    return getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  }
+
+  function cellFromEvent(e) {
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+    const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+    return { c: Math.floor(x / CELL), r: Math.floor(y / CELL) };
+  }
+  // paint code selected by paintSel. Returns the grid value to paint with.
+  function paintTo() {
+    const v = (document.getElementById('paintSel') || {}).value || 'wall';
+    if (v === 'road') return EMPTY;
+    if (v === 'mud') return MUD;
+    if (v === 'water') return WATER;
+    return WALL;
+  }
+  canvas.addEventListener('mousedown', (e) => {
+    if (running) return;
+    const {r, c} = cellFromEvent(e);
+    if (!inBounds(r, c)) return;
+    if (grid[r][c] === START) dragMode = 'start';
+    else if (grid[r][c] === GOAL) dragMode = 'goal';
+    else {
+      // Click on the SAME terrain we're painting with → erase (toggle behaviour).
+      const target = paintTo();
+      const cur = grid[r][c];
+      if (cur === target && target !== EMPTY) {
+        dragMode = 'erase'; grid[r][c] = EMPTY;
+      } else {
+        dragMode = 'paint'; grid[r][c] = target;
+      }
+    }
+    clearSearch(); draw();
+  });
+  canvas.addEventListener('mousemove', (e) => {
+    if (!dragMode || running) return;
+    const {r, c} = cellFromEvent(e);
+    if (!inBounds(r, c)) return;
+    if (dragMode === 'start' && grid[r][c] !== GOAL && grid[r][c] !== WALL) {
+      grid[start.r][start.c] = EMPTY; start = {r, c}; grid[r][c] = START;
+    } else if (dragMode === 'goal' && grid[r][c] !== START && grid[r][c] !== WALL) {
+      grid[goal.r][goal.c] = EMPTY; goal = {r, c}; grid[r][c] = GOAL;
+    } else if (dragMode === 'paint' && grid[r][c] !== START && grid[r][c] !== GOAL) {
+      grid[r][c] = paintTo();
+    } else if (dragMode === 'erase' && grid[r][c] !== START && grid[r][c] !== GOAL) {
+      // Erase whatever non-special cell we drag over.
+      if (grid[r][c] !== EMPTY) grid[r][c] = EMPTY;
+    }
+    draw();
+  });
+  window.addEventListener('mouseup', () => dragMode = null);
+
+  const NEIGHBORS = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+
+  function* bfs() {
+    frontierData = { algo: 'bfs', entries: [] };
+    const q = [[start.r, start.c]];
+    const parent = new Map();
+    parent.set(key(start.r, start.c), null);
+    while (q.length) {
+      const [r, c] = q.shift();
+      visited.add(key(r, c));
+      frontier.delete(key(r, c));
+      if (r === goal.r && c === goal.c) { frontierData.entries = []; return reconstruct(parent, [r, c]); }
+      for (const [dr, dc] of NEIGHBORS) {
+        const nr = r + dr, nc = c + dc;
+        if (!inBounds(nr, nc)) continue;
+        if (!isPassable(nr, nc)) continue; // walls block; terrain costs ignored by BFS
+        const k = key(nr, nc);
+        if (parent.has(k)) continue;
+        parent.set(k, [r, c]);
+        frontier.add(k);
+        q.push([nr, nc]);
+      }
+      // Snapshot the queue AFTER expansion so it matches what visited/frontier sets show.
+      frontierData.entries = q.map(([r, c], i) => ({
+        r, c, g: '-', h: '-', f: '-',
+        note: i === 0 ? 'next (FIFO)' : 'queued'
+      }));
+      yield;
+    }
+    frontierData.entries = [];
+    return null;
+  }
+  function* dfs() {
+    frontierData = { algo: 'dfs', entries: [] };
+    const stack = [[start.r, start.c]];
+    const parent = new Map();
+    parent.set(key(start.r, start.c), null);
+    while (stack.length) {
+      const [r, c] = stack.pop();
+      if (visited.has(key(r, c))) continue;
+      visited.add(key(r, c));
+      frontier.delete(key(r, c));
+      if (r === goal.r && c === goal.c) { frontierData.entries = []; return reconstruct(parent, [r, c]); }
+      for (const [dr, dc] of NEIGHBORS) {
+        const nr = r + dr, nc = c + dc;
+        if (!inBounds(nr, nc)) continue;
+        if (!isPassable(nr, nc)) continue; // walls block; terrain costs ignored by DFS
+        const k = key(nr, nc);
+        if (parent.has(k)) continue;
+        parent.set(k, [r, c]);
+        frontier.add(k);
+        stack.push([nr, nc]);
+      }
+      // Snapshot the stack (top first) AFTER expansion.
+      frontierData.entries = stack.slice().reverse().map(([r, c], i) => ({
+        r, c, g: '-', h: '-', f: '-',
+        note: i === 0 ? 'next (LIFO)' : 'stacked'
+      }));
+      yield;
+    }
+    frontierData.entries = [];
+    return null;
+  }
+  function* astar(useHeuristic = true) {
+    frontierData = { algo: useHeuristic ? 'astar' : 'dijkstra', entries: [] };
+    const open = [[0, start.r, start.c]];
+    const gScore = new Map(); gScore.set(key(start.r, start.c), 0);
+    const parent = new Map(); parent.set(key(start.r, start.c), null);
+    // heuristic selector: students can switch admissibility to see optimality break.
+    const heurSel = document.getElementById('heurSel');
+    const heurKind = (useHeuristic && heurSel) ? heurSel.value : (useHeuristic ? 'manhattan' : 'zero');
+    const h = (r, c) => {
+      if (!useHeuristic || heurKind === 'zero') return 0;
+      const dr = Math.abs(r - goal.r), dc = Math.abs(c - goal.c);
+      if (heurKind === 'euclidean') return Math.sqrt(dr * dr + dc * dc);
+      if (heurKind === 'manhattan15') return 1.5 * (dr + dc); // INadmissible: overestimates
+      return dr + dc; // Manhattan, admissible on 4-connected grid
+    };
+    while (open.length) {
+      open.sort((a, b) => a[0] - b[0]);
+      const [, r, c] = open.shift();
+      if (visited.has(key(r, c))) continue;
+      visited.add(key(r, c));
+      frontier.delete(key(r, c));
+      if (r === goal.r && c === goal.c) { frontierData.entries = []; return reconstruct(parent, [r, c]); }
+      for (const [dr, dc] of NEIGHBORS) {
+        const nr = r + dr, nc = c + dc;
+        if (!inBounds(nr, nc) || !isPassable(nr, nc)) continue;
+        const k = key(nr, nc);
+        // weighted terrain. Step cost to enter (nr,nc) is cellCost(nr,nc).
+        const tentG = gScore.get(key(r, c)) + cellCost(nr, nc);
+        if (!gScore.has(k) || tentG < gScore.get(k)) {
+          gScore.set(k, tentG);
+          parent.set(k, [r, c]);
+          const f = tentG + h(nr, nc);
+          open.push([f, nr, nc]);
+          frontier.add(k);
+        }
+      }
+      // Snapshot the priority queue AFTER expansion. Filter visited (stale duplicates) and
+      // sort by f so the table shows next-to-pop first.
+      const live = open.filter(([, r, c]) => !visited.has(key(r, c)));
+      live.sort((a, b) => a[0] - b[0]);
+      frontierData.entries = live.map(([f, r, c], i) => {
+        const g = gScore.get(key(r, c)) ?? 0;
+        return {
+          r, c, g, h: f - g, f,
+          note: i === 0 ? 'next (lowest f)' : (useHeuristic ? 'in priority queue' : 'sorted by g')
+        };
+      });
+      yield;
+    }
+    frontierData.entries = [];
+    return null;
+  }
+  function reconstruct(parent, end) {
+    const out = []; let cur = end;
+    while (cur) { out.push(cur); cur = parent.get(key(cur[0], cur[1])); }
+    out.reverse(); return out;
+  }
+  // Bidirectional BFS. Run BFS simultaneously from start and goal until the
+  // two frontiers meet. On uniform-cost grids this asymptotically halves the search
+  // tree depth (because BFS is exponential in depth), giving roughly √N work for N nodes.
+  // Implementation: alternate one expansion per side per step; meeting = some node has
+  // a parent in BOTH search trees.
+  function* bidirectionalBFS() {
+    frontierData = { algo: 'bidi', entries: [] };
+    // Two BFS frontiers, parent maps, and "visited" tags from each side.
+    const qS = [[start.r, start.c]], qG = [[goal.r, goal.c]];
+    const parentS = new Map(); parentS.set(key(start.r, start.c), null);
+    const parentG = new Map(); parentG.set(key(goal.r, goal.c), null);
+    const fromS = new Set([key(start.r, start.c)]);
+    const fromG = new Set([key(goal.r, goal.c)]);
+    let meeting = null;
+    function expand(q, parent, ownSet, otherSet) {
+      if (!q.length) return null;
+      const [r, c] = q.shift();
+      visited.add(key(r, c));
+      frontier.delete(key(r, c));
+      if (otherSet.has(key(r, c))) return [r, c]; // already discovered from the other side
+      for (const [dr, dc] of NEIGHBORS) {
+        const nr = r + dr, nc = c + dc;
+        if (!inBounds(nr, nc) || !isPassable(nr, nc)) continue;
+        const k = key(nr, nc);
+        if (parent.has(k)) continue;
+        parent.set(k, [r, c]); ownSet.add(k);
+        frontier.add(k); q.push([nr, nc]);
+        if (otherSet.has(k)) return [nr, nc]; // first meeting point
+      }
+      return null;
+    }
+    while (qS.length || qG.length) {
+      meeting = expand(qS, parentS, fromS, fromG);
+      if (!meeting) meeting = expand(qG, parentG, fromG, fromS);
+      // Snapshot both frontiers concatenated.
+      frontierData.entries = qS.map(([r, c]) => ({
+        r, c, g: '-', h: '-', f: '-', note: 'forward (start→)'
+      })).concat(qG.map(([r, c]) => ({
+        r, c, g: '-', h: '-', f: '-', note: 'backward (←goal)'
+      })));
+      yield;
+      if (meeting) {
+        // Stitch: walk parentS backward from meeting → start, then parentG forward to goal.
+        const fwd = reconstruct(parentS, meeting);
+        // parentG points back toward the goal, so walk from meeting → goal.
+        const bwd = []; let cur = parentG.get(key(meeting[0], meeting[1]));
+        while (cur) { bwd.push(cur); cur = parentG.get(key(cur[0], cur[1])); }
+        frontierData.entries = [];
+        return fwd.concat(bwd);
+      }
+    }
+    frontierData.entries = [];
+    return null;
+  }
+  // IDA* (Iterative Deepening A*). Repeated depth-first searches bounded by
+  // an f-value cutoff that grows each iteration. Linear memory (DFS-like), still finds
+  // optimal paths under admissible heuristic. The "iteration" jump shows up as the
+  // frontier seeming to "restart": that's expected.
+  function* idaStar() {
+    frontierData = { algo: 'idastar', entries: [] };
+    const heurSel = document.getElementById('heurSel');
+    const heurKind = heurSel ? heurSel.value : 'manhattan';
+    const h = (r, c) => {
+      if (heurKind === 'zero') return 0;
+      const dr = Math.abs(r - goal.r), dc = Math.abs(c - goal.c);
+      if (heurKind === 'euclidean') return Math.sqrt(dr * dr + dc * dc);
+      if (heurKind === 'manhattan15') return 1.5 * (dr + dc);
+      return dr + dc;
+    };
+    let bound = h(start.r, start.c);
+    // Use an iterative DFS stack so we can yield between expansions without recursion.
+    for (let iter = 0; iter < 50; iter++) {
+      const stack = [{ r: start.r, c: start.c, g: 0, path: [[start.r, start.c]], seen: new Set([key(start.r, start.c)]) }];
+      let nextBound = Infinity;
+      let found = null;
+      // Reset display sets each iteration (the algorithm conceptually re-explores).
+      visited = new Set(); frontier = new Set();
+      while (stack.length) {
+        const cur = stack.pop();
+        visited.add(key(cur.r, cur.c));
+        frontier.delete(key(cur.r, cur.c));
+        const f = cur.g + h(cur.r, cur.c);
+        if (f > bound) { nextBound = Math.min(nextBound, f); continue; }
+        if (cur.r === goal.r && cur.c === goal.c) { found = cur.path; break; }
+        for (const [dr, dc] of NEIGHBORS) {
+          const nr = cur.r + dr, nc = cur.c + dc;
+          if (!inBounds(nr, nc) || !isPassable(nr, nc)) continue;
+          const nk = key(nr, nc);
+          if (cur.seen.has(nk)) continue;
+          const ng = cur.g + cellCost(nr, nc);
+          const newSeen = new Set(cur.seen); newSeen.add(nk);
+          stack.push({ r: nr, c: nc, g: ng, path: cur.path.concat([[nr, nc]]), seen: newSeen });
+          frontier.add(nk);
+        }
+        // Snapshot only top of stack: IDA* is depth-first.
+        frontierData.entries = stack.slice(-8).reverse().map((s, i) => ({
+          r: s.r, c: s.c, g: s.g, h: h(s.r, s.c), f: s.g + h(s.r, s.c),
+          note: i === 0 ? `next (iter ${iter+1}, bound=${bound.toFixed(1)})` : 'DFS stack'
+        }));
+        yield;
+      }
+      if (found) { frontierData.entries = []; return found; }
+      if (nextBound === Infinity) break;
+      bound = nextBound;
+    }
+    frontierData.entries = [];
+    return null;
+  }
+  function clearSearch() {
+    visited = new Set(); frontier = new Set(); path = [];
+    frontierData = { algo: '', entries: [] };
+    history = [];
+    document.getElementById('nVis').textContent = '0';
+    document.getElementById('nPath').textContent = '-';
+    document.getElementById('status').textContent = 'idle';
+    // Drop any paused step generator: its state is stale once we reset.
+    if (typeof stepGen !== 'undefined') stepGen = null;
+    paused = false;
+    { const g = document.getElementById('pfScrubGroup'); if (g) g.style.visibility = 'hidden'; const lv = document.getElementById('pfLive'); if (lv) lv.disabled = true; }
+    document.getElementById('replaySlider').value = 0;
+    document.getElementById('replaySlider').max = 0;
+    document.getElementById('replayCount').textContent = 'live';
+    { const tc = document.getElementById('tpCount'); if (tc) tc.textContent = 'idle'; }
+    refreshRunBtn();
+    renderFrontierTable();
+  }
+  // Snapshot the search state. Deep-clones the sets so history scrubbing doesn't alias live state.
+  function snapshot() {
+    history.push({
+      visited: new Set(visited),
+      frontier: new Set(frontier),
+      path: path.slice(),
+      frontierEntries: frontierData.entries.slice(),
+      nVis: visited.size,
+    });
+    const s = document.getElementById('replaySlider');
+    s.max = history.length - 1;
+    if (!replayMode) {
+      s.value = history.length - 1;
+      document.getElementById('replayCount').textContent = `step ${history.length}`;
+      { const tc = document.getElementById('tpCount'); if (tc) tc.textContent = `step ${history.length}`; }
+    }
+    if (history.length > 1) { const g = document.getElementById('pfScrubGroup'); if (g) g.style.visibility = 'visible'; }
+  }
+  // Render the live frontier-inspection table from current frontierData.
+  function renderFrontierTable() {
+    const tbody = document.getElementById('frontierTbody');
+    const ct = document.getElementById('frontierCount');
+    const entries = frontierData.entries;
+    ct.textContent = entries.length ? `- ${entries.length} entries` : '';
+    if (entries.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="padding:8px 12px; color:var(--muted); font-style:italic;">(empty)</td></tr>';
+      return;
+    }
+    let html = '';
+    for (const e of entries) {
+      html += '<tr>';
+      html += `<td style="padding:3px 8px; border-bottom:1px solid var(--border);">(${e.r}, ${e.c})</td>`;
+      html += `<td style="padding:3px 8px; border-bottom:1px solid var(--border); text-align:right;">${e.g}</td>`;
+      html += `<td style="padding:3px 8px; border-bottom:1px solid var(--border); text-align:right;">${e.h}</td>`;
+      html += `<td style="padding:3px 8px; border-bottom:1px solid var(--border); text-align:right; font-weight:600;">${e.f}</td>`;
+      html += `<td style="padding:3px 8px; border-bottom:1px solid var(--border); color:var(--muted);">${e.note}</td>`;
+      html += '</tr>';
+    }
+    tbody.innerHTML = html;
+  }
+  function refreshRunBtn() {
+    const btn = document.getElementById('runBtn');
+    const lang = document.documentElement.lang || 'en';
+    const T = (STRINGS[lang] && STRINGS[lang]) || STRINGS.en;
+    btn.setAttribute('aria-pressed', running ? 'true' : 'false');
+    if (running) btn.textContent = T['pause-btn'] || '⏸ Pause search';
+    else if (stepGen !== null) btn.textContent = T['resume-btn'] || '▶ Resume';
+    else btn.textContent = T['run-btn'] || '▶ Run search';
+  }
+  let paused = false;
+  let replayMode = false;
+  // Persistent generator for step-mode. When non-null, we're paused mid-search.
+  let stepGen = null;
+  function newGen() {
+    const algo = document.getElementById('algoSel').value;
+    if (algo === 'bfs') return bfs();
+    if (algo === 'dfs') return dfs();
+    if (algo === 'astar') return astar(true);
+    if (algo === 'bidi') return bidirectionalBFS();
+    if (algo === 'idastar') return idaStar();
+    return astar(false);
+  }
+  function finishSearch(result) {
+    if (result) {
+      path = result;
+      // under weighted terrain, "Path length" is ambiguous: show both step count
+      // and total cost. Steps = edges traversed; cost = sum of cellCost(entered cell).
+      const steps = result.length - 1;
+      let totalCost = 0;
+      for (let i = 1; i < result.length; i++) totalCost += cellCost(result[i][0], result[i][1]);
+      const usesCost = (frontierData.algo === 'astar' || frontierData.algo === 'dijkstra');
+      const showCost = usesCost && totalCost !== steps;
+      document.getElementById('nPath').textContent = showCost
+        ? `${steps} steps  ·  cost ${totalCost}`
+        : `${steps}`;
+      document.getElementById('status').textContent = 'found';
+    } else {
+      document.getElementById('status').textContent = 'no path';
+    }
+    stepGen = null;
+    draw();
+  }
+  document.getElementById('runBtn').addEventListener('click', async () => {
+    // Toggle: if currently running, pause. Else start/resume.
+    if (running) { paused = true; return; }
+    // Replay mode → resuming live wipes the replay state.
+    if (replayMode) { replayMode = false; document.getElementById('replayCount').textContent = 'live'; }
+    if (stepGen === null) { clearSearch(); stepGen = newGen(); }
+    running = true;
+    paused = false;
+    refreshRunBtn();
+    document.getElementById('status').textContent = 'searching…';
+    let result = null; let step = 0;
+    while (true) {
+      if (paused) break;
+      const {value, done} = stepGen.next();
+      if (done) { result = value; break; }
+      step++;
+      snapshot();
+      document.getElementById('nVis').textContent = visited.size;
+      // Read speed slider INSIDE the loop so it's adjustable mid-run.
+      const speed = +document.getElementById('speedSlider').value;
+      const delay = Math.max(0, 100 - speed);
+      if (step % Math.max(1, Math.floor(speed / 10)) === 0) {
+        draw();
+        renderFrontierTable();
+        await sleep(delay);
+      }
+    }
+    running = false;
+    if (paused) {
+      document.getElementById('status').textContent = 'paused';
+      paused = false;
+      draw();
+      renderFrontierTable();
+      refreshRunBtn();
+    } else {
+      finishSearch(result);
+      refreshRunBtn();
+    }
+  });
+  // Step button: expand one frontier node, then pause. Teachers use this to discuss
+  // each expansion before clicking again.
+  document.getElementById('stepBtn').addEventListener('click', () => {
+    if (running) return; // Run is in progress; Step is for paused mode only.
+    if (replayMode) {
+      // While scrubbed back, ❘▶ walks forward through history; only resume the live search once caught up.
+      const s = document.getElementById('replaySlider');
+      if (parseInt(s.value, 10) < history.length - 1) { replayStep(1); return; }
+      replayMode = false; document.getElementById('replayCount').textContent = 'live';
+      { const tc = document.getElementById('tpCount'); if (tc) tc.textContent = 'live'; }
+    }
+    if (stepGen === null) { clearSearch(); stepGen = newGen(); }
+    const {value, done} = stepGen.next();
+    document.getElementById('nVis').textContent = visited.size;
+    if (done) {
+      finishSearch(value);
+    } else {
+      snapshot();
+      document.getElementById('status').textContent = 'paused (step mode)';
+      draw();
+      renderFrontierTable();
+    }
+    refreshRunBtn();
+  });
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+  // Replay scrubber: scrub backward/forward through history.
+  document.getElementById('replaySlider').addEventListener('input', () => {
+    if (running) return;
+    if (history.length === 0) return;
+    const idx = parseInt(document.getElementById('replaySlider').value, 10);
+    const snap = history[Math.min(idx, history.length - 1)];
+    if (!snap) return;
+    replayMode = true;
+    { const lv = document.getElementById('pfLive'); if (lv) lv.disabled = (idx === history.length - 1); }
+    // Apply snapshot to live state: non-destructive (drawing only).
+    visited = new Set(snap.visited);
+    frontier = new Set(snap.frontier);
+    path = snap.path.slice();
+    frontierData.entries = snap.frontierEntries.slice();
+    document.getElementById('nVis').textContent = snap.nVis;
+    document.getElementById('replayCount').textContent =
+      idx === history.length - 1 ? 'live' : `step ${idx + 1} of ${history.length}`;
+    { const tc = document.getElementById('tpCount'); if (tc) tc.textContent =
+        idx === history.length - 1 ? 'live' : `step ${idx + 1} of ${history.length}`; }
+    draw();
+    renderFrontierTable();
+  });
+
+  // ===== Unified transport bar: universal step-back + restart =====
+  function replayStep(delta) {
+    if (running) return;                 // can't scrub while a live search is animating
+    if (history.length === 0) return;
+    const s = document.getElementById('replaySlider');
+    let idx = parseInt(s.value, 10);
+    if (Number.isNaN(idx)) idx = history.length - 1;
+    idx = Math.max(0, Math.min(history.length - 1, idx + delta));
+    s.value = idx;
+    s.dispatchEvent(new Event('input'));  // reuse the existing replay-restore handler
+  }
+  document.getElementById('backBtn').addEventListener('click', () => replayStep(-1));
+  document.getElementById('restartBtn').addEventListener('click', () => {
+    clearSearch(); draw(); renderFrontierTable();
+  });
+  // Numeric jump box: clamp to [0, max], set slider, fire input event.
+  document.getElementById('pfJump').addEventListener('change', () => {
+    const s = document.getElementById('replaySlider');
+    let v = parseInt(document.getElementById('pfJump').value, 10);
+    if (Number.isNaN(v)) v = parseInt(s.value, 10);
+    v = Math.max(0, Math.min(parseInt(s.max, 10) || 0, v));
+    s.value = v;
+    s.dispatchEvent(new Event('input'));
+  });
+  // "Return to live" button: scrub to the newest snapshot.
+  document.getElementById('pfLive').addEventListener('click', () => {
+    const s = document.getElementById('replaySlider');
+    s.value = s.max;
+    s.dispatchEvent(new Event('input'));
+  });
+  // Scrub-in-bar acceptance test.
+  window.__pfScrubTest = function(){ const g=document.getElementById('pfScrubGroup'); const inBar=!!(g&&g.closest('#transport')); const r={scrubInBar:inBar, jump:!!document.getElementById('pfJump'), slider:!!document.getElementById('replaySlider')}; const pass=r.scrubInBar&&r.jump&&r.slider; console.log('[pathfinding] SCRUB-IN-BAR '+(pass?'passed':'FAILED'), r); return Object.assign({pass},r); };
+  // Console acceptance test (mirrors the convolution/cnf-sat applets' pattern).
+  window.__pathAcceptanceTest = function () {
+    const sp = document.getElementById('speedSlider');
+    const r = { transportBar: !!document.getElementById('transport'),
+                backBtn: !!document.getElementById('backBtn'),
+                restartBtn: !!document.getElementById('restartBtn'),
+                speedInBar: !!(sp && sp.closest('#transport')),
+                historyLen: history.length };
+    const pass = r.transportBar && r.backBtn && r.restartBtn && r.speedInBar;
+    console.log('[pathfinding] CONTROLS ACCEPTANCE TEST ' + (pass ? 'passed' : 'FAILED'), r);
+    return Object.assign({ pass }, r);
+  };
+
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++)
+      if (grid[r][c] === WALL) grid[r][c] = EMPTY;
+    clearSearch(); draw();
+  });
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    // Reset to defaults for the CURRENT size (not the original hardcoded coords).
+    const sizeName = document.getElementById('sizeSel').value;
+    const preset = SIZE_PRESETS[sizeName] || SIZE_PRESETS.small;
+    grid = Array.from({length: ROWS}, () => Array(COLS).fill(EMPTY));
+    start = {...preset.start}; goal = {...preset.goal};
+    grid[start.r][start.c] = START; grid[goal.r][goal.c] = GOAL;
+    clearSearch(); draw();
+  });
+  document.getElementById('sizeSel').addEventListener('change', () => {
+    applySize(document.getElementById('sizeSel').value);
+  });
+  // Changing heuristic invalidates any paused search. Clear and let user re-run.
+  document.getElementById('heurSel').addEventListener('change', () => {
+    clearSearch(); draw();
+  });
+  // Universal demo maze: pedagogically interesting for ALL four algorithms.
+  // BFS: expands in concentric rings; the central obstacle splits its frontier.
+  // DFS: dives into the first corridor it sees; the dead-end pocket triggers backtracking.
+  // Dijkstra: same as BFS on uniform cost (good for students to *notice* this equivalence).
+  // A*: heuristic pulls toward goal; the corridor + obstacle force a non-trivial detour.
+  // Sized as a fraction of the current grid so it scales with the size selector.
+  function loadDemoMaze() {
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+      if (grid[r][c] !== START && grid[r][c] !== GOAL) grid[r][c] = EMPTY;
+    }
+    const addWall = (r, c) => {
+      if (inBounds(r, c) && grid[r][c] === EMPTY) grid[r][c] = WALL;
+    };
+    const R = ROWS, C = COLS;
+    // Central rectangular obstacle (forces routing).
+    const cx0 = Math.floor(C * 0.40), cx1 = Math.floor(C * 0.55);
+    const cy0 = Math.floor(R * 0.30), cy1 = Math.floor(R * 0.65);
+    for (let r = cy0; r <= cy1; r++) for (let c = cx0; c <= cx1; c++) addWall(r, c);
+    // L-shaped corridor near upper-right that traps DFS into backtracking.
+    const lx = Math.floor(C * 0.70);
+    const ly0 = Math.floor(R * 0.15), ly1 = Math.floor(R * 0.50);
+    for (let r = ly0; r <= ly1; r++) addWall(r, lx);
+    const lhx0 = Math.floor(C * 0.70), lhx1 = Math.floor(C * 0.85);
+    for (let c = lhx0; c <= lhx1; c++) addWall(ly1, c);
+    // Short horizontal wall low-left to create an alternative route.
+    const lowR = Math.floor(R * 0.80);
+    const lowX0 = Math.floor(C * 0.15), lowX1 = Math.floor(C * 0.50);
+    for (let c = lowX0; c <= lowX1; c++) addWall(lowR, c);
+    // Small bottleneck near start-goal direct line.
+    const bx = Math.floor(C * 0.25);
+    const by0 = Math.floor(R * 0.50), by1 = Math.floor(R * 0.70);
+    for (let r = by0; r <= by1; r++) addWall(r, bx);
+    clearSearch(); draw();
+  }
+  // True recursive-division maze: a bordered, connected "perfect" maze (one path
+  // between any two open cells). Iconic and good for BFS-flood vs DFS-snake, but
+  // that single path flattens the optimality differences the obstacle layout shows.
+  function loadMaze() {
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+      if (grid[r][c] !== START && grid[r][c] !== GOAL) grid[r][c] = EMPTY;
+    }
+    const addWall = (r, c) => { if (inBounds(r, c) && grid[r][c] === EMPTY) grid[r][c] = WALL; };
+    for (let r = 0; r < ROWS; r++) { addWall(r, 0); addWall(r, COLS - 1); }
+    for (let c = 0; c < COLS; c++) { addWall(0, c); addWall(ROWS - 1, c); }
+    const ri = (lo, hi) => lo + Math.floor(Math.random() * (hi - lo + 1));
+    const divide = (top, left, bottom, right) => {
+      const h = bottom - top + 1, w = right - left + 1;
+      if (h < 3 && w < 3) return;
+      const horizontal = w < h ? true : (h < w ? false : Math.random() < 0.5);
+      if (horizontal && h >= 3) {
+        const wr = ri(top + 1, bottom - 1), gap = ri(left, right);
+        for (let c = left; c <= right; c++) if (c !== gap) addWall(wr, c);
+        divide(top, left, wr - 1, right);
+        divide(wr + 1, left, bottom, right);
+      } else if (w >= 3) {
+        const wc = ri(left + 1, right - 1), gap = ri(top, bottom);
+        for (let r = top; r <= bottom; r++) if (r !== gap) addWall(r, wc);
+        divide(top, left, bottom, wc - 1);
+        divide(top, wc + 1, bottom, right);
+      }
+    };
+    divide(1, 1, ROWS - 2, COLS - 2);
+    // Guarantee a solvable maze by VERIFYING, not trusting the generator. BFS from start
+    // over open cells; if the goal isn't reachable (recursive division can seal a region
+    // when a gap is re-blocked at a wall junction), carve the shortest route to it open.
+    // Barriers are 1 cell thick, so this breaches only a cell or two. Solvable by
+    // construction, never a re-roll.
+    const DIRS = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    const seen = new Set([key(start.r, start.c)]);
+    const q = [[start.r, start.c]];
+    let reached = false;
+    for (let i = 0; i < q.length && !reached; i++) {
+      const [r, c] = q[i];
+      if (r === goal.r && c === goal.c) { reached = true; break; }
+      for (const [dr, dc] of DIRS) {
+        const nr = r + dr, nc = c + dc;
+        if (inBounds(nr, nc) && grid[nr][nc] !== WALL && !seen.has(key(nr, nc))) {
+          seen.add(key(nr, nc)); q.push([nr, nc]);
+        }
+      }
+    }
+    if (!reached) {
+      // BFS across ALL cells (walls passable) for a start→goal route, then open its walls.
+      const prev = new Map([[key(start.r, start.c), -1]]);
+      const q2 = [[start.r, start.c]];
+      for (let i = 0; i < q2.length; i++) {
+        const [r, c] = q2[i];
+        if (r === goal.r && c === goal.c) break;
+        for (const [dr, dc] of DIRS) {
+          const nr = r + dr, nc = c + dc, nk = key(nr, nc);
+          if (inBounds(nr, nc) && !prev.has(nk)) { prev.set(nk, key(r, c)); q2.push([nr, nc]); }
+        }
+      }
+      let k = key(goal.r, goal.c);
+      while (k !== -1 && k !== undefined) {
+        const r = Math.floor(k / COLS), c = k % COLS;
+        if (grid[r][c] === WALL) grid[r][c] = EMPTY;
+        k = prev.get(k);
+      }
+    }
+    clearSearch(); draw();
+  }
+  // Rebuild the grid for a new size preset. Re-applies the demo maze afterward.
+  function applySize(name) {
+    const preset = SIZE_PRESETS[name] || SIZE_PRESETS.small;
+    COLS = preset.COLS; ROWS = preset.ROWS; CELL = preset.CELL;
+    canvas.width = COLS * CELL; canvas.height = ROWS * CELL;
+    grid = Array.from({length: ROWS}, () => Array(COLS).fill(EMPTY));
+    start = {...preset.start}; goal = {...preset.goal};
+    grid[start.r][start.c] = START;
+    grid[goal.r][goal.c] = GOAL;
+    loadDemoMaze();
+  }
+  document.getElementById('mazeBtn').addEventListener('click', () => {
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++)
+      if (grid[r][c] !== START && grid[r][c] !== GOAL)
+        grid[r][c] = Math.random() < 0.28 ? WALL : EMPTY;
+    clearSearch(); draw();
+  });
+  document.getElementById('trueMazeBtn').addEventListener('click', loadMaze);
+
+  // hard reset (header button): algorithm + grid back to default (small + demo maze).
+  document.getElementById('hardReset').addEventListener('click', () => {
+    document.getElementById('algoSel').value = 'astar';
+    document.getElementById('algoSel').dispatchEvent(new Event('change'));
+    document.getElementById('speedSlider').value = 50;
+    document.getElementById('sizeSel').value = 'small';
+    document.getElementById('heurSel').value = 'manhattan';
+    applySize('small');
+  });
+
+  const HELP = {
+    bfs: 'BFS explores level by level: it finds the shortest path but checks many cells.',
+    dfs: 'DFS goes deep first. Fast to write, but it can find a long, weird path.',
+    astar: 'A* uses an estimate of remaining distance to focus the search.',
+    dijkstra: 'Dijkstra is A* with no heuristic. On a uniform grid, it behaves like BFS.',
+    bidi: 'Bidirectional BFS runs two BFS at once: from start AND from goal: and stops when they meet. Asymptotically halves the search depth.',
+    idastar: 'IDA* runs DFS with an f-cutoff that grows each iteration. Linear memory, still optimal. Watch the frontier "restart" between iterations.',
+  };
+  document.getElementById('algoSel').addEventListener('change', (e) => {
+    document.getElementById('algoHelp').textContent = HELP[e.target.value];
+    // Algorithm changed: any paused step state is now wrong. Reset.
+    clearSearch(); draw();
+  });
+
+  // touch support: synthesize mouse events from touch events for tablet use.
+  (() => {
+    const target = canvas;
+    let lastTouch = null;
+    target.addEventListener('touchstart', e => {
+      if (e.touches.length > 0) {
+        e.preventDefault();
+        lastTouch = {clientX: e.touches[0].clientX, clientY: e.touches[0].clientY};
+        target.dispatchEvent(new MouseEvent('mousedown', lastTouch));
+      }
+    }, {passive: false});
+    target.addEventListener('touchmove', e => {
+      if (e.touches.length > 0) {
+        e.preventDefault();
+        lastTouch = {clientX: e.touches[0].clientX, clientY: e.touches[0].clientY};
+        target.dispatchEvent(new MouseEvent('mousemove', lastTouch));
+      }
+    }, {passive: false});
+    target.addEventListener('touchend', e => {
+      e.preventDefault();
+      if (lastTouch) target.dispatchEvent(new MouseEvent('mouseup', lastTouch));
+      lastTouch = null;
+    }, {passive: false});
+  })();
+
+  // URL-shareable config: algorithm choice.
+  try {
+    const a = new URLSearchParams(location.search).get('algo');
+    if (a) {
+      const opt = Array.from($('algoSel').options).find(o => o.value === a);
+      if (opt) $('algoSel').value = a;
+    }
+  } catch (_) {}
+  document.getElementById('shareLink').addEventListener('click', async () => {
+    const params = new URLSearchParams();
+    params.set('algo', $('algoSel').value);
+    const url = `${location.origin}${location.pathname}?${params.toString()}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      const btn = document.getElementById('shareLink');
+      const orig = btn.textContent; btn.textContent = '✓ Copied';
+      setTimeout(() => btn.textContent = orig, 1500);
+    } catch (_) { prompt('Copy this URL:', url); }
+  });
+
+  // CSV export: grid + last-run search results.
+  document.getElementById('csvExport').addEventListener('click', () => {
+    const algo = $('algoSel').value;
+    const lines = [
+      '# Pathfinding export',
+      `algorithm,${algo}`,
+      `grid_size,${ROWS}x${COLS}`,
+      `start,${start.r}-${start.c}`,
+      `goal,${goal.r}-${goal.c}`,
+      `nodes_visited,${visited.size}`,
+      `path_length,${path.length ? path.length - 1 : 'no_path'}`,
+      '',
+      '# Path (in order)',
+      'step,row,col',
+    ];
+    for (let i = 0; i < path.length; i++) lines.push(`${i},${path[i][0]},${path[i][1]}`);
+    lines.push('', '# Open frontier at end of last step', 'row,col,g,h,f,note');
+    for (const e of frontierData.entries) {
+      lines.push(`${e.r},${e.c},${e.g},${e.h},${e.f},${e.note}`);
+    }
+    const blob = new Blob([lines.join('\n')], {type: 'text/csv'});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `pathfinding-${algo}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  });
+
+  // Initial load: small grid + deterministic demo maze. First-time visitors see something
+  // visually interesting (not a blank grid) while preserving reproducibility.
+  applySize('small');
+
+  // Lesson tour. Five canonical scenarios comparing BFS / DFS / Dijkstra / A*.
+  function setAlgo(algo, heur) {
+    $('algoSel').value = algo; $('algoSel').dispatchEvent(new Event('change'));
+    if (heur) $('heurSel').value = heur;
+  }
+  const LESSON_TOUR = [
+    { name: 'BFS vs A*: same maze, different work',
+      description: "Small grid, demo maze, BFS first. Record visited nodes, then switch to A* on the same maze and compare the amount of work.",
+      apply: () => { applySize('small'); setAlgo('bfs'); loadDemoMaze(); } },
+    { name: 'DFS trap: fast path is not best path',
+      description: "Small grid, maze layout, DFS. Compare with BFS path length; DFS often finds a path while missing the shortest route.",
+      apply: () => { applySize('small'); loadMaze(); setAlgo('dfs'); } },
+    { name: 'A* focus: heuristic saves work without losing optimality',
+      description: "Small grid, demo maze, A* with Manhattan. Compare path length and visited nodes against BFS.",
+      apply: () => { applySize('small'); loadDemoMaze(); setAlgo('astar', 'manhattan'); } },
+    { name: 'Weighted A*: may focus more, no longer guaranteed',
+      description: "Medium grid, A* with 1.5× Manhattan. Overestimation can reduce work, but it breaks the shortest-path guarantee.",
+      apply: () => { applySize('medium'); loadDemoMaze(); setAlgo('astar', 'manhattan15'); } },
+    { name: 'Weighted terrain: BFS ignores cost, Dijkstra does not',
+      description: "Small grid, zero heuristic, mud paint selected. Add a mud corridor and compare BFS with Dijkstra. BFS counts steps; Dijkstra counts terrain cost.",
+      apply: () => { applySize('small'); loadDemoMaze(); setAlgo('astar', 'zero'); $('paintSel').value = 'mud'; } },
+  ];
+  let tourIdx = 0;
+  function renderTour() {
+    if (!$('tourName')) return;
+    const s = LESSON_TOUR[tourIdx];
+    // Bilingual: look up tour{i}name / tour{i}desc with English inline fallback.
+    const L = (document.documentElement.lang || 'en');
+    const S = STRINGS[L] || STRINGS.en;
+    $('tourName').textContent = S['tour' + tourIdx + 'name'] || s.name;
+    $('tourDesc').textContent = S['tour' + tourIdx + 'desc'] || s.description;
+    $('tourPos').textContent = `${tourIdx + 1}/${LESSON_TOUR.length}`;
+    $('tourPrev').disabled = (tourIdx === 0);
+    $('tourNext').disabled = (tourIdx === LESSON_TOUR.length - 1);
+  }
+  $('tourApply').addEventListener('click', () => LESSON_TOUR[tourIdx].apply());
+  $('tourPrev').addEventListener('click', () => { if (tourIdx > 0) { tourIdx--; renderTour(); } });
+  $('tourNext').addEventListener('click', () => { if (tourIdx < LESSON_TOUR.length - 1) { tourIdx++; renderTour(); } });
+  renderTour();
+
+
+  function scenarioGalleryText(key, fallback) {
+    const L = document.documentElement.lang || 'en';
+    const S = STRINGS[L] || STRINGS.en;
+    return S[key] || fallback;
+  }
+  function localizedScenarioField(index, field, fallback) {
+    const L = document.documentElement.lang || 'en';
+    const S = STRINGS[L] || STRINGS.en;
+    return S['tour' + index + field] || fallback || '';
+  }
+  function appendScenarioMeta(card, label, text) {
+    const p = document.createElement('p');
+    p.className = 'scenario-meta';
+    const strong = document.createElement('strong');
+    strong.textContent = label + ': ';
+    p.appendChild(strong);
+    p.appendChild(document.createTextNode(text));
+    card.appendChild(p);
+  }
+  function renderScenarioGallery() {
+    const root = $('scenarioGalleryCards');
+    if (!root || typeof LESSON_TOUR === 'undefined') return;
+    root.innerHTML = '';
+    LESSON_TOUR.forEach((scenario, index) => {
+      const title = localizedScenarioField(index, 'name', scenario.name || (scenarioGalleryText('sg-card-prefix', 'Scenario') + ' ' + (index + 1)));
+      const description = localizedScenarioField(index, 'desc', scenario.description || '');
+      const card = document.createElement('article');
+      card.className = 'scenario-card';
+      card.setAttribute('data-scenario-index', String(index));
+
+      const h = document.createElement('h3');
+      h.textContent = `${scenarioGalleryText('sg-card-prefix', 'Scenario')} ${index + 1}: ${title}`;
+      card.appendChild(h);
+
+      appendScenarioMeta(card, scenarioGalleryText('sg-concept-label', 'Concept'), title);
+      appendScenarioMeta(card, scenarioGalleryText('sg-observe-label', 'What to watch'), description);
+      appendScenarioMeta(card, scenarioGalleryText('sg-misconception-label', 'Predict before applying'), scenarioGalleryText('sg-misconception-text', 'Which visible result should change most, and why? Commit to an answer before applying.'));
+      appendScenarioMeta(card, scenarioGalleryText('sg-teacher-label', 'Teacher use'), scenarioGalleryText('sg-teacher-text', 'Use as a 2–3 minute predict → run → explain prompt.'));
+
+      const btn = document.createElement('button');
+      btn.className = 'step-btn';
+      btn.type = 'button';
+      btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare');
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('.scenario-card').forEach(item => item.classList.remove('applied'));
+        tourIdx = index;
+        renderTour();
+        scenario.apply();
+        card.classList.add('applied');
+        btn.textContent = '✓ ' + scenarioGalleryText('sg-applied', 'Applied; compare the result');
+        setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
+      });
+      card.appendChild(btn);
+      root.appendChild(card);
+    });
+  }
+  renderScenarioGallery();
+
+  // Worksheet/lab mode: 3 questions with instant ✓/✗ feedback.
+  // Bilingual feedback helper: ws{n}ok / ws{n}no with English inline fallback.
+  function wsMsg(key, en) {
+    const L = (document.documentElement.lang || 'en');
+    return (STRINGS[L] && STRINGS[L][key]) || en;
+  }
+  // MCQ: each question is graded by the selected radio's index, not typed text.
+  // `correct` is the index of the right option (language-agnostic). ok/no are the
+  // existing bilingual feedback keys, with an English inline fallback via wsMsg.
+  const WORKSHEET = [
+    { correct: 1,
+      ok:  ['ws1ok', "Correct. BFS explores in concentric rings (FIFO queue). The first time it reaches the goal, the path length equals the minimum number of edges from start. On uniform-cost grids, that's the shortest path: guaranteed."],
+      no:  ['ws1no', "Try 'yes'. BFS expands by distance from start, so the first time it touches the goal, that's the shortest path on an unweighted graph."] },
+    { correct: 2,
+      ok:  ['ws2ok', "Correct. DFS uses a stack (LIFO) and commits to one direction until it hits a dead end. The first path it finds is usually NOT shortest: DFS isn't designed for optimality, just for finding a path quickly."],
+      no:  ['ws2no', "Try 'often longer'. DFS dives deep along one direction first; the first path it finds is rarely the shortest."] },
+    { correct: 0,
+      ok:  ['ws3ok', "Right. A* uses f = g + h to focus exploration toward the goal. With an admissible heuristic, it still finds the shortest path (like BFS) but visits far fewer 'wasted' nodes in the wrong direction."],
+      no:  ['ws3no', "Try 'fewer'. A*'s heuristic biases exploration toward the goal: same correctness as BFS, much less wasted work."] },
+  ];
+  WORKSHEET.forEach((q, i) => {
+    const n = i + 1;
+    $(`ws${n}btn`).addEventListener('click', () => {
+      const fb = $(`ws${n}fb`);
+      const picked = document.querySelector(`input[name="ws${n}"]:checked`);
+      if (!picked) {
+        fb.textContent = wsMsg('ws-pick', 'Pick an answer first.');
+        fb.style.color = 'var(--muted)';
+        return;
+      }
+      const ok = Number(picked.value) === q.correct;
+      const [key, en] = ok ? q.ok : q.no;
+      fb.textContent = (ok ? '✓ ' : '✗ ') + wsMsg(key, en);
+      fb.style.color = ok ? '#16a34a' : '#dc2626';
+    });
+  });
+
+  // ===== Race mode: two algorithms search the SAME maze in lockstep =====
+  // Self-contained instrumented search: does NOT touch the main search globals,
+  // so two can run side by side. Reuses grid/start/goal/key/cellCost/inBounds/getCSS
+  // by closure over the main script scope.
+  (function () {
+    const G = id => document.getElementById(id);
+    const cvA = G('raceCvA'); if (!cvA) return;
+    const cvB = G('raceCvB');
+    const actx = cvA.getContext('2d'), bctx = cvB.getContext('2d');
+    const NB = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    let runA = null, runB = null, raceTimer = null, racing = false;
+    const pass2 = (r, c) => inBounds(r, c) && grid[r][c] !== WALL;
+    const hMan = (r, c) => Math.abs(r - goal.r) + Math.abs(c - goal.c);
+
+    function makeSearch(type) {
+      const s = { type, visited: new Set(), inFront: new Set(), came: new Map(),
+                  gs: new Map(), frontier: [], expanded: 0, done: false, found: false, path: null };
+      const sk = key(start.r, start.c);
+      s.gs.set(sk, 0); s.frontier.push({ r: start.r, c: start.c }); s.inFront.add(sk);
+      function popNode() {
+        if (type === 'bfs') return s.frontier.shift();
+        if (type === 'dfs') return s.frontier.pop();
+        let bi = 0, bv = Infinity;
+        for (let i = 0; i < s.frontier.length; i++) {
+          const n = s.frontier[i], nk = key(n.r, n.c), gv = s.gs.get(nk) || 0;
+          const v = type === 'dijkstra' ? gv : type === 'greedy' ? hMan(n.r, n.c) : gv + hMan(n.r, n.c);
+          if (v < bv) { bv = v; bi = i; }
+        }
+        return s.frontier.splice(bi, 1)[0];
+      }
+      s.step = function () {
+        if (s.done) return;
+        if (!s.frontier.length) { s.done = true; s.found = false; return; }
+        const cur = popNode(), ck = key(cur.r, cur.c);
+        s.inFront.delete(ck);
+        if (s.visited.has(ck)) return;                 // stale priority-queue entry
+        s.visited.add(ck); s.expanded++;
+        if (cur.r === goal.r && cur.c === goal.c) {
+          s.done = true; s.found = true;
+          const path = []; let k = ck;
+          while (k !== undefined) { path.push([Math.floor(k / COLS), k % COLS]); k = s.came.get(k); }
+          s.path = path.reverse(); return;
+        }
+        for (const [dr, dc] of NB) {
+          const nr = cur.r + dr, nc = cur.c + dc;
+          if (!pass2(nr, nc) || s.visited.has(key(nr, nc))) continue;
+          const nk = key(nr, nc);
+          const ng = (s.gs.get(ck) || 0) + ((type === 'bfs' || type === 'dfs') ? 1 : cellCost(nr, nc));
+          if (type === 'bfs' || type === 'dfs') {
+            if (s.inFront.has(nk)) continue;
+            s.came.set(nk, ck); s.gs.set(nk, ng);
+            s.frontier.push({ r: nr, c: nc }); s.inFront.add(nk);
+          } else if (!s.gs.has(nk) || ng < s.gs.get(nk)) {
+            s.gs.set(nk, ng); s.came.set(nk, ck);
+            s.frontier.push({ r: nr, c: nc }); s.inFront.add(nk);
+          }
+        }
+      };
+      return s;
+    }
+
+    function draw(ctx, cv, s) {
+      const W = cv.width, H = cv.height, cw = W / COLS, ch = H / ROWS;
+      const cBg = getCSS('--card') || '#ffffff', cV = getCSS('--visited') || '#dbeafe',
+            cF = getCSS('--frontier') || '#f59e0b', cWa = getCSS('--wall') || '#334155',
+            cS = getCSS('--start') || '#16a34a', cG = getCSS('--goal') || '#dc2626';
+      ctx.fillStyle = cBg; ctx.fillRect(0, 0, W, H);
+      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+        const k = key(r, c); let f = null;
+        if (grid[r][c] === WALL) f = cWa;
+        else if (s.visited.has(k)) f = cV;
+        if (s.inFront.has(k)) f = cF;
+        if (f) { ctx.fillStyle = f; ctx.fillRect(c * cw, r * ch, cw + 0.7, ch + 0.7); }
+      }
+      if (s.path) {
+        ctx.strokeStyle = '#15803d'; ctx.lineWidth = Math.max(2, cw * 0.34);
+        ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.beginPath();
+        s.path.forEach(([r, c], i) => { const px = c * cw + cw / 2, py = r * ch + ch / 2; i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
+        ctx.stroke();
+      }
+      ctx.fillStyle = cS; ctx.fillRect(start.c * cw, start.r * ch, cw, ch);
+      ctx.fillStyle = cG; ctx.fillRect(goal.c * cw, goal.r * ch, cw, ch);
+    }
+
+    function refreshStats() {
+      G('raceNA').textContent = runA ? runA.expanded : 0;
+      G('raceNB').textContent = runB ? runB.expanded : 0;
+      const tag = s => !s ? '' : s.done ? (s.found ? '✓ ' + (s.path.length - 1) + ' steps' : '✗ no path') : '…';
+      G('raceStatA').textContent = tag(runA); G('raceStatB').textContent = tag(runB);
+    }
+    function showResult() {
+      if (!runA || !runB) return;
+      const a = runA.expanded, b = runB.expanded;
+      const la = G('raceAlgoA').selectedOptions[0].textContent, lb = G('raceAlgoB').selectedOptions[0].textContent;
+      let msg;
+      if (!runA.found && !runB.found) msg = 'Neither reached the goal: the start is walled off from it.';
+      else if (a === b) msg = `${la} and ${lb} each expanded ${a} nodes.`;
+      else {
+        const lo = Math.min(a, b), hi = Math.max(a, b), few = a < b ? la : lb, mo = a < b ? lb : la, ratio = hi / lo;
+        msg = `${few} expanded ${lo} nodes vs ${mo}'s ${hi}: ${few} explored ${ratio.toFixed(ratio >= 10 ? 0 : 1)}× fewer.`;
+      }
+      G('raceResult').textContent = msg;
+      G('raceResult').style.color = getCSS('--accent') || '#9333ea';
+    }
+    function frame() {
+      if (!racing) return;
+      if (!runA.done) runA.step();
+      if (!runB.done) runB.step();
+      draw(actx, cvA, runA); draw(bctx, cvB, runB); refreshStats();
+      if (runA.done && runB.done) { racing = false; G('raceBtn').textContent = '▶ Race'; showResult(); return; }
+      const sp = +((G('speedSlider') || {}).value || 50);
+      raceTimer = setTimeout(frame, Math.max(8, 80 - sp * 0.7));
+    }
+    function resetRace() {
+      racing = false; if (raceTimer) clearTimeout(raceTimer);
+      runA = makeSearch(G('raceAlgoA').value); runB = makeSearch(G('raceAlgoB').value);
+      G('raceLabelA').textContent = G('raceAlgoA').selectedOptions[0].textContent;
+      G('raceLabelB').textContent = G('raceAlgoB').selectedOptions[0].textContent;
+      G('raceResult').textContent = ''; G('raceBtn').textContent = '▶ Race';
+      draw(actx, cvA, runA); draw(bctx, cvB, runB); refreshStats();
+    }
+    G('raceBtn').addEventListener('click', () => {
+      if (racing) { racing = false; if (raceTimer) clearTimeout(raceTimer); G('raceBtn').textContent = '▶ Race'; return; }
+      if (!runA || (runA.done && runB.done)) resetRace();
+      racing = true; G('raceBtn').textContent = '⏸ Pause'; frame();
+    });
+    G('raceReset').addEventListener('click', resetRace);
+    G('raceAlgoA').addEventListener('change', resetRace);
+    G('raceAlgoB').addEventListener('change', resetRace);
+    const det = G('raceDetails');
+    if (det) det.addEventListener('toggle', () => { if (det.open) resetRace(); });
+    resetRace();
+
+    window.__raceTest = function () {
+      const t = makeSearch('astar'); let n = 0;
+      while (!t.done && n < 200000) { t.step(); n++; }
+      const r = { canvases: !!(cvA && cvB), astarFound: t.found, astarExpanded: t.expanded };
+      const pass = r.canvases && t.expanded > 0;
+      console.log('[pathfinding] RACE-MODE ' + (pass ? 'passed' : 'FAILED'), r);
+      return Object.assign({ pass }, r);
+    };
+  })();
+})();
+</script>
+<!-- Embed mode handler (shared pattern across all 12 applets). -->
+<script>
+(() => {
+  try {
+    if (new URLSearchParams(location.search).get('embed') === '1') {
+      document.body.classList.add('embed-mode');
+    }
+  } catch (_) {}
+  const btn = document.getElementById('embedLink');
+  if (!btn) return;
+  btn.addEventListener('click', async () => {
+    const url = new URL(location.href);
+    url.searchParams.set('embed', '1');
+    const snippet = `<iframe src="${url.toString()}" width="100%" height="720" frameborder="0" style="border:1px solid #e5e7eb; border-radius:8px;" loading="lazy"></iframe>`;
+    try {
+      await navigator.clipboard.writeText(snippet);
+      const orig = btn.textContent; btn.textContent = '✓ Copied iframe';
+      setTimeout(() => btn.textContent = orig, 1800);
+    } catch (_) { prompt('Copy this iframe snippet:', snippet); }
+  });
+})();
+</script>
+<footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
+<p style="margin:0 0 6px;"><a data-i18n="footer-top" href="#top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
+<p style="margin:0;"><span data-i18n="footer-course">Made for the Introduction to AI course at Haidian Kaiwen Academy.</span></p>
+<p style="margin:6px 0 0;">© <span data-current-year="">2026</span> Logan M. Dixon · <a data-i18n="footer-portfolio" href="https://lmdixon23.github.io/" style="color:var(--accent,#0891b2);">Portfolio</a> · <a data-i18n="footer-project" href="../../index.html" style="color:var(--accent,#0891b2);">AI Playgrounds</a> · <a data-i18n="footer-source" href="https://github.com/lmdixon23/ai-playgrounds" style="color:var(--accent,#0891b2);">Source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a data-i18n="footer-issue" href="https://github.com/lmdixon23/ai-playgrounds/issues" style="color:var(--accent,#0891b2);">Report an issue</a> · <a href="https://orcid.org/0009-0001-0592-462X" rel="me" style="color:var(--accent,#0891b2);">ORCID</a></p>
+</footer>
+<script>
+(function() {
+  const LAB_CONFIG = {"slug": "search-pathfinding", "title": "Pathfinding lab packet", "zhTitle": "寻路实验包", "fields": [{"label": "Algorithm", "selector": "#algoSel", "kind": "selected"}, {"label": "Grid size", "selector": "#sizeSel", "kind": "selected"}, {"label": "Heuristic", "selector": "#heurSel", "kind": "selected"}, {"label": "Path length", "selector": "#nPath", "kind": "text"}, {"label": "Status", "selector": "#status", "kind": "text"}, {"label": "Frontier count", "selector": "#frontierCount", "kind": "text"}]};
+  const root = document.querySelector('.classroom-lab');
+  if (!root) return;
+  const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;
+  const qs = (sel) => root.querySelector(sel);
+  function currentLang() {
+    const raw = String(document.documentElement.lang || 'en').toLowerCase();
+    if (raw.startsWith('zh')) return 'zh';
+    if (raw.startsWith('vi')) return 'vi';
+    if (raw.startsWith('es')) return 'es';
+    return 'en';
+  }
+  function textFor(el, lang) {
+    if ((lang === 'vi' || lang === 'es') && window.__r4Localization) {
+      const source = el.getAttribute('data-lab-en') || el.textContent;
+      return window.__r4Localization.translateString(source, lang);
+    }
+    return el.getAttribute(lang === 'zh' ? 'data-lab-zh' : 'data-lab-en') || el.textContent;
+  }
+  function applyLabLang() {
+    const lang = currentLang();
+    root.querySelectorAll('[data-lab-en]').forEach(el => {
+      const value = textFor(el, lang);
+      if (el.tagName === 'TEXTAREA') el.placeholder = value;
+      else el.textContent = value;
+    });
+  }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? 'on' : 'off';
+    else if (field.kind === 'text') value = el.textContent.trim();
+    else value = el.value;
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    const label = ((currentLang() === 'vi' || currentLang() === 'es') && window.__r4Localization) ? window.__r4Localization.translateString(field.label, currentLang()) : field.label;
+    return value ? label + ': ' + value : null;
+  }
+  function snapshot() {
+    const lines = LAB_CONFIG.fields.map(readField).filter(Boolean);
+    return lines.length ? lines.join('\n') : 'No state captured yet. Run or adjust the applet first.';
+  }
+  function answers() {
+    const data = {};
+    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => data[area.getAttribute('data-lab-answer')] = area.value.trim());
+    return data;
+  }
+  function saveDraft() { try { localStorage.setItem(storageKey, JSON.stringify(answers())); } catch (_) {} }
+  function loadDraft() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      root.querySelectorAll('textarea[data-lab-answer]').forEach(area => { const key = area.getAttribute('data-lab-answer'); if (saved[key]) area.value = saved[key]; });
+    } catch (_) {}
+  }
+  function packet() {
+    const lang = currentLang();
+    const baseLabels = {title: LAB_CONFIG.title, state:'State snapshot', predict:'Predict', observe:'Observe', explain:'Explain', transfer:'Transfer'};
+    const labels = lang === 'zh' ? {title: LAB_CONFIG.zhTitle, state:'状态记录', predict:'预测', observe:'观察', explain:'解释', transfer:'迁移'} : ((lang === 'vi' || lang === 'es') && window.__r4Localization ? Object.fromEntries(Object.entries(baseLabels).map(([k,v]) => [k, window.__r4Localization.translateString(v, lang)])) : baseLabels);
+    const a = answers();
+    return [
+      '# ' + labels.title,
+      '',
+      '- Applet: ' + (document.querySelector('h1') ? document.querySelector('h1').textContent.trim() : document.title),
+      '- Date: ' + new Date().toLocaleString(),
+      '',
+      '## ' + labels.state,
+      snapshot(),
+      '',
+      '## ' + labels.predict,
+      a.predict || '',
+      '',
+      '## ' + labels.observe,
+      a.observe || '',
+      '',
+      '## ' + labels.explain,
+      a.explain || '',
+      '',
+      '## ' + labels.transfer,
+      a.transfer || ''
+    ].join('\n');
+  }
+  function setStatus(en, zh) { const el = qs('.lab-status'); if (el) el.textContent = currentLang() === 'zh' ? zh : en; }
+  function refreshState() { const el = qs('[data-lab-state]'); if (el) el.textContent = snapshot(); }
+  async function copyPacket(btn) {
+    const text = packet();
+    try { await navigator.clipboard.writeText(text); setStatus('Copied local lab packet.', '已复制本地实验包。'); }
+    catch (_) { window.prompt('Copy this lab packet:', text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
+  }
+
+  function markdownToPrintableHtml(markdown) {
+    const escape = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const inline = value => escape(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    const lines = String(markdown).split(/\r?\n/);
+    let html = '', inList = false, inState = false;
+    const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
+    for (const raw of lines) {
+      const line = raw.trimEnd();
+      if (line.startsWith('# ')) { closeList(); html += '<h1>' + inline(line.slice(2)) + '</h1>'; inState=false; }
+      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = /state snapshot|状态记录/i.test(title); }
+      else if (line.startsWith('- ')) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inline(line.slice(2)) + '</li>'; }
+      else if (!line.trim()) { closeList(); }
+      else { closeList(); html += inState ? '<pre class="state">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
+    }
+    closeList(); return html;
+  }
+
+  function printPacket() {
+    const w = window.open('', '_blank');
+    if (!w) { setStatus('Popup blocked. Copy the packet instead.', '弹窗被拦截。请改用复制实验包。'); return; }
+    const rendered = markdownToPrintableHtml(packet());
+    const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+    setStatus('Print page opened.', '打印页面已打开。');
+  }
+  function clearDraft() {
+    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.value = '');
+    try { localStorage.removeItem(storageKey); } catch (_) {}
+    refreshState(); setStatus('Local draft cleared.', '本地草稿已清除。');
+  }
+  root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.addEventListener('input', saveDraft));
+  root.querySelector('[data-lab-action="copy"]')?.addEventListener('click', copyPacket);
+  root.querySelector('[data-lab-action="print"]')?.addEventListener('click', printPacket);
+  root.querySelector('[data-lab-action="refresh"]')?.addEventListener('click', () => { refreshState(); setStatus('State refreshed.', '状态已更新。'); });
+  root.querySelector('[data-lab-action="clear"]')?.addEventListener('click', clearDraft);
+  document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(applyLabLang, 0)));
+  window.addEventListener('r4languagechange', () => setTimeout(applyLabLang, 0));
+  
+  document.addEventListener('change', refreshState);
+  document.addEventListener('click', (event) => { if (!(event.target instanceof HTMLTextAreaElement)) setTimeout(refreshState, 0); }, true);
+  loadDraft(); applyLabLang(); refreshState();
+})();
+</script>
+<script>
+(function() {
+  const VISUAL_CONFIG = {"intro":"Follow the search as four linked parts: the map defines possible moves, the frontier stores candidates, the rule selects the next cell, and the path appears only after the goal is reached.","zhIntro":"把搜索看成四个相连部分：地图决定可走的移动，边界保存候选格子，规则选择下一个格子，只有到达目标后路径才会出现。","misread":"A larger explored area is not automatically smarter. It may mean the algorithm had less useful guidance.","zhMisread":"探索区域更大不一定更聪明。它也可能说明算法缺少有效引导。","steps":[{"label":"Map constraints","zhLabel":"地图约束","text":"Walls and terrain define which moves are possible and how costly they are.","zhText":"墙和地形决定哪些移动可行，以及移动成本是多少。","selector":"#sizeSel","kind":"selected","liveLabel":"Grid","zhLiveLabel":"网格"},{"label":"Frontier pressure","zhLabel":"边界压力","text":"The frontier is the set of next candidates. Its growth shows how much uncertainty the search still carries.","zhText":"边界是下一批候选格子。它的增长显示搜索仍然有多少不确定性。","selector":"#frontierCount","kind":"text","liveLabel":"Frontier","zhLiveLabel":"边界"},{"label":"Selection rule","zhLabel":"选择规则","text":"BFS, DFS, Dijkstra, and A* differ mainly in how they choose the next candidate.","zhText":"BFS、DFS、Dijkstra 和 A* 的主要差别在于如何选择下一个候选格子。","selector":"#algoSel","kind":"selected","liveLabel":"Rule","zhLiveLabel":"规则"},{"label":"Path evidence","zhLabel":"路径证据","text":"The final path is evidence of the selected route, but the visited cells reveal the search cost behind it.","zhText":"最终路径显示选出的路线，但访问过的格子显示背后的搜索成本。","selector":"#nPath","kind":"text","liveLabel":"Path","zhLiveLabel":"路径"}],"fields":[{"label":"Algorithm","zhLabel":"算法","selector":"#algoSel","kind":"selected"},{"label":"Heuristic","zhLabel":"启发式","selector":"#heurSel","kind":"selected"},{"label":"Status","zhLabel":"状态","selector":"#status","kind":"text"},{"label":"Path length","zhLabel":"路径长度","selector":"#nPath","kind":"text"},{"label":"Frontier count","zhLabel":"边界数量","selector":"#frontierCount","kind":"text"}]};
+  const root = document.querySelector('.visual-explanation');
+  if (!root) return;
+  const flow = root.querySelector('[data-visual-flow]');
+  const intro = root.querySelector('[data-visual-intro]');
+  const snapshotBox = root.querySelector('[data-visual-snapshot]');
+  const misreadBox = root.querySelector('[data-visual-misread]');
+  function currentLang() { return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en'; }
+  function t(obj, key) { const lang = currentLang(); return (lang === 'zh' && obj['zh' + key[0].toUpperCase() + key.slice(1)]) || obj[key] || ''; }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? 'on' : 'off';
+    else if (field.kind === 'value') value = el.value;
+    else value = el.textContent.trim();
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? { label: field.label, zhLabel: field.zhLabel || field.label, value } : null;
+  }
+  function liveValue(step) {
+    if (!step.selector) return '';
+    const field = readField({ selector: step.selector, kind: step.kind || 'text', label: step.liveLabel || 'Live', zhLabel: step.zhLiveLabel || '实时' });
+    return field ? field.value : (step.fallback || '');
+  }
+  function renderVisualExplanation() {
+    const lang = currentLang();
+    root.querySelectorAll('[data-visual-en]').forEach(el => {
+      el.textContent = el.getAttribute(lang === 'zh' ? 'data-visual-zh' : 'data-visual-en') || el.textContent;
+    });
+    intro.textContent = lang === 'zh' ? VISUAL_CONFIG.zhIntro : VISUAL_CONFIG.intro;
+    misreadBox.textContent = lang === 'zh' ? VISUAL_CONFIG.zhMisread : VISUAL_CONFIG.misread;
+    flow.innerHTML = VISUAL_CONFIG.steps.map((step, idx) => {
+      const title = lang === 'zh' ? step.zhLabel : step.label;
+      const body = lang === 'zh' ? step.zhText : step.text;
+      const liveLabel = lang === 'zh' ? (step.zhLiveLabel || '实时') : (step.liveLabel || 'Live');
+      const live = liveValue(step);
+      const liveHtml = live ? '<span class="visual-live"><strong>' + escapeHtml(liveLabel) + '</strong><span>' + escapeHtml(live) + '</span></span>' : '';
+      return '<article class="visual-card" data-step="' + String(idx + 1).padStart(2, '0') + '"><h4>' + escapeHtml(title) + '</h4><p>' + escapeHtml(body) + '</p>' + liveHtml + '</article>';
+    }).join('');
+    const lines = (VISUAL_CONFIG.fields || []).map(readField).filter(Boolean).map(f => (lang === 'zh' ? f.zhLabel : f.label) + ': ' + f.value);
+    snapshotBox.textContent = lines.length ? lines.join('\n') : (lang === 'zh' ? '还没有捕捉到状态。请先运行或调整小程序。' : 'No state captured yet. Run or adjust the applet first.');
+  }
+  function escapeHtml(text) { return String(text).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+  let visualTimer = null;
+  function scheduleVisualRender() {
+    if (visualTimer) cancelAnimationFrame(visualTimer);
+    visualTimer = requestAnimationFrame(renderVisualExplanation);
+  }
+  document.addEventListener('change', scheduleVisualRender);
+  document.addEventListener('input', scheduleVisualRender);
+  document.addEventListener('click', () => setTimeout(scheduleVisualRender, 0), true);
+  document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(scheduleVisualRender, 0)));
+  setInterval(renderVisualExplanation, 1200);
+  renderVisualExplanation();
+})();
+</script>
+<!-- Privacy-friendly analytics: GoatCounter, cookieless. -->
+
+<script>
+(function() {
+  const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "Algorithm", "zhLabel": "算法", "selector": "#algoSel", "kind": "selected"}, {"label": "Heuristic", "zhLabel": "启发式", "selector": "#heurSel", "kind": "selected"}, {"label": "Status", "zhLabel": "状态", "selector": "#status", "kind": "text"}, {"label": "Path length", "zhLabel": "路径长度", "selector": "#nPath", "kind": "text"}, {"label": "Frontier count", "zhLabel": "边界数量", "selector": "#frontierCount", "kind": "text"}]};
+  const layer = document.querySelector('.accessibility-layer');
+  if (!layer) return;
+  const intro = layer.querySelector('[data-a11y-intro]');
+  const stateGrid = layer.querySelector('[data-a11y-state-grid]');
+  const liveRegion = layer.querySelector('#a11yLiveRegion');
+  let renderTimer = 0;
+  let lastSummary = '';
+  function currentLang() {
+    return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+  }
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+  function localized(obj, key) {
+    const lang = currentLang();
+    const zhKey = 'zh' + key[0].toUpperCase() + key.slice(1);
+    return (lang === 'zh' && obj[zhKey]) || obj[key] || '';
+  }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? (currentLang() === 'zh' ? '开' : 'on') : (currentLang() === 'zh' ? '关' : 'off');
+    else if (field.kind === 'value') value = el.value;
+    else value = el.textContent.trim();
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? { label: localized(field, 'label'), value } : null;
+  }
+  function renderAccessibilityLayer(options = {}) {
+    const lang = currentLang();
+    layer.querySelectorAll('[data-a11y-en]').forEach(el => {
+      el.textContent = el.getAttribute(lang === 'zh' ? 'data-a11y-zh' : 'data-a11y-en') || el.textContent;
+    });
+    const copy = A11Y_CONFIG.copy[lang] || A11Y_CONFIG.copy.en;
+    intro.textContent = copy.intro;
+    layer.querySelector('[data-a11y-title]').textContent = copy.title;
+    layer.querySelector('[data-a11y-keyboard-title]').textContent = copy.keyboardTitle;
+    layer.querySelector('[data-a11y-keyboard-1]').textContent = copy.keyboard1;
+    layer.querySelector('[data-a11y-keyboard-2]').textContent = copy.keyboard2;
+    layer.querySelector('[data-a11y-keyboard-3]').textContent = copy.keyboard3;
+    layer.querySelector('[data-a11y-state-title]').textContent = copy.stateTitle;
+    layer.querySelector('[data-a11y-motion-title]').textContent = copy.motionTitle;
+    layer.querySelector('[data-a11y-motion-copy]').textContent = copy.motionCopy;
+    layer.querySelector('[data-a11y-note]').textContent = copy.note;
+    const fields = A11Y_CONFIG.fields.map(readField).filter(Boolean);
+    if (fields.length) {
+      stateGrid.innerHTML = fields.map(field => '<dt>' + escapeHtml(field.label) + '</dt><dd>' + escapeHtml(field.value) + '</dd>').join('');
+    } else {
+      stateGrid.innerHTML = '<dt>' + escapeHtml(copy.emptyLabel) + '</dt><dd>' + escapeHtml(copy.emptyValue) + '</dd>';
+    }
+    const summary = fields.map(field => field.label + ': ' + field.value).join('; ') || copy.emptyValue;
+    if (options.announce && liveRegion && summary !== lastSummary) {
+      liveRegion.textContent = copy.livePrefix + summary;
+    }
+    lastSummary = summary;
+  }
+  function markVisualRegions() {
+    const descriptionId = 'a11yStateSummary';
+    document.querySelectorAll('canvas, svg, [role="img"]').forEach((el, index) => {
+      if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+      if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', A11Y_CONFIG.copy.en.visualLabel + ' ' + (index + 1));
+      const describedBy = (el.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+      if (!describedBy.includes(descriptionId)) {
+        describedBy.push(descriptionId);
+        el.setAttribute('aria-describedby', describedBy.join(' '));
+      }
+    });
+  }
+  function scheduleAccessibilityRender(announce = true) {
+    clearTimeout(renderTimer);
+    renderTimer = setTimeout(() => renderAccessibilityLayer({ announce }), 100);
+  }
+  document.addEventListener('input', () => scheduleAccessibilityRender(true), true);
+  document.addEventListener('change', () => scheduleAccessibilityRender(true), true);
+  document.addEventListener('click', event => {
+    if (event.target && event.target.closest && event.target.closest('button, [role="button"], canvas, svg, select, input')) {
+      scheduleAccessibilityRender(true);
+    }
+  }, true);
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ' || event.key.startsWith('Arrow') || event.key === 'Tab') {
+      scheduleAccessibilityRender(false);
+    }
+  }, true);
+  setInterval(() => {
+    if (!document.hidden) renderAccessibilityLayer({ announce: false });
+  }, 1500);
+  markVisualRegions();
+  renderAccessibilityLayer({ announce: false });
+  window.renderAccessibilityLayer = renderAccessibilityLayer;
+})();
+</script>
+<script>
+(function () {
+  document.querySelectorAll('[data-current-year]').forEach(el => { el.textContent = new Date().getFullYear(); });
+})();
+</script>
+<script id="learner-content-system">
+(() => {
+  const profile = {"slug":"search-pathfinding","en":{"title":"Pathfinding Visualizer","big":"Compare four ways to search the same map. Watch how each algorithm chooses the next cell, how much work it does, and whether it finds the least-cost path.","primer":"Search algorithms differ in two questions: which location should be explored next, and what counts as a good path? Learn the names below before comparing the traces.","terms":[{"term":"Breadth-first search (BFS)","definition":"Explores every location at the current number of edges from the start before moving farther away."},{"term":"Depth-first search (DFS)","definition":"Follows one branch deeply before backtracking to try another branch."},{"term":"Dijkstra's algorithm","definition":"Finds a least-cost path when different moves can have different costs."},{"term":"A* search","definition":"Combines the cost already paid with an estimate of the cost still remaining."},{"term":"Heuristic","definition":"An estimate that helps a search focus on promising locations."},{"term":"Frontier","definition":"Locations that have been discovered but not yet explored."},{"term":"Path cost","definition":"The total cost accumulated along a route from start to goal."},{"term":"Explored set","definition":"Nodes that the algorithm has already removed from the frontier and processed."},{"term":"Admissible heuristic","definition":"A remaining-cost estimate that never overestimates the true cheapest cost."}],"scenarios":[{"title":"Breadth-first search and A* on the same maze","question":"How much work can a useful estimate save without changing the shortest path?","run":"Run breadth-first search (BFS), record the path length and visited nodes, then run A* search on the unchanged maze.","predict":"Will A* visit fewer nodes, the same number, or more? Will the path length change?","explain":"Use the frontier and visited counts to explain how the heuristic focuses A*."},{"title":"Depth-first search can find the wrong kind of success","question":"Why is finding a path different from finding the shortest path?","run":"Run depth-first search (DFS), then compare its path length with breadth-first search (BFS) on the same grid.","predict":"With this fixed grid and neighbor order, which search will expand fewer nodes before reaching the goal, and which will produce the shorter path?","explain":"Explain how following one branch deeply can reach the goal after relatively few expansions yet still produce a longer route. One trace is not a general runtime ranking."},{"title":"A* with a safe Manhattan-distance estimate","question":"How can A* reduce work while keeping the shortest-path guarantee?","run":"Run A* with the Manhattan-distance heuristic, then compare its path and visited nodes with breadth-first search (BFS).","predict":"Predict whether the path length will match BFS and where the visited cells will concentrate.","explain":"Connect the estimate to the narrower search pattern without claiming the estimate knows the route."},{"title":"Weighted A* trades a guarantee for stronger focus","question":"What changes when the estimate is allowed to overstate the remaining distance?","run":"Run A* with 1.5 times the Manhattan estimate and compare it with standard A*.","predict":"Predict which version will visit fewer nodes and whether both must return the same path cost.","explain":"Explain why stronger heuristic weighting can remove the optimal-path guarantee without implying a general runtime speedup."},{"title":"Breadth-first search counts steps; Dijkstra counts cost","question":"Why can two paths with the same number of steps have different total costs?","run":"Paint a muddy corridor, run breadth-first search (BFS), then run Dijkstra's algorithm without changing the map.","predict":"Predict whether the algorithms will choose the same route through the weighted terrain.","explain":"Use step count and terrain cost to explain the different choices."}]},"zh":{"title":"寻路可视化","big":"在同一张地图上比较四种搜索方法。观察每种算法如何选择下一个格子、完成多少工作，以及是否找到最低成本路径。","primer":"搜索算法主要在两个问题上不同：下一步探索哪里，以及什么才算好路径。比较轨迹前，先熟悉下面的术语。","terms":[{"term":"广度优先搜索（BFS）","definition":"先探索与起点具有相同边数距离的所有位置，再继续向边数更远处搜索。"},{"term":"深度优先搜索（DFS）","definition":"沿一条分支深入前进，走不通时再回退。"},{"term":"Dijkstra 算法","definition":"当不同移动具有不同成本时，寻找最低成本路径。"},{"term":"A* 搜索","definition":"把已经付出的成本与剩余成本的估计结合起来。"},{"term":"启发式","definition":"帮助搜索集中到更有希望位置上的估计。"},{"term":"搜索前沿","definition":"已经发现但尚未探索的位置。"},{"term":"路径代价","definition":"从起点到目标沿一条路线累计的总代价。"},{"term":"已探索集合","definition":"算法已经从前沿取出并处理过的节点。"},{"term":"可采纳启发式","definition":"从不高估真实最低剩余代价的估计函数。"}],"scenarios":[{"title":"同一迷宫中的广度优先搜索与 A*","question":"有用的估计能减少多少工作，同时保持最短路径不变？","run":"先运行广度优先搜索（BFS），记录路径长度和访问节点，再在同一迷宫中运行 A*。","predict":"预测 A* 会访问更少、相同还是更多节点。路径长度会改变吗？","explain":"用搜索前沿和访问数量解释启发式如何让 A* 更集中。"},{"title":"深度优先搜索可能找到“错误的成功”","question":"找到一条路径与找到最短路径有什么不同？","run":"运行深度优先搜索（DFS），再在同一网格上与广度优先搜索（BFS）的路径长度比较。","predict":"在固定网格和固定邻居顺序下，预测哪种搜索会在到达目标前扩展更少节点，以及哪种会给出更短路径。","explain":"解释深入一条分支为什么可能在扩展较少节点后到达目标，却仍得到更长路线；单次轨迹不能证明算法一般更快。"},{"title":"使用安全曼哈顿距离估计的 A*","question":"A* 如何减少工作并保持最短路径保证？","run":"使用曼哈顿距离启发式运行 A*，再与广度优先搜索（BFS）的路径和访问节点数比较。","predict":"预测路径长度是否与 BFS 相同，访问格子会集中在哪里。","explain":"把估计与更窄的搜索范围联系起来，但不要说估计已经知道路线。"},{"title":"加权 A* 用保证换取更强聚焦","question":"当估计可以高估剩余距离时，会发生什么？","run":"使用 1.5 倍曼哈顿估计运行 A*，并与标准 A* 比较。","predict":"预测哪种会访问更少节点，以及两者是否必须得到相同路径成本。","explain":"解释更强聚焦为什么可能破坏最优路径的数学保证。"},{"title":"广度优先搜索计算步数；Dijkstra 计算成本","question":"为什么步数相同的两条路径可能总成本不同？","run":"画出一条泥泞走廊，运行广度优先搜索（BFS），再在不改变地图的情况下运行 Dijkstra 算法。","predict":"预测两种算法是否会在加权地形中选择相同路线。","explain":"用步数和地形成本解释不同选择。"}]}};
+  window.APPLET_LEARNER_PROFILE = profile;
+  const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;
+  try {
+    STRINGS.en.title = profile.en.title; STRINGS.zh.title = profile.zh.title;
+    STRINGS.en['tldr-strong'] = 'What this applet shows'; STRINGS.zh['tldr-strong'] = '这个工具展示什么';
+    STRINGS.en['tldr-body'] = profile.en.big; STRINGS.zh['tldr-body'] = profile.zh.big;
+    profile.en.scenarios.forEach((item,i) => { STRINGS.en['tour'+i+'name']=item.title; STRINGS.en['tour'+i+'desc']=item.run; if (typeof LESSON_TOUR !== 'undefined' && LESSON_TOUR[i]) { LESSON_TOUR[i].name=item.title; LESSON_TOUR[i].description=item.run; } });
+    profile.zh.scenarios.forEach((item,i) => { STRINGS.zh['tour'+i+'name']=item.title; STRINGS.zh['tour'+i+'desc']=item.run; });
+  } catch (_) {}
+  function applyCoreCopy(){
+    const c=copy();
+    document.title=c.title+' | AI Playgrounds';
+    const h=document.querySelector('.header-main h1'); if(h) h.textContent=c.title;
+    const strong=document.querySelector('.tldr strong'); if(strong) strong.textContent=currentLocale()==='zh'?'这个工具展示什么':'What this applet shows';
+    const body=document.querySelector('.tldr span'); if(body) body.textContent=c.big;
+    const jump=document.querySelector('.jump-link'); if(jump) jump.textContent=currentLocale()==='zh'?'↓ 阅读分步解释':'↓ Read the step-by-step explanation';
+  }
+  function stateData(){
+    const values={};
+    document.querySelectorAll('#main input,#main select,#main textarea').forEach(el=>{
+      if(!el.id||el.closest('.classroom-lab'))return;
+      if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;
+      values[el.id]=el.type==='checkbox'?el.checked:el.value;
+    });
+    return {applet:profile.en.title,slug:profile.slug,exported_at:new Date().toISOString(),values};
+  }
+  function toolbar(){
+    const actions=document.querySelector('.header-actions'); if(!actions||actions.dataset.standardized==='1')return;
+    const share=document.getElementById('shareLink'), embed=document.getElementById('embedLink'), reset=document.getElementById('hardReset');
+    const csv=document.getElementById('csvExport'), png=document.getElementById('exportPng');
+    const more=document.createElement('details'); more.className='header-more';
+    const summary=document.createElement('summary'); summary.className='header-png'; summary.setAttribute('aria-haspopup','menu'); more.appendChild(summary);
+    const menu=document.createElement('div'); menu.className='header-more-menu'; menu.setAttribute('role','menu'); more.appendChild(menu);
+    if(embed){embed.textContent='📎 Embed in LMS';menu.appendChild(embed)}
+    const jsonBtn=document.createElement('button');jsonBtn.type='button';jsonBtn.className='header-png';jsonBtn.dataset.exportState='';menu.appendChild(jsonBtn);
+    if(csv){csv.textContent='📊 Data table (.csv)';menu.appendChild(csv)}
+    if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
+    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
+    actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
+    window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';if(share){share.textContent=zh?'🔗 分享':'🔗 Share';share.title=zh?'复制可在另一浏览器中重新打开当前设置的链接。':'Copy a link that reopens the current settings in another browser.';}summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
+    window.refreshAppletToolbar();
+    document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
+  }
+  function terms(){
+    const inner=document.querySelector('.interactive-inner'); if(!inner||inner.querySelector('.key-terms'))return;
+    const d=document.createElement('details');d.className='key-terms';d.open=true;
+    d.innerHTML='<summary><span data-key-summary></span></summary><div class="key-terms-panel"><p class="key-terms-intro" data-key-intro></p><dl class="key-terms-grid" data-key-grid></dl></div>';
+    const first=inner.querySelector(':scope > details');inner.insertBefore(d,first||inner.firstChild);
+    window.renderAppletKeyTerms=()=>{const c=copy();d.querySelector('[data-key-summary]').textContent=currentLocale()==='zh'?'🔑 先学这些术语':'🔑 Key terms before the explanation';d.querySelector('[data-key-intro]').textContent=c.primer;d.querySelector('[data-key-grid]').innerHTML=c.terms.map(x=>'<div class="key-term"><dt>'+x.term+'</dt><dd>'+x.definition+'</dd></div>').join('')};
+    window.renderAppletKeyTerms();
+  }
+  function essayPrimer(){
+    const essay=document.querySelector('article#essay');if(!essay||essay.querySelector('.essay-primer'))return;
+    const box=document.createElement('section');box.className='essay-primer';essay.insertBefore(box,essay.firstChild);
+    window.renderEssayPrimer=()=>{const c=copy();const heading=currentLocale()==='zh'?'阅读前先准备':'Before you read';const termHeading=currentLocale()==='zh'?'本页会使用的术语':'Terms used in this explanation';box.innerHTML='<h2>'+heading+'</h2><p>'+c.primer+'</p><h3>'+termHeading+'</h3><dl class="essay-primer-terms">'+c.terms.map(x=>'<div><dt>'+x.term+'</dt><dd>'+x.definition+'</dd></div>').join('')+'</dl>'};window.renderEssayPrimer();
+  }
+  function patchScenarioData(){
+    try{if(typeof renderScenarioGallery==='function')renderScenarioGallery();if(typeof renderTour==='function')renderTour()}catch(_){}
+  }
+  window.refreshLearnerContent=()=>{applyCoreCopy();window.renderAppletKeyTerms?.();window.renderEssayPrimer?.();window.refreshAppletToolbar?.()};
+  applyCoreCopy();toolbar();terms();essayPrimer();patchScenarioData();
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(window.refreshLearnerContent,20)));
+})();
+</script>
+<!-- AI_PLAYGROUNDS_COMPONENT:original/essay-language-script -->
+<!-- AI_PLAYGROUNDS_COMPONENT:original/learning-modes-script -->
+<script id="applet-translation-completion">
+(() => {
+  const exact = {"Skip to applet controls":"跳到交互控件","▸ Show teacher notes (discussion prompts + curriculum)":"▸ 展开教师说明（讨论提示与课程联系）","▾ Hide teacher notes (discussion prompts + curriculum)":"▾ 收起教师说明（讨论提示与课程联系）","idle":"空闲","(empty)":"（空）","(no actions yet)":"（尚无动作）","exploring":"探索中","BFS explores level by level: it finds the shortest path but checks many cells.":"BFS 逐层探索：它能找到最短路径，但会检查许多格子。","Greedy best-first":"贪心最佳优先"};
+  const rules = [].map(([source,target])=>[new RegExp(source),target]);
+  const currentLanguage=()=>((document.documentElement.lang||'en').startsWith('zh')?'zh':'en');
+  const excluded=node=>node.parentElement && node.parentElement.closest('script,style,noscript,[data-essay-lang="en"]');
+  const applyRule=text=>{
+    if(Object.prototype.hasOwnProperty.call(exact,text))return exact[text];
+    for(const [pattern,target] of rules){if(pattern.test(text)){pattern.lastIndex=0;return text.replace(pattern,target)}}
+    return null;
+  };
+  function translateNode(node){
+    if(excluded(node))return;
+    const raw=node.nodeValue||'',trimmed=raw.trim();if(!trimmed)return;
+    if(currentLanguage()==='en'){
+      if(node.__appletEnglish!==undefined){const start=raw.indexOf(trimmed);node.nodeValue=raw.slice(0,start)+node.__appletEnglish+raw.slice(start+trimmed.length);delete node.__appletEnglish}
+      return;
+    }
+    const translated=applyRule(trimmed);if(translated===null||translated===trimmed)return;
+    node.__appletEnglish=trimmed;const start=raw.indexOf(trimmed);node.nodeValue=raw.slice(0,start)+translated+raw.slice(start+trimmed.length);
+  }
+  function translateAttribute(el,attr){
+    const value=el.getAttribute(attr);if(!value)return;
+    const prop='__appletEnglish_'+attr;
+    if(currentLanguage()==='en'){
+      if(el[prop]!==undefined){el.setAttribute(attr,el[prop]);delete el[prop]}
+      return;
+    }
+    const translated=applyRule(value.trim());if(translated===null||translated===value.trim())return;
+    el[prop]=value;el.setAttribute(attr,translated);
+  }
+  function refresh(root=document){
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);nodes.forEach(translateNode);
+    const elements=(root.querySelectorAll?root.querySelectorAll('[title],[aria-label],[placeholder]'):[]);elements.forEach(el=>['title','aria-label','placeholder'].forEach(a=>{if(el.hasAttribute(a))translateAttribute(el,a)}));
+  }
+  let queued=false;const schedule=()=>{if(queued)return;queued=true;queueMicrotask(()=>{queued=false;refresh()})};
+  const observer=new MutationObserver(mutations=>{if(currentLanguage()!=='zh')return;for(const m of mutations){if(m.type==='characterData'||m.addedNodes.length){schedule();break}}});
+  observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+  document.querySelectorAll('button[data-lang]').forEach(button=>button.addEventListener('click',()=>setTimeout(()=>refresh(),45)));
+  refresh();
+  window.refreshAppletTranslationCompletion=refresh;
+})();
+</script>
+<!-- suite-guided-challenge-v2:start -->
+<link href="../../assets/guided-challenges.css" rel="stylesheet"/>
+<script defer src="../../assets/guided-challenges.js"></script>
+<!-- suite-guided-challenge-v2:end -->
+<script src="../../assets/locales/search-pathfinding-r4.js"></script>
+<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["search-pathfinding"];if(!row)return;Object.assign(row.vi.strings,{"🧪 Quick Assign · QA-SEARCH-01 · 10–15 min": "🧪 Bài tập nhanh · QA-SEARCH-01 · 10–15 phút", "A* vs BFS: same goal, different work": "A* và BFS: cùng mục tiêu, khác lượng công việc", "Predict which search will do less work, run a comparison, then explain how the frontier and heuristic changed the result.": "Dự đoán thuật toán tìm kiếm nào sẽ làm ít việc hơn, chạy phép so sánh rồi giải thích cách frontier và heuristic làm thay đổi quá trình tìm kiếm.", "Before running, which algorithm will visit fewer cells on this maze, and why?": "Trước khi chạy, thuật toán nào sẽ thăm ít ô hơn trong mê cung này, và vì sao?", "Run at least two algorithms. Record path length, visited nodes, and one visible frontier pattern.": "Chạy ít nhất hai thuật toán. Ghi lại độ dài đường đi, số nút đã thăm và một mẫu frontier nhìn thấy được.", "What did the heuristic change in the search process?": "Heuristic đã thay đổi điều gì trong quá trình tìm kiếm?", "When would BFS be safer than greedy best-first search or weighted A*?": "Khi nào BFS sẽ an toàn hơn greedy best-first search hoặc weighted A*?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"🧪 Quick Assign · QA-SEARCH-01 · 10–15 min": "🧪 Tarea rápida · QA-SEARCH-01 · 10–15 min", "A* vs BFS: same goal, different work": "A* frente a BFS: mismo objetivo, distinto trabajo", "Predict which search will do less work, run a comparison, then explain how the frontier and heuristic changed the result.": "Predice qué búsqueda hará menos trabajo, ejecuta una comparación y explica cómo la frontera y la heurística cambiaron el proceso.", "Before running, which algorithm will visit fewer cells on this maze, and why?": "Antes de ejecutar, ¿qué algoritmo visitará menos celdas en este laberinto y por qué?", "Run at least two algorithms. Record path length, visited nodes, and one visible frontier pattern.": "Ejecuta al menos dos algoritmos. Registra la longitud de la ruta, los nodos visitados y un patrón visible de la frontera.", "What did the heuristic change in the search process?": "¿Qué cambió la heurística en el proceso de búsqueda?", "When would BFS be safer than greedy best-first search or weighted A*?": "¿Cuándo sería BFS una opción más segura que greedy best-first search o weighted A*?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script src="../../assets/localization-r4.js"></script>
+<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.8.1</div>
+
+<!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
+<script data-ai-playgrounds-analytics="v1.8.1">
+(function () {
+  'use strict';
+  var CANONICAL_HOST = 'lmdixon23.github.io';
+  var ENDPOINT = 'https://lmdixon23.goatcounter.com/count';
+  var PAGE_KIND = 'applet';
+  var PAGE_SLUG = 'search-pathfinding';
+  var SOURCE_ALLOWLIST = new Set(['hn','linkedin','csta','sigcse','oercommons','merlot','reddit','bluesky','mastodon','devto','hashnode','github','email','school','portfolio','resume','zenodo','jose']);
+  var liveImages = [];
+
+  function storageGet(storage, key) { try { return storage.getItem(key); } catch (_) { return null; } }
+  function storageSet(storage, key, value) { try { storage.setItem(key, value); } catch (_) {} }
+  function privacySignal() {
+    return navigator.globalPrivacyControl === true || navigator.doNotTrack === '1' ||
+      navigator.doNotTrack === 'yes' || window.doNotTrack === '1';
+  }
+  function clean(value) {
+    return String(value || '').toLowerCase().replace(/[^a-z0-9._/-]+/g, '-').replace(/-+/g, '-').replace(/^\/+|\/+$/g, '').slice(0, 80);
+  }
+  function normalizePath(path) {
+    var value = String(path || '/');
+    value = value.replace(/\/index\.html$/, '/');
+    if (value === '/ai-playgrounds') value = '/ai-playgrounds/';
+    return value || '/';
+  }
+  function canonicalPath() {
+    var link = document.querySelector('link[rel="canonical"]');
+    if (link && link.href) {
+      try { return normalizePath(new URL(link.href, location.href).pathname); } catch (_) {}
+    }
+    return normalizePath(location.pathname || '/ai-playgrounds/');
+  }
+
+  var params = new URLSearchParams(location.search);
+  var optedOut = params.get('analytics') === 'off' || storageGet(localStorage, 'ai-playgrounds-analytics') === 'off';
+  var enabled = location.hostname === CANONICAL_HOST && !privacySignal() && !optedOut;
+
+  function transmit(query) {
+    if (!enabled) return;
+    var img = new Image(1, 1);
+    img.referrerPolicy = 'no-referrer';
+    img.onload = img.onerror = function () {
+      var i = liveImages.indexOf(img);
+      if (i >= 0) liveImages.splice(i, 1);
+    };
+    img.src = ENDPOINT + '?' + query.toString();
+    liveImages.push(img);
+  }
+
+  function campaignQuery() {
+    var source = clean(params.get('ap_src'));
+    if (!SOURCE_ALLOWLIST.has(source)) return '';
+    var q = new URLSearchParams();
+    q.set('utm_campaign', 'ai-playgrounds');
+    q.set('utm_source', source);
+    return q.toString();
+  }
+
+  function sendPage() {
+    var query = new URLSearchParams();
+    query.set('p', canonicalPath());
+    query.set('t', document.title || 'AI Playgrounds');
+    var campaign = campaignQuery();
+    if (campaign) query.set('q', campaign);
+    transmit(query);
+  }
+
+  function sendEvent(name, title) {
+    var eventName = clean(name);
+    if (!eventName) return;
+    var query = new URLSearchParams();
+    query.set('p', 'event/' + eventName);
+    query.set('t', title || ('AI Playgrounds event: ' + eventName));
+    query.set('e', '1');
+    transmit(query);
+  }
+
+  window.aiPlaygroundsAnalytics = {
+    enabled: enabled,
+    optOut: function () { storageSet(localStorage, 'ai-playgrounds-analytics', 'off'); location.reload(); },
+    optIn: function () { storageSet(localStorage, 'ai-playgrounds-analytics', 'on'); location.reload(); },
+    count: function (name, title) { sendEvent(name, title); }
+  };
+
+  document.addEventListener('click', function (event) {
+    var out = event.target.closest('#analytics-opt-out');
+    var inn = event.target.closest('#analytics-opt-in');
+    if (out) { event.preventDefault(); window.aiPlaygroundsAnalytics.optOut(); return; }
+    if (inn) { event.preventDefault(); window.aiPlaygroundsAnalytics.optIn(); return; }
+    if (!enabled) return;
+
+    var link = event.target.closest('a[href]');
+    if (link) {
+      var href = link.getAttribute('href') || '';
+      var app = href.match(/playgrounds\/([^/?#]+)\/?/i);
+      if (app) sendEvent('launch/' + clean(app[1]), 'Launch applet: ' + clean(app[1]));
+      else if (/\.(pdf|zip|md|docx?|pptx?|csv)(?:[?#]|$)/i.test(href)) sendEvent('resource/' + clean((href.split('/').pop() || 'download').split(/[?#]/)[0]), 'Resource download');
+      else if (/github\.com\/lmdixon23\/ai-playgrounds/i.test(href)) sendEvent('outbound/github', 'Open AI Playgrounds on GitHub');
+    }
+
+    if (PAGE_KIND === 'applet') {
+      var control = event.target.closest('main button, main [role="button"], .workspace button, .controls button');
+      if (control && !control.closest('header, nav, footer, .toolbar')) {
+        var key = 'ai-playgrounds-engaged-' + PAGE_SLUG;
+        if (storageGet(sessionStorage, key) !== '1') {
+          storageSet(sessionStorage, key, '1');
+          sendEvent('engaged/' + clean(PAGE_SLUG), 'First substantive applet interaction: ' + clean(PAGE_SLUG));
+        }
+      }
+    }
+  }, true);
+
+  if (!enabled) return;
+  sendPage();
+})();
+</script>
+</body>
+</html>

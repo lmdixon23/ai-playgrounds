@@ -1,0 +1,3120 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>K-Means Clustering | AI Playgrounds</title>
+<link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E" rel="icon"/>
+<meta content="Choose the number of clusters, assign each point to its nearest center, and move the centers. Repeat until assignments stop changing." name="description"/>
+<link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/kmeans/" rel="canonical"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/kmeans/?lang=en" hreflang="en" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/kmeans/?lang=zh" hreflang="zh-Hans" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/kmeans/?lang=vi" hreflang="vi" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/kmeans/?lang=es" hreflang="es" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/kmeans/?lang=en" hreflang="x-default" rel="alternate"/>
+<meta content="website" property="og:type"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/kmeans/" property="og:url"/>
+<meta content="K-Means Clustering | AI Playgrounds" property="og:title"/>
+<meta content="Choose the number of clusters, assign each point to its nearest center, and move the centers. Repeat until assignments stop changing." property="og:description"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" property="og:image"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="K-Means Clustering | AI Playgrounds" name="twitter:title"/>
+<meta content="Choose the number of clusters, assign each point to its nearest center, and move the centers. Repeat until assignments stop changing." name="twitter:description"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" name="twitter:image"/>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"K-Means Clustering | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/kmeans/","description":"Choose the number of clusters, assign each point to its nearest center, and move the centers. Repeat until assignments stop changing.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh","vi","es"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
+<style>
+  :root {
+    --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #4d7c0f;
+    --card: #fff; --border: #e5e7eb; --soft: #f9fafb;
+  }
+  /* Cluster palette: 8 distinguishable hues. */
+  /* These are intentionally NOT in the body theme: they should pop. */
+
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", Arial, sans-serif;
+         background: var(--bg); color: var(--fg); line-height: 1.6; }
+
+  .page-header { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 24px; }
+  .header-utility { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .header-prefs { display: flex; align-items: center; gap: 8px; }
+  .header-main { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .header-actions { display: flex; align-items: center; gap: 8px; font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem; }
+  .header-actions .header-reset { margin-left: 12px; }
+  .page-header h1 { margin: 0; font-size: 1.5rem; font-family: inherit; }
+  .page-header .back { color: var(--accent); text-decoration: none; font-size: 0.9rem; font-family: -apple-system, system-ui, sans-serif; }
+
+  /* Pinned TL;DR badge: bold accent-colored block. */
+  .tldr {
+    max-width: 820px; margin: 16px auto 0;
+    background: var(--accent); color: white;
+    border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; font-weight: 500;
+    font-family: -apple-system, system-ui, sans-serif; line-height: 1.45;
+  }
+  .tldr strong { color: rgba(255, 255, 255, 0.85); font-size: 0.72rem;
+                  letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700;
+                  display: block; margin-bottom: 6px; }
+  /* Jump-to-explanation link. */
+  .jump-link {
+    display: inline-block; margin-top: 14px;
+    padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px;
+    background: white; color: var(--accent); text-decoration: none;
+    font-family: -apple-system, system-ui, sans-serif; font-size: 0.82rem;
+    font-weight: 600; transition: background 0.15s;
+  }
+  .jump-link:hover { background: var(--soft); }
+  .jump-anchor { text-align: center; }
+
+  /* The interactive at the top, centered. */
+  .interactive {
+    background: var(--card); padding: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .interactive-inner { max-width: min(1280px, 100%); margin: 0 auto; }
+  .control-row {
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    margin-bottom: 14px; font-family: -apple-system, system-ui, sans-serif;
+    font-size: 0.88rem;
+  }
+  .control-row label { color: var(--muted); }
+  .control-row .group { display: flex; gap: 4px; border: 1px solid var(--border);
+                         border-radius: 6px; overflow: hidden; }
+  .control-row .group button {
+    padding: 7px 12px; background: var(--card); color: var(--fg);
+    border: none; border-right: 1px solid var(--border); cursor: pointer;
+    font: inherit; font-size: 0.85rem; transition: background 0.1s;
+  }
+  .control-row .group button:last-child { border-right: none; }
+  .control-row .group button.active { background: var(--accent); color: white;
+                                       font-weight: 600; }
+  .control-row .group button:hover:not(.active) { background: var(--soft); }
+  .control-row .step-btn {
+    padding: 9px 16px; background: var(--accent); color: white;
+    border: none; border-radius: 6px; cursor: pointer; font: inherit;
+    font-weight: 600; font-size: 0.9rem;
+  }
+  .control-row .step-btn.secondary { background: white; color: var(--fg);
+                                       border: 1px solid var(--border); font-weight: normal; }
+  .control-row .step-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .control-row input[type=number] {
+    padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px;
+    width: 60px; font: inherit; text-align: center;
+  }
+
+  canvas {
+    display: block; margin: 0 auto;
+    background: white; border: 1px solid var(--border); border-radius: 6px;
+    cursor: crosshair; max-width: 100%;
+  }
+  .hint {
+    text-align: center; color: var(--muted); font-size: 0.85rem;
+    font-family: -apple-system, system-ui, sans-serif;
+    margin: 10px 0 0; font-style: italic;
+  }
+  .phase-indicator {
+    display: inline-block; padding: 3px 10px; border-radius: 999px;
+    background: var(--soft); color: var(--muted); font-size: 0.78rem;
+    font-family: -apple-system, system-ui, sans-serif;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .phase-indicator.assign { background: #dbeafe; color: #1e40af; }
+  .phase-indicator.update { background: #fef3c7; color: #92400e; }
+  .phase-indicator.converged { background: #d1fae5; color: #065f46; }
+  .iter-counter { float: right; font-family: monospace; color: var(--muted);
+                   font-size: 0.85rem; }
+
+  /* Long-form prose section below. */
+  .essay {
+    max-width: 720px; margin: 0 auto; padding: 40px 24px 80px;
+    font-size: 1.05rem;
+  }
+  .essay h2 { font-size: 1.5rem; margin-top: 36px; margin-bottom: 12px;
+               font-family: inherit; color: var(--accent); }
+  .essay h3 { font-size: 1.15rem; margin-top: 24px; margin-bottom: 8px;
+               font-family: inherit; }
+  .essay p { margin: 0 0 14px; }
+  .essay .lede { font-size: 1.15rem; color: #374151; }
+  .essay .aha {
+    background: #fef9c3; border-left: 4px solid #facc15;
+    padding: 12px 18px; margin: 18px 0; border-radius: 0 6px 6px 0;
+    font-style: italic; color: #713f12;
+  }
+  .essay code {
+    background: var(--soft); padding: 1px 6px; border-radius: 4px;
+    font-family: 'SF Mono', Consolas, monospace; font-size: 0.92em;
+  }
+  .essay ul { padding-left: 22px; }
+  .essay ul li { margin-bottom: 6px; }
+  .essay .citation { color: var(--muted); font-size: 0.85rem;
+                      border-top: 1px solid var(--border); padding-top: 16px;
+                      margin-top: 24px; font-family: -apple-system, system-ui, sans-serif; }
+  .essay .for-teachers {
+    background: var(--soft); border: 1px solid var(--border); border-radius: 8px;
+    padding: 20px 24px; margin-top: 36px;
+    font-family: -apple-system, system-ui, sans-serif; font-size: 0.95rem;
+  }
+  .essay .for-teachers h3 { font-family: -apple-system, system-ui, sans-serif;
+                              color: var(--accent); font-size: 0.9rem;
+                              text-transform: uppercase; letter-spacing: 0.05em;
+                              margin-top: 0; }
+
+  /* Init choice overlay (Harris-style full-canvas picker) */
+  .choice-overlay {
+    position: absolute; inset: 0; background: rgba(255, 253, 248, 0.96);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 14px;
+    font-family: -apple-system, system-ui, sans-serif;
+    z-index: 50;
+  }
+  /* Q1 RED fix: while overlay is up, treat it as a true modal: block clicks on
+     dataset/init/k controls so users can't accidentally change state behind it. */
+  body.overlay-active .controls,
+  body.overlay-active .group { pointer-events: none; opacity: 0.55; }
+  body.overlay-active .choice-overlay { pointer-events: auto; opacity: 1; }
+  .choice-overlay h3 { margin: 0 0 10px; font-family: inherit;
+                         font-size: 1.5rem; color: var(--accent); text-align: center; }
+  .choice-overlay .choices { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .choice-overlay .choice-btn {
+    padding: 18px 26px; background: white; color: var(--fg);
+    border: 2px solid var(--border); border-radius: 10px; cursor: pointer;
+    font: inherit; font-size: 1rem; font-weight: 600; min-width: 140px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .choice-overlay .choice-btn:hover {
+    background: var(--soft); border-color: var(--accent);
+  }
+  .choice-overlay .choice-btn .sub {
+    display: block; font-size: 0.78rem; font-weight: normal;
+    color: var(--muted); margin-top: 6px;
+  }
+  .canvas-stage { position: relative; max-width: 100%; }
+
+  /* === additions === */
+  /* Language switcher in header */
+  .lang-switch { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .lang-switch button { padding: 4px 10px; background: white; color: var(--muted);
+                          border: none; cursor: pointer; font: inherit; font-size: 0.78rem; }
+  .lang-switch button.active { background: var(--accent); color: white; font-weight: 600; }
+  .header-reset { padding: 6px 12px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font: inherit; font-size: 0.82rem; }
+  .header-reset:hover { background: var(--soft); }
+
+  /* Reduced-motion preference */
+  /* ===== Unified transport bar (shared playback controls across stepped applets) ===== */
+  .transport { display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+               padding: 8px 10px; margin: 10px 0; border: 1px solid var(--border);
+               border-radius: 8px; background: var(--soft); }
+  .tp-btn { font: inherit; font-size: 0.9rem; cursor: pointer; border: 1px solid var(--border);
+            background: var(--card); color: var(--fg); border-radius: 6px; padding: 6px 12px; min-width: 40px; line-height: 1; }
+  .tp-btn:hover { background: var(--soft); }
+  .tp-speed { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--muted); }
+  .tp-speed input { accent-color: var(--accent); }
+  .tp-count { margin-left: auto; font-family: ui-monospace, monospace; font-size: 0.82rem;
+              color: var(--muted); font-variant-numeric: tabular-nums; min-width: 128px; text-align: right; }
+  .tp-btn:disabled { opacity: 0.45; cursor: default; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+  /* Touch devices: comfortable tap targets without changing desktop layout. */
+  @media (pointer: coarse) {
+    button, .step-btn, .tp-btn, .group button, select, summary { min-height: 44px; }
+  }
+  /* === dark mode === */
+  body.dark-mode {
+    --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8;
+    --card: #1e293b; --border: #334155; --soft: #1e293b;
+  }
+  body.dark-mode .essay .lede { color: #cbd5e1; }
+  body.dark-mode .essay .for-teachers { background: #0f172a; }
+  body.dark-mode .essay .citation { color: var(--muted); border-top-color: var(--border); }
+  /* True canvas dark mode: render fn picks bg directly. */
+  body.dark-mode .header-reset,
+  body.dark-mode .lang-switch button:not(.active),
+  body.dark-mode .header-theme,
+  body.dark-mode .control-row .group button:not(.active),
+  body.dark-mode .control-row .step-btn,
+  body.dark-mode input[type="number"] { background: var(--card); color: var(--fg); }
+  body.dark-mode .control-row .group { background: var(--card); }
+  body.dark-mode .choice-overlay .choice-btn { background: var(--card); color: var(--fg); }
+  .header-theme { padding: 6px 10px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font-size: 1rem; line-height: 1; font-family: inherit; }
+  .header-theme:hover { background: var(--soft); }
+  /* === PNG export + accessible slider thumbs === */
+  .header-png { padding: 6px 10px; background: white; color: var(--fg);
+                  border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                  font-size: 0.85rem; font-family: inherit; }
+  .header-png:hover { background: var(--soft); }
+  body.dark-mode .header-png { background: var(--card); color: var(--fg); }
+  /* ===== Slider styling: native themed control via accent-color (consistent across browsers) ===== */
+  input[type="range"] { accent-color: var(--accent); height: 28px; cursor: pointer; }
+  /* embed mode. Strip chrome so the applet fits cleanly in an LMS iframe. */
+  body.embed-mode .page-header,
+  body.embed-mode aside.tldr,
+  body.embed-mode article.essay,
+  body.embed-mode .jump-anchor { display: none !important; }
+  body.embed-mode .interactive { padding: 12px; border-bottom: none; }
+
+  /* === STEP 1: Canvas responsive fix === */
+  #cv { aspect-ratio: 800 / 500; height: auto; width: 100%; max-width: 100%; }
+  #inertiaSpark { flex: 0 0 auto; width: 200px; height: 30px; max-width: 100%; }
+
+  /* === STEP 2: Bento grid === */
+  .bento { display: grid; grid-template-columns: minmax(300px, 360px) minmax(0, 1fr); gap: 16px; align-items: start; margin-bottom: 14px; }
+  .bento-side, .bento-main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .bento-cell { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+  .bento-cell > :first-child { margin-top: 0 !important; }
+  .tp-scrub { min-width: 0; }
+  @media (max-width: 860px) { .bento { grid-template-columns: 1fr; gap: 12px; } }
+  /* ===== Shared a11y + contrast tokens (keyboard focus and contrast tokens) ===== */
+  button:focus-visible, a:focus-visible, select:focus-visible,
+  input:focus-visible, textarea:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+  .tldr { background: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), var(--accent); }
+  .tldr strong { color: #fff; }
+
+
+  /* Student response packet: local-only assignment packet across the applet family. */
+  .classroom-lab .lab-panel { margin-top:8px; padding:14px; background:var(--card); border:1px solid var(--border); border-radius:8px; }
+  .classroom-lab .lab-intro { margin:0 0 12px; color:var(--muted); font-size:0.88rem; line-height:1.5; }
+  .classroom-lab .lab-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+  .classroom-lab .lab-field { display:flex; flex-direction:column; gap:4px; }
+  .classroom-lab .lab-field label { font-family:-apple-system,system-ui,sans-serif; font-size:0.82rem; font-weight:700; color:var(--accent); }
+  .classroom-lab textarea { min-height:86px; resize:vertical; width:100%; border:1px solid var(--border); border-radius:6px; padding:8px; font:inherit; color:var(--fg); background:var(--bg); }
+  .classroom-lab .lab-state { margin-top:12px; padding:10px 12px; border:1px dashed var(--border); border-radius:8px; background:var(--soft); color:var(--muted); font-family:ui-monospace,monospace; font-size:0.78rem; white-space:pre-wrap; }
+  .classroom-lab .lab-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; align-items:center; }
+  .classroom-lab .lab-status { color:var(--muted); font-size:0.82rem; min-height:1.2em; }
+  @media (max-width:480px) { .classroom-lab .lab-grid { grid-template-columns:1fr; } .classroom-lab .lab-actions button { width:100%; } }
+
+  /* Scenario Gallery: visible, reusable entry points generated from the lesson-tour scenarios. */
+  .scenario-gallery-panel {
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .scenario-gallery-intro {
+    margin: 0 0 10px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .scenario-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .scenario-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--card) 88%, var(--soft));
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 100%;
+  }
+  .scenario-card h3 {
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.98rem;
+    line-height: 1.25;
+  }
+  .scenario-card p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .scenario-card .scenario-meta {
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  .scenario-card .scenario-meta strong { color: var(--fg); }
+  .scenario-card button {
+    margin-top: auto;
+    align-self: flex-start;
+  }
+  @media (max-width: 480px) {
+    .scenario-card-grid { grid-template-columns: 1fr; }
+    .scenario-card button { width: 100%; }
+  }
+
+
+
+  /* Supporting learning components. */
+  .visual-explanation-panel {
+    margin-top: 8px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .visual-explanation-intro {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .visual-flow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+  }
+  .visual-card {
+    position: relative;
+    min-height: 132px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, var(--accent)), var(--card));
+    overflow: hidden;
+  }
+  .visual-card::before {
+    content: attr(data-step);
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    color: color-mix(in srgb, var(--accent) 62%, transparent);
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+  .visual-card h4 {
+    margin: 0 28px 8px 0;
+    color: var(--accent);
+    font-size: 0.9rem;
+    line-height: 1.25;
+  }
+  .visual-card p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .visual-live {
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 8px;
+    background: var(--soft);
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.74rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .visual-live strong { color: var(--accent); font-family: -apple-system, system-ui, sans-serif; font-size: 0.72rem; }
+  .visual-watch-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .visual-snapshot, .visual-misread {
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: var(--soft);
+  }
+  .visual-snapshot strong, .visual-misread strong {
+    display: block;
+    color: var(--accent);
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 0.78rem;
+    margin-bottom: 6px;
+  }
+  .visual-snapshot pre {
+    margin: 0;
+    white-space: pre-wrap;
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+  .visual-misread p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  @media (max-width: 620px) {
+    .visual-watch-grid { grid-template-columns: 1fr; }
+  }
+
+
+
+  /* Supporting learning components. */
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 10px;
+    z-index: 10000;
+    padding: 10px 14px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 8px;
+    font-family: -apple-system, system-ui, sans-serif;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .skip-link:focus { left: 12px; }
+  :focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+  [tabindex="-1"]:focus { outline: none; }
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+  .accessibility-layer {
+    margin-top: 12px;
+  }
+  .accessibility-panel {
+    margin-top: 8px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .accessibility-intro {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .accessibility-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .accessibility-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--card) 92%, var(--soft));
+    padding: 12px;
+  }
+  .accessibility-card h3 {
+    margin: 0 0 8px;
+    color: var(--accent);
+    font-size: 0.92rem;
+  }
+  .accessibility-card p,
+  .accessibility-card li {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .accessibility-card ul {
+    margin: 0;
+    padding-left: 1.15rem;
+  }
+  .a11y-state-grid {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 6px 10px;
+    margin: 0;
+    font-size: 0.84rem;
+  }
+  .a11y-state-grid dt {
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .a11y-state-grid dd {
+    margin: 0;
+    color: var(--fg);
+    overflow-wrap: anywhere;
+  }
+  .accessibility-note {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+  @media (max-width: 620px) {
+    .accessibility-grid { grid-template-columns: 1fr; }
+    .a11y-state-grid { grid-template-columns: 1fr; }
+    .a11y-state-grid dt { margin-top: 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html:focus-within { scroll-behavior: auto !important; }
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+
+
+  /* Supporting learning components. */
+  .interactive-inner { max-width: min(1280px, 100%); }
+  .scenario-card,
+  .accessibility-card,
+  .classroom-lab .lab-panel,
+  .accessibility-panel,
+  .signature-challenge-panel {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, var(--soft)), var(--card));
+  }
+  .signature-challenge-panel {
+    margin-top: 12px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .signature-challenge-panel strong { display:block; color:var(--accent); margin-bottom:4px; }
+  .signature-challenge-panel p { margin: 6px 0 0; color: var(--muted); font-size: 0.88rem; line-height: 1.5; }
+
+
+  /* Supporting learning components. */
+  .learning-deck { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:12px; align-items:start; }
+  .learning-deck > details { margin-top:0 !important; min-width:0; }
+  .learning-deck > .scenario-gallery,
+  .learning-deck > .visual-explanation,
+  .learning-deck > .classroom-lab,
+  .learning-deck > .accessibility-layer { grid-column:1 / -1; }
+  .learning-deck > details > summary { background:var(--card) !important; }
+  .scenario-gallery-panel, .scenario-card, .accessibility-panel, .accessibility-card,
+  .classroom-lab .lab-panel, .signature-challenge-panel {
+    background:linear-gradient(180deg,color-mix(in srgb,var(--card) 90%,var(--accent)),var(--card)) !important;
+  }
+  .scenario-card { box-shadow:0 6px 18px rgba(15,23,42,.05); transition:border-color .16s, box-shadow .16s, transform .16s; }
+  .scenario-card.applied { border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 22%,transparent),0 10px 24px rgba(15,23,42,.08); transform:translateY(-1px); }
+  .scenario-card .scenario-meta:last-of-type { margin-bottom:2px; }
+  @media (max-width:900px) { .learning-deck { grid-template-columns:1fr; } .learning-deck > details { grid-column:1 !important; } }
+
+
+  /* Supporting learning components. */
+  #datasetGroup { flex-wrap:wrap; overflow:visible; border:0; gap:6px; }
+  #datasetGroup button { flex:1 1 132px; min-width:0; white-space:normal; border:1px solid var(--border) !important; border-radius:6px; }
+  #datasetGroup button:last-child { border-right:1px solid var(--border) !important; }
+
+</style>
+<!-- AI_PLAYGROUNDS_COMPONENT:original/learner-interface-style -->
+<!-- AI_PLAYGROUNDS_COMPONENT:original/learning-modes-style-common -->
+<link href="../../assets/localization-r4.css" rel="stylesheet"/>
+<meta name="ai-playgrounds-version" content="1.8.1">
+
+<!-- AI_PLAYGROUNDS_COMPONENT:original/v14-version-provenance-style -->
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to applet controls</a>
+<header class="page-header">
+<div class="header-utility">
+<a class="back" data-i18n="back-link" href="../../index.html">← Back to all playgrounds</a>
+<div class="header-prefs">
+<button aria-label="Toggle dark or light theme" class="header-theme" id="themeToggle" title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
+<div class="lang-switch" title="Switch interface language">
+<button class="active" data-lang="en">EN</button>
+<button data-lang="zh">中文</button>
+</div>
+</div>
+</div>
+<div class="header-main">
+<h1 data-i18n="title">K-Means Clustering</h1>
+<div class="header-actions">
+<button class="header-png" id="shareLink" title="Copy a URL that re-opens this exact configuration in another browser.">🔗 Share</button>
+<button class="header-png" id="embedLink" title="Copy an &lt;iframe&gt; snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
+<button class="header-png" id="csvExport" title="Download points + cluster assignments + centroid positions as CSV (two sections in one file).">📊 CSV</button>
+<button class="header-png" id="exportPng" title="Download the current visualization as a PNG image (for slides).">📷 PNG</button>
+<button class="header-reset" data-i18n="reset-all" id="hardReset" title="Reset everything to the default: Gaussian mixture dataset, k=3, random init.">↺ Reset all</button>
+</div>
+</div>
+</header>
+<aside class="tldr">
+<strong data-i18n="tldr-strong">The big idea</strong>
+<span data-i18n="tldr-body">K-means clusters points by repeatedly moving each centroid to the mean of the points assigned to it. It works on round blobs and fails on weird shapes.</span>
+</aside>
+<section class="interactive" id="main" role="main" tabindex="-1">
+<div class="interactive-inner">
+<div class="bento">
+<div class="bento-side">
+<div class="bento-cell">
+<div class="control-row">
+<label data-i18n="dataset-label">Dataset:</label>
+<div class="group" id="datasetGroup">
+<button class="active" data-d="gaussian" data-i18n="d-gaussian" data-i18n-title="d-gaussian-title" title="Three roughly round blobs. This synthetic example is well matched to Euclidean k-means when k=3, but one successful run does not establish a universal grouping.">Gaussian mixture</button>
+<button data-d="uniform" data-i18n="d-uniform" data-i18n-title="d-uniform-title" title="Uniform random points. Tests how k-means behaves with no real cluster structure.">Uniform points</button>
+<button data-d="packed" data-i18n="d-packed" data-i18n-title="d-packed-title" title="Six tightly packed circles. Try the farthest point init with k=6.">Packed circles</button>
+<button data-d="smiley" data-i18n="d-smiley" data-i18n-title="d-smiley-title" title="A smiley face. The mouth is a curved arc: k-means cannot find it as a single cluster.">Smiley face</button>
+<button data-d="pimpled" data-i18n="d-pimpled" data-i18n-title="d-pimpled-title" title="Smiley face plus noise dots. Tests robustness to outliers.">Pimpled smiley</button>
+<button data-d="custom" data-i18n="d-custom" data-i18n-title="d-custom-title" title="Empty canvas: click to add your own data points.">Clear (draw your own)</button>
+</div>
+</div>
+<div class="control-row">
+<label data-i18n="init-label">Initialize centroids:</label>
+<div class="group" id="initGroup">
+<button data-i="choose" data-i18n="i-choose" data-i18n-title="i-choose-title" title="Click anywhere on the canvas to place centroids yourself. Best for spotting bad-init failures.">I'll choose</button>
+<button class="active" data-i="random" data-i18n="i-random" data-i18n-title="i-random-title" title="Pick k random data points as initial centroids. Simple but often poor.">Randomly</button>
+<button data-i="farthest" data-i18n="i-farthest" data-i18n-title="i-farthest-title" title="Pick centroids spread far apart from each other. Usually much better than random.">Farthest point</button>
+<button data-i="kpp" data-i18n="i-kpp" data-i18n-title="i-kpp-title" title="k-means++: probabilistic farthest point. Pick first uniformly, then each subsequent centroid with probability ∝ D(x)² where D(x) is distance to nearest existing centroid. The scikit-learn default initialization uses a greedy k-means++ variant with multiple candidate trials.">k-means++</button>
+</div>
+<label data-i18n="k-label">k =</label>
+<input data-i18n-title="k-input-title" id="kInput" max="8" min="1" title="Number of clusters to find. K-means needs this in advance: there's no rule for choosing it." type="number" value="3"/>
+<button class="step-btn secondary" data-i18n="place-btn" data-i18n-title="place-title" id="placeBtn" title="Place k centroids using the chosen initialization strategy.">Place centroids</button>
+</div>
+<div class="control-row">
+<button class="step-btn" data-i18n="reassign-btn" data-i18n-title="reassign-title" id="reassignBtn" title="Assign every point to the cluster of its nearest centroid.">① Reassign only</button>
+<button class="step-btn" data-i18n="update-btn" data-i18n-title="update-title" id="updateBtn" title="Move each centroid to the mean of the points currently assigned to it.">② Move centroids only</button>
+<!-- Run / Reset relocated to the unified transport bar below. -->
+<span class="phase-indicator" id="phaseInd">Ready</span>
+<span class="iter-counter"><span data-i18n="step-label">Step</span> <span id="iterV">0</span></span>
+</div>
+<!-- Unified transport bar (shared playback controls; Run/Reset relocated, Step/Speed/Back added). -->
+<div aria-label="Playback controls" class="transport" id="transport" role="group">
+<button class="tp-btn" data-i18n-title="reset-title" id="resetBtn" title="Clear centroids and cluster assignments. Keeps the current dataset.">↺</button>
+<button class="tp-btn" data-i18n-title="back-title" id="backBtn" title="Step one half-step backward through the run.">◀❘</button>
+<button aria-pressed="false" class="tp-btn" data-i18n="run-btn" data-i18n-title="run-title" id="runBtn" title="Repeat Reassign + Update until the centroids stop moving.">▶ Run to convergence</button>
+<button class="tp-btn" data-i18n="step-btn" data-i18n-title="step-title" id="stepBtn" title="Advance one half-step (reassign, then update).">❘▶ Step</button>
+<label class="tp-speed"><span data-i18n="speed-label">Speed</span>
+<input aria-label="Animation speed" data-i18n-title="speed-title" id="speedSlider" max="100" min="0" title="Higher = faster. Adjustable live." type="range" value="50"/></label>
+<span class="tp-scrub" id="kmScrubGroup" style="display:inline-flex; visibility:hidden; align-items:center; gap:8px; flex:1 1 220px; min-width:150px;">
+<span style="color:var(--accent); font-weight:600; font-size:0.82rem;" title="History">⏪</span>
+<input aria-label="Scrub through steps" id="kmScrub" max="0" min="0" step="1" style="flex:1; min-width:110px;" type="range" value="0"/>
+<label style="color:var(--muted); display:flex; align-items:center; gap:4px; font-size:0.8rem;"><span>frame</span>
+<input aria-label="Jump to frame" id="kmJump" min="0" style="width:64px; padding:3px 6px; border:1px solid var(--border); border-radius:4px; font:inherit;" type="number"/></label>
+<button class="tp-btn" data-i18n="return-live" disabled="" id="kmLive" style="padding:4px 10px; font-size:0.8rem;">Jump to latest</button>
+</span>
+<span class="tp-count" data-i18n="tp-idle" id="tpCount">idle</span>
+</div>
+<!-- inertia trace (folded into the controls rail so the left column is never an empty card). SVG sparkline + numeric readout of within-cluster SSE. -->
+<div id="inertiaBox" style="margin-top:12px; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:8px; display:none;">
+<div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+<strong data-i18n="inertia-label" style="color:var(--accent); font-size:0.88rem;">📉 Inertia (within-cluster SSE):</strong>
+<span id="inertiaV" style="font-family:ui-monospace,monospace; font-size:0.88rem;">-</span>
+<span id="inertiaDelta" style="font-family:ui-monospace,monospace; font-size:0.78rem; color:var(--muted);"></span>
+<svg id="inertiaSpark" style="flex:0 0 200px; height:30px; background:var(--card); border:1px solid var(--border); border-radius:4px;" viewbox="0 0 200 40">
+<polyline fill="none" id="inertiaSparkLine" points="" stroke="var(--accent)" stroke-width="1.5"></polyline>
+</svg>
+</div>
+<p data-i18n="inertia-hint" style="margin:6px 0 0; color:var(--muted); font-size:0.78rem; font-style:italic;">
+      Inertia is the total squared distance from each point to its assigned centroid. K-means is guaranteed to never increase it. When it flattens, you've converged.
+    </p>
+</div>
+<!-- Silhouette score. The "how good is this k?" diagnostic. -->
+<div id="silhouetteBox" style="margin-top:8px; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:8px; display:none;">
+<div style="display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;">
+<strong data-i18n="silh-label" style="color:var(--accent); font-size:0.88rem;">📊 Silhouette score:</strong>
+<span id="silhOverall" style="font-family:ui-monospace,monospace; font-size:0.88rem; font-weight:700;">-</span>
+<span data-i18n="silh-range" style="color:var(--muted); font-size:0.78rem;">(range: −1 bad … 0 overlapping … 1 well-separated)</span>
+</div>
+<div id="silhPerCluster" style="margin-top:6px; display:flex; gap:14px; flex-wrap:wrap; font-family:ui-monospace,monospace; font-size:0.82rem;"></div>
+<p data-i18n="silh-hint" style="margin:6px 0 0; color:var(--muted); font-size:0.78rem; font-style:italic;">
+      Silhouette compares each point's distance to its own cluster vs. the nearest other cluster. Use silhouette as one piece of evidence when comparing candidate k values. Also inspect stability, initialization sensitivity, domain meaning, and model-data mismatch; the largest score is not proof of a uniquely true k.
+    </p>
+</div>
+</div><!-- /.bento-cell (controls + diagnostics) -->
+</div><!-- /.bento-side -->
+<div class="bento-main">
+<div class="bento-cell">
+<div class="canvas-stage">
+<canvas aria-label="K-means clustering visualization. Click to add data points or place centroids." height="500" id="cv" role="img" width="800"></canvas>
+<!-- D3/SVG hybrid: a11y overlay; canvas keeps the Voronoi background. -->
+<svg id="cvOverlay" preserveaspectratio="none" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none;" viewbox="0 0 800 500"></svg>
+<div class="choice-overlay" id="initOverlay" style="display:none">
+<h3>How to pick the initial centroids?</h3>
+<div class="choices">
+<button class="choice-btn" data-pick="choose">I'll choose
+          <span class="sub">Click the canvas yourself</span></button>
+<button class="choice-btn" data-pick="random">Randomly
+          <span class="sub">Pick k random points</span></button>
+<button class="choice-btn" data-pick="farthest">Farthest point
+          <span class="sub">Spread centroids apart</span></button>
+<button class="choice-btn" data-pick="kpp">k-means++
+          <span class="sub">Probabilistic farthest</span></button>
+</div>
+</div>
+</div>
+<p class="hint" id="hint">Click on the canvas to add data points. Then click "Place centroids" → "Reassign Points" → "Update Centroids": repeat.</p>
+</div><!-- /.bento-cell (canvas) -->
+<div class="bento-cell">
+<!-- Gaussian Mixture Model (soft EM). Shows that k-means is the
+       hard-EM special case of GMM with isotropic σ → 0 limit. Uses current
+       centroids as init means. Renders 1σ/2σ ellipses on the main canvas. -->
+<details class="gmm-panel" style="margin-top:8px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="gmm-summary">🎲 GMM (soft EM: see k-means as a special case)</span>
+</summary>
+<div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem;">
+<p data-i18n="gmm-hint" style="margin:0 0 8px; color:var(--muted); font-size:0.82rem;">
+        K-means can be viewed as a limiting hard-assignment case of a spherical Gaussian mixture with shared variance tending toward zero. GMM relaxes this: each point has a soft "responsibility" γᵢₖ for each cluster, and clusters have variances (size). Run GMM EM starting from the current k-means centroids and see how the soft fit differs.
+      </p>
+<div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
+<button class="step-btn" data-i18n="gmm-step" id="gmmStepBtn">One EM step</button>
+<button class="step-btn" data-i18n="gmm-run" id="gmmRunBtn">▶ Run 20 EM steps</button>
+<button class="step-btn secondary" data-i18n="gmm-clear" id="gmmClearBtn">Clear GMM</button>
+<label style="margin-left:10px;"><input checked="" id="gmmShow" type="checkbox"/> <span data-i18n="gmm-show">Show ellipses (1σ, 2σ)</span></label>
+</div>
+<div id="gmmStats" style="font-family:ui-monospace,monospace; font-size:0.82rem; color:var(--muted); min-height:1.4em;">
+<span data-i18n="gmm-empty" style="font-style:italic;">(place centroids first, then click "One EM step")</span>
+</div>
+</div>
+</details>
+</div><!-- /.bento-cell (gmm) -->
+</div><!-- /.bento-main -->
+</div><!-- /.bento -->
+<!-- Scenario gallery. Visible, reusable entry points generated from the lesson-tour scenarios. -->
+<details class="scenario-gallery" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="sg-summary">🎯 Try these scenarios first</span>
+</summary>
+<div class="scenario-gallery-panel">
+<p class="scenario-gallery-intro" data-i18n="sg-intro">Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.</p>
+<div aria-live="polite" class="scenario-card-grid" id="scenarioGalleryCards">
+<article class="scenario-card" data-scenario-index="0">
+<h3>Scenario 1: Three compact groups with k equal to three</h3>
+<p class="scenario-meta"><strong>Core question: </strong> What does the algorithm look like when its assumptions match the data?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Use three well-separated point groups with k set to three and run assignment and update steps.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict how many iterations will be needed before the centers stop moving.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain why compact, round groups are an easy case for k-means.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="1">
+<h3>Scenario 2: Poor starting centers can trap the result</h3>
+<p class="scenario-meta"><strong>Core question: </strong> Why can the same data produce different final clusters?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Place all starting centroids in one corner, run the algorithm, then compare with spread-out initialization.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict whether the centers will always recover the visually obvious groups.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain how initialization changes the path of later assignment and update steps.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="2">
+<h3>Scenario 3: A curved smile does not match compact, roughly convex regions under squared Euclidean distance</h3>
+<p class="scenario-meta"><strong>Core question: </strong> What happens when the shape of the data violates the model’s assumptions?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Use the smiley-face data with k set to three and inspect how the curved mouth is split.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict which parts of the shape will be grouped unnaturally.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain why distance to a centroid favors compact, roughly round regions.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="3">
+<h3>Scenario 4: K-means++ spreads the starting centers</h3>
+<p class="scenario-meta"><strong>Core question: </strong> How does a smarter initialization reduce repeated poor runs?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Use six packed circles, compare random initialization with k-means++, and repeat both several times.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict which method will more often place a center in every visible group.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain why spreading initial centers improves coverage without guaranteeing perfection.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="4">
+<h3>Scenario 5: Use silhouette score to compare k values</h3>
+<p class="scenario-meta"><strong>Core question: </strong> Why can lower inertia alone not select the most defensible candidate number of clusters for this purpose?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Run the same data with k equal to two, three, and four, then compare silhouette scores.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict which k will balance within-cluster closeness and between-cluster separation.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain why inertia always falls as more centers are added, while silhouette can reveal over-splitting.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+</div>
+</div>
+</details>
+<!-- Signature challenge. A one-move comparison that gives this applet a memorable first task. -->
+<details class="signature-challenge" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span>✨ Featured comparison</span>
+</summary>
+<div class="signature-challenge-panel">
+<strong>Featured comparison</strong>
+<p>Change k and watch the story change. K-means always returns clusters, but it does not know the right number of clusters.</p>
+<p><em>Run k=2, k=3, and k=5, then compare whether the clusters match the visible data structure.</em></p>
+</div>
+</details>
+<!-- Supporting learning component. -->
+<details class="visual-explanation" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-visual-en="🧭 Visual explanation" data-visual-zh="🧭 可视化解释镜头">🧭 Visual explanation</span>
+</summary>
+<div class="visual-explanation-panel">
+<p class="visual-explanation-intro" data-visual-intro=""></p>
+<div class="visual-flow" data-visual-flow=""></div>
+<div class="visual-watch-grid">
+<div class="visual-snapshot">
+<strong data-visual-en="Live state to watch" data-visual-zh="要观察的实时状态">Live state to watch</strong>
+<pre data-visual-snapshot="">No state captured yet. Run or adjust the applet first.</pre>
+</div>
+<div class="visual-misread">
+<strong data-visual-en="Misread to avoid" data-visual-zh="避免的误读">Misread to avoid</strong>
+<p data-visual-misread=""></p>
+</div>
+</div>
+</div>
+</details>
+<!-- Lesson tour. Ordered scenarios stepping through K-means' key behaviors. -->
+<details class="lesson-tour" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="tour-summary">📚 Lesson tour (5 steps)</span>
+</summary>
+<div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+<div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+<strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
+<strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">-</strong>
+</div>
+<p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">-</p>
+<div style="display:flex; gap:8px; align-items:center;">
+<button class="step-btn secondary" data-i18n="tour-prev" id="tourPrev">← Prev</button>
+<button class="step-btn" data-i18n="tour-apply" id="tourApply">▶ Apply this scenario</button>
+<button class="step-btn secondary" data-i18n="tour-next" id="tourNext">Next →</button>
+</div>
+</div>
+</details>
+<!-- Worksheet/lab mode. 3 questions per applet with instant check. -->
+<details class="worksheet" style="margin-top:8px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="ws-summary">📝 Worksheet (3 questions)</span>
+</summary>
+<div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem; line-height:1.5;">
+<div class="ws-q" id="ws1">
+<p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">Load the <em>smiley face</em> dataset with k=3. Run to convergence. Does k-means recover the two eyes and the curved smile as three clusters?</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="0"/> <span data-i18n="ws1o0">Yes: it finds the two eyes, and the curved smile becomes one banana-shaped cluster.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="1"/> <span data-i18n="ws1o1">No: the smile is a curved arc, and k-means can only carve out round, straight-edged regions.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="2"/> <span data-i18n="ws1o2">Yes: k-means always recovers the true shapes once it converges.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws1btn">Check</button>
+<span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+<div class="ws-q" id="ws2" style="margin-top:10px;">
+<p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Synthetic Gaussian data generated from 3 groups. Compared to k=3, setting k=6 makes the inertia go:</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="0"/> <span data-i18n="ws2o0">Up: extra centroids split real clusters and add distance.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="1"/> <span data-i18n="ws2o1">Down: more centroids means every point is closer to its nearest one.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="2"/> <span data-i18n="ws2o2">Stays the same: there are only 3 real clusters, so the extra centroids do nothing.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws2btn">Check</button>
+<span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+<div class="ws-q" id="ws3" style="margin-top:10px;">
+<p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Use the silhouette score on the Gaussians dataset. Try k=2, k=3, k=4. Which k has the HIGHEST silhouette?</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="0"/> <span data-i18n="ws3o0">k=2: fewer clusters always means a higher silhouette.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="1"/> <span data-i18n="ws3o1">For this generated sample, k=3 corresponds to the three generating groups and has the highest observed silhouette among the tested values.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="2"/> <span data-i18n="ws3o2">k=4: more clusters always means a higher silhouette.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws3btn">Check</button>
+<span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+</div>
+</details>
+<!-- Student response packet. Local-only: students copy or print their own response packet; the site stores nothing on a server. -->
+<details class="classroom-lab quick-assign" id="quick-assign-qa-kmeans-01" data-quick-assign-id="QA-KMEANS-01" style="margin-top:8px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-lab-en="🧪 Quick Assign · QA-KMEANS-01 · 10–15 min" data-lab-zh="🧪 快速任务 · QA-KMEANS-01 · 10–15 分钟">🧪 Quick Assign · QA-KMEANS-01 · 10–15 min</span>
+</summary>
+<div class="lab-panel"><div class="quick-assign-meta" data-r4-no-translate="1" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong>QA-KMEANS-01</strong> · Level 1 · 10–15 min<br><span>Assign, move, repeat</span></div>
+<p class="lab-intro" data-lab-en="Run assignment and centroid updates, then explain how k, initialization, inertia, and silhouette shape the clustering result." data-lab-zh="运行分配与质心更新，然后解释 k、初始化、惯性和轮廓系数如何影响聚类结果。">Run assignment and centroid updates, then explain how k, initialization, inertia, and silhouette shape the clustering result.</p>
+<div class="lab-grid">
+<div class="lab-field">
+<label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
+<textarea data-lab-answer="predict" data-lab-en="Before running, what k and initialization do you expect to fit the dataset best? Why?" data-lab-zh="运行前，你预计哪个 k 和初始化最适合这个数据集？为什么？" id="lab-predict" placeholder="Before running, what k and initialization do you expect to fit the dataset best? Why?"></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
+<textarea data-lab-answer="observe" data-lab-en="Run several steps. Record k, phase, inertia, and whether the cluster centers moved much." data-lab-zh="运行几个步骤。记录 k、阶段、惯性，以及聚类中心是否明显移动。" id="lab-observe" placeholder="Run several steps. Record k, phase, inertia, and whether the cluster centers moved much."></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
+<textarea data-lab-answer="explain" data-lab-en="How did alternating assignment and centroid update reduce the clustering error?" data-lab-zh="交替进行分配和质心更新如何降低聚类误差？" id="lab-explain" placeholder="How did alternating assignment and centroid update reduce the clustering error?"></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
+<textarea data-lab-answer="transfer" data-lab-en="When could k-means give a misleading clustering result even if inertia decreases?" data-lab-zh="即使惯性下降，什么时候 K 均值仍可能给出误导性的聚类结果？" id="lab-transfer" placeholder="When could k-means give a misleading clustering result even if inertia decreases?"></textarea>
+</div>
+</div>
+<div aria-live="polite" class="lab-state" data-lab-state="">State snapshot appears here.</div>
+<div class="lab-actions">
+<button class="step-btn" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态" type="button">↻ Refresh state</button>
+<button class="step-btn" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包" type="button">📋 Copy packet</button>
+<button class="step-btn secondary" data-lab-action="print" data-lab-en="🖨 Print packet" data-lab-zh="🖨 打印实验包" type="button">🖨 Print packet</button>
+<button class="step-btn secondary" data-lab-action="clear" data-lab-en="Clear local draft" data-lab-zh="清除本地草稿" type="button">Clear local draft</button>
+<span aria-live="polite" class="lab-status"></span>
+</div>
+</div>
+</details>
+<!-- Supporting learning component. -->
+<details class="accessibility-layer" open="">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-a11y-en="♿ Text and keyboard support" data-a11y-zh="♿ 无障碍和文本状态层">♿ Text and keyboard support</span>
+</summary>
+<div aria-labelledby="a11yLayerTitle" class="accessibility-panel" role="region">
+<h2 class="sr-only" data-a11y-title="" id="a11yLayerTitle">Text and keyboard support</h2>
+<p class="accessibility-intro" data-a11y-intro=""></p>
+<div class="accessibility-grid">
+<section aria-labelledby="a11yKeyboardTitle" class="accessibility-card">
+<h3 data-a11y-keyboard-title="" id="a11yKeyboardTitle">Keyboard path</h3>
+<ul>
+<li data-a11y-keyboard-1="">Use Tab and Shift+Tab to move through controls.</li>
+<li data-a11y-keyboard-2="">Use Enter or Space on buttons, and arrow keys on sliders or select controls.</li>
+<li data-a11y-keyboard-3="">The visual region is focusable and described by the state summary below.</li>
+</ul>
+</section>
+<section aria-labelledby="a11yStateTitle" class="accessibility-card">
+<h3 data-a11y-state-title="" id="a11yStateTitle">Text state summary</h3>
+<dl class="a11y-state-grid" data-a11y-state-grid="" id="a11yStateSummary"></dl>
+</section>
+<section aria-labelledby="a11yMotionTitle" class="accessibility-card">
+<h3 data-a11y-motion-title="" id="a11yMotionTitle">Reduced motion and non-visual support</h3>
+<p data-a11y-motion-copy="">Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.</p>
+</section>
+</div>
+<p class="accessibility-note" data-a11y-note="">Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.</p>
+<div aria-atomic="true" aria-live="polite" class="sr-only" id="a11yLiveRegion" role="status"></div>
+</div>
+</details>
+<div class="jump-anchor"><a class="jump-link" href="#essay">↓ Read the explanation</a></div>
+</div>
+</section>
+<article class="essay" id="essay">
+<section data-essay-lang="en">
+<p class="lede">
+    Clustering searches for structure without class labels. K-means partitions points into a user-selected
+    number <code>k</code> of clusters by alternating between nearest-center assignments and mean updates.
+    The two steps are simple; choosing <code>k</code>, initializing the centers, and matching the model to
+    the shape of the data are not.
+  </p>
+<h2>The two Lloyd steps</h2>
+<ol>
+<li><strong>Assignment:</strong> assign each point to its nearest centroid under squared Euclidean distance.</li>
+<li><strong>Update:</strong> replace each centroid with the arithmetic mean of the points assigned to it.</li>
+</ol>
+<p>
+    The shaded Voronoi cells contain all locations closest to each centroid. After an update, the cells
+    move with the centroids. Points that now lie inside another cell will change assignment on the next step.
+  </p>
+<h2>Objective and convergence</h2>
+<p>
+    Lloyd's algorithm minimizes the within-cluster sum of squared distances, also called inertia or SSE.
+    With fixed assignments, the mean minimizes squared distance for each cluster. With fixed centroids,
+    nearest-center assignment minimizes each point's contribution. Each completed step therefore does not
+    increase the objective. Because a finite dataset has finitely many assignments, the procedure reaches a
+    fixed point in finitely many assignment changes, subject to a consistent rule for ties and empty clusters.
+  </p>
+<div class="aha">
+    Convergence means the local update rule has stopped changing the solution. It does not mean the selected
+    clustering is globally best, stable across starts, or meaningful for the application.
+  </div>
+<h2>Initialization changes the destination</h2>
+<ul>
+<li><strong>Random data points:</strong> simple, but several centers may begin in one visible group.</li>
+<li><strong>Farthest point:</strong> repeatedly chooses the point farthest from its nearest existing center;
+      it spreads coverage but can favor outliers.</li>
+<li><strong>K-means++:</strong> chooses later centers randomly with probability proportional to squared
+      distance from the nearest selected center. It usually improves starting coverage while retaining randomness.</li>
+<li><strong>Manual placement:</strong> exposes how a deliberately poor start can redirect later assignments.</li>
+</ul>
+<p>
+    Repeating the algorithm from several starts and keeping the lowest-inertia result reduces, but does not remove,
+    sensitivity to local optima. K-means++ is available in this applet so its variability can be compared directly
+    with uniform random initialization.
+  </p>
+<h2>Shape assumptions and choosing k</h2>
+<p>
+    Squared Euclidean distance favors compact, roughly convex groups of comparable scale. Curved, nested, highly
+    unequal, or density-defined clusters can be split in ways that look unnatural. The smiley data makes that mismatch visible.
+  </p>
+<p>
+    There is no universally correct automatic value of <code>k</code>. Inertia always weakly decreases as more
+    centers are added, so it cannot select <code>k</code> by itself. Elbow plots, silhouette scores, stability checks,
+    external validation, and domain constraints provide different evidence, and they can disagree because
+    clustering objectives do not define one uniquely true grouping.
+  </p>
+<h2>What this model leaves out</h2>
+<p>
+    This applet uses Euclidean distance, equal-weight points, and Lloyd updates. Alternatives include k-medoids
+    for greater outlier robustness, Gaussian mixture models for probabilistic soft assignments, fuzzy c-means,
+    spectral clustering, and DBSCAN or HDBSCAN for density-defined shapes and noise points. Production libraries
+    may accelerate the same objective with triangle-inequality bounds, vectorized computation, and multiple starts.
+  </p>
+<p class="citation">
+    The initialization comparison and failure-mode datasets are inspired by Naftali Harris's
+    <em>Visualizing K-Means Clustering</em>. The explanation and classroom sequence are adapted for this suite.
+  </p>
+<div class="for-teachers">
+<h3>For teachers</h3>
+<p><strong>Curriculum:</strong> Unsupervised learning, centroids, assignment and update steps,
+      inertia, convergence, initialization, silhouette score, and model-data mismatch.</p>
+<p><strong>Pre-exploration prompts:</strong></p>
+<ul>
+<li>What information is missing when training examples have no class labels?</li>
+<li>What does the number <code>k</code> require the algorithm to produce?</li>
+<li>Why might two reasonable clusterings exist for the same points?</li>
+</ul>
+<p><strong>Post-exploration prompts:</strong></p>
+<ul>
+<li>Compare random and k-means++ starts on packed circles over several runs.</li>
+<li>Place all centers in one corner. Which later step can recover, and where can the path remain trapped?</li>
+<li>Run the smiley data with several values of <code>k</code>. Why does changing <code>k</code> not repair the shape assumption?</li>
+<li>Compare inertia and silhouette while increasing <code>k</code>. Why do the measures behave differently?</li>
+</ul>
+<p><strong>Misconceptions to test:</strong> k-means discovers the correct number of clusters;
+      convergence establishes global optimality; lower inertia always identifies a better model;
+      k-means++ guarantees the final optimum.</p>
+</div>
+</section>
+<section data-essay-lang="zh" hidden="" lang="zh">
+<p class="lede">
+    聚类在没有类别标签的情况下寻找结构。K 均值把点划分为用户指定的 <code>k</code> 个簇，并在最近中心分配与均值更新之间交替。两个步骤很简单，选择 <code>k</code>、初始化中心以及判断模型是否适合数据形状则并不简单。
+  </p>
+<h2>Lloyd 算法的两个步骤</h2>
+<ol>
+<li><strong>分配：</strong>按照平方欧几里得距离，把每个点分配给最近质心。</li>
+<li><strong>更新：</strong>把每个质心替换为当前分配到该簇的点的算术平均位置。</li>
+</ol>
+<p>
+    阴影 Voronoi 区域包含所有最接近相应质心的位置。质心更新后，区域也会随之移动。现在落入另一颜色区域的点，会在下一次分配步骤中改变所属簇。
+  </p>
+<h2>目标函数与收敛</h2>
+<p>
+    Lloyd 算法最小化簇内平方距离总和，也称惯性或 SSE。在分配固定时，均值是使每个簇平方距离最小的位置；在质心固定时，最近中心分配使每个点的贡献最小。因此每个完整步骤都不会增大目标函数。有限数据集只有有限种分配，在平局与空簇处理规则一致的条件下，算法会在有限次分配变化后达到固定点。
+  </p>
+<div class="aha">
+    收敛只表示局部更新规则不再改变当前解，并不表示该聚类是全局最佳、不同起点下稳定，或对实际应用具有意义。
+  </div>
+<h2>初始化会改变终点</h2>
+<ul>
+<li><strong>随机数据点：</strong>方法简单，但多个中心可能同时落在一个可见群组中。</li>
+<li><strong>最远点：</strong>反复选择距离最近已有中心最远的点，能够分散覆盖，却可能偏向离群点。</li>
+<li><strong>K-means++：</strong>后续中心按到最近已选中心的平方距离成比例随机选择，通常改善初始覆盖，同时保留随机性。</li>
+<li><strong>手动放置：</strong>可以直接观察刻意较差的起点如何改变之后的分配路径。</li>
+</ul>
+<p>
+    从多个起点重复运行并保留惯性最低的结果，可以降低但不能消除对局部最优的敏感性。本工具已包含 K-means++，可以直接把它的波动与均匀随机初始化比较。
+  </p>
+<h2>形状假设与选择 k</h2>
+<p>
+    平方欧几里得距离偏好紧密、近似凸且尺度相近的群组。弯曲、嵌套、大小差异很大或由密度定义的簇，可能被切分成视觉上不自然的结果。笑脸数据让这种不匹配直接可见。
+  </p>
+<p>
+    不存在适用于所有问题的自动正确 <code>k</code>。增加中心后，惯性总是不增，因此不能单独用惯性选择 <code>k</code>。肘部图、轮廓系数、稳定性检验、外部验证和领域约束提供不同证据，而且它们可能不一致，因为聚类目标并不会定义唯一真实的分组。
+  </p>
+<h2>这个模型省略了什么</h2>
+<p>
+    本工具使用欧几里得距离、等权重点和 Lloyd 更新。其他方法包括对离群点更稳健的 K 中心点、提供概率软分配的高斯混合模型、模糊 C 均值、谱聚类，以及处理密度形状和噪声点的 DBSCAN 或 HDBSCAN。生产库还可使用三角不等式界、向量化计算和多次初始化加速相同目标。
+  </p>
+<p class="citation">
+    初始化比较和失败情境数据受到 Naftali Harris 的 <em>Visualizing K-Means Clustering</em> 启发，解释与课堂顺序则为本套件重新编写。
+  </p>
+<div class="for-teachers">
+<h3>教师指导</h3>
+<p><strong>课程目标：</strong>无监督学习、质心、分配与更新步骤、惯性、收敛、初始化、轮廓系数和模型与数据不匹配。</p>
+<p><strong>探索前问题：</strong></p>
+<ul>
+<li>训练样本没有类别标签时缺少了什么信息？</li>
+<li>数值 <code>k</code> 要求算法产生什么？</li>
+<li>为什么同一组点可能存在两个合理聚类？</li>
+</ul>
+<p><strong>探索后问题：</strong></p>
+<ul>
+<li>在紧密圆群上多次比较随机初始化与 K-means++。</li>
+<li>把全部中心放在一个角落。之后哪个步骤能够恢复，路径又可能在哪里被困？</li>
+<li>用多个 <code>k</code> 运行笑脸数据。改变 <code>k</code> 为什么不能修复形状假设？</li>
+<li>提高 <code>k</code> 时比较惯性和轮廓系数。两个指标为什么表现不同？</li>
+</ul>
+<p><strong>需要检验的误解：</strong>K 均值会发现唯一真实的聚类数；收敛证明全局最优；惯性越低模型一定越好；K-means++ 保证最终最优。</p>
+</div>
+</section>
+</article>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const cv = $('cv'); const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+
+  // ===== bilingual string table =====
+  // ZH strings are placeholders: replace with translations.
+  const STRINGS = {
+    en: {
+      'title': 'K-Means Clustering',
+      'back-link': '← Back to all playgrounds',
+      'footer-top': '↑ Back to top', 'footer-course': 'Made for the Introduction to AI course at Haidian Kaiwen Academy.', 'footer-portfolio': 'Portfolio', 'footer-project': 'AI Playgrounds', 'footer-source': 'Source', 'footer-issue': 'Report an issue',
+      'reset-all': '↺ Reset all',
+      'dataset-label': 'Dataset:',
+      'init-label': 'Initialize centroids:',
+      'k-label': 'k =',
+      'place-btn': 'Place centroids',
+      'reassign-btn': '① Reassign only',
+      'update-btn': '② Move centroids only',
+      'run-btn': '▶ Run to convergence',
+      'step-btn': '❘▶ Step', 'step-title': 'Advance one half-step (reassign, then update).',
+      'speed-label': 'Speed', 'back-title': 'Step one half-step backward through the run.',
+      'tp-idle': 'idle',
+      'return-live': 'Jump to latest',
+      'reset-btn': 'Reset',
+      'step-label': 'Step',
+      'tldr-strong': 'The big idea',
+      'tldr-body': 'K-means clusters points by repeatedly moving each centroid to the mean of the points assigned to it. It works on round blobs and fails on weird shapes.',
+      'd-gaussian': 'Gaussian mixture', 'd-uniform': 'Uniform points',
+      'd-packed': 'Packed circles', 'd-smiley': 'Smiley face',
+      'd-pimpled': 'Pimpled smiley', 'd-custom': 'Clear (draw your own)',
+      'i-choose': "I'll choose", 'i-random': 'Randomly', 'i-farthest': 'Farthest point', 'i-kpp': 'k-means++',
+      'inertia-label': '📉 Inertia (within-cluster SSE):',
+      'inertia-hint': "Inertia is the total squared distance from each point to its assigned centroid. K-means is guaranteed to never increase it. When it flattens, you've converged.",
+      'silh-label': '📊 Silhouette score:',
+      'silh-range': '(range: −1 bad … 0 overlapping … 1 well-separated)',
+      'silh-hint': "Silhouette compares each point's distance to its own cluster vs. the nearest other cluster. Use silhouette as one piece of evidence when comparing candidate k values. Also inspect stability, initialization sensitivity, domain meaning, and model-data mismatch; the largest score is not proof of a uniquely true k.",
+      'tour-summary': '📚 Lesson tour (5 steps)',
+      'tour-step': 'Step',
+      'tour-prev': '← Prev', 'tour-next': 'Next →', 'tour-apply': '▶ Apply this scenario',
+      'sg-summary': '🎯 Try these scenarios first',
+      'sg-intro': 'Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.',
+      'sg-card-prefix': 'Scenario',
+      'sg-concept-label': 'Concept',
+      'sg-observe-label': 'What to watch',
+      'sg-misconception-label': 'Predict before applying',
+      'sg-misconception-text': 'Which visible result should change most, and why? Commit to an answer before applying.',
+      'sg-teacher-label': 'Teacher use',
+      'sg-teacher-text': 'Use as a 2–3 minute predict → run → explain prompt.',
+      'sg-apply': 'Apply and compare',
+      'ws-summary': '📝 Worksheet (3 questions)',
+      'ws-check': 'Check',
+      'ws-pick': 'Pick an answer first.',
+      // worksheet question prompts (data-i18n spans) ---
+      'ws1q': 'Load the smiley face dataset with k=3. Run to convergence. Does k-means recover the two eyes and the curved smile as three clusters?',
+      'ws2q': 'For the same synthetic Gaussian data, how does the best achievable within-cluster SSE behave as k increases from 3 to 6?',
+      'ws3q': 'Use the silhouette score on the Gaussians dataset. Try k=2, k=3, k=4. Which k has the HIGHEST silhouette?',
+      // --- MCQ: worksheet option labels (ws{n}o{i}) ---
+      'ws1o0': 'Yes: it finds the two eyes, and the curved smile becomes one banana-shaped cluster.',
+      'ws1o1': 'No: the smile is a curved arc, and k-means can only carve out round, straight-edged regions.',
+      'ws1o2': 'Yes: k-means always recovers the true shapes once it converges.',
+      'ws2o0': 'Up: extra centroids split real clusters and add distance.',
+      'ws2o1': 'Down: more centroids means every point is closer to its nearest one.',
+      'ws2o2': 'Stays the same: there are only 3 real clusters, so the extra centroids do nothing.',
+      'ws3o0': 'k=2: fewer clusters always means a higher silhouette.',
+      'ws3o1': 'For this generated sample, k=3 corresponds to the three generating groups and has the highest observed silhouette among the tested values.',
+      'ws3o2': 'k=4: more clusters always means a higher silhouette.',
+      // lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
+      'tour0name': 'Easy: 3 Gaussians, k=3',
+      'tour0desc': 'Three well-separated Gaussian blobs generated from three groups. With k=3, many initializations recover a grouping aligned with those generators, but convergence still does not prove global optimality or a uniquely true partition.',
+      'tour1name': 'Bad init: all centroids in one corner',
+      'tour1desc': '"I\'ll Choose" init: click the corner four times to place centroids there. K-means now has to escape the bad start. Often it doesn\'t: multiple runs from different inits is standard practice.',
+      'tour2name': 'Wrong k: smiley face',
+      'tour2desc': 'Smiley face dataset with k=3. K-means tries to fit three compact, roughly convex regions under squared Euclidean distance, but the mouth is a curved arc: no single centroid with Euclidean Voronoi assignment can represent it as one curved cluster. This is the algorithm hitting its inductive bias.',
+      'tour3name': 'k-means++ vs Random init',
+      'tour3desc': 'Packed circles with k=6. Random init often misses some clusters; k-means++ spreads initial centroids apart probabilistically and usually finds all six. Re-run a few times to see the variance.',
+      'tour4name': 'Use silhouette as evidence about k',
+      'tour4desc': 'Same Gaussians dataset. Try k=2, k=3, k=4 and check the silhouette score after each. Compare the scores as evidence for this sample, then check stability and domain meaning. A higher score is not proof of a universally correct k, and fixed thresholds are context-dependent.',
+      // worksheet answer-feedback (ws{n}ok / ws{n}no) ---
+      'ws1ok': 'Correct. Squared-Euclidean k-means favors compact, roughly convex groups separated by straight Voronoi boundaries. The smile is a curved arc, so one point centroid cannot preserve the mouth as one natural curved cluster.',
+      'ws1no': 'Hint: the smile is a long curved arc. K-means can only carve the plane with straight Voronoi boundaries around point centroids.',
+      'ws2ok': "Correct for the objective optimum. The minimum achievable within-cluster SSE cannot increase when k increases because an extra centroid can always be left unused or duplicate an existing solution. A particular k-means run can still land in a worse local optimum because initialization matters.",
+      'ws2no': "Think about the best achievable objective: adding a centroid cannot make the optimum SSE worse, although a particular heuristic run can still converge to a poorer local solution.",
+      'ws3ok': 'Correct. With 3 well-separated Gaussian clusters, k=3 has the highest silhouette among the tested values for this generated sample and aligns with its three generating groups. Silhouette balances cohesion and separation, but it does not generally identify one uniquely true k.',
+      'ws3no': "Try k=3. For this generated sample, try k=3 and compare the observed score with k=2 and k=4. Treat the result as evidence for these data, not a universal truth about k.",
+      // tooltip translations for main controls.
+      'd-gaussian-title': 'Three roughly round blobs. This synthetic example is well matched to Euclidean k-means when k=3, but one successful run does not establish a universal grouping.',
+      'd-uniform-title': 'Uniform random points. Tests how k-means behaves with no real cluster structure.',
+      'd-packed-title': 'Six tightly packed circles. Try the farthest point init with k=6.',
+      'd-smiley-title': 'A smiley face. The mouth is a curved arc: k-means cannot find it as a single cluster.',
+      'd-pimpled-title': 'Smiley face plus noise dots. Tests robustness to outliers.',
+      'd-custom-title': 'Empty canvas: click to add your own data points.',
+      'i-choose-title': "Click anywhere on the canvas to place centroids yourself. Best for spotting bad-init failures.",
+      'i-random-title': 'Pick k random data points as initial centroids. Simple but often poor.',
+      'i-farthest-title': 'Pick centroids spread far apart from each other. This can improve coverage over random initialization on some datasets; compare runs rather than assuming it is always better.',
+      'i-kpp-title': 'k-means++ seeds centers using probabilities proportional to D(x)². This is closely related to the scikit-learn default initialization; scikit-learn uses a greedy multi-trial variant of k-means++.',
+      'k-input-title': 'Number of clusters to fit. K-means requires k in advance; diagnostics such as silhouette, stability, external information, and domain goals can inform the choice but do not uniquely determine it.',
+      'place-title': 'Place k centroids using the chosen initialization strategy.',
+      'reassign-title': 'Assign every point to the cluster of its nearest centroid.',
+      'update-title': 'Move each centroid to the mean of the points currently assigned to it.',
+      'run-title': 'Repeat Reassign + Update until the centroids stop moving.',
+      'reset-title': 'Clear centroids and cluster assignments. Keeps the current dataset.',
+      'gmm-summary': '🎲 GMM (soft EM: see k-means as a special case)',
+      'gmm-hint': 'K-means can be viewed as a limiting hard-assignment case of a spherical Gaussian mixture model as the shared variance shrinks. GMM keeps soft responsibilities γᵢₖ and explicit variance parameters. Run EM from the current k-means centroids and compare the soft fit.',
+      'gmm-step': 'One EM step', 'gmm-run': '▶ Run 20 EM steps',
+      'gmm-clear': 'Clear GMM', 'gmm-show': 'Show ellipses (1σ, 2σ)',
+      'gmm-empty': '(place centroids first, then click "One EM step")',
+    },
+    zh: {
+      'title': 'K-均值聚类可视化',
+      'back-link': '← 返回所有演示',
+      'footer-top': '↑ 返回顶部', 'footer-course': '为海淀凯文学校《人工智能导论》课程制作。', 'footer-portfolio': '作品集', 'footer-project': 'AI Playgrounds', 'footer-source': '源代码', 'footer-issue': '反馈问题',
+      'reset-all': '↺ 全部重置',
+      'dataset-label': '数据集:',
+      'init-label': '初始化质心:',
+      'k-label': 'k =',
+      'place-btn': '放置质心',
+      'reassign-btn': '① 仅重新分配',
+      'update-btn': '② 仅移动质心',
+      'run-btn': '▶ 运行至收敛',
+      'step-btn': '❘▶ 单步', 'step-title': '前进一个半步(先重新分配,再更新)。',
+      'speed-label': '速度', 'back-title': '在运行中后退一个半步。',
+      'tp-idle': '空闲',
+      'return-live': '跳到最新',
+      'reset-btn': '重置',
+      'step-label': '步骤',
+      'tldr-strong': '核心思想',
+      'tldr-body': 'K-均值通过反复把每个质心移到分配给它的点的均值来聚类。对圆形数据团很有效,对奇怪形状则失败。',
+      'd-gaussian': '高斯混合', 'd-uniform': '均匀分布',
+      'd-packed': '紧密圆圈', 'd-smiley': '笑脸',
+      'd-pimpled': '带噪笑脸', 'd-custom': '清空(自己绘制)',
+      'i-choose': '自己选', 'i-random': '随机', 'i-farthest': '最远点', 'i-kpp': 'k-means++',
+      'inertia-label': '📉 惯性(类内平方和):',
+      'inertia-hint': '惯性是每个点到其所属质心的距离平方之和。K-means 保证它永不增加。当曲线趋平时,算法已收敛。',
+      'silh-label': '📊 轮廓系数:',
+      'silh-range': '(取值范围:−1 差 … 0 重叠 … 1 分离良好)',
+      'silh-hint': '轮廓系数比较每个点到自身簇与最近其他簇的距离。比较多个 k 时，轮廓系数可以作为一种诊断证据；分数较高并不能证明存在唯一“正确”的 k，还应结合稳定性、外部信息和领域目标。',
+      'tour-summary': '📚 课程导览(5 步)',
+      'tour-step': '步骤',
+      'tour-prev': '← 上一步', 'tour-next': '下一步 →', 'tour-apply': '▶ 应用此场景',
+      'sg-summary': '🎯 先试这些场景',
+      'sg-intro': '先选择一个场景并预测结果,再应用它,然后把运行结果与你的预测进行比较。',
+      'sg-card-prefix': '场景',
+      'sg-concept-label': '概念',
+      'sg-observe-label': '预期观察',
+      'sg-misconception-label': '误区检查',
+      'sg-misconception-text': '初学者的第一反应可能会漏掉或过度简化什么?',
+      'sg-teacher-label': '教师用法',
+      'sg-teacher-text': '用作 2–3 分钟的“预测 → 运行 → 解释”活动。',
+      'sg-apply': '应用场景',
+      'ws-summary': '📝 练习题(3 题)',
+      'ws-check': '核对',
+      'ws-pick': '请先选择一个答案。',
+      // 练习题题干(data-i18n span)---
+      'ws1q': '加载笑脸数据集,设 k=3,运行至收敛。k-means 能把两只眼睛和弯曲的笑嘴恢复成三个簇吗?',
+      'ws2q': '对同一组合成高斯数据,当 k 从 3 增加到 6 时,理论上可达到的最小类内平方和会怎样变化?',
+      'ws3q': '在高斯数据集上使用轮廓系数。试 k=2、k=3、k=4。哪个 k 的轮廓系数最高?',
+      // --- MCQ: 练习题选项标签(ws{n}o{i})---
+      'ws1o0': '能--它找到两只眼睛,而弯曲的笑嘴会变成一个香蕉形的簇。',
+      'ws1o1': '不能--笑嘴是一条曲线弧,而平方欧氏 k-means 更适合紧凑、近似凸的群组,并用直线 Voronoi 边界切分平面。',
+      'ws1o2': '能--k-means 一旦收敛就证明找到了唯一真实的聚类。',
+      'ws2o0': '上升--多出的质心会把真实的簇拆开,增加距离。',
+      'ws2o1': '下降--质心越多,每个点离最近的质心总是更近。',
+      'ws2o2': '不变--只有 3 个生成群组,所以多出的质心不起作用。',
+      'ws3o0': 'k=2--簇越少,轮廓系数总是越高。',
+      'ws3o1': '在这个生成样本和所测试的 k 值中,k=3 与三个生成群组一致,且观察到的轮廓系数最高。',
+      'ws3o2': 'k=4--簇越多,轮廓系数总是越高。',
+      // 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
+      'tour0name': '简单:3 个高斯,k=3',
+      'tour0desc': '三团彼此分得很开的合成高斯生成群组。k=3 时,许多初始化会得到与这三个生成群组一致的划分,但收敛并不能证明全局最优或唯一真实划分。',
+      'tour1name': '糟糕初始化:所有质心挤在一角',
+      'tour1desc': '使用"自己选"初始化--在角落点击四次把质心都放在那里。现在 k-means 必须摆脱糟糕的起点。它常常做不到--用不同初始化多跑几次是标准做法。',
+      'tour2name': '错误的 k:笑脸',
+      'tour2desc': '笑脸数据集,k=3。k-means 试图拟合三个圆形簇,但嘴是一条曲线弧--单个质心及其欧氏距离分区无法表示这条长弯曲结构。这是算法碰到了它的归纳偏置。',
+      'tour3name': 'k-means++ 对比随机初始化',
+      'tour3desc': '紧密圆圈,k=6。随机初始化常会漏掉一些簇;k-means++ 以概率方式把初始质心分散开,通常能找到全部六个。多跑几次看看波动。',
+      'tour4name': '把轮廓系数作为 k 的证据',
+      'tour4desc': '同一个高斯数据集。试 k=2、k=3、k=4,每次之后查看轮廓系数。在这个合成高斯示例中比较这些分数，并把它们当作证据而不是证明；不同数据与目标可能支持不同 k。',
+      // 练习题答案反馈(ws{n}ok / ws{n}no)---
+      'ws1ok': '正确。平方欧氏 k-means 偏好紧凑、近似凸的群组。笑嘴是一条曲线弧;质心只是一个点,直线 Voronoi 分区无法把这条长弯曲结构保留为一个自然簇。',
+      'ws1no': '提示:笑嘴是一条长长的曲线弧。k-means 只能用围绕点质心的直线 Voronoi 边界来切分平面。',
+      'ws2ok': '对目标函数的最优值而言是这样。增加 k 后,可达到的最小类内平方和不会增大,因为新增质心至少可以不改善原解;但一次具体的 k-means 运行仍可能因初始化而停在较差的局部最优。',
+      'ws2no': '考虑理论上可达到的最佳目标值:增加一个质心不会让最优类内平方和变差,但一次具体的启发式运行仍可能收敛到较差的局部解。',
+      'ws3ok': '正确。在这个具有 3 个生成群组的合成高斯样本中，k=3 的轮廓系数较高，并与生成过程相符。轮廓系数兼顾内聚度与分离度，但不能证明存在唯一真实或正确的 k。',
+      'ws3no': '再比较 k=3。在这个生成样本和所测试的 k 值中,k=3 的轮廓系数最高;把它视为这些数据的证据,而不是普适的真实 k 规则。',
+      // 主要控件的提示翻译。
+      'd-gaussian-title': '三团大致紧凑的合成高斯生成群组。k=3 与这里的生成过程相符，但这只是一个有利示例，不代表 k-means 普遍“完美适用”。',
+      'd-uniform-title': '均匀随机点。测试 k-means 在无生成群组结构下的表现。',
+      'd-packed-title': '六个紧密排列的圆。试试 k=6 配合"最远点"初始化。',
+      'd-smiley-title': '笑脸。嘴是曲线弧--k-means 无法将其识别为一个簇。',
+      'd-pimpled-title': '笑脸加噪点。测试对离群点的鲁棒性。',
+      'd-custom-title': '空白画布--点击添加你自己的数据点。',
+      'i-choose-title': '在画布上任意点击放置质心。适合演示糟糕初始化的失败。',
+      'i-random-title': '随机选 k 个数据点作为初始质心。简单但常常效果差。',
+      'i-farthest-title': '挑选彼此相距较远的质心。在某些数据上能比随机初始化覆盖得更好,但应通过多次运行比较,而不是假定它总是更优。',
+      'i-kpp-title': 'k-means++ 按与最近已选质心的距离平方 D(x)² 来随机播种中心。这与 scikit-learn 的默认初始化密切相关;scikit-learn 使用的是带多次候选尝试的贪心 k-means++ 变体。',
+      'k-input-title': '要拟合的簇数。K-means 需要事先指定 k;轮廓系数、稳定性、外部信息和领域目标都可提供证据,但不能唯一决定 k。',
+      'place-title': '按所选的初始化策略放置 k 个质心。',
+      'reassign-title': '把每个点分配给最近质心所在的簇。',
+      'update-title': '把每个质心移到当前分配给它的点的均值。',
+      'run-title': '反复执行"重新分配 + 更新质心",直到质心不再移动。',
+      'reset-title': '清除质心与簇分配。保留当前数据集。',
+      'gmm-summary': '🎲 GMM(软 EM -- 把 k-means 看作特殊情形)',
+      'gmm-hint': 'K-means 可视为共享球形方差趋小时高斯混合模型的一种极限硬分配情形。GMM 保留软责任度 γᵢₖ 和显式方差参数。可从当前 k-means 质心开始运行 EM 并比较软拟合。',
+      'gmm-step': '一步 EM', 'gmm-run': '▶ 运行 20 步 EM',
+      'gmm-clear': '清除 GMM', 'gmm-show': '显示椭圆 (1σ, 2σ)',
+      'gmm-empty': '(先放置质心,再点击"一步 EM")',
+    },
+  };
+  function setLang(lang) {
+    if (!STRINGS[lang]) lang = 'en';
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.dataset.i18n;
+      if (STRINGS[lang][k]) el.textContent = STRINGS[lang][k];
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const k = el.dataset.i18nTitle;
+      if (STRINGS[lang][k]) el.title = STRINGS[lang][k];
+    });
+    document.querySelectorAll('.lang-switch button').forEach(b =>
+      b.classList.toggle('active', b.dataset.lang === lang));
+    try { localStorage.setItem('ai-playgrounds-lang', lang); localStorage.setItem('lang', lang); } catch (_) {}
+    // Re-render so dynamic hint + phase indicator strings pick up the new language.
+    // try/catch: render() reads `let points`, `let centroids`, etc. declared further
+    // down: on initial setLang call those are in TDZ. The catch swallows the initial
+    // call; later language-switch clicks happen after declarations and run fine.
+    try { if (typeof render === 'function') render(); } catch (_) {}
+    try { refreshHintLanguage(); } catch (_) {}
+  }
+  // Bug fix: previously hardcoded English in hint/phase indicator text setters.
+  function tr(key, en, zh) {
+    return (document.documentElement.lang === 'zh') ? zh : en;
+  }
+  function setHint(en, zh) {
+    const hint = $('hint');
+    if (!hint) return;
+    hint.dataset.hintEn = en;
+    hint.dataset.hintZh = zh;
+    hint.textContent = tr('dynamic-hint', en, zh);
+  }
+  function refreshHintLanguage() {
+    const hint = $('hint');
+    if (!hint || !hint.dataset.hintEn) return;
+    hint.textContent = tr('dynamic-hint', hint.dataset.hintEn, hint.dataset.hintZh || hint.dataset.hintEn);
+  }
+  document.querySelectorAll('.lang-switch button').forEach(b =>
+    b.addEventListener('click', () => {
+      setLang(b.dataset.lang);
+      // re-render the tour in the new language. Safe here: this click handler
+      // only runs post-init, after LESSON_TOUR (a late `const`) is initialized, so
+      // there is no temporal-dead-zone risk (unlike calling it from inside setLang).
+      try { if (typeof renderTour === 'function') renderTour(); } catch (_) {}
+      try { if (typeof renderScenarioGallery === 'function') renderScenarioGallery(); } catch (_) {}
+    }));
+  let initialLang = 'en';
+  try { initialLang = new URLSearchParams(location.search).get('lang') || localStorage.getItem('ai-playgrounds-lang') || localStorage.getItem('lang') || 'en'; } catch (_) {}
+  setLang(initialLang);
+
+  // dark / light theme toggle (shared across all playgrounds via 'theme' key)
+  function setTheme(t) {
+    document.body.classList.toggle('dark-mode', t === 'dark');
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+    try { localStorage.setItem('theme', t); } catch (_) {}
+  }
+  let initialTheme = 'light';
+  try {
+    initialTheme = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  } catch (_) {}
+  setTheme(initialTheme);
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    setTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark');
+    if (typeof render === 'function') render();
+  });
+
+  // For-teachers is hidden by default (cognitive-load floor). User toggles persist.
+  // `?teacher=1` opens on load. `?teacher=0` hides completely (no toggle, for projection).
+  try {
+    const tp = new URLSearchParams(location.search).get('teacher');
+    if (tp === '0') {
+      document.querySelectorAll('.for-teachers').forEach(el => el.style.display = 'none');
+    } else {
+      const style = document.createElement('style');
+      style.textContent = '.for-teachers-expander{margin-top:36px}.for-teachers-expander>summary{cursor:pointer;padding:12px 16px;background:var(--soft);border:1px solid var(--border);border-radius:8px;font-family:-apple-system,system-ui,sans-serif;font-size:0.9rem;color:var(--accent);font-weight:600;list-style:none;user-select:none}.for-teachers-expander>summary::-webkit-details-marker{display:none}.for-teachers-expander[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius:0}.for-teachers-expander>.for-teachers{margin-top:0;border-top:0;border-top-left-radius:0;border-top-right-radius:0}';
+      document.head.appendChild(style);
+      document.querySelectorAll('.for-teachers').forEach(div => {
+        const details = document.createElement('details');
+        details.className = 'for-teachers-expander';
+        const summary = document.createElement('summary');
+        summary.textContent = '▸ Show teacher notes (discussion prompts + curriculum)';
+        div.parentNode.insertBefore(details, div);
+        details.appendChild(summary);
+        details.appendChild(div);
+      });
+      const saved = (() => { try { return localStorage.getItem('teacher-notes-open'); } catch (_) { return null; } })();
+      const shouldOpen = tp === '1' || saved === '1';
+      document.querySelectorAll('details.for-teachers-expander').forEach(d => {
+        d.open = shouldOpen;
+        d.addEventListener('toggle', () => {
+          try { localStorage.setItem('teacher-notes-open', d.open ? '1' : '0'); } catch (_) {}
+        });
+      });
+    }
+  } catch (_) {}
+
+  // URL-shareable config. Encodes dataset / init / k into ?s=base64json.
+  function shareableState() {
+    return {
+      d: dataset, i: initStrategy, k: +$('kInput').value,
+    };
+  }
+  function applyShareableState(s) {
+    try {
+      if (s.d) {
+        document.querySelectorAll('#datasetGroup button').forEach(x =>
+          x.classList.toggle('active', x.dataset.d === s.d));
+        dataset = s.d;
+      }
+      if (s.i) {
+        document.querySelectorAll('#initGroup button').forEach(x =>
+          x.classList.toggle('active', x.dataset.i === s.i));
+        initStrategy = s.i;
+      }
+      if (s.k) $('kInput').value = s.k;
+      if (s.d) loadDataset(s.d);
+      updateConditionalControls();
+    } catch (e) { console.warn('Bad share state:', e); }
+  }
+  try {
+    const sp = new URLSearchParams(location.search).get('s');
+    if (sp) applyShareableState(JSON.parse(atob(sp)));
+  } catch (_) {}
+  document.getElementById('shareLink').addEventListener('click', async () => {
+    const encoded = btoa(JSON.stringify(shareableState()));
+    const url = `${location.origin}${location.pathname}?s=${encoded}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      const btn = document.getElementById('shareLink');
+      const orig = btn.textContent; btn.textContent = '✓ Copied';
+      setTimeout(() => btn.textContent = orig, 1500);
+    } catch (_) {
+      prompt('Copy this URL:', url);
+    }
+  });
+
+  // Export the visualization as PNG.
+  document.getElementById('exportPng').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'kmeans.png';
+    link.href = document.getElementById('cv').toDataURL('image/png');
+    link.click();
+  });
+
+  // Spacebar = "Run to convergence" (the primary action).
+  document.addEventListener('keydown', e => {
+    if (e.code === 'Space' &&
+        e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' &&
+        e.target.tagName !== 'SELECT') {
+      e.preventDefault();
+      document.getElementById('runBtn').click();
+    }
+  });
+
+  // Reduced-motion preference
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ===== Cluster palette: color + shape for WCAG-compliant identity =====
+  const PAL = ['#2563eb', '#dc2626', '#16a34a', '#d97706',
+               '#9333ea', '#0891b2', '#db2777', '#ca8a04'];
+  const PAL_LIGHT = ['#dbeafe', '#fee2e2', '#dcfce7', '#fef3c7',
+                      '#f3e8ff', '#cffafe', '#fce7f3', '#fef9c3'];
+  // Shape per cluster: students with color blindness can still tell clusters apart.
+  const SHAPES = ['circle', 'triangle', 'square', 'diamond',
+                   'cross', 'star', 'pentagon', 'hexagon'];
+  function drawShape(ctx, cx, cy, r, shape, fill, stroke) {
+    ctx.fillStyle = fill;
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1; }
+    ctx.beginPath();
+    if (shape === 'circle') ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    else if (shape === 'square') ctx.rect(cx - r, cy - r, r * 2, r * 2);
+    else if (shape === 'triangle') {
+      ctx.moveTo(cx, cy - r); ctx.lineTo(cx + r, cy + r * 0.8); ctx.lineTo(cx - r, cy + r * 0.8); ctx.closePath();
+    } else if (shape === 'diamond') {
+      ctx.moveTo(cx, cy - r); ctx.lineTo(cx + r, cy); ctx.lineTo(cx, cy + r); ctx.lineTo(cx - r, cy); ctx.closePath();
+    } else if (shape === 'cross') {
+      const t = r * 0.35;
+      ctx.rect(cx - t, cy - r, t * 2, r * 2);
+      ctx.rect(cx - r, cy - t, r * 2, t * 2);
+    } else if (shape === 'star') {
+      for (let i = 0; i < 10; i++) {
+        const a = (i * Math.PI) / 5 - Math.PI / 2;
+        const rr = (i % 2 === 0) ? r : r * 0.42;
+        const x = cx + rr * Math.cos(a), y = cy + rr * Math.sin(a);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+    } else if (shape === 'pentagon' || shape === 'hexagon') {
+      const sides = shape === 'pentagon' ? 5 : 6;
+      for (let i = 0; i < sides; i++) {
+        const a = (i * 2 * Math.PI) / sides - Math.PI / 2;
+        const x = cx + r * Math.cos(a), y = cy + r * Math.sin(a);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+    }
+    ctx.fill();
+    if (stroke) ctx.stroke();
+  }
+
+  let points = [];     // {x, y, cluster}
+  let centroids = [];  // {x, y, prevX, prevY, animStart}
+  let iter = 0;
+  let phase = 'ready';  // 'ready' | 'reassigned' | 'updated' | 'converged'
+  // transport-bar state (snapshot ring buffer + pausable run)
+  let kmHistory = [], kmReviewing = false, kmCursor = 0, running = false;
+  let initStrategy = 'random';
+  let dataset = 'gaussian';
+
+  // conditional control reveal: hide "Place centroids" button when in 'choose' mode
+  // (it auto-engages when you click the canvas instead).
+  function updateConditionalControls() {
+    const placeBtn = $('placeBtn');
+    if (initStrategy === 'choose') {
+      placeBtn.textContent = tr('p-click-place', '✏ Click canvas to place', '✏ 点击画布以放置');
+      placeBtn.disabled = true;
+      placeBtn.style.opacity = '0.5';
+    } else {
+      placeBtn.textContent = STRINGS[document.documentElement.lang || 'en']['place-btn'];
+      placeBtn.disabled = false;
+      placeBtn.style.opacity = '';
+    }
+  }
+
+  // ===== Click handling: placing data points OR centroids =====
+  let placingCentroids = false;
+  cv.addEventListener('click', e => {
+    const rect = cv.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (cv.width / rect.width);
+    const y = (e.clientY - rect.top) * (cv.height / rect.height);
+    if (placingCentroids) {
+      const k = +$('kInput').value;
+      if (centroids.length < k) {
+        centroids.push({x, y});
+        if (centroids.length === k) {
+          placingCentroids = false;
+          setHint('Centroids placed. Now click "Reassign Points".', '质心已放置。现在点击"重新分配点"。');
+          // Reset cluster assignments since we're starting fresh.
+          points.forEach(p => p.cluster = -1);
+          iter = 0; phase = 'ready'; if (typeof clearInertia === 'function') clearInertia();
+        } else {
+          const left = k - centroids.length;
+          setHint(`Click ${left} more time(s) to place centroids.`, `再点击 ${left} 次以放置质心。`);
+        }
+        render();
+      }
+    } else {
+      points.push({x, y, cluster: -1});
+      render();
+    }
+  });
+
+  function distSq(a, b) { return (a.x - b.x) ** 2 + (a.y - b.y) ** 2; }
+
+  // ===== Init strategies =====
+  function initCentroids() {
+    const k = Math.max(1, Math.min(8, +$('kInput').value || 3));
+    centroids = [];
+    points.forEach(p => p.cluster = -1);
+    iter = 0; phase = 'ready'; if (typeof clearInertia === 'function') clearInertia();
+    if (!points.length) {
+      setHint('Add some data points first (click the canvas or pick a dataset).', '请先添加数据点（点击画布或选择数据集）。');
+      return;
+    }
+    if (initStrategy === 'choose') {
+      placingCentroids = true;
+      setHint(`Click the canvas ${k} times to place ${k} centroid(s).`, `点击画布 ${k} 次以放置 ${k} 个质心。`);
+      render();
+      return;
+    }
+    if (initStrategy === 'random') {
+      const used = new Set();
+      while (centroids.length < k && centroids.length < points.length) {
+        const i = Math.floor(Math.random() * points.length);
+        if (used.has(i)) continue;
+        used.add(i);
+        centroids.push({x: points[i].x, y: points[i].y});
+      }
+    } else if (initStrategy === 'farthest') {
+      const first = Math.floor(Math.random() * points.length);
+      centroids.push({x: points[first].x, y: points[first].y});
+      while (centroids.length < k) {
+        let bestI = 0, bestD = -1;
+        for (let i = 0; i < points.length; i++) {
+          const d = Math.min(...centroids.map(c => distSq(points[i], c)));
+          if (d > bestD) { bestD = d; bestI = i; }
+        }
+        centroids.push({x: points[bestI].x, y: points[bestI].y});
+      }
+    } else if (initStrategy === 'kpp') {
+      // k-means++. Pick first uniformly; for each subsequent centroid, sample
+      // a point with probability ∝ D(x)² where D(x) = min distance to existing centroids.
+      // This is what scikit-learn ships as default.
+      const first = Math.floor(Math.random() * points.length);
+      centroids.push({x: points[first].x, y: points[first].y});
+      while (centroids.length < k) {
+        const dsq = points.map(p => Math.min(...centroids.map(c => distSq(p, c))));
+        const total = dsq.reduce((a, b) => a + b, 0);
+        if (total <= 0) {
+          // Degenerate case: all points coincide with existing centroids. Fall back to random.
+          const i = Math.floor(Math.random() * points.length);
+          centroids.push({x: points[i].x, y: points[i].y});
+          continue;
+        }
+        let target = Math.random() * total;
+        let pickI = 0;
+        for (let i = 0; i < points.length; i++) {
+          target -= dsq[i];
+          if (target <= 0) { pickI = i; break; }
+        }
+        centroids.push({x: points[pickI].x, y: points[pickI].y});
+      }
+    }
+    setHint('Centroids placed. Now click "Reassign Points".', '质心已放置。现在点击"重新分配点"。');
+    render();
+  }
+
+  function reassignStep() {
+    if (!centroids.length) return false;
+    let anyChange = false;
+    for (const p of points) {
+      let best = 0, bd = distSq(p, centroids[0]);
+      for (let i = 1; i < centroids.length; i++) {
+        const d = distSq(p, centroids[i]);
+        if (d < bd) { bd = d; best = i; }
+      }
+      if (p.cluster !== best) { p.cluster = best; anyChange = true; }
+    }
+    phase = 'reassigned';
+    return anyChange;
+  }
+  function updateStep() {
+    if (!centroids.length) return 0;
+    let moved = 0;
+    const sums = centroids.map(() => ({x: 0, y: 0, n: 0}));
+    for (const p of points) {
+      if (p.cluster < 0) continue;
+      sums[p.cluster].x += p.x; sums[p.cluster].y += p.y; sums[p.cluster].n++;
+    }
+    const now = performance.now();
+    for (let i = 0; i < centroids.length; i++) {
+      if (sums[i].n > 0) {
+        const nx = sums[i].x / sums[i].n, ny = sums[i].y / sums[i].n;
+        moved += Math.hypot(nx - centroids[i].x, ny - centroids[i].y);
+        // smooth centroid tween (respect reduced motion)
+        centroids[i].prevX = centroids[i].x;
+        centroids[i].prevY = centroids[i].y;
+        centroids[i].x = nx; centroids[i].y = ny;
+        centroids[i].animStart = reducedMotion ? null : now;
+      }
+    }
+    iter++;
+    phase = (moved < 0.5) ? 'converged' : 'updated';
+    // record inertia (total within-cluster SSE) so students see convergence.
+    recordInertia();
+    // Animate the centroid move
+    if (!reducedMotion && moved > 0.5) animateMove();
+    return moved;
+  }
+  // inertia trace. Computes Σ_i Σ_{x ∈ C_i} ||x − μ_i||² and appends to history.
+  let inertiaHistory = [];
+  function computeInertia() {
+    if (!centroids.length || !points.length) return 0;
+    let s = 0;
+    for (const p of points) {
+      if (p.cluster < 0) continue;
+      const c = centroids[p.cluster];
+      const dx = p.x - c.x, dy = p.y - c.y;
+      s += dx * dx + dy * dy;
+    }
+    return s;
+  }
+  function recordInertia() {
+    inertiaHistory.push(computeInertia());
+    if (inertiaHistory.length > 50) inertiaHistory.shift();
+  }
+  function clearInertia() { inertiaHistory = []; }
+
+  // smooth centroid animation loop
+  let animating = false;
+  function animateMove() {
+    if (animating) return;
+    animating = true;
+    const DUR = 350;
+    function step() {
+      const now = performance.now();
+      let stillAnimating = false;
+      for (const c of centroids) {
+        if (c.animStart != null) {
+          const t = (now - c.animStart) / DUR;
+          if (t < 1) stillAnimating = true;
+        }
+      }
+      render();
+      if (stillAnimating) requestAnimationFrame(step);
+      else {
+        for (const c of centroids) c.animStart = null;
+        animating = false;
+        render();
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  // ===== Rendering =====
+  // Get the visual position of a centroid: interpolates during animation.
+  function centroidVisualPos(i) {
+    const c = centroids[i];
+    if (c.animStart == null) return {x: c.x, y: c.y};
+    const t = Math.min(1, (performance.now() - c.animStart) / 350);
+    // Ease-out cubic
+    const e = 1 - Math.pow(1 - t, 3);
+    return {
+      x: c.prevX + (c.x - c.prevX) * e,
+      y: c.prevY + (c.y - c.prevY) * e,
+    };
+  }
+  function closestIdxAt(x, y, posList) {
+    let best = 0, bd = (x - posList[0].x) ** 2 + (y - posList[0].y) ** 2;
+    for (let i = 1; i < posList.length; i++) {
+      const d = (x - posList[i].x) ** 2 + (y - posList[i].y) ** 2;
+      if (d < bd) { bd = d; best = i; }
+    }
+    return best;
+  }
+  function render() {
+    ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : 'white';
+    ctx.fillRect(0, 0, W, H);
+
+    // Compute current visual positions of all centroids (handles tween).
+    const visPos = centroids.map((_, i) => centroidVisualPos(i));
+
+    // Voronoi shading: crisper 3px step (improved visual upgrade).
+    if (visPos.length > 0) {
+      const STEP = 3;
+      for (let x = 0; x < W; x += STEP) {
+        for (let y = 0; y < H; y += STEP) {
+          const best = closestIdxAt(x, y, visPos);
+          ctx.fillStyle = PAL_LIGHT[best];
+          ctx.fillRect(x, y, STEP, STEP);
+        }
+      }
+      // Voronoi cell borders: only draw boundaries.
+      ctx.strokeStyle = '#9ca3af';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < W - STEP; x += STEP) {
+        for (let y = 0; y < H; y += STEP) {
+          if (closestIdxAt(x, y, visPos) !== closestIdxAt(x + STEP, y, visPos)) {
+            ctx.beginPath();
+            ctx.moveTo(x + STEP, y);
+            ctx.lineTo(x + STEP, y + STEP);
+            ctx.stroke();
+          }
+        }
+      }
+      for (let x = 0; x < W; x += STEP) {
+        for (let y = 0; y < H - STEP; y += STEP) {
+          if (closestIdxAt(x, y, visPos) !== closestIdxAt(x, y + STEP, visPos)) {
+            ctx.beginPath();
+            ctx.moveTo(x, y + STEP);
+            ctx.lineTo(x + STEP, y + STEP);
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    // Data points with shape based on cluster (color+shape redundancy for accessibility).
+    for (const p of points) {
+      if (p.cluster < 0) {
+        ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#cbd5e1' : '#374151';
+        ctx.beginPath(); ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2); ctx.fill();
+      } else {
+        drawShape(ctx, p.x, p.y, 4, SHAPES[p.cluster % SHAPES.length], PAL[p.cluster]);
+      }
+    }
+
+    // Centroids: interpolated position + shape outline matching their cluster.
+    for (let i = 0; i < visPos.length; i++) {
+      const c = visPos[i];
+      // Outer white ring
+      ctx.beginPath(); ctx.arc(c.x, c.y, 13, 0, Math.PI * 2);
+      ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : 'white'; ctx.fill();
+      ctx.strokeStyle = PAL[i]; ctx.lineWidth = 3; ctx.stroke();
+      // Inner shape matching the cluster's data-point shape
+      drawShape(ctx, c.x, c.y, 6, SHAPES[i % SHAPES.length], PAL[i]);
+    }
+
+    // UI
+    $('iterV').textContent = iter;
+    if (!kmReviewing) { const tc = $('tpCount'); if (tc) tc.textContent = iter > 0 ? `step ${iter}` : 'idle'; }
+    const pInd = $('phaseInd');
+    pInd.className = 'phase-indicator ' + (
+      phase === 'reassigned' ? 'assign'
+      : phase === 'updated' ? 'update'
+      : phase === 'converged' ? 'converged' : '');
+    pInd.textContent = (
+      phase === 'reassigned' ? tr('p-reassigned', 'Points reassigned', '已重新分配点')
+      : phase === 'updated' ? tr('p-updated', 'Centroids updated', '已更新质心')
+      : phase === 'converged' ? tr('p-converged', 'Converged ✓', '已收敛 ✓')
+      : tr('p-ready', 'Ready', '就绪'));
+
+    // Enable/disable buttons
+    $('reassignBtn').disabled = centroids.length === 0;
+    $('updateBtn').disabled = centroids.length === 0 || phase === 'ready';
+
+    // D3/SVG hybrid: rebuild a11y overlay.
+    updateOverlay();
+    // render the inertia trace + silhouette score.
+    renderInertia();
+    renderSilhouette();
+    // overlay GMM ellipses if a GMM has been fit.
+    drawGmmEllipses(ctx);
+  }
+  // Isotropic-Gaussian Mixture Model. Each component has (μ, σ², π).
+  // EM: E-step computes responsibilities γᵢₖ = πₖN(xᵢ|μₖ,σₖ²I) / Σⱼ πⱼN(xᵢ|μⱼ,σⱼ²I);
+  // M-step updates μₖ, σₖ², πₖ from γ-weighted statistics. Initialized from the
+  // current k-means centroids. Pedagogy: when σ → 0 the GMM collapses to k-means
+  // (winner-take-all responsibilities): k-means is just hard EM in disguise.
+  let gmm = null; // { means: [{x,y}], vars: [number], weights: [number], logLik: number, iters: number }
+  function initGmmFromCentroids() {
+    if (!centroids.length || !points.length) return null;
+    const K = centroids.length;
+    // Initial σ²: variance of all points / K (rough prior).
+    let totalVar = 0;
+    let mx = 0, my = 0;
+    for (const p of points) { mx += p.x; my += p.y; }
+    mx /= points.length; my /= points.length;
+    for (const p of points) totalVar += (p.x - mx) ** 2 + (p.y - my) ** 2;
+    totalVar /= points.length;
+    const initVar = Math.max(100, totalVar / K);  // floor at 100 to avoid singularity
+    return {
+      means: centroids.map(c => ({x: c.x, y: c.y})),
+      vars: new Array(K).fill(initVar),
+      weights: new Array(K).fill(1 / K),
+      logLik: -Infinity, iters: 0,
+    };
+  }
+  function gmmStep() {
+    if (!gmm) gmm = initGmmFromCentroids();
+    if (!gmm) return;
+    const K = gmm.means.length;
+    const N = points.length;
+    // E-step: γᵢₖ proportional to πₖ * (1/(2πσₖ²)) * exp(-||xᵢ-μₖ||²/(2σₖ²)).
+    // Work in log-space for numerical safety, then normalize.
+    const resp = []; // [N][K]
+    let logLik = 0;
+    for (const p of points) {
+      const logs = new Array(K);
+      for (let k = 0; k < K; k++) {
+        const v = gmm.vars[k];
+        const d2 = (p.x - gmm.means[k].x) ** 2 + (p.y - gmm.means[k].y) ** 2;
+        logs[k] = Math.log(gmm.weights[k] + 1e-12) - Math.log(2 * Math.PI * v) - d2 / (2 * v);
+      }
+      const lmax = Math.max(...logs);
+      let s = 0;
+      for (let k = 0; k < K; k++) s += Math.exp(logs[k] - lmax);
+      const lse = lmax + Math.log(s);  // log-sum-exp
+      logLik += lse;
+      const r = new Array(K);
+      for (let k = 0; k < K; k++) r[k] = Math.exp(logs[k] - lse);
+      resp.push(r);
+    }
+    // M-step.
+    const Nk = new Array(K).fill(0);
+    for (let k = 0; k < K; k++) for (let i = 0; i < N; i++) Nk[k] += resp[i][k];
+    for (let k = 0; k < K; k++) {
+      if (Nk[k] < 1e-6) continue;
+      let mx = 0, my = 0;
+      for (let i = 0; i < N; i++) { mx += resp[i][k] * points[i].x; my += resp[i][k] * points[i].y; }
+      gmm.means[k].x = mx / Nk[k]; gmm.means[k].y = my / Nk[k];
+      let vSum = 0;
+      for (let i = 0; i < N; i++) {
+        const d2 = (points[i].x - gmm.means[k].x) ** 2 + (points[i].y - gmm.means[k].y) ** 2;
+        vSum += resp[i][k] * d2;
+      }
+      // Isotropic 2D Gaussian: σ² estimate is (Σγ·d²) / (2·Σγ).
+      gmm.vars[k] = Math.max(50, vSum / (2 * Nk[k]));
+      gmm.weights[k] = Nk[k] / N;
+    }
+    gmm.logLik = logLik;
+    gmm.iters++;
+    updateGmmStats();
+    render();
+  }
+  function updateGmmStats() {
+    if (!gmm) {
+      $('gmmStats').innerHTML = '<span style="font-style:italic;">(no GMM fit yet)</span>';
+      return;
+    }
+    const wStr = gmm.weights.map(w => w.toFixed(3)).join(', ');
+    const sStr = gmm.vars.map(v => Math.sqrt(v).toFixed(1)).join(', ');
+    $('gmmStats').innerHTML =
+      `<span>iter <strong>${gmm.iters}</strong> · ` +
+      `log-likelihood <strong>${gmm.logLik.toFixed(1)}</strong> · ` +
+      `weights π = [${wStr}] · ` +
+      `1σ = [${sStr}] px</span>`;
+  }
+  function drawGmmEllipses(ctx) {
+    if (!gmm || !$('gmmShow') || !$('gmmShow').checked) return;
+    for (let k = 0; k < gmm.means.length; k++) {
+      const sigma = Math.sqrt(gmm.vars[k]);
+      const cx = gmm.means[k].x, cy = gmm.means[k].y;
+      // 1σ and 2σ circles (isotropic, so circles not ellipses).
+      ctx.strokeStyle = (PAL && PAL[k]) ? PAL[k] : '#7c3aed';
+      for (const mult of [1, 2]) {
+        ctx.lineWidth = (mult === 1) ? 2 : 1;
+        ctx.setLineDash(mult === 1 ? [] : [4, 4]);
+        ctx.beginPath();
+        ctx.arc(cx, cy, sigma * mult, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+    }
+  }
+  // silhouette score per AIMA-ish reference (Rousseeuw 1987).
+  // s(i) = (b(i) - a(i)) / max(a(i), b(i))
+  //   a(i) = mean dist from point i to other points in its own cluster
+  //   b(i) = min over OTHER clusters C of (mean dist from i to points in C)
+  // Singleton clusters get s(i) = 0 by convention.
+  function computeSilhouette() {
+    if (!centroids.length || !points.length) return null;
+    // Group points by cluster.
+    const byCluster = {};
+    for (const p of points) {
+      if (p.cluster < 0) return null; // unassigned points → silhouette undefined
+      if (!byCluster[p.cluster]) byCluster[p.cluster] = [];
+      byCluster[p.cluster].push(p);
+    }
+    const clusterIds = Object.keys(byCluster).map(Number).sort((a, b) => a - b);
+    if (clusterIds.length < 2) return null; // need ≥ 2 clusters
+    const dist = (p, q) => Math.hypot(p.x - q.x, p.y - q.y);
+    const perCluster = {};
+    let overall = 0, overallN = 0;
+    for (const cid of clusterIds) {
+      const own = byCluster[cid];
+      let clusterSum = 0, clusterN = 0;
+      for (const p of own) {
+        let a = 0;
+        if (own.length > 1) {
+          for (const q of own) if (q !== p) a += dist(p, q);
+          a /= (own.length - 1);
+        } else {
+          // singleton: silhouette undefined, conventionally 0
+          clusterSum += 0; clusterN += 1;
+          overall += 0; overallN += 1;
+          continue;
+        }
+        let b = Infinity;
+        for (const ocid of clusterIds) {
+          if (ocid === cid) continue;
+          const other = byCluster[ocid];
+          let mean = 0;
+          for (const q of other) mean += dist(p, q);
+          mean /= other.length;
+          if (mean < b) b = mean;
+        }
+        const s = (b - a) / Math.max(a, b);
+        clusterSum += s; clusterN += 1;
+        overall += s; overallN += 1;
+      }
+      perCluster[cid] = clusterN > 0 ? clusterSum / clusterN : 0;
+    }
+    return {
+      overall: overallN > 0 ? overall / overallN : 0,
+      perCluster,
+    };
+  }
+  function renderSilhouette() {
+    const box = $('silhouetteBox');
+    if (!box) return;
+    const s = computeSilhouette();
+    if (!s) { box.style.display = 'none'; return; }
+    box.style.display = '';
+    $('silhOverall').textContent = s.overall.toFixed(3);
+    // Color-code overall score.
+    const o = s.overall;
+    const ovEl = $('silhOverall');
+    ovEl.style.color = o >= 0.5 ? '#16a34a' : o >= 0.25 ? '#0284c7' : o >= 0 ? '#eab308' : '#dc2626';
+    // Per-cluster.
+    const colors = ['#dc2626', '#0284c7', '#16a34a', '#9333ea', '#ea580c', '#0891b2', '#be185d', '#65a30d'];
+    let html = '';
+    for (const [cid, score] of Object.entries(s.perCluster)) {
+      const c = colors[cid % colors.length];
+      html += `<span><span style="display:inline-block; width:10px; height:10px; background:${c}; border-radius:50%; vertical-align:middle; margin-right:4px;"></span>cluster ${+cid + 1}: <b>${score.toFixed(3)}</b></span>`;
+    }
+    $('silhPerCluster').innerHTML = html;
+  }
+  function renderInertia() {
+    const box = $('inertiaBox');
+    if (!box) return;
+    if (inertiaHistory.length === 0) { box.style.display = 'none'; return; }
+    box.style.display = '';
+    const cur = inertiaHistory[inertiaHistory.length - 1];
+    $('inertiaV').textContent = cur.toFixed(0);
+    // Delta vs previous step.
+    if (inertiaHistory.length >= 2) {
+      const prev = inertiaHistory[inertiaHistory.length - 2];
+      const d = cur - prev;
+      const lang = document.documentElement.lang === 'zh' ? 'zh' : 'en';
+      const arrow = d < -0.5 ? '↓' : d > 0.5 ? '↑' : '≈';
+      const dropTxt = lang === 'zh' ? '本次下降' : 'this step';
+      $('inertiaDelta').textContent = `${arrow} ${Math.abs(d).toFixed(0)} (${dropTxt})`;
+    } else {
+      $('inertiaDelta').textContent = '';
+    }
+    // Sparkline: 50 most recent values, scaled to viewBox.
+    const W = 200, H = 40, pad = 2;
+    const min = Math.min(...inertiaHistory);
+    const max = Math.max(...inertiaHistory);
+    const span = max - min || 1;
+    const n = inertiaHistory.length;
+    const pts = inertiaHistory.map((v, i) => {
+      const x = n === 1 ? W / 2 : pad + (W - 2 * pad) * (i / (n - 1));
+      const y = H - pad - ((v - min) / span) * (H - 2 * pad);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(' ');
+    document.getElementById('inertiaSparkLine').setAttribute('points', pts);
+  }
+  // D3-style enter/update/exit overlay. Preserves SVG element identity
+  // across renders (was: tear down + rebuild every frame), which means:
+  //   • focused centroids don't lose focus when render() fires
+  //   • CSS transitions on cx/cy/x/y are honored (smooth tweens, not jumps)
+  //   • screen readers don't re-announce every centroid on every reassign step
+  // Keying: centroids by index (stable in this applet since reassign doesn't
+  // reorder them), points by (x, y) snapshot at first sight (rounded to keep
+  // identity through small tweens).
+  const ns = 'http://www.w3.org/2000/svg';
+  function updateOverlay() {
+    const svg = document.getElementById('cvOverlay');
+    if (!svg) return;
+    // ===== Centroids: enter / update / exit by index =====
+    const existingCentroids = Array.from(svg.querySelectorAll('rect[data-role="centroid"]'));
+    centroids.forEach((c, idx) => {
+      let el = existingCentroids[idx];
+      if (!el) {
+        el = document.createElementNS(ns, 'rect');
+        el.setAttribute('data-role', 'centroid');
+        el.setAttribute('width', 24); el.setAttribute('height', 24);
+        el.setAttribute('fill', 'transparent');
+        el.setAttribute('tabindex', 0);
+        el.setAttribute('role', 'graphics-symbol');
+        el.style.pointerEvents = 'auto';
+        el.style.cursor = 'help';
+        el.style.transition = 'x 200ms ease, y 200ms ease';
+        const t = document.createElementNS(ns, 'title');
+        el.appendChild(t);
+        svg.appendChild(el);
+      }
+      el.setAttribute('x', c.x - 12); el.setAttribute('y', c.y - 12);
+      el.setAttribute('aria-label', `Centroid ${idx + 1} at ${Math.round(c.x)}, ${Math.round(c.y)}.`);
+      el.firstChild.textContent = `Centroid ${idx + 1}`;
+    });
+    // Exit: remove any extra centroid elements (k decreased).
+    for (let i = centroids.length; i < existingCentroids.length; i++) {
+      existingCentroids[i].remove();
+    }
+
+    // ===== Points: enter / update / exit by index =====
+    // Points get tooltips but no tab stops (would flood keyboard nav).
+    const existingPoints = Array.from(svg.querySelectorAll('circle[data-role="point"]'));
+    points.forEach((p, idx) => {
+      let el = existingPoints[idx];
+      if (!el) {
+        el = document.createElementNS(ns, 'circle');
+        el.setAttribute('data-role', 'point');
+        el.setAttribute('r', 8);
+        el.setAttribute('fill', 'transparent');
+        el.style.pointerEvents = 'auto';
+        el.style.cursor = 'help';
+        el.style.transition = 'cx 200ms ease, cy 200ms ease';
+        const t = document.createElementNS(ns, 'title');
+        el.appendChild(t);
+        svg.appendChild(el);
+      }
+      el.setAttribute('cx', p.x); el.setAttribute('cy', p.y);
+      el.firstChild.textContent = p.cluster >= 0
+        ? `Point ${idx + 1}: cluster ${p.cluster + 1}`
+        : `Point ${idx + 1}: unassigned`;
+    });
+    for (let i = points.length; i < existingPoints.length; i++) {
+      existingPoints[i].remove();
+    }
+  }
+
+  // ===== Datasets =====
+  function randn() {
+    let u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+  function loadDataset(name) {
+    points = []; centroids = []; iter = 0; phase = 'ready'; if (typeof clearInertia === 'function') clearInertia();
+    placingCentroids = false;
+    if (name === 'gaussian') {
+      const centers = [{x: 200, y: 150}, {x: 580, y: 180}, {x: 400, y: 380}];
+      for (const c of centers) {
+        for (let i = 0; i < 50; i++) {
+          points.push({x: c.x + randn() * 40, y: c.y + randn() * 40, cluster: -1});
+        }
+      }
+    } else if (name === 'uniform') {
+      for (let i = 0; i < 150; i++) {
+        points.push({x: 40 + Math.random() * (W - 80),
+                     y: 40 + Math.random() * (H - 80), cluster: -1});
+      }
+    } else if (name === 'packed') {
+      const centers = [
+        {x: 140, y: 130}, {x: 360, y: 130}, {x: 580, y: 130},
+        {x: 140, y: 370}, {x: 360, y: 370}, {x: 580, y: 370},
+      ];
+      for (const c of centers) {
+        for (let i = 0; i < 30; i++) {
+          const r = 30 * Math.sqrt(Math.random());
+          const a = 2 * Math.PI * Math.random();
+          points.push({x: c.x + r * Math.cos(a), y: c.y + r * Math.sin(a), cluster: -1});
+        }
+      }
+    } else if (name === 'smiley' || name === 'pimpled') {
+      // Face outline
+      for (let t = 0; t < 100; t++) {
+        const a = 2 * Math.PI * t / 100;
+        points.push({x: 400 + 220 * Math.cos(a), y: 260 + 200 * Math.sin(a), cluster: -1});
+      }
+      // Eyes
+      for (let i = 0; i < 25; i++) {
+        const a = 2 * Math.PI * Math.random();
+        const r = 22 * Math.sqrt(Math.random());
+        points.push({x: 320 + r * Math.cos(a), y: 200 + r * Math.sin(a), cluster: -1});
+      }
+      for (let i = 0; i < 25; i++) {
+        const a = 2 * Math.PI * Math.random();
+        const r = 22 * Math.sqrt(Math.random());
+        points.push({x: 480 + r * Math.cos(a), y: 200 + r * Math.sin(a), cluster: -1});
+      }
+      // Mouth (curved arc)
+      for (let t = 0; t < 50; t++) {
+        const a = Math.PI + Math.PI * t / 49;   // bottom half of a circle
+        points.push({x: 400 + 100 * Math.cos(a), y: 320 + 60 * Math.sin(a), cluster: -1});
+      }
+      // Pimples (extra random scatter)
+      if (name === 'pimpled') {
+        for (let i = 0; i < 50; i++) {
+          // Scatter inside the face
+          let x, y;
+          do {
+            x = 200 + Math.random() * 400;
+            y = 100 + Math.random() * 320;
+          } while ((x - 400) ** 2 / (220 * 220) + (y - 260) ** 2 / (200 * 200) > 0.9);
+          points.push({x, y, cluster: -1});
+        }
+      }
+    }
+    // 'custom' leaves points empty
+    setHint(
+      points.length ? 'Now choose an initialization strategy and click "Place centroids".' : 'Click anywhere on the canvas to add data points.',
+      points.length ? '现在选择初始化策略，然后点击“放置质心”。' : '在画布上点击任意位置添加数据点。'
+    );
+    render();
+  }
+
+  // ===== Wiring =====
+  document.querySelectorAll('#datasetGroup button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#datasetGroup button').forEach(x =>
+        x.classList.toggle('active', x === b));
+      dataset = b.dataset.d;
+      loadDataset(dataset);
+    });
+  });
+  document.querySelectorAll('#initGroup button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#initGroup button').forEach(x =>
+        x.classList.toggle('active', x === b));
+      initStrategy = b.dataset.i;
+      updateConditionalControls();
+    });
+  });
+  // Hard reset (header button): full reset to defaults.
+  $('hardReset').addEventListener('click', () => {
+    document.querySelectorAll('#datasetGroup button').forEach(x =>
+      x.classList.toggle('active', x.dataset.d === 'gaussian'));
+    document.querySelectorAll('#initGroup button').forEach(x =>
+      x.classList.toggle('active', x.dataset.i === 'random'));
+    dataset = 'gaussian'; initStrategy = 'random'; $('kInput').value = 3;
+    updateConditionalControls();
+    loadDataset('gaussian');
+  });
+  // ===== Unified transport bar: snapshot ring buffer (universal step-back) =====
+  const KM_CAP = 300;
+  function kmSetCount(t) { const tc = $('tpCount'); if (tc) tc.textContent = t; }
+  function kmSyncScrub() {
+    const sc = document.getElementById('kmScrub'); if (!sc) return;
+    sc.max = Math.max(0, kmHistory.length - 1);
+    if (!kmReviewing) sc.value = kmHistory.length - 1;
+    const grp = document.getElementById('kmScrubGroup');
+    if (grp && kmHistory.length >= 2) grp.style.visibility = 'visible';
+  }
+  function kmSnap() {
+    kmHistory.push({ assign: points.map(p => p.cluster), cents: centroids.map(c => ({x: c.x, y: c.y})),
+                     iter, phase, inertiaLen: inertiaHistory.length });
+    if (kmHistory.length > KM_CAP) kmHistory.shift();
+    kmSyncScrub();
+  }
+  function kmApply(s) {            // restore points + centroids for review (no tween)
+    animating = false;
+    points.forEach((p, i) => { p.cluster = s.assign[i]; });
+    centroids = s.cents.map(c => ({x: c.x, y: c.y, prevX: c.x, prevY: c.y, animStart: null}));
+    iter = s.iter; phase = s.phase;
+    if (inertiaHistory.length > s.inertiaLen) inertiaHistory.length = s.inertiaLen;
+    render();
+  }
+  function kmReturnLive() {
+    if (kmHistory.length) kmApply(kmHistory[kmHistory.length - 1]);
+    kmReviewing = false; kmSetCount(`step ${iter}`);
+    const _sc=document.getElementById('kmScrub'); if(_sc) _sc.value=Math.max(0,kmHistory.length-1); const _lv=document.getElementById('kmLive'); if(_lv) _lv.disabled = true;
+  }
+  function kmGoto(idx) {
+    if (running || kmHistory.length === 0) return;
+    idx = Math.max(0, Math.min(kmHistory.length - 1, idx | 0));
+    if (idx >= kmHistory.length - 1) { kmReturnLive(); return; }
+    kmReviewing = true; kmCursor = idx;
+    kmApply(kmHistory[idx]);
+    kmSetCount(`frame ${idx + 1}/${kmHistory.length}`);
+    const _sc=document.getElementById('kmScrub'); if(_sc) _sc.value=idx; const _lv=document.getElementById('kmLive'); if(_lv) _lv.disabled = false;
+  }
+  function kmBack() {
+    if (running || kmHistory.length === 0) return;
+    kmGoto((kmReviewing ? kmCursor : kmHistory.length - 1) - 1);
+  }
+  function kmStep() {             // ❘▶ : forward through review, else next half-step
+    if (running) return;
+    if (kmReviewing) { kmGoto(kmCursor + 1); return; }
+    if (!centroids.length) return;
+    if (phase === 'reassigned') updateStep(); else reassignStep();
+    kmSnap(); render(); kmSetCount(`step ${iter}`);
+  }
+  function kmDelay() { return Math.max(0, 500 - (+$('speedSlider').value) * 4.7); }  // ~500ms..30ms
+  $('stepBtn').addEventListener('click', kmStep);
+  $('backBtn').addEventListener('click', kmBack);
+  { const sc = document.getElementById('kmScrub'); if (sc) sc.addEventListener('input', () => kmGoto(+sc.value)); }
+  { const jb = document.getElementById('kmJump'); if (jb) jb.addEventListener('change', () => { let v = parseInt(jb.value, 10); if (Number.isNaN(v)) return; v = Math.max(0, Math.min(kmHistory.length - 1, v)); kmGoto(v); }); }
+  { const lv = document.getElementById('kmLive'); if (lv) lv.addEventListener('click', kmReturnLive); }
+  window.__kmeansAcceptanceTest = function () {
+    const sp = $('speedSlider');
+    const r = { transportBar: !!$('transport'), backBtn: !!$('backBtn'), stepBtn: !!$('stepBtn'),
+                resetBtn: !!$('resetBtn'), speedInBar: !!(sp && sp.closest('#transport')),
+                snapshots: kmHistory.length };
+    const pass = r.transportBar && r.backBtn && r.stepBtn && r.resetBtn && r.speedInBar;
+    console.log('[k-means] CONTROLS ACCEPTANCE TEST ' + (pass ? 'passed' : 'FAILED'), r);
+    return Object.assign({ pass }, r);
+  };
+  $('placeBtn').addEventListener('click', initCentroids);
+  $('reassignBtn').addEventListener('click', () => { reassignStep(); kmSnap(); render(); kmSetCount(`step ${iter}`); });
+  $('updateBtn').addEventListener('click', () => { updateStep(); kmSnap(); render(); kmSetCount(`step ${iter}`); });
+  $('runBtn').addEventListener('click', async () => {
+    if (kmReviewing) kmReturnLive();
+    if (running) { running = false; document.getElementById('runBtn').setAttribute('aria-pressed', 'false'); return; }       // toggle → pause
+    if (!centroids.length) return;
+    running = true; $('runBtn').textContent = '⏸ Pause'; document.getElementById('runBtn').setAttribute('aria-pressed', 'true');
+    const baseTitle = document.title.replace(/^\(iter \d+\) /, '');
+    let safety = 0;
+    while (running && safety < 200) {
+      const changed = reassignStep(); kmSnap(); render();
+      document.title = `(iter ${iter}) ${baseTitle}`;
+      await new Promise(r => setTimeout(r, kmDelay()));
+      if (!running) break;
+      const moved = updateStep(); kmSnap(); render(); kmSetCount(`step ${iter}`);
+      document.title = `(iter ${iter}) ${baseTitle}`;
+      await new Promise(r => setTimeout(r, kmDelay()));
+      if (!changed || moved < 0.5) break;
+      safety++;
+    }
+    running = false; $('runBtn').textContent = '▶ Run to convergence'; document.getElementById('runBtn').setAttribute('aria-pressed', 'false');
+    document.title = baseTitle;
+  });
+  $('resetBtn').addEventListener('click', () => {
+    running = false; $('runBtn').textContent = '▶ Run to convergence';
+    kmHistory = []; kmReviewing = false; kmSetCount('idle');
+    { const g=document.getElementById('kmScrubGroup'); if(g) g.style.visibility='hidden'; const sc=document.getElementById('kmScrub'); if(sc){ sc.max=0; sc.value=0; } const lv=document.getElementById('kmLive'); if(lv) lv.disabled = true; }
+    centroids = []; iter = 0; phase = 'ready'; if (typeof clearInertia === 'function') clearInertia();
+    points.forEach(p => p.cluster = -1);
+    placingCentroids = false;
+    setHint('Cleared. Pick a dataset and place centroids again.', '已清空。选择数据集并重新放置质心。');
+    render();
+  });
+  $('kInput').addEventListener('change', () => {
+    centroids = []; placingCentroids = false;
+    kmHistory = []; kmReviewing = false; kmSetCount('idle');
+    { const g=document.getElementById('kmScrubGroup'); if(g) g.style.visibility='hidden'; const sc=document.getElementById('kmScrub'); if(sc){ sc.max=0; sc.value=0; } const lv=document.getElementById('kmLive'); if(lv) lv.disabled = true; }
+    points.forEach(p => p.cluster = -1);
+    iter = 0; phase = 'ready'; if (typeof clearInertia === 'function') clearInertia();
+    render();
+  });
+
+  // touch support: synthesize mouse events from touch events for tablet use.
+  (() => {
+    const target = cv;
+    let lastTouch = null;
+    target.addEventListener('touchstart', e => {
+      if (e.touches.length > 0) {
+        e.preventDefault();
+        lastTouch = {clientX: e.touches[0].clientX, clientY: e.touches[0].clientY};
+        target.dispatchEvent(new MouseEvent('mousedown', lastTouch));
+      }
+    }, {passive: false});
+    target.addEventListener('touchmove', e => {
+      if (e.touches.length > 0) {
+        e.preventDefault();
+        lastTouch = {clientX: e.touches[0].clientX, clientY: e.touches[0].clientY};
+        target.dispatchEvent(new MouseEvent('mousemove', lastTouch));
+      }
+    }, {passive: false});
+    target.addEventListener('touchend', e => {
+      e.preventDefault();
+      if (lastTouch) {
+        target.dispatchEvent(new MouseEvent('mouseup', lastTouch));
+        target.dispatchEvent(new MouseEvent('click', lastTouch));
+      }
+      lastTouch = null;
+    }, {passive: false});
+  })();
+
+  // Harris-style init choice overlay.
+  // Shows on hardReset OR when explicitly invoked. Picking a strategy applies it
+  // and (for non-"choose") immediately places centroids.
+  function showInitOverlay() {
+    document.getElementById('initOverlay').style.display = '';
+    document.body.classList.add('overlay-active');
+  }
+  function hideInitOverlay() {
+    document.getElementById('initOverlay').style.display = 'none';
+    document.body.classList.remove('overlay-active');
+  }
+  document.querySelectorAll('#initOverlay .choice-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pick = btn.dataset.pick;
+      document.querySelectorAll('#initGroup button').forEach(x =>
+        x.classList.toggle('active', x.dataset.i === pick));
+      initStrategy = pick;
+      updateConditionalControls();
+      hideInitOverlay();
+      if (pick !== 'choose') initCentroids();
+    });
+  });
+  // Re-route the hard-reset button to also show the choice overlay (Harris's pattern).
+  const origHardReset = document.getElementById('hardReset').onclick;
+  document.getElementById('hardReset').addEventListener('click', () => {
+    // Existing logic loads default dataset already; just surface the overlay too.
+    showInitOverlay();
+  });
+
+  // CSV export.
+  document.getElementById('csvExport').addEventListener('click', () => {
+    const lines = ['# K-means data export', '# Section 1: points', 'x,y,cluster'];
+    for (const p of points) lines.push(`${p.x.toFixed(2)},${p.y.toFixed(2)},${p.cluster}`);
+    lines.push('', '# Section 2: centroids', 'x,y');
+    for (const c of centroids) lines.push(`${c.x.toFixed(2)},${c.y.toFixed(2)}`);
+    const blob = new Blob([lines.join('\n')], {type: 'text/csv'});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `kmeans-k${centroids.length}-n${points.length}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  });
+
+  // Lesson tour: ordered K-means scenarios.
+  const LESSON_TOUR = [
+    { name: 'Easy: 3 Gaussians, k=3',
+      description: 'Three well-separated Gaussian blobs generated from three groups. With k=3, many initializations recover a grouping aligned with those generators, but convergence still does not prove global optimality or a uniquely true partition.',
+      apply: () => { initStrategy = 'random'; $('kInput').value = 3; loadDataset('gaussian'); render(); } },
+    { name: 'Bad init: all centroids in one corner',
+      description: '"I\'ll Choose" init: click the corner four times to place centroids there. K-means now has to escape the bad start. Often it doesn\'t: multiple runs from different inits is standard practice.',
+      apply: () => { initStrategy = 'choose'; $('kInput').value = 3; loadDataset('gaussian'); setHint('Now click the corner of the canvas 3 times to place centroids in a bad starting position.', '现在在画布角落点击 3 次，把质心放在较差的起始位置。'); render(); } },
+    { name: 'Wrong k: smiley face',
+      description: 'Smiley face dataset with k=3. K-means tries to fit three compact, roughly convex regions under squared Euclidean distance, but the mouth is a curved arc: no single centroid with Euclidean Voronoi assignment can represent it as one curved cluster. This is the algorithm hitting its inductive bias.',
+      apply: () => { initStrategy = 'random'; $('kInput').value = 3; loadDataset('smiley'); render(); } },
+    { name: 'k-means++ vs Random init',
+      description: 'Packed circles with k=6. Random init often misses some clusters; k-means++ spreads initial centroids apart probabilistically and usually finds all six. Re-run a few times to see the variance.',
+      apply: () => { initStrategy = 'kpp'; $('kInput').value = 6; loadDataset('packed'); render(); } },
+    { name: 'Use silhouette to pick k',
+      description: 'Same Gaussians dataset. Try k=2, k=3, k=4 and check the silhouette score after each. Compare the scores as evidence for this sample, then check stability and domain meaning. A higher score is not proof of a universally correct k, and fixed thresholds are context-dependent.',
+      apply: () => { initStrategy = 'random'; $('kInput').value = 3; loadDataset('gaussian'); render(); setHint('Now press "Place centroids", then "Reassign Points" and "Update Centroids" twice. Watch the silhouette score box. Try k=2 and k=4 too.', '现在点击“放置质心”，再依次点击“重新分配点”和“更新质心”两次。观察轮廓系数框，也试试 k=2 和 k=4。'); } },
+  ];
+  let tourIdx = 0;
+  function renderTour() {
+    if (!$('tourName')) return;
+    const s = LESSON_TOUR[tourIdx];
+    // Bilingual: look up tour{i}name / tour{i}desc with English inline fallback.
+    const L = (document.documentElement.lang || 'en');
+    const S = STRINGS[L] || STRINGS.en;
+    $('tourName').textContent = S['tour' + tourIdx + 'name'] || s.name;
+    $('tourDesc').textContent = S['tour' + tourIdx + 'desc'] || s.description;
+    $('tourPos').textContent = `${tourIdx + 1}/${LESSON_TOUR.length}`;
+    $('tourPrev').disabled = (tourIdx === 0);
+    $('tourNext').disabled = (tourIdx === LESSON_TOUR.length - 1);
+  }
+  $('tourApply').addEventListener('click', () => LESSON_TOUR[tourIdx].apply());
+  $('tourPrev').addEventListener('click', () => { if (tourIdx > 0) { tourIdx--; renderTour(); } });
+  $('tourNext').addEventListener('click', () => { if (tourIdx < LESSON_TOUR.length - 1) { tourIdx++; renderTour(); } });
+  renderTour();
+
+
+  function scenarioGalleryText(key, fallback) {
+    const L = document.documentElement.lang || 'en';
+    const S = STRINGS[L] || STRINGS.en;
+    return S[key] || fallback;
+  }
+  function localizedScenarioField(index, field, fallback) {
+    const L = document.documentElement.lang || 'en';
+    const S = STRINGS[L] || STRINGS.en;
+    return S['tour' + index + field] || fallback || '';
+  }
+  function appendScenarioMeta(card, label, text) {
+    const p = document.createElement('p');
+    p.className = 'scenario-meta';
+    const strong = document.createElement('strong');
+    strong.textContent = label + ': ';
+    p.appendChild(strong);
+    p.appendChild(document.createTextNode(text));
+    card.appendChild(p);
+  }
+  function renderScenarioGallery() {
+    const root = $('scenarioGalleryCards');
+    if (!root || typeof LESSON_TOUR === 'undefined') return;
+    root.innerHTML = '';
+    LESSON_TOUR.forEach((scenario, index) => {
+      const title = localizedScenarioField(index, 'name', scenario.name || (scenarioGalleryText('sg-card-prefix', 'Scenario') + ' ' + (index + 1)));
+      const description = localizedScenarioField(index, 'desc', scenario.description || '');
+      const card = document.createElement('article');
+      card.className = 'scenario-card';
+      card.setAttribute('data-scenario-index', String(index));
+
+      const h = document.createElement('h3');
+      h.textContent = `${scenarioGalleryText('sg-card-prefix', 'Scenario')} ${index + 1}: ${title}`;
+      card.appendChild(h);
+
+      appendScenarioMeta(card, scenarioGalleryText('sg-concept-label', 'Concept'), title);
+      appendScenarioMeta(card, scenarioGalleryText('sg-observe-label', 'What to watch'), description);
+      appendScenarioMeta(card, scenarioGalleryText('sg-misconception-label', 'Predict before applying'), scenarioGalleryText('sg-misconception-text', 'Which visible result should change most, and why? Commit to an answer before applying.'));
+      appendScenarioMeta(card, scenarioGalleryText('sg-teacher-label', 'Teacher use'), scenarioGalleryText('sg-teacher-text', 'Use as a 2–3 minute predict → run → explain prompt.'));
+
+      const btn = document.createElement('button');
+      btn.className = 'step-btn';
+      btn.type = 'button';
+      btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare');
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('.scenario-card').forEach(item => item.classList.remove('applied'));
+        tourIdx = index;
+        renderTour();
+        scenario.apply();
+        card.classList.add('applied');
+        btn.textContent = '✓ ' + scenarioGalleryText('sg-applied', 'Applied; compare the result');
+        setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
+      });
+      card.appendChild(btn);
+      root.appendChild(card);
+    });
+  }
+  renderScenarioGallery();
+
+  // GMM EM controls.
+  $('gmmStepBtn').addEventListener('click', gmmStep);
+  $('gmmRunBtn').addEventListener('click', () => {
+    for (let i = 0; i < 20; i++) gmmStep();
+  });
+  $('gmmClearBtn').addEventListener('click', () => {
+    gmm = null;
+    updateGmmStats();
+    render();
+  });
+  $('gmmShow').addEventListener('change', render);
+
+  // Worksheet/lab mode: 3 questions with instant ✓/✗ feedback.
+  // Bilingual feedback helper: ws{n}ok / ws{n}no with English inline fallback.
+  function wsMsg(key, en) {
+    const L = (document.documentElement.lang || 'en');
+    return (STRINGS[L] && STRINGS[L][key]) || en;
+  }
+  // MCQ: each question is graded by the selected radio's index, not typed text.
+  // `correct` is the index of the right option (language-agnostic). ok/no are the
+  // existing bilingual feedback keys, with an English inline fallback via wsMsg.
+  const WORKSHEET = [
+    { correct: 1,
+      ok:  ['ws1ok', "Correct. K-means assumes round (convex) clusters. The smile is a curved arc: a centroid is only a point, and straight Voronoi partitions around centroids cannot preserve the curved mouth as one cluster. This is the inductive bias of k-means."],
+      no:  ['ws1no', "Hint: the smile is a long curved arc. K-means can only carve the plane with straight Voronoi boundaries around point centroids."] },
+    { correct: 1,
+      ok:  ['ws2ok', "Correct. Inertia (within-cluster SSE) is monotonically non-increasing in k: more centroids means points are always closer to their nearest one. That's why you can't pick k by minimizing inertia alone."],
+      no:  ['ws2no', "Hint: more centroids = points are always closer to the nearest one. Try 'down'."] },
+    { correct: 1,
+      ok:  ['ws3ok', "Correct. With 3 well-separated Gaussian clusters, k=3 has the highest silhouette among the tested values for this generated sample and aligns with its three generating groups. Silhouette balances cohesion and separation, but it does not generally identify one uniquely true k."],
+      no:  ['ws3no', "Try k=3. For this generated sample, try k=3 and compare the observed score with k=2 and k=4. Treat the result as evidence for these data, not a universal truth about k."] },
+  ];
+  WORKSHEET.forEach((q, i) => {
+    const n = i + 1;
+    $(`ws${n}btn`).addEventListener('click', () => {
+      const fb = $(`ws${n}fb`);
+      const picked = document.querySelector(`input[name="ws${n}"]:checked`);
+      if (!picked) {
+        fb.textContent = wsMsg('ws-pick', 'Pick an answer first.');
+        fb.style.color = 'var(--muted)';
+        return;
+      }
+      const ok = Number(picked.value) === q.correct;
+      const [key, en] = ok ? q.ok : q.no;
+      fb.textContent = (ok ? '✓ ' : '✗ ') + wsMsg(key, en);
+      fb.style.color = ok ? '#16a34a' : '#dc2626';
+    });
+  });
+
+  loadDataset('gaussian');
+  window.__kmScrubTest = function(){ const g=document.getElementById('kmScrubGroup'); const inBar=!!(g&&g.closest('#transport')); const r={scrubInBar:inBar, jump:!!document.getElementById('kmJump'), slider:!!document.getElementById('kmScrub')}; const pass=r.scrubInBar&&r.jump&&r.slider; console.log('[k-means] SCRUB-IN-BAR '+(pass?'passed':'FAILED'), r); return Object.assign({pass},r); };
+  window.__bentoTest = function(){ const b=document.querySelector('.bento'); const cells=document.querySelectorAll('.bento-cell').length; const r={bento:!!b, cells, cvAspect:getComputedStyle(document.getElementById('cv')).aspectRatio}; const pass=!!b && cells>=3; console.log('[k-means] BENTO '+(pass?'passed':'FAILED'), r); return Object.assign({pass}, r); };
+})();
+</script>
+<!-- Embed mode handler (shared pattern across all 12 applets). -->
+<script>
+(() => {
+  try {
+    if (new URLSearchParams(location.search).get('embed') === '1') {
+      document.body.classList.add('embed-mode');
+    }
+  } catch (_) {}
+  const btn = document.getElementById('embedLink');
+  if (!btn) return;
+  btn.addEventListener('click', async () => {
+    const url = new URL(location.href);
+    url.searchParams.set('embed', '1');
+    const snippet = `<iframe src="${url.toString()}" width="100%" height="720" frameborder="0" style="border:1px solid #e5e7eb; border-radius:8px;" loading="lazy"></iframe>`;
+    try {
+      await navigator.clipboard.writeText(snippet);
+      const orig = btn.textContent; btn.textContent = '✓ Copied iframe';
+      setTimeout(() => btn.textContent = orig, 1800);
+    } catch (_) { prompt('Copy this iframe snippet:', snippet); }
+  });
+})();
+</script>
+<footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
+<p style="margin:0 0 6px;"><a data-i18n="footer-top" href="#top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
+<p style="margin:0;"><span data-i18n="footer-course">Made for the Introduction to AI course at Haidian Kaiwen Academy.</span></p>
+<p style="margin:6px 0 0;">© <span data-current-year="">2026</span> Logan M. Dixon · <a data-i18n="footer-portfolio" href="https://lmdixon23.github.io/" style="color:var(--accent,#0891b2);">Portfolio</a> · <a data-i18n="footer-project" href="../../index.html" style="color:var(--accent,#0891b2);">AI Playgrounds</a> · <a data-i18n="footer-source" href="https://github.com/lmdixon23/ai-playgrounds" style="color:var(--accent,#0891b2);">Source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a data-i18n="footer-issue" href="https://github.com/lmdixon23/ai-playgrounds/issues" style="color:var(--accent,#0891b2);">Report an issue</a> · <a href="https://orcid.org/0009-0001-0592-462X" rel="me" style="color:var(--accent,#0891b2);">ORCID</a></p>
+</footer>
+<script>
+(function() {
+  const LAB_CONFIG = {"slug": "kmeans", "title": "K-means lab packet", "zhTitle": "K 均值实验包", "fields": [{"label": "k", "selector": "#kInput", "kind": "value"}, {"label": "Phase", "selector": "#phaseInd", "kind": "text"}, {"label": "Iteration", "selector": "#iterV", "kind": "text"}, {"label": "Inertia", "selector": "#inertiaV", "kind": "text"}, {"label": "Inertia change", "selector": "#inertiaDelta", "kind": "text"}, {"label": "Silhouette", "selector": "#silhOverall", "kind": "text"}, {"label": "GMM stats", "selector": "#gmmStats", "kind": "text"}]};
+  const root = document.querySelector('.classroom-lab');
+  if (!root) return;
+  const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;
+  const qs = (sel) => root.querySelector(sel);
+  function currentLang() {
+    const raw = String(document.documentElement.lang || 'en').toLowerCase();
+    if (raw.startsWith('zh')) return 'zh';
+    if (raw.startsWith('vi')) return 'vi';
+    if (raw.startsWith('es')) return 'es';
+    return 'en';
+  }
+  function textFor(el, lang) {
+    if ((lang === 'vi' || lang === 'es') && window.__r4Localization) {
+      const source = el.getAttribute('data-lab-en') || el.textContent;
+      return window.__r4Localization.translateString(source, lang);
+    }
+    return el.getAttribute(lang === 'zh' ? 'data-lab-zh' : 'data-lab-en') || el.textContent;
+  }
+  function applyLabLang() {
+    const lang = currentLang();
+    root.querySelectorAll('[data-lab-en]').forEach(el => {
+      const value = textFor(el, lang);
+      if (el.tagName === 'TEXTAREA') el.placeholder = value;
+      else el.textContent = value;
+    });
+  }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? 'on' : 'off';
+    else if (field.kind === 'text') value = el.textContent.trim();
+    else value = el.value;
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    const label = ((currentLang() === 'vi' || currentLang() === 'es') && window.__r4Localization) ? window.__r4Localization.translateString(field.label, currentLang()) : field.label;
+    return value ? label + ': ' + value : null;
+  }
+  function snapshot() {
+    const lines = LAB_CONFIG.fields.map(readField).filter(Boolean);
+    return lines.length ? lines.join('\n') : 'No state captured yet. Run or adjust the applet first.';
+  }
+  function answers() {
+    const data = {};
+    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => data[area.getAttribute('data-lab-answer')] = area.value.trim());
+    return data;
+  }
+  function saveDraft() { try { localStorage.setItem(storageKey, JSON.stringify(answers())); } catch (_) {} }
+  function loadDraft() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      root.querySelectorAll('textarea[data-lab-answer]').forEach(area => { const key = area.getAttribute('data-lab-answer'); if (saved[key]) area.value = saved[key]; });
+    } catch (_) {}
+  }
+  function packet() {
+    const lang = currentLang();
+    const baseLabels = {title: LAB_CONFIG.title, state:'State snapshot', predict:'Predict', observe:'Observe', explain:'Explain', transfer:'Transfer'};
+    const labels = lang === 'zh' ? {title: LAB_CONFIG.zhTitle, state:'状态记录', predict:'预测', observe:'观察', explain:'解释', transfer:'迁移'} : ((lang === 'vi' || lang === 'es') && window.__r4Localization ? Object.fromEntries(Object.entries(baseLabels).map(([k,v]) => [k, window.__r4Localization.translateString(v, lang)])) : baseLabels);
+    const a = answers();
+    return [
+      '# ' + labels.title,
+      '',
+      '- Applet: ' + (document.querySelector('h1') ? document.querySelector('h1').textContent.trim() : document.title),
+      '- Date: ' + new Date().toLocaleString(),
+      '',
+      '## ' + labels.state,
+      snapshot(),
+      '',
+      '## ' + labels.predict,
+      a.predict || '',
+      '',
+      '## ' + labels.observe,
+      a.observe || '',
+      '',
+      '## ' + labels.explain,
+      a.explain || '',
+      '',
+      '## ' + labels.transfer,
+      a.transfer || ''
+    ].join('\n');
+  }
+  function setStatus(en, zh) { const el = qs('.lab-status'); if (el) el.textContent = currentLang() === 'zh' ? zh : en; }
+  function refreshState() { const el = qs('[data-lab-state]'); if (el) el.textContent = snapshot(); }
+  async function copyPacket() {
+    const text = packet();
+    try { await navigator.clipboard.writeText(text); setStatus('Copied local lab packet.', '已复制本地实验包。'); }
+    catch (_) { window.prompt('Copy this lab packet:', text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
+  }
+
+  function markdownToPrintableHtml(markdown) {
+    const escape = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const inline = value => escape(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    const lines = String(markdown).split(/\r?\n/);
+    let html = '', inList = false, inState = false;
+    const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
+    for (const raw of lines) {
+      const line = raw.trimEnd();
+      if (line.startsWith('# ')) { closeList(); html += '<h1>' + inline(line.slice(2)) + '</h1>'; inState=false; }
+      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = /state snapshot|状态记录/i.test(title); }
+      else if (line.startsWith('- ')) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inline(line.slice(2)) + '</li>'; }
+      else if (!line.trim()) { closeList(); }
+      else { closeList(); html += inState ? '<pre class="state">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
+    }
+    closeList(); return html;
+  }
+
+  function printPacket() {
+    const w = window.open('', '_blank');
+    if (!w) { setStatus('Popup blocked. Copy the packet instead.', '弹窗被拦截。请改用复制实验包。'); return; }
+    const rendered = markdownToPrintableHtml(packet());
+    const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+    setStatus('Print page opened.', '打印页面已打开。');
+  }
+  function clearDraft() {
+    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.value = '');
+    try { localStorage.removeItem(storageKey); } catch (_) {}
+    refreshState(); setStatus('Local draft cleared.', '本地草稿已清除。');
+  }
+  root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.addEventListener('input', saveDraft));
+  root.querySelector('[data-lab-action="copy"]')?.addEventListener('click', copyPacket);
+  root.querySelector('[data-lab-action="print"]')?.addEventListener('click', printPacket);
+  root.querySelector('[data-lab-action="refresh"]')?.addEventListener('click', () => { refreshState(); setStatus('State refreshed.', '状态已更新。'); });
+  root.querySelector('[data-lab-action="clear"]')?.addEventListener('click', clearDraft);
+  document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(applyLabLang, 0)));
+  window.addEventListener('r4languagechange', () => setTimeout(applyLabLang, 0));
+  
+  document.addEventListener('change', refreshState);
+  document.addEventListener('click', (event) => { if (!(event.target instanceof HTMLTextAreaElement)) setTimeout(refreshState, 0); }, true);
+  loadDraft(); applyLabLang(); refreshState();
+})();
+</script>
+<script>
+(function() {
+  const VISUAL_CONFIG = {"intro":"K-means alternates between assigning points to the nearest center and moving each center to the mean of its assigned points. The visual story is assignment, update, inertia drop, then convergence.","zhIntro":"K 均值在两步之间交替：把点分配给最近中心，再把每个中心移到已分配点的均值。可视化故事是分配、更新、惯性下降、收敛。","misread":"More clusters can reduce inertia while still making the grouping less meaningful.","zhMisread":"更多簇可以降低惯性，但分组意义不一定更好。","steps":[{"label":"Choose k","zhLabel":"选择 k","text":"The number of clusters sets how many centers compete for points.","zhText":"簇数量决定有多少中心竞争数据点。","selector":"#kInput","kind":"value","liveLabel":"k","zhLiveLabel":"k"},{"label":"Assign points","zhLabel":"分配数据点","text":"Each point belongs to the nearest current center during the assignment phase.","zhText":"在分配阶段，每个点归属于最近的当前中心。","selector":"#phaseInd","kind":"text","liveLabel":"Phase","zhLiveLabel":"阶段"},{"label":"Move centers","zhLabel":"移动中心","text":"Centers move toward the average position of their assigned points.","zhText":"中心移动到其分配点的平均位置。","selector":"#iterV","kind":"text","liveLabel":"Iteration","zhLiveLabel":"迭代"},{"label":"Evaluate fit","zhLabel":"评估拟合","text":"Inertia measures compactness; silhouette helps show whether clusters are separated.","zhText":"惯性衡量紧凑度；轮廓系数帮助显示簇是否分离。","selector":"#inertiaV","kind":"text","liveLabel":"Inertia","zhLiveLabel":"惯性"}],"fields":[{"label":"k","zhLabel":"k","selector":"#kInput","kind":"value"},{"label":"Phase","zhLabel":"阶段","selector":"#phaseInd","kind":"text"},{"label":"Iteration","zhLabel":"迭代","selector":"#iterV","kind":"text"},{"label":"Inertia","zhLabel":"惯性","selector":"#inertiaV","kind":"text"},{"label":"Silhouette","zhLabel":"轮廓系数","selector":"#silhOverall","kind":"text"}]};
+  const root = document.querySelector('.visual-explanation');
+  if (!root) return;
+  const flow = root.querySelector('[data-visual-flow]');
+  const intro = root.querySelector('[data-visual-intro]');
+  const snapshotBox = root.querySelector('[data-visual-snapshot]');
+  const misreadBox = root.querySelector('[data-visual-misread]');
+  function currentLang() { return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en'; }
+  function t(obj, key) { const lang = currentLang(); return (lang === 'zh' && obj['zh' + key[0].toUpperCase() + key.slice(1)]) || obj[key] || ''; }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? 'on' : 'off';
+    else if (field.kind === 'value') value = el.value;
+    else value = el.textContent.trim();
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? { label: field.label, zhLabel: field.zhLabel || field.label, value } : null;
+  }
+  function liveValue(step) {
+    if (!step.selector) return '';
+    const field = readField({ selector: step.selector, kind: step.kind || 'text', label: step.liveLabel || 'Live', zhLabel: step.zhLiveLabel || '实时' });
+    return field ? field.value : (step.fallback || '');
+  }
+  function renderVisualExplanation() {
+    const lang = currentLang();
+    root.querySelectorAll('[data-visual-en]').forEach(el => {
+      el.textContent = el.getAttribute(lang === 'zh' ? 'data-visual-zh' : 'data-visual-en') || el.textContent;
+    });
+    intro.textContent = lang === 'zh' ? VISUAL_CONFIG.zhIntro : VISUAL_CONFIG.intro;
+    misreadBox.textContent = lang === 'zh' ? VISUAL_CONFIG.zhMisread : VISUAL_CONFIG.misread;
+    flow.innerHTML = VISUAL_CONFIG.steps.map((step, idx) => {
+      const title = lang === 'zh' ? step.zhLabel : step.label;
+      const body = lang === 'zh' ? step.zhText : step.text;
+      const liveLabel = lang === 'zh' ? (step.zhLiveLabel || '实时') : (step.liveLabel || 'Live');
+      const live = liveValue(step);
+      const liveHtml = live ? '<span class="visual-live"><strong>' + escapeHtml(liveLabel) + '</strong><span>' + escapeHtml(live) + '</span></span>' : '';
+      return '<article class="visual-card" data-step="' + String(idx + 1).padStart(2, '0') + '"><h4>' + escapeHtml(title) + '</h4><p>' + escapeHtml(body) + '</p>' + liveHtml + '</article>';
+    }).join('');
+    const lines = (VISUAL_CONFIG.fields || []).map(readField).filter(Boolean).map(f => (lang === 'zh' ? f.zhLabel : f.label) + ': ' + f.value);
+    snapshotBox.textContent = lines.length ? lines.join('\n') : (lang === 'zh' ? '还没有捕捉到状态。请先运行或调整小程序。' : 'No state captured yet. Run or adjust the applet first.');
+  }
+  function escapeHtml(text) { return String(text).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+  let visualTimer = null;
+  function scheduleVisualRender() {
+    if (visualTimer) cancelAnimationFrame(visualTimer);
+    visualTimer = requestAnimationFrame(renderVisualExplanation);
+  }
+  document.addEventListener('change', scheduleVisualRender);
+  document.addEventListener('input', scheduleVisualRender);
+  document.addEventListener('click', () => setTimeout(scheduleVisualRender, 0), true);
+  document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(scheduleVisualRender, 0)));
+  setInterval(renderVisualExplanation, 1200);
+  renderVisualExplanation();
+})();
+</script>
+<!-- Privacy-friendly analytics: GoatCounter, cookieless. -->
+
+<script>
+(function() {
+  const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "k", "zhLabel": "k", "selector": "#kInput", "kind": "value"}, {"label": "Phase", "zhLabel": "阶段", "selector": "#phaseInd", "kind": "text"}, {"label": "Iteration", "zhLabel": "迭代", "selector": "#iterV", "kind": "text"}, {"label": "Inertia", "zhLabel": "惯性", "selector": "#inertiaV", "kind": "text"}, {"label": "Silhouette", "zhLabel": "轮廓系数", "selector": "#silhOverall", "kind": "text"}]};
+  const layer = document.querySelector('.accessibility-layer');
+  if (!layer) return;
+  const intro = layer.querySelector('[data-a11y-intro]');
+  const stateGrid = layer.querySelector('[data-a11y-state-grid]');
+  const liveRegion = layer.querySelector('#a11yLiveRegion');
+  let renderTimer = 0;
+  let lastSummary = '';
+  function currentLang() {
+    return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+  }
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+  function localized(obj, key) {
+    const lang = currentLang();
+    const zhKey = 'zh' + key[0].toUpperCase() + key.slice(1);
+    return (lang === 'zh' && obj[zhKey]) || obj[key] || '';
+  }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? (currentLang() === 'zh' ? '开' : 'on') : (currentLang() === 'zh' ? '关' : 'off');
+    else if (field.kind === 'value') value = el.value;
+    else value = el.textContent.trim();
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? { label: localized(field, 'label'), value } : null;
+  }
+  function renderAccessibilityLayer(options = {}) {
+    const lang = currentLang();
+    layer.querySelectorAll('[data-a11y-en]').forEach(el => {
+      el.textContent = el.getAttribute(lang === 'zh' ? 'data-a11y-zh' : 'data-a11y-en') || el.textContent;
+    });
+    const copy = A11Y_CONFIG.copy[lang] || A11Y_CONFIG.copy.en;
+    intro.textContent = copy.intro;
+    layer.querySelector('[data-a11y-title]').textContent = copy.title;
+    layer.querySelector('[data-a11y-keyboard-title]').textContent = copy.keyboardTitle;
+    layer.querySelector('[data-a11y-keyboard-1]').textContent = copy.keyboard1;
+    layer.querySelector('[data-a11y-keyboard-2]').textContent = copy.keyboard2;
+    layer.querySelector('[data-a11y-keyboard-3]').textContent = copy.keyboard3;
+    layer.querySelector('[data-a11y-state-title]').textContent = copy.stateTitle;
+    layer.querySelector('[data-a11y-motion-title]').textContent = copy.motionTitle;
+    layer.querySelector('[data-a11y-motion-copy]').textContent = copy.motionCopy;
+    layer.querySelector('[data-a11y-note]').textContent = copy.note;
+    const fields = A11Y_CONFIG.fields.map(readField).filter(Boolean);
+    if (fields.length) {
+      stateGrid.innerHTML = fields.map(field => '<dt>' + escapeHtml(field.label) + '</dt><dd>' + escapeHtml(field.value) + '</dd>').join('');
+    } else {
+      stateGrid.innerHTML = '<dt>' + escapeHtml(copy.emptyLabel) + '</dt><dd>' + escapeHtml(copy.emptyValue) + '</dd>';
+    }
+    const summary = fields.map(field => field.label + ': ' + field.value).join('; ') || copy.emptyValue;
+    if (options.announce && liveRegion && summary !== lastSummary) {
+      liveRegion.textContent = copy.livePrefix + summary;
+    }
+    lastSummary = summary;
+  }
+  function markVisualRegions() {
+    const descriptionId = 'a11yStateSummary';
+    document.querySelectorAll('canvas, svg, [role="img"]').forEach((el, index) => {
+      if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+      if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', A11Y_CONFIG.copy.en.visualLabel + ' ' + (index + 1));
+      const describedBy = (el.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+      if (!describedBy.includes(descriptionId)) {
+        describedBy.push(descriptionId);
+        el.setAttribute('aria-describedby', describedBy.join(' '));
+      }
+    });
+  }
+  function scheduleAccessibilityRender(announce = true) {
+    clearTimeout(renderTimer);
+    renderTimer = setTimeout(() => renderAccessibilityLayer({ announce }), 100);
+  }
+  document.addEventListener('input', () => scheduleAccessibilityRender(true), true);
+  document.addEventListener('change', () => scheduleAccessibilityRender(true), true);
+  document.addEventListener('click', event => {
+    if (event.target && event.target.closest && event.target.closest('button, [role="button"], canvas, svg, select, input')) {
+      scheduleAccessibilityRender(true);
+    }
+  }, true);
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ' || event.key.startsWith('Arrow') || event.key === 'Tab') {
+      scheduleAccessibilityRender(false);
+    }
+  }, true);
+  setInterval(() => {
+    if (!document.hidden) renderAccessibilityLayer({ announce: false });
+  }, 1500);
+  markVisualRegions();
+  renderAccessibilityLayer({ announce: false });
+  window.renderAccessibilityLayer = renderAccessibilityLayer;
+})();
+</script>
+<script>
+(function () {
+  document.querySelectorAll('[data-current-year]').forEach(el => { el.textContent = new Date().getFullYear(); });
+})();
+</script>
+<script id="learner-content-system">
+(() => {
+  const profile = {"slug":"kmeans","en":{"title":"K-Means Clustering","big":"Choose the number of clusters, assign each point to its nearest center, and move the centers. Repeat until assignments stop changing.","primer":"K-means alternates between two simple steps. The difficulty comes from choosing k, choosing starting centers, and deciding whether compact, roughly convex regions under squared Euclidean distance fit the data.","terms":[{"term":"k","definition":"The number of clusters the algorithm is required to create."},{"term":"Centroid","definition":"The mean location of all points currently assigned to one cluster."},{"term":"Assignment step","definition":"Assign every point to the nearest centroid."},{"term":"Update step","definition":"Move each centroid to the mean of its assigned points."},{"term":"Inertia or within-cluster sum of squares (SSE)","definition":"The total squared distance from points to their assigned centroids."},{"term":"Silhouette score","definition":"A measure comparing how close a point is to its own cluster versus other clusters."},{"term":"Initialization","definition":"The method used to choose the starting centroid positions."},{"term":"Convergence","definition":"The point at which assignments and centroid positions stop changing."},{"term":"k-means++","definition":"An initialization method that spreads starting centroids apart using distance-weighted sampling."}],"scenarios":[{"title":"Three compact groups with k equal to three","question":"What does the algorithm look like when its assumptions match the data?","run":"Use three well-separated point groups with k set to three and run assignment and update steps.","predict":"Predict how many iterations will be needed before the centers stop moving.","explain":"Explain why compact, round groups are an easy case for k-means."},{"title":"Poor starting centers can trap the result","question":"Why can the same data produce different final clusters?","run":"Place all starting centroids in one corner, run the algorithm, then compare with spread-out initialization.","predict":"Predict whether the centers will always recover the visually obvious groups.","explain":"Explain how initialization changes the path of later assignment and update steps."},{"title":"A curved smile does not match compact, roughly convex regions under squared Euclidean distance","question":"What happens when the shape of the data violates the model’s assumptions?","run":"Use the smiley-face data with k set to three and inspect how the curved mouth is split.","predict":"Predict which parts of the shape will be grouped unnaturally.","explain":"Explain why distance to a centroid favors compact, roughly round regions."},{"title":"K-means++ spreads the starting centers","question":"How does a smarter initialization reduce repeated poor runs?","run":"Use six packed circles, compare random initialization with k-means++, and repeat both several times.","predict":"Predict which method will more often place a center in every visible group.","explain":"Explain why spreading initial centers improves coverage without guaranteeing perfection."},{"title":"Use silhouette score to compare k values","question":"Why can lower inertia alone not select the most defensible candidate number of clusters for this purpose?","run":"Run the same data with k equal to two, three, and four, then compare silhouette scores.","predict":"Predict which k will balance within-cluster closeness and between-cluster separation.","explain":"Explain why inertia always falls as more centers are added, while silhouette can reveal over-splitting."}]},"zh":{"title":"K 均值聚类","big":"选择聚类数量，把每个点分配给最近中心，再移动中心。重复这些步骤，直到分配不再变化。","primer":"K 均值在两个简单步骤之间交替。困难在于选择 k、选择起始中心，以及判断圆形聚类是否适合数据。","terms":[{"term":"k","definition":"算法必须创建的聚类数量。"},{"term":"质心","definition":"当前分配到一个聚类的所有点的平均位置。"},{"term":"分配步骤","definition":"把每个点分配给最近质心。"},{"term":"更新步骤","definition":"把每个质心移动到其所属点的平均位置。"},{"term":"惯性或簇内平方和（SSE）","definition":"所有点到其所属质心的平方距离总和。"},{"term":"轮廓系数","definition":"比较一个点接近自身聚类与其他聚类程度的指标。"},{"term":"初始化","definition":"选择初始质心位置的方法。"},{"term":"收敛","definition":"簇分配和质心位置不再变化的状态。"},{"term":"k-means++","definition":"一种按距离加权抽样、使初始质心彼此分散的初始化方法。"}],"scenarios":[{"title":"三个紧密群组与 k=3","question":"当算法假设与数据匹配时，会是什么样？","run":"使用三个分离良好的点群，把 k 设为 3，并运行分配和更新步骤。","predict":"预测质心停止移动前需要多少次迭代。","explain":"解释为什么紧密、近似圆形的群组是 K 均值的简单情况。"},{"title":"较差起始中心会限制结果","question":"为什么同一数据可能产生不同最终聚类？","run":"把所有起始质心放在一个角落，运行算法，再与分散初始化比较。","predict":"预测质心是否总能恢复视觉上明显的群组。","explain":"解释初始化如何改变之后的分配和更新路径。"},{"title":"弯曲笑脸不符合圆形聚类","question":"数据形状违反模型假设时会怎样？","run":"使用笑脸数据并把 k 设为 3，观察弯曲嘴巴如何被切分。","predict":"预测哪些部分会被不自然地分组。","explain":"解释到质心的距离为什么偏好紧密、近似圆形的区域。"},{"title":"K-means++ 分散起始中心","question":"更聪明的初始化如何减少差结果？","run":"使用六个紧密圆群，比较随机初始化与 K-means++，并多次重复。","predict":"预测哪种方法更常在每个可见群组中放置一个中心。","explain":"解释分散起始中心为什么能改善覆盖，却不能保证完美。"},{"title":"用轮廓系数比较 k","question":"为什么只降低惯性不能选择最佳聚类数？","run":"在同一数据上运行 k=2、3、4，并比较轮廓系数。","predict":"预测哪个 k 能平衡簇内接近与簇间分离。","explain":"解释为什么增加中心总会降低惯性，而轮廓系数能显示过度切分。"}]}};
+  window.APPLET_LEARNER_PROFILE = profile;
+  const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;
+  try {
+    STRINGS.en.title = profile.en.title; STRINGS.zh.title = profile.zh.title;
+    STRINGS.en['tldr-strong'] = 'What this applet shows'; STRINGS.zh['tldr-strong'] = '这个工具展示什么';
+    STRINGS.en['tldr-body'] = profile.en.big; STRINGS.zh['tldr-body'] = profile.zh.big;
+    profile.en.scenarios.forEach((item,i) => { STRINGS.en['tour'+i+'name']=item.title; STRINGS.en['tour'+i+'desc']=item.run; if (typeof LESSON_TOUR !== 'undefined' && LESSON_TOUR[i]) { LESSON_TOUR[i].name=item.title; LESSON_TOUR[i].description=item.run; } });
+    profile.zh.scenarios.forEach((item,i) => { STRINGS.zh['tour'+i+'name']=item.title; STRINGS.zh['tour'+i+'desc']=item.run; });
+  } catch (_) {}
+  function applyCoreCopy(){
+    const c=copy();
+    document.title=c.title+' | AI Playgrounds';
+    const h=document.querySelector('.header-main h1'); if(h) h.textContent=c.title;
+    const strong=document.querySelector('.tldr strong'); if(strong) strong.textContent=currentLocale()==='zh'?'这个工具展示什么':'What this applet shows';
+    const body=document.querySelector('.tldr span'); if(body) body.textContent=c.big;
+    const jump=document.querySelector('.jump-link'); if(jump) jump.textContent=currentLocale()==='zh'?'↓ 阅读分步解释':'↓ Read the step-by-step explanation';
+  }
+  function stateData(){
+    const values={};
+    document.querySelectorAll('#main input,#main select,#main textarea').forEach(el=>{
+      if(!el.id||el.closest('.classroom-lab'))return;
+      if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;
+      values[el.id]=el.type==='checkbox'?el.checked:el.value;
+    });
+    return {applet:profile.en.title,slug:profile.slug,exported_at:new Date().toISOString(),values};
+  }
+  function toolbar(){
+    const actions=document.querySelector('.header-actions'); if(!actions||actions.dataset.standardized==='1')return;
+    const share=document.getElementById('shareLink'), embed=document.getElementById('embedLink'), reset=document.getElementById('hardReset');
+    const csv=document.getElementById('csvExport'), png=document.getElementById('exportPng');
+    const more=document.createElement('details'); more.className='header-more';
+    const summary=document.createElement('summary'); summary.className='header-png'; summary.setAttribute('aria-haspopup','menu'); more.appendChild(summary);
+    const menu=document.createElement('div'); menu.className='header-more-menu'; menu.setAttribute('role','menu'); more.appendChild(menu);
+    if(embed){embed.textContent='📎 Embed in LMS';menu.appendChild(embed)}
+    const jsonBtn=document.createElement('button');jsonBtn.type='button';jsonBtn.className='header-png';jsonBtn.dataset.exportState='';menu.appendChild(jsonBtn);
+    if(csv){csv.textContent='📊 Data table (.csv)';menu.appendChild(csv)}
+    if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
+    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
+    actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
+    window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';if(share){share.textContent=zh?'🔗 分享':'🔗 Share';share.title=zh?'复制可在另一浏览器中重新打开当前设置的链接。':'Copy a link that reopens the current settings in another browser.';}summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
+    window.refreshAppletToolbar();
+    document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
+  }
+  function terms(){
+    const inner=document.querySelector('.interactive-inner'); if(!inner||inner.querySelector('.key-terms'))return;
+    const d=document.createElement('details');d.className='key-terms';d.open=true;
+    d.innerHTML='<summary><span data-key-summary></span></summary><div class="key-terms-panel"><p class="key-terms-intro" data-key-intro></p><dl class="key-terms-grid" data-key-grid></dl></div>';
+    const first=inner.querySelector(':scope > details');inner.insertBefore(d,first||inner.firstChild);
+    window.renderAppletKeyTerms=()=>{const c=copy();d.querySelector('[data-key-summary]').textContent=currentLocale()==='zh'?'🔑 先学这些术语':'🔑 Key terms before the explanation';d.querySelector('[data-key-intro]').textContent=c.primer;d.querySelector('[data-key-grid]').innerHTML=c.terms.map(x=>'<div class="key-term"><dt>'+x.term+'</dt><dd>'+x.definition+'</dd></div>').join('')};
+    window.renderAppletKeyTerms();
+  }
+  function essayPrimer(){
+    const essay=document.querySelector('article#essay');if(!essay||essay.querySelector('.essay-primer'))return;
+    const box=document.createElement('section');box.className='essay-primer';essay.insertBefore(box,essay.firstChild);
+    window.renderEssayPrimer=()=>{const c=copy();const heading=currentLocale()==='zh'?'阅读前先准备':'Before you read';const termHeading=currentLocale()==='zh'?'本页会使用的术语':'Terms used in this explanation';box.innerHTML='<h2>'+heading+'</h2><p>'+c.primer+'</p><h3>'+termHeading+'</h3><dl class="essay-primer-terms">'+c.terms.map(x=>'<div><dt>'+x.term+'</dt><dd>'+x.definition+'</dd></div>').join('')+'</dl>'};window.renderEssayPrimer();
+  }
+  function patchScenarioData(){
+    try{if(typeof renderScenarioGallery==='function')renderScenarioGallery();if(typeof renderTour==='function')renderTour()}catch(_){}
+  }
+  window.refreshLearnerContent=()=>{applyCoreCopy();window.renderAppletKeyTerms?.();window.renderEssayPrimer?.();window.refreshAppletToolbar?.()};
+  applyCoreCopy();toolbar();terms();essayPrimer();patchScenarioData();
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(window.refreshLearnerContent,20)));
+})();
+</script>
+<!-- AI_PLAYGROUNDS_COMPONENT:original/essay-language-script -->
+<!-- AI_PLAYGROUNDS_COMPONENT:original/learning-modes-script -->
+<script id="applet-translation-completion">
+(() => {
+  const exact = {"Skip to applet controls":"跳到交互控件","▸ Show teacher notes (discussion prompts + curriculum)":"▸ 展开教师说明（讨论提示与课程联系）","▾ Hide teacher notes (discussion prompts + curriculum)":"▾ 收起教师说明（讨论提示与课程联系）","idle":"空闲","(empty)":"（空）","(no actions yet)":"（尚无动作）","exploring":"探索中","How to pick the initial centroids?":"如何选择初始质心？","I'll choose":"由我选择","Click the canvas yourself":"自行点击画布","Randomly":"随机选择","Pick k random points":"随机选择 k 个点","Farthest point":"最远点","Spread centroids apart":"让质心彼此分散","Probabilistic farthest":"概率式最远点","Clear GMM":"清除 GMM","Visualizing K-Means Clustering":"K 均值聚类可视化"};
+  const rules = [["^Point ([0-9]+): unassigned$","点 \\1：未分配"]].map(([source,target])=>[new RegExp(source),target]);
+  const currentLanguage=()=>((document.documentElement.lang||'en').startsWith('zh')?'zh':'en');
+  const excluded=node=>node.parentElement && node.parentElement.closest('script,style,noscript,[data-essay-lang="en"]');
+  const applyRule=text=>{
+    if(Object.prototype.hasOwnProperty.call(exact,text))return exact[text];
+    for(const [pattern,target] of rules){if(pattern.test(text)){pattern.lastIndex=0;return text.replace(pattern,target)}}
+    return null;
+  };
+  function translateNode(node){
+    if(excluded(node))return;
+    const raw=node.nodeValue||'',trimmed=raw.trim();if(!trimmed)return;
+    if(currentLanguage()==='en'){
+      if(node.__appletEnglish!==undefined){const start=raw.indexOf(trimmed);node.nodeValue=raw.slice(0,start)+node.__appletEnglish+raw.slice(start+trimmed.length);delete node.__appletEnglish}
+      return;
+    }
+    const translated=applyRule(trimmed);if(translated===null||translated===trimmed)return;
+    node.__appletEnglish=trimmed;const start=raw.indexOf(trimmed);node.nodeValue=raw.slice(0,start)+translated+raw.slice(start+trimmed.length);
+  }
+  function translateAttribute(el,attr){
+    const value=el.getAttribute(attr);if(!value)return;
+    const prop='__appletEnglish_'+attr;
+    if(currentLanguage()==='en'){
+      if(el[prop]!==undefined){el.setAttribute(attr,el[prop]);delete el[prop]}
+      return;
+    }
+    const translated=applyRule(value.trim());if(translated===null||translated===value.trim())return;
+    el[prop]=value;el.setAttribute(attr,translated);
+  }
+  function refresh(root=document){
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);nodes.forEach(translateNode);
+    const elements=(root.querySelectorAll?root.querySelectorAll('[title],[aria-label],[placeholder]'):[]);elements.forEach(el=>['title','aria-label','placeholder'].forEach(a=>{if(el.hasAttribute(a))translateAttribute(el,a)}));
+  }
+  let queued=false;const schedule=()=>{if(queued)return;queued=true;queueMicrotask(()=>{queued=false;refresh()})};
+  const observer=new MutationObserver(mutations=>{if(currentLanguage()!=='zh')return;for(const m of mutations){if(m.type==='characterData'||m.addedNodes.length){schedule();break}}});
+  observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+  document.querySelectorAll('button[data-lang]').forEach(button=>button.addEventListener('click',()=>setTimeout(()=>refresh(),45)));
+  refresh();
+  window.refreshAppletTranslationCompletion=refresh;
+})();
+</script>
+<!-- suite-guided-challenge-v2:start -->
+<link href="../../assets/guided-challenges.css" rel="stylesheet"/>
+<script defer src="../../assets/guided-challenges.js"></script>
+<!-- suite-guided-challenge-v2:end -->
+<script src="../../assets/locales/kmeans-r4.js"></script>
+<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["kmeans"];if(!row)return;Object.assign(row.vi.strings,{"🧪 Quick Assign · QA-KMEANS-01 · 10–15 min": "🧪 Bài tập nhanh · QA-KMEANS-01 · 10–15 phút", "Assign, move, repeat": "Gán điểm, di chuyển tâm, lặp lại", "Run assignment and centroid updates, then explain how k, initialization, inertia, and silhouette shape the clustering result.": "Dự đoán một bước gán cụm và cập nhật centroid, rồi giải thích chu kỳ xen kẽ của k-means.", "Before running, what k and initialization do you expect to fit the dataset best? Why?": "Với các centroid hiện tại, điểm được chọn sẽ được gán vào cụm nào và vì sao?", "Run several steps. Record k, phase, inertia, and whether the cluster centers moved much.": "Ghi lại một phép gán, centroid trước cập nhật và centroid sau cập nhật.", "How did alternating assignment and centroid update reduce the clustering error?": "Hai bước gán điểm và cập nhật centroid phụ thuộc lẫn nhau như thế nào?", "When could k-means give a misleading clustering result even if inertia decreases?": "Tại sao hai cách khởi tạo centroid khác nhau có thể dẫn đến kết quả cuối cùng khác nhau?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"🧪 Quick Assign · QA-KMEANS-01 · 10–15 min": "🧪 Tarea rápida · QA-KMEANS-01 · 10–15 min", "Assign, move, repeat": "Asigna, mueve, repite", "Run assignment and centroid updates, then explain how k, initialization, inertia, and silhouette shape the clustering result.": "Predice una asignación y una actualización de centroide y explica el ciclo alternante de k-means.", "Before running, what k and initialization do you expect to fit the dataset best? Why?": "Con los centroides actuales, ¿a qué grupo se asignará el punto elegido y por qué?", "Run several steps. Record k, phase, inertia, and whether the cluster centers moved much.": "Registra una asignación, el centroide antes de actualizar y el centroide después.", "How did alternating assignment and centroid update reduce the clustering error?": "¿Cómo dependen entre sí los pasos de asignar puntos y actualizar centroides?", "When could k-means give a misleading clustering result even if inertia decreases?": "¿Por qué dos inicializaciones distintas pueden terminar en agrupamientos diferentes?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script src="../../assets/localization-r4.js"></script>
+<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.8.1</div>
+
+<!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
+<script data-ai-playgrounds-analytics="v1.8.1">
+(function () {
+  'use strict';
+  var CANONICAL_HOST = 'lmdixon23.github.io';
+  var ENDPOINT = 'https://lmdixon23.goatcounter.com/count';
+  var PAGE_KIND = 'applet';
+  var PAGE_SLUG = 'kmeans';
+  var SOURCE_ALLOWLIST = new Set(['hn','linkedin','csta','sigcse','oercommons','merlot','reddit','bluesky','mastodon','devto','hashnode','github','email','school','portfolio','resume','zenodo','jose']);
+  var liveImages = [];
+
+  function storageGet(storage, key) { try { return storage.getItem(key); } catch (_) { return null; } }
+  function storageSet(storage, key, value) { try { storage.setItem(key, value); } catch (_) {} }
+  function privacySignal() {
+    return navigator.globalPrivacyControl === true || navigator.doNotTrack === '1' ||
+      navigator.doNotTrack === 'yes' || window.doNotTrack === '1';
+  }
+  function clean(value) {
+    return String(value || '').toLowerCase().replace(/[^a-z0-9._/-]+/g, '-').replace(/-+/g, '-').replace(/^\/+|\/+$/g, '').slice(0, 80);
+  }
+  function normalizePath(path) {
+    var value = String(path || '/');
+    value = value.replace(/\/index\.html$/, '/');
+    if (value === '/ai-playgrounds') value = '/ai-playgrounds/';
+    return value || '/';
+  }
+  function canonicalPath() {
+    var link = document.querySelector('link[rel="canonical"]');
+    if (link && link.href) {
+      try { return normalizePath(new URL(link.href, location.href).pathname); } catch (_) {}
+    }
+    return normalizePath(location.pathname || '/ai-playgrounds/');
+  }
+
+  var params = new URLSearchParams(location.search);
+  var optedOut = params.get('analytics') === 'off' || storageGet(localStorage, 'ai-playgrounds-analytics') === 'off';
+  var enabled = location.hostname === CANONICAL_HOST && !privacySignal() && !optedOut;
+
+  function transmit(query) {
+    if (!enabled) return;
+    var img = new Image(1, 1);
+    img.referrerPolicy = 'no-referrer';
+    img.onload = img.onerror = function () {
+      var i = liveImages.indexOf(img);
+      if (i >= 0) liveImages.splice(i, 1);
+    };
+    img.src = ENDPOINT + '?' + query.toString();
+    liveImages.push(img);
+  }
+
+  function campaignQuery() {
+    var source = clean(params.get('ap_src'));
+    if (!SOURCE_ALLOWLIST.has(source)) return '';
+    var q = new URLSearchParams();
+    q.set('utm_campaign', 'ai-playgrounds');
+    q.set('utm_source', source);
+    return q.toString();
+  }
+
+  function sendPage() {
+    var query = new URLSearchParams();
+    query.set('p', canonicalPath());
+    query.set('t', document.title || 'AI Playgrounds');
+    var campaign = campaignQuery();
+    if (campaign) query.set('q', campaign);
+    transmit(query);
+  }
+
+  function sendEvent(name, title) {
+    var eventName = clean(name);
+    if (!eventName) return;
+    var query = new URLSearchParams();
+    query.set('p', 'event/' + eventName);
+    query.set('t', title || ('AI Playgrounds event: ' + eventName));
+    query.set('e', '1');
+    transmit(query);
+  }
+
+  window.aiPlaygroundsAnalytics = {
+    enabled: enabled,
+    optOut: function () { storageSet(localStorage, 'ai-playgrounds-analytics', 'off'); location.reload(); },
+    optIn: function () { storageSet(localStorage, 'ai-playgrounds-analytics', 'on'); location.reload(); },
+    count: function (name, title) { sendEvent(name, title); }
+  };
+
+  document.addEventListener('click', function (event) {
+    var out = event.target.closest('#analytics-opt-out');
+    var inn = event.target.closest('#analytics-opt-in');
+    if (out) { event.preventDefault(); window.aiPlaygroundsAnalytics.optOut(); return; }
+    if (inn) { event.preventDefault(); window.aiPlaygroundsAnalytics.optIn(); return; }
+    if (!enabled) return;
+
+    var link = event.target.closest('a[href]');
+    if (link) {
+      var href = link.getAttribute('href') || '';
+      var app = href.match(/playgrounds\/([^/?#]+)\/?/i);
+      if (app) sendEvent('launch/' + clean(app[1]), 'Launch applet: ' + clean(app[1]));
+      else if (/\.(pdf|zip|md|docx?|pptx?|csv)(?:[?#]|$)/i.test(href)) sendEvent('resource/' + clean((href.split('/').pop() || 'download').split(/[?#]/)[0]), 'Resource download');
+      else if (/github\.com\/lmdixon23\/ai-playgrounds/i.test(href)) sendEvent('outbound/github', 'Open AI Playgrounds on GitHub');
+    }
+
+    if (PAGE_KIND === 'applet') {
+      var control = event.target.closest('main button, main [role="button"], .workspace button, .controls button');
+      if (control && !control.closest('header, nav, footer, .toolbar')) {
+        var key = 'ai-playgrounds-engaged-' + PAGE_SLUG;
+        if (storageGet(sessionStorage, key) !== '1') {
+          storageSet(sessionStorage, key, '1');
+          sendEvent('engaged/' + clean(PAGE_SLUG), 'First substantive applet interaction: ' + clean(PAGE_SLUG));
+        }
+      }
+    }
+  }, true);
+
+  if (!enabled) return;
+  sendPage();
+})();
+</script>
+</body>
+</html>

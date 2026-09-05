@@ -1,0 +1,2763 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bayesian Network | AI Playgrounds</title>
+<link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E" rel="icon"/>
+<meta content="Use a graph to connect several uncertain events. Add evidence, update probabilities, and observe how one explanation can reduce belief in another explanation." name="description"/>
+<link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-network/" rel="canonical"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-network/?lang=en" hreflang="en" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-network/?lang=zh" hreflang="zh-Hans" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-network/?lang=vi" hreflang="vi" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-network/?lang=es" hreflang="es" rel="alternate"/><link href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-network/?lang=en" hreflang="x-default" rel="alternate"/>
+<meta content="website" property="og:type"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-network/" property="og:url"/>
+<meta content="Bayesian Network | AI Playgrounds" property="og:title"/>
+<meta content="Use a graph to connect several uncertain events. Add evidence, update probabilities, and observe how one explanation can reduce belief in another explanation." property="og:description"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" property="og:image"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="Bayesian Network | AI Playgrounds" name="twitter:title"/>
+<meta content="Use a graph to connect several uncertain events. Add evidence, update probabilities, and observe how one explanation can reduce belief in another explanation." name="twitter:description"/>
+<meta content="https://lmdixon23.github.io/ai-playgrounds/og-image.png" name="twitter:image"/>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Bayesian Network | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-network/","description":"Use a graph to connect several uncertain events. Add evidence, update probabilities, and observe how one explanation can reduce belief in another explanation.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh","vi","es"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
+<style>
+  :root {
+    --bg: #fefdf8; --fg: #1f2937; --muted: #6b7280; --accent: #0f766e;
+    --card: #fff; --border: #e5e7eb; --soft: #f9fafb;
+    --true: #16a34a; --false: #dc2626; --unset: #94a3b8;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", Arial, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; }
+  .page-header { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 24px; }
+  .header-utility { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .header-prefs { display: flex; align-items: center; gap: 8px; }
+  .header-main { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .header-actions { display: flex; align-items: center; gap: 8px; font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem; }
+  .header-actions .header-reset { margin-left: 12px; }
+  .page-header h1 { margin: 0; font-size: 1.5rem; }
+  .page-header .back { color: var(--accent); text-decoration: none; font-size: 0.9rem; font-family: -apple-system, system-ui, sans-serif; }
+  .lang-switch { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .lang-switch button { padding: 4px 10px; background: white; color: var(--muted);
+                          border: none; cursor: pointer; font: inherit; font-size: 0.78rem; }
+  .lang-switch button.active { background: var(--accent); color: white; font-weight: 600; }
+  .header-reset { padding: 6px 12px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font: inherit; font-size: 0.82rem; }
+  .header-reset:hover { background: var(--soft); }
+  .tldr { max-width: 820px; margin: 16px auto 0;
+           background: var(--accent); color: white;
+           border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; font-weight: 500;
+           font-family: -apple-system, system-ui, sans-serif; line-height: 1.45; }
+  .tldr strong { color: rgba(255,255,255,0.85); font-size: 0.72rem; letter-spacing: 0.08em;
+                  text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px; }
+  .interactive { background: var(--card); padding: 24px; border-bottom: 1px solid var(--border); }
+  .interactive-inner { max-width: min(1280px, 100%); margin: 0 auto;
+                         font-family: -apple-system, system-ui, sans-serif; }
+  .control-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+                  margin-bottom: 14px; font-size: 0.88rem; }
+  .control-row label { color: var(--muted); }
+  .control-row .group { display: flex; gap: 0; border: 1px solid var(--border);
+                         border-radius: 6px; overflow: hidden; }
+  .control-row .group button {
+    padding: 7px 12px; background: white; color: var(--fg);
+    border: none; border-right: 1px solid var(--border); cursor: pointer;
+    font: inherit; font-size: 0.85rem;
+  }
+  .control-row .group button:last-child { border-right: none; }
+  .control-row .group button.active { background: var(--accent); color: white; font-weight: 600; }
+  .control-row .step-btn { padding: 7px 14px; background: white; color: var(--fg);
+                            border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                            font: inherit; font-size: 0.85rem; }
+
+  .net-cpts { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 18px; align-items: start;
+                margin-bottom: 18px; }
+  /* Phones/tablets: stack the network graph above the CPT tables; let the SVG fill width. */
+  @media (max-width: 900px) {
+    .net-cpts { grid-template-columns: minmax(0, 1fr); }
+    svg#netSvg { max-width: 420px; margin: 0 auto; }
+    .cpt-grid { grid-template-columns: 1fr; }
+  }
+  /* D3/SVG upgrade: the network is now SVG instead of canvas. The width="320"
+     HTML attribute is a fallback; this CSS makes the graph scale with its column. */
+  svg#netSvg { background: white; border: 1px solid var(--border); border-radius: 6px;
+               width: 100%; height: auto; display: block; max-width: 100%; }
+  body.dark-mode svg#netSvg { background: #1e293b; border-color: var(--border); }
+  svg#netSvg .node-circle { stroke: #475569; stroke-width: 1.5; cursor: grab; transition: r 0.15s, fill 0.15s; }
+  svg#netSvg .node-circle:hover { stroke-width: 2.5; }
+  svg#netSvg .node-circle.dragging { cursor: grabbing; }
+  svg#netSvg .node-label { font: bold 14px system-ui, -apple-system, sans-serif;
+                            text-anchor: middle; dominant-baseline: middle;
+                            pointer-events: none; user-select: none; }
+  svg#netSvg .edge { stroke: #94a3b8; stroke-width: 1.5; fill: none; }
+  body.dark-mode svg#netSvg .edge { stroke: #64748b; }
+  svg#netSvg .node:focus { outline: none; }
+  svg#netSvg .node:focus .node-circle { stroke: var(--accent); stroke-width: 3; }
+  .cpt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .cpt { background: var(--soft); border: 1px solid var(--border);
+           border-radius: 6px; padding: 8px 10px; font-size: 0.82rem; font-family: 'SF Mono', monospace; }
+  .cpt h4 { margin: 0 0 6px; font-family: -apple-system, system-ui, sans-serif;
+              color: var(--accent); font-size: 0.85rem; }
+  .cpt table { width: 100%; border-collapse: collapse; }
+  .cpt td { padding: 3px 4px; }
+  .cpt input { width: 70px; padding: 2px 4px; background: var(--card); color: var(--fg);
+                 border: 1px solid var(--border); border-radius: 3px; font: inherit; font-family: monospace; }
+
+  .evidence-section { background: var(--soft); border: 1px solid var(--border);
+                        border-radius: 8px; padding: 14px; margin-bottom: 16px; }
+  .evidence-section h3 { margin: 0 0 10px; font-size: 0.85rem; color: var(--accent);
+                           text-transform: uppercase; letter-spacing: 0.05em; }
+  .evidence-grid { display: grid; grid-template-columns: 1fr auto auto auto;
+                     gap: 6px 10px; align-items: center; font-size: 0.88rem; }
+  .ev-name { font-weight: 600; }
+  .ev-btn { padding: 5px 12px; font-size: 0.82rem; border-radius: 4px;
+             cursor: pointer; background: white; color: var(--muted);
+             border: 1px solid var(--border); font: inherit; }
+  .ev-btn.active.t { background: var(--true); color: white; border-color: var(--true); font-weight: 700; }
+  .ev-btn.active.f { background: var(--false); color: white; border-color: var(--false); font-weight: 700; }
+  .ev-btn.active.u { background: var(--unset); color: white; border-color: var(--unset); }
+
+  .scenarios { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .scenarios button { padding: 7px 12px; background: white; color: var(--fg);
+                        border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                        font: inherit; font-size: 0.82rem; }
+  .scenarios button:hover { background: var(--soft); }
+
+  .infer-section { background: white; border: 1px solid var(--border);
+                     border-radius: 8px; padding: 14px; margin-bottom: 16px; }
+  .infer-section h3 { margin: 0 0 10px; font-size: 0.85rem; color: var(--accent);
+                        text-transform: uppercase; letter-spacing: 0.05em; }
+  .infer-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .infer-cell { background: var(--soft); border: 1px solid var(--border);
+                  border-radius: 6px; padding: 10px; text-align: center; }
+  .infer-cell .name { font-size: 0.85rem; color: var(--muted); margin-bottom: 4px; }
+  .infer-cell .prob { font-size: 1.4rem; font-weight: 700; font-family: monospace; color: var(--true); }
+  .infer-cell.evidence .prob { color: var(--accent); }
+  .infer-cell .bar { height: 6px; background: var(--border); border-radius: 3px;
+                      margin-top: 6px; overflow: hidden; }
+  .infer-cell .bar .fill { height: 100%; background: var(--true); transition: width 0.25s; }
+  #inferMeta { color: var(--muted); font-size: 0.78rem; font-style: italic; margin-top: 10px; }
+  .jump-link { display: inline-block; margin-top: 14px;
+                padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px;
+                background: white; color: var(--accent); text-decoration: none;
+                font-family: -apple-system, system-ui, sans-serif; font-size: 0.82rem;
+                font-weight: 600; }
+  .jump-link:hover { background: var(--soft); }
+  .jump-anchor { text-align: center; }
+  .essay { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; font-size: 1.05rem; }
+  .essay h2 { font-size: 1.5rem; margin-top: 36px; margin-bottom: 12px; color: var(--accent); }
+  .essay h3 { font-size: 1.15rem; margin-top: 24px; margin-bottom: 8px; }
+  .essay .lede { font-size: 1.15rem; color: #374151; }
+  .essay .aha { background: #ccfbf1; border-left: 4px solid #0d9488;
+                 padding: 12px 18px; margin: 18px 0; border-radius: 0 6px 6px 0;
+                 font-style: italic; color: #134e4a; }
+  .essay code { background: var(--soft); padding: 1px 6px; border-radius: 4px;
+                 font-family: 'SF Mono', Consolas, monospace; font-size: 0.92em; }
+  .essay ul li { margin-bottom: 6px; }
+  .essay .for-teachers { background: var(--soft); border: 1px solid var(--border);
+                          border-radius: 8px; padding: 20px 24px; margin-top: 36px;
+                          font-family: -apple-system, system-ui, sans-serif; font-size: 0.95rem; }
+  .essay .for-teachers h3 { font-family: -apple-system, system-ui, sans-serif;
+                              color: var(--accent); font-size: 0.9rem;
+                              text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+  /* Phones: 5 probability cards in one row gets cramped: wrap to a 2/3-up grid. */
+  @media (max-width: 560px) {
+    .infer-row { grid-template-columns: repeat(2, 1fr); }
+    .evidence-grid { grid-template-columns: 1fr; gap: 4px 6px; }
+    .cpt input { width: 100%; box-sizing: border-box; }
+  }
+  /* Touch devices: comfortable tap targets without changing desktop layout. */
+  @media (pointer: coarse) {
+    button, .step-btn, .ev-btn, .scenarios button, select, summary { min-height: 44px; }
+    .ev-btn { padding-left: 14px; padding-right: 14px; }
+    .cpt input { min-height: 36px; }
+  }
+  /* === dark mode === */
+  body.dark-mode {
+    --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8;
+    --card: #1e293b; --border: #334155; --soft: #1e293b;
+  }
+  body.dark-mode .essay .lede { color: #cbd5e1; }
+  body.dark-mode .essay .for-teachers { background: #0f172a; }
+  /* True canvas dark mode: render fn picks bg directly. */
+  body.dark-mode .header-reset,
+  body.dark-mode .lang-switch button:not(.active),
+  body.dark-mode .header-theme,
+  body.dark-mode .control-row .group button:not(.active),
+  body.dark-mode .control-row .step-btn,
+  body.dark-mode .scenarios button,
+  body.dark-mode .cpt input,
+  body.dark-mode .ev-btn:not(.active) { background: var(--card); color: var(--fg); }
+  body.dark-mode .evidence-section, body.dark-mode .infer-section,
+  body.dark-mode .cpt, body.dark-mode .infer-cell { background: var(--card); }
+  .header-theme { padding: 6px 10px; background: white; color: var(--fg);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                    font-size: 1rem; line-height: 1; font-family: inherit; }
+  .header-theme:hover { background: var(--soft); }
+  .header-png { padding: 6px 10px; background: white; color: var(--fg);
+                  border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+                  font-size: 0.85rem; font-family: inherit; }
+  .header-png:hover { background: var(--soft); }
+  body.dark-mode .header-png { background: var(--card); color: var(--fg); }
+  /* ===== Slider styling: native themed control via accent-color (consistent across browsers) ===== */
+  input[type="range"] { accent-color: var(--accent); height: 28px; cursor: pointer; }
+  /* embed mode. Strip chrome so the applet fits cleanly in an LMS iframe. */
+  body.embed-mode .page-header,
+  body.embed-mode aside.tldr,
+  body.embed-mode article.essay,
+  body.embed-mode .jump-anchor { display: none !important; }
+  body.embed-mode .interactive { padding: 12px; border-bottom: none; }
+  /* ===== Shared a11y + contrast tokens (keyboard focus and contrast tokens) ===== */
+  button:focus-visible, a:focus-visible, select:focus-visible,
+  input:focus-visible, textarea:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+  .tldr { background: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), var(--accent); }
+  .tldr strong { color: #fff; }
+
+
+  /* Student response packet: local-only assignment packet across the applet family. */
+  .classroom-lab .lab-panel { margin-top:8px; padding:14px; background:var(--card); border:1px solid var(--border); border-radius:8px; }
+  .classroom-lab .lab-intro { margin:0 0 12px; color:var(--muted); font-size:0.88rem; line-height:1.5; }
+  .classroom-lab .lab-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+  .classroom-lab .lab-field { display:flex; flex-direction:column; gap:4px; }
+  .classroom-lab .lab-field label { font-family:-apple-system,system-ui,sans-serif; font-size:0.82rem; font-weight:700; color:var(--accent); }
+  .classroom-lab textarea { min-height:86px; resize:vertical; width:100%; border:1px solid var(--border); border-radius:6px; padding:8px; font:inherit; color:var(--fg); background:var(--bg); }
+  .classroom-lab .lab-state { margin-top:12px; padding:10px 12px; border:1px dashed var(--border); border-radius:8px; background:var(--soft); color:var(--muted); font-family:ui-monospace,monospace; font-size:0.78rem; white-space:pre-wrap; }
+  .classroom-lab .lab-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; align-items:center; }
+  .classroom-lab .lab-status { color:var(--muted); font-size:0.82rem; min-height:1.2em; }
+  @media (max-width:480px) { .classroom-lab .lab-grid { grid-template-columns:1fr; } .classroom-lab .lab-actions button { width:100%; } }
+
+  /* Scenario Gallery: visible, reusable entry points generated from the lesson-tour scenarios. */
+  .scenario-gallery-panel {
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .scenario-gallery-intro {
+    margin: 0 0 10px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .scenario-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .scenario-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--card) 88%, var(--soft));
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 100%;
+  }
+  .scenario-card h3 {
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.98rem;
+    line-height: 1.25;
+  }
+  .scenario-card p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .scenario-card .scenario-meta {
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  .scenario-card .scenario-meta strong { color: var(--fg); }
+  .scenario-card button {
+    margin-top: auto;
+    align-self: flex-start;
+  }
+  @media (max-width: 480px) {
+    .scenario-card-grid { grid-template-columns: 1fr; }
+    .scenario-card button { width: 100%; }
+  }
+
+
+
+  /* Supporting learning components. */
+  .visual-explanation-panel {
+    margin-top: 8px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .visual-explanation-intro {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .visual-flow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+  }
+  .visual-card {
+    position: relative;
+    min-height: 132px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, var(--accent)), var(--card));
+    overflow: hidden;
+  }
+  .visual-card::before {
+    content: attr(data-step);
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    color: color-mix(in srgb, var(--accent) 62%, transparent);
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+  .visual-card h4 {
+    margin: 0 28px 8px 0;
+    color: var(--accent);
+    font-size: 0.9rem;
+    line-height: 1.25;
+  }
+  .visual-card p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .visual-live {
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 8px;
+    background: var(--soft);
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.74rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .visual-live strong { color: var(--accent); font-family: -apple-system, system-ui, sans-serif; font-size: 0.72rem; }
+  .visual-watch-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .visual-snapshot, .visual-misread {
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: var(--soft);
+  }
+  .visual-snapshot strong, .visual-misread strong {
+    display: block;
+    color: var(--accent);
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 0.78rem;
+    margin-bottom: 6px;
+  }
+  .visual-snapshot pre {
+    margin: 0;
+    white-space: pre-wrap;
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+  .visual-misread p {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  @media (max-width: 620px) {
+    .visual-watch-grid { grid-template-columns: 1fr; }
+  }
+
+
+
+  /* Supporting learning components. */
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 10px;
+    z-index: 10000;
+    padding: 10px 14px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 8px;
+    font-family: -apple-system, system-ui, sans-serif;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .skip-link:focus { left: 12px; }
+  :focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+  [tabindex="-1"]:focus { outline: none; }
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+  .accessibility-layer {
+    margin-top: 12px;
+  }
+  .accessibility-panel {
+    margin-top: 8px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .accessibility-intro {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .accessibility-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .accessibility-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--card) 92%, var(--soft));
+    padding: 12px;
+  }
+  .accessibility-card h3 {
+    margin: 0 0 8px;
+    color: var(--accent);
+    font-size: 0.92rem;
+  }
+  .accessibility-card p,
+  .accessibility-card li {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .accessibility-card ul {
+    margin: 0;
+    padding-left: 1.15rem;
+  }
+  .a11y-state-grid {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 6px 10px;
+    margin: 0;
+    font-size: 0.84rem;
+  }
+  .a11y-state-grid dt {
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .a11y-state-grid dd {
+    margin: 0;
+    color: var(--fg);
+    overflow-wrap: anywhere;
+  }
+  .accessibility-note {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+  @media (max-width: 620px) {
+    .accessibility-grid { grid-template-columns: 1fr; }
+    .a11y-state-grid { grid-template-columns: 1fr; }
+    .a11y-state-grid dt { margin-top: 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html:focus-within { scroll-behavior: auto !important; }
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+
+
+  /* Supporting learning components. */
+  .interactive-inner { max-width: min(1280px, 100%); }
+  .scenario-card,
+  .accessibility-card,
+  .classroom-lab .lab-panel,
+  .accessibility-panel,
+  .signature-challenge-panel {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, var(--soft)), var(--card));
+  }
+  .signature-challenge-panel {
+    margin-top: 12px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .signature-challenge-panel strong { display:block; color:var(--accent); margin-bottom:4px; }
+  .signature-challenge-panel p { margin: 6px 0 0; color: var(--muted); font-size: 0.88rem; line-height: 1.5; }
+
+
+  /* Supporting learning components. */
+  .learning-deck { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:12px; align-items:start; }
+  .learning-deck > details { margin-top:0 !important; min-width:0; }
+  .learning-deck > .scenario-gallery,
+  .learning-deck > .visual-explanation,
+  .learning-deck > .classroom-lab,
+  .learning-deck > .accessibility-layer { grid-column:1 / -1; }
+  .learning-deck > details > summary { background:var(--card) !important; }
+  .scenario-gallery-panel, .scenario-card, .accessibility-panel, .accessibility-card,
+  .classroom-lab .lab-panel, .signature-challenge-panel {
+    background:linear-gradient(180deg,color-mix(in srgb,var(--card) 90%,var(--accent)),var(--card)) !important;
+  }
+  .scenario-card { box-shadow:0 6px 18px rgba(15,23,42,.05); transition:border-color .16s, box-shadow .16s, transform .16s; }
+  .scenario-card.applied { border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 22%,transparent),0 10px 24px rgba(15,23,42,.08); transform:translateY(-1px); }
+  .scenario-card .scenario-meta:last-of-type { margin-bottom:2px; }
+  @media (max-width:900px) { .learning-deck { grid-template-columns:1fr; } .learning-deck > details { grid-column:1 !important; } }
+
+</style>
+<!-- AI_PLAYGROUNDS_COMPONENT:original/learner-interface-style -->
+<!-- AI_PLAYGROUNDS_COMPONENT:original/learning-modes-style-common -->
+<link href="../../assets/localization-r4.css" rel="stylesheet"/>
+<meta name="ai-playgrounds-version" content="1.8.1">
+
+<!-- AI_PLAYGROUNDS_COMPONENT:original/v14-version-provenance-style -->
+
+
+<style id="bayes-engagement-excellence-style">
+.bayes-eq-strip{margin:0 0 10px;padding:10px 12px;border:1px solid color-mix(in srgb,var(--accent) 32%,var(--border));border-radius:10px;background:linear-gradient(180deg,color-mix(in srgb,var(--card) 92%,var(--accent)),var(--card));display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}.bayes-eq-strip strong{display:block;color:var(--accent);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em}.bayes-eq-strip p{margin:3px 0 0;color:var(--muted);font-size:.8rem;max-width:760px}.bayes-eq-mode{padding:4px 7px;border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--muted);font:11px/1.3 ui-monospace,monospace}.infer-cell .bar{position:relative}.bayes-eq-prev-marker{position:absolute;top:-3px;bottom:-3px;width:3px;border-radius:3px;background:var(--fg);opacity:.55;transform:translateX(-1.5px);pointer-events:none}.bayes-eq-delta{margin-top:7px;padding-top:6px;border-top:1px dashed var(--border);font:11px/1.4 ui-monospace,monospace;color:var(--muted);min-height:2.7em}.bayes-eq-delta b{color:var(--fg)}.infer-cell.bayes-eq-largest{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 17%,transparent)}.bayes-eq-up{color:var(--true)!important}.bayes-eq-down{color:var(--false)!important}.bayes-eq-flat{color:var(--muted)!important}
+@media(max-width:560px){.bayes-eq-strip{display:block}.bayes-eq-mode{display:inline-block;margin-top:7px}}
+@media(prefers-reduced-motion:reduce){.infer-cell .bar .fill,.bayes-eq-prev-marker{transition:none!important}}
+</style>
+
+
+<style id="v151-bayes-mobile-methods">
+@media (max-width: 640px) {
+  .control-row .method-tabs {
+    flex: 1 1 100%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+  }
+  .control-row .method-tabs button {
+    min-width: 0;
+    white-space: normal;
+    line-height: 1.25;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .control-row .method-tabs button:nth-child(2n) { border-right: 0; }
+  .control-row .method-tabs button:nth-last-child(-n+2) { border-bottom: 0; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to applet controls</a>
+<header class="page-header">
+<div class="header-utility">
+<a class="back" data-i18n="back-link" href="../../index.html">← Back to all playgrounds</a>
+<div class="header-prefs">
+<button aria-label="Toggle dark or light theme" class="header-theme" id="themeToggle" title="Toggle dark / light theme (saved across all playgrounds).">🌙</button>
+<div class="lang-switch" title="Switch interface language">
+<button class="active" data-lang="en">EN</button>
+<button data-lang="zh">中文</button>
+</div>
+</div>
+</div>
+<div class="header-main">
+<h1 data-i18n="title">Bayesian Network</h1>
+<div class="header-actions">
+<button class="header-png" id="shareLink" title="Copy a URL that re-opens this evidence assignment + inference method in another browser.">🔗 Share</button>
+<button class="header-png" id="embedLink" title="Copy an &lt;iframe&gt; snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
+<button class="header-png" id="exportPng" title="Download the network diagram as a PNG.">📷 PNG</button>
+<button class="header-reset" data-i18n="reset-all" id="hardReset" title="Reset CPTs to AIMA defaults and clear all evidence.">↺ Reset all</button>
+</div>
+</div>
+</header>
+<aside class="tldr">
+<strong data-i18n="tldr-strong">The big idea</strong>
+<span data-i18n="tldr-body">Learning of an earthquake LOWERS your belief in a burglary: even though the two are independent without evidence. That's "explaining away," and it's visible here in one slider.</span>
+</aside>
+<section class="interactive" id="main" role="main" tabindex="-1">
+<div class="interactive-inner">
+<!-- preset selector. Three classic networks. -->
+<div class="control-row">
+<label data-i18n="net-label">Network:</label>
+<select data-i18n-title="net-title" id="netSel" title="Switch between classic Bayesian networks. Each has its own variables, parents, and conditional probability tables.">
+<option data-i18n="net-burglary" selected="" value="burglary">Burglary (AIMA, 5 vars)</option>
+<option data-i18n="net-sprinkler" value="sprinkler">Sprinkler (Pearl, 4 vars)</option>
+<option data-i18n="net-cancer" value="cancer">Cancer screening (3 vars)</option>
+</select>
+</div>
+<div class="control-row">
+<label data-i18n="method-label">Inference:</label>
+<div class="group method-tabs">
+<button class="active" data-i18n="m-exact" data-i18n-title="m-exact-title" data-m="exact" title="Compute P(query | evidence) exactly by enumeration. Correct, but exponential in the number of unobserved variables.">Exact (enumeration)</button>
+<button data-i18n="m-ve" data-i18n-title="m-ve-title" data-m="ve" title="Variable elimination: algebraic reformulation of exact inference that reuses intermediate sums. Polynomial in tree-width, much faster than enumeration on networks with structure.">Variable elimination</button>
+<button data-i18n="m-gibbs" data-i18n-title="m-gibbs-title" data-m="gibbs" title="Approximate P(query | evidence) with Gibbs sampling. Scales to large networks but is noisy with few samples.">Gibbs sampling</button>
+<button data-i18n="m-lw" data-i18n-title="m-lw-title" data-m="lw" title="Likelihood weighting: sample non-evidence variables in topological order; weight each sample by Π P(evidence_i | parents_i). Unlike Gibbs, samples never get rejected and there's no burn-in. Often more sample-efficient than Gibbs on rare evidence.">Likelihood weighting</button>
+</div>
+<span class="control-row" id="gibbsControls" style="display:none; gap:8px; align-items:center;">
+<label data-i18n="samples-label" data-i18n-title="samples-title" title="More samples = less noisy estimate but slower.">Samples</label>
+<input aria-label="Number of Gibbs sampling iterations" id="nSamples" max="100000" min="100" step="100" style="min-width: 160px" type="range" value="5000"/>
+<span id="nSamplesV" style="font-family:monospace;color:var(--accent);font-weight:700">5,000</span>
+<button class="step-btn" data-i18n="resample-btn" data-i18n-title="resample-btn-title" id="resampleBtn" title="Re-run Gibbs with a different random seed.">↻ Re-sample</button>
+</span>
+</div>
+<div class="net-cpts">
+<div>
+<svg aria-labelledby="netSvgTitle netSvgDesc" height="280" id="netSvg" role="img" viewbox="0 0 320 280" width="320">
+<title id="netSvgTitle">Bayesian network diagram</title>
+<desc id="netSvgDesc">Five variables: Burglary, Earthquake, Alarm, JohnCalls, MaryCalls: connected by directed edges. Drag nodes to rearrange. Tab through to access each variable.</desc>
+<defs>
+<marker id="arrow" markerheight="6" markerwidth="6" orient="auto-start-reverse" refx="9" refy="5" viewbox="0 0 10 10">
+<path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"></path>
+</marker>
+</defs>
+</svg>
+<p data-i18n="net-hint" style="text-align:center; color:var(--muted); font-size:0.78rem; margin-top:6px; font-style:italic;">
+        Drag nodes to rearrange. Edges flow parent → child. Green = clamped TRUE, red = clamped FALSE.
+      </p>
+</div>
+<div>
+<div class="cpt-grid" id="cptArea"></div>
+</div>
+</div>
+<div class="evidence-section">
+<h3 data-i18n="evidence-label">Evidence: click T / F / ? per variable</h3>
+<div class="evidence-grid" id="evGrid"></div>
+</div>
+<div class="scenarios">
+<span data-i18n="scen-label" style="color:var(--muted); font-size:0.82rem; margin-right:6px;">Quick scenarios:</span>
+<button data-i18n="scen-nothing" data-i18n-title="scen-nothing-title" id="s1" title="Clear all evidence.">Nothing observed</button>
+<button data-i18n="scen-john" data-i18n-title="scen-john-title" id="s2" title="John calls. Modest evidence of an alarm somewhere upstream.">John calls</button>
+<button data-i18n="scen-both" data-i18n-title="scen-both-title" id="s3" title="Both John and Mary call. Strong evidence of an alarm.">John &amp; Mary both call</button>
+<button data-i18n="scen-alarm" data-i18n-title="scen-alarm-title" id="s4" title="The alarm is actually sounding (rare in practice).">Alarm is on</button>
+<button data-i18n="scen-eq" data-i18n-title="scen-eq-title" id="s5" title="The 'explaining away' scenario: John, Mary, AND we learn there was an earthquake.">Both call + earthquake</button>
+</div>
+<div class="infer-section">
+<h3 data-i18n="posterior-label">Posterior: P(variable = TRUE | evidence)</h3>
+<div class="infer-row" id="postRow"></div>
+<div id="inferMeta"></div>
+</div>
+<!-- d-separation / independence checker. Pick two variables and ask
+       whether they are conditionally independent given the current evidence.
+       Uses active-trail, Bayes-ball-style rules directly on the DAG. Moralization is a different route to some d-separation checks and is not what this implementation does. -->
+<details class="dsep-panel" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="dsep-summary">🔗 d-separation checker (are X and Y independent given evidence?)</span>
+</summary>
+<div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem;">
+<p data-i18n="dsep-hint" style="margin:0 0 6px; color:var(--muted); font-size:0.82rem;">
+        Pick two variables and click "Check". The algorithm runs Bayes-Ball on the DAG using the current evidence as the conditioning set. Two variables are independent (d-separated) when no active path connects them.
+      </p>
+<div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+<label data-i18n="dsep-x-label">X:</label>
+<select id="dsepX" style="padding:3px 6px; border:1px solid var(--border); border-radius:4px; font:inherit;"></select>
+<label data-i18n="dsep-y-label">Y:</label>
+<select id="dsepY" style="padding:3px 6px; border:1px solid var(--border); border-radius:4px; font:inherit;"></select>
+<button class="step-btn" data-i18n="dsep-btn" id="dsepBtn">Check d-separation</button>
+</div>
+<div id="dsepResult" style="margin-top:8px; font-family:ui-monospace,monospace; font-size:0.85rem; line-height:1.6;">
+<span data-i18n="dsep-empty" style="color:var(--muted); font-style:italic;">(select X and Y, then click Check)</span>
+</div>
+</div>
+</details>
+<!-- Scenario gallery. Visible, reusable entry points generated from the lesson-tour scenarios. -->
+<details class="scenario-gallery" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="sg-summary">🎯 Try these scenarios first</span>
+</summary>
+<div class="scenario-gallery-panel">
+<p class="scenario-gallery-intro" data-i18n="sg-intro">Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.</p>
+<div aria-live="polite" class="scenario-card-grid" id="scenarioGalleryCards">
+<article class="scenario-card" data-scenario-index="0">
+<h3>Scenario 1: Start from the prior probabilities</h3>
+<p class="scenario-meta"><strong>Core question: </strong> What does the network believe before any evidence is entered?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Clear all evidence and read the burglary, earthquake, alarm, and call probabilities.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict which events should be rarest and which probability should be largest.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain how the conditional probability tables create the calm baseline.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="1">
+<h3>Scenario 2: One phone call changes burglary belief</h3>
+<p class="scenario-meta"><strong>Core question: </strong> How can evidence travel against the direction of an arrow?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Set John calls to true, then compare the burglary posterior with its prior probability.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict whether the burglary probability will rise a little or by many times.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain why a possible effect can provide diagnostic evidence about its cause.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="2">
+<h3>Scenario 3: Two reports are conditionally independent given the alarm</h3>
+<p class="scenario-meta"><strong>Core question: </strong> Why do two calls change belief more than one call?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Set both John and Mary calls to true while leaving the possible causes unobserved.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict whether the second report will add weak or strong evidence.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain that the model treats the two call mechanisms as conditionally independent given Alarm, so observing both can jointly strengthen belief in Alarm.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="3">
+<h3>Scenario 4: An earthquake explains away a burglary</h3>
+<p class="scenario-meta"><strong>Core question: </strong> How can adding evidence make a hypothesis less likely?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Keep both calls true, then also set earthquake to true and watch burglary probability.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict the direction of the burglary update before applying the earthquake evidence.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain how the observed earthquake already accounts for the alarm and calls.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+<article class="scenario-card" data-scenario-index="4">
+<h3>Scenario 5: Wet grass has two possible causes</h3>
+<p class="scenario-meta"><strong>Core question: </strong> How does explaining away appear in a different network?</p>
+<p class="scenario-meta"><strong>Run and watch: </strong> Switch to the sprinkler network, observe wet grass, then add evidence that it rained.</p>
+<p class="scenario-meta"><strong>Predict first: </strong> Predict what will happen to the sprinkler probability after rain is confirmed.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain why the two causes compete to explain the same wet grass.</p>
+<button class="step-btn" type="button">Apply and compare</button>
+</article>
+</div>
+</div>
+</details>
+<!-- Signature challenge. A one-move comparison that gives this applet a memorable first task. -->
+<details class="signature-challenge" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span>✨ Featured comparison</span>
+</summary>
+<div class="signature-challenge-panel">
+<strong>Featured comparison</strong>
+<p>Turn evidence on one shared effect into a competition between causes. This is the fastest way to see explaining away.</p>
+<p><em>Set evidence on the effect node, then compare what happens when one cause is also observed.</em></p>
+</div>
+</details>
+<!-- Supporting learning component. -->
+<details class="visual-explanation" open="" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-visual-en="🧭 Visual explanation" data-visual-zh="🧭 可视化解释镜头">🧭 Visual explanation</span>
+</summary>
+<div class="visual-explanation-panel">
+<p class="visual-explanation-intro" data-visual-intro=""></p>
+<div class="visual-flow" data-visual-flow=""></div>
+<div class="visual-watch-grid">
+<div class="visual-snapshot">
+<strong data-visual-en="Live state to watch" data-visual-zh="要观察的实时状态">Live state to watch</strong>
+<pre data-visual-snapshot="">No state captured yet. Run or adjust the applet first.</pre>
+</div>
+<div class="visual-misread">
+<strong data-visual-en="Misread to avoid" data-visual-zh="避免的误读">Misread to avoid</strong>
+<p data-visual-misread=""></p>
+</div>
+</div>
+</div>
+</details>
+<!-- Lesson tour. Ordered scenarios that step students through the key ideas. -->
+<details class="lesson-tour" style="margin-top:12px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="tour-summary">📚 Lesson tour (5 steps)</span>
+</summary>
+<div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px;">
+<div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+<strong style="color:var(--accent);"><span data-i18n="tour-step">Step</span> <span id="tourPos">1/5</span>:</strong>
+<strong id="tourName" style="font-family:-apple-system,system-ui,sans-serif;">-</strong>
+</div>
+<p id="tourDesc" style="margin:0 0 8px; color:var(--fg); font-size:0.88rem; line-height:1.5;">-</p>
+<div style="display:flex; gap:8px; align-items:center;">
+<button class="step-btn secondary" data-i18n="tour-prev" id="tourPrev">← Prev</button>
+<button class="step-btn" data-i18n="tour-apply" id="tourApply">▶ Apply this scenario</button>
+<button class="step-btn secondary" data-i18n="tour-next" id="tourNext">Next →</button>
+</div>
+</div>
+</details>
+<!-- Worksheet/lab mode. 3 questions per applet with instant check. -->
+<details class="worksheet" style="margin-top:8px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-i18n="ws-summary">📝 Worksheet (3 questions)</span>
+</summary>
+<div style="margin-top:8px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:6px; font-size:0.88rem; line-height:1.5;">
+<div class="ws-q" id="ws1">
+<p style="margin:0 0 4px;"><strong>Q1.</strong> <span data-i18n="ws1q">Burglary network. Click "John &amp; Mary both call". Note P(Burglary). Now click "Both call + earthquake". P(Burglary) goes:</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="0"/> <span data-i18n="ws1o0">Up: a second alarm cause makes a burglary even more likely.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="1"/> <span data-i18n="ws1o1">Down: the earthquake explains away the alarm, so burglary is less needed.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="2"/> <span data-i18n="ws1o2">Stays the same: burglary and earthquake are independent, so extra evidence can't change it.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws1btn">Check</button>
+<span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+<div class="ws-q" id="ws2" style="margin-top:10px;">
+<p style="margin:0 0 4px;"><strong>Q2.</strong> <span data-i18n="ws2q">Switch to Sprinkler network. Set Wet=T. Now ALSO set Rain=T. P(Sprinkler=T) is:</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="0"/> <span data-i18n="ws2o0">Higher than with wet grass alone: two confirmed causes stack up.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="1"/> <span data-i18n="ws2o1">Lower than with just wet grass: rain explains the wet grass, so the sprinkler is less needed.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="2"/> <span data-i18n="ws2o2">Unchanged: once the grass is wet, learning about rain tells you nothing about the sprinkler.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws2btn">Check</button>
+<span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+<div class="ws-q" id="ws3" style="margin-top:10px;">
+<p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">Burglary network, "Both call" evidence. Switch inference method from Exact to Gibbs sampling with 5000 samples. The posterior for P(Burglary) compared to Exact is:</span></p>
+<div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="0"/> <span data-i18n="ws3o0">An exact match: Gibbs sampling computes the same posterior as enumeration.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="1"/> <span data-i18n="ws3o1">Close but noisy: Gibbs approximates the posterior, and the estimate wobbles a bit each re-sample.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="2"/> <span data-i18n="ws3o2">Wildly different: sampling methods can't recover this posterior at all.</span></label>
+</div>
+<button class="step-btn" data-i18n="ws-check" id="ws3btn">Check</button>
+<span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
+</div>
+</div>
+</details>
+<!-- Student response packet. Local-only: students copy or print their own response packet; the site stores nothing on a server. -->
+<details class="classroom-lab quick-assign" id="quick-assign-qa-bn-01" data-quick-assign-id="QA-BN-01" style="margin-top:8px;">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-lab-en="🧪 Quick Assign · QA-BN-01 · 10–15 min" data-lab-zh="🧪 快速任务 · QA-BN-01 · 10–15 分钟">🧪 Quick Assign · QA-BN-01 · 10–15 min</span>
+</summary>
+<div class="lab-panel"><div class="quick-assign-meta" data-r4-no-translate="1" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong>QA-BN-01</strong> · Level 1 · 10–15 min<br><span>Explaining away</span></div>
+<p class="lab-intro" data-lab-en="Set evidence, compare posteriors, then explain how conditional dependence and explaining away changed the inference." data-lab-zh="设置证据、比较后验概率，然后解释条件依赖和解释消除如何改变推理结果。">Set evidence, compare posteriors, then explain how conditional dependence and explaining away changed the inference.</p>
+<div class="lab-grid">
+<div class="lab-field">
+<label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
+<textarea data-lab-answer="predict" data-lab-en="Before changing evidence, which hidden cause do you expect to become more likely, and why?" data-lab-zh="改变证据前，你预计哪个隐藏原因会变得更可能？为什么？" id="lab-predict" placeholder="Before changing evidence, which hidden cause do you expect to become more likely, and why?"></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
+<textarea data-lab-answer="observe" data-lab-en="Apply at least one scenario. Record the evidence and the posterior probabilities that changed most." data-lab-zh="至少应用一个情境。记录证据以及变化最大的后验概率。" id="lab-observe" placeholder="Apply at least one scenario. Record the evidence and the posterior probabilities that changed most."></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
+<textarea data-lab-answer="explain" data-lab-en="How did the graph structure make one variable evidence for another?" data-lab-zh="图结构如何使一个变量成为另一个变量的证据？" id="lab-explain" placeholder="How did the graph structure make one variable evidence for another?"></textarea>
+</div>
+<div class="lab-field">
+<label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
+<textarea data-lab-answer="transfer" data-lab-en="Name a real situation where one explanation can lower the probability of another explanation." data-lab-zh="举一个现实情境，其中一个解释会降低另一个解释的概率。" id="lab-transfer" placeholder="Name a real situation where one explanation can lower the probability of another explanation."></textarea>
+</div>
+</div>
+<div aria-live="polite" class="lab-state" data-lab-state="">State snapshot appears here.</div>
+<div class="lab-actions">
+<button class="step-btn" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态" type="button">↻ Refresh state</button>
+<button class="step-btn" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包" type="button">📋 Copy packet</button>
+<button class="step-btn secondary" data-lab-action="print" data-lab-en="🖨 Print packet" data-lab-zh="🖨 打印实验包" type="button">🖨 Print packet</button>
+<button class="step-btn secondary" data-lab-action="clear" data-lab-en="Clear local draft" data-lab-zh="清除本地草稿" type="button">Clear local draft</button>
+<span aria-live="polite" class="lab-status"></span>
+</div>
+</div>
+</details>
+<!-- Supporting learning component. -->
+<details class="accessibility-layer" open="">
+<summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
+<span data-a11y-en="♿ Text and keyboard support" data-a11y-zh="♿ 无障碍和文本状态层">♿ Text and keyboard support</span>
+</summary>
+<div aria-labelledby="a11yLayerTitle" class="accessibility-panel" role="region">
+<h2 class="sr-only" data-a11y-title="" id="a11yLayerTitle">Text and keyboard support</h2>
+<p class="accessibility-intro" data-a11y-intro=""></p>
+<div class="accessibility-grid">
+<section aria-labelledby="a11yKeyboardTitle" class="accessibility-card">
+<h3 data-a11y-keyboard-title="" id="a11yKeyboardTitle">Keyboard path</h3>
+<ul>
+<li data-a11y-keyboard-1="">Use Tab and Shift+Tab to move through controls.</li>
+<li data-a11y-keyboard-2="">Use Enter or Space on buttons, and arrow keys on sliders or select controls.</li>
+<li data-a11y-keyboard-3="">The visual region is focusable and described by the state summary below.</li>
+</ul>
+</section>
+<section aria-labelledby="a11yStateTitle" class="accessibility-card">
+<h3 data-a11y-state-title="" id="a11yStateTitle">Text state summary</h3>
+<dl class="a11y-state-grid" data-a11y-state-grid="" id="a11yStateSummary"></dl>
+</section>
+<section aria-labelledby="a11yMotionTitle" class="accessibility-card">
+<h3 data-a11y-motion-title="" id="a11yMotionTitle">Reduced motion and non-visual support</h3>
+<p data-a11y-motion-copy="">Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.</p>
+</section>
+</div>
+<p class="accessibility-note" data-a11y-note="">Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.</p>
+<div aria-atomic="true" aria-live="polite" class="sr-only" id="a11yLiveRegion" role="status"></div>
+</div>
+</details>
+<div class="jump-anchor"><a class="jump-link" data-i18n="jump-link" href="#essay">↓ Read the explanation</a></div>
+</div>
+</section>
+<article class="essay" id="essay">
+<section data-essay-lang="en">
+<p class="lede">
+    A Bayesian network represents a joint probability distribution with a directed acyclic graph.
+    In the classic burglary network, burglary (B) and earthquake (E) can trigger an alarm (A), and
+    John (J) and Mary (M) may call after hearing it. The graph and its conditional probability
+    tables let you ask questions such as P(B | J): the probability of a burglary given that John called.
+  </p>
+<h2>What the arrows encode</h2>
+<p>
+    An arrow points from a parent variable to a child whose probability table is conditioned on
+    that parent. Here, the alarm table depends on burglary and earthquake, while each call table
+    depends on the alarm. An arrow may be given a causal interpretation when the model and data
+    justify it, but the mathematical role of the graph is to encode factorization and conditional
+    independence.
+  </p>
+<p>
+    The safe rule is the local Markov property: given its parents, a node is conditionally
+    independent of its non-descendants. A missing arrow by itself does not prove that two arbitrary
+    variables are independent; the conclusion depends on the full graph and on which variables are observed.
+  </p>
+<h2>The explaining-away effect</h2>
+<p>
+    Select <strong>John and Mary both call</strong>. The two calls make an alarm more plausible,
+    which raises the posterior probability of burglary. Then add evidence that an earthquake
+    occurred. The burglary probability falls because the earthquake already provides an explanation
+    for the alarm and the calls.
+  </p>
+<div class="aha">
+    Burglary and earthquake are independent before evidence in this network. After observing their
+    common effect, they become dependent: evidence for one cause can reduce belief in the other.
+    This collider pattern is called explaining away.
+  </div>
+<h2>Exact inference and Gibbs sampling</h2>
+<p>
+    Exact inference sums or eliminates the possible values of unobserved variables to normalize the
+    posterior. Enumeration is easy in this five-variable network, but its worst-case work grows
+    exponentially with the number and structure of variables. More efficient exact methods, such as
+    variable elimination or junction-tree algorithms, exploit the graph structure but can still be expensive.
+  </p>
+<p>
+    Gibbs sampling approximates the posterior by repeatedly resampling one unobserved variable from
+    its conditional distribution given the current values of the others. More samples usually reduce
+    visible sampling noise, although successive samples are correlated and convergence depends on the
+    model. A finite sample is an estimate, not an exact answer.
+  </p>
+<h2>What this model leaves out</h2>
+<p>
+    Larger Bayesian networks may learn their probability tables or even parts of their structure from
+    data. Practical inference can use variable elimination, belief propagation, Monte Carlo methods,
+    or variational approximations. This applet isolates the central idea: a graph specifies how a joint
+    distribution factors, and evidence changes beliefs throughout that structure.
+  </p>
+<div class="for-teachers">
+<h3>For teachers</h3>
+<p><strong>Curriculum:</strong> Directed graphical models, conditional probability tables,
+      conditional independence, explaining away, and exact versus sampling-based inference.</p>
+<p><strong>Pre-exploration prompts:</strong></p>
+<ul>
+<li>Does an arrow always establish causation, or can it represent a probabilistic dependency?</li>
+<li>If an alarm sounds, which possible causes become more likely?</li>
+<li>Could learning one cause make another cause less likely?</li>
+</ul>
+<p><strong>Post-exploration prompts:</strong></p>
+<ul>
+<li>Observe John calling, then observe both calls. Why does the second call add evidence?</li>
+<li>Add earthquake evidence. Which posterior changes most, and why?</li>
+<li>Run Gibbs sampling several times at 1,000 samples, then at 50,000. Separate sampling variation from a change in the underlying model.</li>
+<li>Raise the burglary prior in the table. Which conclusions change because the prior changed rather than because the evidence changed?</li>
+</ul>
+<p><strong>Misconceptions to test:</strong> every arrow is causal; no edge always means
+      independence; sampling is exact inference performed more slowly.</p>
+</div>
+</section>
+<section data-essay-lang="zh" hidden="" lang="zh">
+<p class="lede">
+    贝叶斯网络用有向无环图表示联合概率分布。在经典的入室盗窃网络中，入室盗窃 B 和地震 E 都可能触发警报 A，John J 和 Mary M 听到警报后可能打电话。图结构与条件概率表可以回答 P(B | J) 之类的问题，也就是在 John 打来电话的条件下发生入室盗窃的概率。
+  </p>
+<h2>箭头编码了什么</h2>
+<p>
+    箭头从父变量指向子变量，子变量的概率表以父变量为条件。在本网络中，警报表取决于入室盗窃和地震，而两人的来电表都取决于警报。当模型假设与数据支持时，箭头可以被赋予因果解释；从数学上看，图的作用是编码概率分解和条件独立关系。
+  </p>
+<p>
+    更准确的规则是局部马尔可夫性质：给定一个节点的父节点后，该节点与其非后代条件独立。仅仅缺少一条箭头，并不能证明任意两个变量独立；结论取决于完整图结构以及哪些变量已被观测。
+  </p>
+<h2>解释消除效应</h2>
+<p>
+    选择 <strong>John 和 Mary 都来电</strong>。两次来电使警报发生的可能性更高，因此入室盗窃的后验概率上升。随后再加入发生地震的证据。入室盗窃的概率会下降，因为地震已经为警报和来电提供了一个解释。
+  </p>
+<div class="aha">
+    在这个网络中，入室盗窃和地震在没有证据时相互独立。观测到它们的共同结果后，两者会变得相关：支持一个原因的证据可能降低对另一个原因的信念。这种碰撞节点结构产生的现象称为解释消除。
+  </div>
+<h2>精确推理与 Gibbs 采样</h2>
+<p>
+    精确推理通过对未观测变量的可能取值进行求和或消元，计算并归一化后验概率。在这个五变量网络中，枚举很容易；在一般情况下，计算量会随变量数量和图结构呈指数增长。变量消元或连接树等更高效的精确方法会利用图结构，但仍可能十分昂贵。
+  </p>
+<p>
+    Gibbs 采样通过反复更新一个未观测变量来近似后验分布，每次都依据其他变量当前取值下的条件分布重新采样。更多样本通常会减少可见的采样波动，不过相邻样本彼此相关，而且收敛情况取决于模型。有限样本给出的是估计值，不是精确答案。
+  </p>
+<h2>这个模型省略了什么</h2>
+<p>
+    更大的贝叶斯网络可能从数据中学习概率表，甚至学习部分图结构。实际推理会使用变量消元、信念传播、蒙特卡洛方法或变分近似。本工具集中呈现核心思想：图规定联合分布如何分解，而证据会沿着这一结构改变各变量的信念。
+  </p>
+<div class="for-teachers">
+<h3>教师指导</h3>
+<p><strong>课程目标：</strong>有向图模型、条件概率表、条件独立、解释消除，以及精确推理与采样推理的区别。</p>
+<p><strong>探索前问题：</strong></p>
+<ul>
+<li>箭头是否总能证明因果关系，还是也可以表示概率依赖？</li>
+<li>警报响起时，哪些可能原因会变得更可信？</li>
+<li>得知一个原因后，另一个原因是否可能变得不那么可信？</li>
+</ul>
+<p><strong>探索后问题：</strong></p>
+<ul>
+<li>先观测 John 来电，再观测两人都来电。第二次来电为什么增加了证据？</li>
+<li>加入地震证据。哪个后验概率变化最大，为什么？</li>
+<li>用 1,000 个样本多次运行 Gibbs 采样，再改为 50,000 个样本。区分采样波动与模型本身发生变化。</li>
+<li>提高表中的入室盗窃先验概率。哪些结论因为先验改变而变化，而不是因为证据改变？</li>
+</ul>
+<p><strong>需要检验的误解：</strong>每条箭头都表示因果；没有边就总是独立；采样只是速度较慢的精确推理。</p>
+</div>
+</section>
+</article>
+<!-- SVG network drawing: no external dependency. -->
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+
+  // ===== bilingual + reduced motion + hard reset =====
+  const STRINGS = {
+    en: {
+      'title': 'Bayesian Network', 'back-link': '← Back to all playgrounds',
+      'footer-top': '↑ Back to top', 'footer-course': 'Made for the Introduction to AI course at Haidian Kaiwen Academy.', 'footer-portfolio': 'Portfolio', 'footer-project': 'AI Playgrounds', 'footer-source': 'Source', 'footer-issue': 'Report an issue',
+      'reset-all': '↺ Reset all', 'method-label': 'Inference:',
+      'evidence-label': 'Evidence: click T / F / ? per variable',
+      'posterior-label': 'Posterior: P(variable = TRUE | evidence)',
+      'tldr-strong': 'The big idea',
+      'tldr-body': "Learning of an earthquake LOWERS your belief in a burglary: even though the two are independent without evidence. That's \"explaining away,\" and it's visible here in one slider.",
+      'net-label': 'Network:',
+      'net-burglary': 'Burglary (AIMA, 5 vars)',
+      'net-sprinkler': 'Sprinkler (Pearl, 4 vars)',
+      'net-cancer': 'Cancer screening (3 vars)',
+      'net-title': 'Switch between classic Bayesian networks. Each has its own variables, parents, and conditional probability tables.',
+      'm-exact': 'Exact (enumeration)', 'm-ve': 'Variable elimination', 'm-gibbs': 'Gibbs sampling',
+      'm-lw': 'Likelihood weighting',
+      'm-exact-title': 'Compute P(query | evidence) exactly by enumeration. Correct, but exponential in the number of unobserved variables.',
+      'm-ve-title': 'Variable elimination: algebraic reformulation of exact inference that reuses intermediate sums. Polynomial in tree-width, much faster than enumeration on networks with structure.',
+      'm-gibbs-title': 'Approximate P(query | evidence) with Gibbs sampling. Scales to large networks but is noisy with few samples.',
+      'm-lw-title': "Likelihood weighting: sample non-evidence variables in topological order; weight each sample by Π P(evidence_i | parents_i). Unlike Gibbs, samples never get rejected and there's no burn-in. Often more sample-efficient than Gibbs on rare evidence.",
+      'samples-label': 'Samples', 'resample-btn': '↻ Re-sample',
+      'net-hint': 'Drag nodes to rearrange. Edges flow parent → child. Green = clamped TRUE, red = clamped FALSE.',
+      'scen-label': 'Quick scenarios:',
+      'scen-nothing': 'Nothing observed', 'scen-john': 'John calls',
+      'scen-both': 'John & Mary both call', 'scen-alarm': 'Alarm is on',
+      'scen-eq': 'Both call + earthquake',
+      'jump-link': '↓ Read the explanation',
+      'tour-summary': '📚 Lesson tour (5 steps)',
+      'tour-step': 'Step',
+      'tour-prev': '← Prev', 'tour-next': 'Next →', 'tour-apply': '▶ Apply this scenario',
+      'sg-summary': '🎯 Try these scenarios first',
+      'sg-intro': 'Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.',
+      'sg-card-prefix': 'Scenario',
+      'sg-concept-label': 'Concept',
+      'sg-observe-label': 'What to watch',
+      'sg-misconception-label': 'Predict before applying',
+      'sg-misconception-text': 'Which visible result should change most, and why? Commit to an answer before applying.',
+      'sg-teacher-label': 'Teacher use',
+      'sg-teacher-text': 'Use as a 2–3 minute predict → run → explain prompt.',
+      'sg-apply': 'Apply and compare',
+      'ws-summary': '📝 Worksheet (3 questions)',
+      'ws-check': 'Check',
+      'ws-pick': 'Pick an answer first.',
+      'ws1q': 'Burglary network. Click "John & Mary both call". Note P(Burglary). Now click "Both call + earthquake". P(Burglary) goes:',
+      'ws2q': 'Switch to Sprinkler network. Set Wet=T. Now ALSO set Rain=T. P(Sprinkler=T) is:',
+      'ws3q': 'Burglary network, "Both call" evidence. Switch inference method from Exact to Gibbs sampling with 5000 samples. The posterior for P(Burglary) compared to Exact is:',
+      // --- MCQ: worksheet option labels (ws{n}o{i}) ---
+      'ws1o0': 'Up: a second alarm cause makes a burglary even more likely.',
+      'ws1o1': 'Down: the earthquake explains away the alarm, so burglary is less needed.',
+      'ws1o2': 'Stays the same: burglary and earthquake are independent, so extra evidence can\'t change it.',
+      'ws2o0': 'Higher than with wet grass alone: two confirmed causes stack up.',
+      'ws2o1': 'Lower than with just wet grass: rain explains the wet grass, so the sprinkler is less needed.',
+      'ws2o2': 'Unchanged: once the grass is wet, learning about rain tells you nothing about the sprinkler.',
+      'ws3o0': 'An exact match: Gibbs sampling computes the same posterior as enumeration.',
+      'ws3o1': 'Close but noisy: Gibbs approximates the posterior, and the estimate wobbles a bit each re-sample.',
+      'ws3o2': 'Wildly different: sampling methods can\'t recover this posterior at all.',
+      // lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
+      'tour0name': 'Burglary network: nothing observed',
+      'tour0desc': 'Prior beliefs only. P(Burglary) ≈ 0.001, P(Earthquake) ≈ 0.002, P(Alarm) ≈ 0.003. Everything is rare and roughly independent: this is the calm baseline.',
+      'tour1name': 'John calls → burglary belief jumps',
+      'tour1desc': "Single neighbor reports. P(Burglary | J=T) jumps ~50× from prior. Evidence flows upward against the arrows: that's diagnostic reasoning.",
+      'tour2name': 'Both call → burglary belief soars',
+      'tour2desc': 'P(Burglary | J=T, M=T) ≈ 0.28. Two independent corroborating reports of an alarm push the posterior much higher than either alone.',
+      'tour3name': 'Explaining away: earthquake observed',
+      'tour3desc': "Add E=T to the both-call evidence. P(Burglary) DROPS because the earthquake already explains the alarm. Two causes 'compete' to explain a common effect. This is the signature pattern that flat probabilistic reasoning can't capture.",
+      'tour4name': 'Sprinkler: wet grass, two possible causes',
+      'tour4desc': "Switch to Pearl's sprinkler network. Set W=T (wet grass). Both Rain and Sprinkler are plausible. Now also clamp Rain=T: Sprinkler's probability drops. Same explaining-away pattern in a different domain.",
+      // worksheet answer-feedback (ws{n}ok / ws{n}no) ---
+      'ws1ok': "Correct. This is 'explaining away' (Pearl): the earthquake provides an alternative cause for the alarm, so P(Burglary) drops. Two causes compete to explain a common effect, even though they were independent before evidence.",
+      'ws1no': "Try 'down'. The earthquake already explains why the alarm sounded: burglary becomes less needed as an explanation.",
+      'ws2ok': 'Right. Same explaining-away pattern. Wet=T raises P(Sprinkler) above prior. Then learning Rain=T explains the wet grass, so P(Sprinkler) drops back toward (but stays slightly above) prior.',
+      'ws2no': "Try 'lower than just wet'. Rain explains the wetness, so sprinkler is less needed.",
+      'ws3ok': 'Correct. With 5000 samples, Gibbs converges to within ~0.01-0.05 of the exact answer. Re-sample a few times to see the variance: Monte Carlo error scales as 1/√N.',
+      'ws3no': "Try 'close but noisy'. Gibbs sampling approximates the posterior; more samples = less noise. 5000 is usually within ~0.05.",
+      'dsep-summary': '🔗 d-separation checker (are X and Y independent given evidence?)',
+      'dsep-hint': 'Pick two variables and click "Check". The algorithm runs Bayes-Ball on the DAG using the current evidence as the conditioning set. Two variables are independent (d-separated) when no active path connects them.',
+      'dsep-x-label': 'X:', 'dsep-y-label': 'Y:',
+      'dsep-btn': 'Check d-separation',
+      'dsep-empty': '(select X and Y, then click Check)',
+      // tooltip translations for main controls + scenario buttons.
+      'samples-title': 'More samples = less noisy estimate but slower.',
+      'resample-btn-title': 'Re-run Gibbs with a different random seed.',
+      'scen-nothing-title': 'Clear all evidence.',
+      'scen-john-title': 'John calls. Modest evidence of an alarm somewhere upstream.',
+      'scen-both-title': 'Both John and Mary call. Strong evidence of an alarm.',
+      'scen-alarm-title': 'The alarm is actually sounding (rare in practice).',
+      'scen-eq-title': "The 'explaining away' scenario: John, Mary, AND we learn there was an earthquake.",
+    },
+    zh: {
+      'title': '贝叶斯网络可视化', 'back-link': '← 返回所有演示',
+      'footer-top': '↑ 返回顶部', 'footer-course': '为海淀凯文学校《人工智能导论》课程制作。', 'footer-portfolio': '作品集', 'footer-project': 'AI Playgrounds', 'footer-source': '源代码', 'footer-issue': '反馈问题',
+      'reset-all': '↺ 全部重置', 'method-label': '推理:',
+      'evidence-label': '证据: 每个变量点击 T / F / ?',
+      'posterior-label': '后验概率: P(变量 = TRUE | 证据)',
+      'tldr-strong': '核心思想',
+      'tldr-body': '得知地震反而会降低你对入室盗窃的信念--尽管这两件事在没有证据时是相互独立的。这就是"解释消除",在这里你能用一个滑块看清楚。',
+      'net-label': '网络:',
+      'net-burglary': '入室盗窃(AIMA,5 变量)',
+      'net-sprinkler': '洒水器(Pearl,4 变量)',
+      'net-cancer': '癌症筛查(3 变量)',
+      'net-title': '在经典贝叶斯网络之间切换。每个网络都有自己的变量、父节点和条件概率表。',
+      'm-exact': '精确(枚举)', 'm-ve': '变量消除', 'm-gibbs': 'Gibbs 采样',
+      'm-lw': '似然加权',
+      'm-exact-title': '通过枚举精确计算 P(查询 | 证据)。结果正确,但在未观测变量数量上呈指数级。',
+      'm-ve-title': '变量消除--精确推理的代数重排,通过缓存中间求和来复用计算。在树宽上多项式,有结构的网络比枚举快得多。',
+      'm-gibbs-title': '用 Gibbs 采样近似计算 P(查询 | 证据)。可扩展到大网络,但样本少时噪声大。',
+      'm-lw-title': '似然加权--按拓扑顺序对非证据变量采样,每个样本的权重为 Π P(证据_i | 父节点_i)。与 Gibbs 不同,样本永不被拒绝,也无需 burn-in。证据稀有时通常比 Gibbs 更高效。',
+      'samples-label': '样本数', 'resample-btn': '↻ 重新采样',
+      'net-hint': '拖动节点可重新排列。箭头从父节点指向子节点。绿色表示固定为真，红色表示固定为假。',
+      'scen-label': '快速场景:',
+      'scen-nothing': '无观测', 'scen-john': 'John 来电',
+      'scen-both': 'John 与 Mary 都来电', 'scen-alarm': '警报在响',
+      'scen-eq': '两人来电 + 地震',
+      'jump-link': '↓ 阅读说明',
+      'tour-summary': '📚 课程导览(5 步)',
+      'tour-step': '步骤',
+      'tour-prev': '← 上一步', 'tour-next': '下一步 →', 'tour-apply': '▶ 应用此场景',
+      'sg-summary': '🎯 先试这些场景',
+      'sg-intro': '先选择一个场景并预测结果,再应用它,然后把运行结果与你的预测进行比较。',
+      'sg-card-prefix': '场景',
+      'sg-concept-label': '概念',
+      'sg-observe-label': '预期观察',
+      'sg-misconception-label': '误区检查',
+      'sg-misconception-text': '初学者的第一反应可能会漏掉或过度简化什么?',
+      'sg-teacher-label': '教师用法',
+      'sg-teacher-text': '用作 2–3 分钟的“预测 → 运行 → 解释”活动。',
+      'sg-apply': '应用场景',
+      'ws-summary': '📝 练习题(3 题)',
+      'ws-check': '核对',
+      'ws-pick': '请先选择一个答案。',
+      'ws1q': '入室盗窃(Burglary)网络。点击 "John & Mary both call"。记下 P(Burglary)。再点击 "Both call + earthquake"。此时 P(Burglary) 会:',
+      'ws2q': '切换到洒水器(Sprinkler)网络。设 Wet=T。现在再设 Rain=T。P(Sprinkler=T) 会是:',
+      'ws3q': '入室盗窃网络,"Both call" 证据。把推理方法从 Exact 切换为 5000 样本的 Gibbs 采样。P(Burglary) 的后验与 Exact 相比:',
+      // --- MCQ:练习题选项(ws{n}o{i})---
+      'ws1o0': '上升--多了一个引发警报的原因,会让入室盗窃更有可能。',
+      'ws1o1': '下降--地震解释消除了警报,因此不再那么需要入室盗窃来解释。',
+      'ws1o2': '保持不变--入室盗窃与地震相互独立,额外的证据无法改变它。',
+      'ws2o0': '比只有草地湿时更高--两个被确认的原因叠加起来。',
+      'ws2o1': '比只有草地湿时更低--下雨解释了草地为何湿,因此不再那么需要洒水器。',
+      'ws2o2': '保持不变--草地一旦湿了,得知是否下雨就再也无法告诉你洒水器的情况。',
+      'ws3o0': '完全一致--Gibbs 采样算出的后验与枚举相同。',
+      'ws3o1': '接近但有噪声--Gibbs 近似后验,每次重新采样估计都会略有波动。',
+      'ws3o2': '相差极大--采样方法根本无法恢复这个后验。',
+      // 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
+      'tour0name': '入室盗窃网络:无观测',
+      'tour0desc': '只有先验信念。P(Burglary) ≈ 0.001,P(Earthquake) ≈ 0.002,P(Alarm) ≈ 0.003。一切都很罕见且大致独立--这是平静的基线。',
+      'tour1name': 'John 来电 → 入室盗窃信念上升',
+      'tour1desc': '单个邻居报告。P(Burglary | J=T) 比先验跳升约 50 倍。证据逆着箭头向上传播--这就是诊断式推理。',
+      'tour2name': '两人都来电 → 入室盗窃信念飙升',
+      'tour2desc': 'P(Burglary | J=T, M=T) ≈ 0.28。两个相互独立、彼此印证的警报报告,把后验推得比任何单独一个都高得多。',
+      'tour3name': '解释消除:观测到地震',
+      'tour3desc': '在两人来电的证据上再加 E=T。P(Burglary) 会下降,因为地震已经解释了警报。两个原因"竞争"去解释同一个共同结果。这正是扁平的概率推理无法捕捉的标志性模式。',
+      'tour4name': '洒水器:草地湿了,两个可能原因',
+      'tour4desc': '切换到 Pearl 的洒水器网络。设 W=T(草地湿了)。下雨和洒水器都说得通。现在再钳制 Rain=T--洒水器的概率下降。同样的解释消除模式,只是换了个领域。',
+      // 练习题答案反馈(ws{n}ok / ws{n}no)---
+      'ws1ok': '正确。这就是"解释消除"(Pearl)--地震为警报提供了另一个原因,所以 P(Burglary) 下降。两个原因竞争去解释同一个共同结果,尽管它们在有证据之前是相互独立的。',
+      'ws1no': '试试"down"。地震已经解释了警报为何响起--入室盗窃作为解释就不那么必要了。',
+      'ws2ok': '对。同样的解释消除模式。Wet=T 把 P(Sprinkler) 抬到先验之上。随后得知 Rain=T 解释了草地为何湿,于是 P(Sprinkler) 回落到接近(但仍略高于)先验。',
+      'ws2no': '试试"lower than just wet"。下雨解释了潮湿,所以洒水器就不那么必要了。',
+      'ws3ok': '正确。在 5000 个样本下,Gibbs 收敛到与精确答案相差约 0.01–0.05。多重新采样几次看看波动--蒙特卡洛误差按 1/√N 缩小。',
+      'ws3no': '试试"close but noisy"。Gibbs 采样近似后验;样本越多噪声越小。5000 通常在 ~0.05 以内。',
+      'dsep-summary': '🔗 d-分离检查器(给定证据后 X 与 Y 独立吗?)',
+      'dsep-hint': '选择两个变量并点击"检查"。算法在当前证据集上对 DAG 运行 Bayes-Ball。两个变量在没有活跃路径相连时是独立的(d-分离)。',
+      'dsep-x-label': 'X:', 'dsep-y-label': 'Y:',
+      'dsep-btn': '检查 d-分离',
+      'dsep-empty': '(选择 X 和 Y,然后点击"检查")',
+      // 主要控件与场景按钮的提示翻译。
+      'samples-title': '样本越多估计噪声越小,但运行越慢。',
+      'resample-btn-title': '用不同随机种子重新运行 Gibbs 采样。',
+      'scen-nothing-title': '清除所有证据。',
+      'scen-john-title': 'John 来电。上游某处有警报的中等证据。',
+      'scen-both-title': 'John 与 Mary 都来电。警报的强证据。',
+      'scen-alarm-title': '警报实际正在响(实践中罕见)。',
+      'scen-eq-title': '"解释消除"场景:John、Mary 都来电,且我们还知道发生了地震。',
+    },
+  };
+  function setLang(lang) {
+    if (!STRINGS[lang]) lang = 'en';
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.dataset.i18n;
+      if (STRINGS[lang][k]) el.textContent = STRINGS[lang][k];
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const k = el.dataset.i18nTitle;
+      if (STRINGS[lang][k]) el.title = STRINGS[lang][k];
+    });
+    document.querySelectorAll('.lang-switch button').forEach(b =>
+      b.classList.toggle('active', b.dataset.lang === lang));
+    try { localStorage.setItem('ai-playgrounds-lang', lang); localStorage.setItem('lang', lang); } catch (_) {}
+  }
+  document.querySelectorAll('.lang-switch button').forEach(b =>
+    b.addEventListener('click', () => {
+      setLang(b.dataset.lang);
+      // re-render the tour in the new language. Safe here: this click handler
+      // only runs post-init, after LESSON_TOUR (a late `const`) is initialized, so
+      // there is no temporal-dead-zone risk (unlike calling it from inside setLang).
+      try { if (typeof renderTour === 'function') renderTour(); } catch (_) {}
+      try { if (typeof renderScenarioGallery === 'function') renderScenarioGallery(); } catch (_) {}
+    }));
+  let initialLang = 'en';
+  try { initialLang = new URLSearchParams(location.search).get('lang') || localStorage.getItem('ai-playgrounds-lang') || localStorage.getItem('lang') || 'en'; } catch (_) {}
+  setLang(initialLang);
+
+  function setTheme(t) {
+    document.body.classList.toggle('dark-mode', t === 'dark');
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+    try { localStorage.setItem('theme', t); } catch (_) {}
+  }
+  let initialTheme = 'light';
+  try {
+    initialTheme = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  } catch (_) {}
+  setTheme(initialTheme);
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    setTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark');
+    if (typeof drawNet === 'function') drawNet();
+    if (typeof recompute === 'function') recompute();
+  });
+
+  // For-teachers is hidden by default (cognitive-load floor). User toggles persist.
+  // `?teacher=1` opens on load. `?teacher=0` hides completely (no toggle, for projection).
+  try {
+    const tp = new URLSearchParams(location.search).get('teacher');
+    if (tp === '0') {
+      document.querySelectorAll('.for-teachers').forEach(el => el.style.display = 'none');
+    } else {
+      const style = document.createElement('style');
+      style.textContent = '.for-teachers-expander{margin-top:36px}.for-teachers-expander>summary{cursor:pointer;padding:12px 16px;background:var(--soft);border:1px solid var(--border);border-radius:8px;font-family:-apple-system,system-ui,sans-serif;font-size:0.9rem;color:var(--accent);font-weight:600;list-style:none;user-select:none}.for-teachers-expander>summary::-webkit-details-marker{display:none}.for-teachers-expander[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius:0}.for-teachers-expander>.for-teachers{margin-top:0;border-top:0;border-top-left-radius:0;border-top-right-radius:0}';
+      document.head.appendChild(style);
+      document.querySelectorAll('.for-teachers').forEach(div => {
+        const details = document.createElement('details');
+        details.className = 'for-teachers-expander';
+        const summary = document.createElement('summary');
+        summary.textContent = '▸ Show teacher notes (discussion prompts + curriculum)';
+        div.parentNode.insertBefore(details, div);
+        details.appendChild(summary);
+        details.appendChild(div);
+      });
+      const saved = (() => { try { return localStorage.getItem('teacher-notes-open'); } catch (_) { return null; } })();
+      const shouldOpen = tp === '1' || saved === '1';
+      document.querySelectorAll('details.for-teachers-expander').forEach(d => {
+        d.open = shouldOpen;
+        d.addEventListener('toggle', () => {
+          try { localStorage.setItem('teacher-notes-open', d.open ? '1' : '0'); } catch (_) {}
+        });
+      });
+    }
+  } catch (_) {}
+  // D3/SVG upgrade: serialize the SVG element to PNG via an off-screen canvas.
+  // The SVG is inlined into a data URI, loaded into an Image, then drawn at 2× scale.
+  document.getElementById('exportPng').addEventListener('click', () => {
+    const svgEl = document.getElementById('netSvg');
+    const clone = svgEl.cloneNode(true);
+    // Force inline bg so the PNG isn't transparent.
+    const dark = document.body.classList.contains('dark-mode');
+    clone.setAttribute('style', `background:${dark ? '#1e293b' : 'white'};`);
+    // Inline the minimal CSS the SVG needs so the rasterized output matches the live view.
+    const styleNode = document.createElement('style');
+    styleNode.textContent = `
+      .node-circle { stroke: #475569; stroke-width: 1.5; }
+      .node-label { font: bold 14px system-ui, -apple-system, sans-serif;
+                     text-anchor: middle; dominant-baseline: middle; }
+      .edge { stroke: ${dark ? '#64748b' : '#94a3b8'}; stroke-width: 1.5; fill: none; }
+    `;
+    clone.insertBefore(styleNode, clone.firstChild);
+    const xml = new XMLSerializer().serializeToString(clone);
+    const dataUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
+    const img = new Image();
+    img.onload = () => {
+      const scale = 2;
+      const cv = document.createElement('canvas');
+      cv.width = svgEl.viewBox.baseVal.width * scale;
+      cv.height = svgEl.viewBox.baseVal.height * scale;
+      const ctx = cv.getContext('2d');
+      ctx.fillStyle = dark ? '#1e293b' : 'white';
+      ctx.fillRect(0, 0, cv.width, cv.height);
+      ctx.drawImage(img, 0, 0, cv.width, cv.height);
+      const link = document.createElement('a');
+      link.download = 'bayes-network.png';
+      link.href = cv.toDataURL('image/png');
+      link.click();
+    };
+    img.onerror = () => { alert('PNG export failed: try refreshing the page.'); };
+    img.src = dataUri;
+  });
+
+  // ===== Network definitions (AIMA 14.2) =====
+  // three preset networks. The Burglary network is the AIMA canonical example.
+  // The Sprinkler network is the classic Pearl illustration (3 vars). The Cancer-test
+  // network (Pearl, 4 vars) demonstrates rare-disease screening: pairs well with the
+  // bayes-classifier applet's sequential-update lesson.
+  let net = null;
+  function netBurglary() {
+    return {
+      vars: ['B', 'E', 'A', 'J', 'M'],
+      labels: {B: 'Burglary', E: 'Earthquake', A: 'Alarm', J: 'JohnCalls', M: 'MaryCalls'},
+      parents: {B: [], E: [], A: ['B', 'E'], J: ['A'], M: ['A']},
+      cpt: {
+        B: {'': 0.001}, E: {'': 0.002},
+        A: {'TT': 0.95, 'TF': 0.94, 'FT': 0.29, 'FF': 0.001},
+        J: {'T': 0.90, 'F': 0.05}, M: {'T': 0.70, 'F': 0.01},
+      },
+    };
+  }
+  // Sprinkler / Cloudy / Rain / WetGrass: Pearl's classic 4-node DAG.
+  // C → S, C → R, S & R → W.
+  function netSprinkler() {
+    return {
+      vars: ['C', 'S', 'R', 'W'],
+      labels: {C: 'Cloudy', S: 'Sprinkler', R: 'Rain', W: 'WetGrass'},
+      parents: {C: [], S: ['C'], R: ['C'], W: ['S', 'R']},
+      cpt: {
+        C: {'': 0.5},
+        S: {'T': 0.1, 'F': 0.5},      // P(S=T | Cloudy)
+        R: {'T': 0.8, 'F': 0.2},      // P(R=T | Cloudy)
+        W: {'TT': 0.99, 'TF': 0.90, 'FT': 0.90, 'FF': 0.00}, // P(W=T | S, R)
+      },
+    };
+  }
+  // Cancer screening: Pearl's medical example.
+  // C → T1, C → T2 (two independent tests of an underlying condition).
+  function netCancer() {
+    return {
+      vars: ['C', 'T1', 'T2'],
+      labels: {C: 'Cancer', T1: 'Test₁ positive', T2: 'Test₂ positive'},
+      parents: {C: [], T1: ['C'], T2: ['C']},
+      cpt: {
+        C: {'': 0.01},                  // 1% prior: rare disease
+        T1: {'T': 0.9, 'F': 0.05},      // 90% sens, 95% spec
+        T2: {'T': 0.9, 'F': 0.05},      // identical second test (independent given C)
+      },
+    };
+  }
+  const NET_PRESETS = {
+    burglary: { name: 'Burglary (AIMA)', fn: netBurglary,
+      layout: { B: {x: 80, y: 50}, E: {x: 240, y: 50}, A: {x: 160, y: 140},
+                J: {x: 80, y: 230}, M: {x: 240, y: 230} } },
+    sprinkler: { name: 'Sprinkler (Pearl)', fn: netSprinkler,
+      layout: { C: {x: 160, y: 50}, S: {x: 80, y: 140}, R: {x: 240, y: 140},
+                W: {x: 160, y: 230} } },
+    cancer: { name: 'Cancer screening', fn: netCancer,
+      layout: { C: {x: 160, y: 70}, T1: {x: 80, y: 200}, T2: {x: 240, y: 200} } },
+  };
+  function defaultNet() { return netBurglary(); }
+  net = defaultNet();
+  // Evidence object is rebuilt per-network in switchNet: must hold all current vars.
+  let evidence = {};
+  for (const v of net.vars) evidence[v] = null;
+
+  function topo() { return ['B', 'E', 'A', 'J', 'M']; }
+  function pNode(v, assign) {
+    const par = net.parents[v];
+    const key = par.map(p => assign[p] ? 'T' : 'F').join('');
+    const p = net.cpt[v][key];
+    return assign[v] ? p : (1 - p);
+  }
+  function enumAll(vars, assign) {
+    if (vars.length === 0) return 1.0;
+    const [v, ...rest] = vars;
+    if (evidence[v] !== null) {
+      const a = {...assign, [v]: evidence[v]};
+      return pNode(v, a) * enumAll(rest, a);
+    }
+    let s = 0;
+    for (const val of [true, false]) {
+      const a = {...assign, [v]: val};
+      s += pNode(v, a) * enumAll(rest, a);
+    }
+    return s;
+  }
+  function inferExact() {
+    const result = {};
+    for (const v of net.vars) {
+      if (evidence[v] !== null) { result[v] = evidence[v] ? 1.0 : 0.0; continue; }
+      const ev0 = evidence[v];
+      evidence[v] = true;
+      const pT = enumAll(topo(), {});
+      evidence[v] = false;
+      const pF = enumAll(topo(), {});
+      evidence[v] = ev0;
+      const denom = pT + pF;
+      result[v] = denom > 0 ? pT / denom : 0;
+    }
+    return result;
+  }
+
+  // ===== Variable Elimination (VE) =====
+  // A factor is {vars: [name,...], table: Map<assignmentString, prob>}.
+  // Assignment string is one char per var in factor.vars order: 'T'/'F'.
+  function assignKey(vars, assignment) {
+    return vars.map(v => assignment[v] ? 'T' : 'F').join('');
+  }
+  function cptToFactor(v) {
+    // Factor: P(v | parents(v)): variables are [parents..., v].
+    const parents = net.parents[v];
+    const vars = [...parents, v];
+    const table = new Map();
+    // Enumerate all 2^|vars| assignments.
+    const n = vars.length;
+    for (let m = 0; m < (1 << n); m++) {
+      const assign = {};
+      for (let i = 0; i < n; i++) assign[vars[i]] = !!(m & (1 << (n - 1 - i)));
+      const k = assignKey(vars, assign);
+      const pkey = parents.map(p => assign[p] ? 'T' : 'F').join('');
+      const ptrue = net.cpt[v][pkey];
+      table.set(k, assign[v] ? ptrue : (1 - ptrue));
+    }
+    return { vars, table };
+  }
+  function restrictFactor(factor, evidenceMap) {
+    // Drop variables whose value is fixed in evidence, keep rows matching.
+    const evVars = factor.vars.filter(v => evidenceMap[v] !== undefined);
+    if (evVars.length === 0) return factor;
+    const remaining = factor.vars.filter(v => evidenceMap[v] === undefined);
+    const newTable = new Map();
+    for (const [k, p] of factor.table) {
+      // Decode the key back to an assignment.
+      const assign = {};
+      for (let i = 0; i < factor.vars.length; i++) assign[factor.vars[i]] = (k[i] === 'T');
+      let matchesEvidence = true;
+      for (const v of evVars) {
+        if (assign[v] !== evidenceMap[v]) { matchesEvidence = false; break; }
+      }
+      if (!matchesEvidence) continue;
+      const newK = assignKey(remaining, assign);
+      newTable.set(newK, p);
+    }
+    return { vars: remaining, table: newTable };
+  }
+  function multiplyFactors(f1, f2) {
+    // Union of variables; product of probabilities for compatible rows.
+    const unionVars = [...f1.vars];
+    for (const v of f2.vars) if (!unionVars.includes(v)) unionVars.push(v);
+    const table = new Map();
+    const n = unionVars.length;
+    for (let m = 0; m < (1 << n); m++) {
+      const assign = {};
+      for (let i = 0; i < n; i++) assign[unionVars[i]] = !!(m & (1 << (n - 1 - i)));
+      const k1 = assignKey(f1.vars, assign);
+      const k2 = assignKey(f2.vars, assign);
+      const p1 = f1.table.get(k1); const p2 = f2.table.get(k2);
+      if (p1 === undefined || p2 === undefined) continue;
+      table.set(assignKey(unionVars, assign), p1 * p2);
+    }
+    return { vars: unionVars, table };
+  }
+  function sumOut(factor, v) {
+    // Marginalize out v: for each combo of remaining vars, sum over v ∈ {T, F}.
+    if (!factor.vars.includes(v)) return factor;
+    const remaining = factor.vars.filter(x => x !== v);
+    const table = new Map();
+    for (const [k, p] of factor.table) {
+      // Decode → strip v from assignment → re-encode.
+      const assign = {};
+      for (let i = 0; i < factor.vars.length; i++) assign[factor.vars[i]] = (k[i] === 'T');
+      const newK = assignKey(remaining, assign);
+      table.set(newK, (table.get(newK) || 0) + p);
+    }
+    return { vars: remaining, table };
+  }
+  function inferVE() {
+    // Variable elimination per AIMA Ch 14.4.
+    const result = {};
+    const allVars = net.vars;
+    // Pre-build per-CPT factors, restricted to current evidence.
+    const evMap = {};
+    for (const v of allVars) if (evidence[v] !== null) evMap[v] = evidence[v];
+    for (const queryVar of allVars) {
+      if (evidence[queryVar] !== null) {
+        result[queryVar] = evidence[queryVar] ? 1.0 : 0.0;
+        continue;
+      }
+      // Build factors restricted to evidence.
+      let factors = allVars.map(v => restrictFactor(cptToFactor(v), evMap));
+      // Eliminate every variable except queryVar (in reverse topological order = leaves first).
+      const elimOrder = allVars.filter(v => v !== queryVar && evidence[v] === null).reverse();
+      for (const v of elimOrder) {
+        const involved = factors.filter(f => f.vars.includes(v));
+        const others = factors.filter(f => !f.vars.includes(v));
+        if (involved.length === 0) { factors = others; continue; }
+        let product = involved[0];
+        for (let i = 1; i < involved.length; i++) product = multiplyFactors(product, involved[i]);
+        const summed = sumOut(product, v);
+        factors = [...others, summed];
+      }
+      // Multiply remaining factors → unnormalized P(queryVar | evidence).
+      let result_factor = factors[0];
+      for (let i = 1; i < factors.length; i++) result_factor = multiplyFactors(result_factor, factors[i]);
+      // Normalize.
+      const pT = result_factor.table.get('T') || 0;
+      const pF = result_factor.table.get('F') || 0;
+      const denom = pT + pF;
+      result[queryVar] = denom > 0 ? pT / denom : 0;
+    }
+    return result;
+  }
+  function gibbs(nSamples) {
+    const state = {};
+    for (const v of net.vars) {
+      state[v] = evidence[v] !== null ? evidence[v] : (Math.random() < 0.5);
+    }
+    const counts = {}; for (const v of net.vars) counts[v] = 0;
+    const burn = Math.floor(nSamples * 0.1);
+    for (let i = 0; i < nSamples + burn; i++) {
+      for (const v of net.vars) {
+        if (evidence[v] !== null) continue;
+        const stateT = {...state, [v]: true};
+        const stateF = {...state, [v]: false};
+        const pT = jointProb(stateT);
+        const pF = jointProb(stateF);
+        const total = pT + pF;
+        state[v] = (Math.random() * total) < pT;
+      }
+      if (i >= burn) for (const v of net.vars) if (state[v]) counts[v]++;
+    }
+    const result = {};
+    for (const v of net.vars) {
+      if (evidence[v] !== null) { result[v] = evidence[v] ? 1.0 : 0.0; continue; }
+      result[v] = counts[v] / nSamples;
+    }
+    return result;
+  }
+  function jointProb(assign) {
+    let p = 1.0;
+    for (const v of net.vars) p *= pNode(v, assign);
+    return p;
+  }
+  // Likelihood weighting (AIMA Ch 14.5). Sample non-evidence variables
+  // in topological order from their CPTs; weight each sample by Π P(e_i | parents_i)
+  // over evidence variables. Unlike Gibbs there's no burn-in and no rejected samples.
+  // Often more sample-efficient than Gibbs when evidence is rare.
+  function likelihoodWeighting(nSamples) {
+    // weightedCounts[v] accumulates Σ w * 1[sample[v] = true].
+    // totalWeight accumulates Σ w. Final estimate: weightedCounts[v] / totalWeight.
+    const weightedCounts = {}; for (const v of net.vars) weightedCounts[v] = 0;
+    let totalWeight = 0;
+    // Topological order: net.vars is already specified parent-before-child by construction.
+    for (let i = 0; i < nSamples; i++) {
+      const sample = {};
+      let w = 1.0;
+      for (const v of net.vars) {
+        if (evidence[v] !== null) {
+          // Clamped: include factor P(e_v | parents_v) into the weight.
+          sample[v] = evidence[v];
+          w *= pNode(v, sample);
+        } else {
+          // Free: sample from P(v | parents_v).
+          const pT = pNode(v, {...sample, [v]: true});
+          sample[v] = (Math.random() < pT);
+        }
+      }
+      totalWeight += w;
+      for (const v of net.vars) if (sample[v]) weightedCounts[v] += w;
+    }
+    const result = {};
+    for (const v of net.vars) {
+      if (evidence[v] !== null) { result[v] = evidence[v] ? 1.0 : 0.0; continue; }
+      result[v] = totalWeight > 0 ? weightedCounts[v] / totalWeight : 0;
+    }
+    return result;
+  }
+
+  function setupEvidenceUI() {
+    const grid = $('evGrid');
+    grid.innerHTML = '';
+    for (const v of net.vars) {
+      const name = document.createElement('div');
+      name.className = 'ev-name'; name.textContent = net.labels[v];
+      grid.appendChild(name);
+      const choices = [['t', true, 'T'], ['f', false, 'F'], ['u', null, '?']];
+      for (const [cls, val, label] of choices) {
+        const b = document.createElement('button');
+        b.className = `ev-btn ${cls}` + (evidence[v] === val ? ' active' : '');
+        b.textContent = label;
+        b.title = val === true ? `Clamp ${net.labels[v]} = TRUE`
+               : val === false ? `Clamp ${net.labels[v]} = FALSE`
+               : `Unobserved: let inference compute ${net.labels[v]}`;
+        b.addEventListener('click', () => {
+          evidence[v] = val;
+          setupEvidenceUI();
+          recompute();
+        });
+        grid.appendChild(b);
+      }
+    }
+  }
+  function setupCPTs() {
+    const area = $('cptArea');
+    area.innerHTML = '';
+    for (const v of net.vars) {
+      const div = document.createElement('div');
+      div.className = 'cpt';
+      let html = `<h4>P(${v}=T | parents)</h4><table>`;
+      const par = net.parents[v];
+      const keys = Object.keys(net.cpt[v]);
+      keys.sort();
+      for (const k of keys) {
+        const parLabel = par.length ? par.map((p, i) => `${p}=${k[i]}`).join(', ') : 'unconditional';
+        html += `<tr><td>${parLabel}</td><td><input data-var="${v}" data-key="${k}" type="number"
+                  min="0" max="1" step="0.001" value="${net.cpt[v][k]}"
+                  title="Edit this probability: the network updates instantly."></td></tr>`;
+      }
+      html += '</table>';
+      div.innerHTML = html;
+      area.appendChild(div);
+    }
+    area.querySelectorAll('input').forEach(inp => inp.addEventListener('change', e => {
+      const v = e.target.dataset.var, k = e.target.dataset.key;
+      net.cpt[v][k] = Math.max(0, Math.min(1, +e.target.value || 0));
+      recompute();
+    }));
+  }
+
+  // === D3/SVG upgrade ===
+  // nodePos is now preset-aware and rebuilt by switchNet: see below.
+  let currentPreset = 'burglary';
+  let nodePos = {};
+  function applyPresetLayout(name) {
+    const preset = NET_PRESETS[name];
+    nodePos = {};
+    for (const v of net.vars) {
+      const def = preset.layout[v] || {x: 160, y: 140};
+      nodePos[v] = {x: def.x, y: def.y};
+    }
+  }
+  function NODE_LABEL(v) { return net.labels[v] || v; }
+  function edgePath(a, b, rA, rB) {
+    // Compute endpoints on circle boundaries (not centers) so the arrow doesn't hide inside the child.
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const ux = dx / len, uy = dy / len;
+    const x1 = a.x + ux * rA, y1 = a.y + uy * rA;
+    const x2 = b.x - ux * rB, y2 = b.y - uy * rB;
+    return `M${x1},${y1} L${x2},${y2}`;
+  }
+  function drawNet() {
+    const svg = document.getElementById('netSvg');
+    if (!svg) return;
+    const R = 26;
+    const SVG_NS = 'http://www.w3.org/2000/svg';
+
+    // Rebuild only dynamic network layers. Keep <title>, <desc>, and <defs> intact for accessibility and arrows.
+    svg.querySelectorAll('path.edge, g.node').forEach(el => el.remove());
+
+    function make(tag, attrs = {}, text = '') {
+      const el = document.createElementNS(SVG_NS, tag);
+      for (const [key, value] of Object.entries(attrs)) el.setAttribute(key, String(value));
+      if (text) el.textContent = text;
+      return el;
+    }
+    function updateIncidentEdges(variable) {
+      svg.querySelectorAll('path.edge').forEach(path => {
+        const from = path.getAttribute('data-from');
+        const to = path.getAttribute('data-to');
+        if (from === variable || to === variable) {
+          path.setAttribute('d', edgePath(nodePos[from], nodePos[to], R, R));
+        }
+      });
+    }
+    function svgPoint(event) {
+      const pt = svg.createSVGPoint();
+      pt.x = event.clientX;
+      pt.y = event.clientY;
+      const matrix = svg.getScreenCTM();
+      return matrix ? pt.matrixTransform(matrix.inverse()) : {x: 160, y: 140};
+    }
+    function cycleEvidence(d) {
+      const cur = evidence[d];
+      evidence[d] = (cur === null) ? true : (cur === true) ? false : null;
+      setupEvidenceUI();
+      recompute();
+    }
+
+    for (const v of net.vars) {
+      for (const p of net.parents[v]) {
+        svg.appendChild(make('path', {
+          class: 'edge',
+          'data-from': p,
+          'data-to': v,
+          'marker-end': 'url(#arrow)',
+          d: edgePath(nodePos[p], nodePos[v], R, R)
+        }));
+      }
+    }
+
+    for (const d of net.vars) {
+      const g = make('g', {
+        class: 'node',
+        tabindex: 0,
+        role: 'button',
+        'aria-label': `${NODE_LABEL(d)} variable. Press Enter to cycle evidence: unset, true, false.`,
+        transform: `translate(${nodePos[d].x},${nodePos[d].y})`
+      });
+      const fill = evidence[d] === true ? getCSS('--true')
+                 : evidence[d] === false ? getCSS('--false')
+                 : (document.body.classList.contains('dark-mode') ? '#334155' : '#f1f5f9');
+      const labelFill = evidence[d] === null
+        ? (document.body.classList.contains('dark-mode') ? '#e2e8f0' : '#1f2937')
+        : '#fff';
+      g.appendChild(make('circle', {class: 'node-circle', r: R, fill}));
+      g.appendChild(make('text', {class: 'node-label', fill: labelFill}, d));
+
+      let dragging = false;
+      let moved = false;
+      g.addEventListener('click', event => {
+        if (moved) { event.preventDefault(); return; }
+        cycleEvidence(d);
+      });
+      g.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          cycleEvidence(d);
+        }
+      });
+      g.addEventListener('pointerdown', event => {
+        if (event.button !== 0) return;
+        dragging = true;
+        moved = false;
+        g.setPointerCapture?.(event.pointerId);
+        g.querySelector('.node-circle')?.classList.add('dragging');
+      });
+      g.addEventListener('pointermove', event => {
+        if (!dragging) return;
+        event.preventDefault();
+        const pt = svgPoint(event);
+        nodePos[d].x = Math.max(R, Math.min(320 - R, pt.x));
+        nodePos[d].y = Math.max(R, Math.min(280 - R, pt.y));
+        g.setAttribute('transform', `translate(${nodePos[d].x},${nodePos[d].y})`);
+        updateIncidentEdges(d);
+        moved = true;
+      });
+      g.addEventListener('pointerup', event => {
+        if (!dragging) return;
+        dragging = false;
+        g.releasePointerCapture?.(event.pointerId);
+        g.querySelector('.node-circle')?.classList.remove('dragging');
+        if (moved) setTimeout(() => { moved = false; }, 0);
+      });
+      g.addEventListener('pointercancel', event => {
+        dragging = false;
+        g.releasePointerCapture?.(event.pointerId);
+        g.querySelector('.node-circle')?.classList.remove('dragging');
+        moved = false;
+      });
+      svg.appendChild(g);
+    }
+  }
+  function getCSS(v) {
+    return getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  }
+  function renderPosteriors(post, meta) {
+
+    window.__bayesPosteriorPresentationSnapshot = {
+      preset: currentPreset,
+      vars: net.vars.slice(),
+      labels: Object.assign({}, net.labels),
+      evidence: Object.assign({}, evidence),
+      method,
+      post: Object.assign({}, post),
+      meta
+    };
+    window.dispatchEvent(new CustomEvent('bayesposteriorchange'));
+    const row = $('postRow');
+    row.innerHTML = '';
+    for (const v of net.vars) {
+      const cell = document.createElement('div');
+      cell.className = 'infer-cell' + (evidence[v] !== null ? ' evidence' : '');
+      const isEv = evidence[v] !== null;
+      cell.innerHTML = `
+        <div class="name">${net.labels[v]}${isEv ? ' (evidence)' : ''}</div>
+        <div class="prob">${(post[v] * 100).toFixed(2)}%</div>
+        <div class="bar"><div class="fill" style="width:${post[v] * 100}%"></div></div>
+      `;
+      row.appendChild(cell);
+    }
+    $('inferMeta').textContent = meta;
+  }
+
+  let method = 'exact';
+  function recompute() {
+    drawNet();
+    let post, meta;
+    if (method === 'exact') {
+      const t0 = performance.now();
+      post = inferExact();
+      meta = `Exact inference by enumeration: computed in ${(performance.now() - t0).toFixed(1)} ms.`;
+    } else if (method === 've') {
+      const t0 = performance.now();
+      post = inferVE();
+      meta = `Variable elimination: computed in ${(performance.now() - t0).toFixed(1)} ms. Same answer as enumeration; saves redundant work by caching intermediate factors.`;
+    } else if (method === 'lw') {
+      const n = +$('nSamples').value;
+      const t0 = performance.now();
+      post = likelihoodWeighting(n);
+      meta = `Likelihood weighting, ${n.toLocaleString()} samples: ${(performance.now() - t0).toFixed(0)} ms. Each sample is weighted by P(evidence | parents); unlike Gibbs there's no burn-in and no rejected samples. Re-sample for a new RNG seed.`;
+    } else {
+      const n = +$('nSamples').value;
+      const t0 = performance.now();
+      post = gibbs(n);
+      meta = `Gibbs sampling, ${n.toLocaleString()} samples: ${(performance.now() - t0).toFixed(0)} ms. Results are approximate.`;
+    }
+    renderPosteriors(post, meta);
+  }
+
+  document.querySelectorAll('.method-tabs button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.method-tabs button').forEach(x =>
+        x.classList.toggle('active', x === b));
+      method = b.dataset.m;
+      // Both 'gibbs' and 'lw' use the sample-count slider.
+      $('gibbsControls').style.display = (method === 'gibbs' || method === 'lw') ? 'inline-flex' : 'none';
+      recompute();
+    });
+  });
+  $('nSamples').addEventListener('input', () => {
+    $('nSamplesV').textContent = (+$('nSamples').value).toLocaleString();
+  });
+  $('resampleBtn').addEventListener('click', recompute);
+  $('hardReset').addEventListener('click', () => {
+    switchNet('burglary');
+    document.querySelectorAll('.method-tabs button').forEach(x =>
+      x.classList.toggle('active', x.dataset.m === 'exact'));
+    method = 'exact';
+    $('gibbsControls').style.display = 'none';
+  });
+
+  // switch to a different preset network. Rebuilds the entire UI.
+  function switchNet(name) {
+    if (!NET_PRESETS[name]) name = 'burglary';
+    currentPreset = name;
+    net = NET_PRESETS[name].fn();
+    // Rebuild evidence map for new variable set.
+    evidence = {};
+    for (const v of net.vars) evidence[v] = null;
+    applyPresetLayout(name);
+    // Refresh dependent UI. The quick-scenarios buttons only make sense for burglary;
+    // hide them otherwise.
+    const sc = document.querySelector('.scenarios');
+    if (sc) sc.style.display = (name === 'burglary') ? '' : 'none';
+    setupEvidenceUI(); setupCPTs(); rebuildDsepDropdowns(); recompute();
+  }
+
+  // d-separation checker.
+  // Algorithm: Bayes-Ball (Shachter 1998). At each node, an arriving "ball" decides
+  // whether to pass through based on the node's status (observed in the evidence set or not)
+  // and the direction it arrived from. Returns true iff there's an active path X: Y.
+  // The textbook recursive enumeration of trails is simpler to explain but Bayes-Ball
+  // scales linearly in graph size.
+  //
+  // Active-trail rules (AIMA Ch 14.2 / Koller & Friedman):
+  //   Chain X → Z → Y or X ← Z ← Y : active iff Z NOT observed.
+  //   Fork  X ← Z → Y               : active iff Z NOT observed.
+  //   Collider X → Z ← Y            : active iff Z OR a descendant of Z IS observed.
+  function dseparated(x, y, evidenceSet) {
+    if (x === y) return { sep: false, reason: 'X and Y are the same variable: trivially not independent.' };
+    if (evidenceSet.has(x) || evidenceSet.has(y)) {
+      return { sep: true, reason: `${x === '' ? '' : x} (or Y) is itself observed in the evidence set, so that queried variable has no remaining uncertainty under this conditioning set.` };
+    }
+    // Precompute the nodes that are ancestors of an observed node. A collider becomes active when it or one of its descendants is observed.
+    const observedAndAncestors = new Set();
+    for (const z of evidenceSet) {
+      const stack = [z];
+      while (stack.length) {
+        const cur = stack.pop();
+        if (observedAndAncestors.has(cur)) continue;
+        observedAndAncestors.add(cur);
+        for (const par of net.parents[cur] || []) stack.push(par);
+      }
+    }
+    // Bayes-Ball traversal: BFS over (node, arrived-from-direction) pairs.
+    // direction = 'child' (ball came from a child, going up) or 'parent' (came from a parent, going down).
+    const children = {};
+    for (const v of net.vars) children[v] = [];
+    for (const v of net.vars) for (const p of net.parents[v]) children[p].push(v);
+    const visited = new Set();
+    // Start: push X going both directions (we haven't arrived from anywhere).
+    const queue = [[x, 'parent'], [x, 'child']];
+    const trace = []; // for explanation
+    while (queue.length) {
+      const [node, dir] = queue.shift();
+      const tag = `${node}:${dir}`;
+      if (visited.has(tag)) continue;
+      visited.add(tag);
+      if (node === y) {
+        return { sep: false, reason: `Active path found: ball reached ${y}. Trace: ${trace.slice(-6).join(' → ')} → ${y}.` };
+      }
+      const isObserved = evidenceSet.has(node);
+      const isInObsClosure = observedAndAncestors.has(node);
+      if (dir === 'child') {
+        // Ball arrived from a child (going up). If node is NOT observed, it can:
+        //   - keep going up (to parents): pass-through
+        //   - bounce back down (to other children): divergent fork
+        if (!isObserved) {
+          for (const p of net.parents[node]) { queue.push([p, 'child']); trace.push(`${node}↑${p}`); }
+          for (const ch of children[node]) { queue.push([ch, 'parent']); trace.push(`${node}↓${ch}`); }
+        }
+        // If observed: ball stops (chain/fork rule blocks).
+      } else {
+        // Ball arrived from a parent (going down).
+        // Three Bayes-Ball cases:
+        //   Z observed:                pass UP to other parents (collider activated by Z);
+        //                              BLOCK going down (chain Z→child blocked).
+        //   Z unobserved, observed descendant: pass DOWN to children (chain),
+        //                              AND pass UP to other parents (collider via descendant).
+        //   Z unobserved, no observed descendant: pass DOWN to children only.
+        // Note that isInObsClosure ⇒ (isObserved OR observed descendant); these conditions
+        // are not mutually exclusive, so check both independently rather than else-if.
+        if (!isObserved) {
+          for (const ch of children[node]) { queue.push([ch, 'parent']); trace.push(`${node}↓${ch}`); }
+        }
+        if (isInObsClosure) {
+          for (const p of net.parents[node]) { queue.push([p, 'child']); trace.push(`${node}↑${p}(via collider)`); }
+        }
+      }
+    }
+    return { sep: true, reason: `No active path from ${x} to ${y} given evidence {${[...evidenceSet].join(', ') || '∅'}}. They are d-separated → conditionally independent.` };
+  }
+  function rebuildDsepDropdowns() {
+    const xSel = $('dsepX'), ySel = $('dsepY');
+    if (!xSel || !ySel) return;
+    const prevX = xSel.value, prevY = ySel.value;
+    xSel.innerHTML = ''; ySel.innerHTML = '';
+    for (const v of net.vars) {
+      xSel.add(new Option(net.labels[v] || v, v));
+      ySel.add(new Option(net.labels[v] || v, v));
+    }
+    // Try to preserve previous selections; otherwise default to first two distinct vars.
+    if (Array.from(xSel.options).some(o => o.value === prevX)) xSel.value = prevX;
+    if (Array.from(ySel.options).some(o => o.value === prevY)) ySel.value = prevY;
+    if (xSel.value === ySel.value && net.vars.length > 1) {
+      ySel.value = net.vars[1];
+    }
+    // Clear result.
+    const r = $('dsepResult');
+    if (r) r.innerHTML = '<span style="color:var(--muted); font-style:italic;">(select X and Y, then click Check)</span>';
+  }
+  // Wire button. Computed lazily: won't fire before rebuildDsepDropdowns runs.
+  if ($('dsepBtn')) {
+    $('dsepBtn').addEventListener('click', () => {
+      const x = $('dsepX').value, y = $('dsepY').value;
+      const evSet = new Set();
+      for (const v of net.vars) if (evidence[v] !== null) evSet.add(v);
+      const { sep, reason } = dseparated(x, y, evSet);
+      const color = sep ? '#16a34a' : '#dc2626';
+      const verdict = sep
+        ? `✓ ${x} ⊥ ${y} | evidence  (d-separated → conditionally independent)`
+        : `✗ ${x} ⊥̸ ${y} | evidence  (NOT d-separated: there is an active path)`;
+      $('dsepResult').innerHTML =
+        `<div style="color:${color}; font-weight:600;">${verdict}</div>` +
+        `<div style="color:var(--muted); margin-top:4px;">${reason}</div>`;
+    });
+  }
+
+  function setEv(obj) {
+    for (const v of net.vars) evidence[v] = (v in obj) ? obj[v] : null;
+    setupEvidenceUI(); recompute();
+  }
+  $('s1').addEventListener('click', () => setEv({}));
+  $('s2').addEventListener('click', () => setEv({J: true}));
+  $('s3').addEventListener('click', () => setEv({J: true, M: true}));
+  $('s4').addEventListener('click', () => setEv({A: true}));
+  $('s5').addEventListener('click', () => setEv({J: true, M: true, E: true}));
+
+  // URL-shareable config: evidence + method + () preset network.
+  try {
+    const sp = new URLSearchParams(location.search);
+    const netParam = sp.get('net');
+    if (netParam && NET_PRESETS[netParam]) {
+      $('netSel').value = netParam;
+      switchNet(netParam);
+    }
+    const ev = sp.get('ev'); // T/F/? per variable, in net.vars order
+    if (ev && ev.length === net.vars.length) {
+      const obj = {};
+      net.vars.forEach((v, i) => {
+        const c = ev[i];
+        if (c === 'T') obj[v] = true;
+        else if (c === 'F') obj[v] = false;
+      });
+      setEv(obj);
+    }
+    const m = sp.get('m');
+    if (m === 'gibbs' || m === 'exact' || m === 've' || m === 'lw') {
+      document.querySelectorAll('[data-m]').forEach(b =>
+        b.classList.toggle('active', b.dataset.m === m));
+      method = m;
+      $('gibbsControls').style.display = (method === 'gibbs' || method === 'lw') ? 'inline-flex' : 'none';
+      recompute();
+    }
+  } catch (_) {}
+  document.getElementById('shareLink').addEventListener('click', async () => {
+    const params = new URLSearchParams();
+    const enc = v => evidence[v] === true ? 'T' : evidence[v] === false ? 'F' : '?';
+    // use current network's variable order so share works for any preset.
+    params.set('net', currentPreset);
+    params.set('ev', net.vars.map(enc).join(''));
+    params.set('m', method);
+    const url = `${location.origin}${location.pathname}?${params.toString()}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      const btn = document.getElementById('shareLink');
+      const orig = btn.textContent; btn.textContent = '✓ Copied';
+      setTimeout(() => btn.textContent = orig, 1500);
+    } catch (_) { prompt('Copy this URL:', url); }
+  });
+
+  // Wire the preset selector.
+  $('netSel').addEventListener('change', () => switchNet($('netSel').value));
+
+  applyPresetLayout('burglary');
+  setupEvidenceUI();
+  setupCPTs();
+  rebuildDsepDropdowns();
+  recompute();
+
+  // Lesson tour. Five canonical scenarios spanning the three preset networks.
+  const LESSON_TOUR = [
+    { name: 'Burglary network: nothing observed',
+      description: "Prior beliefs only. P(Burglary) ≈ 0.001, P(Earthquake) ≈ 0.002, P(Alarm) ≈ 0.003. Everything is rare and roughly independent: this is the calm baseline.",
+      apply: () => { switchNet('burglary'); $('netSel').value = 'burglary'; setEv({}); } },
+    { name: 'John calls → burglary belief jumps',
+      description: "Single neighbor reports. P(Burglary | J=T) jumps ~50× from prior. Evidence flows upward against the arrows: that's diagnostic reasoning.",
+      apply: () => { switchNet('burglary'); $('netSel').value = 'burglary'; setEv({J: true}); } },
+    { name: 'Both call → burglary belief soars',
+      description: "P(Burglary | J=T, M=T) ≈ 0.28. Two independent corroborating reports of an alarm push the posterior much higher than either alone.",
+      apply: () => { switchNet('burglary'); $('netSel').value = 'burglary'; setEv({J: true, M: true}); } },
+    { name: 'Explaining away: earthquake observed',
+      description: "Add E=T to the both-call evidence. P(Burglary) DROPS because the earthquake already explains the alarm. Two causes 'compete' to explain a common effect. This is the signature pattern that flat probabilistic reasoning can't capture.",
+      apply: () => { switchNet('burglary'); $('netSel').value = 'burglary'; setEv({J: true, M: true, E: true}); } },
+    { name: 'Sprinkler: wet grass, two possible causes',
+      description: "Switch to Pearl's sprinkler network. Set W=T (wet grass). Both Rain and Sprinkler are plausible. Now also clamp Rain=T: Sprinkler's probability drops. Same explaining-away pattern in a different domain.",
+      apply: () => { switchNet('sprinkler'); $('netSel').value = 'sprinkler'; setEv({W: true, R: true}); } },
+  ];
+  let tourIdx = 0;
+  function renderTour() {
+    if (!$('tourName')) return;
+    const s = LESSON_TOUR[tourIdx];
+    // Bilingual: look up tour{i}name / tour{i}desc with English inline fallback.
+    const L = (document.documentElement.lang || 'en');
+    const S = STRINGS[L] || STRINGS.en;
+    $('tourName').textContent = S['tour' + tourIdx + 'name'] || s.name;
+    $('tourDesc').textContent = S['tour' + tourIdx + 'desc'] || s.description;
+    $('tourPos').textContent = `${tourIdx + 1}/${LESSON_TOUR.length}`;
+    $('tourPrev').disabled = (tourIdx === 0);
+    $('tourNext').disabled = (tourIdx === LESSON_TOUR.length - 1);
+  }
+  $('tourApply').addEventListener('click', () => LESSON_TOUR[tourIdx].apply());
+  $('tourPrev').addEventListener('click', () => { if (tourIdx > 0) { tourIdx--; renderTour(); } });
+  $('tourNext').addEventListener('click', () => { if (tourIdx < LESSON_TOUR.length - 1) { tourIdx++; renderTour(); } });
+  renderTour();
+
+
+  function scenarioGalleryText(key, fallback) {
+    const L = document.documentElement.lang || 'en';
+    const S = STRINGS[L] || STRINGS.en;
+    return S[key] || fallback;
+  }
+  function localizedScenarioField(index, field, fallback) {
+    const L = document.documentElement.lang || 'en';
+    const S = STRINGS[L] || STRINGS.en;
+    return S['tour' + index + field] || fallback || '';
+  }
+  function appendScenarioMeta(card, label, text) {
+    const p = document.createElement('p');
+    p.className = 'scenario-meta';
+    const strong = document.createElement('strong');
+    strong.textContent = label + ': ';
+    p.appendChild(strong);
+    p.appendChild(document.createTextNode(text));
+    card.appendChild(p);
+  }
+  function renderScenarioGallery() {
+    const root = $('scenarioGalleryCards');
+    if (!root || typeof LESSON_TOUR === 'undefined') return;
+    root.innerHTML = '';
+    LESSON_TOUR.forEach((scenario, index) => {
+      const title = localizedScenarioField(index, 'name', scenario.name || (scenarioGalleryText('sg-card-prefix', 'Scenario') + ' ' + (index + 1)));
+      const description = localizedScenarioField(index, 'desc', scenario.description || '');
+      const card = document.createElement('article');
+      card.className = 'scenario-card';
+      card.setAttribute('data-scenario-index', String(index));
+
+      const h = document.createElement('h3');
+      h.textContent = `${scenarioGalleryText('sg-card-prefix', 'Scenario')} ${index + 1}: ${title}`;
+      card.appendChild(h);
+
+      appendScenarioMeta(card, scenarioGalleryText('sg-concept-label', 'Concept'), title);
+      appendScenarioMeta(card, scenarioGalleryText('sg-observe-label', 'What to watch'), description);
+      appendScenarioMeta(card, scenarioGalleryText('sg-misconception-label', 'Predict before applying'), scenarioGalleryText('sg-misconception-text', 'Which visible result should change most, and why? Commit to an answer before applying.'));
+      appendScenarioMeta(card, scenarioGalleryText('sg-teacher-label', 'Teacher use'), scenarioGalleryText('sg-teacher-text', 'Use as a 2–3 minute predict → run → explain prompt.'));
+
+      const btn = document.createElement('button');
+      btn.className = 'step-btn';
+      btn.type = 'button';
+      btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare');
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('.scenario-card').forEach(item => item.classList.remove('applied'));
+        tourIdx = index;
+        renderTour();
+        scenario.apply();
+        card.classList.add('applied');
+        btn.textContent = '✓ ' + scenarioGalleryText('sg-applied', 'Applied; compare the result');
+        setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
+      });
+      card.appendChild(btn);
+      root.appendChild(card);
+    });
+  }
+  renderScenarioGallery();
+
+  // Worksheet/lab mode: 3 questions with instant ✓/✗ feedback.
+  // Bilingual feedback helper: ws{n}ok / ws{n}no with English inline fallback.
+  function wsMsg(key, en) {
+    const L = (document.documentElement.lang || 'en');
+    return (STRINGS[L] && STRINGS[L][key]) || en;
+  }
+  // MCQ: each question is graded by the selected radio's index, not typed text.
+  // `correct` is the index of the right option (language-agnostic). ok/no are the
+  // existing bilingual feedback keys, with an English inline fallback via wsMsg.
+  const WORKSHEET = [
+    { correct: 1,
+      ok:  ['ws1ok', "Correct. This is 'explaining away' (Pearl): the earthquake provides an alternative cause for the alarm, so P(Burglary) drops. Two causes compete to explain a common effect, even though they were independent before evidence."],
+      no:  ['ws1no', "Try 'down'. The earthquake already explains why the alarm sounded: burglary becomes less needed as an explanation."] },
+    { correct: 1,
+      ok:  ['ws2ok', "Right. Same explaining-away pattern. Wet=T raises P(Sprinkler) above prior. Then learning Rain=T explains the wet grass, so P(Sprinkler) drops back toward (but stays slightly above) prior."],
+      no:  ['ws2no', "Try 'lower than just wet'. Rain explains the wetness, so sprinkler is less needed."] },
+    { correct: 1,
+      ok:  ['ws3ok', "Correct. With 5000 samples, Gibbs converges to within ~0.01-0.05 of the exact answer. Re-sample a few times to see the variance: Monte Carlo error scales as 1/√N."],
+      no:  ['ws3no', "Try 'close but noisy'. Gibbs sampling approximates the posterior; more samples = less noise. 5000 is usually within ~0.05."] },
+  ];
+  WORKSHEET.forEach((q, i) => {
+    const n = i + 1;
+    $(`ws${n}btn`).addEventListener('click', () => {
+      const fb = $(`ws${n}fb`);
+      const picked = document.querySelector(`input[name="ws${n}"]:checked`);
+      if (!picked) {
+        fb.textContent = wsMsg('ws-pick', 'Pick an answer first.');
+        fb.style.color = 'var(--muted)';
+        return;
+      }
+      const ok = Number(picked.value) === q.correct;
+      const [key, en] = ok ? q.ok : q.no;
+      fb.textContent = (ok ? '✓ ' : '✗ ') + wsMsg(key, en);
+      fb.style.color = ok ? '#16a34a' : '#dc2626';
+    });
+  });
+})();
+</script>
+<!-- Embed mode handler (shared pattern across all 12 applets). -->
+<script>
+(() => {
+  try {
+    if (new URLSearchParams(location.search).get('embed') === '1') {
+      document.body.classList.add('embed-mode');
+    }
+  } catch (_) {}
+  const btn = document.getElementById('embedLink');
+  if (!btn) return;
+  btn.addEventListener('click', async () => {
+    const url = new URL(location.href);
+    url.searchParams.set('embed', '1');
+    const snippet = `<iframe src="${url.toString()}" width="100%" height="720" frameborder="0" style="border:1px solid #e5e7eb; border-radius:8px;" loading="lazy"></iframe>`;
+    try {
+      await navigator.clipboard.writeText(snippet);
+      const orig = btn.textContent; btn.textContent = '✓ Copied iframe';
+      setTimeout(() => btn.textContent = orig, 1800);
+    } catch (_) { prompt('Copy this iframe snippet:', snippet); }
+  });
+})();
+</script>
+<footer class="site-footer" style="margin-top:36px; border-top:1px solid var(--border,#e5e7eb); padding:20px 24px; text-align:center; color:var(--muted,#6b7280); font-size:0.82rem; line-height:1.7;">
+<p style="margin:0 0 6px;"><a data-i18n="footer-top" href="#top" style="color:var(--accent,#0891b2); text-decoration:none;">↑ Back to top</a></p>
+<p style="margin:0;"><span data-i18n="footer-course">Made for the Introduction to AI course at Haidian Kaiwen Academy.</span></p>
+<p style="margin:6px 0 0;">© <span data-current-year="">2026</span> Logan M. Dixon · <a data-i18n="footer-portfolio" href="https://lmdixon23.github.io/" style="color:var(--accent,#0891b2);">Portfolio</a> · <a data-i18n="footer-project" href="../../index.html" style="color:var(--accent,#0891b2);">AI Playgrounds</a> · <a data-i18n="footer-source" href="https://github.com/lmdixon23/ai-playgrounds" style="color:var(--accent,#0891b2);">Source</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/blob/main/LICENSE" style="color:var(--accent,#0891b2);">MIT</a> · <a data-i18n="footer-issue" href="https://github.com/lmdixon23/ai-playgrounds/issues" style="color:var(--accent,#0891b2);">Report an issue</a> · <a href="https://orcid.org/0009-0001-0592-462X" rel="me" style="color:var(--accent,#0891b2);">ORCID</a></p>
+</footer>
+<script>
+(function() {
+  const LAB_CONFIG = {"slug": "bayes-network", "title": "Bayesian network lab packet", "zhTitle": "贝叶斯网络实验包", "fields": [{"label": "Network", "selector": "#netSel", "kind": "selected"}, {"label": "Samples", "selector": "#nSamplesV", "kind": "text"}, {"label": "Inference metadata", "selector": "#inferMeta", "kind": "text"}, {"label": "Posteriors", "selector": "#postRow", "kind": "text"}, {"label": "D-separation result", "selector": "#dsepResult", "kind": "text"}]};
+  const root = document.querySelector('.classroom-lab');
+  if (!root) return;
+  const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;
+  const qs = (sel) => root.querySelector(sel);
+  function currentLang() {
+    const raw = String(document.documentElement.lang || 'en').toLowerCase();
+    if (raw.startsWith('zh')) return 'zh';
+    if (raw.startsWith('vi')) return 'vi';
+    if (raw.startsWith('es')) return 'es';
+    return 'en';
+  }
+  function textFor(el, lang) {
+    if ((lang === 'vi' || lang === 'es') && window.__r4Localization) {
+      const source = el.getAttribute('data-lab-en') || el.textContent;
+      return window.__r4Localization.translateString(source, lang);
+    }
+    return el.getAttribute(lang === 'zh' ? 'data-lab-zh' : 'data-lab-en') || el.textContent;
+  }
+  function applyLabLang() {
+    const lang = currentLang();
+    root.querySelectorAll('[data-lab-en]').forEach(el => {
+      const value = textFor(el, lang);
+      if (el.tagName === 'TEXTAREA') el.placeholder = value;
+      else el.textContent = value;
+    });
+  }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? 'on' : 'off';
+    else if (field.kind === 'text') value = el.textContent.trim();
+    else value = el.value;
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    const label = ((currentLang() === 'vi' || currentLang() === 'es') && window.__r4Localization) ? window.__r4Localization.translateString(field.label, currentLang()) : field.label;
+    return value ? label + ': ' + value : null;
+  }
+  function snapshot() {
+    const lines = LAB_CONFIG.fields.map(readField).filter(Boolean);
+    return lines.length ? lines.join('\n') : 'No state captured yet. Run or adjust the applet first.';
+  }
+  function answers() {
+    const data = {};
+    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => data[area.getAttribute('data-lab-answer')] = area.value.trim());
+    return data;
+  }
+  function saveDraft() { try { localStorage.setItem(storageKey, JSON.stringify(answers())); } catch (_) {} }
+  function loadDraft() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      root.querySelectorAll('textarea[data-lab-answer]').forEach(area => { const key = area.getAttribute('data-lab-answer'); if (saved[key]) area.value = saved[key]; });
+    } catch (_) {}
+  }
+  function packet() {
+    const lang = currentLang();
+    const baseLabels = {title: LAB_CONFIG.title, state:'State snapshot', predict:'Predict', observe:'Observe', explain:'Explain', transfer:'Transfer'};
+    const labels = lang === 'zh' ? {title: LAB_CONFIG.zhTitle, state:'状态记录', predict:'预测', observe:'观察', explain:'解释', transfer:'迁移'} : ((lang === 'vi' || lang === 'es') && window.__r4Localization ? Object.fromEntries(Object.entries(baseLabels).map(([k,v]) => [k, window.__r4Localization.translateString(v, lang)])) : baseLabels);
+    const a = answers();
+    return [
+      '# ' + labels.title,
+      '',
+      '- Applet: ' + (document.querySelector('h1') ? document.querySelector('h1').textContent.trim() : document.title),
+      '- Date: ' + new Date().toLocaleString(),
+      '',
+      '## ' + labels.state,
+      snapshot(),
+      '',
+      '## ' + labels.predict,
+      a.predict || '',
+      '',
+      '## ' + labels.observe,
+      a.observe || '',
+      '',
+      '## ' + labels.explain,
+      a.explain || '',
+      '',
+      '## ' + labels.transfer,
+      a.transfer || ''
+    ].join('\n');
+  }
+  function setStatus(en, zh) { const el = qs('.lab-status'); if (el) el.textContent = currentLang() === 'zh' ? zh : en; }
+  function refreshState() { const el = qs('[data-lab-state]'); if (el) el.textContent = snapshot(); }
+  async function copyPacket() {
+    const text = packet();
+    try { await navigator.clipboard.writeText(text); setStatus('Copied local lab packet.', '已复制本地实验包。'); }
+    catch (_) { window.prompt('Copy this lab packet:', text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
+  }
+
+  function markdownToPrintableHtml(markdown) {
+    const escape = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const inline = value => escape(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    const lines = String(markdown).split(/\r?\n/);
+    let html = '', inList = false, inState = false;
+    const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
+    for (const raw of lines) {
+      const line = raw.trimEnd();
+      if (line.startsWith('# ')) { closeList(); html += '<h1>' + inline(line.slice(2)) + '</h1>'; inState=false; }
+      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = /state snapshot|状态记录/i.test(title); }
+      else if (line.startsWith('- ')) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inline(line.slice(2)) + '</li>'; }
+      else if (!line.trim()) { closeList(); }
+      else { closeList(); html += inState ? '<pre class="state">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
+    }
+    closeList(); return html;
+  }
+
+  function printPacket() {
+    const w = window.open('', '_blank');
+    if (!w) { setStatus('Popup blocked. Copy the packet instead.', '弹窗被拦截。请改用复制实验包。'); return; }
+    const rendered = markdownToPrintableHtml(packet());
+    const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+    setStatus('Print page opened.', '打印页面已打开。');
+  }
+  function clearDraft() {
+    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.value = '');
+    try { localStorage.removeItem(storageKey); } catch (_) {}
+    refreshState(); setStatus('Local draft cleared.', '本地草稿已清除。');
+  }
+  root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.addEventListener('input', saveDraft));
+  root.querySelector('[data-lab-action="copy"]')?.addEventListener('click', copyPacket);
+  root.querySelector('[data-lab-action="print"]')?.addEventListener('click', printPacket);
+  root.querySelector('[data-lab-action="refresh"]')?.addEventListener('click', () => { refreshState(); setStatus('State refreshed.', '状态已更新。'); });
+  root.querySelector('[data-lab-action="clear"]')?.addEventListener('click', clearDraft);
+  document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(applyLabLang, 0)));
+  window.addEventListener('r4languagechange', () => setTimeout(applyLabLang, 0));
+  
+  document.addEventListener('change', refreshState);
+  document.addEventListener('click', (event) => { if (!(event.target instanceof HTMLTextAreaElement)) setTimeout(refreshState, 0); }, true);
+  loadDraft(); applyLabLang(); refreshState();
+})();
+</script>
+<script>
+(function() {
+  const VISUAL_CONFIG = {"intro":"Watch the network as a dependency machine: structure defines possible influence, evidence fixes observed variables, inference updates beliefs, and d-separation explains when information cannot pass.","zhIntro":"把网络看成依赖关系机器：结构定义可能影响，证据固定观测变量，推理更新信念，d-分离说明信息何时不能传递。","misread":"A connected graph does not mean every variable always influences every other variable after evidence is observed.","zhMisread":"图中有连接不代表观察证据后每个变量都会影响其他所有变量。","steps":[{"label":"Graph structure","zhLabel":"图结构","text":"Arrows encode conditional dependence, not time order or moral responsibility.","zhText":"箭头表示条件依赖，不表示时间顺序或责任关系。","selector":"#netSel","kind":"selected","liveLabel":"Network","zhLiveLabel":"网络"},{"label":"Evidence clamp","zhLabel":"证据固定","text":"Observed variables are fixed, so uncertainty shifts to the variables still hidden.","zhText":"已观察变量被固定，所以不确定性转移到仍然隐藏的变量。","selector":"#inferMeta","kind":"text","liveLabel":"Inference","zhLiveLabel":"推理"},{"label":"Posterior flow","zhLabel":"后验流动","text":"Inference recomputes beliefs by combining local conditional tables with the evidence.","zhText":"推理通过结合局部条件表和证据来重新计算信念。","selector":"#postRow","kind":"text","liveLabel":"Posteriors","zhLiveLabel":"后验"},{"label":"Independence test","zhLabel":"独立性测试","text":"D-separation shows when a path of influence is blocked by the observed variables.","zhText":"d-分离显示某条影响路径何时被已观察变量阻断。","selector":"#dsepResult","kind":"text","liveLabel":"d-sep","zhLiveLabel":"d-分离"}],"fields":[{"label":"Network","zhLabel":"网络","selector":"#netSel","kind":"selected"},{"label":"Inference metadata","zhLabel":"推理元数据","selector":"#inferMeta","kind":"text"},{"label":"Posteriors","zhLabel":"后验","selector":"#postRow","kind":"text"},{"label":"D-separation","zhLabel":"d-分离","selector":"#dsepResult","kind":"text"}]};
+  const root = document.querySelector('.visual-explanation');
+  if (!root) return;
+  const flow = root.querySelector('[data-visual-flow]');
+  const intro = root.querySelector('[data-visual-intro]');
+  const snapshotBox = root.querySelector('[data-visual-snapshot]');
+  const misreadBox = root.querySelector('[data-visual-misread]');
+  function currentLang() { return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en'; }
+  function t(obj, key) { const lang = currentLang(); return (lang === 'zh' && obj['zh' + key[0].toUpperCase() + key.slice(1)]) || obj[key] || ''; }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? 'on' : 'off';
+    else if (field.kind === 'value') value = el.value;
+    else value = el.textContent.trim();
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? { label: field.label, zhLabel: field.zhLabel || field.label, value } : null;
+  }
+  function liveValue(step) {
+    if (!step.selector) return '';
+    const field = readField({ selector: step.selector, kind: step.kind || 'text', label: step.liveLabel || 'Live', zhLabel: step.zhLiveLabel || '实时' });
+    return field ? field.value : (step.fallback || '');
+  }
+  function renderVisualExplanation() {
+    const lang = currentLang();
+    root.querySelectorAll('[data-visual-en]').forEach(el => {
+      el.textContent = el.getAttribute(lang === 'zh' ? 'data-visual-zh' : 'data-visual-en') || el.textContent;
+    });
+    intro.textContent = lang === 'zh' ? VISUAL_CONFIG.zhIntro : VISUAL_CONFIG.intro;
+    misreadBox.textContent = lang === 'zh' ? VISUAL_CONFIG.zhMisread : VISUAL_CONFIG.misread;
+    flow.innerHTML = VISUAL_CONFIG.steps.map((step, idx) => {
+      const title = lang === 'zh' ? step.zhLabel : step.label;
+      const body = lang === 'zh' ? step.zhText : step.text;
+      const liveLabel = lang === 'zh' ? (step.zhLiveLabel || '实时') : (step.liveLabel || 'Live');
+      const live = liveValue(step);
+      const liveHtml = live ? '<span class="visual-live"><strong>' + escapeHtml(liveLabel) + '</strong><span>' + escapeHtml(live) + '</span></span>' : '';
+      return '<article class="visual-card" data-step="' + String(idx + 1).padStart(2, '0') + '"><h4>' + escapeHtml(title) + '</h4><p>' + escapeHtml(body) + '</p>' + liveHtml + '</article>';
+    }).join('');
+    const lines = (VISUAL_CONFIG.fields || []).map(readField).filter(Boolean).map(f => (lang === 'zh' ? f.zhLabel : f.label) + ': ' + f.value);
+    snapshotBox.textContent = lines.length ? lines.join('\n') : (lang === 'zh' ? '还没有捕捉到状态。请先运行或调整小程序。' : 'No state captured yet. Run or adjust the applet first.');
+  }
+  function escapeHtml(text) { return String(text).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+  let visualTimer = null;
+  function scheduleVisualRender() {
+    if (visualTimer) cancelAnimationFrame(visualTimer);
+    visualTimer = requestAnimationFrame(renderVisualExplanation);
+  }
+  document.addEventListener('change', scheduleVisualRender);
+  document.addEventListener('input', scheduleVisualRender);
+  document.addEventListener('click', () => setTimeout(scheduleVisualRender, 0), true);
+  document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(scheduleVisualRender, 0)));
+  setInterval(renderVisualExplanation, 1200);
+  renderVisualExplanation();
+})();
+</script>
+<!-- Privacy-friendly analytics: GoatCounter, cookieless. -->
+
+<script>
+(function() {
+  const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "Network", "zhLabel": "网络", "selector": "#netSel", "kind": "selected"}, {"label": "Inference metadata", "zhLabel": "推理元数据", "selector": "#inferMeta", "kind": "text"}, {"label": "Posteriors", "zhLabel": "后验", "selector": "#postRow", "kind": "text"}, {"label": "D-separation", "zhLabel": "d-分离", "selector": "#dsepResult", "kind": "text"}]};
+  const layer = document.querySelector('.accessibility-layer');
+  if (!layer) return;
+  const intro = layer.querySelector('[data-a11y-intro]');
+  const stateGrid = layer.querySelector('[data-a11y-state-grid]');
+  const liveRegion = layer.querySelector('#a11yLiveRegion');
+  let renderTimer = 0;
+  let lastSummary = '';
+  function currentLang() {
+    return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+  }
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+  function localized(obj, key) {
+    const lang = currentLang();
+    const zhKey = 'zh' + key[0].toUpperCase() + key.slice(1);
+    return (lang === 'zh' && obj[zhKey]) || obj[key] || '';
+  }
+  function readField(field) {
+    const el = document.querySelector(field.selector);
+    if (!el) return null;
+    let value = '';
+    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    else if (field.kind === 'checked') value = el.checked ? (currentLang() === 'zh' ? '开' : 'on') : (currentLang() === 'zh' ? '关' : 'off');
+    else if (field.kind === 'value') value = el.value;
+    else value = el.textContent.trim();
+    value = (value || '').replace(/\s+/g, ' ').trim();
+    return value ? { label: localized(field, 'label'), value } : null;
+  }
+  function renderAccessibilityLayer(options = {}) {
+    const lang = currentLang();
+    layer.querySelectorAll('[data-a11y-en]').forEach(el => {
+      el.textContent = el.getAttribute(lang === 'zh' ? 'data-a11y-zh' : 'data-a11y-en') || el.textContent;
+    });
+    const copy = A11Y_CONFIG.copy[lang] || A11Y_CONFIG.copy.en;
+    intro.textContent = copy.intro;
+    layer.querySelector('[data-a11y-title]').textContent = copy.title;
+    layer.querySelector('[data-a11y-keyboard-title]').textContent = copy.keyboardTitle;
+    layer.querySelector('[data-a11y-keyboard-1]').textContent = copy.keyboard1;
+    layer.querySelector('[data-a11y-keyboard-2]').textContent = copy.keyboard2;
+    layer.querySelector('[data-a11y-keyboard-3]').textContent = copy.keyboard3;
+    layer.querySelector('[data-a11y-state-title]').textContent = copy.stateTitle;
+    layer.querySelector('[data-a11y-motion-title]').textContent = copy.motionTitle;
+    layer.querySelector('[data-a11y-motion-copy]').textContent = copy.motionCopy;
+    layer.querySelector('[data-a11y-note]').textContent = copy.note;
+    const fields = A11Y_CONFIG.fields.map(readField).filter(Boolean);
+    if (fields.length) {
+      stateGrid.innerHTML = fields.map(field => '<dt>' + escapeHtml(field.label) + '</dt><dd>' + escapeHtml(field.value) + '</dd>').join('');
+    } else {
+      stateGrid.innerHTML = '<dt>' + escapeHtml(copy.emptyLabel) + '</dt><dd>' + escapeHtml(copy.emptyValue) + '</dd>';
+    }
+    const summary = fields.map(field => field.label + ': ' + field.value).join('; ') || copy.emptyValue;
+    if (options.announce && liveRegion && summary !== lastSummary) {
+      liveRegion.textContent = copy.livePrefix + summary;
+    }
+    lastSummary = summary;
+  }
+  function markVisualRegions() {
+    const descriptionId = 'a11yStateSummary';
+    document.querySelectorAll('canvas, svg, [role="img"]').forEach((el, index) => {
+      if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+      if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', A11Y_CONFIG.copy.en.visualLabel + ' ' + (index + 1));
+      const describedBy = (el.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+      if (!describedBy.includes(descriptionId)) {
+        describedBy.push(descriptionId);
+        el.setAttribute('aria-describedby', describedBy.join(' '));
+      }
+    });
+  }
+  function scheduleAccessibilityRender(announce = true) {
+    clearTimeout(renderTimer);
+    renderTimer = setTimeout(() => renderAccessibilityLayer({ announce }), 100);
+  }
+  document.addEventListener('input', () => scheduleAccessibilityRender(true), true);
+  document.addEventListener('change', () => scheduleAccessibilityRender(true), true);
+  document.addEventListener('click', event => {
+    if (event.target && event.target.closest && event.target.closest('button, [role="button"], canvas, svg, select, input')) {
+      scheduleAccessibilityRender(true);
+    }
+  }, true);
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ' || event.key.startsWith('Arrow') || event.key === 'Tab') {
+      scheduleAccessibilityRender(false);
+    }
+  }, true);
+  setInterval(() => {
+    if (!document.hidden) renderAccessibilityLayer({ announce: false });
+  }, 1500);
+  markVisualRegions();
+  renderAccessibilityLayer({ announce: false });
+  window.renderAccessibilityLayer = renderAccessibilityLayer;
+})();
+</script>
+<script>
+(function () {
+  document.querySelectorAll('[data-current-year]').forEach(el => { el.textContent = new Date().getFullYear(); });
+})();
+</script>
+<script id="learner-content-system">
+(() => {
+  const profile = {"slug":"bayes-network","en":{"title":"Bayesian Network","big":"Use a graph to connect several uncertain events. Add evidence, update probabilities, and observe how one explanation can reduce belief in another explanation.","primer":"A Bayesian network separates the structure of a problem from the numbers used to describe it. Learn the graph and table terms before reading the probability updates.","terms":[{"term":"Bayesian network","definition":"A graph that represents probabilistic dependencies among variables."},{"term":"Directed acyclic graph (DAG)","definition":"A graph with arrows and no path that loops back to its starting point."},{"term":"Conditional probability table (CPT)","definition":"A table giving a variable’s probability for each combination of its parent values."},{"term":"Evidence","definition":"A variable whose value has been observed or fixed."},{"term":"Posterior probability","definition":"A probability after the evidence has been included."},{"term":"Explaining away","definition":"Evidence for one cause reduces belief in another cause of the same effect."},{"term":"Conditional independence","definition":"A relation defined relative to a conditioning set: once those variables are fixed, learning one variable provides no additional information about the other."},{"term":"Exact inference","definition":"A calculation that sums over all compatible hidden-variable assignments to obtain the posterior exactly."}],"scenarios":[{"title":"Start from the prior probabilities","question":"What does the network believe before any evidence is entered?","run":"Clear all evidence and read the burglary, earthquake, alarm, and call probabilities.","predict":"Predict which events should be rarest and which probability should be largest.","explain":"Explain how the conditional probability tables create the calm baseline."},{"title":"One phone call changes burglary belief","question":"How can evidence travel against the direction of an arrow?","run":"Set John calls to true, then compare the burglary posterior with its prior probability.","predict":"Predict whether the burglary probability will rise a little or by many times.","explain":"Explain why a possible effect can provide diagnostic evidence about its cause."},{"title":"Two reports are conditionally independent given the alarm","question":"Why do two calls change belief more than one call?","run":"Set both John and Mary calls to true while leaving the possible causes unobserved.","predict":"Predict whether the second report will add weak or strong evidence.","explain":"Explain that the model treats the two call mechanisms as conditionally independent given Alarm, so observing both can jointly strengthen belief in Alarm."},{"title":"An earthquake explains away a burglary","question":"How can adding evidence make a hypothesis less likely?","run":"Keep both calls true, then also set earthquake to true and watch burglary probability.","predict":"Predict the direction of the burglary update before applying the earthquake evidence.","explain":"Explain how the observed earthquake already accounts for the alarm and calls."},{"title":"Wet grass has two possible causes","question":"How does explaining away appear in a different network?","run":"Switch to the sprinkler network, observe wet grass, then add evidence that it rained.","predict":"Predict what will happen to the sprinkler probability after rain is confirmed.","explain":"Explain why the two causes compete to explain the same wet grass."}]},"zh":{"title":"贝叶斯网络","big":"用图连接多个不确定事件。加入证据、更新概率，并观察一个解释如何降低对另一个解释的信念。","primer":"贝叶斯网络把问题结构与描述它的数值分开。阅读概率更新前，先熟悉图和概率表的术语。","terms":[{"term":"贝叶斯网络","definition":"表示变量之间概率依赖关系的图。"},{"term":"有向无环图（DAG）","definition":"带方向且不存在回到起点循环路径的图。"},{"term":"条件概率表（CPT）","definition":"给出父变量不同取值组合下该变量概率的表。"},{"term":"证据","definition":"已经观察到或固定取值的变量。"},{"term":"后验概率","definition":"加入证据后的概率。"},{"term":"解释消除","definition":"一个原因的证据会降低对同一结果的另一个原因的信念。"},{"term":"条件独立","definition":"条件独立始终相对于一个条件集合来定义：固定这些变量后，知道其中一个变量不会再为另一个变量提供额外信息。"},{"term":"精确推断","definition":"对所有相容的隐藏变量赋值求和，从而精确得到后验概率。"}],"scenarios":[{"title":"从先验概率开始","question":"没有输入证据时，网络相信什么？","run":"清除所有证据，读取入室盗窃、地震、警报和电话的概率。","predict":"预测哪些事件最罕见，哪个概率最大。","explain":"解释条件概率表如何形成平静的基线。"},{"title":"一个电话改变入室盗窃信念","question":"证据如何逆着箭头方向传播？","run":"把 John 来电设为真，并比较入室盗窃的后验与先验概率。","predict":"预测入室盗窃概率会小幅上升还是增加很多倍。","explain":"解释为什么可能的结果能为原因提供诊断证据。"},{"title":"给定警报后条件独立的两个报告加强证据","question":"为什么两个电话比一个电话更能改变信念？","run":"把 John 和 Mary 来电都设为真，同时不观察可能原因。","predict":"预测第二个报告会增加弱证据还是强证据。","explain":"解释该模型如何在给定 Alarm 后把两个来电机制视为条件独立，因此观察到两次来电可以共同增强对 Alarm 的信念。"},{"title":"地震解释消除了入室盗窃","question":"为什么加入证据可能让假设更不可能？","run":"保持两个电话为真，再把地震设为真并观察入室盗窃概率。","predict":"应用地震证据前，预测入室盗窃概率变化方向。","explain":"解释已知地震如何为警报和电话提供现成解释。"},{"title":"湿草有两个可能原因","question":"解释消除如何出现在不同网络中？","run":"切换到洒水器网络，观察湿草，再加入下雨证据。","predict":"预测确认下雨后洒水器概率如何变化。","explain":"解释两个原因为什么会竞争解释同一片湿草。"}]}};
+  window.APPLET_LEARNER_PROFILE = profile;
+  const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;
+  try {
+    STRINGS.en.title = profile.en.title; STRINGS.zh.title = profile.zh.title;
+    STRINGS.en['tldr-strong'] = 'What this applet shows'; STRINGS.zh['tldr-strong'] = '这个工具展示什么';
+    STRINGS.en['tldr-body'] = profile.en.big; STRINGS.zh['tldr-body'] = profile.zh.big;
+    profile.en.scenarios.forEach((item,i) => { STRINGS.en['tour'+i+'name']=item.title; STRINGS.en['tour'+i+'desc']=item.run; if (typeof LESSON_TOUR !== 'undefined' && LESSON_TOUR[i]) { LESSON_TOUR[i].name=item.title; LESSON_TOUR[i].description=item.run; } });
+    profile.zh.scenarios.forEach((item,i) => { STRINGS.zh['tour'+i+'name']=item.title; STRINGS.zh['tour'+i+'desc']=item.run; });
+  } catch (_) {}
+  function applyCoreCopy(){
+    const c=copy();
+    document.title=c.title+' | AI Playgrounds';
+    const h=document.querySelector('.header-main h1'); if(h) h.textContent=c.title;
+    const strong=document.querySelector('.tldr strong'); if(strong) strong.textContent=currentLocale()==='zh'?'这个工具展示什么':'What this applet shows';
+    const body=document.querySelector('.tldr span'); if(body) body.textContent=c.big;
+    const jump=document.querySelector('.jump-link'); if(jump) jump.textContent=currentLocale()==='zh'?'↓ 阅读分步解释':'↓ Read the step-by-step explanation';
+  }
+  function stateData(){
+    const values={};
+    document.querySelectorAll('#main input,#main select,#main textarea').forEach(el=>{
+      if(!el.id||el.closest('.classroom-lab'))return;
+      if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;
+      values[el.id]=el.type==='checkbox'?el.checked:el.value;
+    });
+    return {applet:profile.en.title,slug:profile.slug,exported_at:new Date().toISOString(),values};
+  }
+  function toolbar(){
+    const actions=document.querySelector('.header-actions'); if(!actions||actions.dataset.standardized==='1')return;
+    const share=document.getElementById('shareLink'), embed=document.getElementById('embedLink'), reset=document.getElementById('hardReset');
+    const csv=document.getElementById('csvExport'), png=document.getElementById('exportPng');
+    const more=document.createElement('details'); more.className='header-more';
+    const summary=document.createElement('summary'); summary.className='header-png'; summary.setAttribute('aria-haspopup','menu'); more.appendChild(summary);
+    const menu=document.createElement('div'); menu.className='header-more-menu'; menu.setAttribute('role','menu'); more.appendChild(menu);
+    if(embed){embed.textContent='📎 Embed in LMS';menu.appendChild(embed)}
+    const jsonBtn=document.createElement('button');jsonBtn.type='button';jsonBtn.className='header-png';jsonBtn.dataset.exportState='';menu.appendChild(jsonBtn);
+    if(csv){csv.textContent='📊 Data table (.csv)';menu.appendChild(csv)}
+    if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
+    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
+    actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
+    window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';if(share){share.textContent=zh?'🔗 分享':'🔗 Share';share.title=zh?'复制可在另一浏览器中重新打开当前设置的链接。':'Copy a link that reopens the current settings in another browser.';}summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
+    window.refreshAppletToolbar();
+    document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
+  }
+  function terms(){
+    const inner=document.querySelector('.interactive-inner'); if(!inner||inner.querySelector('.key-terms'))return;
+    const d=document.createElement('details');d.className='key-terms';d.open=true;
+    d.innerHTML='<summary><span data-key-summary></span></summary><div class="key-terms-panel"><p class="key-terms-intro" data-key-intro></p><dl class="key-terms-grid" data-key-grid></dl></div>';
+    const first=inner.querySelector(':scope > details');inner.insertBefore(d,first||inner.firstChild);
+    window.renderAppletKeyTerms=()=>{const c=copy();d.querySelector('[data-key-summary]').textContent=currentLocale()==='zh'?'🔑 先学这些术语':'🔑 Key terms before the explanation';d.querySelector('[data-key-intro]').textContent=c.primer;d.querySelector('[data-key-grid]').innerHTML=c.terms.map(x=>'<div class="key-term"><dt>'+x.term+'</dt><dd>'+x.definition+'</dd></div>').join('')};
+    window.renderAppletKeyTerms();
+  }
+  function essayPrimer(){
+    const essay=document.querySelector('article#essay');if(!essay||essay.querySelector('.essay-primer'))return;
+    const box=document.createElement('section');box.className='essay-primer';essay.insertBefore(box,essay.firstChild);
+    window.renderEssayPrimer=()=>{const c=copy();const heading=currentLocale()==='zh'?'阅读前先准备':'Before you read';const termHeading=currentLocale()==='zh'?'本页会使用的术语':'Terms used in this explanation';box.innerHTML='<h2>'+heading+'</h2><p>'+c.primer+'</p><h3>'+termHeading+'</h3><dl class="essay-primer-terms">'+c.terms.map(x=>'<div><dt>'+x.term+'</dt><dd>'+x.definition+'</dd></div>').join('')+'</dl>'};window.renderEssayPrimer();
+  }
+  function patchScenarioData(){
+    try{if(typeof renderScenarioGallery==='function')renderScenarioGallery();if(typeof renderTour==='function')renderTour()}catch(_){}
+  }
+  window.refreshLearnerContent=()=>{applyCoreCopy();window.renderAppletKeyTerms?.();window.renderEssayPrimer?.();window.refreshAppletToolbar?.()};
+  applyCoreCopy();toolbar();terms();essayPrimer();patchScenarioData();
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(window.refreshLearnerContent,20)));
+})();
+</script>
+<!-- AI_PLAYGROUNDS_COMPONENT:original/essay-language-script -->
+<!-- AI_PLAYGROUNDS_COMPONENT:original/learning-modes-script -->
+<script id="applet-translation-completion">
+(() => {
+  const exact = {"Skip to applet controls":"跳到交互控件","▸ Show teacher notes (discussion prompts + curriculum)":"▸ 展开教师说明（讨论提示与课程联系）","▾ Hide teacher notes (discussion prompts + curriculum)":"▾ 收起教师说明（讨论提示与课程联系）","idle":"空闲","(empty)":"（空）","(no actions yet)":"（尚无动作）","exploring":"探索中","Bayesian network diagram":"贝叶斯网络图","Five variables: Burglary, Earthquake, Alarm, JohnCalls, MaryCalls: connected by directed edges. Drag nodes to rearrange. Tab through to access each variable.":"五个变量：入室盗窃、地震、警报、约翰来电和玛丽来电，由有向边连接。拖动节点可重新排列，使用 Tab 键可逐一访问变量。","Drag nodes to rearrange. Edges point from parent to child. Green = clamped TRUE, red = clamped FALSE.":"拖动节点可重新排列。箭头从父节点指向子节点。绿色表示固定为真，红色表示固定为假。","Drag nodes to rearrange. Edges flow parent → child. Green = clamped TRUE, red = clamped FALSE.":"拖动节点可重新排列。箭头从父节点指向子节点。绿色表示固定为真，红色表示固定为假。","unconditional":"无条件","Burglary":"入室盗窃","Earthquake":"地震","Alarm":"警报","JohnCalls":"John 来电","MaryCalls":"Mary 来电","(select X and Y, then click Check)":"（选择 X 和 Y，然后点击“检查”）"};
+  const rules = [["^Exact inference by enumeration: computed in ([0-9.]+) ms\\.$","枚举法精确推理：用时 \\1 毫秒。"]].map(([source,target])=>[new RegExp(source),target]);
+  const currentLanguage=()=>((document.documentElement.lang||'en').startsWith('zh')?'zh':'en');
+  const excluded=node=>node.parentElement && node.parentElement.closest('script,style,noscript,[data-essay-lang="en"]');
+  const applyRule=text=>{
+    if(Object.prototype.hasOwnProperty.call(exact,text))return exact[text];
+    for(const [pattern,target] of rules){if(pattern.test(text)){pattern.lastIndex=0;return text.replace(pattern,target)}}
+    return null;
+  };
+  function translateNode(node){
+    if(excluded(node))return;
+    const raw=node.nodeValue||'',trimmed=raw.trim();if(!trimmed)return;
+    if(currentLanguage()==='en'){
+      if(node.__appletEnglish!==undefined){const start=raw.indexOf(trimmed);node.nodeValue=raw.slice(0,start)+node.__appletEnglish+raw.slice(start+trimmed.length);delete node.__appletEnglish}
+      return;
+    }
+    const translated=applyRule(trimmed);if(translated===null||translated===trimmed)return;
+    node.__appletEnglish=trimmed;const start=raw.indexOf(trimmed);node.nodeValue=raw.slice(0,start)+translated+raw.slice(start+trimmed.length);
+  }
+  function translateAttribute(el,attr){
+    const value=el.getAttribute(attr);if(!value)return;
+    const prop='__appletEnglish_'+attr;
+    if(currentLanguage()==='en'){
+      if(el[prop]!==undefined){el.setAttribute(attr,el[prop]);delete el[prop]}
+      return;
+    }
+    const translated=applyRule(value.trim());if(translated===null||translated===value.trim())return;
+    el[prop]=value;el.setAttribute(attr,translated);
+  }
+  function refresh(root=document){
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);nodes.forEach(translateNode);
+    const elements=(root.querySelectorAll?root.querySelectorAll('[title],[aria-label],[placeholder]'):[]);elements.forEach(el=>['title','aria-label','placeholder'].forEach(a=>{if(el.hasAttribute(a))translateAttribute(el,a)}));
+  }
+  let queued=false;const schedule=()=>{if(queued)return;queued=true;queueMicrotask(()=>{queued=false;refresh()})};
+  const observer=new MutationObserver(mutations=>{if(currentLanguage()!=='zh')return;for(const m of mutations){if(m.type==='characterData'||m.addedNodes.length){schedule();break}}});
+  observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+  document.querySelectorAll('button[data-lang]').forEach(button=>button.addEventListener('click',()=>setTimeout(()=>refresh(),45)));
+  refresh();
+  window.refreshAppletTranslationCompletion=refresh;
+})();
+</script>
+<!-- suite-guided-challenge-v2:start -->
+<link href="../../assets/guided-challenges.css" rel="stylesheet"/>
+<script defer src="../../assets/guided-challenges.js"></script>
+<!-- suite-guided-challenge-v2:end -->
+<script src="../../assets/locales/bayes-network-r4.js"></script>
+<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["bayes-network"];if(!row)return;Object.assign(row.vi.strings,{"🧪 Quick Assign · QA-BN-01 · 10–15 min": "🧪 Bài tập nhanh · QA-BN-01 · 10–15 phút", "Explaining away": "Hiện tượng giải thích loại trừ", "Set evidence, compare posteriors, then explain how conditional dependence and explaining away changed the inference.": "Dự đoán posterior của hai nguyên nhân, thêm bằng chứng cho một nguyên nhân rồi giải thích vì sao niềm tin vào nguyên nhân kia có thể giảm.", "Before changing evidence, which hidden cause do you expect to become more likely, and why?": "Sau khi quan sát hiệu ứng chung, điều gì sẽ xảy ra với nguyên nhân B nếu sau đó có bằng chứng mạnh cho nguyên nhân A?", "Apply at least one scenario. Record the evidence and the posterior probabilities that changed most.": "Ghi lại posterior trước và sau khi thêm bằng chứng cho một nguyên nhân chung của cùng hiệu ứng.", "How did the graph structure make one variable evidence for another?": "Vì sao thay đổi này là phụ thuộc có điều kiện qua hiệu ứng chung chứ không phải A trực tiếp làm giảm B?", "Name a real situation where one explanation can lower the probability of another explanation.": "Mô tả một ví dụ khác trong đó hai lời giải thích cạnh tranh cho cùng một bằng chứng có thể giải thích loại trừ nhau.", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"🧪 Quick Assign · QA-BN-01 · 10–15 min": "🧪 Tarea rápida · QA-BN-01 · 10–15 min", "Explaining away": "Explicación alternativa", "Set evidence, compare posteriors, then explain how conditional dependence and explaining away changed the inference.": "Predice los posteriores de dos causas, añade evidencia para una causa y explica por qué puede bajar la creencia en la otra.", "Before changing evidence, which hidden cause do you expect to become more likely, and why?": "Tras observar el efecto común, ¿qué ocurrirá con la causa B si después aparece evidencia fuerte para la causa A?", "Apply at least one scenario. Record the evidence and the posterior probabilities that changed most.": "Registra el posterior antes y después de añadir evidencia para una de dos causas de un efecto común.", "How did the graph structure make one variable evidence for another?": "¿Por qué el cambio es dependencia condicional a través del efecto común y no que A reduzca directamente B?", "Name a real situation where one explanation can lower the probability of another explanation.": "Describe otro caso en que dos explicaciones competidoras de la misma evidencia puedan explicarse mutuamente.", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script src="../../assets/localization-r4.js"></script>
+<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.8.1</div>
+
+<script id="bayes-engagement-excellence-runtime">
+(()=>{'use strict';
+const $=s=>document.querySelector(s);let previous=null,current=null;
+const COPY={
+ en:{title:'Keep the previous exact belief visible',help:'A dark marker shows the previous exact posterior. The filled bar is the current posterior. This is a before/after comparison only; it does not imply probability literally flows along graph arrows.',first:'Make one evidence or CPT change in Exact or Variable elimination to leave a previous-state marker.',paused:'Exact before/after comparison is paused for sampling methods because Monte Carlo noise can move estimates even when the model has not changed.',before:'before',now:'now',largest:'largest exact change',exact:'exact comparison'},
+ zh:{title:'保留上一个精确信念作为参照',help:'深色标记表示上一个精确后验，填充条表示当前后验。这只是前后比较；并不表示概率会沿图中箭头真实流动。',first:'在精确枚举或变量消除模式下改变一次证据或 CPT，即可留下上一状态标记。',paused:'采样方法会暂停精确前后比较，因为即使模型没有改变，蒙特卡洛噪声也可能使估计发生波动。',before:'之前',now:'现在',largest:'最大精确变化',exact:'精确比较'},
+ vi:{title:'Giữ niềm tin chính xác trước đó làm mốc',help:'Vạch tối là hậu nghiệm chính xác trước đó; thanh tô là hậu nghiệm hiện tại. Đây chỉ là so sánh trước/sau, không ngụ ý xác suất thực sự chảy dọc các mũi tên của đồ thị.',first:'Hãy thay đổi một bằng chứng hoặc CPT trong chế độ Exact hay Variable elimination để để lại mốc trạng thái trước.',paused:'So sánh trước/sau chính xác tạm dừng với phương pháp lấy mẫu vì nhiễu Monte Carlo có thể làm ước lượng thay đổi ngay cả khi mô hình không đổi.',before:'trước',now:'hiện tại',largest:'thay đổi chính xác lớn nhất',exact:'so sánh chính xác'},
+ es:{title:'Mantén visible la creencia exacta anterior',help:'La marca oscura muestra el posterior exacto anterior; la barra rellena muestra el posterior actual. Es una comparación antes/después: no implica que la probabilidad fluya literalmente por las flechas del grafo.',first:'Haz un cambio de evidencia o CPT en Exact o Eliminación de variables para dejar una marca del estado anterior.',paused:'La comparación exacta antes/después se pausa con métodos de muestreo porque el ruido de Monte Carlo puede mover las estimaciones aunque el modelo no cambie.',before:'antes',now:'ahora',largest:'mayor cambio exacto',exact:'comparación exacta'}
+};
+function clone(v){return JSON.parse(JSON.stringify(v))}function snapshot(){return window.__bayesPosteriorPresentationSnapshot?clone(window.__bayesPosteriorPresentationSnapshot):null}function locale(){const r=window.__r4Localization?.locale?.();if(r)return r;const l=(document.documentElement.lang||'en').toLowerCase();if(l.startsWith('zh'))return'zh';if(l.startsWith('vi'))return'vi';if(l.startsWith('es'))return'es';return'en'}function cp(){return COPY[locale()]||COPY.en}function deterministic(s){return !!s&&(s.method==='exact'||s.method==='ve')}function sameFrame(a,b){return !!a&&!!b&&a.preset===b.preset&&a.method===b.method&&deterministic(a)&&deterministic(b)}
+function install(){const section=$('.infer-section');if(!section||$('#bayes-eq-strip'))return;const strip=document.createElement('div');strip.id='bayes-eq-strip';strip.className='bayes-eq-strip';strip.setAttribute('data-r4-no-translate','1');strip.innerHTML='<div><strong id="bayes-eq-title"></strong><p id="bayes-eq-help"></p></div><span id="bayes-eq-mode" class="bayes-eq-mode"></span>';section.insertBefore(strip,$('#postRow'));window.addEventListener('bayesposteriorchange',handle);window.addEventListener('r4languagechange',()=>queueMicrotask(render));document.querySelectorAll('.lang-switch button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(render,0)));current=snapshot();render()}
+function handle(){const next=snapshot();if(current&&sameFrame(current,next)&&JSON.stringify(current.post)!==JSON.stringify(next.post))previous=current;else if(!sameFrame(current,next))previous=null;current=next;queueMicrotask(render)}
+function render(){if(!$('#bayes-eq-strip'))return;const c=cp();$('#bayes-eq-title').textContent=c.title;$('#bayes-eq-mode').textContent=current?`${current.method} · ${c.exact}`:c.exact;const cells=[...document.querySelectorAll('#postRow .infer-cell')];cells.forEach(cell=>{cell.classList.remove('bayes-eq-largest');cell.querySelectorAll('.bayes-eq-prev-marker,.bayes-eq-delta').forEach(el=>el.remove())});if(!current){$('#bayes-eq-help').textContent=c.first;return}if(!deterministic(current)){previous=null;$('#bayes-eq-help').textContent=c.paused;return}if(!previous||!sameFrame(previous,current)){previous=null;$('#bayes-eq-help').textContent=c.first;return}const deltas=current.vars.map(v=>({v,d:current.post[v]-previous.post[v],abs:Math.abs(current.post[v]-previous.post[v])})),largest=deltas.reduce((a,b)=>b.abs>a.abs?b:a,deltas[0]);$('#bayes-eq-help').textContent=`${c.largest}: ${current.labels[largest.v]} ${largest.d>=0?'↑':'↓'} ${(100*largest.abs).toFixed(2)} pp. ${c.help}`;current.vars.forEach((v,i)=>{const cell=cells[i];if(!cell)return;const prev=previous.post[v],now=current.post[v],d=now-prev,bar=cell.querySelector('.bar');if(bar){const marker=document.createElement('span');marker.className='bayes-eq-prev-marker';marker.style.left=`${Math.max(0,Math.min(100,prev*100))}%`;marker.title=`${c.before}: ${(100*prev).toFixed(2)}%`;bar.appendChild(marker)}const delta=document.createElement('div');delta.className='bayes-eq-delta '+(d>1e-12?'bayes-eq-up':d<-1e-12?'bayes-eq-down':'bayes-eq-flat');delta.innerHTML=`<b>${c.before}</b> ${(100*prev).toFixed(2)}% → <b>${c.now}</b> ${(100*now).toFixed(2)}%<br>${d>1e-12?'↑':d<-1e-12?'↓':'→'} ${(100*Math.abs(d)).toFixed(2)} pp`;cell.appendChild(delta);if(v===largest.v)cell.classList.add('bayes-eq-largest')})}
+function init(){if(!window.__bayesPosteriorPresentationSnapshot||!$('#postRow'))return setTimeout(init,0);install();window.__bayesPosteriorDeltaExperience={getCurrent:()=>clone(current),getPrevious:()=>clone(previous),render}}
+init();
+})();
+</script>
+
+<!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
+<script data-ai-playgrounds-analytics="v1.8.1">
+(function () {
+  'use strict';
+  var CANONICAL_HOST = 'lmdixon23.github.io';
+  var ENDPOINT = 'https://lmdixon23.goatcounter.com/count';
+  var PAGE_KIND = 'applet';
+  var PAGE_SLUG = 'bayes-network';
+  var SOURCE_ALLOWLIST = new Set(['hn','linkedin','csta','sigcse','oercommons','merlot','reddit','bluesky','mastodon','devto','hashnode','github','email','school','portfolio','resume','zenodo','jose']);
+  var liveImages = [];
+
+  function storageGet(storage, key) { try { return storage.getItem(key); } catch (_) { return null; } }
+  function storageSet(storage, key, value) { try { storage.setItem(key, value); } catch (_) {} }
+  function privacySignal() {
+    return navigator.globalPrivacyControl === true || navigator.doNotTrack === '1' ||
+      navigator.doNotTrack === 'yes' || window.doNotTrack === '1';
+  }
+  function clean(value) {
+    return String(value || '').toLowerCase().replace(/[^a-z0-9._/-]+/g, '-').replace(/-+/g, '-').replace(/^\/+|\/+$/g, '').slice(0, 80);
+  }
+  function normalizePath(path) {
+    var value = String(path || '/');
+    value = value.replace(/\/index\.html$/, '/');
+    if (value === '/ai-playgrounds') value = '/ai-playgrounds/';
+    return value || '/';
+  }
+  function canonicalPath() {
+    var link = document.querySelector('link[rel="canonical"]');
+    if (link && link.href) {
+      try { return normalizePath(new URL(link.href, location.href).pathname); } catch (_) {}
+    }
+    return normalizePath(location.pathname || '/ai-playgrounds/');
+  }
+
+  var params = new URLSearchParams(location.search);
+  var optedOut = params.get('analytics') === 'off' || storageGet(localStorage, 'ai-playgrounds-analytics') === 'off';
+  var enabled = location.hostname === CANONICAL_HOST && !privacySignal() && !optedOut;
+
+  function transmit(query) {
+    if (!enabled) return;
+    var img = new Image(1, 1);
+    img.referrerPolicy = 'no-referrer';
+    img.onload = img.onerror = function () {
+      var i = liveImages.indexOf(img);
+      if (i >= 0) liveImages.splice(i, 1);
+    };
+    img.src = ENDPOINT + '?' + query.toString();
+    liveImages.push(img);
+  }
+
+  function campaignQuery() {
+    var source = clean(params.get('ap_src'));
+    if (!SOURCE_ALLOWLIST.has(source)) return '';
+    var q = new URLSearchParams();
+    q.set('utm_campaign', 'ai-playgrounds');
+    q.set('utm_source', source);
+    return q.toString();
+  }
+
+  function sendPage() {
+    var query = new URLSearchParams();
+    query.set('p', canonicalPath());
+    query.set('t', document.title || 'AI Playgrounds');
+    var campaign = campaignQuery();
+    if (campaign) query.set('q', campaign);
+    transmit(query);
+  }
+
+  function sendEvent(name, title) {
+    var eventName = clean(name);
+    if (!eventName) return;
+    var query = new URLSearchParams();
+    query.set('p', 'event/' + eventName);
+    query.set('t', title || ('AI Playgrounds event: ' + eventName));
+    query.set('e', '1');
+    transmit(query);
+  }
+
+  window.aiPlaygroundsAnalytics = {
+    enabled: enabled,
+    optOut: function () { storageSet(localStorage, 'ai-playgrounds-analytics', 'off'); location.reload(); },
+    optIn: function () { storageSet(localStorage, 'ai-playgrounds-analytics', 'on'); location.reload(); },
+    count: function (name, title) { sendEvent(name, title); }
+  };
+
+  document.addEventListener('click', function (event) {
+    var out = event.target.closest('#analytics-opt-out');
+    var inn = event.target.closest('#analytics-opt-in');
+    if (out) { event.preventDefault(); window.aiPlaygroundsAnalytics.optOut(); return; }
+    if (inn) { event.preventDefault(); window.aiPlaygroundsAnalytics.optIn(); return; }
+    if (!enabled) return;
+
+    var link = event.target.closest('a[href]');
+    if (link) {
+      var href = link.getAttribute('href') || '';
+      var app = href.match(/playgrounds\/([^/?#]+)\/?/i);
+      if (app) sendEvent('launch/' + clean(app[1]), 'Launch applet: ' + clean(app[1]));
+      else if (/\.(pdf|zip|md|docx?|pptx?|csv)(?:[?#]|$)/i.test(href)) sendEvent('resource/' + clean((href.split('/').pop() || 'download').split(/[?#]/)[0]), 'Resource download');
+      else if (/github\.com\/lmdixon23\/ai-playgrounds/i.test(href)) sendEvent('outbound/github', 'Open AI Playgrounds on GitHub');
+    }
+
+    if (PAGE_KIND === 'applet') {
+      var control = event.target.closest('main button, main [role="button"], .workspace button, .controls button');
+      if (control && !control.closest('header, nav, footer, .toolbar')) {
+        var key = 'ai-playgrounds-engaged-' + PAGE_SLUG;
+        if (storageGet(sessionStorage, key) !== '1') {
+          storageSet(sessionStorage, key, '1');
+          sendEvent('engaged/' + clean(PAGE_SLUG), 'First substantive applet interaction: ' + clean(PAGE_SLUG));
+        }
+      }
+    }
+  }, true);
+
+  if (!enabled) return;
+  sendPage();
+})();
+</script>
+</body>
+</html>
