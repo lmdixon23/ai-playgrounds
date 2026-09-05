@@ -6,25 +6,42 @@ import sys
 
 import migrate_v1_9_r5a_build_contract as first
 
+R4B_PHASE = "v1.9-r4b-token-owned-components"
+
+
+def patch_exact(text: str, old: str, new: str, label: str) -> str:
+    count = text.count(old)
+    if count != 1:
+        raise RuntimeError(f"R5a phase-decoupling expected one {label}, found {count}")
+    return text.replace(old, new, 1)
+
 
 def main() -> None:
     try:
         first.main()
         return
     except RuntimeError as exc:
-        expected = "R4b page-component phase drift: 'v1.9-r4b-token-owned-components'"
+        expected = f"R4b page-component phase drift: '{R4B_PHASE}'"
         if expected not in str(exc):
             raise
 
-    # R5a advances the product-level architecture phase only. The canonical
-    # page graph is still the accepted R4b token-owned component subgraph and
-    # therefore must remain explicitly pinned to its own phase.
+    # R5a advances only the product-level architecture phase. The canonical
+    # page graph and design-binding graph remain accepted R4b subgraphs and
+    # therefore keep their own explicit phase identities.
     text = first.BUILD.read_text(encoding="utf-8")
-    old = '    if pages.get("phase") != CURRENT_PHASE:\n        raise RuntimeError(f"R4b page-component phase drift: {pages.get(\'phase\')!r}")\n'
-    new = '    if pages.get("phase") != "v1.9-r4b-token-owned-components":\n        raise RuntimeError(f"R4b page-component phase drift: {pages.get(\'phase\')!r}")\n'
-    if text.count(old) != 1:
-        raise RuntimeError("R5a phase-decoupling patch did not find exactly one page-phase assertion")
-    first.BUILD.write_text(text.replace(old, new, 1), encoding="utf-8")
+    text = patch_exact(
+        text,
+        '    if pages.get("phase") != CURRENT_PHASE:\n        raise RuntimeError(f"R4b page-component phase drift: {pages.get(\'phase\')!r}")\n',
+        f'    if pages.get("phase") != "{R4B_PHASE}":\n        raise RuntimeError(f"R4b page-component phase drift: {{pages.get(\'phase\')!r}}")\n',
+        "page-component phase assertion",
+    )
+    text = patch_exact(
+        text,
+        '    if token_contract.get("binding_phase") != CURRENT_PHASE:\n        raise RuntimeError(f"R4b design binding phase drift: {token_contract.get(\'binding_phase\')!r}")\n',
+        f'    if token_contract.get("binding_phase") != "{R4B_PHASE}":\n        raise RuntimeError(f"R4b design binding phase drift: {{token_contract.get(\'binding_phase\')!r}}")\n',
+        "design-binding phase assertion",
+    )
+    first.BUILD.write_text(text, encoding="utf-8")
 
     subprocess.run([sys.executable, str(first.BUILD)], cwd=first.ROOT, check=True)
     evidence = first.ROOT / "release-evidence" / "v1.9-canonical-source-r5a.json"
