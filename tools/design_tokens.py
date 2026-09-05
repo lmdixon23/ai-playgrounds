@@ -1,175 +1,32 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import json
-import math
 import re
 from pathlib import Path
 from typing import Any
 
 import page_components
+import token_components
+import token_values
+from token_values import (
+    EXPECTED_FORMAT,
+    EXPECTED_SCHEMA,
+    TOKENS,
+    TokenContractError,
+    alias_target,
+    collect_tokens,
+    css_value,
+    load_json,
+    normalize_css_atom,
+    require,
+    resolve_token,
+)
 
-ROOT = Path(__file__).resolve().parents[1]
-TOKENS = ROOT / "src" / "design" / "ai-playgrounds.tokens.json"
+ROOT = token_values.ROOT
 BINDINGS = ROOT / "src" / "design" / "current-bindings.json"
 CATALOGUE = ROOT / "src" / "product" / "catalogue.json"
-EXPECTED_SCHEMA = "https://www.designtokens.org/schemas/2025.10/format.json"
-EXPECTED_FORMAT = "DTCG 2025.10"
-ALIAS_RE = re.compile(r"^\{([A-Za-z0-9_.-]+)\}$")
-HEX_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
 CUSTOM_PROPERTY_RE = re.compile(r"(--[A-Za-z0-9_-]+)\s*:\s*([^;{}]+)")
 STYLE_OPEN_RE = re.compile(r"<style\b[^>]*>", re.IGNORECASE)
-
-
-class TokenContractError(RuntimeError):
-    pass
-
-
-def require(condition: bool, message: str) -> None:
-    if not condition:
-        raise TokenContractError(message)
-
-
-def load_json(path: Path) -> Any:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def collect_tokens(root: dict[str, Any]) -> dict[str, dict[str, Any]]:
-    tokens: dict[str, dict[str, Any]] = {}
-
-    def walk(node: Any, path: tuple[str, ...], inherited_type: str | None) -> None:
-        if not isinstance(node, dict):
-            return
-        current_type = node.get("$type", inherited_type)
-        if "$value" in node:
-            require(path, "Token at document root is invalid")
-            require(isinstance(current_type, str) and current_type, f"Token has no type: {'.'.join(path)}")
-            name = ".".join(path)
-            require(name not in tokens, f"Duplicate token path: {name}")
-            tokens[name] = {
-                "path": name,
-                "type": current_type,
-                "value": node["$value"],
-                "description": node.get("$description"),
-            }
-            return
-        for key, value in node.items():
-            if key.startswith("$"):
-                continue
-            walk(value, path + (key,), current_type)
-
-    walk(root, tuple(), None)
-    require(tokens, "Design-token document contains no tokens")
-    return tokens
-
-
-def alias_target(value: Any) -> str | None:
-    if not isinstance(value, str):
-        return None
-    match = ALIAS_RE.fullmatch(value.strip())
-    return match.group(1) if match else None
-
-
-def validate_dimension(value: Any, path: str) -> None:
-    require(isinstance(value, dict), f"Dimension must be an object: {path}")
-    require(set(value) == {"value", "unit"}, f"Dimension fields drift: {path}")
-    number = value.get("value")
-    unit = value.get("unit")
-    require(isinstance(number, (int, float)) and not isinstance(number, bool), f"Dimension value is not numeric: {path}")
-    require(math.isfinite(float(number)), f"Dimension value is not finite: {path}")
-    require(unit in {"px", "rem"}, f"Unsupported R4a dimension unit for {path}: {unit!r}")
-
-
-def validate_color(value: Any, path: str) -> None:
-    require(isinstance(value, dict), f"Color must be an object: {path}")
-    require(value.get("colorSpace") == "srgb", f"R4a color space must be sRGB: {path}")
-    components = value.get("components")
-    require(isinstance(components, list) and len(components) == 3, f"sRGB color requires 3 components: {path}")
-    for component in components:
-        require(isinstance(component, (int, float)) and not isinstance(component, bool), f"Color component is not numeric: {path}")
-        require(0 <= float(component) <= 1, f"Color component outside 0..1: {path}")
-    alpha = value.get("alpha", 1)
-    require(isinstance(alpha, (int, float)) and not isinstance(alpha, bool) and 0 <= float(alpha) <= 1, f"Color alpha invalid: {path}")
-    hex_value = value.get("hex")
-    require(isinstance(hex_value, str) and HEX_RE.fullmatch(hex_value), f"Color hex invalid: {path}")
-    raw = hex_value[1:]
-    expected = [int(raw[index:index + 2], 16) / 255 for index in (0, 2, 4)]
-    for actual, target in zip(components, expected):
-        require(abs(float(actual) - target) <= 0.0000015, f"Color components/hex disagree: {path}")
-
-
-def validate_shadow(value: Any, path: str) -> None:
-    require(isinstance(value, dict), f"Shadow must be an object: {path}")
-    require(set(value) == {"color", "offsetX", "offsetY", "blur", "spread"}, f"Shadow fields drift: {path}")
-    validate_color(value["color"], f"{path}.color")
-    for field in ("offsetX", "offsetY", "blur", "spread"):
-        validate_dimension(value[field], f"{path}.{field}")
-
-
-def validate_literal(value: Any, token_type: str, path: str) -> None:
-    if token_type == "dimension":
-        validate_dimension(value, path)
-    elif token_type == "number":
-        require(isinstance(value, (int, float)) and not isinstance(value, bool), f"Number token invalid: {path}")
-        require(math.isfinite(float(value)), f"Number token is not finite: {path}")
-    elif token_type == "fontFamily":
-        if isinstance(value, str):
-            require(bool(value), f"Font family token is empty: {path}")
-        else:
-            require(isinstance(value, list) and value and all(isinstance(item, str) and item for item in value), f"Font family token invalid: {path}")
-    elif token_type == "color":
-        validate_color(value, path)
-    elif token_type == "shadow":
-        if isinstance(value, list):
-            require(value, f"Shadow token list is empty: {path}")
-            for index, item in enumerate(value):
-                validate_shadow(item, f"{path}[{index}]")
-        else:
-            validate_shadow(value, path)
-    else:
-        raise TokenContractError(f"Unsupported R4a token type {token_type!r}: {path}")
-
-
-def resolve_token(tokens: dict[str, dict[str, Any]], path: str, stack: tuple[str, ...] = tuple()) -> tuple[str, Any]:
-    require(path in tokens, f"Unknown token reference: {path}")
-    require(path not in stack, f"Token alias cycle: {' -> '.join(stack + (path,))}")
-    token = tokens[path]
-    target = alias_target(token["value"])
-    if target is None:
-        validate_literal(token["value"], token["type"], path)
-        return token["type"], token["value"]
-    target_type, target_value = resolve_token(tokens, target, stack + (path,))
-    require(target_type == token["type"], f"Alias type mismatch: {path} ({token['type']}) -> {target} ({target_type})")
-    return target_type, target_value
-
-
-def css_number(value: int | float) -> str:
-    number = float(value)
-    if number.is_integer():
-        return str(int(number))
-    return format(number, ".12g")
-
-
-def css_value(tokens: dict[str, dict[str, Any]], path: str) -> str:
-    token_type, value = resolve_token(tokens, path)
-    if token_type == "dimension":
-        return f"{css_number(value['value'])}{value['unit']}"
-    if token_type == "number":
-        return css_number(value)
-    if token_type == "fontFamily":
-        return ",".join(value) if isinstance(value, list) else value
-    if token_type == "color":
-        return str(value["hex"]).lower()
-    raise TokenContractError(f"No CSS scalar representation for token type {token_type!r}: {path}")
-
-
-def normalize_css_atom(value: str) -> str:
-    normalized = value.strip().lower()
-    match = re.fullmatch(r"#([0-9a-f]{3})", normalized)
-    if match:
-        digits = match.group(1)
-        return "#" + "".join(char * 2 for char in digits)
-    return normalized
 
 
 def style_contents(html: str) -> list[str]:
@@ -231,7 +88,11 @@ def custom_properties(html: str, selector: str) -> dict[str, str]:
     return properties
 
 
-def validate_theme_profiles(tokens: dict[str, dict[str, Any]], bindings: dict[str, Any], pages: dict[str, bytes]) -> dict[str, Any]:
+def validate_theme_profiles(
+    tokens: dict[str, dict[str, Any]],
+    bindings: dict[str, Any],
+    pages: dict[str, bytes],
+) -> dict[str, Any]:
     profiles = bindings.get("themeProfiles")
     require(isinstance(profiles, dict) and profiles, "Theme profiles missing")
     covered: list[str] = []
@@ -259,18 +120,28 @@ def validate_theme_profiles(tokens: dict[str, dict[str, Any]], bindings: dict[st
                     require(variable in observed, f"Theme variable {variable} missing in {slug} / {selector}")
                     expected = css_value(tokens, token_path)
                     actual = observed[variable]
-                    require(normalize_css_atom(actual) == normalize_css_atom(expected), f"Theme token mismatch {slug} {selector} {variable}: {actual} != {expected}")
+                    require(
+                        normalize_css_atom(actual) == normalize_css_atom(expected),
+                        f"Theme token mismatch {slug} {selector} {variable}: {actual} != {expected}",
+                    )
                     mode_evidence[variable] = {"token": token_path, "value": actual}
                     checks += 1
                 entry[mode] = {"selector": selector, "variables": mode_evidence}
             profile_evidence[slug] = entry
         evidence[profile_name] = profile_evidence
     require(len(covered) == len(set(covered)), "Theme profiles overlap in lab membership")
-    require(set(covered) == set(pages), f"Theme profile lab coverage drift: missing={sorted(set(pages)-set(covered))}, extra={sorted(set(covered)-set(pages))}")
+    require(
+        set(covered) == set(pages),
+        f"Theme profile lab coverage drift: missing={sorted(set(pages)-set(covered))}, extra={sorted(set(covered)-set(pages))}",
+    )
     return {"profiles": len(profiles), "slugs": len(covered), "checks": checks, "evidence": evidence, "pass": True}
 
 
-def validate_accents(tokens: dict[str, dict[str, Any]], bindings: dict[str, Any], pages: dict[str, bytes]) -> dict[str, Any]:
+def validate_accents(
+    tokens: dict[str, dict[str, Any]],
+    bindings: dict[str, Any],
+    pages: dict[str, bytes],
+) -> dict[str, Any]:
     catalogue = {row["slug"]: row for row in load_json(CATALOGUE)}
     accent_bindings = bindings.get("accentBindings")
     require(isinstance(accent_bindings, dict), "Accent bindings missing")
@@ -286,7 +157,10 @@ def validate_accents(tokens: dict[str, dict[str, Any]], bindings: dict[str, Any]
         root = custom_properties(html, ":root")
         require("--accent" in root, f"Page root accent missing: {slug}")
         light_value = css_value(tokens, paths["uiLight"])
-        require(normalize_css_atom(root["--accent"]) == normalize_css_atom(light_value), f"Light page accent token drift: {slug}: {root['--accent']} != {light_value}")
+        require(
+            normalize_css_atom(root["--accent"]) == normalize_css_atom(light_value),
+            f"Light page accent token drift: {slug}: {root['--accent']} != {light_value}",
+        )
         entry: dict[str, Any] = {"catalogue": catalogue_value, "uiLight": light_value}
         if slug in newer:
             selector = f'body.ap-standard-dark[data-ap-modern-parity="{slug}"]'
@@ -305,33 +179,117 @@ def validate_accents(tokens: dict[str, dict[str, Any]], bindings: dict[str, Any]
             entry["uiDark"] = dark_value
             checks += 3
         evidence[slug] = entry
-    require(evidence["minimax-alpha-beta"]["catalogue"] != evidence["minimax-alpha-beta"]["uiLight"], "Minimax frozen catalogue/page accent discrepancy was accidentally erased")
+    require(
+        evidence["minimax-alpha-beta"]["catalogue"] != evidence["minimax-alpha-beta"]["uiLight"],
+        "Minimax frozen catalogue/page accent discrepancy was accidentally erased",
+    )
     return {"slugs": len(evidence), "checks": checks, "evidence": evidence, "minimaxMismatchPreserved": True, "pass": True}
 
 
-def validate_component_literal_bindings(tokens: dict[str, dict[str, Any]], bindings: dict[str, Any]) -> dict[str, Any]:
-    rows = bindings.get("componentLiteralBindings")
-    require(isinstance(rows, list) and rows, "Component literal bindings missing")
-    evidence: list[dict[str, Any]] = []
+def validate_component_literal_bindings(
+    tokens: dict[str, dict[str, Any]],
+    bindings: dict[str, Any],
+    page_state: dict[str, Any],
+) -> dict[str, Any]:
+    phase = bindings.get("phase")
+    if phase == "v1.9-r4a-design-token-contract":
+        rows = bindings.get("componentLiteralBindings")
+        require(isinstance(rows, list) and rows, "R4a component literal bindings missing")
+        evidence: list[dict[str, Any]] = []
+        for row in rows:
+            require(isinstance(row, dict), "R4a component literal binding is not an object")
+            resource = row.get("resource")
+            token_path = row.get("token")
+            needle = row.get("needle")
+            expected_count = row.get("count")
+            require(isinstance(resource, str) and resource, "R4a component binding resource missing")
+            require(isinstance(token_path, str) and token_path, "R4a component binding token missing")
+            require(isinstance(needle, str) and needle, "R4a component binding needle missing")
+            require(isinstance(expected_count, int) and expected_count >= 1, "R4a component binding count invalid")
+            resource_path = ROOT / resource
+            require(resource_path.is_file(), f"R4a component binding resource missing: {resource}")
+            rendered = resource_path.read_text(encoding="utf-8")
+            actual_count = rendered.count(needle)
+            require(actual_count == expected_count, f"R4a component literal count drift {resource} / {needle}: {actual_count} != {expected_count}")
+            css = css_value(tokens, token_path)
+            require(css in needle, f"R4a component binding does not contain resolved token value: {token_path}={css!r} not in {needle!r}")
+            evidence.append({"resource": resource, "token": token_path, "value": css, "needle": needle, "count": actual_count})
+        return {"bindings": len(rows), "evidence": evidence, "source_model": "r4a-raw-component-literals", "pass": True}
+
+    require(phase == "v1.9-r4b-token-owned-components", f"Unsupported design binding phase: {phase!r}")
+    rows = bindings.get("renderedComponentLiteralBindings")
+    require(isinstance(rows, list) and rows, "R4b rendered component literal bindings missing")
+    component_payloads = page_state.get("component_payloads")
+    require(isinstance(component_payloads, dict), "R4b page-state component payloads missing")
+    evidence = []
     for row in rows:
-        require(isinstance(row, dict), "Component literal binding is not an object")
-        resource = row.get("resource")
+        require(isinstance(row, dict), "R4b rendered component literal binding is not an object")
+        component = row.get("component")
         token_path = row.get("token")
-        needle = row.get("needle")
+        needle = row.get("rendered_needle")
         expected_count = row.get("count")
-        require(isinstance(resource, str) and resource, "Component binding resource missing")
-        require(isinstance(token_path, str) and token_path, "Component binding token missing")
-        require(isinstance(needle, str) and needle, "Component binding needle missing")
-        require(isinstance(expected_count, int) and expected_count >= 1, "Component binding count invalid")
-        path = ROOT / resource
-        require(path.is_file(), f"Component binding resource missing: {resource}")
-        text = path.read_text(encoding="utf-8")
-        actual_count = text.count(needle)
-        require(actual_count == expected_count, f"Component literal count drift {resource} / {needle}: {actual_count} != {expected_count}")
+        require(isinstance(component, str) and component in component_payloads, f"R4b rendered binding references unknown component: {component!r}")
+        require(isinstance(token_path, str) and token_path, f"R4b rendered component token missing: {component}")
+        require(isinstance(needle, str) and needle, f"R4b rendered component needle missing: {component} / {token_path}")
+        require(isinstance(expected_count, int) and expected_count >= 1, f"R4b rendered component count invalid: {component} / {token_path}")
+        rendered = component_payloads[component].decode("utf-8")
+        actual_count = rendered.count(needle)
+        require(actual_count == expected_count, f"R4b rendered literal count drift {component} / {needle}: {actual_count} != {expected_count}")
         css = css_value(tokens, token_path)
-        require(css in needle, f"Component binding does not contain resolved token value: {token_path}={css!r} not in {needle!r}")
-        evidence.append({"resource": resource, "token": token_path, "value": css, "needle": needle, "count": actual_count})
-    return {"bindings": len(rows), "evidence": evidence, "pass": True}
+        require(css in needle, f"R4b rendered binding does not contain resolved token value: {token_path}={css!r} not in {needle!r}")
+        evidence.append({"component": component, "token": token_path, "value": css, "rendered_needle": needle, "count": actual_count})
+    return {"bindings": len(rows), "evidence": evidence, "source_model": "r4b-rendered-token-components", "pass": True}
+
+
+def validate_token_template_bindings(
+    tokens: dict[str, dict[str, Any]],
+    bindings: dict[str, Any],
+) -> dict[str, Any]:
+    if bindings.get("phase") == "v1.9-r4a-design-token-contract":
+        return {"components": 0, "bindings": 0, "evidence": [], "pass": True, "active": False}
+
+    require(bindings.get("phase") == "v1.9-r4b-token-owned-components", "Token-template validation requires R4b phase")
+    require(bindings.get("tokenComponentManifest") == "src/design/token-components.json", "R4b token-component manifest pointer drift")
+    rows = bindings.get("tokenTemplateBindings")
+    require(isinstance(rows, list) and rows, "R4b token-template bindings missing")
+    state = token_components.load_and_render(require_raw_equivalence=False)
+    require(state["phase"] == "v1.9-r4b-token-owned-components", "R4b design binding requires final token-component manifest")
+    evidence: list[dict[str, Any]] = []
+    components: set[str] = set()
+    for row in rows:
+        require(isinstance(row, dict), "R4b token-template binding is not an object")
+        component = row.get("component")
+        template = row.get("template")
+        token_path = row.get("token")
+        token_marker = row.get("marker")
+        template_needle = row.get("template_needle")
+        rendered_needle = row.get("rendered_needle")
+        expected_count = row.get("count")
+        require(isinstance(component, str) and component in state["evidence"], f"R4b token-template binding references unknown component: {component!r}")
+        require(template == state["evidence"][component]["template"], f"R4b token-template path drift: {component}")
+        require(isinstance(token_path, str) and token_path, f"R4b token-template token missing: {component}")
+        require(token_marker == "{{dt:" + token_path + "}}", f"R4b token-template marker drift: {component} / {token_path}")
+        require(isinstance(template_needle, str) and template_needle, f"R4b template needle missing: {component} / {token_path}")
+        require(isinstance(rendered_needle, str) and rendered_needle, f"R4b rendered needle missing: {component} / {token_path}")
+        require(isinstance(expected_count, int) and expected_count >= 1, f"R4b token-template count invalid: {component} / {token_path}")
+        template_text = (ROOT / template).read_text(encoding="utf-8")
+        require(template_text.count(template_needle) == expected_count, f"R4b template needle count drift: {component} / {token_path}")
+        require(template_text.count(token_marker) == expected_count, f"R4b token marker count drift: {component} / {token_path}")
+        css = css_value(tokens, token_path)
+        require(css in rendered_needle, f"R4b template binding resolved value mismatch: {component} / {token_path}")
+        components.add(component)
+        evidence.append({"component": component, "template": template, "token": token_path, "marker": token_marker, "value": css, "count": expected_count})
+    require(set(state["components"]) == components, "R4b token-template binding component coverage drift")
+    require(len(rows) == state["binding_count"], "R4b token-template binding cardinality drift")
+    return {
+        "components": len(components),
+        "bindings": len(rows),
+        "evidence": evidence,
+        "rendered_component_bytes": state["rendered_component_bytes"],
+        "token_template_bytes": state["token_template_bytes"],
+        "pass": True,
+        "active": True,
+    }
 
 
 def validate_contract() -> dict[str, Any]:
@@ -339,11 +297,16 @@ def validate_contract() -> dict[str, Any]:
     bindings = load_json(BINDINGS)
     require(isinstance(document, dict), "Design-token document must be an object")
     require(document.get("$schema") == EXPECTED_SCHEMA, f"Design-token schema must be {EXPECTED_SCHEMA}")
-    require(bindings.get("schema_version") == 1, "R4a binding schema version drift")
-    require(bindings.get("phase") == "v1.9-r4a-design-token-contract", "R4a binding phase drift")
-    require(bindings.get("token_file") == "src/design/ai-playgrounds.tokens.json", "R4a token-file ownership drift")
-    require(bindings.get("format") == EXPECTED_FORMAT, "R4a token format drift")
-    require(bindings.get("public_release_boundary") == "v1.8.1", "R4a release boundary drift")
+    phase = bindings.get("phase")
+    expected_binding_contract = {
+        "v1.9-r4a-design-token-contract": 1,
+        "v1.9-r4b-token-owned-components": 2,
+    }
+    require(phase in expected_binding_contract, f"Unsupported design binding phase: {phase!r}")
+    require(bindings.get("schema_version") == expected_binding_contract[phase], f"Design binding schema version drift for {phase}")
+    require(bindings.get("token_file") == "src/design/ai-playgrounds.tokens.json", "Design token-file ownership drift")
+    require(bindings.get("format") == EXPECTED_FORMAT, "Design token format drift")
+    require(bindings.get("public_release_boundary") == "v1.8.1", "Design binding release boundary drift")
 
     tokens = collect_tokens(document)
     aliases = 0
@@ -353,13 +316,14 @@ def validate_contract() -> dict[str, Any]:
             aliases += 1
         resolve_token(tokens, path)
         type_counts[token["type"]] = type_counts.get(token["type"], 0) + 1
-    require(set(type_counts) == {"dimension", "number", "fontFamily", "color", "shadow"}, f"R4a token type-family drift: {sorted(type_counts)}")
+    require(set(type_counts) == {"dimension", "number", "fontFamily", "color", "shadow"}, f"Token type-family drift: {sorted(type_counts)}")
 
     page_state = page_components.load_and_validate()
     pages = page_state["reconstructed"]
     themes = validate_theme_profiles(tokens, bindings, pages)
     accents = validate_accents(tokens, bindings, pages)
-    literals = validate_component_literal_bindings(tokens, bindings)
+    literals = validate_component_literal_bindings(tokens, bindings, page_state)
+    token_templates = validate_token_template_bindings(tokens, bindings)
 
     required_paths = {
         "dimension.control.compact", "dimension.control.standard", "dimension.control.touch",
@@ -376,15 +340,18 @@ def validate_contract() -> dict[str, Any]:
     return {
         "schema": document["$schema"],
         "format": EXPECTED_FORMAT,
+        "binding_phase": phase,
         "token_count": len(tokens),
         "alias_count": aliases,
         "type_counts": type_counts,
         "theme_profiles": themes,
         "accents": accents,
         "component_literal_bindings": literals,
+        "token_template_bindings": token_templates,
         "page_graph": {
             "pages": len(page_state["slugs"]),
             "components": len(page_state["components"]),
+            "token_template_components": len(page_state.get("token_template_components", [])),
             "deduplicated_bytes": page_state["metrics"]["deduplicated_bytes"],
         },
         "pass": True,
@@ -394,8 +361,9 @@ def validate_contract() -> dict[str, Any]:
 if __name__ == "__main__":
     result = validate_contract()
     print(
-        "R4a design tokens: PASS — "
+        "Design tokens: PASS — "
         f"{result['token_count']} typed tokens / {result['alias_count']} aliases / "
         f"{result['theme_profiles']['checks']} theme bindings / "
-        f"{result['component_literal_bindings']['bindings']} component literal bindings"
+        f"{result['component_literal_bindings']['bindings']} rendered component bindings / "
+        f"{result['token_template_bindings']['bindings']} token-template bindings"
     )

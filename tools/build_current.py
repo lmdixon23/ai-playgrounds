@@ -6,8 +6,8 @@ import json
 from pathlib import Path
 
 from build_site_v1_8_1 import build_site as build_legacy_v181
-import page_components
 import design_tokens
+import page_components
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "_site"
@@ -21,8 +21,9 @@ R1_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r1.json"
 R2_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r2.json"
 R3_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r3.json"
 R4A_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r4a.json"
+R4B_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r4b.json"
 BASELINE_SHA = "d1c72e10e6c5bf64b9a4bbed578b2305d1c988d0"
-CURRENT_PHASE = "v1.9-r4a-design-token-contract"
+CURRENT_PHASE = "v1.9-r4b-token-owned-components"
 R2_PEER_SLUGS = (
     "transformer-language-model",
     "agent-tool-context",
@@ -145,17 +146,18 @@ def validate_product_model() -> dict[str, object]:
     if release.get("architecture_phase") != CURRENT_PHASE:
         raise RuntimeError(f"Current architecture phase must be {CURRENT_PHASE}")
     if release.get("public_release") != "v1.8.1" or release.get("software_version") != "1.8.1":
-        raise RuntimeError("R4a must remain bound to exact public v1.8.1")
+        raise RuntimeError("R4b must remain bound to exact public v1.8.1")
     if release.get("baseline_source_sha") != BASELINE_SHA:
-        raise RuntimeError("R4a baseline source SHA changed")
+        raise RuntimeError("R4b baseline source SHA changed")
     if release.get("public_file_count") != 58 or release.get("applet_count") != 15:
-        raise RuntimeError("R4a public boundary must remain 58 files / 15 applets")
+        raise RuntimeError("R4b public boundary must remain 58 files / 15 applets")
     if release.get("foundations_count") != 13 or release.get("modern_extension_count") != 2:
-        raise RuntimeError("R4a curriculum track-count boundary changed")
+        raise RuntimeError("R4b curriculum track-count boundary changed")
     if release.get("learner_locales") != ["en", "zh", "vi", "es"]:
-        raise RuntimeError("R4a learner locale order changed")
+        raise RuntimeError("R4b learner locale order changed")
     if release.get("quick_assign_count") != 15:
-        raise RuntimeError("R4a Quick Assign count changed")
+        raise RuntimeError("R4b Quick Assign count changed")
+
     expected_release_fields = {
         "canonical_catalogue": "src/product/catalogue.json",
         "canonical_page_component_manifest": "src/product/page-components.json",
@@ -167,11 +169,36 @@ def validate_product_model() -> dict[str, object]:
         "design_token_contract": "src/design/ai-playgrounds.tokens.json",
         "design_token_bindings": "src/design/current-bindings.json",
         "design_token_format": "DTCG 2025.10",
-        "design_token_phase": "contract-first-frozen-output-binding",
+        "design_token_phase": "token-owned-shared-component-source",
+        "token_component_manifest": "src/design/token-components.json",
+        "token_template_component_count": 6,
+        "token_template_binding_count": 21,
+        "token_template_rendered_component_bytes": 19050,
+        "token_template_source_bytes": 19724,
     }
     for key, expected in expected_release_fields.items():
         if release.get(key) != expected:
-            raise RuntimeError(f"R4a release source boundary drift for {key}: {release.get(key)!r} != {expected!r}")
+            raise RuntimeError(f"R4b release source boundary drift for {key}: {release.get(key)!r} != {expected!r}")
+
+    if pages.get("phase") != CURRENT_PHASE:
+        raise RuntimeError(f"R4b page-component phase drift: {pages.get('phase')!r}")
+    if len(pages.get("token_template_components", [])) != 6:
+        raise RuntimeError("R4b page graph must contain exactly 6 token-template components")
+    source_kinds = pages.get("component_source_kinds", {})
+    if sum(1 for value in source_kinds.values() if value == "token-template") != 6:
+        raise RuntimeError("R4b token-template source-kind count drift")
+    if sum(1 for value in source_kinds.values() if value == "raw") != 11:
+        raise RuntimeError("R4b raw component source-kind count drift")
+
+    if token_contract.get("binding_phase") != CURRENT_PHASE:
+        raise RuntimeError(f"R4b design binding phase drift: {token_contract.get('binding_phase')!r}")
+    if token_contract.get("component_literal_bindings", {}).get("bindings") != 21:
+        raise RuntimeError("R4b rendered component binding count drift")
+    token_templates = token_contract.get("token_template_bindings", {})
+    if token_templates.get("components") != 6 or token_templates.get("bindings") != 21 or token_templates.get("active") is not True:
+        raise RuntimeError("R4b token-template binding boundary drift")
+    if token_templates.get("rendered_component_bytes") != 19050 or token_templates.get("token_template_bytes") != 19724:
+        raise RuntimeError("R4b token-template byte metrics drift")
 
     if not isinstance(labs, list) or len(labs) != 15:
         raise RuntimeError("Canonical lab manifest must contain exactly 15 labs")
@@ -203,7 +230,6 @@ def validate_product_model() -> dict[str, object]:
         for field in ("title", "course_order", "accent"):
             if lab.get(field) != public.get(field):
                 raise RuntimeError(f"Canonical lab/catalogue drift for {slug}.{field}")
-
         qa = qa_by_slug.get(slug)
         if qa is None or lab.get("quick_assign_id") != qa.get("id"):
             raise RuntimeError(f"Quick Assign ownership drift for {slug}")
@@ -214,17 +240,17 @@ def validate_product_model() -> dict[str, object]:
         if not isinstance(implementation, dict):
             raise RuntimeError(f"Implementation ownership missing for {slug}")
         if implementation.get("kind") != "canonical-template-with-shared-components-and-legacy-equivalence":
-            raise RuntimeError(f"R3 canonical implementation kind drift for {slug}")
+            raise RuntimeError(f"Canonical implementation kind drift for {slug}")
         if implementation.get("primary") != page_by_slug[slug].get("template"):
-            raise RuntimeError(f"R3 canonical template owner drift for {slug}")
+            raise RuntimeError(f"Canonical template owner drift for {slug}")
         if implementation.get("component_manifest") != "src/product/page-components.json":
-            raise RuntimeError(f"R3 component manifest owner drift for {slug}")
+            raise RuntimeError(f"Component manifest owner drift for {slug}")
         legacy = implementation.get("legacy_equivalence")
         if not isinstance(legacy, dict) or not legacy:
-            raise RuntimeError(f"R3 legacy-equivalence provenance missing for {slug}")
+            raise RuntimeError(f"Legacy-equivalence provenance missing for {slug}")
         missing_legacy = [path for path in _legacy_paths(legacy) if not (ROOT / path).is_file()]
         if missing_legacy:
-            raise RuntimeError(f"R3 legacy-equivalence path missing for {slug}: {missing_legacy}")
+            raise RuntimeError(f"Legacy-equivalence path missing for {slug}: {missing_legacy}")
 
     return {
         "release": release,
@@ -250,11 +276,7 @@ def validate_emitted_catalogue(model: dict[str, object]) -> dict[str, object]:
     for slug in model["slugs"]:
         if not (SITE / "playgrounds" / slug / "index.html").is_file():
             raise RuntimeError(f"Generated public applet path missing: {slug}")
-    return {
-        "rows": len(emitted),
-        "canonical_sha256": model["catalogue"]["sha256"],
-        "pass": True,
-    }
+    return {"rows": len(emitted), "canonical_sha256": model["catalogue"]["sha256"], "pass": True}
 
 
 def handoff_catalogue(model: dict[str, object]) -> dict[str, object]:
@@ -263,7 +285,7 @@ def handoff_catalogue(model: dict[str, object]) -> dict[str, object]:
     canonical = model["catalogue"]["raw"]
     if legacy != canonical:
         raise RuntimeError(
-            "R3 legacy/canonical catalogue handoff differs: "
+            "Legacy/canonical catalogue handoff differs: "
             f"legacy_sha256={digest_bytes(legacy)}, canonical_sha256={digest_bytes(canonical)}"
         )
     public.write_bytes(canonical)
@@ -287,7 +309,7 @@ def handoff_canonical_pages(model: dict[str, object]) -> dict[str, object]:
         canonical = reconstructed[slug]
         if legacy != canonical:
             raise RuntimeError(
-                f"R3 legacy/canonical page handoff differs for {slug}: "
+                f"Legacy/canonical page handoff differs for {slug}: "
                 f"legacy_sha256={digest_bytes(legacy)}, canonical_sha256={digest_bytes(canonical)}"
             )
         public.write_bytes(canonical)
@@ -311,9 +333,10 @@ def write_evidence(path: Path, payload: dict[str, object]) -> None:
 def build_current() -> None:
     model = validate_product_model()
 
-    # R3 still invokes the historical ladder strictly as an independent
-    # equivalence witness. Current catalogue and all 15 page bytes are owned by
-    # canonical sources only after byte-for-byte equality has been proven.
+    # R4b still invokes the historical ladder strictly as an independent
+    # equivalence witness. Canonical token/template/page sources own final bytes
+    # only after exact equality has been proven. R5 removes this current-build
+    # dependency once the non-applet public remainder is canonically owned.
     build_legacy_v181()
 
     catalogue_handoff = handoff_catalogue(model)
@@ -350,14 +373,8 @@ def build_current() -> None:
         "artifact": comparison,
     })
 
-    peer_pages = {
-        slug: model["page_components"]["page_evidence"][slug]
-        for slug in R2_PEER_SLUGS
-    }
-    peer_handoff = {
-        slug: page_handoff["pages"][slug]
-        for slug in R2_PEER_SLUGS
-    }
+    peer_pages = {slug: model["page_components"]["page_evidence"][slug] for slug in R2_PEER_SLUGS}
+    peer_handoff = {slug: page_handoff["pages"][slug] for slug in R2_PEER_SLUGS}
     write_evidence(R2_EVIDENCE, {
         "phase": "v1.9-r2-peer-current-pages",
         "baseline_source_sha": BASELINE_SHA,
@@ -373,6 +390,7 @@ def build_current() -> None:
     write_evidence(R3_EVIDENCE, {
         "phase": "v1.9-r3-shared-page-components",
         "baseline_source_sha": BASELINE_SHA,
+        "representation": "superseded-by-r4b-token-template-component-source",
         "canonical_catalogue": "src/product/catalogue.json",
         "canonical_page_component_manifest": "src/product/page-components.json",
         "catalogue_handoff": catalogue_handoff,
@@ -385,33 +403,65 @@ def build_current() -> None:
         "artifact": comparison,
     })
 
+    token_contract = model["design_tokens"]
     write_evidence(R4A_EVIDENCE, {
-        "phase": CURRENT_PHASE,
+        "phase": "v1.9-r4a-design-token-contract",
         "baseline_source_sha": BASELINE_SHA,
+        "representation": "preserved-through-r4b-rendered-component-bindings",
         "design_token_contract": "src/design/ai-playgrounds.tokens.json",
         "design_token_bindings": "src/design/current-bindings.json",
-        "design_token_schema": model["design_tokens"]["schema"],
-        "design_token_format": model["design_tokens"]["format"],
-        "token_count": model["design_tokens"]["token_count"],
-        "alias_count": model["design_tokens"]["alias_count"],
-        "type_counts": model["design_tokens"]["type_counts"],
+        "design_token_schema": token_contract["schema"],
+        "design_token_format": token_contract["format"],
+        "token_count": token_contract["token_count"],
+        "alias_count": token_contract["alias_count"],
+        "type_counts": token_contract["type_counts"],
         "theme_profiles": {
-            "profiles": model["design_tokens"]["theme_profiles"]["profiles"],
-            "slugs": model["design_tokens"]["theme_profiles"]["slugs"],
-            "checks": model["design_tokens"]["theme_profiles"]["checks"],
-            "pass": model["design_tokens"]["theme_profiles"]["pass"],
+            "profiles": token_contract["theme_profiles"]["profiles"],
+            "slugs": token_contract["theme_profiles"]["slugs"],
+            "checks": token_contract["theme_profiles"]["checks"],
+            "pass": token_contract["theme_profiles"]["pass"],
         },
         "accent_bindings": {
-            "slugs": model["design_tokens"]["accents"]["slugs"],
-            "checks": model["design_tokens"]["accents"]["checks"],
-            "minimaxMismatchPreserved": model["design_tokens"]["accents"]["minimaxMismatchPreserved"],
-            "pass": model["design_tokens"]["accents"]["pass"],
+            "slugs": token_contract["accents"]["slugs"],
+            "checks": token_contract["accents"]["checks"],
+            "minimaxMismatchPreserved": token_contract["accents"]["minimaxMismatchPreserved"],
+            "pass": token_contract["accents"]["pass"],
         },
         "component_literal_bindings": {
-            "bindings": model["design_tokens"]["component_literal_bindings"]["bindings"],
-            "pass": model["design_tokens"]["component_literal_bindings"]["pass"],
+            "bindings": token_contract["component_literal_bindings"]["bindings"],
+            "source_model": token_contract["component_literal_bindings"]["source_model"],
+            "pass": token_contract["component_literal_bindings"]["pass"],
         },
-        "page_graph": model["design_tokens"]["page_graph"],
+        "page_graph": token_contract["page_graph"],
+        "model": common_model,
+        "catalogue": catalogue_check,
+        "artifact": comparison,
+    })
+
+    source_kinds = model["page_components"]["component_source_kinds"]
+    write_evidence(R4B_EVIDENCE, {
+        "phase": CURRENT_PHASE,
+        "baseline_source_sha": BASELINE_SHA,
+        "token_component_manifest": "src/design/token-components.json",
+        "token_template_component_count": token_contract["token_template_bindings"]["components"],
+        "token_template_binding_count": token_contract["token_template_bindings"]["bindings"],
+        "rendered_component_bytes": token_contract["token_template_bindings"]["rendered_component_bytes"],
+        "token_template_bytes": token_contract["token_template_bindings"]["token_template_bytes"],
+        "component_source_kinds": {
+            "raw": sum(1 for value in source_kinds.values() if value == "raw"),
+            "token-template": sum(1 for value in source_kinds.values() if value == "token-template"),
+        },
+        "rendered_component_literal_bindings": {
+            "bindings": token_contract["component_literal_bindings"]["bindings"],
+            "pass": token_contract["component_literal_bindings"]["pass"],
+        },
+        "token_template_bindings": {
+            "components": token_contract["token_template_bindings"]["components"],
+            "bindings": token_contract["token_template_bindings"]["bindings"],
+            "pass": token_contract["token_template_bindings"]["pass"],
+        },
+        "page_graph": token_contract["page_graph"],
+        "minimaxMismatchPreserved": token_contract["accents"]["minimaxMismatchPreserved"],
         "model": common_model,
         "catalogue": catalogue_check,
         "artifact": comparison,
@@ -419,12 +469,12 @@ def build_current() -> None:
 
     if not comparison["pass"]:
         raise RuntimeError(
-            "R4a current build differs from frozen v1.8.1 byte oracle: "
+            "R4b current build differs from frozen v1.8.1 byte oracle: "
             f"added={comparison['added']}, removed={comparison['removed']}, changed={comparison['changed']}"
         )
 
     print(
-        "v1.9 R4a current build: PASS — DTCG token contract validated before canonical page/catalogue handoff; "
+        "v1.9 R4b current build: PASS — six shared components render from DTCG token templates before canonical page/catalogue handoff; "
         f"{comparison['actual_files']} files remain byte-identical to frozen v1.8.1"
     )
 
