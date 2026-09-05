@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="ai-playgrounds-version" content="1.8.1">
+<title>AI Playgrounds Activity Packs | Ready-to-assign student labs</title>
+<meta name="description" content="Ready-to-assign AI Playgrounds student activities built around prediction, experimentation, explanation, and transfer.">
+<link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/activities/">
+<style>
+:root{color-scheme:light dark;--bg:#f8fafc;--card:#fff;--ink:#0f172a;--muted:#475569;--line:#cbd5e1;--accent:#0369a1;--soft:#e0f2fe}
+@media(prefers-color-scheme:dark){:root{--bg:#020617;--card:#0f172a;--ink:#e5e7eb;--muted:#cbd5e1;--line:#334155;--accent:#7dd3fc;--soft:#082f49}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}main{max-width:980px;margin:auto;padding:32px 20px 72px}a{color:var(--accent)}.back{display:inline-block;margin-bottom:22px}.hero,.card,.note{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}.hero h1{font-size:clamp(2rem,5vw,3.6rem);line-height:1;margin:.2em 0}.eyebrow{font-size:.78rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:20px 0}.card h2{margin-top:0}.meta{color:var(--muted);font-size:.9rem}.button{display:inline-flex;min-height:44px;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:999px;text-decoration:none;font-weight:750;background:var(--soft)}.note{margin-top:18px;border-left:5px solid var(--accent)}:focus-visible{outline:3px solid var(--accent);outline-offset:3px}@media(max-width:680px){main{padding:22px 14px 52px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<a class="back" href="../teacher-pack.html">← Teacher Pack</a>
+<section class="hero">
+<p class="eyebrow">AI Playgrounds · Activity Packs</p>
+<h1>Ready-to-assign inquiry labs</h1>
+<p>These pilot activities turn an interactive applet into a complete learner task: <strong>predict → run → observe → explain → transfer</strong>. Student responses stay in the browser and can be printed. No account or backend is required.</p>
+</section>
+<div class="grid">
+<article class="card">
+<p class="eyebrow">NN-1 · Core lab · 35–45 min</p>
+<h2>Make it fail, then make it learn</h2>
+<p>Use the Tiny Neural Network to investigate linearity, hidden-layer capacity, training dynamics, and generalization by deliberately creating both failure and success cases.</p>
+<p class="meta">Recommended after an introduction to neurons, activations, loss, and train/test data.</p>
+<a class="button" href="nn-1.html">Open NN-1</a>
+</article>
+<article class="card">
+<p class="eyebrow">CNN-1 · Core lab · 40–50 min</p>
+<h2>Be the filter</h2>
+<p>Use the Convolution Playground to connect hand-calculated multiply-and-sum arithmetic to edge detection, learned filters, and pooling.</p>
+<p class="meta">Recommended after NN-1 or a short introduction to image grids and convolution kernels.</p>
+<a class="button" href="cnn-1.html">Open CNN-1</a>
+</article>
+</div>
+<section class="note">
+<h2>Teacher-use boundary</h2>
+<p>These public pages are student-facing. Teacher answer keys and grading exemplars are intentionally not published on the public site. The current Activity Pack pilot is English-only; the core applets remain multilingual.</p>
+</section>
+<footer><p>AI Playgrounds · Activity Pack pilot introduced in v1.5.1</p></footer>
+</main>
+
+<!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
+<script data-ai-playgrounds-analytics="v1.8.1">
+(function () {
+  'use strict';
+  var CANONICAL_HOST = 'lmdixon23.github.io';
+  var ENDPOINT = 'https://lmdixon23.goatcounter.com/count';
+  var PAGE_KIND = 'activity';
+  var PAGE_SLUG = 'activities';
+  var SOURCE_ALLOWLIST = new Set(['hn','linkedin','csta','sigcse','oercommons','merlot','reddit','bluesky','mastodon','devto','hashnode','github','email','school','portfolio','resume','zenodo','jose']);
+  var liveImages = [];
+
+  function storageGet(storage, key) { try { return storage.getItem(key); } catch (_) { return null; } }
+  function storageSet(storage, key, value) { try { storage.setItem(key, value); } catch (_) {} }
+  function privacySignal() {
+    return navigator.globalPrivacyControl === true || navigator.doNotTrack === '1' ||
+      navigator.doNotTrack === 'yes' || window.doNotTrack === '1';
+  }
+  function clean(value) {
+    return String(value || '').toLowerCase().replace(/[^a-z0-9._/-]+/g, '-').replace(/-+/g, '-').replace(/^\/+|\/+$/g, '').slice(0, 80);
+  }
+  function normalizePath(path) {
+    var value = String(path || '/');
+    value = value.replace(/\/index\.html$/, '/');
+    if (value === '/ai-playgrounds') value = '/ai-playgrounds/';
+    return value || '/';
+  }
+  function canonicalPath() {
+    var link = document.querySelector('link[rel="canonical"]');
+    if (link && link.href) {
+      try { return normalizePath(new URL(link.href, location.href).pathname); } catch (_) {}
+    }
+    return normalizePath(location.pathname || '/ai-playgrounds/');
+  }
+
+  var params = new URLSearchParams(location.search);
+  var optedOut = params.get('analytics') === 'off' || storageGet(localStorage, 'ai-playgrounds-analytics') === 'off';
+  var enabled = location.hostname === CANONICAL_HOST && !privacySignal() && !optedOut;
+
+  function transmit(query) {
+    if (!enabled) return;
+    var img = new Image(1, 1);
+    img.referrerPolicy = 'no-referrer';
+    img.onload = img.onerror = function () {
+      var i = liveImages.indexOf(img);
+      if (i >= 0) liveImages.splice(i, 1);
+    };
+    img.src = ENDPOINT + '?' + query.toString();
+    liveImages.push(img);
+  }
+
+  function campaignQuery() {
+    var source = clean(params.get('ap_src'));
+    if (!SOURCE_ALLOWLIST.has(source)) return '';
+    var q = new URLSearchParams();
+    q.set('utm_campaign', 'ai-playgrounds');
+    q.set('utm_source', source);
+    return q.toString();
+  }
+
+  function sendPage() {
+    var query = new URLSearchParams();
+    query.set('p', canonicalPath());
+    query.set('t', document.title || 'AI Playgrounds');
+    var campaign = campaignQuery();
+    if (campaign) query.set('q', campaign);
+    transmit(query);
+  }
+
+  function sendEvent(name, title) {
+    var eventName = clean(name);
+    if (!eventName) return;
+    var query = new URLSearchParams();
+    query.set('p', 'event/' + eventName);
+    query.set('t', title || ('AI Playgrounds event: ' + eventName));
+    query.set('e', '1');
+    transmit(query);
+  }
+
+  window.aiPlaygroundsAnalytics = {
+    enabled: enabled,
+    optOut: function () { storageSet(localStorage, 'ai-playgrounds-analytics', 'off'); location.reload(); },
+    optIn: function () { storageSet(localStorage, 'ai-playgrounds-analytics', 'on'); location.reload(); },
+    count: function (name, title) { sendEvent(name, title); }
+  };
+
+  document.addEventListener('click', function (event) {
+    var out = event.target.closest('#analytics-opt-out');
+    var inn = event.target.closest('#analytics-opt-in');
+    if (out) { event.preventDefault(); window.aiPlaygroundsAnalytics.optOut(); return; }
+    if (inn) { event.preventDefault(); window.aiPlaygroundsAnalytics.optIn(); return; }
+    if (!enabled) return;
+
+    var link = event.target.closest('a[href]');
+    if (link) {
+      var href = link.getAttribute('href') || '';
+      var app = href.match(/playgrounds\/([^/?#]+)\/?/i);
+      if (app) sendEvent('launch/' + clean(app[1]), 'Launch applet: ' + clean(app[1]));
+      else if (/\.(pdf|zip|md|docx?|pptx?|csv)(?:[?#]|$)/i.test(href)) sendEvent('resource/' + clean((href.split('/').pop() || 'download').split(/[?#]/)[0]), 'Resource download');
+      else if (/github\.com\/lmdixon23\/ai-playgrounds/i.test(href)) sendEvent('outbound/github', 'Open AI Playgrounds on GitHub');
+    }
+
+    if (PAGE_KIND === 'applet') {
+      var control = event.target.closest('main button, main [role="button"], .workspace button, .controls button');
+      if (control && !control.closest('header, nav, footer, .toolbar')) {
+        var key = 'ai-playgrounds-engaged-' + PAGE_SLUG;
+        if (storageGet(sessionStorage, key) !== '1') {
+          storageSet(sessionStorage, key, '1');
+          sendEvent('engaged/' + clean(PAGE_SLUG), 'First substantive applet interaction: ' + clean(PAGE_SLUG));
+        }
+      }
+    }
+  }, true);
+
+  if (!enabled) return;
+  sendPage();
+})();
+</script>
+</body>
+</html>

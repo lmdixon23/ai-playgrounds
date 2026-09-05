@@ -8,6 +8,7 @@ from pathlib import Path
 from build_site_v1_8_1 import build_site as build_legacy_v181
 import design_tokens
 import page_components
+import public_remainder
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "_site"
@@ -22,8 +23,9 @@ R2_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r2.json"
 R3_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r3.json"
 R4A_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r4a.json"
 R4B_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r4b.json"
+R5A_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r5a.json"
 BASELINE_SHA = "d1c72e10e6c5bf64b9a4bbed578b2305d1c988d0"
-CURRENT_PHASE = "v1.9-r4b-token-owned-components"
+CURRENT_PHASE = "v1.9-r5a-public-remainder-ownership"
 R2_PEER_SLUGS = (
     "transformer-language-model",
     "agent-tool-context",
@@ -142,21 +144,22 @@ def validate_product_model() -> dict[str, object]:
     catalogue = load_canonical_catalogue()
     pages = page_components.load_and_validate()
     token_contract = design_tokens.validate_contract()
+    public_remainder_state = public_remainder.load_and_validate()
 
     if release.get("architecture_phase") != CURRENT_PHASE:
         raise RuntimeError(f"Current architecture phase must be {CURRENT_PHASE}")
     if release.get("public_release") != "v1.8.1" or release.get("software_version") != "1.8.1":
-        raise RuntimeError("R4b must remain bound to exact public v1.8.1")
+        raise RuntimeError("R5a must remain bound to exact public v1.8.1")
     if release.get("baseline_source_sha") != BASELINE_SHA:
-        raise RuntimeError("R4b baseline source SHA changed")
+        raise RuntimeError("R5a baseline source SHA changed")
     if release.get("public_file_count") != 58 or release.get("applet_count") != 15:
-        raise RuntimeError("R4b public boundary must remain 58 files / 15 applets")
+        raise RuntimeError("R5a public boundary must remain 58 files / 15 applets")
     if release.get("foundations_count") != 13 or release.get("modern_extension_count") != 2:
-        raise RuntimeError("R4b curriculum track-count boundary changed")
+        raise RuntimeError("R5a curriculum track-count boundary changed")
     if release.get("learner_locales") != ["en", "zh", "vi", "es"]:
-        raise RuntimeError("R4b learner locale order changed")
+        raise RuntimeError("R5a learner locale order changed")
     if release.get("quick_assign_count") != 15:
-        raise RuntimeError("R4b Quick Assign count changed")
+        raise RuntimeError("R5a Quick Assign count changed")
 
     expected_release_fields = {
         "canonical_catalogue": "src/product/catalogue.json",
@@ -175,12 +178,16 @@ def validate_product_model() -> dict[str, object]:
         "token_template_binding_count": 21,
         "token_template_rendered_component_bytes": 19050,
         "token_template_source_bytes": 19724,
+        "public_remainder_manifest": "src/product/public-remainder.json",
+        "public_remainder_count": 43,
+        "canonical_existing_public_remainder_count": 29,
+        "current_snapshot_public_remainder_count": 14,
     }
     for key, expected in expected_release_fields.items():
         if release.get(key) != expected:
             raise RuntimeError(f"R4b release source boundary drift for {key}: {release.get(key)!r} != {expected!r}")
 
-    if pages.get("phase") != CURRENT_PHASE:
+    if pages.get("phase") != "v1.9-r4b-token-owned-components":
         raise RuntimeError(f"R4b page-component phase drift: {pages.get('phase')!r}")
     if len(pages.get("token_template_components", [])) != 6:
         raise RuntimeError("R4b page graph must contain exactly 6 token-template components")
@@ -190,7 +197,7 @@ def validate_product_model() -> dict[str, object]:
     if sum(1 for value in source_kinds.values() if value == "raw") != 11:
         raise RuntimeError("R4b raw component source-kind count drift")
 
-    if token_contract.get("binding_phase") != CURRENT_PHASE:
+    if token_contract.get("binding_phase") != "v1.9-r4b-token-owned-components":
         raise RuntimeError(f"R4b design binding phase drift: {token_contract.get('binding_phase')!r}")
     if token_contract.get("component_literal_bindings", {}).get("bindings") != 21:
         raise RuntimeError("R4b rendered component binding count drift")
@@ -199,6 +206,11 @@ def validate_product_model() -> dict[str, object]:
         raise RuntimeError("R4b token-template binding boundary drift")
     if token_templates.get("rendered_component_bytes") != 19050 or token_templates.get("token_template_bytes") != 19724:
         raise RuntimeError("R4b token-template byte metrics drift")
+
+    if public_remainder_state.get("counts") != {"canonical_existing": 29, "current_snapshot": 14}:
+        raise RuntimeError("R5a public-remainder ownership count drift")
+    if len(public_remainder_state.get("public_paths", [])) != 43:
+        raise RuntimeError("R5a public-remainder path count drift")
 
     if not isinstance(labs, list) or len(labs) != 15:
         raise RuntimeError("Canonical lab manifest must contain exactly 15 labs")
@@ -258,6 +270,7 @@ def validate_product_model() -> dict[str, object]:
         "catalogue": catalogue,
         "page_components": pages,
         "design_tokens": token_contract,
+        "public_remainder": public_remainder_state,
         "lab_count": len(labs),
         "foundation_count": len(foundations),
         "modern_extension_count": len(modern_extensions),
@@ -333,10 +346,10 @@ def write_evidence(path: Path, payload: dict[str, object]) -> None:
 def build_current() -> None:
     model = validate_product_model()
 
-    # R4b still invokes the historical ladder strictly as an independent
-    # equivalence witness. Canonical token/template/page sources own final bytes
-    # only after exact equality has been proven. R5 removes this current-build
-    # dependency once the non-applet public remainder is canonically owned.
+    # R5a still invokes the historical ladder strictly as an independent
+    # equivalence witness. The complete 43-file non-applet remainder now has
+    # canonical source ownership; R5b removes this historical current-build
+    # dependency after direct 58-file composition is independently proven.
     build_legacy_v181()
 
     catalogue_handoff = handoff_catalogue(model)
@@ -440,7 +453,7 @@ def build_current() -> None:
 
     source_kinds = model["page_components"]["component_source_kinds"]
     write_evidence(R4B_EVIDENCE, {
-        "phase": CURRENT_PHASE,
+        "phase": "v1.9-r4b-token-owned-components",
         "baseline_source_sha": BASELINE_SHA,
         "token_component_manifest": "src/design/token-components.json",
         "token_template_component_count": token_contract["token_template_bindings"]["components"],
@@ -467,14 +480,29 @@ def build_current() -> None:
         "artifact": comparison,
     })
 
+    remainder_state = model["public_remainder"]
+    write_evidence(R5A_EVIDENCE, {
+        "phase": CURRENT_PHASE,
+        "baseline_source_sha": BASELINE_SHA,
+        "public_remainder_manifest": "src/product/public-remainder.json",
+        "public_remainder_count": len(remainder_state["public_paths"]),
+        "ownership_counts": remainder_state["counts"],
+        "ownership_bytes": remainder_state["bytes"],
+        "snapshot_public_paths": remainder_state["snapshot_public_paths"],
+        "historical_builder_role": "independent-current-build-equivalence-witness-until-r5b",
+        "model": common_model,
+        "catalogue": catalogue_check,
+        "artifact": comparison,
+    })
+
     if not comparison["pass"]:
         raise RuntimeError(
-            "R4b current build differs from frozen v1.8.1 byte oracle: "
+            "R5a current build differs from frozen v1.8.1 byte oracle: "
             f"added={comparison['added']}, removed={comparison['removed']}, changed={comparison['changed']}"
         )
 
     print(
-        "v1.9 R4b current build: PASS — six shared components render from DTCG token templates before canonical page/catalogue handoff; "
+        "v1.9 R5a current build: PASS — 43 non-applet public files have canonical source ownership while the historical ladder remains an equivalence witness; "
         f"{comparison['actual_files']} files remain byte-identical to frozen v1.8.1"
     )
 

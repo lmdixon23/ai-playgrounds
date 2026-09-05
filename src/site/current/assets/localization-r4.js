@@ -1,0 +1,464 @@
+(() => {
+  'use strict';
+  // v1.6.1: preserve canonical source text across VI/ES round trips, refresh native layers before overlay activation, and cancel superseded locale timers.
+
+  const SUPPORTED = ['en', 'zh', 'vi', 'es'];
+  const SELF_NAMES = { en: 'English', zh: '简体中文', vi: 'Tiếng Việt', es: 'Español' };
+  const LOCALE_KEY = 'ai-playgrounds-locale4';
+  const slug = location.pathname.split('/').filter(Boolean).slice(-2, -1)[0] || 'applet';
+  const rootData = window.__AI_PLAYGROUNDS_R4_LOCALES || {};
+  rootData.common = rootData.common || {};
+  rootData.common.vi = Object.assign({
+    '✓ Applied; compare the result': '✓ Đã áp dụng; hãy so sánh kết quả',
+    'Learning mode': 'Chế độ học tập',
+    'Explore': 'Khám phá',
+    'Guided Challenge': 'Thử thách có hướng dẫn',
+    'Prepare challenge': 'Chuẩn bị thử thách',
+    'Lock prediction': 'Khóa dự đoán',
+    'Reveal mechanism': 'Tiết lộ cơ chế',
+    'Compare': 'So sánh',
+    'Reset challenge': 'Đặt lại thử thách',
+    'Explain the discrepancy': 'Giải thích sự khác biệt',
+    'Try changed case': 'Thử trường hợp đã thay đổi',
+    'Your locked prediction': 'Dự đoán đã khóa của bạn',
+    'Revealed applet state': 'Trạng thái applet đã tiết lộ',
+    'Before the hidden step': 'Trước bước bị ẩn',
+    'After the hidden step': 'Sau bước bị ẩn',
+    'The relevant result is hidden until you lock a prediction and reveal it.': 'Kết quả liên quan sẽ được ẩn cho đến khi bạn khóa dự đoán và chọn tiết lộ.',
+    'Bayes Rule Playground': 'Sân chơi Quy tắc Bayes',
+    'Bayesian Network': 'Mạng Bayes',
+    'CNF and SAT Builder': 'Trình xây dựng CNF và SAT',
+    'Convolution Playground': 'Sân chơi tích chập',
+    'Hill Climbing and Simulated Annealing': 'Leo đồi và luyện kim mô phỏng',
+    'K-Means Clustering': 'Phân cụm K-Means',
+    'K-Nearest Neighbors': 'K láng giềng gần nhất',
+    'Tiny Neural Network': 'Mạng nơ-ron nhỏ',
+    'Overfitting Explorer': 'Khám phá quá khớp',
+    'Q-Learning Gridworld': 'Thế giới lưới Q-Learning',
+    'Pathfinding Visualizer': 'Trình trực quan hóa tìm đường',
+    'Wumpus World': 'Thế giới Wumpus'
+  }, rootData.common.vi || {});
+  rootData.common.es = Object.assign({
+    '✓ Applied; compare the result': '✓ Aplicado; compara el resultado',
+    'Learning mode': 'Modo de aprendizaje',
+    'Explore': 'Explorar',
+    'Guided Challenge': 'Desafío guiado',
+    'Prepare challenge': 'Preparar desafío',
+    'Lock prediction': 'Bloquear predicción',
+    'Reveal mechanism': 'Revelar mecanismo',
+    'Compare': 'Comparar',
+    'Reset challenge': 'Reiniciar desafío',
+    'Explain the discrepancy': 'Explica la discrepancia',
+    'Try changed case': 'Probar caso modificado',
+    'Your locked prediction': 'Tu predicción bloqueada',
+    'Revealed applet state': 'Estado revelado del applet',
+    'Before the hidden step': 'Antes del paso oculto',
+    'After the hidden step': 'Después del paso oculto',
+    'The relevant result is hidden until you lock a prediction and reveal it.': 'El resultado relevante permanece oculto hasta que bloquees una predicción y lo reveles.',
+    'Bayes Rule Playground': 'Laboratorio de la regla de Bayes',
+    'Bayesian Network': 'Red bayesiana',
+    'CNF and SAT Builder': 'Constructor de CNF y SAT',
+    'Convolution Playground': 'Laboratorio de convolución',
+    'Hill Climbing and Simulated Annealing': 'Escalada de colinas y recocido simulado',
+    'K-Means Clustering': 'Agrupación K-Means',
+    'K-Nearest Neighbors': 'K vecinos más cercanos',
+    'Tiny Neural Network': 'Red neuronal pequeña',
+    'Overfitting Explorer': 'Explorador de sobreajuste',
+    'Q-Learning Gridworld': 'Entorno de cuadrícula Q-Learning',
+    'Pathfinding Visualizer': 'Visualizador de búsqueda de rutas',
+    'Wumpus World': 'Mundo de Wumpus'
+  }, rootData.common.es || {});
+  const data = rootData[slug] || null;
+
+  // R4 stays invisible until the applet-specific VI/ES catalog is complete.
+  if (!data || data.ready !== true || !data.vi || !data.es) return;
+
+  let current = 'en';
+  let applying = false;
+  let nativeLanguageClick = false;
+  const originalText = new WeakMap();
+  const originalAttrs = new WeakMap();
+  // MutationObserver callbacks are asynchronous, so a simple `applying` boolean
+  // cannot distinguish our own translated writes from later applet updates.
+  // Remember the exact values written by the localization layer instead.
+  const lastAppliedText = new WeakMap();
+  const lastAppliedAttrs = new WeakMap();
+  const ordered = { vi: null, es: null };
+  let canonicalDocumentTitle = '';
+  let canonicalHeadingText = '';
+  let pendingOverlayTimer = null;
+
+  function normalizeLocale(value) {
+    const raw = String(value || '').toLowerCase();
+    if (raw === 'zh-hans' || raw.startsWith('zh')) return 'zh';
+    if (raw.startsWith('vi')) return 'vi';
+    if (raw.startsWith('es')) return 'es';
+    return 'en';
+  }
+
+  function initialLocale() {
+    try {
+      const q = new URLSearchParams(location.search).get('lang');
+      if (q && SUPPORTED.includes(normalizeLocale(q))) return normalizeLocale(q);
+      const saved = localStorage.getItem(LOCALE_KEY);
+      if (saved && SUPPORTED.includes(normalizeLocale(saved))) return normalizeLocale(saved);
+    } catch (_) {}
+    return normalizeLocale(document.documentElement.lang || 'en');
+  }
+
+  function mapFor(locale) {
+    const common = rootData.common && rootData.common[locale] ? rootData.common[locale] : {};
+    const local = data[locale] && data[locale].strings ? data[locale].strings : {};
+    return Object.assign({}, local, common);
+  }
+
+  function orderedPairs(locale) {
+    if (ordered[locale]) return ordered[locale];
+    const map = mapFor(locale);
+    ordered[locale] = Object.entries(map)
+      .filter(([source, target]) => source && target && source !== target)
+      .sort((a, b) => b[0].length - a[0].length);
+    return ordered[locale];
+  }
+
+  function translateString(value, locale = current) {
+    const input = String(value == null ? '' : value);
+    if (locale !== 'vi' && locale !== 'es') return input;
+    const map = mapFor(locale);
+    if (Object.prototype.hasOwnProperty.call(map, input)) return map[input];
+    let out = input;
+    for (const [source, target] of orderedPairs(locale)) {
+      if (source.length < 4 || !out.includes(source)) continue;
+      out = out.split(source).join(target);
+    }
+    const patterns = (data[locale] && data[locale].patterns) || [];
+    for (const row of patterns) {
+      try { out = out.replace(new RegExp(row.source, row.flags || 'g'), row.target); } catch (_) {}
+    }
+    return out;
+  }
+
+  function skipNode(node) {
+    const el = node && (node.nodeType === 1 ? node : node.parentElement);
+    if (!el) return true;
+    return !!el.closest('script,style,noscript,template,code,pre,kbd,samp,.lang-switch,[data-r4-no-translate]');
+  }
+
+  function textSource(node) {
+    if (!originalText.has(node)) originalText.set(node, node.nodeValue || '');
+    return originalText.get(node);
+  }
+
+  function attrState(el) {
+    if (!originalAttrs.has(el)) originalAttrs.set(el, {});
+    return originalAttrs.get(el);
+  }
+
+  function translateTextNode(node) {
+    if (skipNode(node)) return;
+    const live = node.nodeValue || '';
+    if (!originalText.has(node)) originalText.set(node, live);
+    const source = textSource(node);
+    const translated = translateString(source);
+    if (translated !== live) {
+      lastAppliedText.set(node, translated);
+      applying = true;
+      node.nodeValue = translated;
+      applying = false;
+    }
+  }
+
+  function translateAttributes(el) {
+    if (!el || el.nodeType !== 1 || skipNode(el)) return;
+    const state = attrState(el);
+    for (const attr of ['title', 'aria-label', 'placeholder']) {
+      if (!el.hasAttribute(attr)) continue;
+      const live = el.getAttribute(attr) || '';
+      if (!Object.prototype.hasOwnProperty.call(state, attr)) state[attr] = live;
+      const source = Object.prototype.hasOwnProperty.call(state, attr) ? state[attr] : live;
+      const translated = translateString(source);
+      if (translated !== live) {
+        const applied = lastAppliedAttrs.get(el) || {};
+        applied[attr] = translated;
+        lastAppliedAttrs.set(el, applied);
+        applying = true;
+        el.setAttribute(attr, translated);
+        applying = false;
+      }
+    }
+  }
+
+  function translateTree(root = document.body) {
+    if (current !== 'vi' && current !== 'es' || !root) return;
+    if (root.nodeType === Node.TEXT_NODE) translateTextNode(root);
+    if (root.nodeType === Node.ELEMENT_NODE) translateAttributes(root);
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      if (node.nodeType === Node.TEXT_NODE) translateTextNode(node);
+      else translateAttributes(node);
+    }
+  }
+
+  function restoreTree(root = document.body) {
+    if (!root) return;
+    applying = true;
+    try {
+      if (root.nodeType === Node.TEXT_NODE && originalText.has(root)) root.nodeValue = originalText.get(root);
+      if (root.nodeType === Node.ELEMENT_NODE && originalAttrs.has(root)) {
+        const state = originalAttrs.get(root);
+        Object.entries(state).forEach(([a, v]) => root.setAttribute(a, v));
+      }
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) {
+        const node = walker.currentNode;
+        if (node.nodeType === Node.TEXT_NODE && originalText.has(node)) node.nodeValue = originalText.get(node);
+        else if (node.nodeType === Node.ELEMENT_NODE && originalAttrs.has(node)) {
+          const state = originalAttrs.get(node);
+          Object.entries(state).forEach(([a, v]) => node.setAttribute(a, v));
+        }
+      }
+    } finally { applying = false; }
+  }
+
+  function nativeButton(locale) {
+    return document.querySelector(`.lang-switch button[data-lang="${locale}"]`);
+  }
+
+  function nativeLocale() {
+    const active = document.querySelector('.lang-switch button[data-lang].active');
+    return normalizeLocale((active && active.dataset.lang) || document.documentElement.lang || 'en');
+  }
+
+  function clickNative(locale) {
+    locale = normalizeLocale(locale);
+    const btn = nativeButton(locale);
+    if (!btn) return false;
+    // Do not re-run native language handlers when the applet is already in the
+    // requested language. On initial page load a redundant EN click can race with
+    // Guided Challenge setup and reset/rebuild applet state after the challenge
+    // has begun.
+    if (nativeLocale() === locale) return true;
+    nativeLanguageClick = true;
+    try { btn.click(); } finally { nativeLanguageClick = false; }
+    return true;
+  }
+
+  function updateUrl(locale) {
+    try {
+      const u = new URL(location.href);
+      u.searchParams.set('lang', locale);
+      history.replaceState(null, '', u);
+    } catch (_) {}
+  }
+
+  function persist(locale) {
+    try { localStorage.setItem(LOCALE_KEY, locale); } catch (_) {}
+  }
+
+  function metaSource(kind) {
+    const meta = data.meta && data.meta.en ? data.meta.en : {};
+    return meta[kind] || '';
+  }
+
+  function applyMetadata(locale) {
+    const localeMeta = data.meta && data.meta[locale] ? data.meta[locale] : {};
+    const title = locale === 'en' ? metaSource('title') : (localeMeta.title || translateString(metaSource('title'), locale));
+    const description = locale === 'en' ? metaSource('description') : (localeMeta.description || translateString(metaSource('description'), locale));
+    if (title) {
+      document.title = title;
+      document.querySelectorAll('meta[property="og:title"],meta[name="twitter:title"]').forEach(el => el.setAttribute('content', title));
+    }
+    if (description) {
+      document.querySelector('meta[name="description"]')?.setAttribute('content', description);
+      document.querySelectorAll('meta[property="og:description"],meta[name="twitter:description"]').forEach(el => el.setAttribute('content', description));
+    }
+  }
+
+  function refreshKnownLayers() {
+    for (const name of ['refreshLearnerContent', 'renderAppletKeyTerms', 'renderEssayPrimer', 'refreshAppletToolbar', 'renderAccessibilityLayer', 'renderScenarioGallery', 'renderTour']) {
+      try { if (typeof window[name] === 'function') window[name](); } catch (_) {}
+    }
+  }
+
+  function wrapTr() {
+    if (typeof window.tr !== 'function' || window.tr.__r4Wrapped) return;
+    const base = window.tr;
+    const wrapped = function(key, en, zh) {
+      if (current === 'vi' || current === 'es') return translateString(en, current);
+      return base.apply(this, arguments);
+    };
+    wrapped.__r4Wrapped = true;
+    window.tr = wrapped;
+  }
+
+  function patchClipboard() {
+    try {
+      const clipboard = navigator.clipboard;
+      if (!clipboard || typeof clipboard.writeText !== 'function' || clipboard.writeText.__r4Wrapped) return;
+      const base = clipboard.writeText.bind(clipboard);
+      const wrapped = text => base(current === 'vi' || current === 'es' ? translateString(String(text), current) : text);
+      wrapped.__r4Wrapped = true;
+      clipboard.writeText = wrapped;
+    } catch (_) {}
+  }
+
+  function selectControl() {
+    return document.querySelector('.r4-language-select');
+  }
+
+  function updateSelect(locale) {
+    const select = selectControl();
+    if (select) select.value = locale;
+  }
+
+  function activateOverlay(locale) {
+    current = 'en';
+    document.documentElement.lang = 'en';
+    refreshKnownLayers();
+    current = locale;
+    document.documentElement.lang = locale;
+    wrapTr();
+    patchClipboard();
+    applyMetadata(locale);
+    translateTree(document.body);
+    updateSelect(locale);
+    updateUrl(locale);
+    persist(locale);
+    window.dispatchEvent(new CustomEvent('r4languagechange', { detail: { locale } }));
+  }
+
+  function setLocale(locale, options = {}) {
+    locale = normalizeLocale(locale);
+    if (!SUPPORTED.includes(locale)) locale = 'en';
+    if (pendingOverlayTimer !== null) {
+      clearTimeout(pendingOverlayTimer);
+      pendingOverlayTimer = null;
+    }
+    restoreTree(document.body);
+    if (locale === 'en' || locale === 'zh') {
+      current = locale;
+      clickNative(locale);
+      document.documentElement.lang = locale === 'zh' ? 'zh' : 'en';
+      refreshKnownLayers();
+      if (locale === 'en') {
+        const heading = document.querySelector('h1');
+        if (heading && canonicalHeadingText) {
+          applying = true;
+          try { heading.textContent = canonicalHeadingText; } finally { applying = false; }
+        }
+      }
+      applyMetadata(locale);
+      if (locale === 'en' && canonicalDocumentTitle) document.title = canonicalDocumentTitle;
+      updateSelect(locale);
+      updateUrl(locale);
+      persist(locale);
+      window.dispatchEvent(new CustomEvent('r4languagechange', { detail: { locale } }));
+      return;
+    }
+    // Existing applet code remains the source of state. VI/ES overlays are always
+    // generated from its English rendering, never translated from translated text.
+    current = 'en';
+    clickNative('en');
+    pendingOverlayTimer = setTimeout(() => {
+      pendingOverlayTimer = null;
+      activateOverlay(locale);
+    }, options.immediate ? 0 : 60);
+  }
+
+  function installSelect() {
+    const holder = document.querySelector('.lang-switch');
+    if (!holder || holder.querySelector('.r4-language-select')) return;
+    const select = document.createElement('select');
+    select.className = 'r4-language-select';
+    select.setAttribute('aria-label', 'Language');
+    select.setAttribute('data-r4-no-translate', '1');
+    for (const locale of SUPPORTED) {
+      const option = document.createElement('option');
+      option.value = locale;
+      option.textContent = SELF_NAMES[locale];
+      select.appendChild(option);
+    }
+    holder.appendChild(select);
+    holder.classList.add('r4-locale-ready');
+    select.addEventListener('change', () => setLocale(select.value));
+  }
+
+  const observer = new MutationObserver(mutations => {
+    if (applying) return;
+    for (const mutation of mutations) {
+      if (mutation.type === 'characterData') {
+        const live = mutation.target.nodeValue || '';
+        if (lastAppliedText.get(mutation.target) === live) {
+          lastAppliedText.delete(mutation.target);
+          continue;
+        }
+        // Applet-authored dynamic state is always a new source value, including
+        // while English or Chinese is active. This is what prevents a later locale
+        // switch from restoring stale page-load state.
+        originalText.set(mutation.target, live);
+        if (current === 'vi' || current === 'es') translateTextNode(mutation.target);
+      } else if (mutation.type === 'attributes') {
+        const attr = mutation.attributeName;
+        const live = mutation.target.getAttribute(attr) || '';
+        const applied = lastAppliedAttrs.get(mutation.target) || {};
+        if (applied[attr] === live) {
+          delete applied[attr];
+          lastAppliedAttrs.set(mutation.target, applied);
+          continue;
+        }
+        const state = attrState(mutation.target);
+        state[attr] = live;
+        if (current === 'vi' || current === 'es') translateAttributes(mutation.target);
+      } else {
+        mutation.addedNodes.forEach(node => {
+          if (current === 'vi' || current === 'es') translateTree(node);
+        });
+      }
+    }
+  });
+
+  function init() {
+    canonicalDocumentTitle = document.title;
+    const initialHeading = document.querySelector('h1');
+    canonicalHeadingText = initialHeading ? initialHeading.textContent : '';
+    installSelect();
+    wrapTr();
+    patchClipboard();
+    observer.observe(document.body, { subtree:true, childList:true, characterData:true, attributes:true, attributeFilter:['title','aria-label','placeholder'] });
+    // Legacy language handlers in some applets rebuild or reset the experiment as
+    // part of their EN/ZH switch. R4 invokes those buttons only as an internal
+    // rendering bridge; locale changes must not mutate learner/challenge state.
+    // A synchronous hard-reset click dispatched by that bridge is therefore
+    // suppressed in capture phase. Normal user reset clicks are unaffected.
+    document.addEventListener('click', event => {
+      if (!nativeLanguageClick) return;
+      const target = event.target;
+      if (target && target.closest && target.closest('#hardReset')) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    }, true);
+    document.querySelectorAll('.lang-switch button[data-lang]').forEach(button => {
+      button.addEventListener('click', () => {
+        if (nativeLanguageClick) return;
+        const locale = normalizeLocale(button.dataset.lang);
+        current = locale;
+        updateSelect(locale);
+        persist(locale);
+      });
+    });
+    setLocale(initialLocale(), { immediate:true });
+    window.__r4Localization = {
+      locale: () => current,
+      setLocale,
+      translateString,
+      ready: () => !!data && data.ready === true,
+      supported: () => [...SUPPORTED],
+      slug,
+    };
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(init, 0), { once:true });
+  else setTimeout(init, 0);
+})();
