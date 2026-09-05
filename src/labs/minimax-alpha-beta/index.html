@@ -1,0 +1,1642 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="ai-playgrounds-version" content="1.8.1">
+<link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/minimax-alpha-beta/">
+<title>Game Trees: Minimax and Alpha-Beta Pruning | AI Playgrounds</title>
+<style>
+:root{--bg:#f7f8fb;--card:#fff;--fg:#172033;--muted:#637083;--border:#d7dde7;--accent:#3157c8;--max:#1d4ed8;--min:#7c3aed;--good:#0f766e;--warn:#b45309;--bad:#b91c1c;--soft:#eef2ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}button,select,input,textarea{font:inherit;color:inherit}button,select,input{min-height:38px}.shell{max-width:1220px;margin:0 auto;padding:22px}.hero,.panel{background:var(--card);border:1px solid var(--border);border-radius:14px}.hero{padding:22px}.hero h1{margin:.1rem 0 .35rem;font-size:clamp(1.6rem,3vw,2.5rem)}.hero p{margin:.3rem 0;color:var(--muted);max-width:920px}.grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(290px,.75fr);gap:14px;margin-top:14px}.panel{padding:16px;min-width:0}.controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.control label{display:block;font-size:.76rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}.control select,.control input{width:100%;border:1px solid var(--border);border-radius:8px;background:#fff;padding:6px 9px}.transport{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.transport button,.action{border:1px solid var(--border);background:var(--card);border-radius:8px;padding:7px 11px;cursor:pointer}.transport button.primary,.action.primary{background:var(--accent);color:#fff;border-color:var(--accent)}button:disabled{opacity:.45;cursor:not-allowed}.tree-wrap{border:1px solid var(--border);border-radius:12px;background:linear-gradient(180deg,#fff,#fbfcff);overflow:auto;min-height:440px}.tree{display:block;width:100%;min-width:720px;height:auto}.edge{stroke:#aab4c3;stroke-width:2;fill:none}.node circle{fill:#fff;stroke:#8b98aa;stroke-width:2}.node.max circle{stroke:var(--max)}.node.min circle{stroke:var(--min)}.node.current circle{stroke-width:5;filter:drop-shadow(0 0 5px #3157c855)}.node.visited circle{fill:#eef2ff}.node.returned circle{fill:#ecfdf5;stroke:var(--good)}.node.pruned{opacity:.38}.node.pruned circle{stroke-dasharray:5 4;fill:#fff1f2;stroke:var(--bad)}.node text{font:11px ui-monospace,SFMono-Regular,Consolas,monospace;text-anchor:middle;fill:var(--fg);pointer-events:none}.node .role{font-size:9px;fill:var(--muted)}.node .value{font-weight:800}.node .bounds{font-size:9px;fill:var(--muted)}.summary{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin:12px 0}.metric{border:1px solid var(--border);border-radius:10px;background:#fff;padding:9px}.metric strong{display:block;font-size:.68rem;text-transform:uppercase;color:var(--muted)}.metric span{display:block;font:700 14px ui-monospace,monospace;margin-top:2px}.trace-card{border:1px solid var(--border);border-radius:10px;padding:11px;background:#fbfcff}.trace-card strong{color:var(--accent)}.trace-card p{margin:.35rem 0;color:var(--muted)}.state{white-space:pre-wrap;overflow-wrap:anywhere;background:#111827;color:#f8fafc;border-radius:9px;padding:10px;max-height:190px;overflow:auto;font:12px/1.45 ui-monospace,monospace}.utility-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.utility-item{border:1px solid var(--border);border-radius:8px;padding:8px}.utility-item label{display:flex;justify-content:space-between;align-items:center;gap:8px;font:12px ui-monospace,monospace}.utility-item input{width:76px;border:1px solid var(--border);border-radius:6px;padding:4px 6px}.baseline{border:1px solid var(--border);border-radius:10px;padding:10px;background:#fafafa;margin-top:10px}.baseline.empty{color:var(--muted)}.challenge{margin-top:14px}.challenge h2{margin:.15rem 0 .4rem}.challenge-grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:12px}.challenge-box{border:1px solid var(--border);border-radius:11px;padding:12px}.challenge-prediction{display:grid;gap:8px}.challenge-prediction label{font-weight:700}.challenge-prediction input,.challenge-prediction select,.challenge-prediction textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:7px}.challenge-prediction textarea{min-height:76px}.challenge-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.actual{margin-top:9px;padding:10px;border-radius:8px;background:#ecfdf5;border:1px solid #99d7c9}.hidden{display:none!important}.note{font-size:.82rem;color:var(--muted)}.pill{display:inline-flex;border:1px solid var(--border);border-radius:999px;padding:3px 8px;font-size:.72rem;color:var(--muted)}:focus-visible{outline:3px solid #3157c855;outline-offset:2px}
+@media(max-width:900px){.grid,.challenge-grid{grid-template-columns:1fr}.summary{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:560px){.shell{padding:10px}.controls{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,minmax(0,1fr))}.utility-list{grid-template-columns:1fr}.tree{min-width:650px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}.node.current circle{filter:none}}
+</style>
+<meta name="lab15-candidate-stage" content="R6-Multilingual">
+
+<style id="lab15-r6-locale-style">
+.lab15-locale-bar{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin:0 0 12px;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--card)}
+.lab15-locale-bar label{font-size:.78rem;font-weight:800;color:var(--muted)}
+.lab15-language-select{min-height:38px;padding:6px 32px 6px 10px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--fg);font:inherit;cursor:pointer}
+.lab15-language-select:focus-visible{outline:3px solid #3157c855;outline-offset:2px}
+@media(pointer:coarse){.lab15-language-select{min-height:44px}}
+@media(max-width:560px){
+  html,body{max-width:100%;overflow-x:hidden}
+  .shell,.grid,.panel,.challenge-grid,.challenge-box,.controls,.summary,.utility-list,.transport,.tree-wrap{min-width:0;max-width:100%}
+  .shell{width:100%}
+  .tree-wrap{width:100%;overflow-x:auto;overflow-y:hidden}
+  .utility-item label{min-width:0;flex-wrap:wrap;overflow-wrap:anywhere}
+  .utility-item input{max-width:100%}
+  .lab15-locale-bar{justify-content:stretch;flex-wrap:wrap;min-width:0;max-width:100%}
+  .lab15-language-select{flex:1 1 180px;min-width:0;max-width:100%}
+}
+</style>
+
+
+<style id="lab15-v16-public-shell">
+.lab15-public-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 10px;font-size:.84rem;color:var(--muted)}
+.lab15-public-nav a{font-weight:850;color:var(--accent);text-decoration:none}.lab15-public-nav a:hover{text-decoration:underline}
+@media(max-width:560px){.lab15-public-nav{flex-wrap:wrap}}
+</style>
+
+<style id="v161-standard-applet-shell-style">
+.ap-standard-header{background:var(--card,#fff);border-bottom:1px solid var(--border,#d7dde7);padding:12px 24px;color:var(--fg,#172033)}
+.ap-standard-header .header-utility{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.ap-standard-header .header-prefs{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ap-standard-header .header-main{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.ap-standard-header .header-title-wrap{min-width:0;flex:1 1 520px}
+.ap-standard-header h1{margin:0;font-size:1.5rem;line-height:1.2}
+.ap-standard-header .ap-standard-subtitle{margin:.25rem 0 0;color:var(--muted,#637083);max-width:920px;font-size:.9rem}
+.ap-standard-header .back{color:var(--accent,#3157c8);text-decoration:none;font-size:.9rem;font-weight:700}
+.ap-standard-header .header-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ap-standard-header label{font-size:.78rem;font-weight:800;color:var(--muted,#637083)}
+.ap-standard-header select,.ap-standard-header button{min-height:38px;border:1px solid var(--border,#d7dde7);border-radius:7px;background:var(--card,#fff);color:var(--fg,#172033);font:inherit;padding:6px 10px}
+.ap-standard-header select{padding-right:32px;cursor:pointer}.ap-standard-header button{cursor:pointer}
+.ap-standard-header :focus-visible,.ap-standard-footer :focus-visible{outline:2px solid var(--accent,#3157c8);outline-offset:2px}
+.ap-standard-footer{margin:28px auto 0;max-width:1220px;padding:18px 24px 32px;border-top:1px solid var(--border,#d7dde7);color:var(--muted,#637083);font-size:.82rem;text-align:center}
+.ap-standard-footer a{color:var(--accent,#3157c8)}
+body.ap-standard-dark{--bg:#0f172a;--card:#172033;--fg:#e2e8f0;--muted:#a9b6c9;--border:#334155;--soft:#1e293b;background:var(--bg)!important;color:var(--fg)!important}
+body.ap-standard-dark .ap-standard-header select,body.ap-standard-dark .ap-standard-header button{background:var(--card);color:var(--fg)}
+@media(pointer:coarse){.ap-standard-header select,.ap-standard-header button{min-height:44px}}
+@media(max-width:480px){.ap-standard-header{padding:12px 16px}.ap-standard-header .header-actions,.ap-standard-header .header-prefs{width:100%}.ap-standard-header select{flex:1 1 170px;min-width:0}.ap-standard-header .header-actions button{flex:1}.ap-standard-footer{padding-left:16px;padding-right:16px}}
+@media(prefers-reduced-motion:reduce){.ap-standard-header *,.ap-standard-footer *{transition:none!important}}
+
+.lab15-public-nav,#lab15-locale-bar,main.shell>.hero>.pill,main.shell>.hero>h1,main.shell>.hero>p:first-of-type{display:none!important}
+</style>
+
+<style id="v17-modern-quick-assign">.quick-assign-modern{margin:18px 0}.quick-assign-modern summary{cursor:pointer}.quick-assign-modern-body{padding-top:10px}.qa-modern-field{display:block;margin:10px 0}.qa-modern-field textarea{width:100%;box-sizing:border-box;min-height:72px}</style><style id="v17-modern-quick-assign-containment">
+.quick-assign-modern{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;overflow-wrap:anywhere;overflow-x:clip!important}
+.quick-assign-modern *{min-width:0;box-sizing:border-box}
+.quick-assign-modern summary,.quick-assign-modern-body,.qa-modern-field{min-width:0!important;max-width:100%!important;box-sizing:border-box!important;white-space:normal!important;overflow-wrap:anywhere!important}
+.quick-assign-modern .challenge-controls{display:flex!important;flex-wrap:wrap!important;min-width:0!important;max-width:100%!important}
+.quick-assign-modern textarea{display:block;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+.quick-assign-modern button{max-width:100%!important;white-space:normal!important;overflow-wrap:anywhere!important}
+#challengeSelect{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+@media(max-width:480px){
+  .quick-assign-modern{width:auto!important;max-width:100%!important;margin-left:0!important;margin-right:0!important;overflow:hidden!important}
+  .quick-assign-modern .challenge-controls>*{flex:1 1 140px;max-width:100%!important}
+  #challengeSelect{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important}
+}
+</style>
+<style id="v172-modern-parity-style">
+.ap-modern-skip{position:absolute;left:-999px;top:10px;z-index:10000;padding:10px 14px;background:var(--accent,#3157c8);color:#fff;border-radius:8px;font:700 .9rem -apple-system,system-ui,sans-serif;text-decoration:none}
+.ap-modern-skip:focus{left:12px}
+.ap-standard-header.page-header{background:var(--card,#fff);border-bottom:1px solid var(--border,#d7dde7);padding:12px 24px}
+.ap-standard-header .ap-standard-subtitle{display:none!important}
+.ap-standard-header .header-actions button{min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px}
+.ap-modern-tldr{max-width:820px;margin:16px auto 0;background:var(--accent,#3157c8);color:#fff;border-radius:8px;padding:14px 16px;font:.88rem/1.45 -apple-system,system-ui,sans-serif}
+.ap-modern-tldr strong{color:rgba(255,255,255,.86);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:6px}
+.ap-modern-tldr p{margin:5px 0}
+.ap-modern-support{max-width:980px;margin:18px auto;padding:0 20px;color:var(--fg,#172033)}
+.ap-modern-support details{margin:10px 0;border:1px solid var(--border,#d7dde7);border-radius:9px;background:var(--card,#fff);padding:0}
+.ap-modern-support summary{cursor:pointer;font-weight:800;padding:11px 13px}
+.ap-modern-support .ap-support-body{padding:0 13px 13px;color:var(--muted,#637083);line-height:1.5}
+.ap-modern-terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0}
+.ap-modern-term{border:1px solid var(--border,#d7dde7);border-radius:8px;padding:9px;background:var(--soft,#f8fafc)}
+.ap-modern-term dt{font-weight:800;color:var(--fg,#172033)}
+.ap-modern-term dd{margin:3px 0 0}
+.ap-standard-footer.ap-modern-rich-footer{max-width:none;padding:18px 24px 30px}
+.ap-modern-footer-primary{margin-bottom:7px}
+.ap-modern-toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:10000;background:#111827;color:#fff;padding:8px 12px;border-radius:8px;font:600 .82rem -apple-system,system-ui,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.2)}
+body.embed-mode>.ap-standard-header,body.embed-mode>.ap-modern-skip,body.embed-mode>.ap-modern-tldr,body.embed-mode>.ap-modern-support,body.embed-mode>.ap-standard-footer{display:none!important}
+body.embed-mode main{margin-top:0!important}
+@media(max-width:720px){.ap-standard-header .header-actions{width:100%;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.ap-standard-header .header-actions button{width:100%;justify-content:center}.ap-modern-terms{grid-template-columns:1fr}}
+@media(pointer:coarse){.ap-standard-header .header-actions button{min-height:44px}}
+@media(prefers-reduced-motion:reduce){.ap-modern-toast{transition:none!important}}
+</style>
+<style id="v172-modern-toolbar-parity-style">
+.ap-standard-header .header-prefs #ap-standard-theme{width:38px;padding:6px;justify-content:center;font-size:0;line-height:1}
+.ap-standard-header .header-prefs #ap-standard-theme::first-letter{font-size:1rem}
+.ap-standard-header .header-more{position:relative}
+.ap-standard-header .header-more>summary{list-style:none;cursor:pointer;user-select:none;min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border:1px solid var(--border,#d7dde7);border-radius:8px;background:var(--card,#fff);color:var(--fg,#172033);font:inherit}
+.ap-standard-header .header-more>summary::-webkit-details-marker{display:none}
+.ap-standard-header .header-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:80;min-width:220px;padding:7px;background:var(--card,#fff);border:1px solid var(--border,#d7dde7);border-radius:10px;box-shadow:0 16px 35px rgba(15,23,42,.18);display:grid;gap:5px}
+.ap-standard-header .header-more-menu button{width:100%;text-align:left;justify-content:flex-start;white-space:normal}
+@media(pointer:coarse){.ap-standard-header .header-more>summary{min-height:44px}.ap-standard-header .header-prefs #ap-standard-theme{min-height:44px;width:44px}}
+@media(max-width:720px){.ap-standard-header .header-actions{width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important}.ap-standard-header .header-actions>button,.ap-standard-header .header-actions>.header-more,.ap-standard-header .header-more>summary{width:100%;justify-content:center}.ap-standard-header .header-more-menu{right:auto;left:0;max-width:min(290px,90vw)}}
+</style>
+<meta name="description" content="Compare minimax and alpha-beta on the same tree, then change the move order.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lmdixon23.github.io/ai-playgrounds/playgrounds/minimax-alpha-beta/">
+<meta property="og:title" content="Game Trees: Minimax and Alpha-Beta Pruning | AI Playgrounds">
+<meta property="og:description" content="Compare minimax and alpha-beta on the same tree, then change the move order.">
+<meta property="og:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Game Trees: Minimax and Alpha-Beta Pruning | AI Playgrounds">
+<meta name="twitter:description" content="Compare minimax and alpha-beta on the same tree, then change the move order.">
+<meta name="twitter:image" content="https://lmdixon23.github.io/ai-playgrounds/og-image.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230284c7'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23ffffff'/%3E%3C/svg%3E">
+<link rel="alternate" hreflang="en" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/minimax-alpha-beta/?lang=en">
+<link rel="alternate" hreflang="zh-Hans" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/minimax-alpha-beta/?lang=zh">
+<link rel="alternate" hreflang="vi" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/minimax-alpha-beta/?lang=vi">
+<link rel="alternate" hreflang="es" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/minimax-alpha-beta/?lang=es">
+<link rel="alternate" hreflang="x-default" href="https://lmdixon23.github.io/ai-playgrounds/playgrounds/minimax-alpha-beta/?lang=en">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["WebApplication","LearningResource"],"name":"Game Trees: Minimax and Alpha-Beta Pruning | AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/playgrounds/minimax-alpha-beta/","description":"Compare minimax and alpha-beta on the same tree, then change the move order.","applicationCategory":"EducationalApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"inLanguage":["en","zh","vi","es"],"license":"https://opensource.org/licenses/MIT","learningResourceType":"interactive simulation","educationalLevel":["high school","undergraduate"],"isPartOf":{"@type":"WebSite","name":"AI Playgrounds","url":"https://lmdixon23.github.io/ai-playgrounds/"},"author":{"@type":"Person","name":"Logan M. Dixon","sameAs":"https://orcid.org/0009-0001-0592-462X"}}</script>
+<style id="v172-modern-quick-assign-parity-style">
+.quick-assign-modern.classroom-lab{margin:8px 0!important;padding:0!important;background:transparent!important;border:0!important;border-radius:0!important;overflow:visible!important}
+.quick-assign-modern.classroom-lab>summary{cursor:pointer;padding:10px 12px!important;background:var(--card)!important;border:1px solid var(--border)!important;border-left:4px solid color-mix(in srgb,var(--accent) 62%,var(--border))!important;border-radius:10px!important;color:var(--fg)!important;font:750 .88rem -apple-system,system-ui,sans-serif!important}
+.quick-assign-modern.classroom-lab[open]>summary{border-color:color-mix(in srgb,var(--accent) 55%,var(--border))!important}
+.quick-assign-modern .quick-assign-modern-body.lab-panel{margin-top:8px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:8px}
+.quick-assign-modern .qa-modern-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:10px}
+.quick-assign-modern .qa-modern-field.lab-field{display:flex;margin:0;flex-direction:column;gap:4px}
+.quick-assign-modern .qa-modern-field.lab-field>strong{font-family:-apple-system,system-ui,sans-serif;font-size:.82rem;font-weight:700;color:var(--accent)}
+.quick-assign-modern .qa-modern-field textarea{min-height:86px;resize:vertical;width:100%;border:1px solid var(--border);border-radius:6px;padding:8px;font:inherit;color:var(--fg);background:var(--bg)}
+.quick-assign-modern .qa-modern-state{margin-top:12px;padding:10px 12px;border:1px dashed var(--border);border-radius:8px;background:var(--soft);color:var(--muted);font-family:ui-monospace,monospace;font-size:.78rem;white-space:pre-wrap;max-height:250px;overflow:auto}
+.quick-assign-modern .challenge-controls.lab-actions{display:flex!important;flex-wrap:wrap!important;gap:8px;margin-top:12px;align-items:center}
+.quick-assign-modern .lab-status{color:var(--muted);font-size:.82rem;min-height:1.2em}
+@media(max-width:480px){.quick-assign-modern .qa-modern-grid{grid-template-columns:1fr}.quick-assign-modern .challenge-controls.lab-actions button{width:100%}}
+</style>
+<style id="v172-modern-a11y-parity-style">
+.ap-modern-a11y-parity .ap-support-body{padding-top:2px}
+.ap-modern-a11y-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ap-modern-a11y-card{border:1px solid var(--border,#d7dde7);border-radius:8px;padding:10px;background:var(--soft,#f8fafc);min-width:0}
+.ap-modern-a11y-card h3{margin:0 0 6px;font-size:.86rem;color:var(--fg,#172033)}
+.ap-modern-a11y-card ul{margin:0;padding-left:20px}.ap-modern-a11y-card li{margin:4px 0}
+.ap-modern-a11y-state-card{grid-column:1/-1}
+.ap-modern-a11y-state{margin:7px 0 0;max-height:260px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;border:1px dashed var(--border,#d7dde7);border-radius:7px;padding:9px;background:var(--card,#fff);color:var(--fg,#172033);font:12px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}
+.ap-modern-a11y-note{margin:10px 0 0;font-size:.8rem;color:var(--muted,#637083)}
+.ap-modern-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+@media(max-width:680px){.ap-modern-a11y-grid{grid-template-columns:1fr}.ap-modern-a11y-state-card{grid-column:auto}}
+@media(prefers-reduced-motion:reduce){.ap-modern-a11y-parity *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+</style>
+<style id="v181-modern-learner-parity-style">
+.ap-standard-header .header-prefs{gap:8px}
+.ap-standard-header .header-theme,.ap-standard-header .header-png,.ap-standard-header .header-reset,.ap-standard-header .header-more>summary{min-height:38px;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--fg);font:inherit;cursor:pointer}
+.ap-standard-header .header-actions{align-items:center}.ap-standard-header .header-reset{margin-left:4px}
+.ap-standard-header .modern-lang-switch{display:inline-flex;align-items:center;overflow:hidden;border:1px solid var(--border);border-radius:8px;background:var(--card)}
+.ap-standard-header .modern-lang-switch label{padding:0 0 0 9px;color:var(--muted);font-size:.78rem;font-weight:700;white-space:nowrap}
+.ap-standard-header .modern-lang-switch select{min-height:36px;border:0!important;border-radius:0!important;background:var(--card);color:var(--fg);padding:6px 9px}
+.ap-modern-curriculum{max-width:980px;margin:22px auto 0;padding:0 20px;color:var(--fg);font:15px/1.6 system-ui,-apple-system,sans-serif}
+.ap-modern-curriculum details{margin:12px 0}
+.ap-modern-curriculum details>summary{cursor:pointer;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-left:4px solid color-mix(in srgb,var(--accent) 62%,var(--border));border-radius:10px;color:var(--fg);font-weight:800}
+.ap-modern-featured-body,.scenario-gallery-panel{padding:16px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}
+.ap-modern-featured-body>strong{display:block;font-size:1.08rem;color:var(--accent);margin-bottom:7px}
+.ap-modern-featured-body p{margin:7px 0}
+.featured-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.scenario-gallery-intro{margin:0 0 12px;color:var(--muted)}
+.scenario-card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.scenario-card{min-width:0;padding:15px;border:1px solid var(--border);border-radius:10px;background:color-mix(in srgb,var(--card) 97%,var(--accent));box-shadow:0 6px 18px rgba(15,23,42,.05)}
+.scenario-card.applied{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 22%,transparent)}
+.scenario-card h3{margin:0 0 9px;font-size:1rem;color:var(--fg)}
+.scenario-card .scenario-meta{margin:7px 0;line-height:1.5;color:var(--fg)}
+.scenario-card .scenario-meta strong{display:block;color:var(--fg);margin-bottom:2px}
+.scenario-card button,.featured-actions button{border:0;border-radius:8px;background:var(--accent);color:#fff;font-weight:750;padding:8px 11px;cursor:pointer}
+.ap-modern-jump{text-align:center;margin:17px 0 8px}
+.ap-modern-jump .jump-link{display:inline-block;padding:7px 14px;border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--accent);text-decoration:none;font-weight:700;font-size:.84rem}
+.ap-modern-essay{max-width:760px;margin:0 auto;padding:30px 0 54px;font-size:1.03rem}
+.ap-modern-essay h2{font-size:1.45rem;margin:34px 0 11px;color:var(--accent)}
+.ap-modern-essay p{margin:0 0 14px}
+.essay-primer{margin:0 0 24px;padding:16px 18px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--card) 96%,var(--accent));border-radius:10px}
+.essay-primer h2{margin:0 0 7px;font-size:1.08rem}
+.essay-primer h3{margin:14px 0 8px;font-size:.95rem}
+.essay-primer-terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0}
+.essay-primer-terms>div{padding:9px 10px;border:1px solid var(--border);border-radius:8px;background:var(--card)}
+.essay-primer-terms dt{font-weight:800;color:var(--fg)}
+.essay-primer-terms dd{margin:2px 0 0;color:var(--muted);font-size:.83rem;line-height:1.45}
+.for-teachers{background:var(--soft);border:1px solid var(--border);border-radius:10px;padding:20px 22px;margin-top:34px;font-size:.94rem}
+.for-teachers h2{margin:0 0 10px;font-size:1.05rem;text-transform:uppercase;letter-spacing:.04em}
+.for-teachers h3{font-size:.95rem;margin:16px 0 6px;color:var(--fg)}
+.for-teachers ul{margin:5px 0;padding-left:22px}.for-teachers li{margin:5px 0}
+.ap-modern-a11y-compact .ap-support-body{padding:13px;color:var(--muted)}
+.ap-modern-a11y-compact a{color:var(--accent);font-weight:700}
+.ap-modern-back-controls{margin-top:24px}
+body.embed-mode .ap-modern-curriculum{display:none!important}
+body.ap-standard-dark{--good:#6ee7b7;--warn:#fdba74;--bad:#fca5a5}
+body.ap-standard-dark[data-ap-modern-parity="transformer-language-model"]{--accent:#c4b5fd;--accent-strong:#6d28d9}
+body.ap-standard-dark[data-ap-modern-parity="agent-tool-context"]{--accent:#5eead4;--accent-strong:#0f766e}
+body.ap-standard-dark[data-ap-modern-parity="minimax-alpha-beta"]{--accent:#93c5fd;--accent-strong:#1d4ed8}
+body.ap-standard-dark button.primary,body.ap-standard-dark .action.primary,body.ap-standard-dark .scenario-card button,body.ap-standard-dark .featured-actions button{background:var(--accent-strong)!important;color:#fff!important}
+body.ap-standard-dark .boundary{background:#292244!important;border-color:#5b4c88!important;color:var(--fg)!important}
+body.ap-standard-dark .warning{background:#3b2a16!important;border-color:#854d0e!important;color:#fed7aa!important}
+body.ap-standard-dark .matrix td.masked{background:#263348!important;color:#cbd5e1!important}
+body.ap-standard-dark .stage.good{border-color:#059669!important}body.ap-standard-dark .stage.warn{border-color:#c2410c!important}body.ap-standard-dark .stage.bad{border-color:#be123c!important}
+body.ap-standard-dark .pill.good{border-color:#059669!important}body.ap-standard-dark .pill.warn{border-color:#c2410c!important}body.ap-standard-dark .pill.bad{border-color:#be123c!important}
+body.ap-standard-dark .control select,body.ap-standard-dark .control input{background:var(--card)!important;color:var(--fg)!important}
+body.ap-standard-dark .tree-wrap{background:linear-gradient(180deg,#111827,#172033)!important}
+body.ap-standard-dark .edge{stroke:#64748b!important}
+body.ap-standard-dark .node circle{fill:#172033!important;stroke:#94a3b8!important}
+body.ap-standard-dark .node.visited circle{fill:#312e81!important}
+body.ap-standard-dark .node.returned circle{fill:#064e3b!important;stroke:#6ee7b7!important}
+body.ap-standard-dark .node.pruned circle{fill:#4c1d2b!important;stroke:#fda4af!important}
+body.ap-standard-dark .metric,body.ap-standard-dark .trace-card,body.ap-standard-dark .baseline{background:var(--card)!important;color:var(--fg)!important}
+body.ap-standard-dark .actual{background:#052e2b!important;border-color:#0f766e!important;color:var(--fg)!important}
+@media(min-width:980px){.scenario-card-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.scenario-card:last-child:nth-child(3n+2){grid-column:auto}}
+@media(max-width:720px){.ap-standard-header .header-main{align-items:flex-start}.ap-standard-header .header-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important}.ap-standard-header .header-actions>.header-png,.ap-standard-header .header-actions>.header-reset{width:100%;margin:0}.scenario-card-grid,.essay-primer-terms{grid-template-columns:1fr}.ap-modern-curriculum{padding:0 14px}.ap-modern-essay{padding-bottom:38px}}
+@media(max-width:520px){.ap-standard-header .header-prefs{width:100%}.ap-standard-header .modern-lang-switch{flex:1;min-width:0}.ap-standard-header .modern-lang-switch select{min-width:0;width:100%}}
+@media(pointer:coarse){.ap-standard-header .header-theme,.ap-standard-header .header-png,.ap-standard-header .header-reset,.ap-standard-header .header-more>summary,.scenario-card button,.featured-actions button{min-height:44px}}
+@media(prefers-reduced-motion:reduce){.scenario-card{transition:none!important}.ap-modern-curriculum{scroll-behavior:auto!important}}
+</style>
+</head>
+<body id="top" data-ap-modern-parity="minimax-alpha-beta">
+<a class="ap-modern-skip" href="#ap-modern-interactive-start" data-ap-en="Skip to applet controls" data-ap-zh="跳到 applet 控件" data-ap-vi="Bỏ qua đến điều khiển applet" data-ap-es="Saltar a los controles del applet">Skip to applet controls</a>
+<header class="ap-standard-header page-header" data-ap-standard-shell="minimax-alpha-beta">
+  <div class="header-utility"><a class="back" href="../../index.html">← <span data-ap-chrome="back">AI Playgrounds</span></a><div class="header-prefs"><button class="header-theme" id="ap-standard-theme" type="button" data-ap-chrome="theme">Theme</button><div class="lang-switch modern-lang-switch"><label for="ap-standard-language-select" data-ap-chrome="language">Language</label><select id="ap-standard-language-select" aria-label="Language"><option value="en">English</option><option value="zh">简体中文</option><option value="vi">Tiếng Việt</option><option value="es">Español</option></select></div></div></div>
+  <div class="header-main"><div class="header-title-wrap"><h1 id="ap-standard-title">Game Trees: Minimax and Alpha-Beta Pruning</h1><p id="ap-standard-subtitle" class="ap-standard-subtitle">Compare minimax and alpha-beta on the same tree, then change the move order.</p></div><div class="header-actions"><button class="header-png" id="ap-modern-share" type="button" data-ap-en="Share" data-ap-zh="分享" data-ap-vi="Chia sẻ" data-ap-es="Compartir">🔗 <span>Share</span></button><button class="header-png" id="ap-modern-embed" type="button" data-ap-en="Embed" data-ap-zh="嵌入" data-ap-vi="Nhúng" data-ap-es="Insertar">📎 <span>Embed</span></button><button class="header-png" id="ap-modern-settings-json" type="button" data-ap-en="JSON" data-ap-zh="JSON" data-ap-vi="JSON" data-ap-es="JSON">⬇ <span>JSON</span></button><button class="header-reset" id="ap-standard-reset" type="button" data-ap-chrome="reset">Reset</button></div></div>
+</header>
+<aside class="ap-modern-tldr" aria-labelledby="ap-modern-big-label">
+<strong id="ap-modern-big-label" data-ap-en="The big idea" data-ap-zh="核心思想" data-ap-vi="Ý tưởng chính" data-ap-es="La idea central">The big idea</strong>
+<p data-ap-en="Minimax backs terminal utilities through alternating MAX and MIN choices. Alpha-Beta can skip work only when current bounds prove a branch cannot change the exact minimax decision." data-ap-zh="Minimax 在交替的 MAX 与 MIN 选择中向上回传终局效用值。只有当当前边界证明某分支不可能改变精确的 minimax 决策时，Alpha-Beta 才能跳过搜索工作。" data-ap-vi="Minimax truyền các utility ở lá lên qua lượt MAX và MIN xen kẽ. Alpha-Beta chỉ được bỏ qua công việc khi các cận hiện tại chứng minh một nhánh không thể thay đổi quyết định minimax chính xác." data-ap-es="Minimax propaga utilidades terminales mediante decisiones alternas de MAX y MIN. Alpha-Beta solo puede omitir trabajo cuando los límites actuales demuestran que una rama no puede cambiar la decisión minimax exacta.">Minimax backs terminal utilities through alternating MAX and MIN choices. Alpha-Beta can skip work only when current bounds prove a branch cannot change the exact minimax decision.</p>
+<p><b data-ap-en="What to watch" data-ap-zh="观察重点" data-ap-vi="Điều cần quan sát" data-ap-es="Qué observar">What to watch</b>: <span data-ap-en="Compare the root value and move with visited/evaluated nodes; change child order to change work without changing the game." data-ap-zh="比较根节点的值和选择与已访问/已评估节点数量；改变子节点顺序会改变工作量，但不会改变博弈本身。" data-ap-vi="So sánh giá trị/lựa chọn ở gốc với số nút đã thăm/đánh giá; đổi thứ tự con để đổi lượng công việc mà không đổi trò chơi." data-ap-es="Compara el valor y la jugada raíz con los nodos visitados/evaluados; cambia el orden de hijos para cambiar el trabajo sin cambiar el juego.">Compare the root value and move with visited/evaluated nodes; change child order to change work without changing the game.</span></p>
+</aside>
+<main id="ap-modern-interactive-start" tabindex="-1" class="shell"><div class="lab15-public-nav" data-lab15-no-translate="true"><a href="../../">AI Playgrounds</a><span>v1.8.1</span></div>
+  <section class="hero">
+    <span class="pill">AI Playgrounds · v1.8.1</span>
+    <h1>Game Trees: Minimax and Alpha-Beta Pruning</h1>
+    <p>Back terminal utilities up through alternating MAX and MIN turns. Then switch on alpha-beta pruning to see which subtrees can be skipped without changing the exact root decision.</p>
+    <p><strong>Model boundary:</strong> finite deterministic two-player zero-sum perfect-information trees. Pruned nodes remain visible as part of the problem definition but are labeled not evaluated by the algorithm.</p>
+  </section>
+
+  <section class="grid">
+    <div class="panel">
+      <div class="controls">
+        <div class="control"><label for="scenario">Scenario</label><select id="scenario"></select></div>
+        <div class="control"><label for="algorithm">Algorithm</label><select id="algorithm"><option value="minimax">Minimax</option><option value="alpha_beta">Alpha-Beta</option></select></div>
+        <div class="control"><label for="order">Child order</label><select id="order"><option value="configured">Configured order</option><option value="reverse">Reverse every sibling list</option></select></div>
+      </div>
+      <div class="transport" role="group" aria-label="Trace playback">
+        <button id="resetTrace">Restart trace</button>
+        <button id="backTrace">Back</button>
+        <button id="stepTrace" class="primary">Step</button>
+        <button id="endTrace">Reveal complete trace</button>
+        <button id="saveBaseline">Save run for comparison</button>
+      </div>
+      <div class="summary" aria-label="Search summary">
+        <div class="metric"><strong>Root value</strong><span id="rootValue">hidden</span></div>
+        <div class="metric"><strong>Selected move</strong><span id="selectedMove">hidden</span></div>
+        <div class="metric"><strong>Optimal set</strong><span id="optimalSet">hidden</span></div>
+        <div class="metric"><strong>Visited</strong><span id="visitedCount">0</span></div>
+        <div class="metric"><strong>Leaves evaluated</strong><span id="leafCount">0</span></div>
+        <div class="metric"><strong>Pruned nodes</strong><span id="prunedCount">0</span></div>
+      </div>
+      <div class="tree-wrap"><svg id="tree" class="tree" role="img" aria-label="Game tree search state"></svg></div>
+      <div class="trace-card" aria-live="polite">
+        <strong id="traceTitle">Trace not started</strong>
+        <p id="traceExplanation">The tree and terminal utilities are visible, but no search event has been revealed.</p>
+        <div id="boundsLine" class="note"></div>
+      </div>
+      <h3>Text equivalent of current state</h3>
+      <pre id="textState" class="state"></pre>
+    </div>
+
+    <aside class="panel">
+      <h2>Manipulate the problem</h2>
+      <p class="note">Terminal utilities are the game's given data. Editing one recomputes the trace; it does not mutate the tree topology.</p>
+      <div id="utilities" class="utility-list"></div>
+      <div id="baseline" class="baseline empty">No comparison run saved.</div>
+      <h3>What to watch</h3>
+      <p class="note"><strong>MAX</strong> keeps the largest returned child value. <strong>MIN</strong> keeps the smallest. In Alpha-Beta mode, a cutoff is safe once <code>alpha &gt;= beta</code>; skipped nodes are not evaluated.</p>
+      <p class="note">Move ordering can change how much work alpha-beta does. It cannot change the exact minimax value of this fixed tree.</p>
+    </aside>
+  </section>
+
+  <section class="ap-modern-curriculum ap-modern-entry" id="ap-modern-learning" data-modern-learning="minimax-alpha-beta" aria-label="Learning sequence">
+<details class="signature-challenge ap-modern-featured" open>
+<summary>✨ Featured experiment</summary>
+<div class="ap-modern-featured-body"><strong>Find the first safe prune</strong>
+<p><b>Core question:</b> When do alpha and beta prove that a sibling cannot matter?</p>
+<p><em><b>Run and watch:</b> Apply the first-prune scenario, step until α ≥ β, and identify the nodes not evaluated.</em></p>
+<div class="featured-actions"><button type="button" data-modern-apply="2">Start featured experiment</button></div></div>
+</details>
+<details class="scenario-gallery" open>
+<summary>🎯 Try these scenarios first</summary>
+<div class="scenario-gallery-panel"><p class="scenario-gallery-intro">Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.</p>
+<div class="scenario-card-grid" id="ap-modern-scenario-cards"><article class="scenario-card" data-modern-scenario-card="0">
+<h3>Scenario 1: Back up a simple tree</h3>
+<p class="scenario-meta"><strong>Core question:</strong> How do alternating MIN and MAX choices determine the root value?</p>
+<p class="scenario-meta"><strong>Run and watch:</strong> Use the simple backup tree with minimax and reveal the trace one step at a time.</p>
+<p class="scenario-meta"><strong>Predict first:</strong> Predict each MIN value, then the move MAX will choose.</p>
+<p class="scenario-meta"><strong>Explain afterward:</strong> Explain why the largest visible leaf alone does not determine the root move.</p>
+<button type="button" data-modern-apply="0">Apply and compare</button>
+</article><article class="scenario-card" data-modern-scenario-card="1">
+<h3>Scenario 2: A greedy leaf can be a trap</h3>
+<p class="scenario-meta"><strong>Core question:</strong> Why can a branch containing the largest leaf still be the worse move?</p>
+<p class="scenario-meta"><strong>Run and watch:</strong> Apply the greedy-trap tree and compare the best visible leaf with the value MIN can force.</p>
+<p class="scenario-meta"><strong>Predict first:</strong> Predict whether MAX chooses branch A or B.</p>
+<p class="scenario-meta"><strong>Explain afterward:</strong> Explain why a player chooses a strategy against an opponent, not a single leaf.</p>
+<button type="button" data-modern-apply="1">Apply and compare</button>
+</article><article class="scenario-card" data-modern-scenario-card="2">
+<h3>Scenario 3: Find the first safe prune</h3>
+<p class="scenario-meta"><strong>Core question:</strong> When do alpha and beta prove that a sibling cannot matter?</p>
+<p class="scenario-meta"><strong>Run and watch:</strong> Apply the first-prune scenario, step until α ≥ β, and identify the nodes not evaluated.</p>
+<p class="scenario-meta"><strong>Predict first:</strong> Predict which sibling will be skipped and what root value remains.</p>
+<p class="scenario-meta"><strong>Explain afterward:</strong> Explain why the skipped node cannot change the ancestor choice.</p>
+<button type="button" data-modern-apply="2">Apply and compare</button>
+</article><article class="scenario-card" data-modern-scenario-card="3">
+<h3>Scenario 4: Move order changes work, not the answer</h3>
+<p class="scenario-meta"><strong>Core question:</strong> How can the same tree require fewer evaluated leaves?</p>
+<p class="scenario-meta"><strong>Run and watch:</strong> Use alpha-beta on the good-ordering tree, save the run, then reverse the sibling order.</p>
+<p class="scenario-meta"><strong>Predict first:</strong> Predict which order exposes useful bounds earlier.</p>
+<p class="scenario-meta"><strong>Explain afterward:</strong> Explain why both orders must return the same minimax value.</p>
+<button type="button" data-modern-apply="3">Apply and compare</button>
+</article><article class="scenario-card" data-modern-scenario-card="4">
+<h3>Scenario 5: Some trees offer no useful cutoff</h3>
+<p class="scenario-meta"><strong>Core question:</strong> Why does alpha-beta sometimes visit every leaf?</p>
+<p class="scenario-meta"><strong>Run and watch:</strong> Apply the no-prune scenario and reveal the full alpha-beta trace.</p>
+<p class="scenario-meta"><strong>Predict first:</strong> Predict whether any bound becomes strong enough to skip a sibling.</p>
+<p class="scenario-meta"><strong>Explain afterward:</strong> Explain why alpha-beta’s best-case speedup is not guaranteed.</p>
+<button type="button" data-modern-apply="4">Apply and compare</button>
+</article></div></div>
+</details>
+<div class="ap-modern-jump"><a class="jump-link" href="#essay">↓ Read the step-by-step explanation</a></div>
+ </section>
+<details class="card quick-assign-modern classroom-lab quick-assign" id="quick-assign-qa-minimax-01" data-quick-assign-id="QA-MINIMAX-01"><summary><strong><span class="qa-i18n" data-qa-en="Quick Assign · QA-MINIMAX-01 · 10–15 min" data-qa-zh="快速任务 · QA-MINIMAX-01 · 10–15 分钟" data-qa-vi="Bài tập nhanh · QA-MINIMAX-01 · 10–15 phút" data-qa-es="Tarea rápida · QA-MINIMAX-01 · 10–15 min">Quick Assign · QA-MINIMAX-01 · 10–15 min</span></strong></summary><div class="quick-assign-modern-body lab-panel"><h2><span class="qa-i18n" data-qa-en="Same answer, less search" data-qa-zh="同一答案，更少搜索" data-qa-vi="Cùng đáp án, ít tìm kiếm hơn" data-qa-es="Misma respuesta, menos búsqueda">Same answer, less search</span></h2><p><span class="qa-i18n" data-qa-en="Use the pruning or move-order Guided Challenge below. Predict first, reveal the trace, then justify why skipped work cannot change the exact minimax answer." data-qa-zh="完成下方剪枝或走法顺序引导挑战。先预测，再揭示 trace，并说明为何跳过的工作不能改变精确 minimax 答案。" data-qa-vi="Làm Guided Challenge về pruning hoặc move ordering bên dưới. Dự đoán trước, tiết lộ trace, rồi giải thích vì sao phần việc bị bỏ qua không thể đổi đáp án minimax chính xác." data-qa-es="Completa el Guided Challenge de poda u orden de movimientos. Predice primero, revela la traza y justifica por qué el trabajo omitido no puede cambiar la respuesta minimax exacta.">Use the pruning or move-order Guided Challenge below. Predict first, reveal the trace, then justify why skipped work cannot change the exact minimax answer.</span></p><p class="tiny">Use the existing Guided Challenge immediately below for the run/reveal step. Responses stay in this browser unless you deliberately copy or print them.</p><div class="qa-modern-grid"><label class="qa-modern-field lab-field"><strong><span class="qa-i18n" data-qa-en="Will this branch prune, or which move order will evaluate less work? State the bound or ordering reason you expect." data-qa-zh="该分支会剪枝吗，或哪种走法顺序评估的工作更少？写出你预计的界或排序理由。" data-qa-vi="Nhánh này có bị prune không, hoặc thứ tự nước đi nào sẽ đánh giá ít việc hơn? Nêu bound hoặc lý do thứ tự bạn dự đoán." data-qa-es="¿Se podará esta rama o qué orden evaluará menos trabajo? Indica el límite o razón de orden que esperas.">Will this branch prune, or which move order will evaluate less work? State the bound or ordering reason you expect.</span></strong><textarea data-qa-answer="predict" rows="3" aria-label="predict"></textarea></label><label class="qa-modern-field lab-field"><strong><span class="qa-i18n" data-qa-en="Record the root value/move, evaluated-work count or first cutoff, and the relevant alpha/beta values when pruning occurs." data-qa-zh="记录根节点价值/走法、评估工作量或第一次 cutoff，以及发生剪枝时相关的 alpha/beta 值。" data-qa-vi="Ghi lại root value/move, số công việc được đánh giá hoặc cutoff đầu tiên, và các giá trị alpha/beta liên quan khi pruning xảy ra." data-qa-es="Registra el valor/movimiento de la raíz, el trabajo evaluado o primer corte y los valores alpha/beta relevantes cuando ocurre la poda.">Record the root value/move, evaluated-work count or first cutoff, and the relevant alpha/beta values when pruning occurs.</span></strong><textarea data-qa-answer="observe" rows="3" aria-label="observe"></textarea></label><label class="qa-modern-field lab-field"><strong><span class="qa-i18n" data-qa-en="Why is the cutoff safe, and why does Alpha-Beta still return the exact minimax result?" data-qa-zh="为什么 cutoff 是安全的？为什么 Alpha-Beta 仍返回完全相同的 minimax 结果？" data-qa-vi="Vì sao cutoff an toàn, và vì sao Alpha-Beta vẫn trả về đúng kết quả minimax chính xác?" data-qa-es="¿Por qué es seguro el corte y por qué Alpha-Beta sigue devolviendo el resultado minimax exacto?">Why is the cutoff safe, and why does Alpha-Beta still return the exact minimax result?</span></strong><textarea data-qa-answer="explain" rows="3" aria-label="explain"></textarea></label><label class="qa-modern-field lab-field"><strong><span class="qa-i18n" data-qa-en="How could reordering the same children change search work without changing the game tree or optimal decision?" data-qa-zh="怎样只重排相同的子节点就改变搜索工作量，却不改变游戏树或最优决策？" data-qa-vi="Đổi thứ tự cùng các child có thể đổi lượng công việc tìm kiếm mà không đổi game tree hay quyết định tối ưu như thế nào?" data-qa-es="¿Cómo puede reordenar los mismos hijos cambiar el trabajo de búsqueda sin cambiar el árbol ni la decisión óptima?">How could reordering the same children change search work without changing the game tree or optimal decision?</span></strong><textarea data-qa-answer="transfer" rows="3" aria-label="transfer"></textarea></label></div><div class="qa-modern-state lab-state" data-qa-modern-state aria-live="polite" data-ap-en="State snapshot appears here." data-ap-zh="状态记录会显示在这里。" data-ap-vi="Ảnh chụp trạng thái sẽ xuất hiện ở đây." data-ap-es="La captura del estado aparecerá aquí.">State snapshot appears here.</div><div class="challenge-controls lab-actions"><button type="button" data-qa-action="refresh-state" data-ap-en="Refresh state" data-ap-zh="更新状态" data-ap-vi="Làm mới trạng thái" data-ap-es="Actualizar estado">↻ <span>Refresh state</span></button><button type="button" data-qa-action="copy">Copy responses</button><button type="button" data-qa-action="print">Print / PDF</button><button type="button" data-qa-action="clear">Clear local draft</button><span class="lab-status" data-qa-modern-status aria-live="polite"></span></div></div></details>
+<section class="ap-modern-curriculum ap-modern-explanation" id="ap-modern-explanation">
+<article class="essay ap-modern-essay" id="essay">
+<section class="essay-primer"><h2>Before you read</h2><p>Minimax assumes both players choose optimally: MAX keeps the largest backed-up value and MIN keeps the smallest. Alpha-beta returns the same answer while skipping branches that current bounds prove cannot matter.</p>
+<h3>Terms used in this explanation</h3><dl class="essay-primer-terms"><div><dt>Game tree</dt><dd>Possible moves arranged as parent and child positions.</dd></div><div><dt>Terminal utility</dt><dd>The score assigned to a finished position.</dd></div><div><dt>MAX node</dt><dd>A turn that keeps the largest child value.</dd></div><div><dt>MIN node</dt><dd>A turn that keeps the smallest child value.</dd></div><div><dt>Minimax value</dt><dd>The result backed up under optimal choices by both players.</dd></div><div><dt>Alpha (α)</dt><dd>The best value MAX can already guarantee on the current path.</dd></div><div><dt>Beta (β)</dt><dd>The best value MIN can already guarantee on the current path.</dd></div><div><dt>Cutoff</dt><dd>A proof that remaining siblings cannot change the ancestor decision.</dd></div></dl></section>
+<section><h2>1. Define the game before searching</h2><p>A game tree lists legal continuations. Terminal utilities are part of the problem definition, not values invented by minimax.</p><p>This lab assumes a finite, deterministic, two-player, zero-sum, perfect-information game and optimal play by both sides.</p></section><section><h2>2. Back values from leaves to the root</h2><p>At a MAX node, keep the largest returned child value. At a MIN node, keep the smallest. Repeating that rule gives the root minimax value and an optimal move.</p><p>A high leaf is not enough: the opposing player chooses among the leaves available on their turn.</p></section><section><h2>3. Carry alpha and beta bounds</h2><p>Alpha is the best value MAX can already guarantee along the current path. Beta is the best value MIN can already guarantee.</p><p>Once alpha is at least beta, remaining siblings cannot improve the decision for the player whose ancestor already has the stronger option.</p></section><section><h2>4. Pruning preserves the exact answer</h2><p>A pruned node still exists in the game tree. The algorithm merely avoids evaluating it because the current bounds prove it cannot affect the root choice.</p><p>Move ordering changes when strong bounds appear. It can reduce work dramatically, but it cannot change the exact minimax result on the same fixed tree.</p></section><section><h2>What this model leaves out</h2><p>Large games require depth limits, heuristic evaluation, transposition tables, iterative deepening, and other search engineering.</p><p>Games with chance, hidden information, simultaneous moves, more than two players, or non-zero-sum payoffs need different models.</p></section>
+<section class="for-teachers"><h2>For teachers</h2>
+<p><strong>Curriculum:</strong> Game trees, terminal utility, alternating MAX/MIN backup, optimal play, alpha and beta bounds, safe cutoffs, and move ordering.</p>
+<h3>Pre-exploration prompts</h3><ul><li>Who chooses the next node at a MIN turn?</li><li>Can the largest leaf determine MAX’s move by itself?</li><li>What would make it safe not to inspect a branch?</li></ul>
+<h3>Post-exploration prompts</h3><ul><li>Back up the simple tree without running the applet.</li><li>Find the exact event where the first cutoff becomes safe.</li><li>Reverse move order and compare evaluated leaves.</li><li>Explain why pruned means not evaluated, not removed from the game.</li></ul>
+<p><strong>Misconceptions to test:</strong> MAX always chooses the largest visible leaf; pruning changes the answer; pruned nodes do not exist; alpha-beta always prunes; move ordering changes the game value.</p></section>
+<details id="ap-modern-a11y" class="accessibility-layer ap-modern-a11y-compact">
+<summary>♿ Text and keyboard support</summary><div class="ap-support-body">
+<h2 class="ap-modern-sr-only">Text and keyboard support</h2><p>Use Tab and Shift+Tab to move through controls. Use Enter or Space on buttons and arrow keys on sliders or select controls.</p>
+<p><a href="#textState">Read the current model state in the applet’s text-state panel.</a></p><p>Important results are available as text and do not depend only on color or motion. This does not replace a full human assistive-technology audit.</p></div></details>
+<p class="ap-modern-back-controls"><a href="#ap-modern-interactive-start">↑ Back to the applet controls</a></p>
+</article></section><section class="panel challenge">
+    <h2>Guided Challenge</h2>
+    <p class="note">Predict first, lock the prediction, then reveal the deterministic mechanism.</p>
+    <div class="challenge-grid">
+      <div class="challenge-box">
+        <label for="challengeSelect"><strong>Challenge</strong></label>
+        <select id="challengeSelect">
+          <option value="root">1. Predict the root choice</option>
+          <option value="min">2. Back up a MIN node</option>
+          <option value="prune">3. Will the branch prune?</option>
+          <option value="order">4. Which move order does less work?</option>
+          <option value="greedy">5. Greedy versus minimax</option>
+        </select>
+        <p id="challengePrompt"></p>
+        <button id="challengeBegin" class="action primary">Begin challenge</button>
+      </div>
+      <div class="challenge-box">
+        <div id="challengePrediction" class="challenge-prediction"></div>
+        <div class="challenge-actions">
+          <button id="challengeLock" class="action" disabled>Lock prediction</button>
+          <button id="challengeReveal" class="action primary" disabled>Reveal mechanism</button>
+          <button id="challengeReset" class="action">Reset challenge</button>
+        </div>
+        <div id="challengeActual" class="actual hidden" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+</main>
+<script id="lab15-minimax-alpha-beta-core">
+"use strict";
+
+/*
+ * Independent JavaScript implementation for Lab 15: Minimax and Alpha-Beta.
+ *
+ * This file intentionally does not import, transpile, or generate code from the
+ * Python reference. Both runtimes implement the same frozen data/trace contract
+ * independently so cross-runtime parity can detect drift.
+ */
+
+const MAX_PLAYER = "MAX";
+const MIN_PLAYER = "MIN";
+
+class TreeValidationError extends Error {
+  constructor(code, message) {
+    super(message);
+    this.name = "TreeValidationError";
+    this.code = code;
+  }
+}
+
+function playerForDepth(depth) {
+  if (!Number.isInteger(depth) || depth < 0) {
+    throw new Error("depth must be a non-negative integer");
+  }
+  return depth % 2 === 0 ? MAX_PLAYER : MIN_PLAYER;
+}
+
+function copyNode(node) {
+  return {
+    id: node.id,
+    children: Array.isArray(node.children) ? [...node.children] : [],
+    utility: node.utility === undefined ? null : node.utility,
+    label: node.label === undefined ? null : node.label,
+  };
+}
+
+function validateTree(tree) {
+  if (!tree || typeof tree.root !== "string" || tree.root.length === 0) {
+    throw new TreeValidationError("missing_root", "root id must be a non-empty string");
+  }
+  if (!Array.isArray(tree.nodes)) {
+    throw new TreeValidationError("missing_root", "tree nodes must be an array");
+  }
+
+  const byId = new Map();
+  for (const raw of tree.nodes) {
+    const node = copyNode(raw);
+    if (typeof node.id !== "string" || node.id.length === 0) {
+      throw new TreeValidationError("invalid_id", "every node id must be a non-empty string");
+    }
+    if (byId.has(node.id)) {
+      throw new TreeValidationError("duplicate_id", `duplicate node id: ${node.id}`);
+    }
+    byId.set(node.id, node);
+  }
+
+  if (!byId.has(tree.root)) {
+    throw new TreeValidationError("missing_root", `root node does not exist: ${tree.root}`);
+  }
+
+  for (const node of byId.values()) {
+    if (new Set(node.children).size !== node.children.length) {
+      throw new TreeValidationError("duplicate_child", `node ${node.id} repeats a child`);
+    }
+    const terminal = node.children.length === 0;
+    if (terminal) {
+      if (node.utility === null) {
+        throw new TreeValidationError("missing_utility", `terminal node ${node.id} lacks utility`);
+      }
+      if (typeof node.utility !== "number" || !Number.isFinite(node.utility)) {
+        throw new TreeValidationError("invalid_utility", `terminal utility must be finite numeric: ${node.id}`);
+      }
+    } else if (node.utility !== null) {
+      throw new TreeValidationError(
+        "nonterminal_utility",
+        `nonterminal node ${node.id} must not supply terminal utility`,
+      );
+    }
+    for (const childId of node.children) {
+      if (!byId.has(childId)) {
+        throw new TreeValidationError(
+          "missing_child",
+          `node ${node.id} references missing child ${childId}`,
+        );
+      }
+    }
+  }
+
+  const parentCount = new Map([...byId.keys()].map((id) => [id, 0]));
+  for (const node of byId.values()) {
+    for (const childId of node.children) {
+      const count = parentCount.get(childId) + 1;
+      parentCount.set(childId, count);
+      if (count > 1) {
+        throw new TreeValidationError("multiple_parents", `node ${childId} has more than one parent`);
+      }
+    }
+  }
+
+  if (parentCount.get(tree.root) !== 0) {
+    throw new TreeValidationError("root_has_parent", "the configured root must not have a parent");
+  }
+
+  const color = new Map([...byId.keys()].map((id) => [id, 0]));
+  function visitCycle(id) {
+    if (color.get(id) === 1) {
+      throw new TreeValidationError("cycle", `cycle detected at node ${id}`);
+    }
+    if (color.get(id) === 2) return;
+    color.set(id, 1);
+    for (const childId of byId.get(id).children) visitCycle(childId);
+    color.set(id, 2);
+  }
+  for (const id of byId.keys()) {
+    if (color.get(id) === 0) visitCycle(id);
+  }
+
+  const reachable = new Set();
+  function mark(id) {
+    if (reachable.has(id)) return;
+    reachable.add(id);
+    for (const childId of byId.get(id).children) mark(childId);
+  }
+  mark(tree.root);
+  if (reachable.size !== byId.size) {
+    const missing = [...byId.keys()].filter((id) => !reachable.has(id)).sort();
+    throw new TreeValidationError("unreachable", `unreachable nodes: ${missing.join(", ")}`);
+  }
+
+  return byId;
+}
+
+function safeBound(value) {
+  return Number.isFinite(value) ? value : null;
+}
+
+function subtreeIds(rootId, byId) {
+  const out = [];
+  function walk(id) {
+    out.push(id);
+    for (const childId of byId.get(id).children) walk(childId);
+  }
+  walk(rootId);
+  return out;
+}
+
+function eventRecord(event, nodeId, depth, fields = {}) {
+  return {
+    event,
+    node_id: nodeId,
+    depth,
+    player: playerForDepth(depth),
+    child_id: fields.child_id ?? null,
+    child_index: fields.child_index ?? null,
+    value: fields.value ?? null,
+    best: fields.best ?? null,
+    alpha: fields.alpha ?? null,
+    beta: fields.beta ?? null,
+    pruned: fields.pruned ? [...fields.pruned] : [],
+    visited_count: fields.visited_count ?? 0,
+    evaluated_leaf_count: fields.evaluated_leaf_count ?? 0,
+  };
+}
+
+function minimax(tree) {
+  const byId = validateTree(tree);
+  const visited = [];
+  const leaves = [];
+  const nodeReturns = {};
+  const trace = [];
+
+  function emit(event, id, depth, fields = {}) {
+    trace.push(eventRecord(event, id, depth, {
+      ...fields,
+      alpha: null,
+      beta: null,
+      visited_count: visited.length,
+      evaluated_leaf_count: leaves.length,
+    }));
+  }
+
+  function solve(id, depth) {
+    const node = byId.get(id);
+    visited.push(id);
+    emit("enter", id, depth);
+
+    if (node.children.length === 0) {
+      const value = Number(node.utility);
+      leaves.push(id);
+      nodeReturns[id] = value;
+      emit("leaf", id, depth, { value, best: value });
+      emit("return", id, depth, { value, best: value });
+      return value;
+    }
+
+    const maximizing = playerForDepth(depth) === MAX_PLAYER;
+    let best = maximizing ? -Infinity : Infinity;
+    node.children.forEach((childId, index) => {
+      const childValue = solve(childId, depth + 1);
+      emit("child_return", id, depth, {
+        child_id: childId,
+        child_index: index,
+        value: childValue,
+        best: Number.isFinite(best) ? best : null,
+      });
+      const better = maximizing ? childValue > best : childValue < best;
+      if (better) {
+        best = childValue;
+        emit("best_update", id, depth, {
+          child_id: childId,
+          child_index: index,
+          value: childValue,
+          best,
+        });
+      }
+    });
+
+    nodeReturns[id] = best;
+    emit("return", id, depth, { value: best, best });
+    return best;
+  }
+
+  const rootValue = solve(tree.root, 0);
+  const root = byId.get(tree.root);
+  let optimalChildren = [];
+  let selectedChild = null;
+  if (root.children.length) {
+    optimalChildren = root.children.filter(
+      (childId) => Object.prototype.hasOwnProperty.call(nodeReturns, childId)
+        && nodeReturns[childId] === rootValue,
+    );
+    selectedChild = optimalChildren[0];
+  }
+
+  return {
+    algorithm: "minimax",
+    root_value: rootValue,
+    selected_child: selectedChild,
+    optimal_children: optimalChildren,
+    visited_nodes: visited,
+    evaluated_leaves: leaves,
+    pruned_nodes: [],
+    node_returns: nodeReturns,
+    trace,
+  };
+}
+
+function alphaBeta(tree) {
+  const byId = validateTree(tree);
+  const visited = [];
+  const leaves = [];
+  const pruned = [];
+  const nodeReturns = {};
+  const trace = [];
+
+  function emit(event, id, depth, alpha, beta, fields = {}) {
+    trace.push(eventRecord(event, id, depth, {
+      ...fields,
+      alpha: safeBound(alpha),
+      beta: safeBound(beta),
+      visited_count: visited.length,
+      evaluated_leaf_count: leaves.length,
+    }));
+  }
+
+  function solve(id, depth, alphaIn, betaIn) {
+    let alpha = alphaIn;
+    let beta = betaIn;
+    const node = byId.get(id);
+    visited.push(id);
+    emit("enter", id, depth, alpha, beta);
+
+    if (node.children.length === 0) {
+      const value = Number(node.utility);
+      leaves.push(id);
+      nodeReturns[id] = value;
+      emit("leaf", id, depth, alpha, beta, { value, best: value });
+      emit("return", id, depth, alpha, beta, { value, best: value });
+      return value;
+    }
+
+    const maximizing = playerForDepth(depth) === MAX_PLAYER;
+    let best = maximizing ? -Infinity : Infinity;
+
+    for (let index = 0; index < node.children.length; index += 1) {
+      const childId = node.children[index];
+      const childValue = solve(childId, depth + 1, alpha, beta);
+      emit("child_return", id, depth, alpha, beta, {
+        child_id: childId,
+        child_index: index,
+        value: childValue,
+        best: Number.isFinite(best) ? best : null,
+      });
+
+      const better = maximizing ? childValue > best : childValue < best;
+      if (better) {
+        best = childValue;
+        emit("best_update", id, depth, alpha, beta, {
+          child_id: childId,
+          child_index: index,
+          value: childValue,
+          best,
+        });
+      }
+
+      if (maximizing) {
+        const updated = Math.max(alpha, best);
+        if (updated !== alpha) {
+          alpha = updated;
+          emit("alpha_update", id, depth, alpha, beta, {
+            child_id: childId,
+            child_index: index,
+            value: childValue,
+            best,
+          });
+        }
+      } else {
+        const updated = Math.min(beta, best);
+        if (updated !== beta) {
+          beta = updated;
+          emit("beta_update", id, depth, alpha, beta, {
+            child_id: childId,
+            child_index: index,
+            value: childValue,
+            best,
+          });
+        }
+      }
+
+      if (alpha >= beta && index + 1 < node.children.length) {
+        const skipped = [];
+        for (const siblingId of node.children.slice(index + 1)) {
+          skipped.push(...subtreeIds(siblingId, byId));
+        }
+        pruned.push(...skipped);
+        emit("prune", id, depth, alpha, beta, {
+          child_id: childId,
+          child_index: index,
+          value: childValue,
+          best,
+          pruned: skipped,
+        });
+        break;
+      }
+    }
+
+    nodeReturns[id] = best;
+    emit("return", id, depth, alpha, beta, { value: best, best });
+    return best;
+  }
+
+  const rootValue = solve(tree.root, 0, -Infinity, Infinity);
+  const root = byId.get(tree.root);
+  let selectedChild = null;
+  if (root.children.length) {
+    const updates = trace.filter(
+      (entry) => entry.event === "best_update" && entry.node_id === tree.root,
+    );
+    selectedChild = updates.length ? updates[updates.length - 1].child_id : root.children[0];
+  }
+
+  return {
+    algorithm: "alpha_beta",
+    root_value: rootValue,
+    selected_child: selectedChild,
+    optimal_children: null,
+    visited_nodes: visited,
+    evaluated_leaves: leaves,
+    pruned_nodes: pruned,
+    node_returns: nodeReturns,
+    trace,
+  };
+}
+
+function node(id, children = [], utility = null, label = null) {
+  return { id, children: [...children], utility, label };
+}
+
+function tree(root, rows) {
+  return {
+    root,
+    nodes: rows.map(([id, children, utility]) => node(id, children, utility)),
+  };
+}
+
+const SCENARIOS = {
+  simple_backup: () => tree("R", [
+    ["R", ["A", "B"], null],
+    ["A", ["A1", "A2"], null],
+    ["B", ["B1", "B2"], null],
+    ["A1", [], 3], ["A2", [], 5], ["B1", [], 4], ["B2", [], 6],
+  ]),
+  greedy_trap: () => tree("R", [
+    ["R", ["A", "B"], null],
+    ["A", ["A1", "A2"], null],
+    ["B", ["B1", "B2"], null],
+    ["A1", [], 9], ["A2", [], -4], ["B1", [], 2], ["B2", [], 3],
+  ]),
+  first_prune: () => tree("R", [
+    ["R", ["A", "B"], null],
+    ["A", ["A1", "A2"], null],
+    ["B", ["B1", "B2"], null],
+    ["A1", [], 5], ["A2", [], 6], ["B1", [], 4], ["B2", [], 9],
+  ]),
+  good_ordering: () => tree("R", [
+    ["R", ["A", "B", "C"], null],
+    ["A", ["A1", "A2"], null],
+    ["B", ["B1", "B2"], null],
+    ["C", ["C1", "C2"], null],
+    ["A1", [], 8], ["A2", [], 9],
+    ["B1", [], 7], ["B2", [], 10],
+    ["C1", [], 6], ["C2", [], 11],
+  ]),
+  poor_ordering: () => tree("R", [
+    ["R", ["C", "B", "A"], null],
+    ["A", ["A2", "A1"], null],
+    ["B", ["B2", "B1"], null],
+    ["C", ["C2", "C1"], null],
+    ["A1", [], 8], ["A2", [], 9],
+    ["B1", [], 7], ["B2", [], 10],
+    ["C1", [], 6], ["C2", [], 11],
+  ]),
+  no_prune: () => tree("R", [
+    ["R", ["A", "B"], null],
+    ["A", ["A1", "A2"], null],
+    ["B", ["B1", "B2"], null],
+    ["A1", [], 1], ["A2", [], 2], ["B1", [], 3], ["B2", [], 4],
+  ]),
+  tied_optimum: () => tree("R", [
+    ["R", ["A", "B", "C"], null],
+    ["A", ["A1", "A2"], null],
+    ["B", ["B1", "B2"], null],
+    ["C", ["C1", "C2"], null],
+    ["A1", [], 5], ["A2", [], 7],
+    ["B1", [], 5], ["B2", [], 8],
+    ["C1", [], 4], ["C2", [], 9],
+  ]),
+  deep_cutoff: () => tree("R", [
+    ["R", ["A", "B"], null],
+    ["A", ["A1", "A2"], null],
+    ["B", ["B1", "B2"], null],
+    ["A1", ["A11", "A12"], null],
+    ["A2", ["A21", "A22"], null],
+    ["B1", ["B11", "B12"], null],
+    ["B2", ["B21", "B22"], null],
+    ["A11", [], 5], ["A12", [], 6],
+    ["A21", [], 7], ["A22", [], 4],
+    ["B11", [], 3], ["B12", [], 2],
+    ["B21", [], 9], ["B22", [], 8],
+  ]),
+  boundary_terminal: () => tree("R", [["R", [], -2]]),
+  boundary_chain: () => tree("R", [
+    ["R", ["A"], null],
+    ["A", ["B"], null],
+    ["B", ["C"], null],
+    ["C", [], 7],
+  ]),
+  boundary_unbalanced: () => tree("R", [
+    ["R", ["A", "B"], null],
+    ["A", [], 1],
+    ["B", ["C", "D"], null],
+    ["C", ["E"], null],
+    ["D", ["F", "G"], null],
+    ["E", [], -2],
+    ["F", [], 0],
+    ["G", [], 3],
+  ]),
+};
+
+function scenario(name) {
+  if (!Object.prototype.hasOwnProperty.call(SCENARIOS, name)) {
+    throw new Error(`unknown Lab 15 scenario: ${name}`);
+  }
+  return SCENARIOS[name]();
+}
+
+function invalidFixtures() {
+  return {
+    missing_root: { root: "missing", nodes: [node("R", [], 0)] },
+    duplicate_id: { root: "R", nodes: [node("R", [], 0), node("R", [], 1)] },
+    missing_child: { root: "R", nodes: [node("R", ["X"], null)] },
+    duplicate_child: { root: "R", nodes: [node("R", ["A", "A"], null), node("A", [], 1)] },
+    root_has_parent: { root: "R", nodes: [node("R", ["A"], null), node("A", ["R"], null)] },
+    multiple_parents: {
+      root: "R",
+      nodes: [
+        node("R", ["A", "B"], null),
+        node("A", ["C"], null),
+        node("B", ["C"], null),
+        node("C", [], 0),
+      ],
+    },
+    cycle: {
+      root: "R",
+      nodes: [node("R", [], 0), node("X", ["Y"], null), node("Y", ["X"], null)],
+    },
+    unreachable: { root: "R", nodes: [node("R", [], 0), node("X", [], 1)] },
+    missing_utility: { root: "R", nodes: [node("R", [], null)] },
+    invalid_utility: { root: "R", nodes: [node("R", [], Number.POSITIVE_INFINITY)] },
+    nonterminal_utility: {
+      root: "R",
+      nodes: [node("R", ["A"], 5), node("A", [], 1)],
+    },
+  };
+}
+
+function validationCode(input) {
+  try {
+    validateTree(input);
+    return null;
+  } catch (error) {
+    if (error instanceof TreeValidationError) return error.code;
+    throw error;
+  }
+}
+
+function parityFixtures() {
+  const scenarios = {};
+  for (const name of Object.keys(SCENARIOS)) {
+    const input = scenario(name);
+    scenarios[name] = {
+      tree: input,
+      minimax: minimax(input),
+      alpha_beta: alphaBeta(input),
+    };
+  }
+
+  const invalid = {};
+  for (const [name, input] of Object.entries(invalidFixtures())) {
+    invalid[name] = validationCode(input);
+  }
+
+  return { scenarios, invalid };
+}
+
+const API = {
+  MAX_PLAYER,
+  MIN_PLAYER,
+  TreeValidationError,
+  playerForDepth,
+  validateTree,
+  minimax,
+  alphaBeta,
+  scenario,
+  scenarioNames: () => Object.keys(SCENARIOS),
+  parityFixtures,
+};
+
+if (typeof module !== "undefined" && module.exports) module.exports = API;
+if (typeof window !== "undefined") window.Lab15GameTreeCore = API;
+
+</script>
+<script>
+(() => {
+  "use strict";
+  const C = window.Lab15GameTreeCore;
+  if (!C) throw new Error("Lab15GameTreeCore did not load");
+
+  const $ = (id) => document.getElementById(id);
+  const scenarioLabels = {
+    simple_backup: "Simple backup",
+    greedy_trap: "Greedy trap",
+    first_prune: "First safe prune",
+    good_ordering: "Good move ordering",
+    poor_ordering: "Poor move ordering",
+    no_prune: "No pruning possible",
+    tied_optimum: "Tied optimal moves",
+    deep_cutoff: "Deep cutoff",
+    boundary_terminal: "Single terminal root",
+    boundary_chain: "One-child chain",
+    boundary_unbalanced: "Unbalanced boundary tree"
+  };
+  let baseTree = null;
+  let activeTree = null;
+  let result = null;
+  let traceIndex = -1;
+  let baseline = null;
+  let challenge = {state:"inactive", id:"root", prediction:null};
+
+  function clone(value){ return JSON.parse(JSON.stringify(value)); }
+  function applyOrder(tree, mode){
+    const out = clone(tree);
+    if(mode === "reverse"){
+      out.nodes.forEach(node => { if(node.children.length > 1) node.children.reverse(); });
+    }
+    return out;
+  }
+  function depthMap(tree){
+    const map = new Map();
+    function walk(id,d){ map.set(id,d); const n=tree.nodes.find(x=>x.id===id); n.children.forEach(c=>walk(c,d+1)); }
+    walk(tree.root,0); return map;
+  }
+  function recompute(reset=true){
+    activeTree = applyOrder(baseTree, $("order").value);
+    result = $("algorithm").value === "minimax" ? C.minimax(activeTree) : C.alphaBeta(activeTree);
+    if(reset) traceIndex = -1;
+    renderAll();
+  }
+  function loadScenario(name){
+    baseTree = C.scenario(name);
+    $("order").value = "configured";
+    recompute(true);
+    renderUtilities();
+  }
+  function visibleState(){
+    const events = traceIndex < 0 ? [] : result.trace.slice(0, traceIndex + 1);
+    const visited = new Set();
+    const returned = {};
+    const pruned = new Set();
+    let current = null;
+    let leaves = 0;
+    for(const event of events){
+      if(event.event === "enter") visited.add(event.node_id);
+      if(event.event === "leaf") leaves = event.evaluated_leaf_count;
+      if(event.event === "return") returned[event.node_id] = event.value;
+      if(event.event === "prune") event.pruned.forEach(id => pruned.add(id));
+      current = event;
+    }
+    return {events,visited,returned,pruned,current,leaves};
+  }
+  function layoutTree(tree){
+    const by = new Map(tree.nodes.map(n=>[n.id,n]));
+    const depths = depthMap(tree);
+    let leafSlot = 0;
+    const pos = new Map();
+    function place(id){
+      const node = by.get(id);
+      let x;
+      if(!node.children.length){ x = 70 + leafSlot++ * 105; }
+      else { const childXs=node.children.map(place); x=(childXs[0]+childXs[childXs.length-1])/2; }
+      const y = 62 + depths.get(id)*100;
+      pos.set(id,{x,y});
+      return x;
+    }
+    place(tree.root);
+    const maxDepth=Math.max(...depths.values());
+    return {pos,width:Math.max(720,leafSlot*105+90),height:Math.max(300,(maxDepth+1)*100+70),depths,by};
+  }
+  function svg(name, attrs={}){
+    const el=document.createElementNS("http://www.w3.org/2000/svg",name);
+    Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,String(v))); return el;
+  }
+  function renderTree(){
+    const state=visibleState(), data=layoutTree(activeTree), root=$("tree");
+    root.replaceChildren(); root.setAttribute("viewBox",`0 0 ${data.width} ${data.height}`);
+    for(const node of activeTree.nodes){
+      for(const childId of node.children){
+        const a=data.pos.get(node.id), b=data.pos.get(childId);
+        root.appendChild(svg("path",{class:"edge",d:`M ${a.x} ${a.y+25} C ${a.x} ${a.y+55}, ${b.x} ${b.y-55}, ${b.x} ${b.y-25}`}));
+      }
+    }
+    for(const node of activeTree.nodes){
+      const p=data.pos.get(node.id), depth=data.depths.get(node.id), terminal=node.children.length===0;
+      const classes=["node", C.playerForDepth(depth).toLowerCase()];
+      if(state.visited.has(node.id)) classes.push("visited");
+      if(Object.prototype.hasOwnProperty.call(state.returned,node.id)) classes.push("returned");
+      if(state.pruned.has(node.id)) classes.push("pruned");
+      if(state.current && state.current.node_id===node.id) classes.push("current");
+      const g=svg("g",{class:classes.join(" "),transform:`translate(${p.x} ${p.y})`});
+      const title=svg("title"); title.textContent=`${node.id}: ${terminal ? "terminal utility "+node.utility : C.playerForDepth(depth)+" node"}${state.pruned.has(node.id) ? "; not evaluated after cutoff" : ""}`;
+      const circle=svg("circle",{r:27});
+      const idText=svg("text",{y:-7}); idText.textContent=node.id;
+      const role=svg("text",{y:7,class:"role"}); role.textContent=terminal ? `u=${node.utility}` : C.playerForDepth(depth);
+      const value=svg("text",{y:20,class:"value"}); value.textContent=Object.prototype.hasOwnProperty.call(state.returned,node.id) ? `v=${state.returned[node.id]}` : (state.pruned.has(node.id) ? "PRUNED" : "");
+      g.append(title,circle,idText,role,value); root.appendChild(g);
+    }
+    root.setAttribute("aria-label",`Game tree. ${state.visited.size} nodes visited; ${state.pruned.size} nodes currently marked not evaluated after pruning.`);
+  }
+  function describeEvent(event){
+    if(!event) return ["Trace not started","The tree and terminal utilities are visible, but no search event has been revealed."];
+    const name=event.event.replaceAll("_"," ");
+    let explanation=`${event.player} at node ${event.node_id}: ${name}.`;
+    if(event.child_id) explanation += ` Child ${event.child_id}${event.value===null?"":` returned ${event.value}`}.`;
+    if(event.event==="best_update") explanation += ` The current best becomes ${event.best}.`;
+    if(event.event==="alpha_update") explanation += ` alpha becomes ${event.alpha}.`;
+    if(event.event==="beta_update") explanation += ` beta becomes ${event.beta}.`;
+    if(event.event==="prune") explanation += ` alpha (${event.alpha}) >= beta (${event.beta}), so ${event.pruned.join(", ")} will not be evaluated.`;
+    if(event.event==="return") explanation += ` This node returns ${event.value}.`;
+    return [`${traceIndex+1}/${result.trace.length} - ${name}`, explanation];
+  }
+  function renderTrace(){
+    const state=visibleState(), [title,explanation]=describeEvent(state.current);
+    $("traceTitle").textContent=title; $("traceExplanation").textContent=explanation;
+    if(state.current && $("algorithm").value==="alpha_beta"){
+      const a=state.current.alpha===null?"-inf":state.current.alpha, b=state.current.beta===null?"+inf":state.current.beta;
+      $("boundsLine").textContent=`Current bounds in this event: alpha=${a}, beta=${b}`;
+    } else $("boundsLine").textContent="";
+    const complete=traceIndex===result.trace.length-1;
+    $("rootValue").textContent=complete?String(result.root_value):"hidden";
+    $("selectedMove").textContent=complete?(result.selected_child??"terminal"):"hidden";
+    $("optimalSet").textContent=complete?($("algorithm").value==="minimax"?(result.optimal_children.length?result.optimal_children.join(", "):"terminal"):"not claimed from pruned trace"):"hidden";
+    $("visitedCount").textContent=String(state.visited.size);
+    $("leafCount").textContent=String(state.leaves);
+    $("prunedCount").textContent=String(state.pruned.size);
+    $("backTrace").disabled=traceIndex<0; $("stepTrace").disabled=complete; $("endTrace").disabled=complete;
+    const lines=[
+      `scenario=${$("scenario").value}`,
+      `algorithm=${$("algorithm").value}`,
+      `order=${$("order").value}`,
+      `trace_event=${state.current?state.current.event:"none"}`,
+      `trace_index=${traceIndex}`,
+      `visited=${[...state.visited].join(",")||"none"}`,
+      `evaluated_leaves=${state.leaves}`,
+      `pruned_not_evaluated=${[...state.pruned].join(",")||"none"}`,
+      `root_value=${complete?result.root_value:"hidden"}`,
+      `selected_move=${complete?(result.selected_child??"terminal"):"hidden"}`
+    ];
+    if(state.current && $("algorithm").value==="alpha_beta") lines.push(`alpha=${state.current.alpha===null?"-inf":state.current.alpha}; beta=${state.current.beta===null?"+inf":state.current.beta}`);
+    $("textState").textContent=lines.join("\n");
+  }
+  function renderUtilities(){
+    const box=$("utilities"); box.replaceChildren();
+    baseTree.nodes.filter(n=>!n.children.length).forEach(node=>{
+      const wrap=document.createElement("div"); wrap.className="utility-item";
+      const label=document.createElement("label"); const span=document.createElement("span"); span.textContent=node.id;
+      const input=document.createElement("input"); input.type="number"; input.min="-20"; input.max="20"; input.step="1"; input.value=String(node.utility); input.dataset.node=node.id;
+      input.addEventListener("change",()=>{
+        const value=Number(input.value);
+        if(!Number.isFinite(value)){input.value=String(node.utility);return;}
+        const bounded=Math.max(-20,Math.min(20,value)); input.value=String(bounded); node.utility=bounded; recompute(true);
+      });
+      label.append(span,input); wrap.appendChild(label); box.appendChild(wrap);
+    });
+  }
+  function renderBaseline(){
+    const box=$("baseline");
+    if(!baseline){box.className="baseline empty";box.textContent="No comparison run saved.";return;}
+    box.className="baseline";
+    const current={algorithm:$("algorithm").value,root:result.root_value,move:result.selected_child,visited:result.visited_nodes.length,leaves:result.evaluated_leaves.length,pruned:result.pruned_nodes.length};
+    box.textContent=`Saved: ${baseline.algorithm}, value ${baseline.root}, move ${baseline.move??"terminal"}, ${baseline.leaves} leaves. Current: ${current.algorithm}, value ${current.root}, move ${current.move??"terminal"}, ${current.leaves} leaves.`;
+  }
+  function renderAll(){ renderTree();renderTrace();renderBaseline(); }
+
+  C.scenarioNames().forEach(name=>{const option=document.createElement("option");option.value=name;option.textContent=scenarioLabels[name]||name;$("scenario").appendChild(option);});
+  $("scenario").value="simple_backup";
+  $("scenario").addEventListener("change",()=>loadScenario($("scenario").value));
+  $("algorithm").addEventListener("change",()=>recompute(true));
+  $("order").addEventListener("change",()=>recompute(true));
+  $("resetTrace").addEventListener("click",()=>{traceIndex=-1;renderAll();});
+  $("backTrace").addEventListener("click",()=>{traceIndex=Math.max(-1,traceIndex-1);renderAll();});
+  $("stepTrace").addEventListener("click",()=>{traceIndex=Math.min(result.trace.length-1,traceIndex+1);renderAll();});
+  $("endTrace").addEventListener("click",()=>{traceIndex=result.trace.length-1;renderAll();});
+  $("saveBaseline").addEventListener("click",()=>{baseline={algorithm:$("algorithm").value,root:result.root_value,move:result.selected_child,visited:result.visited_nodes.length,leaves:result.evaluated_leaves.length,pruned:result.pruned_nodes.length};renderBaseline();});
+
+  const challengeDefs={
+    root:{prompt:"On the Simple backup tree, which root child will MAX select, and what value reaches the root?", setup(){ $("scenario").value="simple_backup";$("algorithm").value="minimax";loadScenario("simple_backup"); }, fields:[["move","select",["A","B"]],["value","number"]], answer(){const r=C.minimax(C.scenario("simple_backup"));return{move:r.selected_child,value:r.root_value,text:`MAX selects ${r.selected_child}; the root value is ${r.root_value}. MIN returns 3 from A and 4 from B, so MAX chooses 4.`};}},
+    min:{prompt:"In Simple backup, node A is a MIN node with terminal children 3 and 5. What value does A return?",setup(){ $("scenario").value="simple_backup";$("algorithm").value="minimax";loadScenario("simple_backup"); },fields:[["value","number"]],answer(){const r=C.minimax(C.scenario("simple_backup"));return{value:r.node_returns.A,text:`A returns ${r.node_returns.A}. MIN keeps the smaller child value.`};}},
+    prune:{prompt:"In First safe prune with Alpha-Beta, will B's remaining child B2 be evaluated after B1 returns 4?",setup(){ $("scenario").value="first_prune";$("algorithm").value="alpha_beta";loadScenario("first_prune"); },fields:[["prune","select",["yes","no"]]],answer(){const r=C.alphaBeta(C.scenario("first_prune"));const e=r.trace.find(x=>x.event==="prune");return{prune:e&&e.pruned.includes("B2")?"yes":"no",text:`Yes. After B1 returns 4, alpha=5 and beta=4, so alpha >= beta. B2 is present in the tree but is not evaluated.`};}},
+    order:{prompt:"The Good ordering and Poor ordering scenarios contain the same utilities. Which one makes Alpha-Beta evaluate fewer leaves?",setup(){ $("scenario").value="good_ordering";$("algorithm").value="alpha_beta";loadScenario("good_ordering"); },fields:[["order","select",["good","poor","same"]]],answer(){const g=C.alphaBeta(C.scenario("good_ordering")),p=C.alphaBeta(C.scenario("poor_ordering"));return{order:g.evaluated_leaves.length<p.evaluated_leaves.length?"good":g.evaluated_leaves.length>p.evaluated_leaves.length?"poor":"same",text:`Good ordering evaluates ${g.evaluated_leaves.length} leaves; poor ordering evaluates ${p.evaluated_leaves.length}. Both return value ${g.root_value}.`};}},
+    greedy:{prompt:"In Greedy trap, branch A contains a visible utility 9. Does minimax select A or B?",setup(){ $("scenario").value="greedy_trap";$("algorithm").value="minimax";loadScenario("greedy_trap"); },fields:[["move","select",["A","B"]]],answer(){const r=C.minimax(C.scenario("greedy_trap"));return{move:r.selected_child,text:`Minimax selects ${r.selected_child}. MIN can force A down to -4, while B guarantees 2; the visible 9 does not determine the root choice.`};}}
+  };
+  function renderChallengePrompt(){challenge.id=$("challengeSelect").value;$("challengePrompt").textContent=challengeDefs[challenge.id].prompt;}
+  function renderChallengeFields(){
+    const box=$("challengePrediction");box.replaceChildren();
+    for(const [name,type,options] of challengeDefs[challenge.id].fields){
+      const label=document.createElement("label");label.textContent=name==="move"?"Predicted move":name==="value"?"Predicted value":name==="prune"?"Will B2 be pruned?":"Fewer leaves";
+      let input;
+      if(type==="select"){input=document.createElement("select");const blank=document.createElement("option");blank.value="";blank.textContent="Choose";input.appendChild(blank);options.forEach(v=>{const o=document.createElement("option");o.value=v;o.textContent=v;input.appendChild(o);});}
+      else {input=document.createElement("input");input.type="number";}
+      input.dataset.challengeField=name;input.addEventListener("input",syncChallengeReady);label.appendChild(input);box.appendChild(label);
+    }
+  }
+  function predictionValues(){const out={};document.querySelectorAll("[data-challenge-field]").forEach(el=>out[el.dataset.challengeField]=el.value);return out;}
+  function syncChallengeReady(){const fields=[...document.querySelectorAll("[data-challenge-field]")];$("challengeLock").disabled=challenge.state!=="awaiting"||!fields.length||fields.some(el=>el.value==="");}
+  function beginChallenge(){challenge={state:"awaiting",id:$("challengeSelect").value,prediction:null};challengeDefs[challenge.id].setup();renderChallengeFields();$("challengeActual").classList.add("hidden");$("challengeActual").textContent="";$("challengeReveal").disabled=true;syncChallengeReady();}
+  function lockChallenge(){if(challenge.state!=="awaiting")return;challenge.prediction=predictionValues();challenge.state="locked";document.querySelectorAll("[data-challenge-field]").forEach(el=>el.disabled=true);$("challengeLock").disabled=true;$("challengeReveal").disabled=false;}
+  function revealChallenge(){if(challenge.state!=="locked")return;const answer=challengeDefs[challenge.id].answer();challenge.state="revealed";const keys=Object.keys(answer).filter(k=>k!=="text");const matched=keys.every(k=>String(answer[k])===String(challenge.prediction[k]));$("challengeActual").textContent=`${matched?"Prediction matched. ":"Prediction differed. "}${answer.text}`;$("challengeActual").classList.remove("hidden");$("challengeReveal").disabled=true;if(challenge.id==="prune"){traceIndex=result.trace.findIndex(e=>e.event==="prune");renderAll();}else{$("endTrace").click();}}
+  function resetChallenge(){challenge={state:"inactive",id:$("challengeSelect").value,prediction:null};$("challengePrediction").replaceChildren();$("challengeActual").classList.add("hidden");$("challengeActual").textContent="";$("challengeLock").disabled=true;$("challengeReveal").disabled=true;}
+  $("challengeSelect").addEventListener("change",()=>{resetChallenge();renderChallengePrompt();});
+  $("challengeBegin").addEventListener("click",beginChallenge);$("challengeLock").addEventListener("click",lockChallenge);$("challengeReveal").addEventListener("click",revealChallenge);$("challengeReset").addEventListener("click",resetChallenge);
+  renderChallengePrompt();
+  loadScenario("simple_backup");
+
+  window.Lab15Prototype={
+    getTree:()=>clone(activeTree),
+    getResult:()=>clone(result),
+    getTraceIndex:()=>traceIndex,
+    setTraceIndex:(i)=>{traceIndex=Math.max(-1,Math.min(result.trace.length-1,Number(i)));renderAll();},
+    getVisibleState:()=>{const s=visibleState();return{visited:[...s.visited],pruned:[...s.pruned],returned:clone(s.returned),event:s.current?clone(s.current):null,leaves:s.leaves};},
+    getChallengeState:()=>clone(challenge),
+    recompute:()=>recompute(true)
+  };
+})();
+</script>
+<script id="lab15-locale-data" type="application/json">{"catalogs":{"en":{"algorithm.alpha_beta":"Alpha-Beta","algorithm.minimax":"Minimax","aria.search_summary":"Search summary","aria.trace_playback":"Trace playback","aria.tree_initial":"Game tree search state","badge":"R4 English candidate","baseline.compare":"Saved: {savedAlg}, value {savedRoot}, move {savedMove}, {savedLeaves} leaves. Current: {currentAlg}, value {currentRoot}, move {currentMove}, {currentLeaves} leaves.","baseline.none":"No comparison run saved.","challenge.begin":"Begin challenge","challenge.diff":"Prediction differed.","challenge.greedy.actual":"Minimax selects B. MIN can force A down to -4, while B guarantees 2; the visible 9 does not determine the root choice.","challenge.greedy.label":"5. Greedy versus minimax","challenge.greedy.prompt":"In Greedy trap, branch A contains a visible utility 9. Does minimax select A or B?","challenge.intro":"Predict first, lock the prediction, then reveal the deterministic mechanism.","challenge.label":"Challenge","challenge.lock":"Lock prediction","challenge.match":"Prediction matched.","challenge.min.actual":"A returns 3. MIN keeps the smaller child value.","challenge.min.label":"2. Back up a MIN node","challenge.min.prompt":"In Simple backup, node A is a MIN node with terminal children 3 and 5. What value does A return?","challenge.order.actual":"Good ordering evaluates 4 leaves; poor ordering evaluates 6. Both return value 8.","challenge.order.label":"4. Which move order does less work?","challenge.order.prompt":"The Good ordering and Poor ordering scenarios contain the same utilities. Which one makes Alpha-Beta evaluate fewer leaves?","challenge.prune.actual":"Yes. After B1 returns 4, alpha=5 and beta=4, so alpha >= beta. B2 is present in the tree but is not evaluated.","challenge.prune.label":"3. Will the branch prune?","challenge.prune.prompt":"In First safe prune with Alpha-Beta, will B's remaining child B2 be evaluated after B1 returns 4?","challenge.reset":"Reset challenge","challenge.reveal":"Reveal mechanism","challenge.root.actual":"MAX selects B; the root value is 4. MIN returns 3 from A and 4 from B, so MAX chooses 4.","challenge.root.label":"1. Predict the root choice","challenge.root.prompt":"On the Simple backup tree, which root child will MAX select, and what value reaches the root?","challenge.title":"Guided Challenge","control.algorithm":"Algorithm","control.order":"Child order","control.scenario":"Scenario","event.alpha_update":"alpha update","event.best_update":"best update","event.beta_update":"beta update","event.child_return":"child return","event.enter":"enter","event.leaf":"leaf","event.prune":"prune","event.return":"return","field.choose":"Choose","field.move":"Predicted move","field.order":"Fewer leaves","field.prune":"Will B2 be pruned?","field.value":"Predicted value","heading.text_state":"Text equivalent of current state","hero.boundary":"Model boundary: finite deterministic two-player zero-sum perfect-information trees. Pruned nodes remain visible as part of the problem definition but are labeled not evaluated by the algorithm.","hero.boundary.body":" finite deterministic two-player zero-sum perfect-information trees. Pruned nodes remain visible as part of the problem definition but are labeled not evaluated by the algorithm.","hero.boundary.prefix":"Model boundary:","hero.intro":"Back terminal utilities up through alternating MAX and MIN turns. Then switch on alpha-beta pruning to see which subtrees can be skipped without changing the exact root decision.","hero.title":"Game Trees: Minimax and Alpha-Beta Pruning","locale.language":"Language","metric.leaves":"Leaves evaluated","metric.move":"Selected move","metric.optimal":"Optimal set","metric.pruned":"Pruned nodes","metric.root":"Root value","metric.visited":"Visited","option.good":"good","option.no":"no","option.poor":"poor","option.same":"same","option.yes":"yes","order.configured":"Configured order","order.reverse":"Reverse every sibling list","page.title":"Game Trees: Minimax and Alpha-Beta Pruning","panel.cutoff.tail":"; skipped nodes are not evaluated.","panel.edit_note":"Terminal utilities are the game's given data. Editing one recomputes the trace; it does not mutate the tree topology.","panel.manipulate":"Manipulate the problem","panel.max.keep":" keeps the largest returned child value. ","panel.maxmin":"MAX keeps the largest returned child value. MIN keeps the smallest. In Alpha-Beta mode, a cutoff is safe once alpha >= beta; skipped nodes are not evaluated.","panel.min.keep":" keeps the smallest. In Alpha-Beta mode, a cutoff is safe once ","panel.order":"Move ordering can change how much work alpha-beta does. It cannot change the exact minimax value of this fixed tree.","panel.watch":"What to watch","scenario.boundary_chain":"One-child chain","scenario.boundary_terminal":"Single terminal root","scenario.boundary_unbalanced":"Unbalanced boundary tree","scenario.deep_cutoff":"Deep cutoff","scenario.first_prune":"First safe prune","scenario.good_ordering":"Good move ordering","scenario.greedy_trap":"Greedy trap","scenario.no_prune":"No pruning possible","scenario.poor_ordering":"Poor move ordering","scenario.simple_backup":"Simple backup","scenario.tied_optimum":"Tied optimal moves","state.hidden":"hidden","state.none":"none","state.not_claimed":"not claimed from pruned trace","state.terminal":"terminal","text.algorithm":"algorithm={value}","text.bounds":"alpha={alpha}; beta={beta}","text.evaluated_leaves":"evaluated_leaves={value}","text.move":"selected_move={value}","text.order":"order={value}","text.pruned":"pruned_not_evaluated={value}","text.root":"root_value={value}","text.scenario":"scenario={value}","text.trace_event":"trace_event={value}","text.trace_index":"trace_index={value}","text.visited":"visited={value}","trace.alpha_update":"{player} at node {node}: alpha update. Child {child} returned {value}. alpha becomes {alpha}.","trace.best_update":"{player} at node {node}: best update. Child {child} returned {value}. The current best becomes {best}.","trace.beta_update":"{player} at node {node}: beta update. Child {child} returned {value}. beta becomes {beta}.","trace.bounds":"Current bounds in this event: alpha={alpha}, beta={beta}","trace.child_return":"{player} at node {node}: child return. Child {child} returned {value}.","trace.enter":"{player} at node {node}: enter.","trace.leaf":"{player} at node {node}: leaf.","trace.not_started.body":"The tree and terminal utilities are visible, but no search event has been revealed.","trace.not_started.title":"Trace not started","trace.prune":"{player} at node {node}: prune. Child {child} returned {value}. alpha ({alpha}) >= beta ({beta}), so {pruned} will not be evaluated.","trace.return":"{player} at node {node}: return. This node returns {value}.","trace.title":"{index}/{total} - {event}","transport.back":"Back","transport.end":"Reveal complete trace","transport.restart":"Restart trace","transport.save":"Save run for comparison","transport.step":"Step","tree.aria":"Game tree. {visited} nodes visited; {pruned} nodes currently marked not evaluated after pruning.","tree.node_internal":"{node}: {player} node","tree.node_internal_pruned":"{node}: {player} node; not evaluated after cutoff","tree.node_terminal":"{node}: terminal utility {utility}","tree.node_terminal_pruned":"{node}: terminal utility {utility}; not evaluated after cutoff","tree.pruned_label":"PRUNED"},"es":{"algorithm.alpha_beta":"Alpha-Beta","algorithm.minimax":"Minimax","aria.search_summary":"Resumen de búsqueda","aria.trace_playback":"Controles de reproducción de la traza","aria.tree_initial":"Estado de búsqueda del árbol de juego","badge":"Candidato R4 en inglés","baseline.compare":"Guardado: {savedAlg}, valor {savedRoot}, movimiento {savedMove}, {savedLeaves} hojas evaluadas. Actual: {currentAlg}, valor {currentRoot}, movimiento {currentMove}, {currentLeaves} hojas evaluadas.","baseline.none":"No hay ninguna ejecución guardada para comparar.","challenge.begin":"Comenzar desafío","challenge.diff":"La predicción fue diferente.","challenge.greedy.actual":"Minimax elige B. MIN puede forzar A hasta -4, mientras que B garantiza 2; el 9 visible no determina la elección en la raíz.","challenge.greedy.label":"5. Voraz frente a Minimax","challenge.greedy.prompt":"En Greedy trap, la rama A contiene una utilidad visible de 9. ¿Minimax elige A o B?","challenge.intro":"Predice primero, bloquea la predicción y después revela el mecanismo determinista.","challenge.label":"Desafío","challenge.lock":"Bloquear predicción","challenge.match":"La predicción coincidió.","challenge.min.actual":"A devuelve 3. MIN conserva el menor valor de sus hijos.","challenge.min.label":"2. Propaga hacia atrás un nodo MIN","challenge.min.prompt":"En Simple backup, el nodo A es un nodo MIN con hijos terminales de valores 3 y 5. ¿Qué valor devuelve A?","challenge.order.actual":"El buen orden evalúa 4 hojas; el mal orden evalúa 6. Ambos devuelven el valor 8.","challenge.order.label":"4. ¿Qué orden de movimientos requiere menos trabajo?","challenge.order.prompt":"Los escenarios Good ordering y Poor ordering contienen las mismas utilidades. ¿Cuál hace que Alpha-Beta evalúe menos hojas?","challenge.prune.actual":"Sí. Después de que B1 devuelve 4, alpha=5 y beta=4, por lo que alpha >= beta. B2 sigue presente en el árbol, pero el algoritmo no lo evalúa.","challenge.prune.label":"3. ¿Se podará esta rama?","challenge.prune.prompt":"En First safe prune con Alpha-Beta, ¿se evaluará el hijo restante B2 de B después de que B1 devuelva 4?","challenge.reset":"Reiniciar desafío","challenge.reveal":"Revelar mecanismo","challenge.root.actual":"MAX elige B; el valor de la raíz es 4. MIN devuelve 3 desde A y 4 desde B, así que MAX elige 4.","challenge.root.label":"1. Predice la elección de la raíz","challenge.root.prompt":"En el árbol Simple backup, ¿qué hijo de la raíz elegirá MAX y qué valor llegará a la raíz?","challenge.title":"Desafío guiado","control.algorithm":"Algoritmo","control.order":"Orden de los hijos","control.scenario":"Escenario","event.alpha_update":"actualizar alpha","event.best_update":"actualizar mejor valor","event.beta_update":"actualizar beta","event.child_return":"retorno del hijo","event.enter":"entrar","event.leaf":"hoja","event.prune":"podar","event.return":"retornar","field.choose":"Elegir","field.move":"Movimiento predicho","field.order":"Menos hojas evaluadas","field.prune":"¿Se podará B2?","field.value":"Valor predicho","heading.text_state":"Equivalente textual del estado actual","hero.boundary":"Límite del modelo: árboles de juego finitos, deterministas, de dos jugadores, de suma cero y con información perfecta. Los nodos podados siguen visibles como parte de la definición del problema, pero se marcan explícitamente como no evaluados por el algoritmo.","hero.boundary.body":" árboles de juego finitos, deterministas, de dos jugadores, de suma cero y con información perfecta. Los nodos podados siguen visibles como parte de la definición del problema, pero se marcan explícitamente como no evaluados por el algoritmo.","hero.boundary.prefix":"Límite del modelo:","hero.intro":"Propaga hacia atrás las utilidades terminales a través de turnos alternados de MAX y MIN. Después activa la poda alpha-beta para ver qué subárboles pueden omitirse sin cambiar la decisión exacta en la raíz.","hero.title":"Árboles de juego: Minimax y poda Alpha-Beta","locale.language":"Idioma","metric.leaves":"Hojas evaluadas","metric.move":"Movimiento elegido","metric.optimal":"Conjunto óptimo","metric.pruned":"Nodos podados","metric.root":"Valor de la raíz","metric.visited":"Nodos visitados","option.good":"buen orden","option.no":"no","option.poor":"mal orden","option.same":"igual","option.yes":"sí","order.configured":"Orden configurado","order.reverse":"Invertir cada lista de hermanos","page.title":"Árboles de juego: Minimax y poda Alpha-Beta","panel.cutoff.tail":"; los nodos omitidos no son evaluados por el algoritmo.","panel.edit_note":"Las utilidades terminales son datos dados por el juego. Editar una recalcula la traza; no cambia la topología del árbol.","panel.manipulate":"Modificar el problema","panel.max.keep":" conserva el mayor valor devuelto por sus hijos. ","panel.maxmin":"MAX conserva el mayor valor devuelto por sus hijos. MIN conserva el menor. En modo Alpha-Beta, un corte es seguro cuando alpha >= beta; los nodos omitidos no son evaluados por el algoritmo.","panel.min.keep":" conserva el menor. En modo Alpha-Beta, un corte es seguro cuando ","panel.order":"El orden de los movimientos puede cambiar cuánto trabajo realiza alpha-beta. No puede cambiar el valor Minimax exacto de este árbol de juego fijo.","panel.watch":"Qué observar","scenario.boundary_chain":"Cadena de un solo hijo","scenario.boundary_terminal":"Raíz terminal única","scenario.boundary_unbalanced":"Árbol límite desequilibrado","scenario.deep_cutoff":"Corte profundo","scenario.first_prune":"Primer corte seguro","scenario.good_ordering":"Buen orden de movimientos","scenario.greedy_trap":"Trampa voraz","scenario.no_prune":"No es posible podar","scenario.poor_ordering":"Mal orden de movimientos","scenario.simple_backup":"Propagación simple","scenario.tied_optimum":"Movimientos óptimos empatados","state.hidden":"oculto","state.none":"ninguno","state.not_claimed":"la traza podada no afirma el conjunto óptimo completo","state.terminal":"terminal","text.algorithm":"algorithm={value}","text.bounds":"alpha={alpha}; beta={beta}","text.evaluated_leaves":"evaluated_leaves={value}","text.move":"selected_move={value}","text.order":"order={value}","text.pruned":"pruned_not_evaluated={value}","text.root":"root_value={value}","text.scenario":"scenario={value}","text.trace_event":"trace_event={value}","text.trace_index":"trace_index={value}","text.visited":"visited={value}","trace.alpha_update":"{player} en el nodo {node}: actualizar alpha. El hijo {child} devuelve {value}. alpha pasa a ser {alpha}.","trace.best_update":"{player} en el nodo {node}: actualizar mejor valor. El hijo {child} devuelve {value}. El mejor valor actual pasa a ser {best}.","trace.beta_update":"{player} en el nodo {node}: actualizar beta. El hijo {child} devuelve {value}. beta pasa a ser {beta}.","trace.bounds":"Límites actuales en este evento: alpha={alpha}, beta={beta}","trace.child_return":"{player} en el nodo {node}: retorno del hijo. El hijo {child} devuelve {value}.","trace.enter":"{player} en el nodo {node}: entrar.","trace.leaf":"{player} en el nodo {node}: hoja.","trace.not_started.body":"El árbol y las utilidades terminales son visibles, pero todavía no se ha revelado ningún evento de búsqueda.","trace.not_started.title":"La traza no ha comenzado","trace.prune":"{player} en el nodo {node}: podar. El hijo {child} devuelve {value}. Como alpha ({alpha}) >= beta ({beta}), {pruned} no será evaluado por el algoritmo.","trace.return":"{player} en el nodo {node}: retornar. Este nodo devuelve {value}.","trace.title":"{index}/{total} - {event}","transport.back":"Atrás","transport.end":"Revelar traza completa","transport.restart":"Reiniciar traza","transport.save":"Guardar ejecución para comparar","transport.step":"Paso","tree.aria":"Árbol de juego. Se han visitado {visited} nodos; actualmente {pruned} nodos están marcados como no evaluados después de la poda.","tree.node_internal":"{node}: nodo {player}","tree.node_internal_pruned":"{node}: nodo {player}; no evaluado después del corte","tree.node_terminal":"{node}: utilidad terminal {utility}","tree.node_terminal_pruned":"{node}: utilidad terminal {utility}; no evaluado después del corte","tree.pruned_label":"PODADO"},"vi":{"algorithm.alpha_beta":"Alpha-Beta","algorithm.minimax":"Minimax","aria.search_summary":"Tóm tắt tìm kiếm","aria.trace_playback":"Điều khiển phát vết","aria.tree_initial":"Trạng thái tìm kiếm trên cây trò chơi","badge":"Bản ứng viên tiếng Anh R4","baseline.compare":"Đã lưu: {savedAlg}, giá trị {savedRoot}, nước đi {savedMove}, đánh giá {savedLeaves} lá. Hiện tại: {currentAlg}, giá trị {currentRoot}, nước đi {currentMove}, đánh giá {currentLeaves} lá.","baseline.none":"Chưa lưu lần chạy nào để so sánh.","challenge.begin":"Bắt đầu thử thách","challenge.diff":"Dự đoán khác kết quả.","challenge.greedy.actual":"Minimax chọn B. MIN có thể ép A xuống -4, trong khi B bảo đảm 2; giá trị 9 nhìn thấy không quyết định lựa chọn ở nút gốc.","challenge.greedy.label":"5. Tham lam so với Minimax","challenge.greedy.prompt":"Trong Greedy trap, nhánh A có một giá trị tiện ích nhìn thấy là 9. Minimax sẽ chọn A hay B?","challenge.intro":"Dự đoán trước, khóa dự đoán, rồi mới tiết lộ cơ chế xác định.","challenge.label":"Thử thách","challenge.lock":"Khóa dự đoán","challenge.match":"Dự đoán khớp.","challenge.min.actual":"A trả về 3. MIN giữ giá trị nút con nhỏ hơn.","challenge.min.label":"2. Lan truyền ngược một nút MIN","challenge.min.prompt":"Trong Simple backup, nút A là một nút MIN có hai nút con kết thúc với giá trị 3 và 5. A trả về giá trị nào?","challenge.order.actual":"Thứ tự tốt đánh giá 4 lá; thứ tự kém đánh giá 6 lá. Cả hai đều trả về giá trị 8.","challenge.order.label":"4. Thứ tự nước đi nào cần ít công việc hơn?","challenge.order.prompt":"Hai kịch bản Good ordering và Poor ordering có cùng các giá trị tiện ích. Kịch bản nào khiến Alpha-Beta đánh giá ít lá hơn?","challenge.prune.actual":"Có. Sau khi B1 trả về 4, alpha=5 và beta=4, nên alpha >= beta. B2 vẫn có trong cây nhưng thuật toán không đánh giá nó.","challenge.prune.label":"3. Nhánh này có bị cắt không?","challenge.prune.prompt":"Trong First safe prune với Alpha-Beta, nút con còn lại B2 của B có được đánh giá sau khi B1 trả về 4 không?","challenge.reset":"Đặt lại thử thách","challenge.reveal":"Tiết lộ cơ chế","challenge.root.actual":"MAX chọn B; giá trị nút gốc là 4. MIN trả về 3 từ A và 4 từ B, vì vậy MAX chọn 4.","challenge.root.label":"1. Dự đoán lựa chọn ở nút gốc","challenge.root.prompt":"Trong cây Simple backup, MAX sẽ chọn nút con nào của gốc và giá trị nào được lan truyền về nút gốc?","challenge.title":"Thử thách có hướng dẫn","control.algorithm":"Thuật toán","control.order":"Thứ tự nút con","control.scenario":"Kịch bản","event.alpha_update":"cập nhật alpha","event.best_update":"cập nhật tốt nhất","event.beta_update":"cập nhật beta","event.child_return":"nút con trả về","event.enter":"đi vào","event.leaf":"lá","event.prune":"cắt tỉa","event.return":"trả về","field.choose":"Chọn","field.move":"Nước đi dự đoán","field.order":"Ít lá được đánh giá hơn","field.prune":"B2 có bị cắt tỉa không?","field.value":"Giá trị dự đoán","heading.text_state":"Biểu diễn văn bản tương đương của trạng thái hiện tại","hero.boundary":"Giới hạn mô hình: cây trò chơi hữu hạn, xác định, hai người chơi, tổng bằng không và thông tin hoàn hảo. Các nút bị cắt tỉa vẫn hiện diện như một phần của bài toán nhưng được ghi rõ là thuật toán không đánh giá.","hero.boundary.body":" cây trò chơi hữu hạn, xác định, hai người chơi, tổng bằng không và thông tin hoàn hảo. Các nút bị cắt tỉa vẫn hiện diện như một phần của bài toán nhưng được ghi rõ là thuật toán không đánh giá.","hero.boundary.prefix":"Giới hạn mô hình:","hero.intro":"Lan truyền ngược các giá trị tiện ích ở trạng thái kết thúc qua những lượt MAX và MIN luân phiên. Sau đó bật cắt tỉa alpha-beta để xem những cây con nào có thể được bỏ qua mà không làm thay đổi quyết định chính xác ở nút gốc.","hero.title":"Cây trò chơi: Minimax và cắt tỉa Alpha-Beta","locale.language":"Ngôn ngữ","metric.leaves":"Lá đã đánh giá","metric.move":"Nước đi đã chọn","metric.optimal":"Tập nước đi tối ưu","metric.pruned":"Nút bị cắt tỉa","metric.root":"Giá trị nút gốc","metric.visited":"Nút đã thăm","option.good":"thứ tự tốt","option.no":"không","option.poor":"thứ tự kém","option.same":"như nhau","option.yes":"có","order.configured":"Thứ tự đã cấu hình","order.reverse":"Đảo ngược mọi danh sách nút anh em","page.title":"Cây trò chơi: Minimax và cắt tỉa Alpha-Beta","panel.cutoff.tail":"; các nút bị bỏ qua không được thuật toán đánh giá.","panel.edit_note":"Các giá trị tiện ích ở trạng thái kết thúc là dữ liệu đã cho của trò chơi. Sửa một giá trị sẽ tính lại vết nhưng không thay đổi cấu trúc liên kết của cây.","panel.manipulate":"Điều chỉnh bài toán","panel.max.keep":" giữ giá trị nút con trả về lớn nhất. ","panel.maxmin":"MAX giữ giá trị nút con trả về lớn nhất. MIN giữ giá trị nhỏ nhất. Trong chế độ Alpha-Beta, có thể cắt an toàn khi alpha >= beta; các nút bị bỏ qua không được thuật toán đánh giá.","panel.min.keep":" giữ giá trị nhỏ nhất. Trong chế độ Alpha-Beta, có thể cắt an toàn khi ","panel.order":"Thứ tự nước đi có thể thay đổi lượng công việc của alpha-beta. Nó không thể thay đổi giá trị Minimax chính xác của cây trò chơi cố định này.","panel.watch":"Điểm cần quan sát","scenario.boundary_chain":"Chuỗi mỗi nút một con","scenario.boundary_terminal":"Gốc duy nhất là trạng thái kết thúc","scenario.boundary_unbalanced":"Cây biên không cân bằng","scenario.deep_cutoff":"Cắt sâu","scenario.first_prune":"Lần cắt tỉa an toàn đầu tiên","scenario.good_ordering":"Thứ tự nước đi tốt","scenario.greedy_trap":"Bẫy tham lam","scenario.no_prune":"Không thể cắt tỉa","scenario.poor_ordering":"Thứ tự nước đi kém","scenario.simple_backup":"Lan truyền ngược đơn giản","scenario.tied_optimum":"Các nước đi tối ưu đồng hạng","state.hidden":"chưa hiện","state.none":"không có","state.not_claimed":"vết đã cắt tỉa không khẳng định tập tối ưu đầy đủ","state.terminal":"trạng thái kết thúc","text.algorithm":"algorithm={value}","text.bounds":"alpha={alpha}; beta={beta}","text.evaluated_leaves":"evaluated_leaves={value}","text.move":"selected_move={value}","text.order":"order={value}","text.pruned":"pruned_not_evaluated={value}","text.root":"root_value={value}","text.scenario":"scenario={value}","text.trace_event":"trace_event={value}","text.trace_index":"trace_index={value}","text.visited":"visited={value}","trace.alpha_update":"{player} tại nút {node}: cập nhật alpha. Nút con {child} trả về {value}. alpha trở thành {alpha}.","trace.best_update":"{player} tại nút {node}: cập nhật tốt nhất. Nút con {child} trả về {value}. Giá trị tốt nhất hiện tại trở thành {best}.","trace.beta_update":"{player} tại nút {node}: cập nhật beta. Nút con {child} trả về {value}. beta trở thành {beta}.","trace.bounds":"Các cận hiện tại trong sự kiện này: alpha={alpha}, beta={beta}","trace.child_return":"{player} tại nút {node}: nút con trả về. Nút con {child} trả về {value}.","trace.enter":"{player} tại nút {node}: đi vào.","trace.leaf":"{player} tại nút {node}: lá.","trace.not_started.body":"Cây trò chơi và các giá trị tiện ích ở trạng thái kết thúc đã hiển thị, nhưng chưa có sự kiện tìm kiếm nào được tiết lộ.","trace.not_started.title":"Vết chưa bắt đầu","trace.prune":"{player} tại nút {node}: cắt tỉa. Nút con {child} trả về {value}. Vì alpha ({alpha}) >= beta ({beta}), {pruned} sẽ không được thuật toán đánh giá.","trace.return":"{player} tại nút {node}: trả về. Nút này trả về {value}.","trace.title":"{index}/{total} - {event}","transport.back":"Lùi","transport.end":"Hiện toàn bộ vết","transport.restart":"Khởi động lại vết","transport.save":"Lưu lần chạy để so sánh","transport.step":"Bước","tree.aria":"Cây trò chơi. Đã thăm {visited} nút; hiện có {pruned} nút được đánh dấu là không được đánh giá sau khi cắt tỉa.","tree.node_internal":"{node}: nút {player}","tree.node_internal_pruned":"{node}: nút {player}; không được đánh giá sau khi cắt","tree.node_terminal":"{node}: giá trị tiện ích kết thúc {utility}","tree.node_terminal_pruned":"{node}: giá trị tiện ích kết thúc {utility}; không được đánh giá sau khi cắt","tree.pruned_label":"ĐÃ CẮT"},"zh":{"algorithm.alpha_beta":"Alpha-Beta","algorithm.minimax":"Minimax","aria.search_summary":"搜索摘要","aria.trace_playback":"跟踪播放控件","aria.tree_initial":"博弈树搜索状态","badge":"R4 英文候选版","baseline.compare":"已保存：{savedAlg}，值 {savedRoot}，行动 {savedMove}，求值 {savedLeaves} 个叶节点。当前：{currentAlg}，值 {currentRoot}，行动 {currentMove}，求值 {currentLeaves} 个叶节点。","baseline.none":"尚未保存用于比较的运行。","challenge.begin":"开始挑战","challenge.diff":"预测不同。","challenge.greedy.actual":"Minimax 选择 B。MIN 可以把 A 压低到 -4，而 B 能保证 2；可见的 9 并不能决定根节点的选择。","challenge.greedy.label":"5. 贪心选择与 Minimax","challenge.greedy.prompt":"在“贪心陷阱”中，分支 A 含有一个可见效用值 9。Minimax 会选择 A 还是 B？","challenge.intro":"先做预测并锁定答案，再揭示确定性的计算机制。","challenge.label":"挑战","challenge.lock":"锁定预测","challenge.match":"预测正确。","challenge.min.actual":"A 返回 3。MIN 保留较小的子节点值。","challenge.min.label":"2. 回传一个 MIN 节点","challenge.min.prompt":"在“简单回传”中，节点 A 是一个 MIN 节点，终局子节点的效用值为 3 和 5。A 会返回什么值？","challenge.order.actual":"良好行动顺序求值 4 个叶节点；较差行动顺序求值 6 个叶节点。两者的返回值都为 8。","challenge.order.label":"4. 哪种行动顺序工作量更少？","challenge.order.prompt":"“良好行动顺序”和“较差行动顺序”场景具有相同效用值。哪一种会让 Alpha-Beta 求值更少的叶节点？","challenge.prune.actual":"是。B1 返回 4 后，alpha=5 且 beta=4，因此 alpha >= beta。B2 仍存在于博弈树中，但算法不会对它求值。","challenge.prune.label":"3. 这个分支会被剪枝吗？","challenge.prune.prompt":"在“首次安全剪枝”场景中使用 Alpha-Beta。当 B1 返回 4 后，B 的剩余子节点 B2 还会被求值吗？","challenge.reset":"重置挑战","challenge.reveal":"揭示机制","challenge.root.actual":"MAX 选择 B；根节点值为 4。MIN 从 A 返回 3、从 B 返回 4，因此 MAX 选择 4。","challenge.root.label":"1. 预测根节点选择","challenge.root.prompt":"在“简单回传”博弈树中，MAX 会选择根节点的哪个子节点？根节点最终得到什么值？","challenge.title":"引导式挑战","control.algorithm":"算法","control.order":"子节点顺序","control.scenario":"场景","event.alpha_update":"alpha 更新","event.best_update":"最优值更新","event.beta_update":"beta 更新","event.child_return":"子节点返回","event.enter":"进入","event.leaf":"叶节点","event.prune":"剪枝","event.return":"返回","field.choose":"请选择","field.move":"预测行动","field.order":"叶节点求值更少","field.prune":"B2 会被剪枝吗？","field.value":"预测值","heading.text_state":"当前状态的文本等价表示","hero.boundary":"模型边界：有限、确定性、双人、零和、完全信息博弈树。被剪枝的节点仍作为问题定义的一部分显示，但明确标注为算法未求值。","hero.boundary.body":"有限、确定性、双人、零和、完全信息博弈树。被剪枝的节点仍作为问题定义的一部分显示，但明确标注为算法未求值。","hero.boundary.prefix":"模型边界：","hero.intro":"将终局效用值沿交替的 MAX 和 MIN 回合逐层回传。然后启用 alpha-beta 剪枝，观察哪些子树可以在不改变根节点精确决策的前提下被跳过。","hero.title":"博弈树：Minimax 与 Alpha-Beta 剪枝","locale.language":"语言","metric.leaves":"已求值叶节点","metric.move":"已选行动","metric.optimal":"最优行动集合","metric.pruned":"已剪枝节点","metric.root":"根节点值","metric.visited":"已访问节点","option.good":"良好顺序","option.no":"否","option.poor":"较差顺序","option.same":"相同","option.yes":"是","order.configured":"已配置顺序","order.reverse":"反转每组兄弟节点顺序","page.title":"博弈树：Minimax 与 Alpha-Beta 剪枝","panel.cutoff.tail":"，就可以安全截断；被跳过的节点不会被算法求值。","panel.edit_note":"终局效用值是博弈给定的数据。编辑某个值会重新计算跟踪，但不会改变树的拓扑结构。","panel.manipulate":"调整问题","panel.max.keep":" 保留返回的最大子节点值。","panel.maxmin":"MAX 保留返回的最大子节点值，MIN 保留最小值。在 Alpha-Beta 模式下，一旦 alpha >= beta，就可以安全截断；被跳过的节点不会被算法求值。","panel.min.keep":" 保留最小值。在 Alpha-Beta 模式下，一旦满足 ","panel.order":"行动顺序可以改变 alpha-beta 的搜索工作量，但不能改变这棵固定博弈树的精确 Minimax 值。","panel.watch":"观察重点","scenario.boundary_chain":"单子节点链","scenario.boundary_terminal":"单个终局根节点","scenario.boundary_unbalanced":"非平衡边界树","scenario.deep_cutoff":"深层截断","scenario.first_prune":"首次安全剪枝","scenario.good_ordering":"良好行动顺序","scenario.greedy_trap":"贪心陷阱","scenario.no_prune":"无法剪枝","scenario.poor_ordering":"较差行动顺序","scenario.simple_backup":"简单回传","scenario.tied_optimum":"并列最优行动","state.hidden":"未揭示","state.none":"无","state.not_claimed":"剪枝跟踪不声称完整最优集合","state.terminal":"终局","text.algorithm":"algorithm={value}","text.bounds":"alpha={alpha}; beta={beta}","text.evaluated_leaves":"evaluated_leaves={value}","text.move":"selected_move={value}","text.order":"order={value}","text.pruned":"pruned_not_evaluated={value}","text.root":"root_value={value}","text.scenario":"scenario={value}","text.trace_event":"trace_event={value}","text.trace_index":"trace_index={value}","text.visited":"visited={value}","trace.alpha_update":"{player} 位于节点 {node}：alpha 更新。子节点 {child} 返回 {value}。alpha 变为 {alpha}。","trace.best_update":"{player} 位于节点 {node}：最优值更新。子节点 {child} 返回 {value}。当前最优值变为 {best}。","trace.beta_update":"{player} 位于节点 {node}：beta 更新。子节点 {child} 返回 {value}。beta 变为 {beta}。","trace.bounds":"此事件中的当前边界：alpha={alpha}，beta={beta}","trace.child_return":"{player} 位于节点 {node}：子节点返回。子节点 {child} 返回 {value}。","trace.enter":"{player} 位于节点 {node}：进入。","trace.leaf":"{player} 位于节点 {node}：叶节点。","trace.not_started.body":"博弈树和终局效用值已经可见，但尚未揭示任何搜索事件。","trace.not_started.title":"跟踪尚未开始","trace.prune":"{player} 位于节点 {node}：剪枝。子节点 {child} 返回 {value}。由于 alpha ({alpha}) >= beta ({beta})，{pruned} 将不会被算法求值。","trace.return":"{player} 位于节点 {node}：返回。该节点返回 {value}。","trace.title":"{index}/{total} - {event}","transport.back":"后退","transport.end":"揭示完整跟踪","transport.restart":"重新开始跟踪","transport.save":"保存本次运行以便比较","transport.step":"单步","tree.aria":"博弈树。已访问 {visited} 个节点；当前有 {pruned} 个节点被标记为剪枝后未求值。","tree.node_internal":"{node}：{player} 节点","tree.node_internal_pruned":"{node}：{player} 节点；截断后未求值","tree.node_terminal":"{node}：终局效用值 {utility}","tree.node_terminal_pruned":"{node}：终局效用值 {utility}；截断后未求值","tree.pruned_label":"已剪枝"}},"source_freeze_head":"f904e6d68f71602dced73e99d259eee055899bc2"}</script>
+
+<script id="lab15-r6-localization-runtime">
+(() => {
+  "use strict";
+  const DATA = JSON.parse(document.getElementById("lab15-locale-data").textContent);
+  const LOCALES = ["en", "zh", "vi", "es"];
+  const NAMES = {en:"English", zh:"简体中文", vi:"Tiếng Việt", es:"Español"};
+  const HTML_LANG = {en:"en", zh:"zh-Hans", vi:"vi", es:"es"};
+  const catalogs = DATA.catalogs;
+  let current = "en";
+  let scheduled = false;
+  let observer = null;
+  let mutating = false;
+
+  const exactToKey = new Map();
+  const phraseEntries = [];
+  const templateEntries = [];
+
+  function escapeRe(text){return text.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")}
+  function compileTemplate(value, key){
+    const names=[];
+    let cursor=0, pattern="^";
+    const re=/\{([A-Za-z0-9_]+)\}/g;
+    let match;
+    while((match=re.exec(value))){
+      pattern += escapeRe(value.slice(cursor,match.index));
+      names.push(match[1]);
+      pattern += "([\\s\\S]*?)";
+      cursor = match.index + match[0].length;
+    }
+    pattern += escapeRe(value.slice(cursor)) + "$";
+    return {key,names,re:new RegExp(pattern),literal:value.replace(/\{[A-Za-z0-9_]+\}/g,"").length};
+  }
+  for(const locale of LOCALES){
+    const cat=catalogs[locale];
+    for(const [key,value] of Object.entries(cat)){
+      if(!exactToKey.has(value)) exactToKey.set(value,key);
+      if(/\{[A-Za-z0-9_]+\}/.test(value)) templateEntries.push(compileTemplate(value,key));
+      else if(value.length>=8 || key==="challenge.match" || key==="challenge.diff") phraseEntries.push({key,value,length:value.length});
+    }
+  }
+  templateEntries.sort((a,b)=>b.literal-a.literal);
+  phraseEntries.sort((a,b)=>b.length-a.length);
+
+  function format(template,args){
+    return template.replace(/\{([A-Za-z0-9_]+)\}/g,(_,name)=>Object.prototype.hasOwnProperty.call(args,name)?args[name]:`{${name}}`);
+  }
+  function direct(text){
+    const key=exactToKey.get(text);
+    return key && Object.prototype.hasOwnProperty.call(catalogs[current],key) ? catalogs[current][key] : null;
+  }
+  function translateTemplate(text){
+    for(const entry of templateEntries){
+      const match=entry.re.exec(text);
+      if(!match) continue;
+      const args={};
+      entry.names.forEach((name,index)=>{
+        const raw=match[index+1];
+        const translated=direct(raw);
+        args[name]=translated===null ? raw : translated;
+      });
+      return format(catalogs[current][entry.key],args);
+    }
+    return null;
+  }
+  function translateScalar(text){
+    if(!text) return text;
+    const exact=direct(text); if(exact!==null) return exact;
+    if(text.includes("\n")){
+      return text.split("\n").map(line=>translateScalar(line)).join("\n");
+    }
+    const ws=/^(\s*)([\s\S]*?)(\s*)$/.exec(text);
+    if(ws && ws[2]){
+      const coreDirect=direct(ws[2]);
+      if(coreDirect!==null) return ws[1]+coreDirect+ws[3];
+      const coreTemplate=translateTemplate(ws[2]);
+      if(coreTemplate!==null) return ws[1]+coreTemplate+ws[3];
+    }
+    const templated=translateTemplate(text); if(templated!==null) return templated;
+    let out=text;
+    for(const entry of phraseEntries){
+      if(!out.includes(entry.value)) continue;
+      const target=catalogs[current][entry.key];
+      if(target!==entry.value) out=out.split(entry.value).join(target);
+    }
+    return out;
+  }
+  function skipElement(el){
+    return !!(el && el.closest && el.closest("#lab15-locale-data,[data-lab15-no-translate]"));
+  }
+  function localizeAttributes(el){
+    if(skipElement(el)) return;
+    for(const name of ["aria-label","title","placeholder"]){
+      if(!el.hasAttribute || !el.hasAttribute(name)) continue;
+      const before=el.getAttribute(name), after=translateScalar(before);
+      if(after!==before) el.setAttribute(name,after);
+    }
+  }
+  function localizeTextNode(node){
+    if(!node || node.nodeType!==Node.TEXT_NODE) return;
+    const parent=node.parentElement;
+    if(!parent || ["SCRIPT","STYLE","NOSCRIPT"].includes(parent.tagName) || skipElement(parent)) return;
+    const before=node.nodeValue, after=translateScalar(before);
+    if(after!==before) node.nodeValue=after;
+  }
+  function localizeTree(root){
+    if(!root) return;
+    if(root.nodeType===Node.TEXT_NODE){localizeTextNode(root);return;}
+    if(root.nodeType!==Node.ELEMENT_NODE && root.nodeType!==Node.DOCUMENT_NODE) return;
+    if(root.nodeType===Node.ELEMENT_NODE) localizeAttributes(root);
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_ELEMENT|NodeFilter.SHOW_TEXT);
+    let node=walker.currentNode;
+    while(node){
+      if(node.nodeType===Node.TEXT_NODE) localizeTextNode(node);
+      else if(node.nodeType===Node.ELEMENT_NODE) localizeAttributes(node);
+      node=walker.nextNode();
+    }
+  }
+  function updateChrome(){
+    const htmlLang=HTML_LANG[current];
+    if(document.documentElement.lang!==htmlLang) document.documentElement.lang=htmlLang;
+    const nextTitle=translateScalar(document.title);
+    if(document.title!==nextTitle) document.title=nextTitle;
+    const label=document.getElementById("lab15-language-label");
+    const labelText=catalogs[current]["locale.language"];
+    if(label && label.textContent!==labelText) label.textContent=labelText;
+    const select=document.getElementById("lab15-language-select");
+    if(select && select.value!==current) select.value=current;
+  }
+  function updateUrl(){
+    try{const url=new URL(location.href);url.searchParams.set("lang",current);history.replaceState(null,"",url)}catch(_){ }
+  }
+  function observe(){
+    if(observer && !mutating){
+      observer.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:["aria-label","title","placeholder"]});
+    }
+  }
+  function localizeScoped(root=document.body){
+    if(!root || mutating) return;
+    mutating=true;
+    if(observer) observer.disconnect();
+    try{
+      localizeTree(root);
+      updateChrome();
+    }finally{
+      mutating=false;
+      observe();
+    }
+  }
+  function localizeAll(){localizeScoped(document.body)}
+  function schedule(){
+    if(scheduled) return;
+    scheduled=true;
+    queueMicrotask(()=>{
+      scheduled=false;
+      localizeAll();
+    });
+  }
+  function setLocale(code,{updateHistory=true}={}){
+    if(!LOCALES.includes(code)) code="en";
+    current=code;
+    localizeAll();
+    if(updateHistory) updateUrl();
+    window.dispatchEvent(new CustomEvent("lab15localechange",{detail:{locale:current}}));
+    return current;
+  }
+  function installBar(){
+    const main=document.querySelector("main.shell"); if(!main || document.getElementById("lab15-locale-bar")) return;
+    const bar=document.createElement("div");bar.id="lab15-locale-bar";bar.className="lab15-locale-bar";bar.setAttribute("data-lab15-no-translate","true");
+    const label=document.createElement("label");label.id="lab15-language-label";label.htmlFor="lab15-language-select";
+    const select=document.createElement("select");select.id="lab15-language-select";select.className="lab15-language-select";select.setAttribute("aria-labelledby","lab15-language-label");
+    for(const code of LOCALES){const option=document.createElement("option");option.value=code;option.textContent=NAMES[code];select.appendChild(option)}
+    select.addEventListener("change",()=>setLocale(select.value));bar.append(label,select);main.prepend(bar);
+  }
+  function initialLocale(){
+    try{const value=new URL(location.href).searchParams.get("lang");return LOCALES.includes(value)?value:"en"}catch(_){return"en"}
+  }
+  function init(){
+    installBar();
+    current=initialLocale();
+    localizeAll();
+    observer=new MutationObserver(mutations=>{
+      if(mutating) return;
+      if(mutations.some(m=>m.type==="characterData" || m.type==="attributes" || m.addedNodes.length || m.removedNodes.length)) schedule();
+    });
+    observe();
+    window.Lab15Localization={
+      locale:()=>current,
+      getLocale:()=>current,
+      setLocale:(code)=>setLocale(code),
+      catalog:(code=current)=>({...catalogs[code]}),
+      locales:()=>LOCALES.slice(),
+      sourceFreeze:()=>DATA.source_freeze_head,
+      relocalize:()=>localizeAll()
+    };
+  }
+  init();
+})();
+</script>
+
+
+<!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
+<script data-ai-playgrounds-analytics="v1.8.1">
+(function () {
+  'use strict';
+  var CANONICAL_HOST = 'lmdixon23.github.io';
+  var ENDPOINT = 'https://lmdixon23.goatcounter.com/count';
+  var PAGE_KIND = 'applet';
+  var PAGE_SLUG = 'minimax-alpha-beta';
+  var SOURCE_ALLOWLIST = new Set(['hn','linkedin','csta','sigcse','oercommons','merlot','reddit','bluesky','mastodon','devto','hashnode','github','email','school','portfolio','resume','zenodo','jose']);
+  var liveImages = [];
+
+  function storageGet(storage, key) { try { return storage.getItem(key); } catch (_) { return null; } }
+  function storageSet(storage, key, value) { try { storage.setItem(key, value); } catch (_) {} }
+  function privacySignal() {
+    return navigator.globalPrivacyControl === true || navigator.doNotTrack === '1' ||
+      navigator.doNotTrack === 'yes' || window.doNotTrack === '1';
+  }
+  function clean(value) {
+    return String(value || '').toLowerCase().replace(/[^a-z0-9._/-]+/g, '-').replace(/-+/g, '-').replace(/^\/+|\/+$/g, '').slice(0, 80);
+  }
+  function normalizePath(path) {
+    var value = String(path || '/');
+    value = value.replace(/\/index\.html$/, '/');
+    if (value === '/ai-playgrounds') value = '/ai-playgrounds/';
+    return value || '/';
+  }
+  function canonicalPath() {
+    var link = document.querySelector('link[rel="canonical"]');
+    if (link && link.href) {
+      try { return normalizePath(new URL(link.href, location.href).pathname); } catch (_) {}
+    }
+    return normalizePath(location.pathname || '/ai-playgrounds/');
+  }
+
+  var params = new URLSearchParams(location.search);
+  var optedOut = params.get('analytics') === 'off' || storageGet(localStorage, 'ai-playgrounds-analytics') === 'off';
+  var enabled = location.hostname === CANONICAL_HOST && !privacySignal() && !optedOut;
+
+  function transmit(query) {
+    if (!enabled) return;
+    var img = new Image(1, 1);
+    img.referrerPolicy = 'no-referrer';
+    img.onload = img.onerror = function () {
+      var i = liveImages.indexOf(img);
+      if (i >= 0) liveImages.splice(i, 1);
+    };
+    img.src = ENDPOINT + '?' + query.toString();
+    liveImages.push(img);
+  }
+
+  function campaignQuery() {
+    var source = clean(params.get('ap_src'));
+    if (!SOURCE_ALLOWLIST.has(source)) return '';
+    var q = new URLSearchParams();
+    q.set('utm_campaign', 'ai-playgrounds');
+    q.set('utm_source', source);
+    return q.toString();
+  }
+
+  function sendPage() {
+    var query = new URLSearchParams();
+    query.set('p', canonicalPath());
+    query.set('t', document.title || 'AI Playgrounds');
+    var campaign = campaignQuery();
+    if (campaign) query.set('q', campaign);
+    transmit(query);
+  }
+
+  function sendEvent(name, title) {
+    var eventName = clean(name);
+    if (!eventName) return;
+    var query = new URLSearchParams();
+    query.set('p', 'event/' + eventName);
+    query.set('t', title || ('AI Playgrounds event: ' + eventName));
+    query.set('e', '1');
+    transmit(query);
+  }
+
+  window.aiPlaygroundsAnalytics = {
+    enabled: enabled,
+    optOut: function () { storageSet(localStorage, 'ai-playgrounds-analytics', 'off'); location.reload(); },
+    optIn: function () { storageSet(localStorage, 'ai-playgrounds-analytics', 'on'); location.reload(); },
+    count: function (name, title) { sendEvent(name, title); }
+  };
+
+  document.addEventListener('click', function (event) {
+    var out = event.target.closest('#analytics-opt-out');
+    var inn = event.target.closest('#analytics-opt-in');
+    if (out) { event.preventDefault(); window.aiPlaygroundsAnalytics.optOut(); return; }
+    if (inn) { event.preventDefault(); window.aiPlaygroundsAnalytics.optIn(); return; }
+    if (!enabled) return;
+
+    var link = event.target.closest('a[href]');
+    if (link) {
+      var href = link.getAttribute('href') || '';
+      var app = href.match(/playgrounds\/([^/?#]+)\/?/i);
+      if (app) sendEvent('launch/' + clean(app[1]), 'Launch applet: ' + clean(app[1]));
+      else if (/\.(pdf|zip|md|docx?|pptx?|csv)(?:[?#]|$)/i.test(href)) sendEvent('resource/' + clean((href.split('/').pop() || 'download').split(/[?#]/)[0]), 'Resource download');
+      else if (/github\.com\/lmdixon23\/ai-playgrounds/i.test(href)) sendEvent('outbound/github', 'Open AI Playgrounds on GitHub');
+    }
+
+    if (PAGE_KIND === 'applet') {
+      var control = event.target.closest('main button, main [role="button"], .workspace button, .controls button');
+      if (control && !control.closest('header, nav, footer, .toolbar')) {
+        var key = 'ai-playgrounds-engaged-' + PAGE_SLUG;
+        if (storageGet(sessionStorage, key) !== '1') {
+          storageSet(sessionStorage, key, '1');
+          sendEvent('engaged/' + clean(PAGE_SLUG), 'First substantive applet interaction: ' + clean(PAGE_SLUG));
+        }
+      }
+    }
+  }, true);
+
+  if (!enabled) return;
+  sendPage();
+})();
+</script>
+<footer class="ap-standard-footer ap-modern-rich-footer" data-ap-standard-footer>
+<div class="ap-modern-footer-primary"><a href="#top" data-ap-en="↑ Back to top" data-ap-zh="↑ 返回顶部" data-ap-vi="↑ Lên đầu trang" data-ap-es="↑ Volver arriba">↑ Back to top</a> · <span data-ap-en="Made for the Introduction to AI course at Haidian Kaiwen Academy." data-ap-zh="为北京海淀凯文学校的人工智能导论课程制作。" data-ap-vi="Được xây dựng cho khóa Introduction to AI tại Haidian Kaiwen Academy." data-ap-es="Creado para el curso Introduction to AI de Haidian Kaiwen Academy.">Made for the Introduction to AI course at Haidian Kaiwen Academy.</span></div>
+<div>© 2026 Logan M. Dixon · <a href="https://lmdixon23.github.io/" data-ap-en="Portfolio" data-ap-zh="作品集" data-ap-vi="Hồ sơ" data-ap-es="Portafolio">Portfolio</a> · <a href="../../index.html">AI Playgrounds</a> · <a href="../../curriculum.html">Curriculum</a> · <a href="../../teacher-pack.html">Teacher Pack</a> · <a href="https://github.com/lmdixon23/ai-playgrounds">Source</a> · MIT · <a href="../../research-and-citation.html">Citation</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-ap-en="Report an issue" data-ap-zh="报告问题" data-ap-vi="Báo lỗi" data-ap-es="Informar de un problema">Report an issue</a> · <a href="https://orcid.org/0009-0001-0592-462X">ORCID</a></div>
+</footer>
+<script id="v161-standard-shell-runtime">
+(()=>{'use strict';const API="Lab15Localization",EVENT="lab15localechange",DATA={"title":"Game Trees: Minimax and Alpha-Beta Pruning","title_zh":"博弈树：Minimax 与 Alpha-Beta 剪枝","title_vi":"Cây trò chơi: Minimax và cắt tỉa Alpha-Beta","title_es":"Árboles de juego: Minimax y poda Alpha-Beta","desc":"Compare minimax and alpha-beta on the same tree, then change the move order.","desc_zh":"在同一棵树上比较 minimax 与 alpha-beta，再改变行动顺序。","desc_vi":"So sánh minimax và alpha-beta trên cùng cây, rồi đổi thứ tự nước đi.","desc_es":"Compara minimax y alpha-beta en el mismo árbol y después cambia el orden de jugadas."},CHROME={"en":{"back":"AI Playgrounds","language":"Language","theme":"Theme","reset":"Reset","home":"Home","curriculum":"Curriculum","teacher":"Teacher Pack","source":"Source","citation":"Citation"},"zh":{"back":"AI Playgrounds","language":"语言","theme":"主题","reset":"重置","home":"首页","curriculum":"课程","teacher":"教师包","source":"源代码","citation":"引用"},"vi":{"back":"AI Playgrounds","language":"Ngôn ngữ","theme":"Giao diện","reset":"Đặt lại","home":"Trang chủ","curriculum":"Chương trình","teacher":"Teacher Pack","source":"Mã nguồn","citation":"Trích dẫn"},"es":{"back":"AI Playgrounds","language":"Idioma","theme":"Tema","reset":"Reiniciar","home":"Inicio","curriculum":"Currículo","teacher":"Teacher Pack","source":"Código fuente","citation":"Citación"}};const $=s=>document.querySelector(s);function norm(v){v=String(v||'').toLowerCase();if(v.startsWith('zh'))return'zh';if(v.startsWith('vi'))return'vi';if(v.startsWith('es'))return'es';return'en'}function api(){return window[API]||null}function locale(){const a=api();return norm((a&&((a.getLocale&&a.getLocale())||(a.locale&&a.locale())))||new URL(location.href).searchParams.get('lang')||'en')}function f(base,l){if(l==='en')return DATA[base]||'';return DATA[base+'_'+l]||DATA[base]||''}function sync(value){const l=norm(value||locale()),c=CHROME[l]||CHROME.en;$('#ap-standard-title').textContent=f('title',l);document.title=f('title',l)+' | AI Playgrounds';$('#ap-standard-subtitle').textContent=f('desc',l);const sel=$('#ap-standard-language-select');if(sel)sel.value=l;document.querySelectorAll('[data-ap-chrome]').forEach(el=>{const k=el.dataset.apChrome;if(c[k])el.textContent=c[k]})}let deferredWait=false;function wait(){const a=api();if(!a||typeof a.setLocale!=='function'){if(document.readyState==='loading'&&!deferredWait){deferredWait=true;document.addEventListener('DOMContentLoaded',wait,{once:true});return}console.error('Modern shell could not start because '+API+' is unavailable');return}const sel=$('#ap-standard-language-select');sync(locale());sel?.addEventListener('change',()=>{a.setLocale(sel.value);setTimeout(()=>sync(sel.value),0)});window.addEventListener(EVENT,e=>sync(e.detail&&e.detail.locale));const themeButton=$('#ap-standard-theme');function applySharedTheme(value){const dark=value==='dark';document.body.classList.toggle('ap-standard-dark',dark);if(themeButton){themeButton.textContent=dark?'☀️':'🌙';themeButton.setAttribute('aria-pressed',dark?'true':'false')}try{localStorage.setItem('theme',dark?'dark':'light')}catch(_){}}let sharedTheme='light';try{sharedTheme=localStorage.getItem('theme')||localStorage.getItem('ai-playgrounds-theme')||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(_){}applySharedTheme(sharedTheme);try{localStorage.removeItem('ai-playgrounds-theme')}catch(_){}themeButton?.addEventListener('click',()=>applySharedTheme(document.body.classList.contains('ap-standard-dark')?'light':'dark'));$('#ap-standard-reset')?.addEventListener('click',()=>location.reload())}wait();})();
+</script>
+<script data-quick-assign-modern-runtime="1">
+(() => {
+  'use strict';
+  const id = "QA-MINIMAX-01";
+  const root = document.querySelector('[data-quick-assign-id="' + id + '"]');
+  if (!root) return;
+  const key = 'ai-playgrounds-quick-assign:' + id;
+  const locale = () => {
+    const value = String(document.documentElement.lang || 'en').toLowerCase();
+    return value.startsWith('zh') ? 'zh' : value.startsWith('vi') ? 'vi' : value.startsWith('es') ? 'es' : 'en';
+  };
+  function paint() {
+    const language = locale();
+    root.querySelectorAll('.qa-i18n').forEach(el => {
+      el.textContent = el.getAttribute('data-qa-' + language) || el.getAttribute('data-qa-en') || '';
+    });
+  }
+  function save() {
+    try {
+      const data = {};
+      root.querySelectorAll('[data-qa-answer]').forEach(el => data[el.dataset.qaAnswer] = el.value);
+      localStorage.setItem(key, JSON.stringify(data));
+    } catch (_error) {}
+  }
+  function load() {
+    try {
+      const data = JSON.parse(localStorage.getItem(key) || '{}');
+      root.querySelectorAll('[data-qa-answer]').forEach(el => {
+        if (Object.prototype.hasOwnProperty.call(data, el.dataset.qaAnswer)) el.value = data[el.dataset.qaAnswer];
+      });
+    } catch (_error) {}
+  }
+  root.addEventListener('input', event => {
+    if (event.target && event.target.matches('[data-qa-answer]')) save();
+  });
+  root.querySelector('[data-qa-action="clear"]')?.addEventListener('click', () => {
+    root.querySelectorAll('[data-qa-answer]').forEach(el => el.value = '');
+    try { localStorage.removeItem(key); } catch (_error) {}
+  });
+  root.querySelector('[data-qa-action="print"]')?.addEventListener('click', () => window.print());
+  root.querySelector('[data-qa-action="copy"]')?.addEventListener('click', async () => {
+    const text = [...root.querySelectorAll('[data-qa-answer]')]
+      .map(el => el.dataset.qaAnswer.toUpperCase() + ': ' + el.value)
+      .join('\n\n');
+    try { await navigator.clipboard.writeText(text); } catch (_error) {}
+  });
+  window.addEventListener("lab15localechange", () => setTimeout(paint, 0));
+  document.querySelector('#ap-standard-language-select')?.addEventListener('change', () => setTimeout(paint, 0));
+  load();
+  paint();
+})();
+</script><script data-v17-quick-assign-direct-open="1">
+(() => {
+  'use strict';
+  function revealTarget() {
+    const raw = String(location.hash || '');
+    if (!raw.startsWith('#quick-assign-')) return;
+    let target = null;
+    try { target = document.querySelector(raw); } catch (_error) { return; }
+    if (!target || !target.matches('details[data-quick-assign-id]')) return;
+    target.open = true;
+    requestAnimationFrame(() => target.scrollIntoView({block:'start'}));
+  }
+  revealTarget();
+  window.addEventListener('hashchange', revealTarget);
+})();
+</script>
+<script id="v172-modern-parity-runtime">
+(()=>{'use strict';const D={"copy":{"en":{"big":"Minimax backs terminal utilities through alternating MAX and MIN choices. Alpha-Beta can skip work only when current bounds prove a branch cannot change the exact minimax decision.","watch":"Compare the root value and move with visited/evaluated nodes; change child order to change work without changing the game.","fidelity":"The tree is finite and deterministic. Pruning skips evaluation work; it does not remove branches from the game itself.","terms":[["Minimax","Exact recursive decision rule for alternating maximizing and minimizing players."],["Alpha (α)","Best value MAX can already guarantee along the current path."],["Beta (β)","Best value MIN can already guarantee along the current path."],["Cutoff","A point where remaining siblings cannot change the ancestor decision."],["Move ordering","The order children are searched; it changes pruning work, not the exact minimax result."]]},"zh":{"big":"Minimax 在交替的 MAX 与 MIN 选择中向上回传终局效用值。只有当当前边界证明某分支不可能改变精确的 minimax 决策时，Alpha-Beta 才能跳过搜索工作。","watch":"比较根节点的值和选择与已访问/已评估节点数量；改变子节点顺序会改变工作量，但不会改变博弈本身。","fidelity":"这里使用有限、确定性的博弈树。剪枝跳过的是评估工作，并不会从真实博弈中删除分支。","terms":[["Minimax","针对交替最大化与最小化玩家的精确递归决策规则。"],["Alpha (α)","当前路径上 MAX 已经能够保证的最佳值。"],["Beta (β)","当前路径上 MIN 已经能够保证的最佳值。"],["Cutoff","剩余兄弟节点已不可能改变祖先决策的位置。"],["Move ordering","搜索子节点的顺序；会改变剪枝工作量，但不会改变精确 minimax 结果。"]]},"vi":{"big":"Minimax truyền các utility ở lá lên qua lượt MAX và MIN xen kẽ. Alpha-Beta chỉ được bỏ qua công việc khi các cận hiện tại chứng minh một nhánh không thể thay đổi quyết định minimax chính xác.","watch":"So sánh giá trị/lựa chọn ở gốc với số nút đã thăm/đánh giá; đổi thứ tự con để đổi lượng công việc mà không đổi trò chơi.","fidelity":"Cây là hữu hạn và xác định. Pruning bỏ qua công việc đánh giá, không xóa nhánh khỏi trò chơi thật.","terms":[["Minimax","Quy tắc quyết định đệ quy chính xác cho người chơi MAX và MIN xen kẽ."],["Alpha (α)","Giá trị tốt nhất mà MAX đã có thể bảo đảm trên đường hiện tại."],["Beta (β)","Giá trị tốt nhất mà MIN đã có thể bảo đảm trên đường hiện tại."],["Cutoff","Điểm mà các nút anh em còn lại không thể thay đổi quyết định của tổ tiên."],["Move ordering","Thứ tự tìm các nút con; thay đổi lượng pruning nhưng không đổi kết quả minimax chính xác."]]},"es":{"big":"Minimax propaga utilidades terminales mediante decisiones alternas de MAX y MIN. Alpha-Beta solo puede omitir trabajo cuando los límites actuales demuestran que una rama no puede cambiar la decisión minimax exacta.","watch":"Compara el valor y la jugada raíz con los nodos visitados/evaluados; cambia el orden de hijos para cambiar el trabajo sin cambiar el juego.","fidelity":"El árbol es finito y determinista. La poda omite evaluación; no elimina ramas del juego real.","terms":[["Minimax","Regla recursiva exacta para jugadores que maximizan y minimizan de forma alterna."],["Alpha (α)","Mejor valor que MAX ya puede garantizar en la ruta actual."],["Beta (β)","Mejor valor que MIN ya puede garantizar en la ruta actual."],["Cutoff","Punto donde los hermanos restantes no pueden cambiar la decisión del ancestro."],["Move ordering","Orden de búsqueda de los hijos; cambia el trabajo de poda, no el resultado minimax exacto."]]}},"chrome":{"en":{"skip":"Skip to applet controls","biglabel":"The big idea","watchlabel":"What to watch","share":"Share","embed":"Embed","more":"More","terms":"Key terms","a11y":"Text and keyboard support","a11ybody":"Use Tab and Shift+Tab to move through controls. Important model state is also exposed in text, tables, or exact numeric values, and reduced-motion preferences are respected under tested paths. This support does not replace a full human screen-reader or accessibility-conformance audit.","fidelity":"Keep this model boundary in mind","backtop":"↑ Back to top","made":"Made for the Introduction to AI course at Haidian Kaiwen Academy.","portfolio":"Portfolio","report":"Report an issue","orcid":"ORCID","copied":"Link copied","embedcopied":"Embed code copied"},"zh":{"skip":"跳到 applet 控件","biglabel":"核心思想","watchlabel":"观察重点","share":"分享","embed":"嵌入","more":"更多","terms":"关键术语","a11y":"文本与键盘支持","a11ybody":"使用 Tab 和 Shift+Tab 在控件之间移动。重要模型状态也通过文本、表格或精确数值呈现，并在测试路径中尊重减少动态效果设置。此支持不等同于完整的人类屏幕阅读器或无障碍合规审计。","fidelity":"请记住这个模型边界","backtop":"↑ 返回顶部","made":"为北京海淀凯文学校的人工智能导论课程制作。","portfolio":"作品集","report":"报告问题","orcid":"ORCID","copied":"链接已复制","embedcopied":"嵌入代码已复制"},"vi":{"skip":"Bỏ qua đến điều khiển applet","biglabel":"Ý tưởng chính","watchlabel":"Điều cần quan sát","share":"Chia sẻ","embed":"Nhúng","more":"Thêm","terms":"Thuật ngữ chính","a11y":"Hỗ trợ văn bản và bàn phím","a11ybody":"Dùng Tab và Shift+Tab để di chuyển qua các điều khiển. Trạng thái mô hình quan trọng cũng được trình bày bằng văn bản, bảng hoặc giá trị số chính xác, và chế độ giảm chuyển động được tôn trọng trong các đường kiểm thử. Hỗ trợ này không thay thế một cuộc kiểm tra con người đầy đủ về trình đọc màn hình hay tuân thủ trợ năng.","fidelity":"Hãy nhớ giới hạn của mô hình này","backtop":"↑ Lên đầu trang","made":"Được xây dựng cho khóa Introduction to AI tại Haidian Kaiwen Academy.","portfolio":"Hồ sơ","report":"Báo lỗi","orcid":"ORCID","copied":"Đã sao chép liên kết","embedcopied":"Đã sao chép mã nhúng"},"es":{"skip":"Saltar a los controles del applet","biglabel":"La idea central","watchlabel":"Qué observar","share":"Compartir","embed":"Insertar","more":"Más","terms":"Términos clave","a11y":"Soporte de texto y teclado","a11ybody":"Usa Tab y Shift+Tab para recorrer los controles. El estado importante del modelo también aparece como texto, tablas o valores numéricos exactos, y las preferencias de movimiento reducido se respetan en las rutas probadas. Este soporte no sustituye una auditoría humana completa de lector de pantalla o conformidad de accesibilidad.","fidelity":"Mantén presente este límite del modelo","backtop":"↑ Volver arriba","made":"Creado para el curso Introduction to AI de Haidian Kaiwen Academy.","portfolio":"Portafolio","report":"Informar de un problema","orcid":"ORCID","copied":"Enlace copiado","embedcopied":"Código de inserción copiado"}},"shell":{"en":{"back":"Back to all playgrounds","theme":"Theme","reset":"Reset lab"},"zh":{"back":"返回全部 playground","theme":"主题","reset":"重置实验"},"vi":{"back":"Quay lại tất cả playground","theme":"Giao diện","reset":"Đặt lại lab"},"es":{"back":"Volver a todos los playgrounds","theme":"Tema","reset":"Reiniciar laboratorio"}}};
+const norm=v=>{v=String(v||'').toLowerCase();return v.startsWith('zh')?'zh':v.startsWith('vi')?'vi':v.startsWith('es')?'es':'en'};
+const locale=()=>norm(document.documentElement.lang);
+function paint(){const l=locale();document.querySelectorAll('[data-ap-en]').forEach(el=>{const v=el.getAttribute('data-ap-'+l)||el.getAttribute('data-ap-en')||'';if(el.matches('button')){const sp=el.querySelector('span');if(sp)sp.textContent=v;else el.textContent=v}else el.textContent=v});const back=document.querySelector('[data-ap-chrome="back"]');if(back)back.textContent=D.shell[l].back;const theme=document.getElementById('ap-standard-theme');if(theme){theme.setAttribute('aria-label',D.shell[l].theme);theme.title=D.shell[l].theme}const reset=document.getElementById('ap-standard-reset');if(reset)reset.textContent='↺ '+D.shell[l].reset;const dl=document.getElementById('ap-modern-terms-list');if(dl){dl.innerHTML='';for(const pair of D.copy[l].terms){const wrap=document.createElement('div');wrap.className='ap-modern-term';const dt=document.createElement('dt');dt.textContent=pair[0];const dd=document.createElement('dd');dd.textContent=pair[1];wrap.append(dt,dd);dl.append(wrap)}}}
+function toast(key){document.querySelector('.ap-modern-toast')?.remove();const el=document.createElement('div');el.className='ap-modern-toast';el.setAttribute('role','status');el.textContent=D.chrome[locale()][key]||D.chrome.en[key];document.body.append(el);setTimeout(()=>el.remove(),1800)}
+async function copyText(text,key){try{await navigator.clipboard.writeText(text);toast(key)}catch(_e){const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.append(ta);ta.select();try{document.execCommand('copy');toast(key)}catch(_x){}ta.remove()}}
+document.getElementById('ap-modern-share')?.addEventListener('click',async()=>{const url=location.href;try{if(navigator.share){await navigator.share({title:document.title,url});return}}catch(_e){}copyText(url,'copied')});
+document.getElementById('ap-modern-embed')?.addEventListener('click',()=>{const u=new URL(location.href);u.searchParams.set('embed','1');const code='<iframe src="'+u.href.replace(/"/g,'&quot;')+'" loading="lazy" style="width:100%;min-height:720px;border:0" title="'+document.title.replace(/"/g,'&quot;')+'"></iframe>';copyText(code,'embedcopied')});
+try{if(new URLSearchParams(location.search).get('embed')==='1')document.body.classList.add('embed-mode')}catch(_e){}
+new MutationObserver(paint).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});window.addEventListener('lab13localechange',paint);window.addEventListener('lab14localechange',paint);window.addEventListener('lab15localechange',paint);paint();
+})();
+</script>
+<script id="v172-modern-toolbar-runtime">
+(()=>{'use strict';const THEME_LABELS={"en":"Toggle dark or light theme","zh":"切换深色或浅色主题","vi":"Chuyển giao diện tối hoặc sáng","es":"Cambiar entre tema oscuro y claro"};const norm=v=>{v=String(v||'').toLowerCase();return v.startsWith('zh')?'zh':v.startsWith('vi')?'vi':v.startsWith('es')?'es':'en'};const loc=()=>norm(document.documentElement.lang);const theme=document.getElementById('ap-standard-theme');
+function paintTheme(){if(!theme)return;const dark=document.body.classList.contains('ap-standard-dark');theme.textContent=dark?'☀️':'🌙';const label=THEME_LABELS[loc()]||THEME_LABELS.en;theme.setAttribute('aria-label',label);theme.title=label}
+function stateData(){const values={};document.querySelectorAll('#ap-modern-interactive-start input,#ap-modern-interactive-start select,#ap-modern-interactive-start textarea').forEach(el=>{if(!el.id||el.closest('[data-quick-assign-id]'))return;if(el.type==='radio'&&!el.checked)return;values[el.id]=el.type==='checkbox'?el.checked:el.value});return{applet:document.getElementById('ap-standard-title')?.textContent||document.title,slug:document.body.dataset.apModernParity||'',exported_at:new Date().toISOString(),values}}
+document.getElementById('ap-modern-settings-json')?.addEventListener('click',()=>{const data=JSON.stringify(stateData(),null,2);const blob=new Blob([data],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(document.body.dataset.apModernParity||'ai-playground')+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);document.getElementById('ap-modern-more')?.removeAttribute('open')});
+theme?.addEventListener('click',()=>setTimeout(paintTheme,0));new MutationObserver(paintTheme).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});document.addEventListener('click',e=>{const more=document.getElementById('ap-modern-more');if(more?.open&&!more.contains(e.target))more.open=false});paintTheme();
+})();</script>
+<script id="v172-modern-packet-runtime">
+(()=>{'use strict';const COPY={"en":{"state":"State snapshot","empty":"State snapshot appears here.","refresh":"Refresh state","copy":"Copy packet","print":"Print packet","predict":"Predict","observe":"Observe","explain":"Explain","transfer":"Transfer","copied":"Copied local lab packet.","popup":"Popup blocked. Copy the packet instead."},"zh":{"state":"状态记录","empty":"状态记录会显示在这里。","refresh":"更新状态","copy":"复制实验包","print":"打印实验包","predict":"预测","observe":"观察","explain":"解释","transfer":"迁移","copied":"已复制本地实验包。","popup":"弹窗被拦截。请改用复制实验包。"},"vi":{"state":"Ảnh chụp trạng thái","empty":"Ảnh chụp trạng thái sẽ xuất hiện ở đây.","refresh":"Làm mới trạng thái","copy":"Sao chép gói bài","print":"In gói bài","predict":"Dự đoán","observe":"Quan sát","explain":"Giải thích","transfer":"Chuyển giao","copied":"Đã sao chép gói bài cục bộ.","popup":"Cửa sổ bật lên bị chặn. Hãy sao chép gói bài thay thế."},"es":{"state":"Captura del estado","empty":"La captura del estado aparecerá aquí.","refresh":"Actualizar estado","copy":"Copiar paquete","print":"Imprimir paquete","predict":"Predecir","observe":"Observar","explain":"Explicar","transfer":"Transferir","copied":"Paquete local copiado.","popup":"Ventana emergente bloqueada. Copia el paquete en su lugar."}};const root=document.querySelector('[data-quick-assign-id]');if(!root)return;const source=document.getElementById("textState");const state=root.querySelector('[data-qa-modern-state]');const status=root.querySelector('[data-qa-modern-status]');const norm=v=>{v=String(v||'').toLowerCase();return v.startsWith('zh')?'zh':v.startsWith('vi')?'vi':v.startsWith('es')?'es':'en'};const locale=()=>norm(document.documentElement.lang);const labels=()=>COPY[locale()]||COPY.en;
+function refresh(){if(!state)return;const value=String(source?.value||source?.textContent||'').trim();state.textContent=value||labels().empty;state.dataset.qaStateReady='1'}
+function answers(){const out={};root.querySelectorAll('[data-qa-answer]').forEach(el=>out[el.dataset.qaAnswer]=(el.value||'').trim());return out}
+function packet(){const l=labels(),a=answers();return['# '+(document.getElementById('ap-standard-title')?.textContent||document.title),'','## '+l.state,(state?.textContent||l.empty),'','## '+l.predict,a.predict||'','','## '+l.observe,a.observe||'','','## '+l.explain,a.explain||'','','## '+l.transfer,a.transfer||''].join('\n')}
+function setStatus(text){if(status)status.textContent=text}
+async function copyPacket(){const text=packet();try{await navigator.clipboard.writeText(text);setStatus(labels().copied)}catch(_e){window.prompt('Copy this lab packet:',text)}}
+function printable(markdown){const esc=v=>String(v).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));return String(markdown).split(/\r?\n/).map(line=>{if(line.startsWith('# '))return'<h1>'+esc(line.slice(2))+'</h1>';if(line.startsWith('## '))return'<h2>'+esc(line.slice(3))+'</h2>';if(!line.trim())return'';return'<p>'+esc(line)+'</p>'}).join('')}
+function printPacket(){const w=window.open('','_blank');if(!w){setStatus(labels().popup);return}const body=printable(packet());w.document.open();w.document.write('<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}h1{font-size:1.6rem}h2{font-size:1.05rem;margin-top:18px;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{white-space:pre-wrap}@media print{body{margin:0;max-width:none;padding:0}}</style></head><body>'+body+'</body></html>');w.document.close();setTimeout(()=>{try{w.focus();w.print()}catch(_e){}},250)}
+root.addEventListener('click',event=>{const button=event.target?.closest?.('[data-qa-action]');if(!button)return;const action=button.dataset.qaAction;if(action==='refresh-state'||action==='copy'||action==='print'){event.preventDefault();event.stopImmediatePropagation();if(action==='refresh-state')refresh();if(action==='copy')copyPacket();if(action==='print')printPacket()}},true);
+new MutationObserver(()=>{if(state?.dataset.qaStateReady==='1')setTimeout(refresh,0)}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+})();</script>
+<script id="v172-modern-packet-label-runtime" data-v172-stable-lifecycle="true">
+(()=>{'use strict';
+const COPY={"en":{"predict":"Predict","observe":"Observe","explain":"Explain","transfer":"Transfer","refresh":"Refresh state","copy":"Copy packet","print":"Print packet","clear":"Clear local draft","state":"State snapshot"},"zh":{"predict":"预测","observe":"观察","explain":"解释","transfer":"迁移","refresh":"更新状态","copy":"复制实验包","print":"打印实验包","clear":"清除本地草稿","state":"状态记录"},"vi":{"predict":"Dự đoán","observe":"Quan sát","explain":"Giải thích","transfer":"Chuyển giao","refresh":"Làm mới trạng thái","copy":"Sao chép gói bài","print":"In gói bài","clear":"Xóa bản nháp cục bộ","state":"Ảnh chụp trạng thái"},"es":{"predict":"Predecir","observe":"Observar","explain":"Explicar","transfer":"Transferir","refresh":"Actualizar estado","copy":"Copiar paquete","print":"Imprimir paquete","clear":"Borrar borrador local","state":"Captura del estado"}};
+const SOURCE_ID="textState";
+const norm=v=>{v=String(v||'').toLowerCase();return v.startsWith('zh')?'zh':v.startsWith('vi')?'vi':v.startsWith('es')?'es':'en'};
+const locale=()=>norm(document.documentElement.lang);
+const root=()=>document.querySelector('[data-quick-assign-id]');
+const source=()=>document.getElementById(SOURCE_ID);
+function sourceText(){const s=source();return s?String(s.value||s.textContent||'').trim():''}
+function syncAccessibleState(){
+  const out=document.getElementById('ap-modern-a11y-state');if(!out)return;
+  const packet=root()?.querySelector('[data-qa-modern-state]');
+  const next=sourceText()||String(packet?.textContent||'').trim();
+  if(!next)return;
+  if(out.textContent!==next){out.textContent=next;const live=document.getElementById('ap-modern-a11y-live');if(live)live.textContent=next.slice(0,500)}
+}
+function paintLabels(){
+  const qa=root(),l=COPY[locale()]||COPY.en;if(!qa){syncAccessibleState();return}
+  qa.querySelectorAll('[data-qa-answer]').forEach(el=>{const key=el.dataset.qaAnswer;if(l[key])el.setAttribute('aria-label',l[key])});
+  for(const key of ['refresh','copy','print','clear']){const action=key==='refresh'?'refresh-state':key;const button=qa.querySelector('[data-qa-action="'+action+'"]');if(!button)continue;const label=l[key]||COPY.en[key];button.textContent=(key==='refresh'?'↻ ':'')+label;button.setAttribute('aria-label',label)}
+  const state=qa.querySelector('[data-qa-modern-state]');if(state)state.setAttribute('aria-label',l.state||COPY.en.state);
+  syncAccessibleState();
+}
+let repaintGeneration=0;
+function schedulePaint(){
+  const generation=++repaintGeneration;
+  const run=()=>{if(generation===repaintGeneration)paintLabels()};
+  run();queueMicrotask(run);if(window.requestAnimationFrame)requestAnimationFrame(run);
+  setTimeout(run,40);setTimeout(run,110);setTimeout(run,180);
+}
+const src=source();if(src){new MutationObserver(syncAccessibleState).observe(src,{childList:true,subtree:true,characterData:true,attributes:true});src.addEventListener?.('input',syncAccessibleState);src.addEventListener?.('change',syncAccessibleState)}
+new MutationObserver(schedulePaint).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+window.addEventListener('lab13localechange',schedulePaint);window.addEventListener('lab14localechange',schedulePaint);window.addEventListener('lab15localechange',schedulePaint);
+schedulePaint();syncAccessibleState();
+})();</script>
+<script id="v181-modern-learner-parity-runtime">
+(()=>{'use strict';const DATA={"common":{"en":{"featured_summary":"✨ Featured experiment","core_question":"Core question","run_watch":"Run and watch","start_featured":"Start featured experiment","scenarios_summary":"🎯 Try these scenarios first","scenarios_intro":"Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.","scenario":"Scenario","predict_first":"Predict first","explain_after":"Explain afterward","apply":"Apply and compare","applied":"Applied; compare the result","jump":"↓ Read the step-by-step explanation","before":"Before you read","terms":"Terms used in this explanation","teachers":"For teachers","curriculum":"Curriculum","pre":"Pre-exploration prompts","post":"Post-exploration prompts","misconceptions":"Misconceptions to test","a11y_summary":"♿ Text and keyboard support","a11y_title":"Text and keyboard support","a11y_intro":"Use Tab and Shift+Tab to move through controls. Use Enter or Space on buttons and arrow keys on sliders or select controls.","state_link":"Read the current model state in the applet’s text-state panel.","a11y_note":"Important results are available as text and do not depend only on color or motion. This does not replace a full human assistive-technology audit.","back_controls":"↑ Back to the applet controls"},"zh":{"featured_summary":"✨ 精选实验","core_question":"核心问题","run_watch":"运行并观察","start_featured":"开始精选实验","scenarios_summary":"🎯 先试试这些情境","scenarios_intro":"选择一个情境，先预测结果，再应用设置，并把实际结果与预测比较。","scenario":"情境","predict_first":"先预测","explain_after":"之后解释","apply":"应用并比较","applied":"已应用；请比较结果","jump":"↓ 阅读分步说明","before":"阅读前先准备","terms":"本说明使用的术语","teachers":"教师参考","curriculum":"课程内容","pre":"探索前问题","post":"探索后问题","misconceptions":"需要检验的误解","a11y_summary":"♿ 文本与键盘支持","a11y_title":"文本与键盘支持","a11y_intro":"使用 Tab 和 Shift+Tab 在控件之间移动。按钮使用 Enter 或空格键，滑块与选择控件使用方向键。","state_link":"在 applet 的文本状态面板中读取当前模型状态。","a11y_note":"重要结果同时以文本提供，不只依赖颜色或动画。此功能不能替代完整的人工辅助技术审计。","back_controls":"↑ 返回 applet 控件"},"vi":{"featured_summary":"✨ Thí nghiệm nổi bật","core_question":"Câu hỏi cốt lõi","run_watch":"Chạy và quan sát","start_featured":"Bắt đầu thí nghiệm nổi bật","scenarios_summary":"🎯 Hãy thử các tình huống này trước","scenarios_intro":"Chọn một tình huống, dự đoán điều sẽ xảy ra, rồi áp dụng và so sánh kết quả với dự đoán.","scenario":"Tình huống","predict_first":"Dự đoán trước","explain_after":"Giải thích sau","apply":"Áp dụng và so sánh","applied":"Đã áp dụng; hãy so sánh kết quả","jump":"↓ Đọc phần giải thích từng bước","before":"Trước khi đọc","terms":"Thuật ngữ dùng trong phần giải thích","teachers":"Dành cho giáo viên","curriculum":"Nội dung học","pre":"Câu hỏi trước khi khám phá","post":"Câu hỏi sau khi khám phá","misconceptions":"Những ngộ nhận cần kiểm tra","a11y_summary":"♿ Hỗ trợ văn bản và bàn phím","a11y_title":"Hỗ trợ văn bản và bàn phím","a11y_intro":"Dùng Tab và Shift+Tab để di chuyển. Dùng Enter hoặc Space cho nút và phím mũi tên cho thanh trượt hoặc ô chọn.","state_link":"Đọc trạng thái mô hình hiện tại trong bảng trạng thái văn bản của applet.","a11y_note":"Kết quả quan trọng có dạng văn bản và không chỉ phụ thuộc vào màu sắc hay chuyển động. Tính năng này không thay thế kiểm tra thủ công đầy đủ bằng công nghệ hỗ trợ.","back_controls":"↑ Quay lại điều khiển applet"},"es":{"featured_summary":"✨ Experimento destacado","core_question":"Pregunta central","run_watch":"Ejecuta y observa","start_featured":"Iniciar el experimento destacado","scenarios_summary":"🎯 Prueba primero estos escenarios","scenarios_intro":"Elige un escenario, predice qué ocurrirá, aplícalo y compara el resultado con tu predicción.","scenario":"Escenario","predict_first":"Predice primero","explain_after":"Explica después","apply":"Aplicar y comparar","applied":"Aplicado; compara el resultado","jump":"↓ Leer la explicación paso a paso","before":"Antes de leer","terms":"Términos usados en esta explicación","teachers":"Para docentes","curriculum":"Contenido","pre":"Preguntas antes de explorar","post":"Preguntas después de explorar","misconceptions":"Ideas erróneas que conviene comprobar","a11y_summary":"♿ Soporte de texto y teclado","a11y_title":"Soporte de texto y teclado","a11y_intro":"Usa Tab y Shift+Tab para moverte. Usa Enter o Espacio en botones y las flechas en deslizadores o selectores.","state_link":"Lee el estado actual del modelo en el panel de estado textual del applet.","a11y_note":"Los resultados importantes están disponibles como texto y no dependen solo del color o del movimiento. Esto no sustituye una auditoría humana completa con tecnologías de apoyo.","back_controls":"↑ Volver a los controles del applet"}},"copy":{"en":{"primer":"Minimax assumes both players choose optimally: MAX keeps the largest backed-up value and MIN keeps the smallest. Alpha-beta returns the same answer while skipping branches that current bounds prove cannot matter.","terms":[["Game tree","Possible moves arranged as parent and child positions."],["Terminal utility","The score assigned to a finished position."],["MAX node","A turn that keeps the largest child value."],["MIN node","A turn that keeps the smallest child value."],["Minimax value","The result backed up under optimal choices by both players."],["Alpha (α)","The best value MAX can already guarantee on the current path."],["Beta (β)","The best value MIN can already guarantee on the current path."],["Cutoff","A proof that remaining siblings cannot change the ancestor decision."]],"scenarios":[{"title":"Back up a simple tree","question":"How do alternating MIN and MAX choices determine the root value?","run":"Use the simple backup tree with minimax and reveal the trace one step at a time.","predict":"Predict each MIN value, then the move MAX will choose.","explain":"Explain why the largest visible leaf alone does not determine the root move."},{"title":"A greedy leaf can be a trap","question":"Why can a branch containing the largest leaf still be the worse move?","run":"Apply the greedy-trap tree and compare the best visible leaf with the value MIN can force.","predict":"Predict whether MAX chooses branch A or B.","explain":"Explain why a player chooses a strategy against an opponent, not a single leaf."},{"title":"Find the first safe prune","question":"When do alpha and beta prove that a sibling cannot matter?","run":"Apply the first-prune scenario, step until α ≥ β, and identify the nodes not evaluated.","predict":"Predict which sibling will be skipped and what root value remains.","explain":"Explain why the skipped node cannot change the ancestor choice."},{"title":"Move order changes work, not the answer","question":"How can the same tree require fewer evaluated leaves?","run":"Use alpha-beta on the good-ordering tree, save the run, then reverse the sibling order.","predict":"Predict which order exposes useful bounds earlier.","explain":"Explain why both orders must return the same minimax value."},{"title":"Some trees offer no useful cutoff","question":"Why does alpha-beta sometimes visit every leaf?","run":"Apply the no-prune scenario and reveal the full alpha-beta trace.","predict":"Predict whether any bound becomes strong enough to skip a sibling.","explain":"Explain why alpha-beta’s best-case speedup is not guaranteed."}],"sections":[["1. Define the game before searching",["A game tree lists legal continuations. Terminal utilities are part of the problem definition, not values invented by minimax.","This lab assumes a finite, deterministic, two-player, zero-sum, perfect-information game and optimal play by both sides."]],["2. Back values from leaves to the root",["At a MAX node, keep the largest returned child value. At a MIN node, keep the smallest. Repeating that rule gives the root minimax value and an optimal move.","A high leaf is not enough: the opposing player chooses among the leaves available on their turn."]],["3. Carry alpha and beta bounds",["Alpha is the best value MAX can already guarantee along the current path. Beta is the best value MIN can already guarantee.","Once alpha is at least beta, remaining siblings cannot improve the decision for the player whose ancestor already has the stronger option."]],["4. Pruning preserves the exact answer",["A pruned node still exists in the game tree. The algorithm merely avoids evaluating it because the current bounds prove it cannot affect the root choice.","Move ordering changes when strong bounds appear. It can reduce work dramatically, but it cannot change the exact minimax result on the same fixed tree."]],["What this model leaves out",["Large games require depth limits, heuristic evaluation, transposition tables, iterative deepening, and other search engineering.","Games with chance, hidden information, simultaneous moves, more than two players, or non-zero-sum payoffs need different models."]]],"teacher":{"curriculum":"Game trees, terminal utility, alternating MAX/MIN backup, optimal play, alpha and beta bounds, safe cutoffs, and move ordering.","pre":["Who chooses the next node at a MIN turn?","Can the largest leaf determine MAX’s move by itself?","What would make it safe not to inspect a branch?"],"post":["Back up the simple tree without running the applet.","Find the exact event where the first cutoff becomes safe.","Reverse move order and compare evaluated leaves.","Explain why pruned means not evaluated, not removed from the game."],"misconceptions":"MAX always chooses the largest visible leaf; pruning changes the answer; pruned nodes do not exist; alpha-beta always prunes; move ordering changes the game value."}},"zh":{"primer":"Minimax 假设双方都做最优选择：MAX 保留较大的回传值，MIN 保留较小的回传值。Alpha-Beta 返回相同答案，同时跳过当前边界已证明无关的分支。","terms":[["博弈树","按父子关系排列的可能行动与局面。"],["终局效用值","赋给结束局面的分数。"],["MAX 节点","保留最大子节点值的一方回合。"],["MIN 节点","保留最小子节点值的一方回合。"],["Minimax 值","双方都最优选择时向上回传的结果。"],["Alpha（α）","当前路径上 MAX 已能保证的最佳值。"],["Beta（β）","当前路径上 MIN 已能保证的最佳值。"],["截断","证明剩余兄弟节点不会改变祖先决策。"]],"scenarios":[{"title":"回传一棵简单博弈树","question":"交替的 MIN 与 MAX 选择怎样决定根节点值？","run":"使用简单回传树与 minimax，逐步揭示跟踪。","predict":"先预测各 MIN 节点值，再预测 MAX 选择的行动。","explain":"解释为什么只看最大的叶节点不能决定根节点行动。"},{"title":"贪心叶节点可能是陷阱","question":"为什么包含最大叶值的分支仍可能是较差行动？","run":"应用贪心陷阱树，比较最大的可见叶值与 MIN 能迫使得到的值。","predict":"预测 MAX 会选择 A 还是 B。","explain":"解释玩家为什么是在对抗对手策略，而不是选择单个叶节点。"},{"title":"找到第一次安全剪枝","question":"Alpha 与 beta 何时能证明某个兄弟节点无关？","run":"应用首次剪枝情境，单步执行到 α ≥ β，并找出未评估节点。","predict":"预测哪个兄弟节点会被跳过，以及根节点值是否保持。","explain":"解释被跳过节点为什么不能改变祖先选择。"},{"title":"行动顺序改变工作量，不改变答案","question":"同一棵树怎样只评估更少叶节点？","run":"用 alpha-beta 运行良好顺序，保存结果，再反转兄弟节点顺序。","predict":"预测哪种顺序会更早产生有用边界。","explain":"解释两种顺序为什么必须返回相同 minimax 值。"},{"title":"有些树无法有效剪枝","question":"为什么 alpha-beta 有时仍会访问所有叶节点？","run":"应用无剪枝情境并揭示完整 alpha-beta 跟踪。","predict":"预测是否会有边界强到足以跳过兄弟节点。","explain":"解释 alpha-beta 的最佳加速为什么没有保证。"}],"sections":[["1. 搜索前先定义博弈",["博弈树列出合法的后续行动。终局效用值属于问题定义，并不是 minimax 生成的数值。","本实验假设有限、确定性、双人、零和、完全信息博弈，并假设双方最优行动。"]],["2. 从叶节点向根节点回传",["MAX 节点保留最大的返回值，MIN 节点保留最小的返回值。重复这条规则即可得到根节点 minimax 值与最优行动。","一个高叶值并不足够，因为对手会在自己的回合中选择可到达的叶节点。"]],["3. 携带 alpha 与 beta 边界",["Alpha 是当前路径上 MAX 已能保证的最佳值；beta 是 MIN 已能保证的最佳值。","当 alpha 至少等于 beta 时，剩余兄弟节点无法改善祖先处已有的更强选择。"]],["4. 剪枝保留精确答案",["被剪枝节点仍存在于博弈树中。算法只是因为边界已证明它不会影响根节点选择而不再评估。","行动顺序会改变强边界何时出现，因此能改变工作量，却不能改变同一固定树上的精确 minimax 结果。"]],["这个模型没有包含什么",["大型游戏还需要深度限制、启发式评估、置换表、迭代加深等搜索工程。","含随机性、隐藏信息、同时行动、多人或非零和收益的博弈需要不同模型。"]]],"teacher":{"curriculum":"博弈树、终局效用值、MAX/MIN 交替回传、最优行动、alpha/beta 边界、安全截断与行动顺序。","pre":["在 MIN 回合是谁选择下一节点？","最大叶值能否单独决定 MAX 的行动？","什么条件能让不检查某分支变得安全？"],"post":["不运行 applet，手工回传简单树。","找出第一次截断变得安全的精确事件。","反转行动顺序并比较评估叶节点数。","解释“被剪枝”为什么表示未评估，而不是从博弈中删除。"],"misconceptions":"MAX 总选择最大可见叶值；剪枝改变答案；被剪枝节点不存在；alpha-beta 总能剪枝；行动顺序会改变博弈值。"}},"vi":{"primer":"Minimax giả định cả hai bên chọn tối ưu: MAX giữ giá trị lớn nhất truyền lên, MIN giữ nhỏ nhất. Alpha-beta trả cùng đáp án nhưng bỏ qua nhánh mà các cận đã chứng minh không thể quan trọng.","terms":[["Cây trò chơi","Các nước đi có thể được sắp theo vị trí cha và con."],["Utility ở trạng thái kết thúc","Điểm gán cho một vị trí đã kết thúc."],["Nút MAX","Lượt giữ giá trị con lớn nhất."],["Nút MIN","Lượt giữ giá trị con nhỏ nhất."],["Giá trị minimax","Kết quả truyền lên khi cả hai bên chọn tối ưu."],["Alpha (α)","Giá trị tốt nhất MAX đã có thể bảo đảm trên đường hiện tại."],["Beta (β)","Giá trị tốt nhất MIN đã có thể bảo đảm trên đường hiện tại."],["Cutoff","Bằng chứng rằng các nút anh em còn lại không thể đổi quyết định tổ tiên."]],"scenarios":[{"title":"Truyền giá trị lên cây đơn giản","question":"Lựa chọn MIN và MAX xen kẽ quyết định giá trị gốc thế nào?","run":"Dùng cây simple backup với minimax và mở trace từng bước.","predict":"Dự đoán từng giá trị MIN rồi nước đi MAX chọn.","explain":"Giải thích vì sao lá lớn nhất nhìn thấy không tự quyết định nước đi ở gốc."},{"title":"Một lá hấp dẫn có thể là bẫy","question":"Vì sao nhánh chứa lá lớn nhất vẫn có thể là nước đi tệ hơn?","run":"Áp dụng cây greedy trap và so sánh lá lớn nhất với giá trị MIN có thể ép.","predict":"Dự đoán MAX chọn A hay B.","explain":"Giải thích vì sao người chơi chọn chiến lược trước đối thủ, không chọn riêng một lá."},{"title":"Tìm lần cắt tỉa an toàn đầu tiên","question":"Khi nào alpha và beta chứng minh một nút anh em không thể quan trọng?","run":"Áp dụng first prune, bước tới α ≥ β và xác định nút không được đánh giá.","predict":"Dự đoán nút nào bị bỏ qua và giá trị gốc còn bao nhiêu.","explain":"Giải thích vì sao nút bị bỏ qua không thể đổi lựa chọn của tổ tiên."},{"title":"Thứ tự nước đi đổi công việc, không đổi đáp án","question":"Cùng một cây có thể cần đánh giá ít lá hơn thế nào?","run":"Chạy alpha-beta với good ordering, lưu lần chạy rồi đảo thứ tự anh em.","predict":"Dự đoán thứ tự nào tạo cận hữu ích sớm hơn.","explain":"Giải thích vì sao cả hai thứ tự phải trả cùng giá trị minimax."},{"title":"Một số cây không cho cutoff hữu ích","question":"Vì sao alpha-beta đôi khi vẫn thăm mọi lá?","run":"Áp dụng no prune và mở toàn bộ trace alpha-beta.","predict":"Dự đoán có cận nào đủ mạnh để bỏ qua nút anh em không.","explain":"Giải thích vì sao tăng tốc tốt nhất của alpha-beta không được bảo đảm."}],"sections":[["1. Xác định trò chơi trước khi tìm",["Cây trò chơi liệt kê các tiếp diễn hợp lệ. Utility ở trạng thái kết thúc là dữ liệu bài toán, không phải giá trị minimax tự tạo.","Lab giả định trò chơi hữu hạn, xác định, hai người, tổng bằng không, thông tin hoàn hảo và cả hai chơi tối ưu."]],["2. Truyền giá trị từ lá lên gốc",["Ở nút MAX, giữ giá trị con lớn nhất; ở nút MIN, giữ nhỏ nhất. Lặp quy tắc cho giá trị minimax ở gốc và nước đi tối ưu.","Một lá cao chưa đủ vì đối thủ chọn trong các lá tới được ở lượt của họ."]],["3. Mang theo cận alpha và beta",["Alpha là giá trị tốt nhất MAX đã bảo đảm trên đường hiện tại; beta là giá trị tốt nhất MIN đã bảo đảm.","Khi alpha ít nhất bằng beta, các nút anh em còn lại không thể cải thiện quyết định ở tổ tiên đã có lựa chọn mạnh hơn."]],["4. Pruning giữ nguyên đáp án chính xác",["Nút bị prune vẫn tồn tại trong cây. Thuật toán chỉ không đánh giá vì cận đã chứng minh nó không ảnh hưởng lựa chọn gốc.","Thứ tự nước đi đổi lúc cận mạnh xuất hiện và có thể giảm nhiều công việc, nhưng không đổi kết quả minimax chính xác."]],["Mô hình này bỏ qua điều gì",["Trò chơi lớn cần giới hạn độ sâu, heuristic evaluation, transposition table, iterative deepening và kỹ thuật tìm kiếm khác.","Trò chơi có ngẫu nhiên, thông tin ẩn, nước đi đồng thời, nhiều hơn hai người hay không zero-sum cần mô hình khác."]]],"teacher":{"curriculum":"Cây trò chơi, terminal utility, MAX/MIN backup, chơi tối ưu, cận alpha/beta, cutoff an toàn và thứ tự nước đi.","pre":["Ai chọn nút tiếp theo ở lượt MIN?","Lá lớn nhất có tự quyết định nước đi MAX không?","Điều gì làm việc không xem một nhánh trở nên an toàn?"],"post":["Tự truyền giá trị cây đơn giản trước khi chạy applet.","Tìm đúng sự kiện nơi cutoff đầu tiên trở nên an toàn.","Đảo thứ tự và so sánh số lá được đánh giá.","Giải thích vì sao pruned nghĩa là không đánh giá, không phải bị xóa khỏi trò chơi."],"misconceptions":"MAX luôn chọn lá lớn nhất nhìn thấy; pruning đổi đáp án; nút bị prune không tồn tại; alpha-beta luôn prune; thứ tự nước đi đổi giá trị trò chơi."}},"es":{"primer":"Minimax supone que ambos jugadores eligen de forma óptima: MAX conserva el mayor valor propagado y MIN el menor. Alpha-beta devuelve la misma respuesta mientras omite ramas que los límites demuestran irrelevantes.","terms":[["Árbol de juego","Movimientos posibles organizados como posiciones padre e hijas."],["Utilidad terminal","Puntuación asignada a una posición final."],["Nodo MAX","Turno que conserva el mayor valor hijo."],["Nodo MIN","Turno que conserva el menor valor hijo."],["Valor minimax","Resultado propagado con elecciones óptimas de ambos jugadores."],["Alpha (α)","Mejor valor que MAX ya puede garantizar en la ruta actual."],["Beta (β)","Mejor valor que MIN ya puede garantizar en la ruta actual."],["Corte","Prueba de que los hermanos restantes no pueden cambiar la decisión del ancestro."]],"scenarios":[{"title":"Propagar un árbol sencillo","question":"¿Cómo determinan MIN y MAX alternos el valor de la raíz?","run":"Usa el árbol sencillo con minimax y revela la traza paso a paso.","predict":"Predice cada valor MIN y después la jugada que elegirá MAX.","explain":"Explica por qué la mayor hoja visible no determina por sí sola la jugada raíz."},{"title":"Una hoja atractiva puede ser una trampa","question":"¿Por qué una rama con la mayor hoja puede ser la peor jugada?","run":"Aplica la trampa voraz y compara la mayor hoja con el valor que MIN puede forzar.","predict":"Predice si MAX elige A o B.","explain":"Explica por qué se elige una estrategia frente a un rival, no una sola hoja."},{"title":"Encontrar la primera poda segura","question":"¿Cuándo demuestran alpha y beta que un hermano ya no importa?","run":"Aplica la primera poda, avanza hasta α ≥ β e identifica los nodos no evaluados.","predict":"Predice qué hermano se omitirá y qué valor conservará la raíz.","explain":"Explica por qué el nodo omitido no puede cambiar la elección del ancestro."},{"title":"El orden cambia el trabajo, no la respuesta","question":"¿Cómo puede el mismo árbol requerir menos hojas evaluadas?","run":"Usa alpha-beta con buen orden, guarda la ejecución y luego invierte los hermanos.","predict":"Predice qué orden expone antes límites útiles.","explain":"Explica por qué ambos órdenes deben devolver el mismo valor minimax."},{"title":"Algunos árboles no ofrecen cortes útiles","question":"¿Por qué alpha-beta a veces visita todas las hojas?","run":"Aplica el escenario sin poda y revela toda la traza alpha-beta.","predict":"Predice si algún límite bastará para omitir un hermano.","explain":"Explica por qué la mejor aceleración de alpha-beta no está garantizada."}],"sections":[["1. Definir el juego antes de buscar",["El árbol enumera continuaciones legales. Las utilidades terminales forman parte del problema; minimax no las inventa.","El laboratorio supone un juego finito, determinista, de dos jugadores, suma cero, información perfecta y juego óptimo."]],["2. Propagar valores de las hojas a la raíz",["MAX conserva el mayor valor hijo y MIN el menor. Repetir la regla produce el valor minimax raíz y una jugada óptima.","Una hoja alta no basta: el rival elige entre las hojas disponibles en su turno."]],["3. Llevar límites alpha y beta",["Alpha es lo mejor que MAX ya garantiza en la ruta; beta es lo mejor que MIN ya garantiza.","Cuando alpha es al menos beta, los hermanos restantes no mejoran la decisión del ancestro que ya posee una opción más fuerte."]],["4. La poda conserva la respuesta exacta",["Un nodo podado sigue en el árbol. El algoritmo evita evaluarlo porque los límites prueban que no afecta la elección raíz.","El orden cambia cuándo aparecen límites fuertes y puede reducir trabajo, pero no cambia el minimax exacto del mismo árbol."]],["Qué deja fuera este modelo",["Los juegos grandes requieren límites de profundidad, evaluación heurística, tablas de transposición, profundización iterativa y otras técnicas.","Azar, información oculta, jugadas simultáneas, más jugadores o pagos no nulos requieren otros modelos."]]],"teacher":{"curriculum":"Árboles, utilidad terminal, respaldo MAX/MIN, juego óptimo, límites alpha/beta, cortes seguros y orden de jugadas.","pre":["¿Quién elige el siguiente nodo en un turno MIN?","¿Puede la mayor hoja decidir sola la jugada MAX?","¿Qué haría seguro no revisar una rama?"],"post":["Propaga el árbol sencillo sin ejecutar el applet.","Encuentra el evento exacto del primer corte seguro.","Invierte el orden y compara hojas evaluadas.","Explica por qué podado significa no evaluado, no eliminado del juego."],"misconceptions":"MAX siempre elige la mayor hoja visible; la poda cambia la respuesta; los nodos podados no existen; alpha-beta siempre poda; el orden cambia el valor del juego."}}},"settings":[{"scenario":"simple_backup","algorithm":"minimax","order":"configured"},{"scenario":"greedy_trap","algorithm":"minimax","order":"configured"},{"scenario":"first_prune","algorithm":"alpha_beta","order":"configured"},{"scenario":"good_ordering","algorithm":"alpha_beta","order":"configured"},{"scenario":"no_prune","algorithm":"alpha_beta","order":"configured"}],"featured":2};const root=document.getElementById('ap-modern-learning'),essayRoot=document.getElementById('ap-modern-explanation');if(!root||!essayRoot)return;
+const norm=v=>{v=String(v||'').toLowerCase();return v.startsWith('zh')?'zh':v.startsWith('vi')?'vi':v.startsWith('es')?'es':'en'};
+const locale=()=>norm(document.documentElement.lang);const E=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+function list(items){return'<ul>'+items.map(x=>'<li>'+E(x)+'</li>').join('')+'</ul>'}
+function paint(){const l=locale(),c=DATA.common[l]||DATA.common.en,d=DATA.copy[l]||DATA.copy.en,f=d.scenarios[DATA.featured];let cards='';d.scenarios.forEach((s,i)=>{cards+='<article class="scenario-card" data-modern-scenario-card="'+i+'"><h3>'+E(c.scenario)+' '+(i+1)+': '+E(s.title)+'</h3><p class="scenario-meta"><strong>'+E(c.core_question)+':</strong> '+E(s.question)+'</p><p class="scenario-meta"><strong>'+E(c.run_watch)+':</strong> '+E(s.run)+'</p><p class="scenario-meta"><strong>'+E(c.predict_first)+':</strong> '+E(s.predict)+'</p><p class="scenario-meta"><strong>'+E(c.explain_after)+':</strong> '+E(s.explain)+'</p><button type="button" data-modern-apply="'+i+'">'+E(c.apply)+'</button></article>'});let terms=d.terms.map(x=>'<div><dt>'+E(x[0])+'</dt><dd>'+E(x[1])+'</dd></div>').join('');let sections=d.sections.map(x=>'<section><h2>'+E(x[0])+'</h2>'+x[1].map(p=>'<p>'+E(p)+'</p>').join('')+'</section>').join('');const t=d.teacher;root.innerHTML='<details class="signature-challenge ap-modern-featured" open><summary>'+E(c.featured_summary)+'</summary><div class="ap-modern-featured-body"><strong>'+E(f.title)+'</strong><p><b>'+E(c.core_question)+':</b> '+E(f.question)+'</p><p><em><b>'+E(c.run_watch)+':</b> '+E(f.run)+'</em></p><div class="featured-actions"><button type="button" data-modern-apply="'+DATA.featured+'">'+E(c.start_featured)+'</button></div></div></details><details class="scenario-gallery" open><summary>'+E(c.scenarios_summary)+'</summary><div class="scenario-gallery-panel"><p class="scenario-gallery-intro">'+E(c.scenarios_intro)+'</p><div class="scenario-card-grid" id="ap-modern-scenario-cards">'+cards+'</div></div></details><div class="ap-modern-jump"><a class="jump-link" href="#essay">'+E(c.jump)+'</a></div><article class="essay ap-modern-essay" id="essay"><section class="essay-primer"><h2>'+E(c.before)+'</h2><p>'+E(d.primer)+'</p><h3>'+E(c.terms)+'</h3><dl class="essay-primer-terms">'+terms+'</dl></section>'+sections+'<section class="for-teachers"><h2>'+E(c.teachers)+'</h2><p><strong>'+E(c.curriculum)+':</strong> '+E(t.curriculum)+'</p><h3>'+E(c.pre)+'</h3>'+list(t.pre)+'<h3>'+E(c.post)+'</h3>'+list(t.post)+'<p><strong>'+E(c.misconceptions)+':</strong> '+E(t.misconceptions)+'</p></section><details id="ap-modern-a11y" class="accessibility-layer ap-modern-a11y-compact"><summary>'+E(c.a11y_summary)+'</summary><div class="ap-support-body"><h2 class="ap-modern-sr-only">'+E(c.a11y_title)+'</h2><p>'+E(c.a11y_intro)+'</p><p><a href="#textState">'+E(c.state_link)+'</a></p><p>'+E(c.a11y_note)+'</p></div></details><p class="ap-modern-back-controls"><a href="#ap-modern-interactive-start">'+E(c.back_controls)+'</a></p></article>';const essay=root.querySelector('.ap-modern-essay');if(essay)essayRoot.replaceChildren(essay)}
+function apply(index){index=Number(index);const settings=DATA.settings[index];if(!settings)return;for(const [id,value] of Object.entries(settings)){const control=document.getElementById(id);if(!control)continue;control.value=String(value);control.dispatchEvent(new Event('change',{bubbles:true}))}root.querySelectorAll('.scenario-card').forEach(x=>x.classList.toggle('applied',Number(x.dataset.modernScenarioCard)===index));const c=DATA.common[locale()]||DATA.common.en;const button=root.querySelector('.scenario-card[data-modern-scenario-card="'+index+'"] button');if(button){button.textContent='✓ '+c.applied;setTimeout(()=>{if(button.isConnected)button.textContent=c.apply},1800)}try{const u=new URL(location.href);u.searchParams.set('scenario',String(index));u.searchParams.set('mode','explore');u.searchParams.set('lang',locale());u.searchParams.delete('featured');history.replaceState(null,'',u)}catch(_e){}document.getElementById('ap-modern-interactive-start')?.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
+root.addEventListener('click',e=>{const button=e.target.closest('[data-modern-apply]');if(!button)return;apply(button.dataset.modernApply)});new MutationObserver(paint).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});window.addEventListener('lab13localechange',paint);window.addEventListener('lab14localechange',paint);window.addEventListener('lab15localechange',paint);paint();try{const p=new URL(location.href).searchParams,n=Number(p.get('scenario'));if(Number.isInteger(n)&&n>=0&&n<DATA.settings.length)setTimeout(()=>apply(n),0)}catch(_e){}
+})();</script>
+</body>
+</html>
