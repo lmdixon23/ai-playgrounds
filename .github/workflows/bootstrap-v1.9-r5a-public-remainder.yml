@@ -1,0 +1,35 @@
+name: Bootstrap v1.9 R5a public remainder ownership
+
+on:
+  push:
+    branches:
+      - refactor/v1.9-public-remainder-ownership-r5a
+
+permissions:
+  contents: write
+
+jobs:
+  materialize-public-remainder:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout R5a branch
+        uses: actions/checkout@v6
+        with:
+          ref: refactor/v1.9-public-remainder-ownership-r5a
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Classify 43 non-applet public files and materialize only unmatched current outputs
+        run: python tools/bootstrap_v1_9_r5a_public_remainder.py
+      - name: Commit canonical remainder map and exact current snapshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/product/public-remainder.json
+          if [ -d src/site/current ]; then git add src/site/current; fi
+          git diff --cached --quiet && exit 0
+          git commit -m "v1.9 R5a: materialize canonical public remainder ownership"
+          git push origin HEAD:refactor/v1.9-public-remainder-ownership-r5a
