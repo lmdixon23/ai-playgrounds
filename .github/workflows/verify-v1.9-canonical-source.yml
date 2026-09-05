@@ -26,8 +26,8 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.13"
-      - name: Verify DTCG design-token contract, canonical page ownership, and frozen 58-file artifact
-        run: python tools/test_v1_9_design_token_contract_r4a.py
+      - name: Verify token-owned shared components, canonical pages, and frozen 58-file artifact
+        run: python tools/test_v1_9_token_owned_components_r4b.py
       - name: Upload current canonical-source evidence
         if: always()
         uses: actions/upload-artifact@v7
@@ -39,5 +39,6 @@ jobs:
             release-evidence/v1.9-canonical-source-r2.json
             release-evidence/v1.9-canonical-source-r3.json
             release-evidence/v1.9-canonical-source-r4a.json
+            release-evidence/v1.9-canonical-source-r4b.json
           if-no-files-found: error
           retention-days: 90
