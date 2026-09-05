@@ -163,6 +163,15 @@ def css_value(tokens: dict[str, dict[str, Any]], path: str) -> str:
     raise TokenContractError(f"No CSS scalar representation for token type {token_type!r}: {path}")
 
 
+def normalize_css_atom(value: str) -> str:
+    normalized = value.strip().lower()
+    match = re.fullmatch(r"#([0-9a-f]{3})", normalized)
+    if match:
+        digits = match.group(1)
+        return "#" + "".join(char * 2 for char in digits)
+    return normalized
+
+
 def style_contents(html: str) -> list[str]:
     styles: list[str] = []
     cursor = 0
@@ -250,7 +259,7 @@ def validate_theme_profiles(tokens: dict[str, dict[str, Any]], bindings: dict[st
                     require(variable in observed, f"Theme variable {variable} missing in {slug} / {selector}")
                     expected = css_value(tokens, token_path)
                     actual = observed[variable]
-                    require(actual == expected, f"Theme token mismatch {slug} {selector} {variable}: {actual} != {expected}")
+                    require(normalize_css_atom(actual) == normalize_css_atom(expected), f"Theme token mismatch {slug} {selector} {variable}: {actual} != {expected}")
                     mode_evidence[variable] = {"token": token_path, "value": actual}
                     checks += 1
                 entry[mode] = {"selector": selector, "variables": mode_evidence}
@@ -277,7 +286,7 @@ def validate_accents(tokens: dict[str, dict[str, Any]], bindings: dict[str, Any]
         root = custom_properties(html, ":root")
         require("--accent" in root, f"Page root accent missing: {slug}")
         light_value = css_value(tokens, paths["uiLight"])
-        require(root["--accent"] == light_value, f"Light page accent token drift: {slug}: {root['--accent']} != {light_value}")
+        require(normalize_css_atom(root["--accent"]) == normalize_css_atom(light_value), f"Light page accent token drift: {slug}: {root['--accent']} != {light_value}")
         entry: dict[str, Any] = {"catalogue": catalogue_value, "uiLight": light_value}
         if slug in newer:
             selector = f'body.ap-standard-dark[data-ap-modern-parity="{slug}"]'
@@ -285,8 +294,8 @@ def validate_accents(tokens: dict[str, dict[str, Any]], bindings: dict[str, Any]
             require("--accent" in dark and "--accent-strong" in dark, f"Dark accent overrides missing: {slug}")
             dark_value = css_value(tokens, paths["uiDark"])
             strong_value = css_value(tokens, paths["uiDarkStrong"])
-            require(dark["--accent"] == dark_value, f"Dark page accent token drift: {slug}")
-            require(dark["--accent-strong"] == strong_value, f"Dark strong accent token drift: {slug}")
+            require(normalize_css_atom(dark["--accent"]) == normalize_css_atom(dark_value), f"Dark page accent token drift: {slug}")
+            require(normalize_css_atom(dark["--accent-strong"]) == normalize_css_atom(strong_value), f"Dark strong accent token drift: {slug}")
             entry["uiDark"] = dark_value
             entry["uiDarkStrong"] = strong_value
             checks += 4
