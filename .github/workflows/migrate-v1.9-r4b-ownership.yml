@@ -1,0 +1,36 @@
+name: Migrate v1.9 R4b token-component ownership
+
+on:
+  push:
+    branches:
+      - refactor/v1.9-token-owned-components-r4b
+
+permissions:
+  contents: write
+
+jobs:
+  migrate-token-component-ownership:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: refactor/v1.9-token-owned-components-r4b
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Transfer six component owners from raw files to token templates
+        run: python tools/migrate_v1_9_r4b_ownership.py
+      - name: Prove final token and page graphs after raw-source retirement
+        run: |
+          python tools/token_components.py
+          python tools/page_components.py
+          python tools/design_tokens.py
+      - name: Commit final R4b ownership model
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A src/design src/product src/ui/components
+          git commit -m 'v1.9 R4b: transfer six shared components to token-owned source'
+          git push origin HEAD:refactor/v1.9-token-owned-components-r4b
