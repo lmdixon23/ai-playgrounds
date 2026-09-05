@@ -68,7 +68,24 @@ def sha256(path: pathlib.Path) -> str:
     return digest.hexdigest()
 
 
+def ensure_baseline_commit() -> None:
+    probe = run(['git', 'cat-file', '-e', f'{BASELINE_SHA}^{{commit}}'], timeout=20)
+    if probe.returncode == 0:
+        return
+    fetched = run(['git', 'fetch', '--no-tags', '--depth=1', 'origin', BASELINE_SHA], timeout=90)
+    if fetched.returncode:
+        raise RuntimeError(
+            fetched.stderr.strip()
+            or fetched.stdout.strip()
+            or f'Could not fetch exact baseline commit {BASELINE_SHA}'
+        )
+    probe = run(['git', 'cat-file', '-e', f'{BASELINE_SHA}^{{commit}}'], timeout=20)
+    if probe.returncode:
+        raise RuntimeError(f'Exact baseline commit remains unavailable after fetch: {BASELINE_SHA}')
+
+
 def assert_evidence_only_diff() -> list[str]:
+    ensure_baseline_commit()
     diff = run(['git', 'diff', '--name-only', f'{BASELINE_SHA}..HEAD'], timeout=30)
     if diff.returncode:
         raise RuntimeError(diff.stderr.strip() or diff.stdout.strip() or 'git diff failed')
