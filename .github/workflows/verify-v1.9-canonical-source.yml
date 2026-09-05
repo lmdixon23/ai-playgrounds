@@ -18,7 +18,7 @@ jobs:
   canonical-source:
     name: Canonical source equivalence and ownership
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -26,8 +26,8 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.13"
-      - name: Verify peer current-page ownership and frozen 58-file artifact
-        run: python tools/test_v1_9_canonical_source_r2.py
+      - name: Verify all-page template/component ownership and frozen 58-file artifact
+        run: python tools/test_v1_9_canonical_source_r3.py
       - name: Upload current canonical-source evidence
         if: always()
         uses: actions/upload-artifact@v7
@@ -37,5 +37,6 @@ jobs:
             release-evidence/v1.9-canonical-source-r0.json
             release-evidence/v1.9-canonical-source-r1.json
             release-evidence/v1.9-canonical-source-r2.json
+            release-evidence/v1.9-canonical-source-r3.json
           if-no-files-found: error
           retention-days: 90
