@@ -1,0 +1,20 @@
+name: Smoke v1.9 R4a token contract
+
+on:
+  push:
+    branches:
+      - refactor/v1.9-design-token-contract-r4a
+
+permissions:
+  contents: read
+
+jobs:
+  validate-token-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Validate DTCG token contract against frozen R3 product
+        run: python tools/design_tokens.py
