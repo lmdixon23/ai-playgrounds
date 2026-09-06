@@ -9,6 +9,7 @@ import design_tokens
 import direct_current_site
 import page_components
 import public_remainder
+import quick_assigns
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "_site"
@@ -16,7 +17,6 @@ PRODUCT = ROOT / "src" / "product" / "release.json"
 LABS = ROOT / "src" / "product" / "labs.json"
 CATALOGUE = ROOT / "src" / "product" / "catalogue.json"
 ORACLE = ROOT / "src" / "product" / "public-artifact-sha256.json"
-QUICK_ASSIGNS = ROOT / "tools" / "quick_assigns_v2.json"
 R0_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r0.json"
 R1_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r1.json"
 R2_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r2.json"
@@ -25,8 +25,9 @@ R4A_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r4a.json"
 R4B_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r4b.json"
 R5A_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r5a.json"
 R5B_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r5b.json"
+R6A_EVIDENCE = ROOT / "release-evidence" / "v1.9-canonical-source-r6a.json"
 BASELINE_SHA = "d1c72e10e6c5bf64b9a4bbed578b2305d1c988d0"
-CURRENT_PHASE = "v1.9-r5b-direct-canonical-build"
+CURRENT_PHASE = "v1.9-r6a-canonical-quick-assign-registry"
 R2_PEER_SLUGS = (
     "transformer-language-model",
     "agent-tool-context",
@@ -141,7 +142,7 @@ def validate_product_model() -> dict[str, object]:
     release = load_json(PRODUCT)
     lab_payload = load_json(LABS)
     labs = lab_payload.get("labs", [])
-    quick = load_json(QUICK_ASSIGNS)
+    quick = quick_assigns.load_and_validate()
     catalogue = load_canonical_catalogue()
     pages = page_components.load_and_validate()
     token_contract = design_tokens.validate_contract()
@@ -150,17 +151,17 @@ def validate_product_model() -> dict[str, object]:
     if release.get("architecture_phase") != CURRENT_PHASE:
         raise RuntimeError(f"Current architecture phase must be {CURRENT_PHASE}")
     if release.get("public_release") != "v1.8.1" or release.get("software_version") != "1.8.1":
-        raise RuntimeError("R5b must remain bound to exact public v1.8.1")
+        raise RuntimeError("R6a must remain bound to exact public v1.8.1")
     if release.get("baseline_source_sha") != BASELINE_SHA:
-        raise RuntimeError("R5b baseline source SHA changed")
+        raise RuntimeError("R6a baseline source SHA changed")
     if release.get("public_file_count") != 58 or release.get("applet_count") != 15:
-        raise RuntimeError("R5b public boundary must remain 58 files / 15 applets")
+        raise RuntimeError("R6a public boundary must remain 58 files / 15 applets")
     if release.get("foundations_count") != 13 or release.get("modern_extension_count") != 2:
-        raise RuntimeError("R5b curriculum track-count boundary changed")
+        raise RuntimeError("R6a curriculum track-count boundary changed")
     if release.get("learner_locales") != ["en", "zh", "vi", "es"]:
-        raise RuntimeError("R5b learner locale order changed")
+        raise RuntimeError("R6a learner locale order changed")
     if release.get("quick_assign_count") != 15:
-        raise RuntimeError("R5b Quick Assign count changed")
+        raise RuntimeError("R6a Quick Assign count changed")
 
     expected_release_fields = {
         "canonical_catalogue": "src/product/catalogue.json",
@@ -184,8 +185,13 @@ def validate_product_model() -> dict[str, object]:
         "canonical_existing_public_remainder_count": 29,
         "current_snapshot_public_remainder_count": 14,
         "direct_current_build": True,
+        "direct_current_build_phase": "v1.9-r5b-direct-canonical-build",
         "current_build_composer": "tools/direct_current_site.py",
         "historical_builder_role": "test-only-regression-and-provenance",
+        "current_quick_assign_registry": "src/product/quick-assigns.json",
+        "quick_assign_registry_phase": "v1.9-r6a-canonical-quick-assign-registry",
+        "historical_quick_assign_registry": "tools/quick_assigns_v2.json",
+        "historical_quick_assign_registry_role": "test-only-regression-and-provenance",
     }
     for key, expected in expected_release_fields.items():
         if release.get(key) != expected:
@@ -236,8 +242,7 @@ def validate_product_model() -> dict[str, object]:
     if set(page_by_slug) != set(lab_by_slug) or set(catalogue_by_slug) != set(lab_by_slug):
         raise RuntimeError("Canonical page/lab/catalogue membership differs")
 
-    active = [row for row in quick.get("activities", []) if row.get("status") == "active"]
-    qa_by_slug = {row.get("slug"): row for row in active}
+    qa_by_slug = quick["by_slug"]
     if len(qa_by_slug) != 15:
         raise RuntimeError(f"Expected 15 active Quick Assigns, found {len(qa_by_slug)}")
 
@@ -275,6 +280,7 @@ def validate_product_model() -> dict[str, object]:
         "page_components": pages,
         "design_tokens": token_contract,
         "public_remainder": public_remainder_state,
+        "quick_assigns": quick,
         "lab_count": len(labs),
         "foundation_count": len(foundations),
         "modern_extension_count": len(modern_extensions),
@@ -310,10 +316,11 @@ def build_current() -> None:
     # are neither imported nor invoked by this facade.
     direct = direct_current_site.build_direct(SITE)
     catalogue_check = validate_emitted_catalogue(model)
+    quick_assign_check = quick_assigns.validate_emitted(SITE, model["quick_assigns"])
     comparison = compare_to_oracle(artifact_hashes())
     if not direct["artifact"]["pass"] or not comparison["pass"]:
         raise RuntimeError(
-            "R5b direct current build differs from frozen v1.8.1 byte oracle: "
+            "R6a current build differs from frozen v1.8.1 byte oracle: "
             f"added={comparison['added']}, removed={comparison['removed']}, changed={comparison['changed']}"
         )
 
@@ -454,7 +461,8 @@ def build_current() -> None:
     })
 
     write_evidence(R5B_EVIDENCE, {
-        "phase": CURRENT_PHASE,
+        "phase": "v1.9-r5b-direct-canonical-build",
+        "representation": "preserved-under-r6a-canonical-quick-assign-registry",
         "baseline_source_sha": BASELINE_SHA,
         "direct_current_build": True,
         "current_build_composer": "tools/direct_current_site.py",
@@ -475,9 +483,29 @@ def build_current() -> None:
         "artifact": comparison,
     })
 
+    quick_state = model["quick_assigns"]
+    write_evidence(R6A_EVIDENCE, {
+        "phase": CURRENT_PHASE,
+        "baseline_source_sha": BASELINE_SHA,
+        "canonical_quick_assign_registry": "src/product/quick-assigns.json",
+        "canonical_quick_assign_sha256": quick_state["sha256"],
+        "historical_quick_assign_registry": "tools/quick_assigns_v2.json",
+        "historical_quick_assign_registry_role": "test-only-regression-and-provenance",
+        "historical_quick_assign_sha256": quick_state["manifest"]["historical_equivalence"]["sha256"],
+        "current_build_reads_historical_quick_assign_registry": False,
+        "schema_version": quick_state["manifest"]["schema_version"],
+        "activity_count": len(quick_state["activities"]),
+        "inquiry_sequence": quick_state["manifest"]["sequence"],
+        "learner_locales": quick_assigns.EXPECTED_LOCALES,
+        "emitted_bindings": quick_assign_check,
+        "model": common_model,
+        "catalogue": catalogue_check,
+        "artifact": comparison,
+    })
+
     print(
-        "v1.9 R5b current build: PASS — direct canonical composition emits 43 remainder + 15 applet pages; "
-        f"{comparison['actual_files']} files remain byte-identical to frozen v1.8.1"
+        "v1.9 R6a current build: PASS — 15 canonical Quick Assigns bind to 15 applets and both support pages; "
+        f"direct composition keeps {comparison['actual_files']} files byte-identical to frozen v1.8.1"
     )
 
 

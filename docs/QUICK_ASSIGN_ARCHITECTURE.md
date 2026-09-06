@@ -62,6 +62,10 @@ All fifteen public applets have one active v1.8.1 Quick Assign:
 - `QA-TRANSFORMER-01` — Transformer Language Modeling
 - `QA-AGENT-01` — Agent Tool Use and Context Protocols
 
+`src/product/quick-assigns.json` is the canonical current registry for these IDs, slugs, anchors, inquiry objectives, teacher criteria, and locale declarations. `src/product/labs.json` binds each lab to exactly one canonical Quick Assign ID, and the current build validates each registry row against its generated applet surface plus the teacher-pack and curriculum links, titles, objectives, and teacher criteria.
+
+`tools/quick_assigns_v2.json` is retained only as a frozen v1.7/v1.8 regression and provenance input. The R6a handoff gate proves semantic equivalence once, while `tools/build_current.py` reads only the canonical current registry. Changes to the historical registry cannot influence current construction.
+
 The first four were the v1.6.1 rollout canaries. The remaining eleven were promoted in v1.7.0 after the all-lab assignment, localization/state, responsive, and release gates passed. v1.7.1 preserved that complete assignment layer. v1.7.2 brought the three modern packets to the shared state-refresh, copy, print, accessibility-label, and four-locale action boundary. v1.8.0 kept one assignment surface per lab while allowing the Hill Climbing, KNN, and CNF/SAT packets to snapshot their new opt-in modes. v1.8.1 keeps the same IDs and response schema while making modern packet state capture explicit rather than eagerly duplicating the always-current native state.
 
 ## Level-1 interaction contract
