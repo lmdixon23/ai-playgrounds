@@ -144,6 +144,47 @@ def load_and_validate() -> dict[str, object]:
     }
 
 
+def emit(site: Path, state: dict[str, object] | None = None) -> dict[str, object]:
+    state = state or load_and_validate()
+    rows = state.get("files")
+    require(isinstance(rows, list) and len(rows) == EXPECTED_REMAINDER_COUNT, "R5b emission requires validated 43-file remainder state")
+
+    emitted: dict[str, dict[str, object]] = {}
+    total_bytes = 0
+    for row in rows:
+        require(isinstance(row, dict), "R5b emission received invalid remainder row")
+        public_path = str(row["public_path"])
+        source_path = str(row["source_path"])
+        expected_sha = str(row["sha256"])
+        expected_bytes = int(row["bytes"])
+        source = ROOT / source_path
+        raw = source.read_bytes()
+        require(digest_bytes(raw) == expected_sha, f"R5b source changed before emission: {public_path}")
+        require(len(raw) == expected_bytes, f"R5b source byte count changed before emission: {public_path}")
+
+        target = site / public_path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(raw)
+        emitted_raw = target.read_bytes()
+        require(digest_bytes(emitted_raw) == expected_sha, f"R5b emitted remainder hash drift: {public_path}")
+        require(len(emitted_raw) == expected_bytes, f"R5b emitted remainder byte-count drift: {public_path}")
+        total_bytes += len(emitted_raw)
+        emitted[public_path] = {
+            "source_kind": row["source_kind"],
+            "source_path": source_path,
+            "sha256": expected_sha,
+            "bytes": expected_bytes,
+        }
+
+    require(len(emitted) == EXPECTED_REMAINDER_COUNT, "R5b did not emit exactly 43 remainder files")
+    return {
+        "file_count": len(emitted),
+        "bytes": total_bytes,
+        "files": emitted,
+        "pass": True,
+    }
+
+
 if __name__ == "__main__":
     state = load_and_validate()
     print(
