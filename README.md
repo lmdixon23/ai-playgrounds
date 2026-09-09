@@ -1,4 +1,4 @@
-# AI Playgrounds v1.9.0
+# AI Playgrounds v1.9.1
 
 Fifteen interactive AI playgrounds in English, Simplified Chinese, Vietnamese,
 and Spanish. No account or backend is required.
@@ -21,9 +21,11 @@ HTML does not copy saved answers.
 
 ## This release
 
-v1.9.0 improves consistency across all fifteen playgrounds, accessibility
-engineering, deterministic regression coverage, and standalone offline delivery.
-Wumpus World now explains its icons and scales breeze and stench with cell size.
+v1.9.1 aligns the shared page layout of Transformer, Agent, and Game Trees with
+the twelve original playgrounds: header controls, learning tabs, Guided Challenge,
+Quick Assign placement, reading width, and teacher notes. Their mechanisms and
+saved classroom drafts are preserved. Standalone offline downloads include these
+changes. The Wumpus World icon key and responsive percept icons from v1.9.0 remain.
 
 Learner and educator usability studies and human screen-reader testing are
 deferred. Automated checks are not a substitute for those studies. This release
@@ -31,7 +33,7 @@ does not claim WCAG conformance, validated learning gains, or educator adoption.
 
 [Release notes](https://lmdixon23.github.io/ai-playgrounds/release-notes.html)
 describe changes and limitations. The historical v1.0.1 DOI is not a DOI for
-v1.9.0. See [citation information](https://lmdixon23.github.io/ai-playgrounds/research-and-citation.html).
+v1.9.1. See [citation information](https://lmdixon23.github.io/ai-playgrounds/research-and-citation.html).
 
 This repository distributes finished website and classroom-download artifacts.
 HTML necessarily includes the browser-side code used by the playgrounds.

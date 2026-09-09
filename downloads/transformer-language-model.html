@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-<!-- Standalone AI Playgrounds v1.9.0 export.
+<!-- Standalone AI Playgrounds v1.9.1 export.
 MIT License
 
 Copyright (c) 2026 Logan M. Dixon
@@ -49,7 +49,7 @@ SOFTWARE.
 .suite-back:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 55%,transparent);outline-offset:3px}
 </style>
 
-<meta name="ai-playgrounds-version" content="1.9.0">
+<meta name="ai-playgrounds-version" content="1.9.1">
 
 <style id="lab13-v14-experience-style">
 #lab13-locale-bar{align-items:center}
@@ -222,18 +222,23 @@ body[data-ap-modern-parity] #ap-modern-interactive-start{width:100%;max-width:11
 .ap-modern-curriculum{max-width:980px;margin:22px auto 0;padding:0 20px;color:var(--fg);font:15px/1.6 system-ui,-apple-system,sans-serif}
 .ap-modern-curriculum details{margin:12px 0}
 .ap-modern-curriculum details>summary{cursor:pointer;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-left:4px solid color-mix(in srgb,var(--accent) 62%,var(--border));border-radius:10px;color:var(--fg);font-weight:800}
-.ap-modern-featured-body,.scenario-gallery-panel{padding:16px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}
+.ap-modern-featured-body{padding:16px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}
+.scenario-gallery-panel{margin-top:8px;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:6px}
+.scenario-gallery>summary{font-family:-apple-system,system-ui,sans-serif;font-size:.88rem;line-height:1.6}
 .ap-modern-featured-body>strong{display:block;font-size:1.08rem;color:var(--accent);margin-bottom:7px}
 .ap-modern-featured-body p{margin:7px 0}
 .featured-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.scenario-gallery-intro{margin:0 0 12px;color:var(--muted)}
-.scenario-card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.scenario-card{min-width:0;padding:15px;border:1px solid var(--border);border-radius:10px;background:color-mix(in srgb,var(--card) 97%,var(--accent));box-shadow:0 6px 18px rgba(15,23,42,.05)}
-.scenario-card.applied{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 22%,transparent)}
-.scenario-card h3{margin:0 0 9px;font-size:1rem;color:var(--fg)}
-.scenario-card .scenario-meta{margin:7px 0;line-height:1.5;color:var(--fg)}
+.scenario-gallery-intro{margin:0 0 10px;color:var(--muted);font-size:.88rem;line-height:1.5}
+.scenario-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.scenario-card{min-width:0;min-height:100%;display:flex;flex-direction:column;gap:8px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:color-mix(in srgb,var(--card) 97%,var(--accent));box-shadow:0 6px 18px rgba(15,23,42,.05)}
+.scenario-card.applied{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 22%,transparent);transform:translateY(-1px)}
+.scenario-card h3{margin:0;font-size:.98rem;line-height:1.25;color:var(--accent)}
+.scenario-card .scenario-meta{margin:0;font-size:.78rem;line-height:1.5;color:var(--muted)}
+.scenario-card .scenario-meta:last-of-type{margin-bottom:2px}
 .scenario-card .scenario-meta strong{display:block;color:var(--fg);margin-bottom:2px}
 .scenario-card button,.featured-actions button{border:0;border-radius:8px;background:var(--accent);color:#fff;font-weight:750;padding:8px 11px;cursor:pointer}
+.scenario-card button{margin-top:auto;align-self:flex-start;font-family:-apple-system,system-ui,sans-serif;font-size:.85rem;line-height:1.6}
+@media(max-width:480px){.scenario-card-grid{grid-template-columns:1fr}.scenario-card button{width:100%}}
 .ap-modern-jump{text-align:center;margin:17px 0 8px}
 .ap-modern-jump .jump-link{display:inline-block;padding:7px 14px;border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--accent);text-decoration:none;font-weight:700;font-size:.84rem}
 .ap-modern-essay{max-width:760px;margin:0 auto;padding:30px 0 54px;font-size:1.03rem}
@@ -273,17 +278,68 @@ body.ap-standard-dark .node.returned circle{fill:#064e3b!important;stroke:#6ee7b
 body.ap-standard-dark .node.pruned circle{fill:#4c1d2b!important;stroke:#fda4af!important}
 body.ap-standard-dark .metric,body.ap-standard-dark .trace-card,body.ap-standard-dark .baseline{background:var(--card)!important;color:var(--fg)!important}
 body.ap-standard-dark .actual{background:#052e2b!important;border-color:#0f766e!important;color:var(--fg)!important}
-@media(min-width:980px){.scenario-card-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.scenario-card:last-child:nth-child(3n+2){grid-column:auto}}
-@media(max-width:720px){.ap-standard-header .header-main{align-items:flex-start}.scenario-card-grid,.essay-primer-terms{grid-template-columns:1fr}.ap-modern-curriculum{padding:0 14px}.ap-modern-essay{padding-bottom:38px}body[data-ap-modern-parity] #ap-modern-interactive-start{padding-left:14px;padding-right:14px}}
+@container(min-width:980px){.scenario-card-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:720px){.ap-standard-header .header-main{align-items:flex-start}.essay-primer-terms{grid-template-columns:1fr}.ap-modern-curriculum{padding:0 14px}.ap-modern-essay{padding-bottom:38px}body[data-ap-modern-parity] #ap-modern-interactive-start{padding-left:14px;padding-right:14px}}
 @media(pointer:coarse){.ap-standard-header .header-theme,.ap-standard-header .header-png,.ap-standard-header .header-reset,.ap-standard-header .header-more>summary,.scenario-card button,.featured-actions button{min-height:44px}}
 @media(prefers-reduced-motion:reduce){.scenario-card{transition:none!important}.ap-modern-curriculum{scroll-behavior:auto!important}}
+/* All-twelve reference shell: mechanism geometry remains owned by each lab. */
+body[data-ap-modern-parity]{--bg:#fefdf8;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","PingFang SC","Microsoft YaHei","Noto Sans SC",Arial,sans-serif;font-size:16px;line-height:1.6}
+body.ap-standard-dark[data-ap-modern-parity]{--bg:#0f172a}
+body.ap-standard-dark .ap-modern-tldr{background:var(--accent-strong)}
+.ap-modern-tldr strong{color:#fff}
+body[data-ap-modern-parity] #ap-modern-interactive-start{max-width:none;width:100%;margin:0;padding:24px;background:var(--card);border-bottom:1px solid var(--border)}
+body[data-ap-modern-parity] .interactive-inner{width:100%;margin:0 auto;max-width:min(1320px,100%);container-type:inline-size}
+body[data-ap-modern-parity] .ap-modern-entry{max-width:none;width:100%;margin:0;padding:0;display:contents;font:inherit}
+body[data-ap-modern-parity] .ap-modern-explanation{width:100%;max-width:none;margin:0;padding:0;font:inherit}
+body[data-ap-modern-parity] article.ap-modern-essay{box-sizing:border-box;width:100%;max-width: 720px;margin:0 auto;padding:40px 24px 80px;font-size:1.05rem;line-height:1.6}
+body[data-ap-modern-parity] .ap-modern-essay h2{font-size:1.5rem;margin:36px 0 12px}
+body[data-ap-modern-parity] .ap-modern-essay h3{font-size:1.15rem;margin:24px 0 8px}
+body[data-ap-modern-parity] .ap-modern-essay p{margin:1em 0}
+body[data-ap-modern-parity] .ap-modern-essay li{margin-bottom:6px}
+body[data-ap-modern-parity] .ap-standard-header{padding:12px 24px}
+body[data-ap-modern-parity] .ap-standard-header h1{line-height:1.6}
+body[data-ap-modern-parity] .ap-standard-header .header-title-wrap{flex:0 1 auto}
+body[data-ap-modern-parity] .ap-standard-header .back{font-weight:400}
+body[data-ap-modern-parity] .header-prefs #ap-standard-language{width:auto;min-width:110px;max-width:100%;min-height:38px;flex:none;padding:6px 26px 6px 9px;font-size:.82rem;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--fg)}
+.suite-guided-shell{margin:0 0 14px;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:color-mix(in srgb,var(--card) 96%,var(--accent));font-family:-apple-system,system-ui,sans-serif}
+.suite-guided-modebar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.suite-guided-mode-label{font-size:.8rem;font-weight:750;color:var(--muted);margin-right:2px}
+.suite-guided-modebar button,.ap-suite-guide-link{min-height:38px;padding:7px 11px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--fg);font:inherit;font-size:.84rem;cursor:pointer}
+.suite-guided-modebar button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:750}
+.suite-guided-panel{margin-top:12px;border-top:1px solid var(--border);padding-top:12px}
+.suite-guided-panel>.challenge{margin:0}
+.suite-guided-panel[hidden],.learning-mode-shell[hidden]{display:none!important}
+.ap-suite-guide-link{justify-self:start;min-height:38px}
+.ap-suite-guide-link,.copy-experiment{background:var(--card);color:var(--fg)}
+.ap-suite-jump-slot{width:100%}
+.for-teachers-expander{margin-top:36px}
+.for-teachers-expander>summary{cursor:pointer;padding:12px 16px;background:var(--soft);border:1px solid var(--border);border-radius:8px;color:var(--accent);font-size:.9rem;font-weight:600}
+.for-teachers-expander>.for-teachers{margin-top:10px;border-radius:8px;padding:20px 24px;font-size:.95rem}
+.for-teachers-expander .for-teachers h2{margin:0;font-size:.9rem;letter-spacing:.05em}
+.learning-mode-panel ol.key-terms-panel{padding-left:34px}
+.learning-mode-panel .ap-modern-featured-body{padding:14px;font-size:.88rem}
+.learning-mode-panel .ap-modern-entry>details{grid-column:1/-1;margin:0;min-width:0}
+.learning-mode-panel .ap-modern-entry>details>summary{background:var(--card);border:1px solid var(--border);border-left:4px solid color-mix(in srgb,var(--accent) 62%,var(--border));border-radius:10px;color:var(--fg);font-weight:750;padding:10px 12px}
+.learning-mode-panel .ap-modern-entry>details[open]>summary{border-color:color-mix(in srgb,var(--accent) 55%,var(--border))}
+body[data-ap-modern-parity] .header-prefs #ap-standard-language,body[data-ap-modern-parity] .header-prefs #ap-standard-theme{min-height:34px;height:34px}
+.learning-mode-panel a{color:var(--accent)}
+.interactive-inner>.hero>.pill,.interactive-inner>.hero>h2,.interactive-inner>.hero>p:first-of-type{display:none!important}
+.ap-native-teaching>.card{margin:0;border:0;box-shadow:none}
+.ap-native-teaching>.card>h2{display:none}
+.learning-mode-tab,.copy-experiment{font:inherit;cursor:pointer}
+.copy-experiment{font-size:.82rem}
+body.ap-standard-dark .suite-guided-modebar button[aria-pressed="true"]{background:var(--accent-strong);border-color:var(--accent-strong)}
+@media(max-width:680px){.suite-guided-modebar button{flex:1 1 140px}}
+@media(pointer:coarse){body[data-ap-modern-parity] .header-prefs #ap-standard-language,.suite-guided-modebar button,.ap-suite-guide-link{min-height:44px}}
+body.embed-mode .suite-guided-shell,body.embed-mode .learning-mode-shell,body.embed-mode .ap-suite-jump-slot{display:none!important}
+@media print{.learning-mode-shell[hidden],.learning-mode-panel[hidden]{display:block!important}.learning-mode-head,.learning-mode-tabs,.suite-guided-modebar,.ap-suite-guide-link{display:none!important}}
 </style>
 
 </head>
 <body id="top" data-ap-modern-parity="transformer-language-model">
 <a class="ap-modern-skip" href="#ap-modern-interactive-start" data-ap-en="Skip to applet controls" data-ap-zh="跳到 applet 控件" data-ap-vi="Bỏ qua đến điều khiển applet" data-ap-es="Saltar a los controles del applet">Skip to applet controls</a>
 <header class="ap-standard-header page-header" data-ap-standard-shell="transformer-language-model">
-  <div class="header-utility"><a class="back" href="https://lmdixon23.github.io/ai-playgrounds/index.html">← <span data-ap-chrome="back">AI Playgrounds</span></a><div class="header-prefs"><button class="header-theme" id="ap-standard-theme" type="button" data-ap-chrome="theme"><span class="ap-theme-icon" aria-hidden="true">◐</span></button><div class="lang-switch modern-lang-switch" role="group" aria-label="Language"><button class="active" type="button" data-ap-language="en" aria-pressed="true">EN</button><button type="button" data-ap-language="zh" aria-pressed="false">中文</button><button type="button" data-ap-language="vi" aria-pressed="false">VI</button><button type="button" data-ap-language="es" aria-pressed="false">ES</button></div></div></div>
+  <div class="header-utility"><a class="back" href="https://lmdixon23.github.io/ai-playgrounds/index.html">← <span data-ap-chrome="back">AI Playgrounds</span></a><div class="header-prefs"><button class="header-theme" id="ap-standard-theme" type="button" data-ap-chrome="theme"><span class="ap-theme-icon" aria-hidden="true">◐</span></button><select id="ap-standard-language" class="r4-language-select" aria-label="Language"><option value="en">English</option><option value="zh">中文</option><option value="vi">Tiếng Việt</option><option value="es">Español</option></select></div></div>
   <div class="header-main"><div class="header-title-wrap"><h1 id="ap-standard-title">Transformer Language Modeling</h1><p id="ap-standard-subtitle" class="ap-standard-subtitle">Change a token, mask, or temperature and watch the next-token probabilities move.</p></div><div class="header-actions"><button class="header-png" id="ap-modern-share" type="button" data-ap-en="Share" data-ap-zh="分享" data-ap-vi="Chia sẻ" data-ap-es="Compartir">🔗 <span>Share</span></button><details class="header-more" id="ap-modern-more"><summary class="header-png" data-ap-en="More" data-ap-zh="更多" data-ap-vi="Thêm" data-ap-es="Más" aria-haspopup="menu">More</summary><div class="header-more-menu" role="menu"><button class="header-png" id="ap-modern-embed" type="button" data-ap-en="Embed in LMS" data-ap-zh="嵌入到 LMS" data-ap-vi="Nhúng vào LMS" data-ap-es="Insertar en LMS">📎 <span>Embed in LMS</span></button><button class="header-png" id="ap-modern-settings-json" type="button" data-ap-en="Current settings (.json)" data-ap-zh="当前设置（.json）" data-ap-vi="Cài đặt hiện tại (.json)" data-ap-es="Configuración actual (.json)">⬇ <span>Current settings (.json)</span></button></div></details><button class="header-reset" id="ap-standard-reset" type="button" data-ap-chrome="reset">↺ Reset all</button></div></div>
 </header>
 <aside class="ap-modern-tldr" aria-labelledby="ap-modern-big-label">
@@ -368,7 +424,7 @@ body.ap-standard-dark .actual{background:#052e2b!important;border-color:#0f766e!
 </details>
 <div class="ap-modern-jump"><a class="jump-link" href="#essay">↓ Read the step-by-step explanation</a></div>
  </section>
-<details class="card quick-assign-modern classroom-lab quick-assign" id="quick-assign-qa-transformer-01" data-quick-assign-id="QA-TRANSFORMER-01"><summary><strong><span class="qa-i18n" data-qa-en="Quick Assign · QA-TRANSFORMER-01 · 10–15 min" data-qa-zh="快速任务 · QA-TRANSFORMER-01 · 10–15 分钟" data-qa-vi="Bài tập nhanh · QA-TRANSFORMER-01 · 10–15 phút" data-qa-es="Tarea rápida · QA-TRANSFORMER-01 · 10–15 min">Quick Assign · QA-TRANSFORMER-01 · 10–15 min</span></strong></summary><div class="quick-assign-modern-body lab-panel"><h2><span class="qa-i18n" data-qa-en="Attend, then predict" data-qa-zh="先注意，再预测" data-qa-vi="Chú ý rồi dự đoán" data-qa-es="Atiende y luego predice">Attend, then predict</span></h2><p><span class="qa-i18n" data-qa-en="Use one Guided Challenge below. Predict first, reveal the mechanism, then connect a concrete attention/logit/probability change to the next-token distribution." data-qa-zh="完成下方一个引导挑战。先预测，再揭示机制，然后把具体的注意力、logit 或概率变化连接到下一 token 分布。" data-qa-vi="Làm một Guided Challenge bên dưới. Dự đoán trước, tiết lộ cơ chế, rồi nối một thay đổi cụ thể về attention/logit/xác suất với phân bố token tiếp theo." data-qa-es="Completa un Guided Challenge de abajo. Predice primero, revela el mecanismo y conecta un cambio concreto de atención/logit/probabilidad con la distribución del siguiente token.">Use one Guided Challenge below. Predict first, reveal the mechanism, then connect a concrete attention/logit/probability change to the next-token distribution.</span></p><p class="tiny">Use the existing Guided Challenge immediately below for the run/reveal step. Responses stay in this browser unless you deliberately copy or print them.</p><div class="qa-modern-grid"><label class="qa-modern-field lab-field"><strong><span class="qa-i18n" data-qa-en="Which source token, mask condition, or temperature change do you expect to matter most, and why?" data-qa-zh="你预计哪个源 token、mask 条件或温度变化影响最大？为什么？" data-qa-vi="Bạn dự đoán token nguồn, điều kiện mask hay thay đổi temperature nào quan trọng nhất, và vì sao?" data-qa-es="¿Qué token fuente, condición de máscara o cambio de temperatura esperas que importe más y por qué?">Which source token, mask condition, or temperature change do you expect to matter most, and why?</span></strong><textarea data-qa-answer="predict" rows="3" aria-label="predict"></textarea></label><label class="qa-modern-field lab-field"><strong><span class="qa-i18n" data-qa-en="Record the challenge, one attention/logit/probability value before or after the change, and the resulting top prediction or distribution change." data-qa-zh="记录挑战、变化前后一个注意力/logit/概率数值，以及最高预测或分布的变化。" data-qa-vi="Ghi lại challenge, một giá trị attention/logit/xác suất trước hoặc sau thay đổi, và thay đổi của dự đoán cao nhất hoặc phân bố." data-qa-es="Registra el reto, un valor de atención/logit/probabilidad antes o después del cambio y el cambio de la predicción principal o de la distribución.">Record the challenge, one attention/logit/probability value before or after the change, and the resulting top prediction or distribution change.</span></strong><textarea data-qa-answer="observe" rows="3" aria-label="observe"></textarea></label><label class="qa-modern-field lab-field"><strong><span class="qa-i18n" data-qa-en="What changed in the computation, and what would be incorrect about treating the largest attention weight as the complete reason for the prediction?" data-qa-zh="计算中究竟改变了什么？为什么把最大注意力权重当作预测的完整原因是不正确的？" data-qa-vi="Điều gì đã thay đổi trong phép tính, và vì sao coi attention weight lớn nhất là toàn bộ lý do của dự đoán là sai?" data-qa-es="¿Qué cambió en el cálculo y por qué sería incorrecto tratar el mayor peso de atención como la razón completa de la predicción?">What changed in the computation, and what would be incorrect about treating the largest attention weight as the complete reason for the prediction?</span></strong><textarea data-qa-answer="explain" rows="3" aria-label="explain"></textarea></label><label class="qa-modern-field lab-field"><strong><span class="qa-i18n" data-qa-en="How would you test whether a different token substitution or temperature changes probabilities without changing the learned weights?" data-qa-zh="你会怎样检验另一种 token 替换或温度变化只改变概率而不改变学习到的权重？" data-qa-vi="Bạn sẽ kiểm tra thế nào xem một token substitution hoặc temperature khác có đổi xác suất mà không đổi learned weights?" data-qa-es="¿Cómo comprobarías si otra sustitución de token o temperatura cambia probabilidades sin cambiar los pesos aprendidos?">How would you test whether a different token substitution or temperature changes probabilities without changing the learned weights?</span></strong><textarea data-qa-answer="transfer" rows="3" aria-label="transfer"></textarea></label></div><div class="qa-modern-state lab-state" data-qa-modern-state aria-live="polite" data-ap-en="State snapshot appears here." data-ap-zh="状态记录会显示在这里。" data-ap-vi="Ảnh chụp trạng thái sẽ xuất hiện ở đây." data-ap-es="La captura del estado aparecerá aquí.">State snapshot appears here.</div><div class="challenge-controls lab-actions"><button type="button" data-qa-action="refresh-state" data-ap-en="Refresh state" data-ap-zh="更新状态" data-ap-vi="Làm mới trạng thái" data-ap-es="Actualizar estado">↻ <span>Refresh state</span></button><button type="button" data-qa-action="copy">Copy responses</button><button type="button" data-qa-action="print">Print / PDF</button><button type="button" data-qa-action="clear">Clear local draft</button><span class="lab-status" data-qa-modern-status aria-live="polite"></span></div></div></details>
+<details class="card quick-assign-modern classroom-lab quick-assign" id="quick-assign-qa-transformer-01" data-quick-assign-id="QA-TRANSFORMER-01"><summary><strong><span class="qa-i18n" data-qa-en="Quick Assign · QA-TRANSFORMER-01 · 10–15 min" data-qa-zh="快速任务 · QA-TRANSFORMER-01 · 10–15 分钟" data-qa-vi="Bài tập nhanh · QA-TRANSFORMER-01 · 10–15 phút" data-qa-es="Tarea rápida · QA-TRANSFORMER-01 · 10–15 min">Quick Assign · QA-TRANSFORMER-01 · 10–15 min</span></strong></summary><div class="quick-assign-modern-body lab-panel"><h2><span class="qa-i18n" data-qa-en="Attend, then predict" data-qa-zh="先注意，再预测" data-qa-vi="Chú ý rồi dự đoán" data-qa-es="Atiende y luego predice">Attend, then predict</span></h2><p><span class="qa-i18n" data-qa-en="Use one Guided Challenge. Predict first, reveal the mechanism, then connect a concrete attention/logit/probability change to the next-token distribution." data-qa-zh="完成一个引导挑战。先预测，再揭示机制，然后把具体的注意力、logit 或概率变化连接到下一 token 分布。" data-qa-vi="Làm một Guided Challenge. Dự đoán trước, tiết lộ cơ chế, rồi nối một thay đổi cụ thể về attention/logit/xác suất với phân bố token tiếp theo." data-qa-es="Completa un Guided Challenge. Predice primero, revela el mecanismo y conecta un cambio concreto de atención/logit/probabilidad con la distribución del siguiente token.">Use one Guided Challenge. Predict first, reveal the mechanism, then connect a concrete attention/logit/probability change to the next-token distribution.</span></p><p class="tiny">Use the existing Guided Challenge for the run/reveal step. Responses stay in this browser unless you deliberately copy or print them.</p><div class="qa-modern-grid"><label class="qa-modern-field lab-field"><strong><span class="qa-i18n" data-qa-en="Which source token, mask condition, or temperature change do you expect to matter most, and why?" data-qa-zh="你预计哪个源 token、mask 条件或温度变化影响最大？为什么？" data-qa-vi="Bạn dự đoán token nguồn, điều kiện mask hay thay đổi temperature nào quan trọng nhất, và vì sao?" data-qa-es="¿Qué token fuente, condición de máscara o cambio de temperatura esperas que importe más y por qué?">Which source token, mask condition, or temperature change do you expect to matter most, and why?</span></strong><textarea data-qa-answer="predict" rows="3" aria-label="predict"></textarea></label><label class="qa-modern-field lab-field"><strong><span class="qa-i18n" data-qa-en="Record the challenge, one attention/logit/probability value before or after the change, and the resulting top prediction or distribution change." data-qa-zh="记录挑战、变化前后一个注意力/logit/概率数值，以及最高预测或分布的变化。" data-qa-vi="Ghi lại challenge, một giá trị attention/logit/xác suất trước hoặc sau thay đổi, và thay đổi của dự đoán cao nhất hoặc phân bố." data-qa-es="Registra el reto, un valor de atención/logit/probabilidad antes o después del cambio y el cambio de la predicción principal o de la distribución.">Record the challenge, one attention/logit/probability value before or after the change, and the resulting top prediction or distribution change.</span></strong><textarea data-qa-answer="observe" rows="3" aria-label="observe"></textarea></label><label class="qa-modern-field lab-field"><strong><span class="qa-i18n" data-qa-en="What changed in the computation, and what would be incorrect about treating the largest attention weight as the complete reason for the prediction?" data-qa-zh="计算中究竟改变了什么？为什么把最大注意力权重当作预测的完整原因是不正确的？" data-qa-vi="Điều gì đã thay đổi trong phép tính, và vì sao coi attention weight lớn nhất là toàn bộ lý do của dự đoán là sai?" data-qa-es="¿Qué cambió en el cálculo y por qué sería incorrecto tratar el mayor peso de atención como la razón completa de la predicción?">What changed in the computation, and what would be incorrect about treating the largest attention weight as the complete reason for the prediction?</span></strong><textarea data-qa-answer="explain" rows="3" aria-label="explain"></textarea></label><label class="qa-modern-field lab-field"><strong><span class="qa-i18n" data-qa-en="How would you test whether a different token substitution or temperature changes probabilities without changing the learned weights?" data-qa-zh="你会怎样检验另一种 token 替换或温度变化只改变概率而不改变学习到的权重？" data-qa-vi="Bạn sẽ kiểm tra thế nào xem một token substitution hoặc temperature khác có đổi xác suất mà không đổi learned weights?" data-qa-es="¿Cómo comprobarías si otra sustitución de token o temperatura cambia probabilidades sin cambiar los pesos aprendidos?">How would you test whether a different token substitution or temperature changes probabilities without changing the learned weights?</span></strong><textarea data-qa-answer="transfer" rows="3" aria-label="transfer"></textarea></label></div><div class="qa-modern-state lab-state" data-qa-modern-state aria-live="polite" data-ap-en="State snapshot appears here." data-ap-zh="状态记录会显示在这里。" data-ap-vi="Ảnh chụp trạng thái sẽ xuất hiện ở đây." data-ap-es="La captura del estado aparecerá aquí.">State snapshot appears here.</div><div class="challenge-controls lab-actions"><button type="button" data-qa-action="refresh-state" data-ap-en="Refresh state" data-ap-zh="更新状态" data-ap-vi="Làm mới trạng thái" data-ap-es="Actualizar estado">↻ <span>Refresh state</span></button><button type="button" data-qa-action="copy">Copy responses</button><button type="button" data-qa-action="print">Print / PDF</button><button type="button" data-qa-action="clear">Clear local draft</button><span class="lab-status" data-qa-modern-status aria-live="polite"></span></div></div></details>
 <section class="ap-modern-curriculum ap-modern-explanation" id="ap-modern-explanation">
 <article class="essay ap-modern-essay" id="essay">
 <section class="essay-primer"><h2>Before you read</h2><p>A Transformer turns tokens into vectors, lets each position mix permitted earlier information, and converts the final vector into next-token probabilities. This lab keeps every number small enough to inspect.</p>
@@ -397,7 +453,7 @@ body.ap-standard-dark .actual{background:#052e2b!important;border-color:#0f766e!
   <section class="card"><h2>Check your model of the model</h2><div class="misconceptions"><div class="myth"><strong>“A token is one word.”</strong><span>Not generally. This applet uses a deliberately simple source-locked toy tokenizer; unknown words map to &lt;UNK&gt; and a period is its own token.</span></div><div class="myth"><strong>“Attention tells us what the model understands.”</strong><span>No. Attention weights are numeric mixing coefficients, not a direct reading of understanding.</span></div><div class="myth"><strong>“The largest attention weight is the reason for the prediction.”</strong><span>No. Value vectors, residual paths, the feed-forward transform, and output weights also affect logits.</span></div><div class="myth"><strong>“The transformer searches the internet for the next word.”</strong><span>Not here. The applet makes no network request or retrieval call.</span></div><div class="myth"><strong>“The causal mask makes the model forget future words it already saw.”</strong><span>The mask is a structural constraint on which source positions a destination may use.</span></div><div class="myth"><strong>“Temperature changes the learned model weights.”</strong><span>No. Temperature rescales fixed logits before softmax.</span></div><div class="myth"><strong>“The most probable token is always selected.”</strong><span>A probability distribution and a generation selection rule are different.</span></div><div class="myth"><strong>“Position vectors are word meanings.”</strong><span>No. They contribute position-dependent information to this toy representation.</span></div><div class="myth"><strong>“The model stores complete answers and retrieves them.”</strong><span>This applet computes logits from numeric state. Retrieval is a separate mechanism.</span></div></div></section>
 
 <footer class="lab13-provenance" data-lab13-v14-provenance>
-  <span>AI Playgrounds</span> · <span>v1.9.0</span> ·
+  <span>AI Playgrounds</span> · <span>v1.9.1</span> ·
   <a href="https://github.com/lmdixon23/ai-playgrounds" data-lab13-source>Source</a> ·
   <a href="https://lmdixon23.github.io/ai-playgrounds/research-and-citation.html" data-lab13-citation>Citation</a>
 </footer>
@@ -691,7 +747,7 @@ init();
 </script>
 
 <!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
-<script data-ai-playgrounds-analytics="v1.9.0">
+<script data-ai-playgrounds-analytics="v1.9.1">
 (function () {
   'use strict';
   var CANONICAL_HOST = 'lmdixon23.github.io';
@@ -905,10 +961,16 @@ const norm=value=>{const text=String(value||'').toLowerCase();return text.starts
 const locale=()=>norm(document.documentElement.lang);
 const theme=document.getElementById('ap-standard-theme');
 const reset=document.getElementById('ap-standard-reset');
+const language=document.getElementById('ap-standard-language');
+const LANGUAGE_LABELS={en:'Language',zh:'语言',vi:'Ngôn ngữ',es:'Idioma'};
 const icon=dark=>dark?'<svg class="ap-theme-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g></svg>':'<svg class="ap-theme-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.3A8.4 8.4 0 0 1 8.7 3.8 8.5 8.5 0 1 0 20.2 15.3Z" fill="currentColor"/></svg>';
 function paint(){const lang=locale(),dark=document.body.classList.contains('ap-standard-dark');if(theme){theme.innerHTML=icon(dark);theme.setAttribute('aria-label',THEME_LABELS[lang]||THEME_LABELS.en);theme.setAttribute('aria-pressed',dark?'true':'false');theme.title=THEME_LABELS[lang]||THEME_LABELS.en}if(reset){reset.textContent='↺ '+(RESET_LABELS[lang]||RESET_LABELS.en)}const orientation=document.getElementById('ap-modern-big-label');if(orientation)orientation.textContent=ORIENTATION_LABELS[lang]||ORIENTATION_LABELS.en;document.querySelectorAll('[data-ap-language]').forEach(button=>{const active=button.dataset.apLanguage===lang;button.classList.toggle('active',active);button.setAttribute('aria-pressed',active?'true':'false')})}
 function localeApi(){return window[API[document.body.dataset.apModernParity||'']]||null}
 document.querySelectorAll('[data-ap-language]').forEach(button=>button.addEventListener('click',()=>{const api=localeApi();if(api&&typeof api.setLocale==='function')api.setLocale(button.dataset.apLanguage)}));
+language?.addEventListener('change',()=>localeApi()?.setLocale(language.value));
+function paintLanguage(){if(language){language.value=locale();language.setAttribute('aria-label',LANGUAGE_LABELS[locale()])}}
+new MutationObserver(paintLanguage).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+paintLanguage();
 document.getElementById('ap-modern-settings-json')?.addEventListener('click',()=>{const values={};document.querySelectorAll('#ap-modern-interactive-start input,#ap-modern-interactive-start select,#ap-modern-interactive-start textarea').forEach(element=>{if(!element.id||element.closest('[data-quick-assign-id]'))return;if(element.type==='radio'&&!element.checked)return;values[element.id]=element.type==='checkbox'?element.checked:element.value});const data=JSON.stringify({applet:document.getElementById('ap-standard-title')?.textContent||document.title,slug:document.body.dataset.apModernParity||'',exported_at:new Date().toISOString(),values},null,2);const blob=new Blob([data],{type:'application/json'});const anchor=document.createElement('a');anchor.href=URL.createObjectURL(blob);anchor.download=(document.body.dataset.apModernParity||'ai-playground')+'-settings.json';anchor.click();setTimeout(()=>URL.revokeObjectURL(anchor.href),1000);document.getElementById('ap-modern-more')?.removeAttribute('open')});
 theme?.addEventListener('click',()=>setTimeout(paint,0));
 reset?.addEventListener('click',event=>{event.preventDefault();event.stopImmediatePropagation();const url=new URL(location.href);const lang=url.searchParams.get('lang');url.search='';url.hash='';if(lang&&LOCALES.includes(norm(lang)))url.searchParams.set('lang',norm(lang));location.replace(url.href)},true);
@@ -916,6 +978,7 @@ new MutationObserver(paint).observe(document.documentElement,{attributes:true,at
 new MutationObserver(paint).observe(document.body,{attributes:true,attributeFilter:['class']});
 ['lab13localechange','lab14localechange','lab15localechange'].forEach(eventName=>window.addEventListener(eventName,()=>setTimeout(paint,0)));
 document.addEventListener('click',event=>{const more=document.getElementById('ap-modern-more');if(more?.open&&!more.contains(event.target))more.open=false});
+document.addEventListener('keydown',event=>{const more=document.getElementById('ap-modern-more');if(event.key==='Escape'&&more?.open){event.preventDefault();more.open=false;more.querySelector('summary').focus()}});
 paint();
 })();</script>
 
@@ -971,9 +1034,318 @@ schedulePaint();syncAccessibleState();
 const norm=v=>{v=String(v||'').toLowerCase();return v.startsWith('zh')?'zh':v.startsWith('vi')?'vi':v.startsWith('es')?'es':'en'};
 const locale=()=>norm(document.documentElement.lang);const E=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 function list(items){return'<ul>'+items.map(x=>'<li>'+E(x)+'</li>').join('')+'</ul>'}
-function paint(){const l=locale(),c=DATA.common[l]||DATA.common.en,d=DATA.copy[l]||DATA.copy.en,f=d.scenarios[DATA.featured];let cards='';d.scenarios.forEach((s,i)=>{cards+='<article class="scenario-card" data-modern-scenario-card="'+i+'"><h3>'+E(c.scenario)+' '+(i+1)+': '+E(s.title)+'</h3><p class="scenario-meta"><strong>'+E(c.core_question)+':</strong> '+E(s.question)+'</p><p class="scenario-meta"><strong>'+E(c.run_watch)+':</strong> '+E(s.run)+'</p><p class="scenario-meta"><strong>'+E(c.predict_first)+':</strong> '+E(s.predict)+'</p><p class="scenario-meta"><strong>'+E(c.explain_after)+':</strong> '+E(s.explain)+'</p><button type="button" data-modern-apply="'+i+'">'+E(c.apply)+'</button></article>'});let terms=d.terms.map(x=>'<div><dt>'+E(x[0])+'</dt><dd>'+E(x[1])+'</dd></div>').join('');let sections=d.sections.map(x=>'<section><h2>'+E(x[0])+'</h2>'+x[1].map(p=>'<p>'+E(p)+'</p>').join('')+'</section>').join('');const t=d.teacher;root.innerHTML='<details class="signature-challenge ap-modern-featured" open><summary>'+E(c.featured_summary)+'</summary><div class="ap-modern-featured-body"><strong>'+E(f.title)+'</strong><p><b>'+E(c.core_question)+':</b> '+E(f.question)+'</p><p><em><b>'+E(c.run_watch)+':</b> '+E(f.run)+'</em></p><div class="featured-actions"><button type="button" data-modern-apply="'+DATA.featured+'">'+E(c.start_featured)+'</button></div></div></details><details class="scenario-gallery" open><summary>'+E(c.scenarios_summary)+'</summary><div class="scenario-gallery-panel"><p class="scenario-gallery-intro">'+E(c.scenarios_intro)+'</p><div class="scenario-card-grid" id="ap-modern-scenario-cards">'+cards+'</div></div></details><div class="ap-modern-jump"><a class="jump-link" href="#essay">'+E(c.jump)+'</a></div><article class="essay ap-modern-essay" id="essay"><section class="essay-primer"><h2>'+E(c.before)+'</h2><p>'+E(d.primer)+'</p><h3>'+E(c.terms)+'</h3><dl class="essay-primer-terms">'+terms+'</dl></section>'+sections+'<section class="for-teachers"><h2>'+E(c.teachers)+'</h2><p><strong>'+E(c.curriculum)+':</strong> '+E(t.curriculum)+'</p><h3>'+E(c.pre)+'</h3>'+list(t.pre)+'<h3>'+E(c.post)+'</h3>'+list(t.post)+'<p><strong>'+E(c.misconceptions)+':</strong> '+E(t.misconceptions)+'</p></section><details id="ap-modern-a11y" class="accessibility-layer ap-modern-a11y-compact"><summary>'+E(c.a11y_summary)+'</summary><div class="ap-support-body"><h2 class="ap-modern-sr-only">'+E(c.a11y_title)+'</h2><p>'+E(c.a11y_intro)+'</p><p><a href="#stateText">'+E(c.state_link)+'</a></p><p>'+E(c.a11y_note)+'</p></div></details><p class="ap-modern-back-controls"><a href="#ap-modern-interactive-start">'+E(c.back_controls)+'</a></p></article>';const essay=root.querySelector('.ap-modern-essay');if(essay)essayRoot.replaceChildren(essay)}
+function paint(){window.__apSuiteLayout?.beforeRender();const l=locale(),c=DATA.common[l]||DATA.common.en,d=DATA.copy[l]||DATA.copy.en,f=d.scenarios[DATA.featured];let cards='';d.scenarios.forEach((s,i)=>{cards+='<article class="scenario-card" data-modern-scenario-card="'+i+'"><h3>'+E(c.scenario)+' '+(i+1)+': '+E(s.title)+'</h3><p class="scenario-meta"><strong>'+E(c.core_question)+':</strong> '+E(s.question)+'</p><p class="scenario-meta"><strong>'+E(c.run_watch)+':</strong> '+E(s.run)+'</p><p class="scenario-meta"><strong>'+E(c.predict_first)+':</strong> '+E(s.predict)+'</p><p class="scenario-meta"><strong>'+E(c.explain_after)+':</strong> '+E(s.explain)+'</p><button type="button" data-modern-apply="'+i+'">'+E(c.apply)+'</button></article>'});let terms=d.terms.map(x=>'<div><dt>'+E(x[0])+'</dt><dd>'+E(x[1])+'</dd></div>').join('');let sections=d.sections.map(x=>'<section><h2>'+E(x[0])+'</h2>'+x[1].map(p=>'<p>'+E(p)+'</p>').join('')+'</section>').join('');const t=d.teacher;root.innerHTML='<details class="signature-challenge ap-modern-featured" open><summary>'+E(c.featured_summary)+'</summary><div class="ap-modern-featured-body"><strong>'+E(f.title)+'</strong><p><b>'+E(c.core_question)+':</b> '+E(f.question)+'</p><p><em><b>'+E(c.run_watch)+':</b> '+E(f.run)+'</em></p><div class="featured-actions"><button type="button" data-modern-apply="'+DATA.featured+'">'+E(c.start_featured)+'</button></div></div></details><details class="scenario-gallery" open><summary>'+E(c.scenarios_summary)+'</summary><div class="scenario-gallery-panel"><p class="scenario-gallery-intro">'+E(c.scenarios_intro)+'</p><div class="scenario-card-grid" id="ap-modern-scenario-cards">'+cards+'</div></div></details><div class="ap-modern-jump"><a class="jump-link" href="#essay">'+E(c.jump)+'</a></div><article class="essay ap-modern-essay" id="essay"><section class="essay-primer"><h2>'+E(c.before)+'</h2><p>'+E(d.primer)+'</p><h3>'+E(c.terms)+'</h3><dl class="essay-primer-terms">'+terms+'</dl></section>'+sections+'<section class="for-teachers"><h2>'+E(c.teachers)+'</h2><p><strong>'+E(c.curriculum)+':</strong> '+E(t.curriculum)+'</p><h3>'+E(c.pre)+'</h3>'+list(t.pre)+'<h3>'+E(c.post)+'</h3>'+list(t.post)+'<p><strong>'+E(c.misconceptions)+':</strong> '+E(t.misconceptions)+'</p></section><details id="ap-modern-a11y" class="accessibility-layer ap-modern-a11y-compact"><summary>'+E(c.a11y_summary)+'</summary><div class="ap-support-body"><h2 class="ap-modern-sr-only">'+E(c.a11y_title)+'</h2><p>'+E(c.a11y_intro)+'</p><p><a href="#stateText">'+E(c.state_link)+'</a></p><p>'+E(c.a11y_note)+'</p></div></details><p class="ap-modern-back-controls"><a href="#ap-modern-interactive-start">'+E(c.back_controls)+'</a></p></article>';const essay=root.querySelector('.ap-modern-essay');if(essay)essayRoot.replaceChildren(essay);window.__apSuiteLayout?.refresh()}
 function apply(index){index=Number(index);const settings=DATA.settings[index];if(!settings)return;for(const [id,value] of Object.entries(settings)){const control=document.getElementById(id);if(!control)continue;control.value=String(value);control.dispatchEvent(new Event('change',{bubbles:true}))}root.querySelectorAll('.scenario-card').forEach(x=>x.classList.toggle('applied',Number(x.dataset.modernScenarioCard)===index));const c=DATA.common[locale()]||DATA.common.en;const button=root.querySelector('.scenario-card[data-modern-scenario-card="'+index+'"] button');if(button){button.textContent='✓ '+c.applied;setTimeout(()=>{if(button.isConnected)button.textContent=c.apply},1800)}try{const u=new URL(location.href);u.searchParams.set('scenario',String(index));u.searchParams.set('mode','explore');u.searchParams.set('lang',locale());u.searchParams.delete('featured');history.replaceState(null,'',u)}catch(_e){}document.getElementById('ap-modern-interactive-start')?.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
-root.addEventListener('click',e=>{const button=e.target.closest('[data-modern-apply]');if(!button)return;apply(button.dataset.modernApply)});new MutationObserver(paint).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});window.addEventListener('lab13localechange',paint);window.addEventListener('lab14localechange',paint);window.addEventListener('lab15localechange',paint);paint();try{const p=new URL(location.href).searchParams,n=Number(p.get('scenario'));if(Number.isInteger(n)&&n>=0&&n<DATA.settings.length)setTimeout(()=>apply(n),0)}catch(_e){}
+root.addEventListener('click',e=>{const button=e.target.closest('[data-modern-apply]');if(!button)return;apply(button.dataset.modernApply)});new MutationObserver(paint).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});window.addEventListener('lab13localechange',paint);window.addEventListener('lab14localechange',paint);window.addEventListener('lab15localechange',paint);paint();try{const p=new URL(location.href).searchParams,n=Number(p.get('scenario'));if(p.has('scenario')&&Number.isInteger(n)&&n>=0&&n<DATA.settings.length)setTimeout(()=>apply(n),0)}catch(_e){}
 })();</script>
 </body>
 </html>
+<style id="learner-interface-style">
+/* Learner-facing terminology, compact glossary, and consistent action hierarchy. */
+.header-actions{align-items:center}.header-more{position:relative}.header-more>summary{list-style:none;cursor:pointer;user-select:none}.header-more>summary::-webkit-details-marker{display:none}.header-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:50;min-width:220px;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 16px 35px rgba(15,23,42,.18);display:grid;gap:5px}.header-more-menu button{width:100%;text-align:left;justify-content:flex-start;white-space:normal}.key-terms-panel{padding:14px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}.key-terms-intro{margin:0 0 10px;color:var(--muted)}.key-terms-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.key-term{padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:color-mix(in srgb,var(--card) 97%,var(--accent))}.key-term dt{font-weight:800;color:var(--fg);margin:0 0 3px}.key-term dd{margin:0;color:var(--muted);font-size:.84rem;line-height:1.45}.essay-primer{margin:0 0 22px;padding:15px 17px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--card) 96%,var(--accent));border-radius:10px}.essay-primer h2{margin:0 0 6px!important;font-size:1.05rem!important}.essay-primer p{margin:0 0 10px!important}.essay-primer h3{margin:12px 0 7px;font-size:.92rem}.essay-primer-terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0}.essay-primer-terms>div{padding:8px 9px;border:1px solid var(--border);border-radius:8px;background:var(--card)}.essay-primer-terms dt{font-weight:800}.essay-primer-terms dd{margin:2px 0 0;color:var(--muted);font-size:.82rem;line-height:1.4}.scenario-card .scenario-meta{line-height:1.5}.scenario-card .scenario-meta strong{display:block;margin-bottom:2px}.header-actions>.header-png,.header-actions>.header-theme,.header-actions>.header-reset,.header-more>summary{min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px}
+@media(max-width:720px){.essay-primer-terms{grid-template-columns:1fr}.header-actions{width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}.header-actions>button,.header-actions>.header-more,.header-more>summary{width:100%;justify-content:center}.header-more-menu{right:auto;left:0;max-width:min(290px,90vw)}.key-terms-grid{grid-template-columns:1fr}}
+</style>
+<style id="learning-modes-style">
+/* Product information architecture and restrained visual hierarchy. */
+.learning-deck{display:contents!important}.learning-mode-shell{margin-top:16px;border-top:1px solid var(--border);padding-top:15px}.learning-mode-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px}.learning-mode-head h2{margin:0;font-size:1rem;color:var(--fg)}.learning-mode-head p{margin:2px 0 0;color:var(--muted);font-size:.82rem}.learning-mode-tools{display:flex;gap:8px;flex-wrap:wrap}.learning-mode-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:5px;background:var(--soft);border:1px solid var(--border);border-radius:14px}.learning-mode-tab{min-height:42px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-weight:750;padding:8px 10px}.learning-mode-tab[aria-selected="true"]{background:var(--card);color:var(--accent);box-shadow:0 3px 12px rgba(15,23,42,.08)}.learning-mode-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px;align-items:start}.learning-mode-panel[hidden]{display:none}.learning-mode-panel>details{margin:0!important;min-width:0}.learning-mode-panel>details.mode-wide{grid-column:1/-1}.learning-mode-panel>details>summary{background:var(--card)!important;border:1px solid var(--border)!important;border-left:4px solid color-mix(in srgb,var(--accent) 62%,var(--border))!important;border-radius:10px!important;color:var(--fg)!important;font-weight:750!important;padding:10px 12px!important}.learning-mode-panel>details[open]>summary{border-color:color-mix(in srgb,var(--accent) 55%,var(--border))!important}.learning-mode-panel .scenario-gallery-panel,.learning-mode-panel .accessibility-panel,.learning-mode-panel .classroom-lab .lab-panel{background:var(--card)!important}.scenario-card,.accessibility-card{background:color-mix(in srgb,var(--card) 97%,var(--accent))!important;box-shadow:none!important}.scenario-card.applied{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 78%,var(--accent)),color-mix(in srgb,var(--card) 88%,var(--accent-2,#6366f1)))!important;border-color:var(--accent)!important;box-shadow:0 12px 28px rgba(15,23,42,.10)!important}.signature-challenge>div,.signature-challenge .signature-challenge-panel{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 80%,var(--accent)),color-mix(in srgb,var(--card) 90%,var(--accent-2,#6366f1)))!important;border:1px solid color-mix(in srgb,var(--accent) 40%,var(--border))!important}.visual-card{background:linear-gradient(180deg,color-mix(in srgb,var(--card) 92%,var(--accent)),var(--card))!important}.featured-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.scenario-card button,.featured-actions button{border:0!important;border-radius:8px!important;background:var(--accent)!important;color:#fff!important;font-weight:750!important;padding:8px 11px!important}.scenario-card button:hover,.featured-actions button:hover{filter:brightness(1.05)}.copy-experiment{font-size:.82rem}.experiment-status{color:var(--muted);font-size:.78rem;min-height:1.2em;margin-top:6px}.mode-intro{grid-column:1/-1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--muted);font-size:.86rem}.mode-intro strong{color:var(--fg)}
+@container (min-width:980px){.scenario-card-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.visual-flow{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
+.interactive-inner{container-type:inline-size;max-width:min(1320px,100%)!important}
+@media(max-width:820px){.learning-mode-head{align-items:flex-start;flex-direction:column}.learning-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-mode-panel{grid-template-columns:1fr}.learning-mode-panel>details{grid-column:1!important}.copy-experiment{width:100%}}
+</style>
+<script id="v19-learning-shell-runtime">
+(() => {
+  'use strict';
+  // Presentation adapter only. Native algorithm, challenge and response nodes
+  // retain their listeners and state; the teaching renderer owns their copy.
+  const main = document.getElementById('ap-modern-interactive-start');
+  const learning = document.getElementById('ap-modern-learning');
+  const essayRoot = document.getElementById('ap-modern-explanation');
+  const challenge = main?.querySelector('.challenge');
+  const packet = main?.querySelector('[data-quick-assign-id]');
+  if (!main || !learning || !essayRoot || !challenge || !packet) return;
+  const COPY = {
+    en: {
+      mode: 'Learning mode', explore: 'Explore', guided: 'Guided Challenge',
+      understand: 'Understand', classroom: 'Use in class', access: 'Text and keyboard',
+      exploreIntro: 'Start with the featured experiment, then use the scenarios to test a prediction.',
+      understandIntro: 'Use the key terms and explanation to describe why the result changes.',
+      classroomIntro: 'Predict, observe, explain and transfer with the local response packet.',
+      accessIntro: 'Use the text-state description and keyboard guidance when the visual display is not enough.',
+      copy: 'Copy this experiment', terms: 'Key terms', mechanism: 'How this model works',
+      tour: 'Step-by-step explanation', teachers: 'Show teacher notes (discussion prompts + curriculum)',
+      guideLink: 'Open Guided Challenge',
+      packetHint: 'Use Guided Challenge for the prediction and reveal. Responses stay in this browser unless you copy or print them.'
+    },
+    zh: {
+      mode: '学习模式', explore: '探索', guided: '引导挑战', understand: '理解',
+      classroom: '课堂使用', access: '文本与键盘',
+      exploreIntro: '从精选实验开始，再使用情境检验预测。',
+      understandIntro: '使用关键术语和解释来说明结果为什么变化。',
+      classroomIntro: '使用本地回答包进行预测、观察、解释和迁移。',
+      accessIntro: '当可视显示不足时，使用文本状态说明和键盘指导。',
+      copy: '复制此实验', terms: '关键术语', mechanism: '这个模型如何工作',
+      tour: '逐步解释', teachers: '显示教师备注（讨论提示与课程关联）', guideLink: '打开引导挑战',
+      packetHint: '使用引导挑战进行预测和揭示。除非复制或打印，回答只保存在此浏览器中。'
+    },
+    vi: {
+      mode: 'Chế độ học', explore: 'Khám phá', guided: 'Thử thách có hướng dẫn',
+      understand: 'Tìm hiểu', classroom: 'Dùng trong lớp', access: 'Văn bản và bàn phím',
+      exploreIntro: 'Bắt đầu với thí nghiệm nổi bật, rồi dùng các kịch bản để kiểm tra dự đoán.',
+      understandIntro: 'Dùng thuật ngữ và phần giải thích để mô tả vì sao kết quả thay đổi.',
+      classroomIntro: 'Dự đoán, quan sát, giải thích và vận dụng bằng phiếu trả lời lưu cục bộ.',
+      accessIntro: 'Dùng mô tả trạng thái bằng văn bản và hướng dẫn bàn phím khi hình ảnh chưa đủ.',
+      copy: 'Sao chép thí nghiệm này', terms: 'Thuật ngữ', mechanism: 'Cách mô hình hoạt động',
+      tour: 'Giải thích từng bước', teachers: 'Mở ghi chú giáo viên (câu hỏi thảo luận và chương trình)',
+      guideLink: 'Mở thử thách có hướng dẫn',
+      packetHint: 'Dùng thử thách có hướng dẫn để dự đoán và xem kết quả. Câu trả lời chỉ lưu trong trình duyệt này trừ khi bạn sao chép hoặc in.'
+    },
+    es: {
+      mode: 'Modo de aprendizaje', explore: 'Explorar', guided: 'Desafío guiado',
+      understand: 'Comprender', classroom: 'Usar en clase', access: 'Texto y teclado',
+      exploreIntro: 'Empieza con el experimento destacado y usa los escenarios para comprobar una predicción.',
+      understandIntro: 'Usa los términos y la explicación para describir por qué cambia el resultado.',
+      classroomIntro: 'Predice, observa, explica y transfiere con la hoja de respuestas local.',
+      accessIntro: 'Usa la descripción textual del estado y la guía del teclado cuando la imagen no sea suficiente.',
+      copy: 'Copiar este experimento', terms: 'Términos clave', mechanism: 'Cómo funciona este modelo',
+      tour: 'Explicación paso a paso', teachers: 'Mostrar notas docentes (preguntas y currículo)',
+      guideLink: 'Abrir el desafío guiado',
+      packetHint: 'Usa el desafío guiado para predecir y revelar. Las respuestas quedan en este navegador salvo que las copies o imprimas.'
+    }
+  };
+  const keys = ['explore', 'understand', 'classroom', 'access'];
+  let active = new URL(location.href).searchParams.get('mode') || 'explore';
+  if (!keys.includes(active)) active = 'explore';
+  let guided = false;
+  let disclosures = {};
+  const el = (tag, className, text) => {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text) node.textContent = text;
+    return node;
+  };
+  const owned = node => {
+    [13, 14, 15].forEach(id => node.setAttribute('data-lab' + id + '-no-translate', 'true'));
+    return node;
+  };
+  const copy = () => COPY[(document.documentElement.lang || 'en').split('-')[0]] || COPY.en;
+  const inner = el('div', 'interactive-inner');
+  [...main.children].filter(node => !['SCRIPT', 'STYLE'].includes(node.tagName)).forEach(node => inner.append(node));
+  main.append(inner);
+  main.classList.add('interactive');
+  main.after(essayRoot);
+
+  const guide = el('section', 'suite-guided-shell');
+  const modebar = owned(el('div', 'suite-guided-modebar'));
+  modebar.setAttribute('role', 'group');
+  const modeLabel = el('span', 'suite-guided-mode-label');
+  modebar.append(modeLabel);
+  const modeButtons = {};
+  ['explore', 'guided'].forEach(mode => {
+    const button = el('button');
+    button.type = 'button';
+    button.dataset.suiteMode = mode;
+    button.addEventListener('click', () => setGuided(mode === 'guided'));
+    modeButtons[mode] = button;
+    modebar.append(button);
+  });
+  const guidePanel = el('div', 'suite-guided-panel');
+  guidePanel.id = 'ap-suite-guided-panel';
+  guidePanel.append(challenge);
+  guide.append(modebar, guidePanel);
+  inner.prepend(guide);
+
+  const shell = el('section', 'learning-mode-shell');
+  const head = owned(el('div', 'learning-mode-head'));
+  const headingGroup = el('div');
+  const heading = el('h2');
+  const intro = el('p');
+  headingGroup.append(heading, intro);
+  const tools = el('div', 'learning-mode-tools');
+  const share = el('button', 'copy-experiment');
+  share.type = 'button';
+  share.addEventListener('click', () => document.getElementById('ap-modern-share')?.click());
+  tools.append(share);
+  head.append(headingGroup, tools);
+  const tabs = owned(el('div', 'learning-mode-tabs'));
+  tabs.setAttribute('role', 'tablist');
+  const panels = {};
+  const panelIntros = {};
+  const buttons = {};
+  shell.append(head, tabs);
+  keys.forEach((key, index) => {
+    const button = el('button', 'learning-mode-tab');
+    button.type = 'button';
+    button.dataset.mode = key;
+    button.id = 'mode-tab-' + key;
+    button.setAttribute('role', 'tab');
+    button.setAttribute('aria-controls', 'mode-panel-' + key);
+    button.addEventListener('click', () => setMode(key));
+    button.addEventListener('keydown', event => {
+      let next;
+      if (event.key === 'ArrowRight') next = (index + 1) % keys.length;
+      if (event.key === 'ArrowLeft') next = (index + keys.length - 1) % keys.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = keys.length - 1;
+      if (next === undefined) return;
+      event.preventDefault();
+      buttons[keys[next]].focus();
+      setMode(keys[next]);
+    });
+    buttons[key] = button;
+    tabs.append(button);
+    const panel = el('div', 'learning-mode-panel');
+    panel.id = 'mode-panel-' + key;
+    panel.setAttribute('role', 'tabpanel');
+    panel.setAttribute('aria-labelledby', button.id);
+    const panelIntro = owned(el('div', 'mode-intro'));
+    panel.append(panelIntro);
+    panelIntros[key] = panelIntro;
+    panels[key] = panel;
+    shell.append(panel);
+  });
+  learning.before(shell);
+  // Keep full numeric traces with the experiment, ahead of teaching navigation.
+  // The two labs' existing misconception/distinction material belongs in
+  // Understand; do not strand it between the explanation link and the article.
+  const numericState = inner.querySelector(':scope > .card.state');
+  const nativeTeaching = [];
+  if (numericState) {
+    let following = numericState.nextElementSibling;
+    while (following && following.matches('section.card:not(.challenge)')) {
+      nativeTeaching.push(following);
+      following = following.nextElementSibling;
+    }
+    shell.before(numericState);
+  }
+  const teachingDetails = nativeTeaching.map(content => {
+    const wrapper = el('details', 'ap-native-teaching mode-wide');
+    const summary = el('summary');
+    wrapper.append(summary, content);
+    return wrapper;
+  });
+  panels.explore.append(learning);
+  packet.classList.add('mode-wide');
+  panels.classroom.append(packet);
+  const guideLink = owned(el('button', 'ap-suite-guide-link'));
+  guideLink.type = 'button';
+  guideLink.addEventListener('click', () => {
+    setGuided(true);
+    modeButtons.guided.focus();
+    guide.scrollIntoView({block: 'start'});
+  });
+  const packetHint = packet.querySelector('.quick-assign-modern-body > .tiny');
+  if (packetHint) { owned(packetHint); packetHint.after(guideLink); }
+  else panels.classroom.append(guideLink);
+  const jumpSlot = el('div', 'ap-suite-jump-slot');
+  shell.after(jumpSlot);
+
+  function setGuided(value) {
+    guided = value;
+    guidePanel.hidden = !value;
+    shell.hidden = value;
+    document.body.classList.toggle('suite-guided-mode-active', value);
+    modeButtons.explore.setAttribute('aria-pressed', String(!value));
+    modeButtons.guided.setAttribute('aria-pressed', String(value));
+  }
+  function setMode(mode, write = true) {
+    active = mode;
+    const c = copy();
+    keys.forEach(key => {
+      panels[key].hidden = key !== mode;
+      buttons[key].setAttribute('aria-selected', String(key === mode));
+      buttons[key].tabIndex = key === mode ? 0 : -1;
+      buttons[key].textContent = c[key];
+      panelIntros[key].replaceChildren(el('strong', '', c[key] + '. '),
+        document.createTextNode(c[key + 'Intro']));
+    });
+    heading.textContent = c[mode];
+    intro.textContent = c[mode + 'Intro'];
+    if (write) {
+      const url = new URL(location.href);
+      url.searchParams.set('mode', mode);
+      history.replaceState(null, '', url);
+    }
+  }
+  function detail(className, label, content) {
+    const node = owned(el('details', className));
+    node.append(el('summary', '', label), content);
+    return node;
+  }
+  function beforeRender() {
+    const selectors = ['.signature-challenge', '.scenario-gallery', '.for-teachers-expander', '#ap-modern-a11y'];
+    selectors.forEach(selector => {
+      const node = document.querySelector(selector);
+      if (node) disclosures[selector] = node.open;
+    });
+  }
+  function refresh() {
+    const c = copy();
+    modeLabel.textContent = c.mode;
+    modebar.setAttribute('aria-label', c.mode);
+    modeButtons.explore.textContent = c.explore;
+    modeButtons.guided.textContent = c.guided;
+    share.textContent = c.copy;
+    guideLink.textContent = c.guideLink;
+    if (packetHint) packetHint.textContent = c.packetHint;
+    tabs.setAttribute('aria-label', c.mode);
+    const essay = essayRoot.querySelector('article.essay');
+    if (!essay) return;
+    const jump = learning.querySelector('.ap-modern-jump');
+    if (jump) jumpSlot.replaceChildren(jump);
+    const help = essay.querySelector('#ap-modern-a11y');
+    if (help) {
+      panels.access.querySelector('#ap-modern-a11y')?.remove();
+      help.classList.add('mode-wide');
+      panels.access.append(help);
+    }
+    const teachers = essay.querySelector('.for-teachers');
+    if (teachers && !teachers.closest('.for-teachers-expander')) {
+      const wrapper = el('details', 'for-teachers-expander');
+      wrapper.append(owned(el('summary', '', c.teachers)));
+      teachers.before(wrapper);
+      wrapper.append(teachers);
+    }
+    // These views reuse already localized teaching content, never invent a
+    // second algorithm explanation or another learner response form.
+    const oldOpen = [...panels.understand.querySelectorAll('details')].map(node => node.open);
+    const terms = essay.querySelector('.essay-primer-terms')?.cloneNode(true);
+    const termsBody = el('div', 'key-terms-panel');
+    if (terms) termsBody.append(terms);
+    const mechanismBody = el('div', 'key-terms-panel');
+    const primer = essay.querySelector('.essay-primer > p');
+    if (primer) mechanismBody.append(primer.cloneNode(true));
+    const articleLink = el('a', '', c.tour);
+    articleLink.href = '#essay';
+    mechanismBody.append(articleLink);
+    const sequence = el('ol', 'key-terms-panel');
+    [...essay.querySelectorAll(':scope > section:not(.essay-primer):not(.for-teachers)')].forEach((section, index) => {
+      const title = section.querySelector('h2');
+      if (!title) return;
+      section.id = 'ap-explanation-step-' + index;
+      const link = el('a', '', title.textContent);
+      link.href = '#' + section.id;
+      const item = el('li');
+      item.append(link);
+      sequence.append(item);
+    });
+    const views = [detail('key-terms', c.terms, termsBody),
+      detail('visual-explanation mode-wide', c.mechanism, mechanismBody),
+      detail('lesson-tour', c.tour, sequence)];
+    teachingDetails.forEach(wrapper => {
+      wrapper.querySelector('summary').textContent = wrapper.querySelector('h2')?.textContent || c.mechanism;
+    });
+    panels.understand.replaceChildren(panelIntros.understand, ...views, ...teachingDetails);
+    views.forEach((node, index) => { node.open = oldOpen[index] || false; });
+    learning.querySelectorAll(':scope > details').forEach(node => node.classList.add('mode-wide'));
+    Object.entries(disclosures).forEach(([selector, open]) => {
+      const node = document.querySelector(selector);
+      if (node) node.open = open;
+    });
+    setMode(active, false);
+    setGuided(guided);
+  }
+  window.__apSuiteLayout = {beforeRender, refresh};
+  refresh();
+})();
+</script>
+
