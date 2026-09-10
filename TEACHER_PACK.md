@@ -2,9 +2,9 @@
 
 **Purpose.** This pack turns AI Playgrounds into ready-to-run classroom activities. The current suite contains **15 learner applets: 13 Foundations/course-track labs plus 2 Modern AI extensions**. It is designed for introductory AI, high-school computer science, early undergraduate survey courses, teacher training, and self-study.
 
-**Language scope.** All 15 learner applets support English, Simplified Chinese, Vietnamese, and Spanish. This Teacher Pack and the current curriculum/navigation support pages use English and Simplified Chinese; the NN-1/CNN-1 Activity Pack pilot is English-only. Do not infer site-wide four-language coverage from the applet boundary.
+**Language scope.** All 15 learner applets and Quick Assigns support English, Simplified Chinese, Vietnamese, and Spanish. The website Teacher Pack and Curriculum Map use English and Simplified Chinese; this text guide and the NN-1/CNN-1 Activity Pack pilot are English-only. Do not infer site-wide four-language coverage from the applet boundary.
 
-**Core claim.** Each applet is an offline-ready learning tool with no backend, no account system, no student-data storage, scenario/prediction workflows, visual and text explanations, and keyboard-oriented support. The current software-verification stack establishes tested implementation behavior, not learning gains or accessibility conformance.
+**Core claim.** Each applet is an offline-ready learning tool with no backend, no account system, and no project-hosted student-response storage. It includes scenario/prediction workflows, visual and text explanations, and keyboard-oriented support. Drafts can remain in the learner's browser. Software verification establishes tested implementation behavior, not learning gains or accessibility conformance.
 
 ## Assignment levels
 
@@ -16,14 +16,27 @@ Quick Assigns reuse the applet's existing Guided Challenge and local Student res
 
 Use the stable ID when assigning work. Student writing stays local unless the student copies, prints, or submits it through the teacher's normal classroom system.
 
-| ID | Applet | Core task | Teacher look-for | Student link |
-|---|---|---|---|---|
-| **QA-SEARCH-01** | Pathfinding | Compare A* and BFS on the same maze | Distinguishes search work from path quality; connects the heuristic to frontier ordering; avoids “A* is always faster.” | [Open QA-SEARCH-01](playgrounds/search-pathfinding/index.html?mode=classroom#quick-assign-qa-search-01) |
-| **QA-LOCAL-01** | Hill Climbing / Simulated Annealing | Explain how a local-search acceptance rule shapes the cost trajectory and when escape mechanisms can help | Connects accepted or rejected neighboring moves to the trajectory; distinguishes local from global optimality; explains when restart or annealing can change the outcome. | [Open QA-LOCAL-01](playgrounds/hill-climbing/index.html?mode=classroom#quick-assign-qa-local-01) |
-| **QA-WUMPUS-01** | Wumpus World | Classify a state/action as safe, risky, or unresolved from percept evidence | Distinguishes unknown from dangerous and entailment from plausibility; probability does not prove safety. | [Open QA-WUMPUS-01](playgrounds/wumpus-world/index.html?mode=classroom#quick-assign-qa-wumpus-01) |
-| **QA-SAT-01** | CNF/SAT | Classify SAT/UNSAT/entailment, inspect CNF/DPLL or resolution evidence, and explain what it establishes | Distinguishes satisfiability from entailment; cites a concrete CNF/DPLL or resolution result; explains what the evidence establishes without overclaiming. | [Open QA-SAT-01](playgrounds/cnf-sat/index.html?mode=classroom#quick-assign-qa-sat-01) |
+All fifteen Level-1 activities are active. Use the classroom link for the chosen lab:
 
-The remaining eleven Level-1 IDs are reserved in `tools/quick_assigns_v1.json` so the naming system stays stable, but they are not advertised until their individual activity contracts pass.
+| # | Applet | Track | Quick Assign |
+|---:|---|---|---|
+| 1 | [Pathfinding Visualizer](https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/index.html) | Foundations | [QA-SEARCH-01](https://lmdixon23.github.io/ai-playgrounds/playgrounds/search-pathfinding/index.html?mode=classroom#quick-assign-qa-search-01) |
+| 2 | [Hill Climbing and Simulated Annealing](https://lmdixon23.github.io/ai-playgrounds/playgrounds/hill-climbing/index.html) | Foundations | [QA-LOCAL-01](https://lmdixon23.github.io/ai-playgrounds/playgrounds/hill-climbing/index.html?mode=classroom#quick-assign-qa-local-01) |
+| 3 | [Wumpus World](https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/index.html) | Foundations | [QA-WUMPUS-01](https://lmdixon23.github.io/ai-playgrounds/playgrounds/wumpus-world/index.html?mode=classroom#quick-assign-qa-wumpus-01) |
+| 4 | [CNF and SAT Builder](https://lmdixon23.github.io/ai-playgrounds/playgrounds/cnf-sat/index.html) | Foundations | [QA-SAT-01](https://lmdixon23.github.io/ai-playgrounds/playgrounds/cnf-sat/index.html?mode=classroom#quick-assign-qa-sat-01) |
+| 5 | [Bayes Rule Playground](https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-classifier/index.html) | Foundations | [QA-BAYES-01](https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-classifier/index.html?mode=classroom#quick-assign-qa-bayes-01) |
+| 6 | [Bayesian Network](https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-network/index.html) | Foundations | [QA-BN-01](https://lmdixon23.github.io/ai-playgrounds/playgrounds/bayes-network/index.html?mode=classroom#quick-assign-qa-bn-01) |
+| 7 | [K-Nearest Neighbors](https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/index.html) | Foundations | [QA-KNN-01](https://lmdixon23.github.io/ai-playgrounds/playgrounds/knn-classifier/index.html?mode=classroom#quick-assign-qa-knn-01) |
+| 8 | [Overfitting Explorer](https://lmdixon23.github.io/ai-playgrounds/playgrounds/overfitting/index.html) | Foundations | [QA-OVERFIT-01](https://lmdixon23.github.io/ai-playgrounds/playgrounds/overfitting/index.html?mode=classroom#quick-assign-qa-overfit-01) |
+| 9 | [Tiny Neural Network](https://lmdixon23.github.io/ai-playgrounds/playgrounds/neural-network/index.html) | Foundations | [QA-NN-01](https://lmdixon23.github.io/ai-playgrounds/playgrounds/neural-network/index.html?mode=classroom#quick-assign-qa-nn-01) |
+| 10 | [K-Means Clustering](https://lmdixon23.github.io/ai-playgrounds/playgrounds/kmeans/index.html) | Foundations | [QA-KMEANS-01](https://lmdixon23.github.io/ai-playgrounds/playgrounds/kmeans/index.html?mode=classroom#quick-assign-qa-kmeans-01) |
+| 11 | [Convolution Playground](https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/index.html) | Foundations | [QA-CNN-01](https://lmdixon23.github.io/ai-playgrounds/playgrounds/convolution/index.html?mode=classroom#quick-assign-qa-cnn-01) |
+| 12 | [Q-Learning Gridworld](https://lmdixon23.github.io/ai-playgrounds/playgrounds/q-learning-gridworld/index.html) | Foundations | [QA-QL-01](https://lmdixon23.github.io/ai-playgrounds/playgrounds/q-learning-gridworld/index.html?mode=classroom#quick-assign-qa-ql-01) |
+| 13 | [Transformer Language Modeling](https://lmdixon23.github.io/ai-playgrounds/playgrounds/transformer-language-model/index.html) | Modern AI extension | [QA-TRANSFORMER-01](https://lmdixon23.github.io/ai-playgrounds/playgrounds/transformer-language-model/index.html?mode=classroom#quick-assign-qa-transformer-01) |
+| 14 | [Agent Tool Use and Context Protocols](https://lmdixon23.github.io/ai-playgrounds/playgrounds/agent-tool-context/index.html) | Modern AI extension | [QA-AGENT-01](https://lmdixon23.github.io/ai-playgrounds/playgrounds/agent-tool-context/index.html?mode=classroom#quick-assign-qa-agent-01) |
+| 15 | [Game Trees: Minimax and Alpha-Beta Pruning](https://lmdixon23.github.io/ai-playgrounds/playgrounds/minimax-alpha-beta/index.html) | Foundations | [QA-MINIMAX-01](https://lmdixon23.github.io/ai-playgrounds/playgrounds/minimax-alpha-beta/index.html?mode=classroom#quick-assign-qa-minimax-01) |
+
+The [Quick Assign guide](docs/QUICK_ASSIGN_ARCHITECTURE.md) provides every activity's objective and teacher look-for criteria.
 
 ### Level 2 - Activity Pack · roughly 30-50 min
 
@@ -54,7 +67,7 @@ Reserved for future longer teacher packages. A Level 3 package may include prere
 
 ### 15-minute beginning-of-course route
 
-Use one of the first four Quick Assigns. No separate worksheet is required.
+Use one of the first four Quick Assigns for early-course topics, or another of the fifteen active activities when its topic fits the class. No separate worksheet is required.
 
 1. 2 minutes: frame the question.
 2. 2 minutes: student prediction.
@@ -163,4 +176,6 @@ The applets include visible focus treatment, reduced-motion support, keyboard gu
 
 ## Reuse and licensing
 
-The suite is MIT licensed. Teachers may link, fork, embed, print, adapt, and remix the materials for classroom use. Applets remain offline-ready HTML artifacts; Activity Packs are printable HTML pages with local-only response storage.
+The suite is MIT licensed. Teachers may link, fork, embed, print, adapt, and remix the materials for classroom use. For single-file offline delivery, use the [standalone classroom downloads](https://lmdixon23.github.io/ai-playgrounds/downloads.html), not a website page that may need neighbouring assets. Extract the ZIP, then copy or rename any individual HTML. No build or installation is needed. Activity Packs are printable HTML pages with local-only response storage.
+
+Copying an HTML file does not copy saved answers. Copy, export, or print work before clearing browser data or changing devices. Human learner/educator usability studies and human screen-reader testing remain deferred; automated checks do not establish those outcomes.

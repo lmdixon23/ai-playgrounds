@@ -556,7 +556,7 @@
 @media(max-width:820px){.learning-mode-head{align-items:flex-start;flex-direction:column}.learning-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-mode-panel{grid-template-columns:1fr}.learning-mode-panel>details{grid-column:1!important}.copy-experiment{width:100%}}
 </style>
 <link href="../../assets/localization-r4.css" rel="stylesheet"/>
-<meta name="ai-playgrounds-version" content="1.9.1">
+<meta name="ai-playgrounds-version" content="1.9.2">
 
 <style id="v14-version-provenance-style">
 .v14-version-provenance{max-width:1180px;margin:22px auto 10px;padding:12px 18px;border-top:1px solid var(--border,#dbe4ee);color:var(--muted,#64748b);font:12px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center}
@@ -2716,7 +2716,10 @@
   }
   function restore(){
     const p=new URL(location.href).searchParams;restoring=true;
-    const n=Number(p.get('scenario'));if(Number.isInteger(n))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
+    // Explicit scenario, then saved controls, override native CNF share state.
+    // Retain the established scenario-zero default unless a native formula exists.
+    const nativeFormula=window.APPLET_LEARNER_PROFILE?.slug==='cnf-sat'&&p.has('f');
+    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeFormula))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
     applyState(decode(p.get('state')||''));
     if(p.get('featured')==='1')sig?.setAttribute('open','');
     restoring=false;
@@ -2735,6 +2738,7 @@
   document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',lang());history.replaceState(null,'',u)},25)));
 })();
 </script>
+
 <script id="applet-translation-completion">
 (() => {
   const exact = {"Skip to applet controls":"跳到交互控件","▸ Show teacher notes (discussion prompts + curriculum)":"▸ 展开教师说明（讨论提示与课程联系）","▾ Hide teacher notes (discussion prompts + curriculum)":"▾ 收起教师说明（讨论提示与课程联系）","idle":"空闲","(empty)":"（空）","(no actions yet)":"（尚无动作）","exploring":"探索中","Bayesian network diagram":"贝叶斯网络图","Five variables: Burglary, Earthquake, Alarm, JohnCalls, MaryCalls: connected by directed edges. Drag nodes to rearrange. Tab through to access each variable.":"五个变量：入室盗窃、地震、警报、约翰来电和玛丽来电，由有向边连接。拖动节点可重新排列，使用 Tab 键可逐一访问变量。","Drag nodes to rearrange. Edges point from parent to child. Green = clamped TRUE, red = clamped FALSE.":"拖动节点可重新排列。箭头从父节点指向子节点。绿色表示固定为真，红色表示固定为假。","Drag nodes to rearrange. Edges flow parent → child. Green = clamped TRUE, red = clamped FALSE.":"拖动节点可重新排列。箭头从父节点指向子节点。绿色表示固定为真，红色表示固定为假。","unconditional":"无条件","Burglary":"入室盗窃","Earthquake":"地震","Alarm":"警报","JohnCalls":"John 来电","MaryCalls":"Mary 来电","(select X and Y, then click Check)":"（选择 X 和 Y，然后点击“检查”）"};
@@ -2784,7 +2788,7 @@
 <!-- suite-guided-challenge-v2:end -->
 <script src="../../assets/locales/bayes-network-r4.js"></script>
 <script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["bayes-network"];if(!row)return;Object.assign(row.vi.strings,{"🧪 Quick Assign · QA-BN-01 · 10–15 min": "🧪 Bài tập nhanh · QA-BN-01 · 10–15 phút", "Explaining away": "Hiện tượng giải thích loại trừ", "Set evidence, compare posteriors, then explain how conditional dependence and explaining away changed the inference.": "Dự đoán posterior của hai nguyên nhân, thêm bằng chứng cho một nguyên nhân rồi giải thích vì sao niềm tin vào nguyên nhân kia có thể giảm.", "Before changing evidence, which hidden cause do you expect to become more likely, and why?": "Sau khi quan sát hiệu ứng chung, điều gì sẽ xảy ra với nguyên nhân B nếu sau đó có bằng chứng mạnh cho nguyên nhân A?", "Apply at least one scenario. Record the evidence and the posterior probabilities that changed most.": "Ghi lại posterior trước và sau khi thêm bằng chứng cho một nguyên nhân chung của cùng hiệu ứng.", "How did the graph structure make one variable evidence for another?": "Vì sao thay đổi này là phụ thuộc có điều kiện qua hiệu ứng chung chứ không phải A trực tiếp làm giảm B?", "Name a real situation where one explanation can lower the probability of another explanation.": "Mô tả một ví dụ khác trong đó hai lời giải thích cạnh tranh cho cùng một bằng chứng có thể giải thích loại trừ nhau.", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"🧪 Quick Assign · QA-BN-01 · 10–15 min": "🧪 Tarea rápida · QA-BN-01 · 10–15 min", "Explaining away": "Explicación alternativa", "Set evidence, compare posteriors, then explain how conditional dependence and explaining away changed the inference.": "Predice los posteriores de dos causas, añade evidencia para una causa y explica por qué puede bajar la creencia en la otra.", "Before changing evidence, which hidden cause do you expect to become more likely, and why?": "Tras observar el efecto común, ¿qué ocurrirá con la causa B si después aparece evidencia fuerte para la causa A?", "Apply at least one scenario. Record the evidence and the posterior probabilities that changed most.": "Registra el posterior antes y después de añadir evidencia para una de dos causas de un efecto común.", "How did the graph structure make one variable evidence for another?": "¿Por qué el cambio es dependencia condicional a través del efecto común y no que A reduzca directamente B?", "Name a real situation where one explanation can lower the probability of another explanation.": "Describe otro caso en que dos explicaciones competidoras de la misma evidencia puedan explicarse mutuamente.", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script src="../../assets/localization-r4.js"></script>
-<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.1</div>
+<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.2</div>
 
 <script id="bayes-engagement-excellence-runtime">
 (()=>{'use strict';
@@ -2805,7 +2809,7 @@ init();
 </script>
 
 <!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
-<script data-ai-playgrounds-analytics="v1.9.1">
+<script data-ai-playgrounds-analytics="v1.9.2">
 (function () {
   'use strict';
   var CANONICAL_HOST = 'lmdixon23.github.io';

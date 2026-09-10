@@ -2,7 +2,7 @@
 
 <html lang="en">
 <head>
-<!-- Standalone AI Playgrounds v1.9.1 export.
+<!-- Standalone AI Playgrounds v1.9.2 export.
 MIT License
 
 Copyright (c) 2026 Logan M. Dixon
@@ -616,7 +616,7 @@ body.dark-mode .r4-language-select {
 }
 
 </style>
-<meta name="ai-playgrounds-version" content="1.9.1">
+<meta name="ai-playgrounds-version" content="1.9.2">
 
 <style id="v14-version-provenance-style">
 .v14-version-provenance{max-width:1180px;margin:22px auto 10px;padding:12px 18px;border-top:1px solid var(--border,#dbe4ee);color:var(--muted,#64748b);font:12px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center}
@@ -2776,7 +2776,10 @@ body.dark-mode .r4-language-select {
   }
   function restore(){
     const p=new URL(location.href).searchParams;restoring=true;
-    const n=Number(p.get('scenario'));if(Number.isInteger(n))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
+    // Explicit scenario, then saved controls, override native CNF share state.
+    // Retain the established scenario-zero default unless a native formula exists.
+    const nativeFormula=window.APPLET_LEARNER_PROFILE?.slug==='cnf-sat'&&p.has('f');
+    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeFormula))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
     applyState(decode(p.get('state')||''));
     if(p.get('featured')==='1')sig?.setAttribute('open','');
     restoring=false;
@@ -2795,6 +2798,7 @@ body.dark-mode .r4-language-select {
   document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',lang());history.replaceState(null,'',u)},25)));
 })();
 </script>
+
 <script id="applet-translation-completion">
 (() => {
   const exact = {"Skip to applet controls":"跳到交互控件","▸ Show teacher notes (discussion prompts + curriculum)":"▸ 展开教师说明（讨论提示与课程联系）","▾ Hide teacher notes (discussion prompts + curriculum)":"▾ 收起教师说明（讨论提示与课程联系）","idle":"空闲","(empty)":"（空）","(no actions yet)":"（尚无动作）","exploring":"探索中","Bayesian network diagram":"贝叶斯网络图","Five variables: Burglary, Earthquake, Alarm, JohnCalls, MaryCalls: connected by directed edges. Drag nodes to rearrange. Tab through to access each variable.":"五个变量：入室盗窃、地震、警报、约翰来电和玛丽来电，由有向边连接。拖动节点可重新排列，使用 Tab 键可逐一访问变量。","Drag nodes to rearrange. Edges point from parent to child. Green = clamped TRUE, red = clamped FALSE.":"拖动节点可重新排列。箭头从父节点指向子节点。绿色表示固定为真，红色表示固定为假。","Drag nodes to rearrange. Edges flow parent → child. Green = clamped TRUE, red = clamped FALSE.":"拖动节点可重新排列。箭头从父节点指向子节点。绿色表示固定为真，红色表示固定为假。","unconditional":"无条件","Burglary":"入室盗窃","Earthquake":"地震","Alarm":"警报","JohnCalls":"John 来电","MaryCalls":"Mary 来电","(select X and Y, then click Check)":"（选择 X 和 Y，然后点击“检查”）"};
@@ -5023,7 +5027,7 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 </script>
-<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.1</div>
+<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.2</div>
 
 <script id="bayes-engagement-excellence-runtime">
 (()=>{'use strict';
@@ -5044,7 +5048,7 @@ init();
 </script>
 
 <!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
-<script data-ai-playgrounds-analytics="v1.9.1">
+<script data-ai-playgrounds-analytics="v1.9.2">
 (function () {
   'use strict';
   var CANONICAL_HOST = 'lmdixon23.github.io';

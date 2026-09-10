@@ -516,7 +516,7 @@
 @media(max-width:820px){.learning-mode-head{align-items:flex-start;flex-direction:column}.learning-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-mode-panel{grid-template-columns:1fr}.learning-mode-panel>details{grid-column:1!important}.copy-experiment{width:100%}}
 </style>
 <link href="../../assets/localization-r4.css" rel="stylesheet"/>
-<meta name="ai-playgrounds-version" content="1.9.1">
+<meta name="ai-playgrounds-version" content="1.9.2">
 
 <style id="v14-version-provenance-style">
 .v14-version-provenance{max-width:1180px;margin:22px auto 10px;padding:12px 18px;border-top:1px solid var(--border,#dbe4ee);color:var(--muted,#64748b);font:12px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center}
@@ -2278,7 +2278,10 @@
   }
   function restore(){
     const p=new URL(location.href).searchParams;restoring=true;
-    const n=Number(p.get('scenario'));if(Number.isInteger(n))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
+    // Explicit scenario, then saved controls, override native CNF share state.
+    // Retain the established scenario-zero default unless a native formula exists.
+    const nativeFormula=window.APPLET_LEARNER_PROFILE?.slug==='cnf-sat'&&p.has('f');
+    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeFormula))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
     applyState(decode(p.get('state')||''));
     if(p.get('featured')==='1')sig?.setAttribute('open','');
     restoring=false;
@@ -2297,6 +2300,7 @@
   document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',lang());history.replaceState(null,'',u)},25)));
 })();
 </script>
+
 <script id="applet-translation-completion">
 (() => {
   const exact = {"Skip to applet controls":"跳到交互控件","▸ Show teacher notes (discussion prompts + curriculum)":"▸ 展开教师说明（讨论提示与课程联系）","▾ Hide teacher notes (discussion prompts + curriculum)":"▾ 收起教师说明（讨论提示与课程联系）","idle":"空闲","(empty)":"（空）","(no actions yet)":"（尚无动作）","exploring":"探索中","disease":"患病","healthy":"健康","test+":"检测阳性","test−":"检测阴性","test-":"检测阴性","Has disease (red)":"患病（红色）","Healthy (green)":"健康（绿色）","Yellow ring = test +":"黄色圆环 = 检测阳性","Blue ring = test −":"蓝色圆环 = 检测阴性","Of 10,000 people:":"在 10,000 人中：","100 have disease, 9,900 are healthy.":"100 人患病，9,900 人健康。"};
@@ -2346,10 +2350,10 @@
 <!-- suite-guided-challenge-v2:end -->
 <script src="../../assets/locales/bayes-classifier-r4.js"></script>
 <script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["bayes-classifier"];if(!row)return;Object.assign(row.vi.strings,{"🧪 Quick Assign · QA-BAYES-01 · 10–15 min": "🧪 Bài tập nhanh · QA-BAYES-01 · 10–15 phút", "Base rates and false alarms": "Tỷ lệ nền và báo động giả", "Predict how a positive result changes belief, adjust the prior and test characteristics, then explain the base-rate effect.": "Thay đổi tỷ lệ nền và chất lượng phép kiểm tra, rồi giải thích vì sao một kết quả dương tính không tự động có nghĩa xác suất hậu nghiệm cao.", "Before moving sliders, will a positive test make disease more likely than healthy? Why?": "Trước khi chạy, bạn dự đoán xác suất hậu nghiệm sau kết quả dương tính sẽ cao hay thấp? Yếu tố nào quan trọng nhất?", "Change the prior, sensitivity, and specificity. Record one setting where a positive test still leaves low disease probability.": "Chạy hai trường hợp với tỷ lệ nền khác nhau. Ghi lại prior, true positive, false positive và posterior.", "Which mattered most in your example: prior, sensitivity, or specificity?": "Vì sao cùng một phép kiểm tra có thể cho posterior khác nhau khi tỷ lệ nền thay đổi?", "Give a non-medical case where the base rate changes how evidence should be interpreted.": "Trong tình huống thực tế nào việc bỏ qua tỷ lệ nền có thể tạo ra quá nhiều báo động giả?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"🧪 Quick Assign · QA-BAYES-01 · 10–15 min": "🧪 Tarea rápida · QA-BAYES-01 · 10–15 min", "Base rates and false alarms": "Tasas base y falsas alarmas", "Predict how a positive result changes belief, adjust the prior and test characteristics, then explain the base-rate effect.": "Cambia la tasa base y la calidad de la prueba y explica por qué un resultado positivo no implica por sí solo una probabilidad posterior alta.", "Before moving sliders, will a positive test make disease more likely than healthy? Why?": "Antes de ejecutar, ¿esperas una probabilidad posterior alta o baja tras un positivo? ¿Qué factor será más importante?", "Change the prior, sensitivity, and specificity. Record one setting where a positive test still leaves low disease probability.": "Ejecuta dos casos con tasas base distintas. Registra el prior, verdaderos positivos, falsos positivos y posterior.", "Which mattered most in your example: prior, sensitivity, or specificity?": "¿Por qué la misma prueba puede producir posteriores diferentes cuando cambia la tasa base?", "Give a non-medical case where the base rate changes how evidence should be interpreted.": "¿En qué situación real ignorar la tasa base podría producir demasiadas falsas alarmas?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script src="../../assets/localization-r4.js"></script>
-<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.1</div>
+<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.2</div>
 
 <!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
-<script data-ai-playgrounds-analytics="v1.9.1">
+<script data-ai-playgrounds-analytics="v1.9.2">
 (function () {
   'use strict';
   var CANONICAL_HOST = 'lmdixon23.github.io';
