@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const slug = location.pathname.split('/').filter(Boolean).slice(-2, -1)[0] || '';
+  const slug = window.APPLET_LEARNER_PROFILE?.slug || location.pathname.split('/').filter(Boolean).slice(-2, -1)[0] || '';
   const CONFIGS = {
     'search-pathfinding': {
       scenario: 0, transferScenario: 1, action: '#stepBtn', actionClicks: 1,

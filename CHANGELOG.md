@@ -2,9 +2,13 @@
 
 This is the reader-facing release index. The [website release history](https://lmdixon23.github.io/ai-playgrounds/release-notes.html) preserves the longer historical narrative. Published tags and download assets are version-specific and are not rewritten to match newer releases.
 
+## v1.9.3
+
+Restored language selection, Guided Challenge, and correct featured experiments at original-lab directory URLs. Added all-fifteen-lab directory/file/renamed-offline regression coverage. See [current release notes](RELEASE_NOTES.md).
+
 ## v1.9.2
 
-CNF/SAT startup-sharing fix and restoration of the fuller public project README and documentation. See [current release notes](RELEASE_NOTES.md).
+CNF/SAT startup-sharing fix and restoration of the fuller public project README and documentation. See [published v1.9.2](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.9.2).
 
 ## v1.9.1
 

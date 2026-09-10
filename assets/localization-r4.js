@@ -5,7 +5,7 @@
   const SUPPORTED = ['en', 'zh', 'vi', 'es'];
   const SELF_NAMES = { en: 'English', zh: '简体中文', vi: 'Tiếng Việt', es: 'Español' };
   const LOCALE_KEY = 'ai-playgrounds-locale4';
-  const slug = location.pathname.split('/').filter(Boolean).slice(-2, -1)[0] || 'applet';
+  const slug = window.APPLET_LEARNER_PROFILE?.slug || location.pathname.split('/').filter(Boolean).slice(-2, -1)[0] || 'applet';
   const rootData = window.__AI_PLAYGROUNDS_R4_LOCALES || {};
   rootData.common = rootData.common || {};
   rootData.common.vi = Object.assign({

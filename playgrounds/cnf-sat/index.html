@@ -560,7 +560,7 @@
 @media(max-width:820px){.learning-mode-head{align-items:flex-start;flex-direction:column}.learning-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-mode-panel{grid-template-columns:1fr}.learning-mode-panel>details{grid-column:1!important}.copy-experiment{width:100%}}
 </style>
 <link href="../../assets/localization-r4.css" rel="stylesheet"/>
-<meta name="ai-playgrounds-version" content="1.9.2">
+<meta name="ai-playgrounds-version" content="1.9.3">
 
 <style id="v14-version-provenance-style">
 .v14-version-provenance{max-width:1180px;margin:22px auto 10px;padding:12px 18px;border-top:1px solid var(--border,#dbe4ee);color:var(--muted,#64748b);font:12px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center}
@@ -2782,7 +2782,7 @@ P</textarea>
 </script>
 <script id="learning-modes-script">
 (() => {
-  const slug = location.pathname.split('/').filter(Boolean).slice(-2,-1)[0] || 'applet';
+  const slug = window.APPLET_LEARNER_PROFILE?.slug || location.pathname.split('/').filter(Boolean).slice(-2,-1)[0] || 'applet';
   const inner = document.querySelector('.interactive-inner');
   if (!inner || inner.querySelector('.learning-mode-shell')) return;
   const oldDeck = [...inner.children].find(el => el.classList && el.classList.contains('learning-deck'));
@@ -2977,7 +2977,7 @@ P</textarea>
 <!-- suite-guided-challenge-v2:end -->
 <script src="../../assets/locales/cnf-sat-r4.js"></script>
 <script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["cnf-sat"];if(!row)return;Object.assign(row.vi.strings,{"🧪 Quick Assign · QA-SAT-01 · 10–15 min": "🧪 Bài tập nhanh · QA-SAT-01 · 10–15 phút", "SAT, UNSAT, or entailed?": "SAT, UNSAT hay suy ra truy vấn?", "Convert a knowledge base, inspect DPLL or CDCL evidence, then explain what CNF, learned clauses, and backjumps establish.": "Chuyển một cơ sở tri thức, kiểm tra bằng chứng DPLL hoặc CDCL, rồi giải thích CNF, mệnh đề học được và bước nhảy lùi chứng minh điều gì.", "Before converting, do you expect the example to be satisfiable, unsatisfiable, or to entail the query? Why?": "Trước khi chuyển đổi, bạn dự đoán ví dụ này là SAT, UNSAT hay suy ra truy vấn? Vì sao?", "Run conversion and inspect a DPLL or CDCL trace. Record the key CNF result and any decision, propagation, conflict, learned clause, or backjump.": "Chạy phép chuyển đổi và xem một vết DPLL hoặc CDCL. Ghi lại kết quả CNF chính cùng mọi quyết định, lan truyền, xung đột, mệnh đề học được hoặc bước nhảy lùi.", "What did CNF make easier to check? If using CDCL, why is the learned clause valid and the backjump level safe?": "CNF giúp kiểm tra điều gì dễ hơn? Nếu dùng CDCL, vì sao mệnh đề học được hợp lệ và mức nhảy lùi an toàn?", "When would a knowledge-base system need resolution rather than a truth-table intuition?": "Khi nào một hệ cơ sở tri thức cần resolution thay vì chỉ dựa vào trực giác bảng chân trị?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"🧪 Quick Assign · QA-SAT-01 · 10–15 min": "🧪 Tarea rápida · QA-SAT-01 · 10–15 min", "SAT, UNSAT, or entailed?": "¿SAT, UNSAT o se deriva la consulta?", "Convert a knowledge base, inspect DPLL or CDCL evidence, then explain what CNF, learned clauses, and backjumps establish.": "Convierte una base de conocimiento, inspecciona evidencia DPLL o CDCL y explica qué establecen CNF, las cláusulas aprendidas y los saltos hacia atrás.", "Before converting, do you expect the example to be satisfiable, unsatisfiable, or to entail the query? Why?": "Antes de convertir, ¿esperas que el ejemplo sea SAT, UNSAT o que implique la consulta? ¿Por qué?", "Run conversion and inspect a DPLL or CDCL trace. Record the key CNF result and any decision, propagation, conflict, learned clause, or backjump.": "Ejecuta la conversión e inspecciona una traza DPLL o CDCL. Registra el resultado CNF clave y cualquier decisión, propagación, conflicto, cláusula aprendida o salto hacia atrás.", "What did CNF make easier to check? If using CDCL, why is the learned clause valid and the backjump level safe?": "¿Qué facilita comprobar CNF? Si usas CDCL, ¿por qué es válida la cláusula aprendida y seguro el nivel de salto?", "When would a knowledge-base system need resolution rather than a truth-table intuition?": "¿Cuándo necesitaría un sistema de conocimiento resolución en lugar de una intuición basada solo en tablas de verdad?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script src="../../assets/localization-r4.js"></script>
-<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.2</div>
+<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.3</div>
 
 <script id="cnf-engagement-excellence-runtime">
 (()=>{'use strict';
@@ -3002,7 +3002,7 @@ function init(){if(!P()||!$('#dpllPlayer'))return setTimeout(init,0);install();w
 </script>
 
 <!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
-<script data-ai-playgrounds-analytics="v1.9.2">
+<script data-ai-playgrounds-analytics="v1.9.3">
 (function () {
   'use strict';
   var CANONICAL_HOST = 'lmdixon23.github.io';

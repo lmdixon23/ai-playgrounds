@@ -2,7 +2,7 @@
 
 > **Start in five minutes:** open the live site, choose one applet, make a prediction, change one variable, and explain the trace. [Live suite](https://lmdixon23.github.io/ai-playgrounds/) · [Teacher Pack](https://lmdixon23.github.io/ai-playgrounds/teacher-pack.html) · [Activity Packs](https://lmdixon23.github.io/ai-playgrounds/activities/) · [Analytics and privacy](docs/ANALYTICS_AND_PRIVACY.md)
 
-[Public v1.9.2 release](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.9.2)
+[Public v1.9.3 release](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.9.3)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Archived v1.0.1 DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21854217.svg)](https://doi.org/10.5281/zenodo.21854217)
 
@@ -14,9 +14,9 @@ Each learner applet runs without an account or backend. Learner-facing support i
 
 **Classroom downloads:** [Download any of the fifteen standalone HTML files or their ZIP](https://lmdixon23.github.io/ai-playgrounds/downloads.html). Each downloaded lab works independently, including its four learner languages and Quick Assign.
 
-**Current release:** v1.9.2 preserves CNF/SAT shared formulas through startup and restores the fuller project README and public documentation. It retains the Labs 13–15 layout alignment and Wumpus World icon key and responsive percept icons. See [release notes](RELEASE_NOTES.md) for changes and limitations.
+**Current release:** v1.9.3 restores language selection, Guided Challenge, and the correct featured experiment when the original twelve labs are opened through their directory URLs. Explicit HTML links and independently usable offline files retain their behavior. The CNF/SAT sharing fix, Labs 13–15 layout alignment, and Wumpus World icon key and responsive percept icons are retained. See [release notes](RELEASE_NOTES.md) for changes and limitations.
 
-**Archived v1.0.1 DOI:** [10.5281/zenodo.21854217](https://doi.org/10.5281/zenodo.21854217) · **All-versions DOI:** [10.5281/zenodo.21854216](https://doi.org/10.5281/zenodo.21854216). The archived DOI identifies v1.0.1, not v1.9.2.
+**Archived v1.0.1 DOI:** [10.5281/zenodo.21854217](https://doi.org/10.5281/zenodo.21854217) · **All-versions DOI:** [10.5281/zenodo.21854216](https://doi.org/10.5281/zenodo.21854216). The archived DOI identifies v1.0.1, not v1.9.3.
 
 ### 15-second demo
 
