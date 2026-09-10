@@ -2,9 +2,13 @@
 
 This is the reader-facing release index. The [website release history](https://lmdixon23.github.io/ai-playgrounds/release-notes.html) preserves the longer historical narrative. Published tags and download assets are version-specific and are not rewritten to match newer releases.
 
+## v1.9.4
+
+Contained replay controls and long translated selectors in responsive layouts across six original labs. Algorithms and classroom response behavior are unchanged. Added native-control regression coverage across four languages and fifteen viewport sizes, with real replay history and keyboard return routes. See [current release notes](RELEASE_NOTES.md).
+
 ## v1.9.3
 
-Restored language selection, Guided Challenge, and correct featured experiments at original-lab directory URLs. Added all-fifteen-lab directory/file/renamed-offline regression coverage. See [current release notes](RELEASE_NOTES.md).
+Restored language selection, Guided Challenge, and correct featured experiments at original-lab directory URLs. Added all-fifteen-lab directory/file/renamed-offline regression coverage. See [published v1.9.3](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.9.3).
 
 ## v1.9.2
 

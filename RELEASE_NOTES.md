@@ -1,9 +1,11 @@
-# AI Playgrounds v1.9.3
+# AI Playgrounds v1.9.4
 
 ## Changes
 
-- The original twelve labs now retain language selection, Guided Challenge, and their correct featured experiment when opened using a directory URL, such as `/playgrounds/kmeans/`, as well as an explicit `index.html` link.
-- All fifteen labs are checked across directory URLs, explicit HTML URLs, and renamed offline files, including four-language switching and saved classroom responses.
+- Replay controls wrap within Pathfinding, Hill Climbing, Wumpus World, K-Means, and Q-Learning panels when space is limited. Neural Network retains its existing responsive replay layout.
+- Selectors in Hill Climbing, Neural Network, Pathfinding, and Wumpus World stay within their panels, including long translated options. These CSS-only changes preserve algorithms, history, saved classroom responses, and all four learner languages.
+- All six replay-enabled labs are checked at fifteen phone, tablet, breakpoint-neighbour, and desktop sizes in four languages, before and after creating history, including keyboard review and return to the latest frame.
+- The original twelve labs retain language selection, Guided Challenge, and the correct featured experiment at directory URLs and explicit HTML links. All fifteen standalone downloads remain independently usable.
 - CNF/SAT shared formulas and parser diagnostics still survive startup. Explicit scenario links retain precedence; saved experiment controls apply afterwards.
 - Labs 13–15 retain their v1.9.1 shared page-layout alignment. Wumpus World retains its icon key and cell-scaled breeze and stench icons; gold remains unchanged.
 
@@ -19,4 +21,4 @@ Answers remain in the learner's browser unless deliberately copied, exported, pr
 
 Human learner and educator usability studies and human screen-reader testing remain deferred. Automated checks are not substitutes for these studies. No WCAG conformance, validated learning gains, or educator adoption is claimed.
 
-The archived v1.0.1 DOI is not a DOI for v1.9.3. See [citation information](https://lmdixon23.github.io/ai-playgrounds/research-and-citation.html) and the [changelog](https://github.com/lmdixon23/ai-playgrounds/blob/v1.9.3/CHANGELOG.md).
+The archived v1.0.1 DOI is not a DOI for v1.9.4. See [citation information](https://lmdixon23.github.io/ai-playgrounds/research-and-citation.html) and the [changelog](https://github.com/lmdixon23/ai-playgrounds/blob/v1.9.4/CHANGELOG.md).
