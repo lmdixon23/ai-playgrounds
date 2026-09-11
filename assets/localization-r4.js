@@ -9,6 +9,13 @@
   const rootData = window.__AI_PLAYGROUNDS_R4_LOCALES || {};
   rootData.common = rootData.common || {};
   rootData.common.vi = Object.assign({
+    "Jump to latest": "Về trạng thái mới nhất",
+    "Jump to frame": "Đến khung",
+    "Jump to iteration": "Đến lần lặp",
+    "Jump to step": "Đến bước",
+    "Jump to episode": "Đến tập",
+    "Jump to epoch": "Đến vòng huấn luyện",
+    "Scrub through steps": "Xem lại các bước",
     '✓ Applied; compare the result': '✓ Đã áp dụng; hãy so sánh kết quả',
     'Learning mode': 'Chế độ học tập',
     'Explore': 'Khám phá',
@@ -39,6 +46,13 @@
     'Wumpus World': 'Thế giới Wumpus'
   }, rootData.common.vi || {});
   rootData.common.es = Object.assign({
+    "Jump to latest": "Ir al estado más reciente",
+    "Jump to frame": "Ir al estado",
+    "Jump to iteration": "Ir a la iteración",
+    "Jump to step": "Ir al paso",
+    "Jump to episode": "Ir al episodio",
+    "Jump to epoch": "Ir a la época",
+    "Scrub through steps": "Explorar los pasos",
     '✓ Applied; compare the result': '✓ Aplicado; compara el resultado',
     'Learning mode': 'Modo de aprendizaje',
     'Explore': 'Explorar',

@@ -2,9 +2,13 @@
 
 This is the reader-facing release index. The [website release history](https://lmdixon23.github.io/ai-playgrounds/release-notes.html) preserves the longer historical narrative. Published tags and download assets are version-specific and are not rewritten to match newer releases.
 
+## v1.9.5
+
+Added missing Vietnamese and Spanish replay action labels across six labs, preserving mechanisms, history, and responsive controls. New native regressions check actual visible and accessible labels on website and independent offline entry forms. See [current release notes](RELEASE_NOTES.md).
+
 ## v1.9.4
 
-Contained replay controls and long translated selectors in responsive layouts across six original labs. Algorithms and classroom response behavior are unchanged. Added native-control regression coverage across four languages and fifteen viewport sizes, with real replay history and keyboard return routes. See [current release notes](RELEASE_NOTES.md).
+Contained replay controls and long translated selectors in responsive layouts across six original labs. Algorithms and classroom response behavior are unchanged. Added native-control regression coverage across four languages and fifteen viewport sizes, with real replay history and keyboard return routes. See [published v1.9.4](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.9.4).
 
 ## v1.9.3
 

@@ -1,7 +1,9 @@
-# AI Playgrounds v1.9.4
+# AI Playgrounds v1.9.5
 
 ## Changes
 
+- Vietnamese and Spanish now translate the return-to-latest button and jump-input accessible names in all six replay-enabled labs. K-Means also gains the missing translated replay-slider name. Iteration, frame, step, episode, and epoch meanings remain distinct.
+- Native regression checks verify actual labels through directory URLs, explicit HTML links, and renamed offline files, including language round trips, retained history, keyboard return, and another native action. Each newly added mapping is independently removed in a negative test to prove detection.
 - Replay controls wrap within Pathfinding, Hill Climbing, Wumpus World, K-Means, and Q-Learning panels when space is limited. Neural Network retains its existing responsive replay layout.
 - Selectors in Hill Climbing, Neural Network, Pathfinding, and Wumpus World stay within their panels, including long translated options. These CSS-only changes preserve algorithms, history, saved classroom responses, and all four learner languages.
 - All six replay-enabled labs are checked at fifteen phone, tablet, breakpoint-neighbour, and desktop sizes in four languages, before and after creating history, including keyboard review and return to the latest frame.
@@ -21,4 +23,6 @@ Answers remain in the learner's browser unless deliberately copied, exported, pr
 
 Human learner and educator usability studies and human screen-reader testing remain deferred. Automated checks are not substitutes for these studies. No WCAG conformance, validated learning gains, or educator adoption is claimed.
 
-The archived v1.0.1 DOI is not a DOI for v1.9.4. See [citation information](https://lmdixon23.github.io/ai-playgrounds/research-and-citation.html) and the [changelog](https://github.com/lmdixon23/ai-playgrounds/blob/v1.9.4/CHANGELOG.md).
+The new translations are engineering-reviewed proposals, not a human naturalness review. This bounded replay-label correction does not establish complete translation coverage; existing English and native Chinese behavior is unchanged.
+
+The archived v1.0.1 DOI is not a DOI for v1.9.5. See [citation information](https://lmdixon23.github.io/ai-playgrounds/research-and-citation.html) and the [changelog](https://github.com/lmdixon23/ai-playgrounds/blob/v1.9.5/CHANGELOG.md).
