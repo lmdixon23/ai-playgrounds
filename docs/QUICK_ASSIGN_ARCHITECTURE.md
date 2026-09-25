@@ -62,9 +62,9 @@ IDs are stable and are not silently reassigned. Each link below opens the corres
 
 ### [QA-NN-01 · Why nonlinearity changes capacity](https://lmdixon23.github.io/ai-playgrounds/playgrounds/neural-network/index.html?mode=classroom#quick-assign-qa-nn-01)
 
-**Objective:** Compare an affine-only network with a nonlinear representation and explain the decision-boundary change.
+**Objective:** Using only the original x-y inputs, compare an affine-only network with nonlinear activation and explain the decision-boundary change.
 
-**Teacher look-for:** A strong response explains that stacking affine layers without a nonlinear activation remains affine, then connects nonlinearity to the network&#x27;s ability to represent a non-linear boundary.
+**Teacher look-for:** A strong response explains that stacking affine layers without a nonlinear activation remains affine in its inputs, distinguishes engineered input features, then connects nonlinearity to the network&#x27;s ability to represent a non-linear boundary.
 
 ### [QA-KMEANS-01 · Assign, move, repeat](https://lmdixon23.github.io/ai-playgrounds/playgrounds/kmeans/index.html?mode=classroom#quick-assign-qa-kmeans-01)
 
@@ -106,8 +106,8 @@ IDs are stable and are not silently reassigned. Each link below opens the corres
 
 1. **Predict:** commit to a mechanism-specific expectation before the relevant result is revealed.
 2. **Manipulate / run:** perform a bounded applet action or comparison using the same underlying mechanism.
-3. **Observe:** record specific state evidence, not a generic impression.
-4. **Explain:** connect the evidence to the target mechanism using course vocabulary.
+3. **Observe:** pause after an action and record specific state evidence. Explain whether it supports or challenges the prediction; a supported prediction is useful evidence too.
+4. **Explain:** connect the evidence to the target mechanism using relevant course terms accurately.
 5. **Transfer:** apply that explanation to a changed case or counterfactual.
 
 Guided Challenge remains the stricter predict-before-reveal interaction where applicable; a Quick Assign can reuse it without replacing the experiment. Teacher look-for criteria describe evidence of reasoning, not a hidden answer key. Private keys or grading exemplars are not published on the student surface.

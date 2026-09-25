@@ -2,7 +2,7 @@
 
 <html lang="en">
 <head>
-<!-- Standalone AI Playgrounds v1.9.5 export.
+<!-- Standalone AI Playgrounds v1.9.6 export.
 MIT License
 
 Copyright (c) 2026 Logan M. Dixon
@@ -524,13 +524,27 @@ SOFTWARE.
 /* Learner-facing terminology, compact glossary, and consistent action hierarchy. */
 .header-actions{align-items:center}.header-more{position:relative}.header-more>summary{list-style:none;cursor:pointer;user-select:none}.header-more>summary::-webkit-details-marker{display:none}.header-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:50;min-width:220px;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 16px 35px rgba(15,23,42,.18);display:grid;gap:5px}.header-more-menu button{width:100%;text-align:left;justify-content:flex-start;white-space:normal}.key-terms-panel{padding:14px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}.key-terms-intro{margin:0 0 10px;color:var(--muted)}.key-terms-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.key-term{padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:color-mix(in srgb,var(--card) 97%,var(--accent))}.key-term dt{font-weight:800;color:var(--fg);margin:0 0 3px}.key-term dd{margin:0;color:var(--muted);font-size:.84rem;line-height:1.45}.essay-primer{margin:0 0 22px;padding:15px 17px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--card) 96%,var(--accent));border-radius:10px}.essay-primer h2{margin:0 0 6px!important;font-size:1.05rem!important}.essay-primer p{margin:0 0 10px!important}.essay-primer h3{margin:12px 0 7px;font-size:.92rem}.essay-primer-terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0}.essay-primer-terms>div{padding:8px 9px;border:1px solid var(--border);border-radius:8px;background:var(--card)}.essay-primer-terms dt{font-weight:800}.essay-primer-terms dd{margin:2px 0 0;color:var(--muted);font-size:.82rem;line-height:1.4}.scenario-card .scenario-meta{line-height:1.5}.scenario-card .scenario-meta strong{display:block;margin-bottom:2px}.header-actions>.header-png,.header-actions>.header-theme,.header-actions>.header-reset,.header-more>summary{min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px}
 @media(max-width:720px){.essay-primer-terms{grid-template-columns:1fr}.header-actions{width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}.header-actions>button,.header-actions>.header-more,.header-more>summary{width:100%;justify-content:center}.header-more-menu{right:auto;left:0;max-width:min(290px,90vw)}.key-terms-grid{grid-template-columns:1fr}}
+/* Accessible text keeps the lab hue without changing filled controls or plots. */
+body.dark-mode{--accent-text:color-mix(in srgb,var(--fg) 80%,var(--accent))}
+body.dark-mode :is(.page-header .back,.scenario-card h3,.classroom-lab .lab-field label,.essay h2,.essay h3,.essay h4,.visual-card h4,.visual-live strong,.signature-challenge-panel strong,footer a){color:var(--accent-text)}
+body.dark-mode footer a{color:var(--accent-text)!important}
+.essay h2,.key-terms-intro,.worksheet{overflow-wrap:anywhere}
+#tourName{min-width:0;overflow-wrap:anywhere}
+div:has(>#tourName),div:has(>#tourNext){flex-wrap:wrap}
+.slider-block,.mode-tabs,#modeGroup,#initGroup{flex-wrap:wrap;max-width:100%}
+select{min-width:0;max-width:100%}
+.scenario-card h3,.essay-primer-terms>div,p,.tldr,[data-i18n="seq-explain"]{min-width:0;overflow-wrap:anywhere}
+.header-actions>button{overflow-wrap:anywhere;white-space:normal}
+h1,h3,.method-tabs button,.stat-item,.key-term,.world-icon-key li>span:last-child{min-width:0;overflow-wrap:anywhere}
+.stats-strip,div:has(>#ngViewW){flex-wrap:wrap;max-width:100%}
+@media(max-width:360px){.visual-live{box-sizing:border-box;min-width:0;white-space:normal;flex-wrap:wrap}.visual-live>span{min-width:0;overflow-wrap:anywhere}}
 </style>
 <style id="learning-modes-style">
 /* Product information architecture and restrained visual hierarchy. */
 .learning-deck{display:contents!important}.learning-mode-shell{margin-top:16px;border-top:1px solid var(--border);padding-top:15px}.learning-mode-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px}.learning-mode-head h2{margin:0;font-size:1rem;color:var(--fg)}.learning-mode-head p{margin:2px 0 0;color:var(--muted);font-size:.82rem}.learning-mode-tools{display:flex;gap:8px;flex-wrap:wrap}.learning-mode-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:5px;background:var(--soft);border:1px solid var(--border);border-radius:14px}.learning-mode-tab{min-height:42px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-weight:750;padding:8px 10px}.learning-mode-tab[aria-selected="true"]{background:var(--card);color:var(--accent);box-shadow:0 3px 12px rgba(15,23,42,.08)}.learning-mode-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px;align-items:start}.learning-mode-panel[hidden]{display:none}.learning-mode-panel>details{margin:0!important;min-width:0}.learning-mode-panel>details.mode-wide{grid-column:1/-1}.learning-mode-panel>details>summary{background:var(--card)!important;border:1px solid var(--border)!important;border-left:4px solid color-mix(in srgb,var(--accent) 62%,var(--border))!important;border-radius:10px!important;color:var(--fg)!important;font-weight:750!important;padding:10px 12px!important}.learning-mode-panel>details[open]>summary{border-color:color-mix(in srgb,var(--accent) 55%,var(--border))!important}.learning-mode-panel .scenario-gallery-panel,.learning-mode-panel .accessibility-panel,.learning-mode-panel .classroom-lab .lab-panel{background:var(--card)!important}.scenario-card,.accessibility-card{background:color-mix(in srgb,var(--card) 97%,var(--accent))!important;box-shadow:none!important}.scenario-card.applied{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 78%,var(--accent)),color-mix(in srgb,var(--card) 88%,var(--accent-2,#6366f1)))!important;border-color:var(--accent)!important;box-shadow:0 12px 28px rgba(15,23,42,.10)!important}.signature-challenge>div,.signature-challenge .signature-challenge-panel{background:linear-gradient(145deg,color-mix(in srgb,var(--card) 80%,var(--accent)),color-mix(in srgb,var(--card) 90%,var(--accent-2,#6366f1)))!important;border:1px solid color-mix(in srgb,var(--accent) 40%,var(--border))!important}.visual-card{background:linear-gradient(180deg,color-mix(in srgb,var(--card) 92%,var(--accent)),var(--card))!important}.featured-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.scenario-card button,.featured-actions button{border:0!important;border-radius:8px!important;background:var(--accent)!important;color:#fff!important;font-weight:750!important;padding:8px 11px!important}.scenario-card button:hover,.featured-actions button:hover{filter:brightness(1.05)}.copy-experiment{font-size:.82rem}.experiment-status{color:var(--muted);font-size:.78rem;min-height:1.2em;margin-top:6px}.mode-intro{grid-column:1/-1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--muted);font-size:.86rem}.mode-intro strong{color:var(--fg)}
 @container (min-width:980px){.scenario-card-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.visual-flow{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
 .interactive-inner{container-type:inline-size;max-width:min(1320px,100%)!important}
-.regression-inspector{margin-top:10px;padding:11px 12px;border:1px solid var(--border);border-radius:10px;background:var(--soft);font-size:.84rem;line-height:1.45}.regression-inspector[hidden]{display:none}.regression-inspector table{width:100%;border-collapse:collapse;margin-top:7px}.regression-inspector th,.regression-inspector td{padding:4px 6px;border-bottom:1px solid var(--border);text-align:right}.regression-inspector th:first-child,.regression-inspector td:first-child{text-align:left}.regression-equation{font-family:ui-monospace,monospace;color:var(--accent);font-weight:700;overflow-wrap:anywhere}.target-scale{display:inline-flex;align-items:center;gap:7px}.target-swatch{display:inline-block;width:72px;height:12px;border-radius:999px;background:linear-gradient(90deg,#2563eb,#22c55e,#f59e0b,#dc2626);border:1px solid var(--border)}
+.regression-inspector{margin-top:10px;padding:11px 12px;border:1px solid var(--border);border-radius:10px;background:var(--soft);font-size:.84rem;line-height:1.45}.regression-inspector[hidden]{display:none}.regression-inspector table{width:100%;border-collapse:collapse;margin-top:7px}.regression-inspector th,.regression-inspector td{padding:4px 6px;border-bottom:1px solid var(--border);text-align:right}.regression-inspector th:first-child,.regression-inspector td:first-child{text-align:left}.regression-equation{font-family:ui-monospace,monospace;color:var(--accent);font-weight:700;overflow-wrap:anywhere}.target-scale{display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;max-width:100%}.target-scale .kval{flex-shrink:0}#classAddControls[hidden],#regressionTargetControls[hidden],#classLegend[hidden],#regressionLegend[hidden],#regressionInspector[hidden],#knnGuided[hidden]{display:none!important}.target-swatch{display:inline-block;width:72px;height:12px;border-radius:999px;background:linear-gradient(90deg,#2563eb,#22c55e,#f59e0b,#dc2626);border:1px solid var(--border)}
 @media(max-width:820px){.learning-mode-head{align-items:flex-start;flex-direction:column}.learning-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-mode-panel{grid-template-columns:1fr}.learning-mode-panel>details{grid-column:1!important}.copy-experiment{width:100%}}
 </style>
 <style>
@@ -569,7 +583,7 @@ body.dark-mode .r4-language-select {
 }
 
 </style>
-<meta name="ai-playgrounds-version" content="1.9.5">
+<meta name="ai-playgrounds-version" content="1.9.6">
 
 <style id="v14-version-provenance-style">
 .v14-version-provenance{max-width:1180px;margin:22px auto 10px;padding:12px 18px;border-top:1px solid var(--border,#dbe4ee);color:var(--muted,#64748b);font:12px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center}
@@ -616,7 +630,7 @@ body.dark-mode .r4-language-select {
 <option data-i18n="task-classification" selected="" value="classification">Classification</option>
 <option data-i18n="task-regression" value="regression">Regression</option>
 </select>
-<span id="classAddControls" style="display:inline-flex;align-items:center;gap:6px;">
+<span id="classAddControls" style="display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;max-width:100%;">
 <label data-i18n="click-adds">Click adds:</label>
 <div class="group mode-tabs">
 <button class="active" data-class="A" data-i18n="class-a" data-i18n-title="class-a-title" title="Future clicks on the canvas add Class A points (blue circles).">Class A (○ blue)</button>
@@ -884,7 +898,7 @@ body.dark-mode .r4-language-select {
 <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
 <span data-lab-en="🧪 Quick Assign · QA-KNN-01 · 10–15 min" data-lab-zh="🧪 快速任务 · QA-KNN-01 · 10–15 分钟">🧪 Quick Assign · QA-KNN-01 · 10–15 min</span>
 </summary>
-<div class="lab-panel"><div class="quick-assign-meta" data-r4-no-translate="1" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong>QA-KNN-01</strong> · Level 1 · 10–15 min<br><span>Which neighbors vote—or get averaged?</span></div>
+<div class="lab-panel"><div class="quick-assign-meta" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong data-r4-no-translate="1">QA-KNN-01</strong> · <span data-lab-en="Level 1 · 10–15 min" data-lab-zh="级别 1 · 10–15 分钟">Level 1 · 10–15 min</span><br><span data-lab-en="Which neighbors vote—or get averaged?" data-lab-zh="哪些邻居参与投票或取平均？">Which neighbors vote—or get averaged?</span></div>
 <p class="lab-intro" data-lab-en="Compare classification voting with regression averaging while keeping the same k, metric, weighting, and selected neighbors." data-lab-zh="在保持相同 k、距离度量、加权方式和所选邻居的情况下，比较分类投票与回归平均。">Compare classification voting with regression averaging while keeping the same k, metric, weighting, and selected neighbors.</p>
 <div class="lab-grid">
 <div class="lab-field">
@@ -904,7 +918,7 @@ body.dark-mode .r4-language-select {
 <textarea data-lab-answer="transfer" data-lab-en="When would KNN struggle because of noise, scaling, or irrelevant features?" data-lab-zh="什么时候 KNN 会因为噪声、尺度或无关特征而表现困难？" id="lab-transfer" placeholder="When would KNN struggle because of noise, scaling, or irrelevant features?"></textarea>
 </div>
 </div>
-<div aria-live="polite" class="lab-state" data-lab-state="">State snapshot appears here.</div>
+<div aria-live="polite" class="lab-state" data-lab-state="" data-lab-en="State snapshot appears here." data-lab-zh="状态快照将显示在这里。">State snapshot appears here.</div>
 <div class="lab-actions">
 <button class="step-btn" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态" type="button">↻ Refresh state</button>
 <button class="step-btn" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包" type="button">📋 Copy packet</button>
@@ -955,12 +969,7 @@ body.dark-mode .r4-language-select {
     means storing the examples, while most computation happens when a prediction is requested.
   </p>
 <h2>What k controls</h2>
-<p>
-    At <code>k = 1</code>, the label of the single nearest example determines the prediction. The
-    plane is divided into ordinary Voronoi cells, so one mislabeled or noisy point can create a
-    small island of predictions. With larger <code>k</code>, several neighbors vote and the boundary
-    becomes less sensitive to any one example.
-  </p>
+<p>At k = 1, the single nearest example determines the prediction. With Euclidean distance, nearest-point regions are ordinary Voronoi cells; other distance metrics change their geometry. One mislabeled point can create a small island of predictions. With larger k, several neighbors vote, reducing sensitivity to one example.</p>
 <p>
     If <code>k</code> approaches the size of the dataset, local structure is averaged away and the
     majority class can dominate most of the space. KNN therefore has no learned coefficients, but
@@ -1018,9 +1027,7 @@ body.dark-mode .r4-language-select {
     K 最近邻 KNN 通过寻找距离查询点最近的 <code>k</code> 个带标签训练点，并组合它们的投票来进行分类。它属于<strong>惰性学习</strong>：拟合阶段主要是保存样本，大部分计算发生在请求预测时。
   </p>
 <h2>k 控制什么</h2>
-<p>
-    当 <code>k = 1</code> 时，单个最近样本的标签决定预测。平面被划分为普通 Voronoi 区域，因此一个错误标签或噪声点就可能产生一小块异常预测区域。增大 <code>k</code> 后，多个邻居共同投票，边界对单一样本的敏感性降低。
-  </p>
+<p>当 k = 1 时，单个最近样本决定预测。使用欧几里得距离时，最近点区域是普通 Voronoi 单元；其他距离度量会改变这些区域的几何形状。一个错误标签可能产生一小块异常预测区域。增大 k 后，多个邻居投票，降低对单一样本的敏感性。</p>
 <p>
     如果 <code>k</code> 接近数据集大小，局部结构会被平均掉，多数类别可能支配大部分空间。KNN 没有学习到的系数，但仍有重要超参数：<code>k</code>、距离度量、特征缩放，以及是否让更近邻居获得更大权重。
   </p>
@@ -1664,11 +1671,17 @@ body.dark-mode .r4-language-select {
   function renderRegressionInspector(pred) {
     if (taskMode() !== 'regression') return;
     const equation = $('regressionEquation'), table = $('regressionNeighborTable');
+    const signature = JSON.stringify([points, $('k').value, $('metricSel').value, $('weightSel').value, $('xScale').value]);
     if (!pred || !pred.neighbors) {
+      // Leaving the canvas must not erase the result before it can be captured.
+      // Changed data or settings invalidate it instead of presenting stale evidence.
+      if (equation.dataset.querySignature === signature) return;
+      delete equation.dataset.querySignature;
       equation.textContent = activeCopy().hintReg;
       table.innerHTML = '';
       return;
     }
+    equation.dataset.querySignature = signature;
     const values = pred.neighbors.map(q => q.target.toFixed(1));
     equation.textContent = pred.weighted
       ? `ŷ = Σ(wᵢyᵢ) / Σwᵢ = ${pred.prediction.toFixed(2)},  wᵢ = 1/(dᵢ + ε)`
@@ -1958,7 +1971,13 @@ body.dark-mode .r4-language-select {
     $('tourPrev').disabled = (tourIdx === 0);
     $('tourNext').disabled = (tourIdx === LESSON_TOUR.length - 1);
   }
-  $('tourApply').addEventListener('click', () => LESSON_TOUR[tourIdx].apply());
+  function applyTourScenario() {
+    $('taskMode').value = 'classification';
+    resetGuided();
+    LESSON_TOUR[tourIdx].apply();
+    updateTaskModeUI();
+  }
+  $('tourApply').addEventListener('click', applyTourScenario);
   $('tourPrev').addEventListener('click', () => { if (tourIdx > 0) { tourIdx--; renderTour(); } });
   $('tourNext').addEventListener('click', () => { if (tourIdx < LESSON_TOUR.length - 1) { tourIdx++; renderTour(); } });
   renderTour();
@@ -2011,10 +2030,11 @@ body.dark-mode .r4-language-select {
         root.querySelectorAll('.scenario-card').forEach(item => item.classList.remove('applied'));
         tourIdx = index;
         renderTour();
-        scenario.apply();
+        applyTourScenario();
         card.classList.add('applied');
         btn.textContent = '✓ ' + scenarioGalleryText('sg-applied', 'Applied; compare the result');
-        setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
+        clearTimeout(btn._timer);
+        btn._timer = setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
       });
       card.appendChild(btn);
       root.appendChild(card);
@@ -2250,10 +2270,9 @@ body.dark-mode .r4-language-select {
 </footer>
 <script>
 (function() {
-  const LAB_CONFIG = {"slug": "knn-classifier", "title": "K-nearest neighbors lab packet", "zhTitle": "K 近邻实验包", "fields": [{"label": "Task mode", "selector": "#taskMode", "kind": "selected"}, {"label": "k", "selector": "#kV", "kind": "text"}, {"label": "Metric", "selector": "#metricSel", "kind": "selected"}, {"label": "Weighting", "selector": "#weightSel", "kind": "selected"}, {"label": "X scale", "selector": "#xScaleV", "kind": "text"}, {"label": "New-point target", "selector": "#targetValue", "kind": "value"}, {"label": "Regression equation", "selector": "#regressionEquation", "kind": "text"}, {"label": "Regression neighbors", "selector": "#regressionNeighborTable", "kind": "text"}, {"label": "Boundary visible", "selector": "#showBoundary", "kind": "checked"}, {"label": "Neighbors visible", "selector": "#showNeighbors", "kind": "checked"}, {"label": "Cross-validation stats", "selector": "#cvStats", "kind": "text"}]};
+  const LAB_CONFIG = {"slug": "knn-classifier", "title": "K-nearest neighbors lab packet", "zhTitle": "K 近邻实验包", "fields": [{"label": "Task mode", "selector": "#taskMode", "kind": "selected", "zhLabel": "任务模式"}, {"label": "k", "selector": "#kV", "kind": "text"}, {"label": "Metric", "selector": "#metricSel", "kind": "selected"}, {"label": "Weighting", "selector": "#weightSel", "kind": "selected"}, {"label": "X scale", "selector": "#xScaleV", "kind": "text"}, {"label": "New-point target", "selector": "#targetValue", "kind": "value", "mode": "regression"}, {"label": "Regression equation", "selector": "#regressionEquation", "kind": "text", "mode": "regression", "zhLabel": "回归算式"}, {"label": "Regression neighbors", "selector": "#regressionNeighborTable", "kind": "table", "mode": "regression", "zhLabel": "回归邻居"}, {"label": "Boundary visible", "selector": "#showBoundary", "kind": "checked"}, {"label": "Neighbors visible", "selector": "#showNeighbors", "kind": "checked"}, {"label": "Cross-validation stats", "selector": "#cvStats", "kind": "text"}, {"label": "Challenge result", "zhLabel": "挑战结果", "selector": "#guidedResult", "kind": "text", "mode": "classification"}]};
   const root = document.querySelector('.classroom-lab');
   if (!root) return;
-  const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;
   const qs = (sel) => root.querySelector(sel);
   function currentLang() {
     const raw = String(document.documentElement.lang || 'en').toLowerCase();
@@ -2272,21 +2291,25 @@ body.dark-mode .r4-language-select {
   function applyLabLang() {
     const lang = currentLang();
     root.querySelectorAll('[data-lab-en]').forEach(el => {
+      // Captured evidence and an explicitly cleared snapshot are learner state.
+      if (el.matches('[data-lab-state]') && (el.hasAttribute('data-r4-no-translate') || el.dataset.qaStateReady === '1')) return;
       const value = textFor(el, lang);
       if (el.tagName === 'TEXTAREA') el.placeholder = value;
       else el.textContent = value;
     });
   }
   function readField(field) {
+    if (field.mode && document.getElementById('taskMode')?.value !== field.mode) return null;
     const el = document.querySelector(field.selector);
     if (!el) return null;
     let value = '';
-    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    if (field.kind === 'table') value = [...el.querySelectorAll('tr')].map(row => [...row.cells].map(cell => cell.textContent.trim()).join(' | ')).join('; ');
+    else if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
     else if (field.kind === 'checked') value = el.checked ? 'on' : 'off';
     else if (field.kind === 'text') value = el.textContent.trim();
     else value = el.value;
     value = (value || '').replace(/\s+/g, ' ').trim();
-    const label = ((currentLang() === 'vi' || currentLang() === 'es') && window.__r4Localization) ? window.__r4Localization.translateString(field.label, currentLang()) : field.label;
+    const label = currentLang() === 'zh' ? (field.zhLabel || field.label) : ((currentLang() === 'vi' || currentLang() === 'es') && window.__r4Localization) ? window.__r4Localization.translateString(field.label, currentLang()) : field.label;
     return value ? label + ': ' + value : null;
   }
   function snapshot() {
@@ -2297,13 +2320,6 @@ body.dark-mode .r4-language-select {
     const data = {};
     root.querySelectorAll('textarea[data-lab-answer]').forEach(area => data[area.getAttribute('data-lab-answer')] = area.value.trim());
     return data;
-  }
-  function saveDraft() { try { localStorage.setItem(storageKey, JSON.stringify(answers())); } catch (_) {} }
-  function loadDraft() {
-    try {
-      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
-      root.querySelectorAll('textarea[data-lab-answer]').forEach(area => { const key = area.getAttribute('data-lab-answer'); if (saved[key]) area.value = saved[key]; });
-    } catch (_) {}
   }
   function packet() {
     const lang = currentLang();
@@ -2317,7 +2333,7 @@ body.dark-mode .r4-language-select {
       '- Date: ' + new Date().toLocaleString(),
       '',
       '## ' + labels.state,
-      snapshot(),
+      qs('[data-lab-state]')?.textContent || '',
       '',
       '## ' + labels.predict,
       a.predict || '',
@@ -2333,26 +2349,26 @@ body.dark-mode .r4-language-select {
     ].join('\n');
   }
   function setStatus(en, zh) { const el = qs('.lab-status'); if (el) el.textContent = currentLang() === 'zh' ? zh : en; }
-  function refreshState() { const el = qs('[data-lab-state]'); if (el) el.textContent = snapshot(); }
+  function refreshState() { const el = qs('[data-lab-state]'); if (el) { el.setAttribute('data-r4-no-translate',''); el.lang = currentLang(); el.textContent = snapshot(); } }
   async function copyPacket() {
     const text = packet();
     try { await navigator.clipboard.writeText(text); setStatus('Copied local lab packet.', '已复制本地实验包。'); }
-    catch (_) { window.prompt('Copy this lab packet:', text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
+    catch (_) { window.prompt(qs('[data-lab-action=copy]').textContent.trim(), text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
   }
 
   function markdownToPrintableHtml(markdown) {
     const escape = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
     const inline = value => escape(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     const lines = String(markdown).split(/\r?\n/);
-    let html = '', inList = false, inState = false;
+    let html = '', inList = false, inState = false, sectionIndex = 0;
     const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
     for (const raw of lines) {
       const line = raw.trimEnd();
       if (line.startsWith('# ')) { closeList(); html += '<h1>' + inline(line.slice(2)) + '</h1>'; inState=false; }
-      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = /state snapshot|状态记录/i.test(title); }
+      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = sectionIndex++ === 0; }
       else if (line.startsWith('- ')) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inline(line.slice(2)) + '</li>'; }
       else if (!line.trim()) { closeList(); }
-      else { closeList(); html += inState ? '<pre class="state">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
+      else { closeList(); html += inState ? '<pre class="state" lang="' + (qs('[data-lab-state]')?.lang || currentLang()) + '">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
     }
     closeList(); return html;
   }
@@ -2361,33 +2377,24 @@ body.dark-mode .r4-language-select {
     const w = window.open('', '_blank');
     if (!w) { setStatus('Popup blocked. Copy the packet instead.', '弹窗被拦截。请改用复制实验包。'); return; }
     const rendered = markdownToPrintableHtml(packet());
-    const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
+    const html = '<!doctype html><html lang="' + currentLang() + '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
     w.document.open();
     w.document.write(html);
     w.document.close();
     setStatus('Print page opened.', '打印页面已打开。');
   }
-  function clearDraft() {
-    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.value = '');
-    try { localStorage.removeItem(storageKey); } catch (_) {}
-    refreshState(); setStatus('Local draft cleared.', '本地草稿已清除。');
-  }
-  root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.addEventListener('input', saveDraft));
   root.querySelector('[data-lab-action="copy"]')?.addEventListener('click', copyPacket);
   root.querySelector('[data-lab-action="print"]')?.addEventListener('click', printPacket);
   root.querySelector('[data-lab-action="refresh"]')?.addEventListener('click', () => { refreshState(); setStatus('State refreshed.', '状态已更新。'); });
-  root.querySelector('[data-lab-action="clear"]')?.addEventListener('click', clearDraft);
   document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(applyLabLang, 0)));
   window.addEventListener('r4languagechange', () => setTimeout(applyLabLang, 0));
   
-  document.addEventListener('change', refreshState);
-  document.addEventListener('click', (event) => { if (!(event.target instanceof HTMLTextAreaElement)) setTimeout(refreshState, 0); }, true);
-  loadDraft(); applyLabLang(); refreshState();
+  applyLabLang();
 })();
 </script>
 <script>
 (function() {
-  const VISUAL_CONFIG = {"intro":"KNN classifies a point by looking outward from that point. The distance metric, scaling, k, and weighting decide which neighbors count most.","zhIntro":"KNN 从待分类点向外查看邻居。距离度量、缩放、k 值和权重决定哪些邻居最重要。","misread":"The nearest-looking points on the screen are not always the nearest under the selected metric and scaling.","zhMisread":"屏幕上看起来最近的点，不一定是在所选距离度量和缩放下最近的点。","steps":[{"label":"Query point","zhLabel":"查询点","text":"Classification starts from the point whose label is unknown.","zhText":"分类从标签未知的查询点开始。","selector":"#showNeighbors","kind":"checked","liveLabel":"Neighbors shown","zhLiveLabel":"显示邻居"},{"label":"Distance lens","zhLabel":"距离镜头","text":"The metric and feature scaling decide what near means.","zhText":"距离度量和特征缩放决定什么叫近。","selector":"#metricSel","kind":"selected","liveLabel":"Metric","zhLiveLabel":"度量"},{"label":"Vote set","zhLabel":"投票集合","text":"k controls how many neighbors vote; weighting changes how strongly near points vote.","zhText":"k 控制有多少邻居投票；权重改变近点投票的强度。","selector":"#kV","kind":"text","liveLabel":"k","zhLiveLabel":"k"},{"label":"Boundary evidence","zhLabel":"边界证据","text":"The decision boundary reveals how local votes divide the input space.","zhText":"决策边界显示局部投票如何划分输入空间。","selector":"#cvStats","kind":"text","liveLabel":"CV","zhLiveLabel":"交叉验证"}],"fields":[{"label":"k","zhLabel":"k","selector":"#kV","kind":"text"},{"label":"Metric","zhLabel":"度量","selector":"#metricSel","kind":"selected"},{"label":"Weighting","zhLabel":"权重","selector":"#weightSel","kind":"selected"},{"label":"X scale","zhLabel":"X 缩放","selector":"#xScaleV","kind":"text"},{"label":"Cross-validation","zhLabel":"交叉验证","selector":"#cvStats","kind":"text"}]};
+  const VISUAL_CONFIG = {"intro": "KNN classifies a point by looking outward from that point. The distance metric, scaling, k, and weighting decide which neighbors count most.", "zhIntro": "KNN 从待分类点向外查看邻居。距离度量、缩放、k 值和权重决定哪些邻居最重要。", "misread": "The nearest-looking points on the screen are not always the nearest under the selected metric and scaling.", "zhMisread": "屏幕上看起来最近的点，不一定是在所选距离度量和缩放下最近的点。", "steps": [{"label": "Query point", "zhLabel": "查询点", "text": "Classification starts from the point whose label is unknown.", "zhText": "分类从标签未知的查询点开始。", "selector": "#showNeighbors", "kind": "checked", "liveLabel": "Neighbors shown", "zhLiveLabel": "显示邻居"}, {"label": "Distance lens", "zhLabel": "距离镜头", "text": "The metric and feature scaling decide what near means.", "zhText": "距离度量和特征缩放决定什么叫近。", "selector": "#metricSel", "kind": "selected", "liveLabel": "Metric", "zhLiveLabel": "度量"}, {"label": "Vote set", "zhLabel": "投票集合", "text": "k controls how many neighbors vote; weighting changes how strongly near points vote.", "zhText": "k 控制有多少邻居投票；权重改变近点投票的强度。", "selector": "#kV", "kind": "text", "liveLabel": "k", "zhLiveLabel": "k"}, {"label": "Boundary evidence", "zhLabel": "边界证据", "text": "The decision boundary reveals how local votes divide the input space.", "zhText": "决策边界显示局部投票如何划分输入空间。", "selector": "#cvStats", "kind": "text", "liveLabel": "CV", "zhLiveLabel": "交叉验证"}], "fields": [{"label": "k", "zhLabel": "k", "selector": "#kV", "kind": "text"}, {"label": "Metric", "zhLabel": "度量", "selector": "#metricSel", "kind": "selected"}, {"label": "Weighting", "zhLabel": "权重", "selector": "#weightSel", "kind": "selected"}, {"label": "X scale", "zhLabel": "X 缩放", "selector": "#xScaleV", "kind": "text"}, {"label": "Cross-validation", "zhLabel": "交叉验证", "selector": "#cvStats", "kind": "text"}, {"label": "Challenge result", "zhLabel": "挑战结果", "selector": "#guidedResult", "kind": "text", "mode": "classification"}, {"label": "Task mode", "zhLabel": "任务模式", "selector": "#taskMode", "kind": "selected"}, {"label": "Regression equation", "zhLabel": "回归算式", "selector": "#regressionEquation", "kind": "text", "mode": "regression"}, {"label": "Regression neighbors", "zhLabel": "回归邻居", "selector": "#regressionNeighborTable", "kind": "table", "mode": "regression"}]};
   const root = document.querySelector('.visual-explanation');
   if (!root) return;
   const flow = root.querySelector('[data-visual-flow]');
@@ -2397,10 +2404,12 @@ body.dark-mode .r4-language-select {
   function currentLang() { return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en'; }
   function t(obj, key) { const lang = currentLang(); return (lang === 'zh' && obj['zh' + key[0].toUpperCase() + key.slice(1)]) || obj[key] || ''; }
   function readField(field) {
+    if (field.mode && document.getElementById('taskMode')?.value !== field.mode) return null;
     const el = document.querySelector(field.selector);
     if (!el) return null;
     let value = '';
-    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    if (field.kind === 'table') value = [...el.querySelectorAll('tr')].map(row => [...row.cells].map(cell => cell.textContent.trim()).join(' | ')).join('; ');
+    else if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
     else if (field.kind === 'checked') value = el.checked ? 'on' : 'off';
     else if (field.kind === 'value') value = el.value;
     else value = el.textContent.trim();
@@ -2448,7 +2457,7 @@ body.dark-mode .r4-language-select {
 
 <script>
 (function() {
-  const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "k", "zhLabel": "k", "selector": "#kV", "kind": "text"}, {"label": "Metric", "zhLabel": "度量", "selector": "#metricSel", "kind": "selected"}, {"label": "Weighting", "zhLabel": "权重", "selector": "#weightSel", "kind": "selected"}, {"label": "X scale", "zhLabel": "X 缩放", "selector": "#xScaleV", "kind": "text"}, {"label": "Cross-validation", "zhLabel": "交叉验证", "selector": "#cvStats", "kind": "text"}]};
+  const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "k", "zhLabel": "k", "selector": "#kV", "kind": "text"}, {"label": "Metric", "zhLabel": "度量", "selector": "#metricSel", "kind": "selected"}, {"label": "Weighting", "zhLabel": "权重", "selector": "#weightSel", "kind": "selected"}, {"label": "X scale", "zhLabel": "X 缩放", "selector": "#xScaleV", "kind": "text"}, {"label": "Cross-validation", "zhLabel": "交叉验证", "selector": "#cvStats", "kind": "text"}, {"label": "Challenge result", "zhLabel": "挑战结果", "selector": "#guidedResult", "kind": "text", "mode": "classification"}, {"label": "Task mode", "zhLabel": "任务模式", "selector": "#taskMode", "kind": "selected"}, {"label": "Regression equation", "zhLabel": "回归算式", "selector": "#regressionEquation", "kind": "text", "mode": "regression"}, {"label": "Regression neighbors", "zhLabel": "回归邻居", "selector": "#regressionNeighborTable", "kind": "table", "mode": "regression"}]};
   const layer = document.querySelector('.accessibility-layer');
   if (!layer) return;
   const intro = layer.querySelector('[data-a11y-intro]');
@@ -2468,10 +2477,12 @@ body.dark-mode .r4-language-select {
     return (lang === 'zh' && obj[zhKey]) || obj[key] || '';
   }
   function readField(field) {
+    if (field.mode && document.getElementById('taskMode')?.value !== field.mode) return null;
     const el = document.querySelector(field.selector);
     if (!el) return null;
     let value = '';
-    if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
+    if (field.kind === 'table') value = [...el.querySelectorAll('tr')].map(row => [...row.cells].map(cell => cell.textContent.trim()).join(' | ')).join('; ');
+    else if (field.kind === 'selected') value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].textContent.trim() : el.value;
     else if (field.kind === 'checked') value = el.checked ? (currentLang() === 'zh' ? '开' : 'on') : (currentLang() === 'zh' ? '关' : 'off');
     else if (field.kind === 'value') value = el.value;
     else value = el.textContent.trim();
@@ -2571,8 +2582,8 @@ body.dark-mode .r4-language-select {
   function stateData(){
     const values={};
     document.querySelectorAll('#main input,#main select,#main textarea').forEach(el=>{
-      if(!el.id||el.closest('.classroom-lab'))return;
-      if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;
+      if(!el.id||el.readOnly||el.closest('.classroom-lab,.worksheet,.suite-guided-shell,[data-quick-assign-id]')||['button','submit','reset','file','password','hidden'].includes(el.type))return;
+      if(el.type==='radio'&&!el.checked)return;
       values[el.id]=el.type==='checkbox'?el.checked:el.value;
     });
     return {applet:profile.en.title,slug:profile.slug,exported_at:new Date().toISOString(),values};
@@ -2582,17 +2593,18 @@ body.dark-mode .r4-language-select {
     const share=document.getElementById('shareLink'), embed=document.getElementById('embedLink'), reset=document.getElementById('hardReset');
     const csv=document.getElementById('csvExport'), png=document.getElementById('exportPng');
     const more=document.createElement('details'); more.className='header-more';
-    const summary=document.createElement('summary'); summary.className='header-png'; summary.setAttribute('aria-haspopup','menu'); more.appendChild(summary);
-    const menu=document.createElement('div'); menu.className='header-more-menu'; menu.setAttribute('role','menu'); more.appendChild(menu);
+    const summary=document.createElement('summary'); summary.className='header-png'; more.appendChild(summary);
+    const menu=document.createElement('div'); menu.className='header-more-menu'; more.appendChild(menu);
     if(embed){embed.textContent='📎 Embed in LMS';menu.appendChild(embed)}
     const jsonBtn=document.createElement('button');jsonBtn.type='button';jsonBtn.className='header-png';jsonBtn.dataset.exportState='';menu.appendChild(jsonBtn);
     if(csv){csv.textContent='📊 Data table (.csv)';menu.appendChild(csv)}
     if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
-    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
+    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false;summary.focus()});
     actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
     window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';if(share){share.textContent=zh?'🔗 分享':'🔗 Share';share.title=zh?'复制可在另一浏览器中重新打开当前设置的链接。':'Copy a link that reopens the current settings in another browser.';}summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
     window.refreshAppletToolbar();
     document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&more.open){e.preventDefault();more.open=false;summary.focus()}});
   }
   function terms(){
     const inner=document.querySelector('.interactive-inner'); if(!inner||inner.querySelector('.key-terms'))return;
@@ -2639,6 +2651,7 @@ body.dark-mode .r4-language-select {
     return 'explore';
   };
   const lang = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const routeLocale = () => ['en','zh','vi','es'].find(code => (document.documentElement.lang || 'en').toLowerCase().startsWith(code)) || 'en';
   const labels = {explore:['Explore','探索'],understand:['Understand','理解'],classroom:['Use in class','课堂使用'],access:['Text and keyboard','文本与键盘']};
   const intros = {
     explore:['Start with the featured experiment, then use the scenarios to test a prediction.','从精选实验开始，再使用情境检验预测。'],
@@ -2710,12 +2723,19 @@ body.dark-mode .r4-language-select {
     renderModeChrome();
     if(write){const u=new URL(location.href);u.searchParams.set('mode',mode);history.replaceState(null,'',u)}
   }
-  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
+  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(['ArrowRight','ArrowLeft','Home','End'].includes(e.key)){e.preventDefault();const n=e.key==='Home'?0:e.key==='End'?list.length-1:(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
 
+  // Share only native mechanism inputs, never responses or global preferences.
+  function shareable(el){
+    return !!el && !!el.id && inner.contains(el)
+      && el.matches('input,select,textarea') && !el.readOnly
+      && !['button','submit','reset','file','password','hidden'].includes(el.type)
+      && !el.closest('.classroom-lab,.worksheet,.suite-guided-shell,[data-quick-assign-id]');
+  }
   function statePayload(){
     const out={};
-    inner.querySelectorAll('select,input').forEach(el=>{
-      if(!el.id||el.closest('.classroom-lab')||['button','submit'].includes(el.type))return;
+    inner.querySelectorAll('select,input,textarea').forEach(el=>{
+      if(!shareable(el))return;
       if(el.type==='radio'){if(el.checked)out[el.id]=el.value;return}
       out[el.id]=el.type==='checkbox'?el.checked:el.value;
     });
@@ -2724,33 +2744,65 @@ body.dark-mode .r4-language-select {
   function encode(obj){return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))}
   function decode(s){try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch{return null}}
   function currentExperimentUrl(){
-    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',lang());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
+    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',routeLocale());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
   }
   window.__buildExperimentUrl=()=>currentExperimentUrl().href;
   const status=shell.querySelector('.experiment-status');
-  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(ui[lang()].copyPrompt,u.href)}};
+  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(shell.querySelector('[data-copy-experiment]').textContent.trim(),u.href)}};
 
-  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','')});
-  document.addEventListener('click',e=>{const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode','explore');u.searchParams.set('lang',lang());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
+  // Let Space activate this native button instead of a lab-wide play shortcut.
+  shell.addEventListener('keydown', event => {
+    if (event.key === ' ' && event.target.closest('[data-start-featured]')) event.stopPropagation();
+  });
+
+  // A learner-initiated handoff moves both the viewport and keyboard focus.
+  // Restoring a shared URL or changing locale must never steal focus.
+  function handoffToExperiment() {
+    const target = [...inner.querySelectorAll('select,input:not([type="hidden"]),textarea')]
+      .find(node => !node.closest('.learning-mode-shell,.suite-guided-shell')
+        && !node.disabled && node.getClientRects().length);
+    if (!target) return;
+    target.focus({preventScroll: true});
+    target.scrollIntoView({block: 'center',
+      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
+  }
+
+  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','');handoffToExperiment()});
+  document.addEventListener('click',e=>{if(restoring&&new URLSearchParams(location.search).has('state'))return;const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode',active);if(!restoring)u.searchParams.set('lang',routeLocale());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
 
   let urlSyncTimer=0;
   function scheduleUrlState(e){
     if(restoring)return;
-    const el=e.target;if(!el||!inner.contains(el)||el.closest('.classroom-lab')||!el.matches('input,select'))return;
+    const el=e.target;if(!shareable(el))return;
     clearTimeout(urlSyncTimer);urlSyncTimer=setTimeout(()=>{const u=currentExperimentUrl();history.replaceState(null,'',u)},80);
   }
   document.addEventListener('input',scheduleUrlState,true);document.addEventListener('change',scheduleUrlState,true);
 
   function applyState(obj){
-    if(!obj)return;
-    Object.entries(obj).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else if(el.type==='radio')el.checked=String(el.value)===String(value);else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});
+    if(!obj || typeof obj !== 'object' || Array.isArray(obj) || Object.keys(obj).length > 256)return;
+    Object.entries(obj).forEach(([id,value])=>{
+      const el=document.getElementById(id);if(!shareable(el))return;
+      if(el.type==='checkbox'){if(typeof value!=='boolean')return;el.checked=value}
+      else {
+        if(!['string','number'].includes(typeof value) || String(value).length>10000)return;
+        const text=String(value);
+        if(el.tagName==='SELECT' && ![...el.options].some(option=>option.value===text))return;
+        if(['number','range'].includes(el.type)){
+          if(!text.trim() || !Number.isFinite(Number(text)))return;
+          if(el.min!=='' && Number(text)<Number(el.min))return;
+          if(el.max!=='' && Number(text)>Number(el.max))return;
+        }
+        if(el.type==='radio'){if(el.value!==text)return;el.checked=true}
+        else el.value=text;
+      }
+      el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));
+    });
   }
   function restore(){
     const p=new URL(location.href).searchParams;restoring=true;
-    // Explicit scenario, then saved controls, override native CNF share state.
-    // Retain the established scenario-zero default unless a native formula exists.
-    const nativeFormula=window.APPLET_LEARNER_PROFILE?.slug==='cnf-sat'&&p.has('f');
-    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeFormula))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
+    // Native links precede explicit scenarios and saved controls.
+    const nativeState=slug==='cnf-sat'&&p.has('f')||slug==='knn-classifier'&&['k','ds','task','metric','weight','scale','target'].some(k=>p.has(k));
+    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeState))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
     applyState(decode(p.get('state')||''));
     if(p.get('featured')==='1')sig?.setAttribute('open','');
     restoring=false;
@@ -2766,14 +2818,14 @@ body.dark-mode .r4-language-select {
   }
   setMode(active,false);ensureExploreContent();
   setTimeout(()=>{refineCards();window.renderAppletKeyTerms?.();restore();renderModeChrome()},250);
-  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',lang());history.replaceState(null,'',u)},25)));
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',routeLocale());history.replaceState(null,'',u)},25)));
 })();
 </script>
 
 <script id="applet-translation-completion">
 (() => {
   const exact = {"Skip to applet controls":"跳到交互控件","▸ Show teacher notes (discussion prompts + curriculum)":"▸ 展开教师说明（讨论提示与课程联系）","▾ Hide teacher notes (discussion prompts + curriculum)":"▾ 收起教师说明（讨论提示与课程联系）","idle":"空闲","(empty)":"（空）","(no actions yet)":"（尚无动作）","exploring":"探索中"};
-  const rules = [["^Class ([AB]) at \\(([^)]+)\\)$","\\1 类，位置（\\2）"]].map(([source,target])=>[new RegExp(source),target]);
+  const rules = [["^Class ([AB]) at \\(([^)]+)\\)$","$1 类，位置（$2）"]].map(([source,target])=>[new RegExp(source),target]);
   const currentLanguage=()=>((document.documentElement.lang||'en').startsWith('zh')?'zh':'en');
   const excluded=node=>node.parentElement && node.parentElement.closest('script,style,noscript,[data-essay-lang="en"]');
   const applyRule=text=>{
@@ -3610,6 +3662,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   },
   "vi": {
+    "teacher": {"At": "Với", "Increase": "Tăng"},
     "strings": {
       "Task:": "Tác vụ:",
       "Switch between categorical voting and continuous-target averaging without reloading the applet.": "Chuyển giữa bỏ phiếu phân loại và lấy trung bình mục tiêu liên tục mà không tải lại applet.",
@@ -3677,7 +3730,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "#windowMath": "#windowMath",
       "${index}": "${index}",
       "(click \"Run CV\": needs at least 10 training points)": "(bấm \"Chạy CV\": cần ít nhất 10 điểm đào tạo)",
-      ", add one mislabeled point. Which region changes and why?": ", thêm một điểm bị gắn nhãn sai.Khu vực nào thay đổi và tại sao?",
+      ", add one mislabeled point. Which region changes and why?": ", thêm một điểm bị gán nhãn sai. Vùng nào thay đổi, và vì sao?",
       ", several neighbors vote and the boundary becomes less sensitive to any one example.": ", một số người hàng xóm bỏ phiếu và ranh giới trở nên ít nhạy cảm hơn với bất kỳ một ví dụ nào.",
       ", the distance metric, feature scaling, and whether nearby votes receive greater weight.": ", thước đo khoảng cách, chia tỷ lệ đối tượng và liệu các phiếu bầu ở gần có nhận được trọng số lớn hơn hay không.",
       ", the label of the single nearest example determines the prediction. The plane is divided into ordinary Voronoi cells, so one mislabeled or noisy point can create a small island of predictions. With larger": ", nhãn của ví dụ gần nhất sẽ xác định dự đoán.Mặt phẳng được chia thành các ô Voronoi thông thường, do đó, một điểm bị gắn nhãn sai hoặc nhiễu có thể tạo ra một hòn đảo dự đoán nhỏ.Với kích thước lớn hơn",
@@ -3773,7 +3826,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Closer neighbors receive more influence than farther neighbors.": "Hàng xóm gần hơn nhận được nhiều ảnh hưởng hơn hàng xóm xa hơn.",
       "cnf-sat": "cnf-sat",
       "Color the entire canvas by the prediction at each cell. Shows the model's decision boundary.": "Tô màu toàn bộ khung vẽ theo dự đoán ở mỗi ô.Hiển thị ranh giới quyết định của mô hình.",
-      "Compare uniform and distance-weighted voting near a boundary.": "So sánh bỏ phiếu thống nhất và bỏ phiếu theo khoảng cách gần ranh giới.",
+      "Compare uniform and distance-weighted voting near a boundary.": "So sánh bỏ phiếu với trọng số đồng đều và trọng số theo khoảng cách ở gần ranh giới.",
       "Comparison recorded. Explain any discrepancy before trying the transfer case.": "Đã ghi lại so sánh.Giải thích bất kỳ sự khác biệt nào trước khi thử trường hợp chuyển nhượng.",
       "Conditionally independent": "Độc lập có điều kiện",
       "Copy a link that reopens the current settings in another browser.": "Sao chép liên kết mở lại cài đặt hiện tại trong trình duyệt khác.",
@@ -3812,7 +3865,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Interactive visualization 2": "Trực quan hóa tương tác 2",
       "Interactive visualization 3": "Trực quan hóa tương tác 3",
       "Interlocking spirals. Tests the decision-boundary's ability to bend.": "Hình xoắn ốc lồng vào nhau.Kiểm tra khả năng bẻ cong ranh giới quyết định.",
-      "is always safer; nearest means whichever point looks closest on the screen; changing the distance rule changes only the displayed number, not which neighbors are selected; distance weighting selects a different neighbor set; tree indexes guarantee": "luôn an toàn hơn;gần nhất có nghĩa là điểm nào trông gần nhất trên màn hình;thay đổi quy tắc khoảng cách chỉ thay đổi số được hiển thị chứ không thay đổi hàng xóm nào được chọn;trọng số khoảng cách chọn một tập lân cận khác;đảm bảo chỉ số cây",
+      "is always safer; nearest means whichever point looks closest on the screen; changing the distance rule changes only the displayed number, not which neighbors are selected; distance weighting selects a different neighbor set; tree indexes guarantee": "luôn an toàn hơn; gần nhất là điểm trông gần nhất trên màn hình; đổi độ đo khoảng cách chỉ đổi số hiển thị, không đổi các láng giềng được chọn; trọng số theo khoảng cách chọn một tập láng giềng khác; chỉ mục dạng cây bảo đảm thời gian truy vấn",
       "k controls how many neighbors vote; weighting changes how strongly near points vote.": "k kiểm soát số lượng phiếu bầu của hàng xóm;trọng số thay đổi mạnh mẽ mức độ bỏ phiếu của các điểm gần nhau.",
       "K-Nearest Neighbors": "K-Hàng xóm gần nhất",
       "K-nearest neighbors (KNN)": "K-hàng xóm gần nhất (KNN)",
@@ -3827,7 +3880,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "KNN can form curved and irregular boundaries without specifying an equation for the boundary. It works well on the two-moons example because local neighbors follow the curved groups. On overlapping classes, no setting can create information that the features do not contain. A smooth uncertain boundary may be more honest than a jagged one that follows every sample.": "KNN có thể tạo các ranh giới cong và không đều mà không cần chỉ định phương trình cho ranh giới.Nó hoạt động tốt trên ví dụ hai mặt trăng vì các nước láng giềng địa phương tuân theo các nhóm đường cong.Trên các lớp chồng chéo, không cài đặt nào có thể tạo thông tin mà các tính năng không chứa.Một ranh giới không chắc chắn bằng phẳng có thể trung thực hơn một ranh giới lởm chởm theo từng mẫu.",
       "KNN classifies a point by looking outward from that point. The distance metric, scaling, k, and weighting decide which neighbors count most.": "KNN phân loại một điểm bằng cách nhìn ra ngoài từ điểm đó.Số liệu khoảng cách, tỷ lệ, k và trọng số quyết định hàng xóm nào được tính nhiều nhất.",
       "KNN first defines which training points count as nearest under the selected distance rule and feature scaling. Then k selects the voters, and the voting rule determines how strongly they count.": "KNN trước tiên xác định điểm đào tạo nào được tính là gần nhất theo quy tắc khoảng cách đã chọn và chia tỷ lệ tính năng.Sau đó, k chọn những người bỏ phiếu và quy tắc bỏ phiếu sẽ xác định mức độ họ được tính.",
-      "KNN has no hyperparameters; larger": "KNN không có siêu tham số;lớn hơn",
+      "KNN has no hyperparameters; larger": "KNN không có siêu tham số; tăng",
       "KNN neighbor prediction challenge": "Thử thách dự đoán hàng xóm KNN",
       "KNN 邻居预测挑战": "KNN 邻居预测挑战",
       "knn-classifier": "phân loại knn",
@@ -3853,7 +3906,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Number of neighbors to consult. k=1 follows a single nearest point; larger k aggregates more neighbors and often smooths local variation, depending on the data.": "Số hàng xóm cần tham khảo.k=1 theo sau một điểm gần nhất;k lớn hơn sẽ tập hợp nhiều lân cận hơn và thường làm trơn biến đổi cục bộ, tùy thuộc vào dữ liệu.",
       "often gives higher bias and lower variance. The useful value depends on sample size, noise, class balance, geometry, and the metric used to define nearness.": "thường cho độ lệch cao hơn và phương sai thấp hơn.Giá trị hữu ích phụ thuộc vào kích thước mẫu, độ nhiễu, cân bằng lớp, hình học và số liệu được sử dụng để xác định độ gần.",
       "often gives low bias and high variance. Large": "thường cho độ lệch thấp và phương sai cao.lớn",
-      "on two moons. At what point is stable structure smoothed away?": "trên hai mặt trăng.Cấu trúc ổn định bị san bằng ở điểm nào?",
+      "on two moons. At what point is stable structure smoothed away?": "trên bộ dữ liệu hai trăng khuyết. Khi nào cấu trúc ổn định bị làm mờ đi?",
       "per query. K-d trees, ball trees, approximate-nearest-neighbor indexes, and vector databases can reduce search work in favorable settings. Exact tree search is often sublinear in low dimensions but can degrade toward a full scan in high dimensions or difficult distributions. Real systems also address missing values, imbalanced classes, calibration, and memory cost.": "mỗi truy vấn.Cây K-d, cây bóng, chỉ mục lân cận gần nhất và cơ sở dữ liệu vectơ có thể giảm bớt công việc tìm kiếm trong các cài đặt thuận lợi.Tìm kiếm cây chính xác thường là tuyến tính ở kích thước thấp nhưng có thể giảm xuống mức quét toàn bộ ở kích thước cao hoặc phân bố khó khăn.Các hệ thống thực cũng giải quyết các giá trị còn thiếu, các lớp không cân bằng, hiệu chuẩn và chi phí bộ nhớ.",
       "Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.": "Chọn một kịch bản, dự đoán điều gì sẽ xảy ra, sau đó áp dụng kịch bản đó và so sánh kết quả với dự đoán của bạn.",
       "Post-exploration prompts:": "Lời nhắc sau khám phá:",
@@ -3886,7 +3939,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Prediction locked and immutable. The underlying applet step has run while the result remains hidden.": "Dự đoán bị khóa và không thể thay đổi.Bước applet cơ bản đã chạy trong khi kết quả vẫn bị ẩn.",
       "prediction-complete-unlocked": "dự đoán-hoàn thành-mở khóa",
       "q-learning-gridworld": "q-learning-gridworld",
-      "queries; all KNN boundaries are ordinary Voronoi boundaries.": "truy vấn;tất cả các ranh giới KNN đều là ranh giới Voronoi thông thường.",
+      "queries; all KNN boundaries are ordinary Voronoi boundaries.": "; mọi ranh giới KNN đều là ranh giới Voronoi thông thường.",
       "Reduced motion and non-visual support": "Giảm chuyển động và hỗ trợ không trực quan",
       "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.": "Cài đặt giảm chuyển động được tôn trọng nếu có thể.Trạng thái hiện tại cũng có sẵn dưới dạng văn bản, vì vậy kết quả chính không chỉ phụ thuộc vào màu sắc, hoạt ảnh hoặc vị trí không gian.",
       "Remove all training points. Click the canvas to add new ones.": "Xóa tất cả điểm huấn luyện.Nhấp vào khung vẽ để thêm những cái mới.",
@@ -3902,7 +3955,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Scenario 4: Feature scale can distort distance": "Kịch bản 4: Thang đo đặc điểm có thể làm sai lệch khoảng cách",
       "Scenario 5: Distance weighting changes a noisy vote": "Kịch bản 5: Trọng số khoảng cách thay đổi một cuộc bỏ phiếu ồn ào",
       "search-pathfinding": "tìm đường dẫn tìm kiếm",
-      "Should one nearest example or a larger neighborhood be trusted near a noisy boundary?": "Có nên tin cậy một ví dụ gần nhất hoặc một vùng lân cận lớn hơn gần ranh giới ồn ào không?",
+      "Should one nearest example or a larger neighborhood be trusted near a noisy boundary?": "Gần một ranh giới có nhiễu, nên tin vào một mẫu gần nhất hay một vùng lân cận lớn hơn?",
       "Small and large k make different errors": "K nhỏ và lớn mắc lỗi khác nhau",
       "Smoother: averaging 25 neighbors washes out individual noise.": "Mượt mà hơn: trung bình 25 người hàng xóm sẽ loại bỏ tiếng ồn riêng lẻ.",
       "Spiral dataset. Drag the X-axis scale slider up to 3×: watch the boundary tilt. KNN is sensitive to which feature has the larger magnitude. Distance-sensitive ML pipelines often scale or standardize features when raw units would distort the intended notion of closeness.": "Tập dữ liệu xoắn ốc.Kéo thanh trượt tỷ lệ trục X lên tới 3×: xem độ nghiêng của ranh giới.KNN rất nhạy cảm với tính năng nào có cường độ lớn hơn.Các quy trình ML nhạy cảm với khoảng cách thường mở rộng quy mô hoặc tiêu chuẩn hóa các tính năng khi các đơn vị thô sẽ làm sai lệch khái niệm dự định về mức độ gần gũi.",
@@ -3942,7 +3995,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "suite-guided-transfer": "chuyển theo hướng dẫn",
       "suite-guided-transfer-prompt": "lời nhắc chuyển hướng dẫn của bộ",
       "suite-guided-transfer-wrap": "bộ-hướng dẫn-chuyển-quấn",
-      "Supervised classification, distance metrics, hyperparameters, decision boundaries, feature scaling, weighted voting, and the bias-variance tradeoff.": "Phân loại được giám sát, số liệu khoảng cách, siêu tham số, ranh giới quyết định, chia tỷ lệ tính năng, bỏ phiếu có trọng số và cân bằng độ lệch-phương sai.",
+      "Supervised classification, distance metrics, hyperparameters, decision boundaries, feature scaling, weighted voting, and the bias-variance tradeoff.": "Phân loại có giám sát, độ đo khoảng cách, siêu tham số, ranh giới quyết định, điều chỉnh thang đo đặc trưng, bỏ phiếu có trọng số và sự đánh đổi giữa độ chệch và phương sai.",
       "Switch the closeness rule to Manhattan. Which statement is mathematically accurate?": "Chuyển quy tắc gần sang Manhattan.Phát biểu nào là chính xác về mặt toán học?",
       "Terms used in this explanation": "Các thuật ngữ được sử dụng trong phần giải thích này",
       "Text and keyboard support": "Hỗ trợ văn bản và bàn phím",
@@ -4047,7 +4100,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Uniform votes vs distance weighting": "Phiếu thống nhất so với trọng số khoảng cách",
       "Use as a 2–3 minute predict → run → explain prompt.": "Sử dụng làm lời nhắc dự đoán trong 2 - 3 phút → chạy → giải thích lời nhắc.",
       "Use Enter or Space on buttons, and arrow keys on sliders or select controls.": "Sử dụng Enter hoặc Space trên các nút và phím mũi tên trên thanh trượt hoặc điều khiển chọn.",
-      "Use noisy overlap. Which errors come from model choice, and which come from ambiguous data?": "Sử dụng sự chồng chéo ồn ào.Lỗi nào đến từ việc lựa chọn mô hình và lỗi nào đến từ dữ liệu không rõ ràng?",
+      "Use noisy overlap. Which errors come from model choice, and which come from ambiguous data?": "Dùng dữ liệu chồng lấn có nhiễu. Sai số nào do lựa chọn mô hình, sai số nào do dữ liệu mơ hồ?",
       "Use Tab and Shift+Tab to move through controls.": "Sử dụng Tab và Shift+Tab để di chuyển qua các điều khiển.",
       "Use the highlighted neighbors to explain the nearly straight boundary.": "Sử dụng các vùng lân cận được đánh dấu để giải thích ranh giới gần như thẳng.",
       "Use the native KNN challenge: place a query, select exactly k predicted neighbors and a class, then lock before reveal.": "Sử dụng thử thách KNN gốc: đặt truy vấn, chọn chính xác k hàng xóm được dự đoán và một lớp, sau đó khóa trước khi hiển thị.",
@@ -4056,7 +4109,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Use the two-blob data, set k to five, and move the query point across the gap.": "Sử dụng dữ liệu hai đốm màu, đặt k thành 5 và di chuyển điểm truy vấn qua khoảng trống.",
       "Use the two-moons data and compare k equal to one with k equal to twenty-five.": "Sử dụng dữ liệu hai mặt trăng và so sánh k bằng một với k bằng hai mươi lăm.",
       "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.": "Sử dụng lớp này khi khó kiểm tra hiển thị hình ảnh, màu sắc, hoạt ảnh hoặc tương tác con trỏ.Nó cung cấp đường dẫn bàn phím và bản tóm tắt văn bản về trạng thái applet hiện tại.",
-      "What could go wrong if two features use very different units?": "Điều gì có thể xảy ra nếu hai tính năng sử dụng các đơn vị rất khác nhau?",
+      "What could go wrong if two features use very different units?": "Điều gì có thể sai nếu hai đặc trưng dùng các đơn vị rất khác nhau?",
       "What does voting look like when the classes are clearly separated?": "Việc bỏ phiếu sẽ như thế nào khi các lớp được phân tách rõ ràng?",
       "What numerical rule could make two examples count as similar?": "Quy tắc số nào có thể khiến hai ví dụ được coi là giống nhau?",
       "What this model leaves out": "Mô hình này bỏ sót những gì",
@@ -4115,7 +4168,8 @@ document.addEventListener('DOMContentLoaded', () => {
       "🖼 Image (.png)": "🖼 Hình ảnh (.png)",
       "🧪 Student response packet": "🧪 Gói phản hồi của học sinh",
       "🧭 Guided challenge: predict before reveal": "🧭 Thử thách có hướng dẫn: dự đoán trước khi lộ diện",
-      "🧭 Visual explanation": "🧭 Giải thích trực quan"
+      "🧭 Visual explanation": "🧭 Giải thích trực quan",
+      "At k = 1, the single nearest example determines the prediction. With Euclidean distance, nearest-point regions are ordinary Voronoi cells; other distance metrics change their geometry. One mislabeled point can create a small island of predictions. With larger k, several neighbors vote, reducing sensitivity to one example.": "Khi k = 1, mẫu gần nhất quyết định dự đoán. Với khoảng cách Euclid, các vùng điểm gần nhất là các ô Voronoi thông thường; các độ đo khác làm thay đổi hình dạng của chúng. Một điểm gán nhãn sai có thể tạo một vùng dự đoán nhỏ. Khi tăng k, nhiều láng giềng cùng bỏ phiếu nên ảnh hưởng của một mẫu giảm đi."
     },
     "patterns": [
       {
@@ -4126,6 +4180,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ]
   },
   "es": {
+    "teacher": {"At": "Con", "Increase": "Aumenta"},
     "strings": {
       "Task:": "Tarea:",
       "Switch between categorical voting and continuous-target averaging without reloading the applet.": "Cambia entre votación categórica y promedio de objetivos continuos sin recargar el applet.",
@@ -4193,7 +4248,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "#windowMath": "#windowMath",
       "${index}": "${index}",
       "(click \"Run CV\": needs at least 10 training points)": "(haga clic en \"Ejecutar CV\": necesita al menos 10 puntos de entrenamiento)",
-      ", add one mislabeled point. Which region changes and why?": ", agregue un punto mal etiquetado.¿Qué región cambia y por qué?",
+      ", add one mislabeled point. Which region changes and why?": ", añade un punto mal etiquetado. ¿Qué región cambia y por qué?",
       ", several neighbors vote and the boundary becomes less sensitive to any one example.": ", varios vecinos votan y el límite se vuelve menos sensible a cualquier ejemplo.",
       ", the distance metric, feature scaling, and whether nearby votes receive greater weight.": ", la métrica de distancia, la escala de características y si los votos cercanos reciben mayor peso.",
       ", the label of the single nearest example determines the prediction. The plane is divided into ordinary Voronoi cells, so one mislabeled or noisy point can create a small island of predictions. With larger": ", la etiqueta del ejemplo más cercano determina la predicción.El avión está dividido en celdas Voronoi ordinarias, por lo que un punto mal etiquetado o ruidoso puede crear una pequeña isla de predicciones.Con mayor",
@@ -4289,7 +4344,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Closer neighbors receive more influence than farther neighbors.": "Los vecinos más cercanos reciben más influencia que los vecinos más lejanos.",
       "cnf-sat": "cnf-sáb",
       "Color the entire canvas by the prediction at each cell. Shows the model's decision boundary.": "Colorea todo el lienzo según la predicción en cada celda.Muestra el límite de decisión del modelo.",
-      "Compare uniform and distance-weighted voting near a boundary.": "Compare la votación uniforme y ponderada por distancia cerca de un límite.",
+      "Compare uniform and distance-weighted voting near a boundary.": "Compara la votación uniforme y la ponderada por distancia cerca de una frontera.",
       "Comparison recorded. Explain any discrepancy before trying the transfer case.": "Comparación registrada.Explique cualquier discrepancia antes de intentar el caso de transferencia.",
       "Conditionally independent": "Condicionalmente independiente",
       "Copy a link that reopens the current settings in another browser.": "Copie un enlace que vuelva a abrir la configuración actual en otro navegador.",
@@ -4328,7 +4383,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Interactive visualization 2": "Visualización interactiva 2",
       "Interactive visualization 3": "Visualización interactiva 3",
       "Interlocking spirals. Tests the decision-boundary's ability to bend.": "Espirales entrelazadas.Pone a prueba la capacidad del límite de decisión para doblarse.",
-      "is always safer; nearest means whichever point looks closest on the screen; changing the distance rule changes only the displayed number, not which neighbors are selected; distance weighting selects a different neighbor set; tree indexes guarantee": "siempre es más seguro;más cercano significa el punto que parece más cercano en la pantalla;cambiar la regla de distancia cambia solo el número mostrado, no los vecinos seleccionados;la ponderación de distancia selecciona un conjunto de vecinos diferente;garantía de índices de árbol",
+      "is always safer; nearest means whichever point looks closest on the screen; changing the distance rule changes only the displayed number, not which neighbors are selected; distance weighting selects a different neighbor set; tree indexes guarantee": "siempre es más seguro; más cercano significa el punto que parece más cercano en pantalla; cambiar la métrica solo cambia el número mostrado, no los vecinos elegidos; la ponderación por distancia elige otro conjunto de vecinos; los índices de árbol garantizan consultas en tiempo",
       "k controls how many neighbors vote; weighting changes how strongly near points vote.": "k controla cuántos vecinos votan;La ponderación cambia la fuerza con la que votan los puntos cercanos.",
       "K-Nearest Neighbors": "K-Vecinos más cercanos",
       "K-nearest neighbors (KNN)": "K-vecinos más cercanos (KNN)",
@@ -4343,7 +4398,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "KNN can form curved and irregular boundaries without specifying an equation for the boundary. It works well on the two-moons example because local neighbors follow the curved groups. On overlapping classes, no setting can create information that the features do not contain. A smooth uncertain boundary may be more honest than a jagged one that follows every sample.": "KNN puede formar límites curvos e irregulares sin especificar una ecuación para el límite.Funciona bien en el ejemplo de las dos lunas porque los vecinos locales siguen los grupos curvos.En clases superpuestas, ninguna configuración puede crear información que las funciones no contengan.Un límite suave e incierto puede ser más honesto que uno irregular que sigue cada muestra.",
       "KNN classifies a point by looking outward from that point. The distance metric, scaling, k, and weighting decide which neighbors count most.": "KNN clasifica un punto mirando hacia afuera desde ese punto.La métrica de distancia, la escala, k y la ponderación deciden qué vecinos cuentan más.",
       "KNN first defines which training points count as nearest under the selected distance rule and feature scaling. Then k selects the voters, and the voting rule determines how strongly they count.": "KNN primero define qué puntos de entrenamiento cuentan como los más cercanos según la regla de distancia seleccionada y la escala de características.Luego k selecciona a los votantes y la regla de votación determina con qué fuerza cuentan.",
-      "KNN has no hyperparameters; larger": "KNN no tiene hiperparámetros;más grande",
+      "KNN has no hyperparameters; larger": "KNN no tiene hiperparámetros; aumentar",
       "KNN neighbor prediction challenge": "Desafío de predicción de vecinos KNN",
       "KNN 邻居预测挑战": "KNN 邻居预测挑战",
       "knn-classifier": "clasificador-knn",
@@ -4369,7 +4424,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Number of neighbors to consult. k=1 follows a single nearest point; larger k aggregates more neighbors and often smooths local variation, depending on the data.": "Número de vecinos a consultar.k=1 sigue un único punto más cercano;Una k mayor agrega más vecinos y, a menudo, suaviza la variación local, según los datos.",
       "often gives higher bias and lower variance. The useful value depends on sample size, noise, class balance, geometry, and the metric used to define nearness.": "a menudo proporciona un mayor sesgo y una menor varianza.El valor útil depende del tamaño de la muestra, el ruido, el equilibrio de clases, la geometría y la métrica utilizada para definir la cercanía.",
       "often gives low bias and high variance. Large": "a menudo proporciona un sesgo bajo y una variación alta.Grande",
-      "on two moons. At what point is stable structure smoothed away?": "en dos lunas.¿En qué punto se suaviza la estructura estable?",
+      "on two moons. At what point is stable structure smoothed away?": "en el conjunto de dos lunas. ¿En qué momento se pierde la estructura estable por el suavizado?",
       "per query. K-d trees, ball trees, approximate-nearest-neighbor indexes, and vector databases can reduce search work in favorable settings. Exact tree search is often sublinear in low dimensions but can degrade toward a full scan in high dimensions or difficult distributions. Real systems also address missing values, imbalanced classes, calibration, and memory cost.": "por consulta.Los árboles K-d, los árboles de bolas, los índices de vecinos más cercanos aproximados y las bases de datos de vectores pueden reducir el trabajo de búsqueda en entornos favorables.La búsqueda de árbol exacta suele ser sublineal en dimensiones bajas, pero puede degradarse hacia una exploración completa en dimensiones altas o distribuciones difíciles.Los sistemas reales también abordan los valores faltantes, las clases desequilibradas, la calibración y el costo de la memoria.",
       "Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.": "Elija un escenario, prediga lo que debería suceder, luego aplíquelo y compare el resultado con su predicción.",
       "Post-exploration prompts:": "Indicaciones posteriores a la exploración:",
@@ -4402,7 +4457,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Prediction locked and immutable. The underlying applet step has run while the result remains hidden.": "Predicción bloqueada e inmutable.El paso del subprograma subyacente se ha ejecutado mientras el resultado permanece oculto.",
       "prediction-complete-unlocked": "predicción-completa-desbloqueada",
       "q-learning-gridworld": "q-learning-gridworld",
-      "queries; all KNN boundaries are ordinary Voronoi boundaries.": "consultas;todos los límites de KNN son límites ordinarios de Voronoi.",
+      "queries; all KNN boundaries are ordinary Voronoi boundaries.": "; todas las fronteras de KNN son fronteras de Voronoi ordinarias.",
       "Reduced motion and non-visual support": "Movimiento reducido y soporte no visual",
       "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.": "Las configuraciones de movimiento reducido se respetan siempre que sea posible.El estado actual también está disponible como texto, por lo que el resultado principal no depende sólo del color, la animación o la posición espacial.",
       "Remove all training points. Click the canvas to add new ones.": "Elimina todos los puntos de entrenamiento.Haga clic en el lienzo para agregar otros nuevos.",
@@ -4418,7 +4473,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Scenario 4: Feature scale can distort distance": "Escenario 4: La escala de características puede distorsionar la distancia",
       "Scenario 5: Distance weighting changes a noisy vote": "Escenario 5: La ponderación de la distancia cambia una votación ruidosa",
       "search-pathfinding": "búsqueda-pathfinding",
-      "Should one nearest example or a larger neighborhood be trusted near a noisy boundary?": "¿Se debe confiar en un ejemplo más cercano o en un vecindario más grande cerca de un límite ruidoso?",
+      "Should one nearest example or a larger neighborhood be trusted near a noisy boundary?": "Cerca de una frontera con ruido, ¿conviene confiar en el ejemplo más cercano o en un vecindario mayor?",
       "Small and large k make different errors": "Pequeños y grandes k cometen errores diferentes",
       "Smoother: averaging 25 neighbors washes out individual noise.": "Más suave: con un promedio de 25 vecinos se elimina el ruido individual.",
       "Spiral dataset. Drag the X-axis scale slider up to 3×: watch the boundary tilt. KNN is sensitive to which feature has the larger magnitude. Distance-sensitive ML pipelines often scale or standardize features when raw units would distort the intended notion of closeness.": "Conjunto de datos en espiral.Arrastre el control deslizante de escala del eje X hasta 3×: observe la inclinación del límite.KNN es sensible a qué característica tiene mayor magnitud.Los canales de aprendizaje automático sensibles a la distancia a menudo escalan o estandarizan características cuando las unidades en bruto distorsionarían la noción prevista de cercanía.",
@@ -4458,7 +4513,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "suite-guided-transfer": "traslado-guiado-suite",
       "suite-guided-transfer-prompt": "mensaje-de-transferencia-guiada-de-suite",
       "suite-guided-transfer-wrap": "envoltura-de-transferencia-guiada-de-suite",
-      "Supervised classification, distance metrics, hyperparameters, decision boundaries, feature scaling, weighted voting, and the bias-variance tradeoff.": "Clasificación supervisada, métricas de distancia, hiperparámetros, límites de decisión, escalamiento de características, votación ponderada y compensación entre sesgo y varianza.",
+      "Supervised classification, distance metrics, hyperparameters, decision boundaries, feature scaling, weighted voting, and the bias-variance tradeoff.": "Clasificación supervisada, métricas de distancia, hiperparámetros, fronteras de decisión, escalado de características, votación ponderada y compromiso entre sesgo y varianza.",
       "Switch the closeness rule to Manhattan. Which statement is mathematically accurate?": "Cambia la regla de cercanía a Manhattan.¿Qué afirmación es matemáticamente exacta?",
       "Terms used in this explanation": "Términos utilizados en esta explicación",
       "Text and keyboard support": "Soporte de texto y teclado",
@@ -4563,7 +4618,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Uniform votes vs distance weighting": "Votos uniformes vs ponderación por distancia",
       "Use as a 2–3 minute predict → run → explain prompt.": "Úselo como mensaje de predicción → ejecución → explicación de 2 a 3 minutos.",
       "Use Enter or Space on buttons, and arrow keys on sliders or select controls.": "Utilice Intro o Espacio en los botones y las teclas de flecha en los controles deslizantes o seleccione controles.",
-      "Use noisy overlap. Which errors come from model choice, and which come from ambiguous data?": "Utilice superposición ruidosa.¿Qué errores provienen de la elección del modelo y cuáles de datos ambiguos?",
+      "Use noisy overlap. Which errors come from model choice, and which come from ambiguous data?": "Usa los datos con solapamiento ruidoso. ¿Qué errores se deben a la elección del modelo y cuáles a la ambigüedad de los datos?",
       "Use Tab and Shift+Tab to move through controls.": "Utilice Tab y Shift+Tab para moverse por los controles.",
       "Use the highlighted neighbors to explain the nearly straight boundary.": "Utilice los vecinos resaltados para explicar el límite casi recto.",
       "Use the native KNN challenge: place a query, select exactly k predicted neighbors and a class, then lock before reveal.": "Utilice el desafío KNN nativo: realice una consulta, seleccione exactamente k vecinos predichos y una clase, luego bloquee antes de revelar.",
@@ -4572,7 +4627,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Use the two-blob data, set k to five, and move the query point across the gap.": "Utilice los datos de dos blobs, establezca k en cinco y mueva el punto de consulta a través del espacio.",
       "Use the two-moons data and compare k equal to one with k equal to twenty-five.": "Utilice los datos de dos lunas y compare k igual a uno con k igual a veinticinco.",
       "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.": "Utilice esta capa cuando la visualización, el color, la animación o la interacción del puntero sean difíciles de inspeccionar.Proporciona una ruta de teclado y un resumen de texto del estado actual del subprograma.",
-      "What could go wrong if two features use very different units?": "¿Qué podría salir mal si dos funciones utilizan unidades muy diferentes?",
+      "What could go wrong if two features use very different units?": "¿Qué podría salir mal si dos características usan unidades muy diferentes?",
       "What does voting look like when the classes are clearly separated?": "¿Cómo se ve la votación cuando las clases están claramente separadas?",
       "What numerical rule could make two examples count as similar?": "¿Qué regla numérica podría hacer que dos ejemplos cuenten como similares?",
       "What this model leaves out": "Lo que este modelo omite",
@@ -4631,7 +4686,8 @@ document.addEventListener('DOMContentLoaded', () => {
       "🖼 Image (.png)": "🖼 Imagen (.png)",
       "🧪 Student response packet": "🧪 Paquete de respuesta para estudiantes",
       "🧭 Guided challenge: predict before reveal": "🧭 Desafío guiado: predecir antes de revelar",
-      "🧭 Visual explanation": "🧭 Explicación visual"
+      "🧭 Visual explanation": "🧭 Explicación visual",
+      "At k = 1, the single nearest example determines the prediction. With Euclidean distance, nearest-point regions are ordinary Voronoi cells; other distance metrics change their geometry. One mislabeled point can create a small island of predictions. With larger k, several neighbors vote, reducing sensitivity to one example.": "Con k = 1, el ejemplo más cercano determina la predicción. Con distancia euclidiana, las regiones del punto más cercano son celdas de Voronoi ordinarias; otras métricas cambian su geometría. Un punto mal etiquetado puede crear una pequeña isla de predicciones. Con mayor k, varios vecinos votan y reducen la sensibilidad a un solo ejemplo."
     },
     "patterns": [
       {
@@ -4645,7 +4701,7 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 </script>
-<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["knn-classifier"];if(!row)return;Object.assign(row.vi.strings,{"🧪 Quick Assign · QA-KNN-01 · 10–15 min": "🧪 Bài tập nhanh · QA-KNN-01 · 10–15 phút", "Which neighbors vote—or get averaged?": "Những láng giềng nào bỏ phiếu hoặc được lấy trung bình?", "Compare classification voting with regression averaging while keeping the same k, metric, weighting, and selected neighbors.": "So sánh bỏ phiếu phân loại với lấy trung bình hồi quy trong khi giữ nguyên k, thước đo, trọng số và các láng giềng được chọn.", "Before changing k, predict how the categorical vote or continuous average will change. Why?": "Trước khi thay đổi k, hãy dự đoán phiếu phân loại hoặc trung bình liên tục sẽ thay đổi thế nào. Vì sao?", "Run at least two settings. Record task mode, k, distance metric, weighting, selected neighbors, and the resulting class or continuous prediction.": "Chạy ít nhất hai cấu hình. Ghi lại chế độ tác vụ, k, thước đo khoảng cách, trọng số, các láng giềng được chọn và dự đoán lớp hoặc giá trị liên tục.", "Why does classification vote over labels while regression averages continuous targets, even though both select neighbors the same way?": "Vì sao phân loại bỏ phiếu trên nhãn còn hồi quy lấy trung bình mục tiêu liên tục, dù cả hai chọn láng giềng theo cùng một cách?", "When would KNN struggle because of noise, scaling, or irrelevant features?": "Khi nào KNN gặp khó khăn vì nhiễu, thang đo hoặc đặc trưng không liên quan?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"🧪 Quick Assign · QA-KNN-01 · 10–15 min": "🧪 Tarea rápida · QA-KNN-01 · 10–15 min", "Which neighbors vote—or get averaged?": "¿Qué vecinos votan o se promedian?", "Compare classification voting with regression averaging while keeping the same k, metric, weighting, and selected neighbors.": "Compara la votación de clasificación con el promedio de regresión manteniendo el mismo k, métrica, ponderación y vecinos seleccionados.", "Before changing k, predict how the categorical vote or continuous average will change. Why?": "Antes de cambiar k, predice cómo cambiará el voto categórico o el promedio continuo. ¿Por qué?", "Run at least two settings. Record task mode, k, distance metric, weighting, selected neighbors, and the resulting class or continuous prediction.": "Ejecuta al menos dos configuraciones. Registra el modo de tarea, k, la métrica de distancia, la ponderación, los vecinos seleccionados y la clase o predicción continua resultante.", "Why does classification vote over labels while regression averages continuous targets, even though both select neighbors the same way?": "¿Por qué la clasificación vota sobre etiquetas mientras la regresión promedia objetivos continuos, aunque ambas seleccionen vecinos de la misma manera?", "When would KNN struggle because of noise, scaling, or irrelevant features?": "¿Cuándo tendría dificultades KNN por ruido, escalado o características irrelevantes?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script>
+<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["knn-classifier"];if(!row)return;Object.assign(row.vi.strings,{"Level 1 · 10–15 min": "Cấp độ 1 · 10–15 phút", "🧪 Quick Assign · QA-KNN-01 · 10–15 min": "🧪 Bài tập nhanh · QA-KNN-01 · 10–15 phút", "Which neighbors vote—or get averaged?": "Những láng giềng nào bỏ phiếu hoặc được lấy trung bình?", "Compare classification voting with regression averaging while keeping the same k, metric, weighting, and selected neighbors.": "So sánh bỏ phiếu phân loại với lấy trung bình hồi quy trong khi giữ nguyên k, thước đo, trọng số và các láng giềng được chọn.", "Before changing k, predict how the categorical vote or continuous average will change. Why?": "Trước khi thay đổi k, hãy dự đoán phiếu phân loại hoặc trung bình liên tục sẽ thay đổi thế nào. Vì sao?", "Run at least two settings. Record task mode, k, distance metric, weighting, selected neighbors, and the resulting class or continuous prediction.": "Chạy ít nhất hai cấu hình. Ghi lại chế độ tác vụ, k, thước đo khoảng cách, trọng số, các láng giềng được chọn và dự đoán lớp hoặc giá trị liên tục.", "Why does classification vote over labels while regression averages continuous targets, even though both select neighbors the same way?": "Vì sao phân loại bỏ phiếu trên nhãn còn hồi quy lấy trung bình mục tiêu liên tục, dù cả hai chọn láng giềng theo cùng một cách?", "When would KNN struggle because of noise, scaling, or irrelevant features?": "Khi nào KNN gặp khó khăn vì nhiễu, thang đo hoặc đặc trưng không liên quan?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"Level 1 · 10–15 min": "Nivel 1 · 10–15 min", "🧪 Quick Assign · QA-KNN-01 · 10–15 min": "🧪 Tarea rápida · QA-KNN-01 · 10–15 min", "Which neighbors vote—or get averaged?": "¿Qué vecinos votan o se promedian?", "Compare classification voting with regression averaging while keeping the same k, metric, weighting, and selected neighbors.": "Compara la votación de clasificación con el promedio de regresión manteniendo el mismo k, métrica, ponderación y vecinos seleccionados.", "Before changing k, predict how the categorical vote or continuous average will change. Why?": "Antes de cambiar k, predice cómo cambiará el voto categórico o el promedio continuo. ¿Por qué?", "Run at least two settings. Record task mode, k, distance metric, weighting, selected neighbors, and the resulting class or continuous prediction.": "Ejecuta al menos dos configuraciones. Registra el modo de tarea, k, la métrica de distancia, la ponderación, los vecinos seleccionados y la clase o predicción continua resultante.", "Why does classification vote over labels while regression averages continuous targets, even though both select neighbors the same way?": "¿Por qué la clasificación vota sobre etiquetas mientras la regresión promedia objetivos continuos, aunque ambas seleccionen vecinos de la misma manera?", "When would KNN struggle because of noise, scaling, or irrelevant features?": "¿Cuándo tendría dificultades KNN por ruido, escalado o características irrelevantes?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script>
 (() => {
   'use strict';
   // v1.6.1: preserve canonical source text across VI/ES round trips, refresh native layers before overlay activation, and cancel superseded locale timers.
@@ -4657,6 +4713,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const rootData = window.__AI_PLAYGROUNDS_R4_LOCALES || {};
   rootData.common = rootData.common || {};
   rootData.common.vi = Object.assign({
+    "↺ Reset all": "↺ Đặt lại",
+    "↺ New world": "↺ Thế giới mới",
+    "Before you read": "Trước khi đọc",
+    "Misconceptions to test:": "Những hiểu lầm cần kiểm tra:",
+    "Core question:": "Câu hỏi trọng tâm:",
+    "Run and watch:": "Chạy và quan sát:",
+    "Predict first:": "Dự đoán trước:",
+    "Explain afterward:": "Giải thích sau:",
+    "Apply and compare": "Áp dụng và so sánh",
+    "Start with the featured experiment, then use the scenarios to test a prediction.": "Bắt đầu với thí nghiệm nổi bật, rồi dùng các tình huống để kiểm tra dự đoán.",
+    "Open the mechanism view and lesson sequence when you need to explain why the result changed.": "Mở phần mô tả cơ chế và trình tự bài học khi cần giải thích vì sao kết quả thay đổi.",
+    "Collect reasoning with the worksheet or the local student response packet.": "Ghi lại lập luận bằng phiếu học tập hoặc bộ câu trả lời của học sinh được lưu cục bộ.",
+    "Use the text-state description and keyboard guidance when the visual display is not enough.": "Dùng mô tả trạng thái bằng văn bản và hướng dẫn bàn phím khi hình ảnh hiển thị chưa đủ.",
+    "Applet learning modes": "Các chế độ học tập của applet",
+    "Copy this experiment": "Sao chép thí nghiệm này",
+    "Experiment link copied.": "Đã sao chép liên kết thí nghiệm.",
+    "Copy this experiment URL": "Sao chép URL của thí nghiệm này",
+    "Understand": "Tìm hiểu",
+    "Use in class": "Dùng trong lớp",
+    "Text and keyboard": "Văn bản và bàn phím",
+    "What this applet shows": "Điều applet này minh họa",
+
     "Jump to latest": "Về trạng thái mới nhất",
     "Jump to frame": "Đến khung",
     "Jump to iteration": "Đến lần lặp",
@@ -4694,6 +4772,28 @@ document.addEventListener('DOMContentLoaded', () => {
     'Wumpus World': 'Thế giới Wumpus'
   }, rootData.common.vi || {});
   rootData.common.es = Object.assign({
+    "↺ Reset all": "↺ Restablecer",
+    "↺ New world": "↺ Nuevo mundo",
+    "Before you read": "Antes de leer",
+    "Misconceptions to test:": "Ideas erróneas que comprobar:",
+    "Core question:": "Pregunta central:",
+    "Run and watch:": "Ejecuta y observa:",
+    "Predict first:": "Predice primero:",
+    "Explain afterward:": "Explica después:",
+    "Apply and compare": "Aplicar y comparar",
+    "Start with the featured experiment, then use the scenarios to test a prediction.": "Empieza con el experimento destacado y usa los escenarios para comprobar una predicción.",
+    "Open the mechanism view and lesson sequence when you need to explain why the result changed.": "Abre la vista del mecanismo y la secuencia de la lección para explicar por qué cambió el resultado.",
+    "Collect reasoning with the worksheet or the local student response packet.": "Recoge el razonamiento con la hoja de actividades o el cuaderno de respuestas del estudiante guardado localmente.",
+    "Use the text-state description and keyboard guidance when the visual display is not enough.": "Usa la descripción textual del estado y la guía del teclado cuando la visualización no sea suficiente.",
+    "Applet learning modes": "Modos de aprendizaje del applet",
+    "Copy this experiment": "Copiar este experimento",
+    "Experiment link copied.": "Enlace del experimento copiado.",
+    "Copy this experiment URL": "Copia la URL de este experimento",
+    "Understand": "Comprender",
+    "Use in class": "Usar en clase",
+    "Text and keyboard": "Texto y teclado",
+    "What this applet shows": "Lo que muestra este applet",
+
     "Jump to latest": "Ir al estado más reciente",
     "Jump to frame": "Ir al estado",
     "Jump to iteration": "Ir a la iteración",
@@ -4735,6 +4835,43 @@ document.addEventListener('DOMContentLoaded', () => {
   // R4 stays invisible until the applet-specific VI/ES catalog is complete.
   if (!data || data.ready !== true || !data.vi || !data.es) return;
 
+  // Scope navigation labels to the footer; Source in a mechanism is not source code.
+  const footerLabels = {"vi":{"footer-top":"↑ Lên đầu trang","footer-portfolio":"Hồ sơ","footer-source":"Mã nguồn","footer-issue":"Báo lỗi"},"es":{"footer-top":"↑ Volver arriba","footer-portfolio":"Portafolio","footer-source":"Código fuente","footer-issue":"Informar de un problema"}};
+  // Teacher headings and short rich-text fragments never enter substring lookup.
+  const teacherLabels = {vi: {'For teachers': 'Dành cho giáo viên', 'Curriculum:': 'Nội dung học:', 'Pre-exploration prompts:': 'Câu hỏi trước khi khám phá:', 'Post-exploration prompts:': 'Câu hỏi sau khi khám phá:'}, es: {'For teachers': 'Para docentes', 'Curriculum:': 'Contenidos:', 'Pre-exploration prompts:': 'Preguntas antes de explorar:', 'Post-exploration prompts:': 'Preguntas después de explorar:'}};
+  // Exact original-header titles only; never translate body or learner text in ZH.
+  const headerTitlesZh = {
+    "Copy an <iframe> snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.": "复制用于嵌入学习管理系统（LMS）的 <iframe> 代码。隐藏页头和说明，仅显示交互区。",
+    "Reset everything to defaults: empty grid, A*, default start and goal positions.": "恢复默认设置：空网格、A* 算法及默认起点和终点。",
+    "Reset everything to defaults: TSP, best-improvement, T₀=10, cooling=0.995.": "恢复默认设置：旅行商问题、最佳改进法、初始温度 T₀=10、降温系数 0.995。",
+    "Generate a new random world, clear the log, reset score.": "生成新的随机世界，清空日志并重置分数。",
+    "Reset input to default 'modus ponens' example.": "将输入恢复为默认的“肯定前件式”示例。",
+    "Reset to default disease scenario: prior=1%, sensitivity=99%, specificity=95%, population=10000.": "恢复默认疾病检测情景：患病率 1%、灵敏度 99%、特异度 95%、人数 10000。",
+    "Reset CPTs to AIMA defaults and clear all evidence.": "将条件概率表恢复为 AIMA 默认值，并清除所有观测证据。",
+    "Reset everything to defaults: two-moons dataset, k=5, both visualizations on.": "恢复默认设置：双月数据集、k=5，并开启两个可视化图层。",
+    "Reset everything: sin truth, n=20 points, σ=0.2 noise, degree 3, λ=0.": "恢复默认设置：真实函数为 sin、n=20 个点、噪声 σ=0.2、多项式次数为 3、λ=0。",
+    "Reset everything to default: two-moons dataset, [2-6-4-1] architecture, ReLU activation, LR=0.03.": "恢复默认设置：双月数据集、[2-6-4-1] 网络结构、ReLU 激活函数、学习率 0.03。",
+    "Reset everything to the default: Gaussian mixture dataset, k=3, random init.": "恢复默认设置：高斯混合数据集、k=3、随机初始化。",
+    "Reset to default: cross input, Sobel-X edge kernel, abs ON, ReLU OFF.": "恢复默认设置：十字形输入、Sobel-X 边缘检测核，开启绝对值变换，关闭 ReLU。",
+    "Clear Q-values; restore the default grid, learning rate, discount factor, exploration rate and step reward.": "清空 Q 值；将网格、学习率、折扣因子、探索率和每步奖励恢复为默认值。",
+    "Download the current grid + search trace as a PNG.": "将当前网格和搜索轨迹下载为 PNG 图片。",
+    "Download the current state visualization as a PNG.": "将当前状态的可视化下载为 PNG 图片。",
+    "Download the world view as a PNG.": "将世界视图下载为 PNG 图片。",
+    "Download the population dot-grid as a PNG.": "将人群点阵图下载为 PNG 图片。",
+    "Download the network diagram as a PNG.": "将网络图下载为 PNG 图片。",
+    "Download the current points + decision boundary as a PNG.": "将当前数据点和决策边界下载为 PNG 图片。",
+    "Download the fit canvas as a PNG.": "将拟合图下载为 PNG 图片。",
+    "Download the decision-boundary canvas as a PNG.": "将决策边界图下载为 PNG 图片。",
+    "Download the current visualization as a PNG image (for slides).": "将当前可视化下载为 PNG 图片（可用于幻灯片）。",
+    "Download the convolution output as a PNG.": "将卷积输出下载为 PNG 图片。",
+    "Download the current grid + Q-value heatmap as a PNG.": "将当前网格和 Q 值热力图下载为 PNG 图片。",
+    "Download grid dimensions and search results (path coordinates, visited-node count, frontier snapshot) as CSV.": "将网格尺寸和搜索结果（路径坐标、已访问节点数、搜索前沿快照）下载为 CSV。",
+    "Download per-iteration costs, algorithm, problem, iteration count and best cost as CSV.": "将每次迭代的代价、算法、问题、迭代次数和最佳代价下载为 CSV。",
+    "Download the current Bayes scenario (prior, sens, spec, population) and the resulting contingency table + posteriors as CSV.": "将当前贝叶斯情景（先验概率、灵敏度、特异度、人数）、列联表和后验概率下载为 CSV。",
+    "Download training + validation datasets and the per-degree MSE table as CSV.": "将训练集、验证集和各多项式次数的均方误差表下载为 CSV。",
+    "Download points + cluster assignments + centroid positions as CSV (two sections in one file).": "将数据点、所属簇和质心位置下载为 CSV（同一文件内分为两个部分）。",
+    "Download episode return history + the current Q-table snapshot as CSV.": "将各回合的回报历史和当前 Q 表快照下载为 CSV。"
+  };
   let current = 'en';
   let applying = false;
   let nativeLanguageClick = false;
@@ -4803,6 +4940,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function skipNode(node) {
     const el = node && (node.nodeType === 1 ? node : node.parentElement);
     if (!el) return true;
+    if (el.closest('.suite-guided-actual')) return false;
     return !!el.closest('script,style,noscript,template,code,pre,kbd,samp,.lang-switch,[data-r4-no-translate]');
   }
 
@@ -4821,7 +4959,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const live = node.nodeValue || '';
     if (!originalText.has(node)) originalText.set(node, live);
     const source = textSource(node);
-    const translated = translateString(source);
+    const footerKey = node.parentElement?.closest('footer [data-i18n]')?.dataset.i18n;
+    // Match formatted teacher prose only; retain source and outer whitespace.
+    const proseKey = node.parentElement?.closest('.for-teachers')
+      ? source.replace(/\s+/g, ' ').trim() : null;
+    const proseMap = proseKey === null ? null
+      : Object.assign({}, mapFor(current), data[current]?.teacher || {}, teacherLabels[current] || {});
+    const prose = proseMap && Object.prototype.hasOwnProperty.call(proseMap, proseKey)
+      ? source.replace(/\S(?:[\s\S]*\S)?/, () => proseMap[proseKey]) : null;
+    const translated = footerLabels[current]?.[footerKey] || prose || translateString(source);
     if (translated !== live) {
       lastAppliedText.set(node, translated);
       applying = true;
@@ -4830,15 +4976,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function translateAttributes(el) {
+  function translateAttributes(el, attributes = ['title', 'aria-label', 'placeholder']) {
     if (!el || el.nodeType !== 1 || skipNode(el)) return;
     const state = attrState(el);
-    for (const attr of ['title', 'aria-label', 'placeholder']) {
+    for (const attr of attributes) {
       if (!el.hasAttribute(attr)) continue;
       const live = el.getAttribute(attr) || '';
       if (!Object.prototype.hasOwnProperty.call(state, attr)) state[attr] = live;
       const source = Object.prototype.hasOwnProperty.call(state, attr) ? state[attr] : live;
-      const translated = translateString(source);
+      const zhTitle = current === 'zh' && attr === 'title' && el.closest('.header-actions')
+        && ['hardReset', 'embedLink', 'csvExport', 'exportPng'].includes(el.id)
+        ? headerTitlesZh[source] : null;
+      const translated = current === 'zh'
+        ? (typeof zhTitle === 'string' ? zhTitle : live) : translateString(source);
       if (translated !== live) {
         const applied = lastAppliedAttrs.get(el) || {};
         applied[attr] = translated;
@@ -4848,6 +4998,14 @@ document.addEventListener('DOMContentLoaded', () => {
         applying = false;
       }
     }
+  }
+
+  function refreshHeaderTitles() {
+    if (current !== 'en' && current !== 'zh') return;
+    document.querySelectorAll('.header-actions #hardReset,.header-actions #embedLink,.header-actions #csvExport,.header-actions #exportPng').forEach(el => {
+      const source = originalAttrs.get(el)?.title ?? el.getAttribute('title');
+      if (Object.prototype.hasOwnProperty.call(headerTitlesZh, source)) translateAttributes(el, ['title']);
+    });
   }
 
   function translateTree(root = document.body) {
@@ -4954,24 +5112,28 @@ document.addEventListener('DOMContentLoaded', () => {
     window.tr = wrapped;
   }
 
-  function patchClipboard() {
-    try {
-      const clipboard = navigator.clipboard;
-      if (!clipboard || typeof clipboard.writeText !== 'function' || clipboard.writeText.__r4Wrapped) return;
-      const base = clipboard.writeText.bind(clipboard);
-      const wrapped = text => base(current === 'vi' || current === 'es' ? translateString(String(text), current) : text);
-      wrapped.__r4Wrapped = true;
-      clipboard.writeText = wrapped;
-    } catch (_) {}
-  }
-
   function selectControl() {
     return document.querySelector('.r4-language-select');
   }
 
   function updateSelect(locale) {
+    const names = {
+      en: ['Language', 'Toggle dark or light theme'],
+      zh: ['语言', '切换深色或浅色主题'],
+      vi: ['Ngôn ngữ', 'Chuyển giao diện tối hoặc sáng'],
+      es: ['Idioma', 'Cambiar entre tema oscuro y claro']
+    }[locale];
     const select = selectControl();
-    if (select) select.value = locale;
+    if (select) {
+      select.value = locale;
+      select.setAttribute('aria-label', names[0]);
+    }
+    const theme = document.getElementById('themeToggle');
+    if (theme) {
+      theme.setAttribute('data-r4-no-translate', '1');
+      theme.setAttribute('aria-label', names[1]);
+      theme.setAttribute('title', names[1]);
+    }
   }
 
   function activateOverlay(locale) {
@@ -4981,7 +5143,7 @@ document.addEventListener('DOMContentLoaded', () => {
     current = locale;
     document.documentElement.lang = locale;
     wrapTr();
-    patchClipboard();
+    // Exporters localize their labels; never translate learner-authored clipboard data.
     applyMetadata(locale);
     translateTree(document.body);
     updateSelect(locale);
@@ -5003,6 +5165,7 @@ document.addEventListener('DOMContentLoaded', () => {
       clickNative(locale);
       document.documentElement.lang = locale === 'zh' ? 'zh' : 'en';
       refreshKnownLayers();
+      refreshHeaderTitles();
       if (locale === 'en') {
         const heading = document.querySelector('h1');
         if (heading && canonicalHeadingText) {
@@ -5051,10 +5214,10 @@ document.addEventListener('DOMContentLoaded', () => {
     for (const mutation of mutations) {
       if (mutation.type === 'characterData') {
         const live = mutation.target.nodeValue || '';
-        if (lastAppliedText.get(mutation.target) === live) {
-          lastAppliedText.delete(mutation.target);
-          continue;
-        }
+        // Several queued records can observe the same final translated value.
+        // Retain its marker until a genuinely different applet value arrives.
+        if (lastAppliedText.get(mutation.target) === live) continue;
+        lastAppliedText.delete(mutation.target);
         // Applet-authored dynamic state is always a new source value, including
         // while English or Chinese is active. This is what prevents a later locale
         // switch from restoring stale page-load state.
@@ -5064,15 +5227,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const attr = mutation.attributeName;
         const live = mutation.target.getAttribute(attr) || '';
         const applied = lastAppliedAttrs.get(mutation.target) || {};
-        if (applied[attr] === live) {
-          delete applied[attr];
-          lastAppliedAttrs.set(mutation.target, applied);
-          continue;
-        }
+        if (applied[attr] === live) continue;
+        delete applied[attr];
         const state = attrState(mutation.target);
         state[attr] = live;
-        if (current === 'vi' || current === 'es') translateAttributes(mutation.target);
+        // Do not overwrite a sibling attribute whose native write is still queued.
+        if (current === 'vi' || current === 'es' || current === 'zh' && attr === 'title') translateAttributes(mutation.target, [attr]);
       } else {
+        // The native original galleries have no Chinese confirmation entry.
+        // Localize only this generated button message, never learner text.
+        if (current === 'zh' && mutation.target.matches?.('.scenario-card button')
+            && mutation.target.textContent === '✓ Applied; compare the result') {
+          mutation.target.textContent = '✓ 已应用；请比较结果';
+        }
+        // Locale renderers replace the original gallery's cards, not its model.
+        // Carry the last applied marker by stable ID; never click/reapply a case.
+        if (mutation.target.id === 'scenarioGalleryCards' && !mutation.target.querySelector('.applied')) {
+          const previous = [...mutation.removedNodes].find(node => node.nodeType === 1 && node.matches('.scenario-card.applied'));
+          const index = previous?.dataset.scenarioIndex;
+          if (index !== undefined) [...mutation.target.children]
+            .find(node => node.dataset.scenarioIndex === index)?.classList.add('applied');
+        }
         mutation.addedNodes.forEach(node => {
           if (current === 'vi' || current === 'es') translateTree(node);
         });
@@ -5086,7 +5261,7 @@ document.addEventListener('DOMContentLoaded', () => {
     canonicalHeadingText = initialHeading ? initialHeading.textContent : '';
     installSelect();
     wrapTr();
-    patchClipboard();
+    // Exporters localize their labels; never translate learner-authored clipboard data.
     observer.observe(document.body, { subtree:true, childList:true, characterData:true, attributes:true, attributeFilter:['title','aria-label','placeholder'] });
     // Legacy language handlers in some applets rebuild or reset the experiment as
     // part of their EN/ZH switch. R4 invokes those buttons only as an internal
@@ -5106,6 +5281,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (nativeLanguageClick) return;
         const locale = normalizeLocale(button.dataset.lang);
         current = locale;
+        refreshHeaderTitles();
         updateSelect(locale);
         persist(locale);
       });
@@ -5126,10 +5302,10 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 </script>
-<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.5</div>
+<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.6</div>
 
 <!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
-<script data-ai-playgrounds-analytics="v1.9.5">
+<script data-ai-playgrounds-analytics="v1.9.6">
 (function () {
   'use strict';
   var CANONICAL_HOST = 'lmdixon23.github.io';
@@ -5245,5 +5421,117 @@ document.addEventListener('DOMContentLoaded', () => {
   sendPage();
 })();
 </script>
+<script data-classroom-result-locales="1">(()=>{const row=window.__AI_PLAYGROUNDS_R4_LOCALES?.["knn-classifier"];if(!row)return;Object.assign(row.vi.strings,{"Challenge result": "Kết quả thử thách"});Object.assign(row.es.strings,{"Challenge result": "Resultado del desafío"});Object.assign(row.vi.strings,{"Task mode": "Chế độ nhiệm vụ", "Regression equation": "Phương trình hồi quy", "Regression neighbors": "Các láng giềng hồi quy"});Object.assign(row.es.strings,{"Task mode": "Modo de tarea", "Regression equation": "Ecuación de regresión", "Regression neighbors": "Vecinos de regresión"});})();</script>
+<script id="classroom-draft-runtime">
+(() => {
+  'use strict';
+  const root = document.querySelector('[data-quick-assign-id]');
+  if (!root) return;
+  const original = !!root.querySelector('[data-lab-answer]');
+  const fields = [...root.querySelectorAll('[data-lab-answer],[data-qa-answer]')];
+  const state = root.querySelector('[data-lab-state],[data-qa-modern-state]');
+  const status = root.querySelector('.lab-status');
+  const slug = window.APPLET_LEARNER_PROFILE?.slug;
+  const key = original ? 'ai-playgrounds-lab-' + slug : 'ai-playgrounds-quick-assign:' + root.dataset.quickAssignId;
+  const locale = () => document.documentElement.lang.toLowerCase().split('-')[0];
+  const COPY = {
+    en: {confirm:'Clear this lab’s saved answers and captured evidence? This cannot be undone.', failed:'Your draft could not be saved in this browser. Copy or print it before closing this page.', cleared:'Local answers and captured evidence cleared.', removeFailed:'The saved draft could not be cleared. Your answers are still here.', restoreFailed:'The saved draft could not be read. Copy or print your work before reloading; clear the draft only if you want to discard it.'},
+    zh: {confirm:'清除此实验已保存的答案和状态记录？此操作无法撤销。', failed:'无法在此浏览器中保存草稿。关闭页面前请复制或打印。', cleared:'已清除本地答案和状态记录。', removeFailed:'无法清除已保存的草稿。你的答案仍保留在这里。', restoreFailed:'无法读取已保存的草稿。重新加载前请复制或打印你的内容；只有确认要丢弃草稿时才清除它。'},
+    vi: {confirm:'Xóa câu trả lời đã lưu và bằng chứng đã chụp của bài này? Không thể hoàn tác.', failed:'Không thể lưu bản nháp trong trình duyệt này. Hãy sao chép hoặc in trước khi đóng trang.', cleared:'Đã xóa câu trả lời cục bộ và bằng chứng đã chụp.', removeFailed:'Không thể xóa bản nháp đã lưu. Câu trả lời của bạn vẫn còn ở đây.', restoreFailed:'Không thể đọc bản nháp đã lưu. Hãy sao chép hoặc in bài trước khi tải lại; chỉ xóa bản nháp nếu muốn bỏ nó.'},
+    es: {confirm:'¿Borrar las respuestas guardadas y la evidencia capturada de este laboratorio? No se puede deshacer.', failed:'No se pudo guardar el borrador en este navegador. Cópialo o imprímelo antes de cerrar esta página.', cleared:'Se borraron las respuestas locales y la evidencia capturada.', removeFailed:'No se pudo borrar el borrador guardado. Tus respuestas siguen aquí.', restoreFailed:'No se pudo leer el borrador guardado. Copia o imprime tu trabajo antes de recargar; bórralo solo si deseas descartarlo.'}
+  };
+  const copy = () => COPY[locale()] || COPY.en;
+  const message = name => { if (status) { status.textContent = copy()[name]; status.dataset.draftError = ['failed','removeFailed','restoreFailed'].includes(name) ? name : ''; } };
+  new MutationObserver(() => { if (status?.dataset.draftError) message(status.dataset.draftError); }).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+  const captured = () => !!state && !!state.textContent.trim() && (state.hasAttribute('data-r4-no-translate') || state.dataset.qaStateReady === '1');
+  function retainCapture(text, lang) {
+    if (!state) return;
+    state.textContent = text;
+    state.lang = ['en','zh','vi','es'].includes(lang) ? lang : 'en';
+    state.setAttribute('data-r4-no-translate','');
+    state.dataset.qaStateReady = '1';
+    for (const n of [13,14,15]) state.setAttribute('data-lab'+n+'-no-translate','');
+    for (const lang of ['en','zh','vi','es']) state.removeAttribute('data-ap-'+lang);
+  }
+  const fieldName = field => field.dataset.labAnswer || field.dataset.qaAnswer;
+  const dirty = new Set();
+  let captureDirty = false, unreadable = false;
+  function readDraft() {
+    const data = JSON.parse(localStorage.getItem(key) || '{}');
+    if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Invalid draft');
+    for (const field of fields) if (data[fieldName(field)] !== undefined && typeof data[fieldName(field)] !== 'string') throw new Error('Invalid answer');
+    if (data.__capture !== undefined && typeof data.__capture?.text !== 'string') throw new Error('Invalid capture');
+    unreadable = false;
+    return data;
+  }
+  function applyDraft(data) {
+    for (const field of fields) if (!dirty.has(fieldName(field))) field.value = data[fieldName(field)] || '';
+    if (!captureDirty) {
+      if (data.__capture) retainCapture(data.__capture.text, data.__capture.lang);
+      else if (captured()) retainCapture('', locale());
+    }
+  }
+  function save(field, refresh = false) {
+    if (field) dirty.add(fieldName(field));
+    captureDirty ||= refresh;
+    try {
+      // Merge only this tab's edits into the latest stored packet. A stale tab
+      // must not replace another tab's different answer or explicit capture.
+      const latest = readDraft();
+      const data = Object.fromEntries(fields.map(field => {
+        const name = fieldName(field);
+        return [name, dirty.has(name) ? field.value : latest[name] || ''];
+      }));
+      if (captureDirty && captured()) data.__capture = {text:state.textContent, lang:state.lang};
+      else if (!captureDirty && latest.__capture) data.__capture = latest.__capture;
+      localStorage.setItem(key, JSON.stringify(data));
+      dirty.clear(); captureDirty = false;
+      if (status?.dataset.draftError || Object.values(COPY).some(value => status?.textContent === value.cleared)) { status.textContent=''; delete status.dataset.draftError; }
+    } catch (_) { message('failed'); }
+  }
+  try { applyDraft(readDraft()); }
+  catch (_) { unreadable = true; message('restoreFailed'); }
+  window.addEventListener('storage', event => {
+    if (event.key !== key && event.key !== null) return;
+    try {
+      if (event.storageArea !== localStorage) return;
+      // Read the latest value, not a possibly superseded queued storage event.
+      applyDraft(readDraft());
+    } catch (_) { unreadable = true; message('restoreFailed'); }
+  });
+  // One owner saves the complete packet before legacy answer-only handlers run.
+  document.addEventListener('input', event => {
+    if (!fields.includes(event.target)) return;
+    event.stopImmediatePropagation();
+    save(event.target);
+  }, true);
+  document.addEventListener('click', event => {
+    const button = event.target.closest?.('[data-lab-action],[data-qa-action]');
+    if (!button || !root.contains(button)) return;
+    const action = button.dataset.labAction || button.dataset.qaAction;
+    if (action === 'refresh' || action === 'refresh-state') {
+      // Capture is synchronous in each native packet; persist its finished result.
+      queueMicrotask(() => save(null, true));
+      return;
+    }
+    if (action !== 'clear') return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (!fields.some(field => field.value) && !captured() && !unreadable) return;
+    if (!window.confirm(copy().confirm)) return;
+    try { localStorage.removeItem(key); }
+    catch (_) { message('removeFailed'); return; }
+    dirty.clear(); captureDirty = false; unreadable = false;
+    for (const field of fields) field.value = '';
+    if (state) {
+      // An empty capture is intentional; do not restore or recapture live results.
+      retainCapture('', locale());
+    }
+    message('cleared');
+    fields[0]?.focus();
+  }, true);
+})();
+</script>
+
 </body>
 </html>

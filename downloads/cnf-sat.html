@@ -2,7 +2,7 @@
 
 <html lang="en">
 <head>
-<!-- Standalone AI Playgrounds v1.9.5 export.
+<!-- Standalone AI Playgrounds v1.9.6 export.
 MIT License
 
 Copyright (c) 2026 Logan M. Dixon
@@ -576,6 +576,20 @@ SOFTWARE.
 /* Learner-facing terminology, compact glossary, and consistent action hierarchy. */
 .header-actions{align-items:center}.header-more{position:relative}.header-more>summary{list-style:none;cursor:pointer;user-select:none}.header-more>summary::-webkit-details-marker{display:none}.header-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:50;min-width:220px;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 16px 35px rgba(15,23,42,.18);display:grid;gap:5px}.header-more-menu button{width:100%;text-align:left;justify-content:flex-start;white-space:normal}.key-terms-panel{padding:14px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}.key-terms-intro{margin:0 0 10px;color:var(--muted)}.key-terms-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.key-term{padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:color-mix(in srgb,var(--card) 97%,var(--accent))}.key-term dt{font-weight:800;color:var(--fg);margin:0 0 3px}.key-term dd{margin:0;color:var(--muted);font-size:.84rem;line-height:1.45}.essay-primer{margin:0 0 22px;padding:15px 17px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--card) 96%,var(--accent));border-radius:10px}.essay-primer h2{margin:0 0 6px!important;font-size:1.05rem!important}.essay-primer p{margin:0 0 10px!important}.essay-primer h3{margin:12px 0 7px;font-size:.92rem}.essay-primer-terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0}.essay-primer-terms>div{padding:8px 9px;border:1px solid var(--border);border-radius:8px;background:var(--card)}.essay-primer-terms dt{font-weight:800}.essay-primer-terms dd{margin:2px 0 0;color:var(--muted);font-size:.82rem;line-height:1.4}.scenario-card .scenario-meta{line-height:1.5}.scenario-card .scenario-meta strong{display:block;margin-bottom:2px}.header-actions>.header-png,.header-actions>.header-theme,.header-actions>.header-reset,.header-more>summary{min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px}
 @media(max-width:720px){.essay-primer-terms{grid-template-columns:1fr}.header-actions{width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}.header-actions>button,.header-actions>.header-more,.header-more>summary{width:100%;justify-content:center}.header-more-menu{right:auto;left:0;max-width:min(290px,90vw)}.key-terms-grid{grid-template-columns:1fr}}
+/* Accessible text keeps the lab hue without changing filled controls or plots. */
+body.dark-mode{--accent-text:color-mix(in srgb,var(--fg) 80%,var(--accent))}
+body.dark-mode :is(.page-header .back,.scenario-card h3,.classroom-lab .lab-field label,.essay h2,.essay h3,.essay h4,.visual-card h4,.visual-live strong,.signature-challenge-panel strong,footer a){color:var(--accent-text)}
+body.dark-mode footer a{color:var(--accent-text)!important}
+.essay h2,.key-terms-intro,.worksheet{overflow-wrap:anywhere}
+#tourName{min-width:0;overflow-wrap:anywhere}
+div:has(>#tourName),div:has(>#tourNext){flex-wrap:wrap}
+.slider-block,.mode-tabs,#modeGroup,#initGroup{flex-wrap:wrap;max-width:100%}
+select{min-width:0;max-width:100%}
+.scenario-card h3,.essay-primer-terms>div,p,.tldr,[data-i18n="seq-explain"]{min-width:0;overflow-wrap:anywhere}
+.header-actions>button{overflow-wrap:anywhere;white-space:normal}
+h1,h3,.method-tabs button,.stat-item,.key-term,.world-icon-key li>span:last-child{min-width:0;overflow-wrap:anywhere}
+.stats-strip,div:has(>#ngViewW){flex-wrap:wrap;max-width:100%}
+@media(max-width:360px){.visual-live{box-sizing:border-box;min-width:0;white-space:normal;flex-wrap:wrap}.visual-live>span{min-width:0;overflow-wrap:anywhere}}
 </style>
 <style id="learning-modes-style">
 /* Product information architecture and restrained visual hierarchy. */
@@ -620,7 +634,7 @@ body.dark-mode .r4-language-select {
 }
 
 </style>
-<meta name="ai-playgrounds-version" content="1.9.5">
+<meta name="ai-playgrounds-version" content="1.9.6">
 
 <style id="v14-version-provenance-style">
 .v14-version-provenance{max-width:1180px;margin:22px auto 10px;padding:12px 18px;border-top:1px solid var(--border,#dbe4ee);color:var(--muted,#64748b);font:12px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center}
@@ -910,7 +924,7 @@ P</textarea>
 <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
 <span data-lab-en="🧪 Quick Assign · QA-SAT-01 · 10–15 min" data-lab-zh="🧪 快速任务 · QA-SAT-01 · 10–15 分钟">🧪 Quick Assign · QA-SAT-01 · 10–15 min</span>
 </summary>
-<div class="lab-panel"><div class="quick-assign-meta" data-r4-no-translate="1" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong>QA-SAT-01</strong> · Level 1 · 10–15 min<br><span>SAT, UNSAT, or entailed?</span></div>
+<div class="lab-panel"><div class="quick-assign-meta" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong data-r4-no-translate="1">QA-SAT-01</strong> · <span data-lab-en="Level 1 · 10–15 min" data-lab-zh="级别 1 · 10–15 分钟">Level 1 · 10–15 min</span><br><span data-lab-en="SAT, UNSAT, or entailed?" data-lab-zh="可满足、不可满足，还是逻辑蕴涵？">SAT, UNSAT, or entailed?</span></div>
 <p class="lab-intro" data-lab-en="Convert a knowledge base, inspect DPLL or CDCL evidence, then explain what CNF, learned clauses, and backjumps establish." data-lab-zh="转换知识库，检查 DPLL 或 CDCL 证据，再解释 CNF、学习子句和回跳能说明什么。">Convert a knowledge base, inspect DPLL or CDCL evidence, then explain what CNF, learned clauses, and backjumps establish.</p>
 <div class="lab-grid">
 <div class="lab-field">
@@ -930,7 +944,7 @@ P</textarea>
 <textarea data-lab-answer="transfer" data-lab-en="When would a knowledge-base system need resolution rather than a truth-table intuition?" data-lab-zh="什么时候知识库系统需要归结，而不是只依靠真值表直觉？" id="lab-transfer" placeholder="When would a knowledge-base system need resolution rather than a truth-table intuition?"></textarea>
 </div>
 </div>
-<div aria-live="polite" class="lab-state" data-lab-state="">State snapshot appears here.</div>
+<div aria-live="polite" class="lab-state" data-lab-state="" data-lab-en="State snapshot appears here." data-lab-zh="状态快照将显示在这里。">State snapshot appears here.</div>
 <div class="lab-actions">
 <button class="step-btn" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态" type="button">↻ Refresh state</button>
 <button class="step-btn" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包" type="button">📋 Copy packet</button>
@@ -1191,7 +1205,7 @@ P</textarea>
       'ws3o2': 'No: Q does not follow from the knowledge base.',
       // lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
       'tour0name': 'Modus ponens (SAT, simple)',
-      'tour0desc': "P → Q and P. CNF is already two clauses. SAT enumeration finds 1 model: {P=T, Q=T}. Then prove Q by resolution: the empty clause appears in one step.",
+      'tour0desc': "P → Q and P become two CNF clauses. SAT enumeration finds one model: {P=T, Q=T}. To prove Q, add its negation and follow successive resolution inferences until the empty clause is derived.",
       'tour1name': 'Biconditional → CNF rewrite (Wumpus rule)',
       'tour1desc': "B11 ↔ (P12 ∨ P21). Watch the rewrite pipeline: ↔ becomes two implications, → becomes ∨, ¬ distributes, then ∨ distributes over ∧. The single sentence expands into multiple clauses.",
       'tour2name': '3-coloring a triangle (SAT)',
@@ -1282,7 +1296,7 @@ P</textarea>
       'ws3o2': '不能--Q 并不能从知识库中推出。',
       // 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
       'tour0name': '肯定前件(可满足,简单)',
-      'tour0desc': 'P → Q 与 P。合取范式已经是两个子句。SAT 枚举找到 1 个模型:{P=T, Q=T}。然后用归结证明 Q--一步就得到空子句。',
+      'tour0desc': 'P → Q 与 P 转换为两个 CNF 子句。SAT 枚举得到一个模型：{P=T, Q=T}。要证明 Q，先加入其否定，再逐步跟随归结推理，直到导出空子句。',
       'tour1name': '双条件 → 合取范式重写(吴普士规则)',
       'tour1desc': 'B11 ↔ (P12 ∨ P21)。观察重写流程:↔ 变为两个蕴含,→ 变为 ∨,¬ 推进去,然后 ∨ 对 ∧ 分配。这一条语句展开成多个子句。',
       'tour2name': '三角形三染色(可满足)',
@@ -2264,7 +2278,7 @@ P</textarea>
   const EX = {
     ex1: 'P -> Q\nP',
     ex2: '# Wumpus pit rule (AIMA 7.4):\n# Breeze at (1,1) iff there is a pit in (1,2) or (2,1).\nB11 <-> (P12 | P21)\nB11',
-    ex3: '# Color 3 nodes (a, b, c) red, green, or blue.\n# Edges: a-b, b-c, a-c (triangle).\n# Each node must be exactly one color.\n(Ra | Ga | Ba) & (Rb | Gb | Bb) & (Rc | Gc | Bc)\n~(Ra & Ga) & ~(Ra & Ba) & ~(Ga & Ba)\n~(Ra & Rb) & ~(Ga & Gb) & ~(Ba & Bb)',
+    ex3: '# Color 3 nodes (a, b, c) red, green, or blue.\n# Edges: a-b, b-c, a-c (triangle).\n# Each node must be exactly one color.\n(Ra | Ga | Ba) & (Rb | Gb | Bb) & (Rc | Gc | Bc)\n~(Ra & Ga) & ~(Ra & Ba) & ~(Ga & Ba)\n~(Rb & Gb) & ~(Rb & Bb) & ~(Gb & Bb)\n~(Rc & Gc) & ~(Rc & Bc) & ~(Gc & Bc)\n~(Ra & Rb) & ~(Ga & Gb) & ~(Ba & Bb)\n~(Rb & Rc) & ~(Gb & Gc) & ~(Bb & Bc)\n~(Ra & Rc) & ~(Ga & Gc) & ~(Ba & Bc)',
     ex4: '# Each pair must differ; assert all three true → UNSAT.\nA -> ~B\nB -> ~C\nC -> ~A\nA & B & C',
     ex5: '# De Morgan: ~(A & B) <-> (~A | ~B). Tautology.\n~(A & B) <-> (~A | ~B)',
     exCdcl: '# CDCL first-UIP example: C=T creates a conflict at level 3.\n# Resolving on D learns (~A | ~C), then backjumps over B from level 3 to level 1.\n(~A | ~C | D)\n(~C | ~D)\n(B | ~B)',
@@ -2309,7 +2323,7 @@ P</textarea>
   // Lesson tour. Five canonical scenarios that step through CNF conversion + SAT + resolution.
   const LESSON_TOUR = [
     { name: 'Modus ponens (SAT, simple)',
-      description: "P → Q and P. CNF is already two clauses. SAT enumeration finds 1 model: {P=T, Q=T}. Then prove Q by resolution: the empty clause appears in one step.",
+      description: "P → Q and P become two CNF clauses. SAT enumeration finds one model: {P=T, Q=T}. To prove Q, add its negation and follow successive resolution inferences until the empty clause is derived.",
       apply: () => { $('input').value = EX.ex1; run(); $('queryInput').value = 'Q'; } },
     { name: 'Biconditional → CNF rewrite (Wumpus rule)',
       description: "B11 ↔ (P12 ∨ P21). Watch the rewrite pipeline: ↔ becomes two implications, → becomes ∨, ¬ distributes, then ∨ distributes over ∧. The single sentence expands into multiple clauses.",
@@ -2393,7 +2407,8 @@ P</textarea>
         scenario.apply();
         card.classList.add('applied');
         btn.textContent = '✓ ' + scenarioGalleryText('sg-applied', 'Applied; compare the result');
-        setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
+        clearTimeout(btn._timer);
+        btn._timer = setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
       });
       card.appendChild(btn);
       root.appendChild(card);
@@ -2471,7 +2486,6 @@ P</textarea>
   const LAB_CONFIG = {"slug": "cnf-sat", "title": "CNF and SAT lab packet", "zhTitle": "CNF 与 SAT 实验包", "fields": [{"label": "Input", "selector": "#input", "kind": "value"}, {"label": "Trace mode", "selector": "#solverMode", "kind": "selected"}, {"label": "CNF stage", "selector": "#cnfCount", "kind": "text"}, {"label": "CNF caption", "selector": "#cnfCaption", "kind": "text"}, {"label": "SAT output", "selector": "#satOut", "kind": "text"}, {"label": "Solver step", "selector": "#dpllCount", "kind": "text"}, {"label": "Resolution output", "selector": "#resolveOut", "kind": "text"}]};
   const root = document.querySelector('.classroom-lab');
   if (!root) return;
-  const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;
   const qs = (sel) => root.querySelector(sel);
   function currentLang() {
     const raw = String(document.documentElement.lang || 'en').toLowerCase();
@@ -2490,6 +2504,8 @@ P</textarea>
   function applyLabLang() {
     const lang = currentLang();
     root.querySelectorAll('[data-lab-en]').forEach(el => {
+      // Captured evidence and an explicitly cleared snapshot are learner state.
+      if (el.matches('[data-lab-state]') && (el.hasAttribute('data-r4-no-translate') || el.dataset.qaStateReady === '1')) return;
       const value = textFor(el, lang);
       if (el.tagName === 'TEXTAREA') el.placeholder = value;
       else el.textContent = value;
@@ -2516,13 +2532,6 @@ P</textarea>
     root.querySelectorAll('textarea[data-lab-answer]').forEach(area => data[area.getAttribute('data-lab-answer')] = area.value.trim());
     return data;
   }
-  function saveDraft() { try { localStorage.setItem(storageKey, JSON.stringify(answers())); } catch (_) {} }
-  function loadDraft() {
-    try {
-      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
-      root.querySelectorAll('textarea[data-lab-answer]').forEach(area => { const key = area.getAttribute('data-lab-answer'); if (saved[key]) area.value = saved[key]; });
-    } catch (_) {}
-  }
   function packet() {
     const lang = currentLang();
     const baseLabels = {title: LAB_CONFIG.title, state:'State snapshot', predict:'Predict', observe:'Observe', explain:'Explain', transfer:'Transfer'};
@@ -2535,7 +2544,7 @@ P</textarea>
       '- Date: ' + new Date().toLocaleString(),
       '',
       '## ' + labels.state,
-      snapshot(),
+      qs('[data-lab-state]')?.textContent || '',
       '',
       '## ' + labels.predict,
       a.predict || '',
@@ -2551,26 +2560,26 @@ P</textarea>
     ].join('\n');
   }
   function setStatus(en, zh) { const el = qs('.lab-status'); if (el) el.textContent = currentLang() === 'zh' ? zh : en; }
-  function refreshState() { const el = qs('[data-lab-state]'); if (el) el.textContent = snapshot(); }
+  function refreshState() { const el = qs('[data-lab-state]'); if (el) { el.setAttribute('data-r4-no-translate',''); el.lang = currentLang(); el.textContent = snapshot(); } }
   async function copyPacket() {
     const text = packet();
     try { await navigator.clipboard.writeText(text); setStatus('Copied local lab packet.', '已复制本地实验包。'); }
-    catch (_) { window.prompt('Copy this lab packet:', text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
+    catch (_) { window.prompt(qs('[data-lab-action=copy]').textContent.trim(), text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
   }
 
   function markdownToPrintableHtml(markdown) {
     const escape = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
     const inline = value => escape(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     const lines = String(markdown).split(/\r?\n/);
-    let html = '', inList = false, inState = false;
+    let html = '', inList = false, inState = false, sectionIndex = 0;
     const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
     for (const raw of lines) {
       const line = raw.trimEnd();
       if (line.startsWith('# ')) { closeList(); html += '<h1>' + inline(line.slice(2)) + '</h1>'; inState=false; }
-      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = /state snapshot|状态记录/i.test(title); }
+      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = sectionIndex++ === 0; }
       else if (line.startsWith('- ')) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inline(line.slice(2)) + '</li>'; }
       else if (!line.trim()) { closeList(); }
-      else { closeList(); html += inState ? '<pre class="state">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
+      else { closeList(); html += inState ? '<pre class="state" lang="' + (qs('[data-lab-state]')?.lang || currentLang()) + '">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
     }
     closeList(); return html;
   }
@@ -2579,28 +2588,19 @@ P</textarea>
     const w = window.open('', '_blank');
     if (!w) { setStatus('Popup blocked. Copy the packet instead.', '弹窗被拦截。请改用复制实验包。'); return; }
     const rendered = markdownToPrintableHtml(packet());
-    const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
+    const html = '<!doctype html><html lang="' + currentLang() + '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
     w.document.open();
     w.document.write(html);
     w.document.close();
     setStatus('Print page opened.', '打印页面已打开。');
   }
-  function clearDraft() {
-    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.value = '');
-    try { localStorage.removeItem(storageKey); } catch (_) {}
-    refreshState(); setStatus('Local draft cleared.', '本地草稿已清除。');
-  }
-  root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.addEventListener('input', saveDraft));
   root.querySelector('[data-lab-action="copy"]')?.addEventListener('click', copyPacket);
   root.querySelector('[data-lab-action="print"]')?.addEventListener('click', printPacket);
   root.querySelector('[data-lab-action="refresh"]')?.addEventListener('click', () => { refreshState(); setStatus('State refreshed.', '状态已更新。'); });
-  root.querySelector('[data-lab-action="clear"]')?.addEventListener('click', clearDraft);
   document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(applyLabLang, 0)));
   window.addEventListener('r4languagechange', () => setTimeout(applyLabLang, 0));
   
-  document.addEventListener('change', refreshState);
-  document.addEventListener('click', (event) => { if (!(event.target instanceof HTMLTextAreaElement)) setTimeout(refreshState, 0); }, true);
-  loadDraft(); applyLabLang(); refreshState();
+  applyLabLang();
 })();
 </script>
 <script>
@@ -2789,8 +2789,8 @@ P</textarea>
   function stateData(){
     const values={};
     document.querySelectorAll('#main input,#main select,#main textarea').forEach(el=>{
-      if(!el.id||el.closest('.classroom-lab'))return;
-      if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;
+      if(!el.id||el.readOnly||el.closest('.classroom-lab,.worksheet,.suite-guided-shell,[data-quick-assign-id]')||['button','submit','reset','file','password','hidden'].includes(el.type))return;
+      if(el.type==='radio'&&!el.checked)return;
       values[el.id]=el.type==='checkbox'?el.checked:el.value;
     });
     return {applet:profile.en.title,slug:profile.slug,exported_at:new Date().toISOString(),values};
@@ -2800,17 +2800,18 @@ P</textarea>
     const share=document.getElementById('shareLink'), embed=document.getElementById('embedLink'), reset=document.getElementById('hardReset');
     const csv=document.getElementById('csvExport'), png=document.getElementById('exportPng');
     const more=document.createElement('details'); more.className='header-more';
-    const summary=document.createElement('summary'); summary.className='header-png'; summary.setAttribute('aria-haspopup','menu'); more.appendChild(summary);
-    const menu=document.createElement('div'); menu.className='header-more-menu'; menu.setAttribute('role','menu'); more.appendChild(menu);
+    const summary=document.createElement('summary'); summary.className='header-png'; more.appendChild(summary);
+    const menu=document.createElement('div'); menu.className='header-more-menu'; more.appendChild(menu);
     if(embed){embed.textContent='📎 Embed in LMS';menu.appendChild(embed)}
     const jsonBtn=document.createElement('button');jsonBtn.type='button';jsonBtn.className='header-png';jsonBtn.dataset.exportState='';menu.appendChild(jsonBtn);
     if(csv){csv.textContent='📊 Data table (.csv)';menu.appendChild(csv)}
     if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
-    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
+    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false;summary.focus()});
     actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
     window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';if(share){share.textContent=zh?'🔗 分享':'🔗 Share';share.title=zh?'复制可在另一浏览器中重新打开当前设置的链接。':'Copy a link that reopens the current settings in another browser.';}summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
     window.refreshAppletToolbar();
     document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&more.open){e.preventDefault();more.open=false;summary.focus()}});
   }
   function terms(){
     const inner=document.querySelector('.interactive-inner'); if(!inner||inner.querySelector('.key-terms'))return;
@@ -2857,6 +2858,7 @@ P</textarea>
     return 'explore';
   };
   const lang = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const routeLocale = () => ['en','zh','vi','es'].find(code => (document.documentElement.lang || 'en').toLowerCase().startsWith(code)) || 'en';
   const labels = {explore:['Explore','探索'],understand:['Understand','理解'],classroom:['Use in class','课堂使用'],access:['Text and keyboard','文本与键盘']};
   const intros = {
     explore:['Start with the featured experiment, then use the scenarios to test a prediction.','从精选实验开始，再使用情境检验预测。'],
@@ -2928,12 +2930,19 @@ P</textarea>
     renderModeChrome();
     if(write){const u=new URL(location.href);u.searchParams.set('mode',mode);history.replaceState(null,'',u)}
   }
-  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
+  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(['ArrowRight','ArrowLeft','Home','End'].includes(e.key)){e.preventDefault();const n=e.key==='Home'?0:e.key==='End'?list.length-1:(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
 
+  // Share only native mechanism inputs, never responses or global preferences.
+  function shareable(el){
+    return !!el && !!el.id && inner.contains(el)
+      && el.matches('input,select,textarea') && !el.readOnly
+      && !['button','submit','reset','file','password','hidden'].includes(el.type)
+      && !el.closest('.classroom-lab,.worksheet,.suite-guided-shell,[data-quick-assign-id]');
+  }
   function statePayload(){
     const out={};
-    inner.querySelectorAll('select,input').forEach(el=>{
-      if(!el.id||el.closest('.classroom-lab')||['button','submit'].includes(el.type))return;
+    inner.querySelectorAll('select,input,textarea').forEach(el=>{
+      if(!shareable(el))return;
       if(el.type==='radio'){if(el.checked)out[el.id]=el.value;return}
       out[el.id]=el.type==='checkbox'?el.checked:el.value;
     });
@@ -2942,33 +2951,65 @@ P</textarea>
   function encode(obj){return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))}
   function decode(s){try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch{return null}}
   function currentExperimentUrl(){
-    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',lang());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
+    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',routeLocale());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
   }
   window.__buildExperimentUrl=()=>currentExperimentUrl().href;
   const status=shell.querySelector('.experiment-status');
-  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(ui[lang()].copyPrompt,u.href)}};
+  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(shell.querySelector('[data-copy-experiment]').textContent.trim(),u.href)}};
 
-  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','')});
-  document.addEventListener('click',e=>{const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode','explore');u.searchParams.set('lang',lang());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
+  // Let Space activate this native button instead of a lab-wide play shortcut.
+  shell.addEventListener('keydown', event => {
+    if (event.key === ' ' && event.target.closest('[data-start-featured]')) event.stopPropagation();
+  });
+
+  // A learner-initiated handoff moves both the viewport and keyboard focus.
+  // Restoring a shared URL or changing locale must never steal focus.
+  function handoffToExperiment() {
+    const target = [...inner.querySelectorAll('select,input:not([type="hidden"]),textarea')]
+      .find(node => !node.closest('.learning-mode-shell,.suite-guided-shell')
+        && !node.disabled && node.getClientRects().length);
+    if (!target) return;
+    target.focus({preventScroll: true});
+    target.scrollIntoView({block: 'center',
+      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
+  }
+
+  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','');handoffToExperiment()});
+  document.addEventListener('click',e=>{if(restoring&&new URLSearchParams(location.search).has('state'))return;const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode',active);if(!restoring)u.searchParams.set('lang',routeLocale());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
 
   let urlSyncTimer=0;
   function scheduleUrlState(e){
     if(restoring)return;
-    const el=e.target;if(!el||!inner.contains(el)||el.closest('.classroom-lab')||!el.matches('input,select'))return;
+    const el=e.target;if(!shareable(el))return;
     clearTimeout(urlSyncTimer);urlSyncTimer=setTimeout(()=>{const u=currentExperimentUrl();history.replaceState(null,'',u)},80);
   }
   document.addEventListener('input',scheduleUrlState,true);document.addEventListener('change',scheduleUrlState,true);
 
   function applyState(obj){
-    if(!obj)return;
-    Object.entries(obj).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else if(el.type==='radio')el.checked=String(el.value)===String(value);else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});
+    if(!obj || typeof obj !== 'object' || Array.isArray(obj) || Object.keys(obj).length > 256)return;
+    Object.entries(obj).forEach(([id,value])=>{
+      const el=document.getElementById(id);if(!shareable(el))return;
+      if(el.type==='checkbox'){if(typeof value!=='boolean')return;el.checked=value}
+      else {
+        if(!['string','number'].includes(typeof value) || String(value).length>10000)return;
+        const text=String(value);
+        if(el.tagName==='SELECT' && ![...el.options].some(option=>option.value===text))return;
+        if(['number','range'].includes(el.type)){
+          if(!text.trim() || !Number.isFinite(Number(text)))return;
+          if(el.min!=='' && Number(text)<Number(el.min))return;
+          if(el.max!=='' && Number(text)>Number(el.max))return;
+        }
+        if(el.type==='radio'){if(el.value!==text)return;el.checked=true}
+        else el.value=text;
+      }
+      el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));
+    });
   }
   function restore(){
     const p=new URL(location.href).searchParams;restoring=true;
-    // Explicit scenario, then saved controls, override native CNF share state.
-    // Retain the established scenario-zero default unless a native formula exists.
-    const nativeFormula=window.APPLET_LEARNER_PROFILE?.slug==='cnf-sat'&&p.has('f');
-    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeFormula))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
+    // Native links precede explicit scenarios and saved controls.
+    const nativeState=slug==='cnf-sat'&&p.has('f')||slug==='knn-classifier'&&['k','ds','task','metric','weight','scale','target'].some(k=>p.has(k));
+    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeState))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
     applyState(decode(p.get('state')||''));
     if(p.get('featured')==='1')sig?.setAttribute('open','');
     restoring=false;
@@ -2984,14 +3025,14 @@ P</textarea>
   }
   setMode(active,false);ensureExploreContent();
   setTimeout(()=>{refineCards();window.renderAppletKeyTerms?.();restore();renderModeChrome()},250);
-  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',lang());history.replaceState(null,'',u)},25)));
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',routeLocale());history.replaceState(null,'',u)},25)));
 })();
 </script>
 
 <script id="applet-translation-completion">
 (() => {
   const exact = {"Skip to applet controls":"跳到交互控件","▸ Show teacher notes (discussion prompts + curriculum)":"▸ 展开教师说明（讨论提示与课程联系）","▾ Hide teacher notes (discussion prompts + curriculum)":"▾ 收起教师说明（讨论提示与课程联系）","idle":"空闲","(empty)":"（空）","(no actions yet)":"（尚无动作）","exploring":"探索中","Speed":"速度","result":"结果","Combined (∧):":"合并（∧）：","1. ↔ eliminated:":"1. 消去 ↔：","2. → eliminated:":"2. 消去 →：","3. ¬ pushed in (De Morgan):":"3. 将 ¬ 内推（德摩根律）：","4. ∨ distributed over ∧:":"4. 将 ∨ 对 ∧ 分配：","the conjunction of all your sentences, before any rewriting":"所有输入语句在改写前的合取","DPLL prunes: this path touches a few assignments vs. 4 brute-force rows.":"DPLL 剪枝：这条路径只访问少量赋值，而暴力搜索需要检查 4 行。","[unit-propagation] · depth 0":"[单元传播] · 深度 0","Unit clause forces P = T.":"单元子句迫使 P = T。","working clause set":"当前子句集"};
-  const rules = [["^Stage ([0-9]+) / ([0-9]+)$","阶段 \\1 / \\2"],["^Stage ([0-9]+) · Original$","阶段 \\1 · 原始公式"],["^([0-9]+) variables? → ([0-9,]+) truth-table rows? to brute-force$","\\1 个变量 → 暴力搜索需要检查 \\2 行真值表"],["^CNF clauses \\(([0-9]+)\\):$","CNF 子句（\\1）："],["^✓ SAT \\(([0-9,]+) models? out of ([0-9,]+)\\)$","✓ 可满足（\\2 个赋值中有 \\1 个模型）"],["^Step ([0-9]+) / ([0-9]+)$","步骤 \\1 / \\2"]].map(([source,target])=>[new RegExp(source),target]);
+  const rules = [["^Stage ([0-9]+) / ([0-9]+)$","阶段 $1 / $2"],["^Stage ([0-9]+) · Original$","阶段 $1 · 原始公式"],["^([0-9]+) variables? → ([0-9,]+) truth-table rows? to brute-force$","$1 个变量 → 暴力搜索需要检查 $2 行真值表"],["^CNF clauses \\(([0-9]+)\\):$","CNF 子句（$1）："],["^✓ SAT \\(([0-9,]+) models? out of ([0-9,]+)\\)$","✓ 可满足（$2 个赋值中有 $1 个模型）"],["^Step ([0-9]+) / ([0-9]+)$","步骤 $1 / $2"]].map(([source,target])=>[new RegExp(source),target]);
   const currentLanguage=()=>((document.documentElement.lang||'en').startsWith('zh')?'zh':'en');
   const excluded=node=>node.parentElement && node.parentElement.closest('script,style,noscript,[data-essay-lang="en"]');
   const applyRule=text=>{
@@ -3828,7 +3869,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   },
   "vi": {
+    "teacher": {"How does": "Công thức", "differ from": "khác gì với"},
     "strings": {
+      "Proposition": "Mệnh đề",
+      "Satisfiability (SAT)": "Tính thỏa được (SAT)",
+      "Unsatisfiable (UNSAT)": "Không thỏa được (UNSAT)",
+      "DPLL algorithm": "Thuật toán DPLL",
+      "Unit propagation": "Lan truyền đơn vị",
+      "Literal": "Literal (biến mệnh đề hoặc phủ định của nó)",
+      "Clause": "Mệnh đề tuyển (clause)",
+      "Truth assignment": "Phép gán chân trị",
       "CDCL backjump": "CDCL nhảy lùi",
       "A deterministic conflict that learns (¬A ∨ ¬C) and backjumps from decision level 3 to level 1.": "Một xung đột xác định học (¬A ∨ ¬C) rồi nhảy lùi từ mức quyết định 3 về mức 1.",
       "Trace mode:": "Chế độ theo dõi:",
@@ -3890,7 +3940,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "#windowMath": "#windowMath",
       "${index}": "${index}",
       ", or CNF, when it is an AND of clauses. For example,": "hoặc CNF khi đó là AND của mệnh đề.Ví dụ,",
-      ". SAT is NP-complete, so no polynomial-time algorithm is known for every instance. Modern solvers are effective on many large structured problems because propagation, learned clauses, restarts, and branching heuristics avoid examining most assignments explicitly.": ". SAT is NP-complete, so no polynomial-time algorithm is known for every instance. Modern solvers are effective on many large structured problems because propagation, learned clauses, restarts, and branching heuristics avoid examining most assignments explicitly.",
+      ". SAT is NP-complete, so no polynomial-time algorithm is known for every instance. Modern solvers are effective on many large structured problems because propagation, learned clauses, restarts, and branching heuristics avoid examining most assignments explicitly.": ". SAT là NP-đầy đủ, nên chưa biết thuật toán thời gian đa thức giải được mọi trường hợp. Các bộ giải hiện đại xử lý tốt nhiều bài toán lớn có cấu trúc nhờ lan truyền, học mệnh đề, khởi động lại và chiến lược phân nhánh để tránh xét tường minh phần lớn phép gán.",
       ".bento-main": ".bento-main",
       ".cell-analysis": ".cell-analysis",
       ".cell-maps": ".cell-maps",
@@ -3931,14 +3981,14 @@ document.addEventListener('DOMContentLoaded', () => {
       "0: UNSAT means no assignment satisfies every clause.": "0: UNSAT có nghĩa là không có phép gán nào thỏa mãn mọi mệnh đề.",
       "1. ↔ eliminated:": "1. ↔ bị loại:",
       "1: forcing P=T and Q=T leaves exactly one satisfying row.": "1: buộc P=T và Q=T để lại đúng một hàng thỏa mãn.",
-      "1: there is always at least one satisfying assignment.": "1: luôn có ít nhất một bài tập thỏa mãn.",
+      "1: there is always at least one satisfying assignment.": "1: luôn có ít nhất một phép gán thỏa mãn.",
       "2 variables → 4 truth-table rows to brute-force": "2 biến → 4 hàng trong bảng chân lý thành brute-force",
       "2. Conjunctive Normal Form (step by step)": "2. Dạng thông thường liên hợp (từng bước)",
       "3-coloring": "3 màu",
       "3-coloring a triangle (SAT)": "Tô màu 3 hình tam giác (SAT)",
       "3-coloring a triangle. SAT problem from graph theory.": "Tô màu 3 hình tam giác.Vấn đề SAT từ lý thuyết đồ thị.",
       "3. Satisfiability: exhaustive reference check": "3. Đạt yêu cầu: kiểm tra tham chiếu toàn diện",
-      "3. ¬ pushed in (De Morgan):": "3. yer đẩy vào (De Morgan):",
+      "3. ¬ pushed in (De Morgan):": "3. Đẩy ¬ vào trong (De Morgan):",
       "3: the satisfying rows are the ones with an odd number of trues.": "3: các hàng thỏa mãn là những hàng có số lượng đúng là lẻ.",
       "4. Entailment by resolution": "4. Yêu cầu theo độ phân giải",
       "4. ∨ distributed over ∧:": "4. ∨ phân bổ trên ∧:",
@@ -3951,14 +4001,14 @@ document.addEventListener('DOMContentLoaded', () => {
       "[unit-propagation] · depth 0": "[lan truyền đơn vị] · độ sâu 0",
       "A biconditional becomes several CNF clauses": "Một điều kiện kép trở thành một số mệnh đề CNF",
       "A choice of true or false for every proposition variable.": "Lựa chọn đúng hoặc sai cho mọi biến mệnh đề.",
-      "A proposition variable or its negation, such as A or ¬A.": "Biến mệnh đề hoặc biến mệnh đề phủ định của nó, chẳng hạn như A hoặc âA.",
+      "A proposition variable or its negation, such as A or ¬A.": "Một biến mệnh đề hoặc phủ định của nó, chẳng hạn A hoặc ¬A.",
       "A statement that is either true or false.": "Tuyên bố đúng hoặc sai.",
       "A trio that pairwise differs but you try to assert all three true. UNSAT.": "Một bộ ba khác nhau theo từng cặp nhưng bạn cố gắng khẳng định cả ba đều đúng.KHÔNG THẬT.",
       "A worsening move can be accepted": "Một động thái xấu đi có thể được chấp nhận",
       "Accept only an improving move": "Chỉ chấp nhận một động thái cải thiện",
       "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.": "Ghi chú về khả năng truy cập: lớp này cung cấp văn bản tương đương với trạng thái applet.Nó không thay thế việc kiểm tra trình đọc màn hình đầy đủ của con người.",
-      "An AND of clauses, where each clause is an OR of literals.": "AND của các mệnh đề, trong đó mỗi mệnh đề là OR của các chữ.",
-      "An OR of one or more literals.": "OR của một hoặc nhiều chữ.",
+      "An AND of clauses, where each clause is an OR of literals.": "Phép hội (AND) của các mệnh đề tuyển; mỗi mệnh đề tuyển là phép tuyển (OR) của các literal.",
+      "An OR of one or more literals.": "Phép tuyển (OR) của một hoặc nhiều literal.",
       "Approximate updated position of Centroid 1": "Vị trí cập nhật gần đúng của Centroid 1",
       "aria-hidden": "aria-ẩn",
       "aria-label": "nhãn aria",
@@ -4004,15 +4054,15 @@ document.addEventListener('DOMContentLoaded', () => {
       "Conditionally independent": "Độc lập có điều kiện",
       "Conflicting XOR constraints (UNSAT)": "Xung đột các ràng buộc XOR (UNSAT)",
       "Conflicting XOR constraints create a contradiction": "Các ràng buộc XOR xung đột tạo ra mâu thuẫn",
-      "Conjunctive normal form (CNF)": "Dạng liên hợp chuẩn (CNF)",
+      "Conjunctive normal form (CNF)": "Dạng chuẩn hội (CNF)",
       "Connect each valid assignment to one legal coloring of the triangle.": "Kết nối mỗi phép gán hợp lệ với một màu hợp lệ của hình tam giác.",
       "Convert a knowledge base, inspect satisfiability, then explain why CNF and resolution reveal entailment.": "Chuyển đổi cơ sở kiến ​​thức, kiểm tra mức độ thỏa mãn, sau đó giải thích lý do tại sao CNF và giải pháp tiết lộ yêu cầu kèm theo.",
-      "Convert the Wumpus rule. Which rewrite step creates the greatest increase in size?": "Chuyển đổi quy tắc Wumpus.Bước viết lại nào tạo ra sự gia tăng kích thước lớn nhất?",
+      "Convert the Wumpus rule. Which rewrite step creates the greatest increase in size?": "Chuyển đổi quy tắc Wumpus. Bước viết lại nào làm kích thước tăng nhiều nhất?",
       "Converting to CNF should preserve truth conditions, but it does not itself solve the formula.": "Chuyển đổi sang CNF sẽ bảo toàn các điều kiện đúng, nhưng bản thân nó không giải được công thức.",
       "Copy a link that reopens the current settings in another browser.": "Sao chép liên kết mở lại cài đặt hiện tại trong trình duyệt khác.",
       "Copy an <iframe> snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.": "Sao chép đoạn mã <iframe> để nhúng vào LMS.Loại bỏ tiêu đề/bài luận để chỉ hiển thị khu vực tương tác.",
       "Correct. P→Q, P → forces P=T, Q=T. Exactly one of the 4 truth-table rows satisfies the KB.": "Đúng.P→Q, P → lực P=T, Q=T.Chính xác một trong 4 hàng của bảng chân lý thỏa mãn KB.",
-      "Correct. UNSAT means no assignment satisfies all clauses. SAT enumeration tries all 2³ = 8 rows and rejects every one.": "Đúng.UNSAT có nghĩa là không có phép gán nào thỏa mãn tất cả các điều khoản.Bảng liệt kê SAT thử tất cả 2³ = 8 hàng và từ chối mọi hàng.",
+      "Correct. UNSAT means no assignment satisfies all clauses. SAT enumeration tries all 2³ = 8 rows and rejects every one.": "Đúng. UNSAT nghĩa là không có phép gán nào thỏa mãn tất cả các mệnh đề. Phép liệt kê SAT thử cả 2³ = 8 hàng và loại tất cả.",
       "De Morgan's law as a tautology: every row is a model.": "Định luật De Morgan như một phép lặp: mỗi hàng là một mô hình.",
       "Direct distribution can make an equivalent CNF exponentially larger. Practical encodings often use a Tseitin transformation: introduce helper variables to produce a CNF that is linear in size and": "Phân phối trực tiếp có thể làm cho CNF tương đương lớn hơn theo cấp số nhân.Các mã hóa thực tế thường sử dụng phép biến đổi Tseitin: giới thiệu các biến trợ giúp để tạo ra CNF có kích thước tuyến tính và",
       "DPLL branches on variable choices and uses propagation to shrink the remaining search.": "DPLL phân nhánh theo các lựa chọn thay đổi và sử dụng tính lan truyền để thu hẹp tìm kiếm còn lại.",
@@ -4021,12 +4071,12 @@ document.addEventListener('DOMContentLoaded', () => {
       "Each pair must differ AND all three must be true. No assignment satisfies all clauses. SAT returns UNSAT: every row of the truth table fails.": "Mỗi cặp phải khác nhau VÀ cả ba đều phải đúng.Không có bài tập nào thỏa mãn tất cả các điều khoản.SAT trả về UNSAT: mọi hàng của bảng chân lý đều thất bại.",
       "Embed or download the current experiment": "Nhúng hoặc tải xuống thử nghiệm hiện tại",
       "Enter the required mechanism prediction before locking.": "Nhập dự đoán cơ chế cần thiết trước khi khóa.",
-      "every formula has one unique CNF; direct distribution is the only practical conversion; SAT solvers simply enumerate all assignments; first-order theorem proving is the same finite problem with different symbols.": "mỗi công thức có một CNF duy nhất;phân phối trực tiếp là sự chuyển đổi thực tế duy nhất;Người giải SAT chỉ đơn giản liệt kê tất cả các bài tập;Chứng minh định lý bậc nhất là cùng một bài toán hữu hạn với các ký hiệu khác nhau.",
+      "every formula has one unique CNF; direct distribution is the only practical conversion; SAT solvers simply enumerate all assignments; first-order theorem proving is the same finite problem with different symbols.": "Mỗi công thức chỉ có một CNF duy nhất; phân phối trực tiếp là cách chuyển đổi thực tế duy nhất; bộ giải SAT chỉ liệt kê mọi phép gán; chứng minh định lý trong logic bậc nhất cũng là bài toán hữu hạn đó, chỉ khác ký hiệu.",
       "Every SAT solver in the world wants Conjunctive Normal Form. Watch ↔ → ¬ get distributed away in five mechanical steps, then brute-force-enumerate every satisfying assignment.": "Mọi người giải SAT trên thế giới đều muốn Dạng chuẩn liên hợp.Xem ↔ → и được phân phát theo năm bước cơ học, sau đó liệt kê từng nhiệm vụ thỏa mãn.",
       "Exhaustive enumeration of all 2": "Liệt kê đầy đủ cả 2",
       "Expected comparison rule": "Quy tắc so sánh dự kiến",
       "Explain how the premises eliminate any assignment where the conclusion is false.": "Giải thích cách các tiền đề loại bỏ bất kỳ phép gán nào có kết luận sai.",
-      "Explain why a clause-based solver benefits from CNF even though users may write richer syntax.": "Giải thích lý do tại sao bộ giải dựa trên mệnh đề lại được hưởng lợi từ CNF mặc dù người dùng có thể viết cú pháp phong phú hơn.",
+      "Explain why a clause-based solver benefits from CNF even though users may write richer syntax.": "Giải thích vì sao CNF có ích cho bộ giải dựa trên mệnh đề, dù người dùng có thể viết cú pháp phong phú hơn.",
       "Explain why deriving a contradiction shows that the original query follows from the knowledge base.": "Giải thích tại sao việc rút ra mâu thuẫn cho thấy truy vấn ban đầu tuân theo cơ sở kiến ​​thức.",
       "Explain why the longer form is easier for a general solver to process.": "Giải thích tại sao dạng dài hơn lại dễ xử lý hơn đối với người giải tổng quát.",
       "For the prepared population, predict the true-positive and false-positive counts before the posterior probability is revealed.": "Đối với nhóm dân số đã chuẩn bị, hãy dự đoán số lượng dương tính thật và dương tính giả trước khi xác suất sau được tiết lộ.",
@@ -4037,7 +4087,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "How can individually reasonable constraints become impossible together?": "Làm thế nào các ràng buộc hợp lý riêng lẻ có thể trở nên không thể thực hiện được cùng nhau?",
       "How can proving that the opposite is impossible establish a conclusion?": "Làm thế nào để chứng minh điều ngược lại là không thể đưa ra kết luận?",
       "Identify the exact set of requirements that cannot all be true at once.": "Xác định tập hợp chính xác các yêu cầu không thể đúng cùng một lúc.",
-      "If a clause has one possible literal left, that literal must be true.": "Nếu một mệnh đề có thể còn lại một nghĩa đen thì nghĩa đen đó phải đúng.",
+      "If a clause has one possible literal left, that literal must be true.": "Nếu trong một mệnh đề tuyển chỉ còn một literal có thể đúng thì literal đó phải đúng.",
       "Input: P -> Q P CNF stage: Stage 0 / 5 CNF caption: Stage 0 · Original the conjunction of all your sentences, before any rewriting SAT output: ✓ SAT (1 model out of 4)PQTT DPLL step: Step 1 / 3": "Đầu vào: P -> Q P Giai đoạn CNF: Giai đoạn 0 / 5 Chú thích CNF: Giai đoạn 0 · Nguyên bản kết hợp của tất cả các câu của bạn, trước khi viết lại Đầu ra SAT: ✓ SAT (1 mô hình trên 4)Bước PQTT DPLL: Bước 1 / 3",
       "Input: P -> Q P Trace mode: DPLL branch trace CNF stage: Stage 0 / 5 CNF caption: Stage 0 · Original the conjunction of all your sentences, before any rewriting SAT output: ✓ SAT (1 model out of 4)PQTT Solver step: Step 1 / 3": "Đầu vào: P -> Q P Chế độ truy vết: Truy vết nhánh DPLL Giai đoạn CNF: Giai đoạn 0 / 5 Chú thích CNF: Giai đoạn 0 · Nguyên bản là phép hội của tất cả các câu trước khi viết lại Đầu ra SAT: ✓ SAT (1 mô hình trên 4)PQTT Bước bộ giải: Bước 1 / 3",
       "Input: P -> Q P CNF stage: Stage 0 / 5 SAT output: ✓ SAT (1 model out of 4)PQTT DPLL step: Step 1 / 3": "Đầu vào: P -> Q P Giai đoạn CNF: Giai đoạn 0 / 5 Đầu ra SAT: ✓ SAT (1 trên 4 mẫu)Bước PQTT DPLL: Bước 1 / 3",
@@ -4048,11 +4098,11 @@ document.addEventListener('DOMContentLoaded', () => {
       "knn-classifier": "phân loại knn",
       "Literal, branch, or contradiction source": "Nguồn theo nghĩa đen, nhánh hoặc mâu thuẫn",
       "Literal, clause, and CNF": "Nghĩa đen, mệnh đề và CNF",
-      "Load an unsatisfiable example and identify the conflict that rules out each branch.": "Tải một ví dụ không thỏa đáng và xác định xung đột loại trừ từng nhánh.",
-      "Load modus ponens. Which clauses force": "Phương thức tải.Điều khoản nào có hiệu lực",
-      "Load the Conflicting XOR (UNSAT) example. How many satisfying assignments?": "Tải ví dụ XOR xung đột (UNSAT).Có bao nhiêu bài tập thỏa mãn?",
+      "Load an unsatisfiable example and identify the conflict that rules out each branch.": "Nạp một ví dụ không thỏa được và xác định xung đột loại bỏ từng nhánh.",
+      "Load modus ponens. Which clauses force": "Nạp ví dụ modus ponens. Những mệnh đề nào suy ra được",
+      "Load the Conflicting XOR (UNSAT) example. How many satisfying assignments?": "Nạp ví dụ XOR xung đột (UNSAT). Có bao nhiêu phép gán thỏa mãn?",
       "Load the conflicting XOR constraint set and inspect why every truth-table row fails.": "Tải bộ ràng buộc XOR xung đột và kiểm tra lý do tại sao mọi hàng trong bảng chân lý đều không thành công.",
-      "Load the Modus ponens example and click Convert. How many satisfying assignments does the SAT enumeration find?": "Tải ví dụ về Modus pons và nhấp vào Chuyển đổi.Bảng liệt kê SAT tìm thấy bao nhiêu bài tập thỏa mãn?",
+      "Load the Modus ponens example and click Convert. How many satisfying assignments does the SAT enumeration find?": "Nạp ví dụ Modus ponens và nhấp Chuyển đổi. Phép liệt kê SAT tìm được bao nhiêu phép gán thỏa mãn?",
       "Load the modus-ponens example, convert it to conjunctive normal form (CNF), and inspect the satisfying assignments.": "Tải ví dụ modus-ponens, chuyển nó sang dạng chuẩn liên hợp (CNF) và kiểm tra các phép gán thỏa mãn.",
       "Load the triangle three-coloring example and inspect the valid assignments.": "Tải ví dụ tô màu ba hình tam giác và kiểm tra các phép gán hợp lệ.",
       "Load the Wumpus breeze rule and step through the rewrite from a biconditional to conjunctive normal form (CNF).": "Tải quy tắc gió Wumpus và thực hiện từng bước viết lại từ dạng hai điều kiện sang dạng chuẩn kết hợp (CNF).",
@@ -4065,9 +4115,9 @@ document.addEventListener('DOMContentLoaded', () => {
       "Memory or tabu status changes the choice": "Trạng thái bộ nhớ hoặc tabu thay đổi lựa chọn",
       "Model relation: conditioning on the common effect Alarm makes Burglary and Earthquake dependent; this is explaining away.": "Mối quan hệ mô hình: điều hòa theo hiệu ứng chung Báo động khiến cho Chống trộm và Động đất phụ thuộc;điều này đang giải thích đi.",
       "Model relation: JohnCalls and MaryCalls are conditionally independent given Alarm.": "Mối quan hệ mô hình: JohnCalls và MaryCalls độc lập có điều kiện với Cảnh báo.",
-      "Modus ponens (SAT, simple)": "Phương thức thi đấu (SAT, đơn giản)",
+      "Modus ponens (SAT, simple)": "Modus ponens (SAT, đơn giản)",
       "Modus ponens: a satisfiable formula": "Modus ponens: một công thức thỏa mãn",
-      "Modus ponens: P→Q, P, conclude Q.": "Các phương thức: P→Q, P, kết luận Q.",
+      "Modus ponens: P→Q, P, conclude Q.": "Modus ponens: P→Q, P, suy ra Q.",
       "Negate the query, add to the KB, run resolution refutation. Empty clause = KB entails the query.": "Phủ định truy vấn, thêm vào KB, chạy bác bỏ độ phân giải.Mệnh đề trống = KB đòi hỏi truy vấn.",
       "neural-network": "mạng thần kinh",
       "Next frontier state or coordinate": "Trạng thái hoặc tọa độ biên giới tiếp theo",
@@ -4076,7 +4126,6 @@ document.addEventListener('DOMContentLoaded', () => {
       "No: Q does not follow from the knowledge base.": "Không: Q không tuân theo cơ sở kiến ​​thức.",
       "No: resolution can only check satisfiability, not prove entailment.": "Không: độ phân giải chỉ có thể kiểm tra tính thỏa đáng chứ không thể chứng minh được sự kế thừa.",
       "Not enough information yet": "Chưa đủ thông tin",
-      "P → Q and P. CNF is already two clauses. SAT enumeration finds 1 model: {P=T, Q=T}. Then prove Q by resolution: the empty clause appears in one step.": "P → Q và P. CNF đã là hai mệnh đề rồi.Phép liệt kê SAT tìm thấy 1 mô hình: {P=T, Q=T}.Sau đó chứng minh Q bằng giải: mệnh đề trống xuất hiện trong một bước.",
       "Parse and convert to CNF, then show exhaustive enumeration and a separate DPLL pruning trace.": "Phân tích cú pháp và chuyển đổi sang CNF, sau đó hiển thị bảng liệt kê đầy đủ và dấu vết cắt tỉa DPLL riêng biệt.",
       "Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.": "Chọn một kịch bản, dự đoán điều gì sẽ xảy ra, sau đó áp dụng kịch bản đó và so sánh kết quả với dự đoán của bạn.",
       "Play / pause the rewrite": "Phát/tạm dừng viết lại",
@@ -4113,19 +4162,19 @@ document.addEventListener('DOMContentLoaded', () => {
       "Production SAT solvers use conflict-driven clause learning, watched literals, preprocessing, restarts, and carefully designed branching heuristics. First-order logic adds variables that range over objects and quantifiers; general first-order validity is undecidable, although theorem provers can establish many useful results. This applet stays with finite propositional formulas so the full assignment space can be inspected.": "Trình giải SAT sản xuất sử dụng phương pháp học mệnh đề dựa trên xung đột, theo dõi nghĩa đen, tiền xử lý, khởi động lại và phương pháp phỏng đoán phân nhánh được thiết kế cẩn thận.Logic bậc nhất thêm các biến nằm trong phạm vi đối tượng và bộ định lượng;giá trị tổng quát bậc nhất là không thể quyết định được, mặc dù những người chứng minh định lý có thể đưa ra nhiều kết quả hữu ích.Applet này vẫn tồn tại với các công thức mệnh đề hữu hạn để có thể kiểm tra toàn bộ không gian gán.",
       "Propositional logic uses variables that are either true or false and connectives such as NOT, AND, OR, implication, and equivalence. The satisfiability problem, or SAT, asks whether at least one truth assignment makes an entire formula true. This applet shows how formulas are standardized and then searched.": "Logic mệnh đề sử dụng các biến đúng hoặc sai và các kết nối như NOT, AND, OR, hàm ý và tương đương.Bài toán về sự thỏa mãn, hay SAT, hỏi liệu ít nhất một phép gán chân lý có làm cho toàn bộ một công thức trở thành đúng hay không.Applet này cho thấy các công thức được chuẩn hóa và sau đó được tìm kiếm như thế nào.",
       "Propositional sentences (one per line)": "Câu mệnh đề (mỗi dòng một câu)",
-      "Propositional syntax, logical equivalence, CNF, SAT, satisfiable versus unsatisfiable formulas, model counting, and the limits of brute force.": "Cú pháp mệnh đề, tương đương logic, CNF, SAT, công thức thỏa mãn và không thỏa mãn, đếm mô hình và giới hạn của lực lượng vũ phu.",
+      "Propositional syntax, logical equivalence, CNF, SAT, satisfiable versus unsatisfiable formulas, model counting, and the limits of brute force.": "Cú pháp logic mệnh đề, tương đương logic, CNF, SAT, công thức thỏa được và không thỏa được, đếm mô hình và giới hạn của vét cạn.",
       "Prove by resolution refutation": "Chứng minh bằng cách giải quyết bác bỏ",
       "q-learning-gridworld": "q-learning-gridworld",
       "Query α:": "Truy vấn α:",
       "read the result as a list of clauses and literals.": "đọc kết quả dưới dạng danh sách các mệnh đề và chữ.",
       "Reduced motion and non-visual support": "Giảm chuyển động và hỗ trợ không trực quan",
       "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.": "Cài đặt giảm chuyển động được tôn trọng nếu có thể.Trạng thái hiện tại cũng có sẵn dưới dạng văn bản, vì vậy kết quả chính không chỉ phụ thuộc vào màu sắc, hoạt ảnh hoặc vị trí không gian.",
-      "Reset input to default 'modus ponens' example.": "Đặt lại đầu vào về ví dụ 'modus pons' mặc định.",
+      "Reset input to default 'modus ponens' example.": "Đặt lại đầu vào về ví dụ 'modus ponens' mặc định.",
       "Resolution makes unsatisfiability visible by deriving conflict from clauses.": "Độ phân giải làm cho sự không thỏa mãn được thể hiện rõ bằng cách rút ra xung đột từ các điều khoản.",
       "Resolution proves a query by contradiction": "Độ phân giải chứng minh truy vấn có mâu thuẫn",
       "Rewrite propositional logic into a standard clause form, test whether any assignment makes the formula true, and watch a solver remove impossible branches.": "Viết lại logic mệnh đề thành dạng mệnh đề tiêu chuẩn, kiểm tra xem liệu phép gán nào có làm cho công thức đúng hay không và xem trình giải loại bỏ các nhánh không thể thực hiện được.",
       "rewrite so each transformation can be inspected. Production SAT pipelines often introduce auxiliary variables with a Tseitin-style encoding. That produces a compact CNF that is": "viết lại để có thể kiểm tra từng chuyển đổi.Quy trình SAT sản xuất thường giới thiệu các biến phụ trợ có mã hóa kiểu Tseitin.Điều đó tạo ra một CNF nhỏ gọn",
-      "Right. Negate Q (¬Q), add to KB, resolve with P→Q to get ¬P, then resolve ¬P with the fact P to get the empty clause. KB ⊨ Q is proved.": "Đúng rồi.Phủ định Q (‎Q), thêm vào KB, giải quyết bằng P→Q để có được ‎P, sau đó giải quyết ‎P với thực tế P để có được mệnh đề trống.KB ⊨ Q được chứng minh.",
+      "Right. Negate Q (¬Q), add to KB, resolve with P→Q to get ¬P, then resolve ¬P with the fact P to get the empty clause. KB ⊨ Q is proved.": "Đúng. Phủ định Q (¬Q), thêm vào KB, phân giải với P→Q để được ¬P, rồi phân giải ¬P với sự kiện P để được mệnh đề rỗng. Đã chứng minh KB ⊨ Q.",
       "Run conversion and at least one SAT or resolution check. Record the key CNF or DPLL result.": "Chạy chuyển đổi và ít nhất một lần kiểm tra SAT hoặc độ phân giải.Ghi lại kết quả CNF hoặc DPLL chính.",
       "says that there is a breeze at cell (1,1) exactly when at least one adjacent cell contains a pit. A logical agent combines many rules of this kind and asks whether a proposed danger or safety claim follows from the knowledge base. SAT provides one computational route for answering those propositional queries.": "nói rằng có gió nhẹ ở ô (1,1) chính xác khi có ít nhất một ô liền kề chứa một hố.Một tác nhân logic kết hợp nhiều quy tắc thuộc loại này và hỏi liệu một yêu cầu về mối nguy hiểm hoặc an toàn được đề xuất có tuân theo cơ sở kiến ​​thức hay không.SAT cung cấp một lộ trình tính toán để trả lời các truy vấn mệnh đề đó.",
       "Scenario 1: Modus ponens: a satisfiable formula": "Kịch bản 1: Modus ponens: một công thức thỏa mãn",
@@ -4137,7 +4186,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Separate the representation step from the solving step: CNF rewrites the logic, SAT search tries assignments, and resolution explains contradiction through clauses.": "Tách bước biểu diễn khỏi bước giải: CNF viết lại logic, tìm kiếm SAT thử các bài tập và giải quyết mâu thuẫn thông qua các mệnh đề.",
       "Show all five stages at once": "Hiển thị tất cả năm giai đoạn cùng một lúc",
       "Stage 0 · Original": "Giai đoạn 0 · Bản gốc",
-      "Standard rewrite pipeline: eliminate ↔, eliminate →, push ¬ in (De Morgan), distribute ∨ over ∧.": "Quy trình viết lại tiêu chuẩn: loại bỏ ↔, loại bỏ →, đẩy и vào (De Morgan), phân phối ∨ trên ∧.",
+      "Standard rewrite pipeline: eliminate ↔, eliminate →, push ¬ in (De Morgan), distribute ∨ over ∧.": "Quy trình viết lại chuẩn: loại bỏ ↔, loại bỏ →, đẩy ¬ vào trong (De Morgan), phân phối ∨ trên ∧.",
       "Start featured experiment": "Bắt đầu thử nghiệm nổi bật",
       "Start with the featured experiment, then use the scenarios to test a prediction.": "Bắt đầu với thử nghiệm nổi bật, sau đó sử dụng các tình huống để kiểm tra dự đoán.",
       "State summary updated: Input: P -> Q P; CNF stage: Stage 0 / 5; SAT output: ✓ SAT (1 model out of 4)PQTT; DPLL step: Step 1 / 3": "Đã cập nhật tóm tắt trạng thái: Đầu vào: P -> Q P;Giai đoạn CNF: Giai đoạn 0/5;Đầu ra SAT: ✓ SAT (1 trên 4 mẫu)PQTT;Bước DPLL: Bước 1/3",
@@ -4190,12 +4239,12 @@ document.addEventListener('DOMContentLoaded', () => {
       "The Wumpus rule as a bridge": "Quy tắc Wumpus như một cây cầu",
       "This applet deliberately shows a direct": "Applet này cố tình hiển thị trực tiếp",
       "Three nodes, three colors, edges form a triangle. SAT enumeration finds the 6 valid colorings (3! permutations). This is graph coloring as propositional logic.": "Ba nút, ba màu, các cạnh tạo thành một hình tam giác.Phép liệt kê SAT tìm ra 6 cách tô màu hợp lệ (3! hoán vị).Đây là cách tô màu đồ thị như logic mệnh đề.",
-      "To prove KB ⊨ α, add ¬α to the knowledge base and apply the resolution rule until you derive the empty clause (contradiction) or stop. AIMA Ch 7.5.": "Để chứng minh KB ⊨ α, hãy thêm иα vào cơ sở tri thức và áp dụng quy tắc giải cho đến khi bạn rút ra mệnh đề trống (mâu thuẫn) hoặc dừng lại.AIMA Ch 7.5.",
+      "To prove KB ⊨ α, add ¬α to the knowledge base and apply the resolution rule until you derive the empty clause (contradiction) or stop. AIMA Ch 7.5.": "Để chứng minh KB ⊨ α, thêm ¬α vào cơ sở tri thức rồi áp dụng quy tắc phân giải đến khi suy ra mệnh đề rỗng (mâu thuẫn) hoặc dừng. AIMA, mục 7.5.",
       "Toggle dark / light theme (saved across all playgrounds).": "Chuyển đổi chủ đề tối / sáng (được lưu trên tất cả các sân chơi).",
       "Toggle dark or light theme": "Chuyển đổi chủ đề tối hoặc sáng",
       "Transfer: change the closeness rule and predict the neighbors again.": "Chuyển: thay đổi quy tắc gần và dự đoán lại các hàng xóm.",
-      "Try 'yes'. Q follows from {P→Q, P} by modus ponens, which resolution can derive: ¬Q + (¬P∨Q) → ¬P, then ¬P + P → empty clause.": "Hãy thử 'có'.Q theo sau từ {P→Q, P} theo modus ponens, độ phân giải có thể rút ra: â€Q + (€P∨Q) → иP, sau đó â€P + P → mệnh đề trống.",
-      "Try 0. UNSAT means literally no satisfying assignment exists: that's what makes it unsatisfiable.": "Hãy thử 0. UNSAT có nghĩa là không có bài tập nào thỏa mãn tồn tại: đó là nguyên nhân khiến nó không thỏa mãn.",
+      "Try 'yes'. Q follows from {P→Q, P} by modus ponens, which resolution can derive: ¬Q + (¬P∨Q) → ¬P, then ¬P + P → empty clause.": "Hãy thử 'có'. Q suy ra từ {P→Q, P} bằng modus ponens; phép phân giải cũng suy ra được: ¬Q + (¬P∨Q) → ¬P, rồi ¬P + P → mệnh đề rỗng.",
+      "Try 0. UNSAT means literally no satisfying assignment exists: that's what makes it unsatisfiable.": "Hãy thử 0. UNSAT nghĩa là không có phép gán nào thỏa mãn: đó chính là tính không thỏa được.",
       "Try 1. The KB {P→Q, P} forces both P=T and Q=T: only one row in the truth table works.": "Thử 1. KB {P→Q, P} buộc cả P=T và Q=T: chỉ một hàng trong bảng chân lý hoạt động.",
       "Unit clause forces P = T.": "Mệnh đề đơn vị lực P = T.",
       "Use as a 2–3 minute predict → run → explain prompt.": "Sử dụng làm lời nhắc dự đoán trong 2 - 3 phút → chạy → giải thích lời nhắc.",
@@ -4203,13 +4252,13 @@ document.addEventListener('DOMContentLoaded', () => {
       "Use Enter or Space on buttons, and arrow keys on sliders or select controls.": "Sử dụng Enter hoặc Space trên các nút và phím mũi tên trên thanh trượt hoặc điều khiển chọn.",
       "Use Tab and Shift+Tab to move through controls.": "Sử dụng Tab và Shift+Tab để di chuyển qua các điều khiển.",
       "Use the modus-ponens KB, query Q. The prover negates Q (adds ¬Q), resolves with P→Q and P, derives the empty clause. KB ⊨ Q is proved. Try changing the query to R (should fail).": "Sử dụng modus-ponens KB, truy vấn Q. Người tục ngữ phủ định Q (thêm ‎Q), giải quyết bằng P→Q và P, rút ​​ra mệnh đề trống.KB ⊨ Q được chứng minh.Hãy thử thay đổi truy vấn thành R (sẽ thất bại).",
-      "Use the modus-ponens knowledge base, negate the query, and run resolution until the empty clause appears.": "Sử dụng cơ sở kiến ​​thức modus-ponens, phủ định truy vấn và chạy giải pháp cho đến khi mệnh đề trống xuất hiện.",
+      "Use the modus-ponens knowledge base, negate the query, and run resolution until the empty clause appears.": "Dùng cơ sở tri thức modus ponens, phủ định truy vấn rồi chạy phân giải đến khi xuất hiện mệnh đề rỗng.",
       "Use the native KNN challenge: place a query, select exactly k predicted neighbors and a class, then lock before reveal.": "Sử dụng thử thách KNN gốc: đặt truy vấn, chọn chính xác k hàng xóm được dự đoán và một lớp, sau đó khóa trước khi hiển thị.",
       "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.": "Sử dụng lớp này khi khó kiểm tra hiển thị hình ảnh, màu sắc, hoạt ảnh hoặc tương tác con trỏ.Nó cung cấp đường dẫn bàn phím và bản tóm tắt văn bản về trạng thái applet hiện tại.",
       "Variables: letters/words": "Biến: chữ cái/từ",
       "What did rewriting to CNF make easier for the solver to check?": "Việc viết lại vào CNF đã giúp người giải quyết kiểm tra dễ dàng hơn điều gì?",
-      "What does one truth assignment represent?": "Một phép gán chân lý thể hiện điều gì?",
-      "What is the difference between two formulas being equivalent and merely both being satisfiable?": "Sự khác biệt giữa hai công thức tương đương và chỉ đơn thuần là cả hai đều thỏa mãn là gì?",
+      "What does one truth assignment represent?": "Một phép gán giá trị chân lý biểu diễn điều gì?",
+      "What is the difference between two formulas being equivalent and merely both being satisfiable?": "Hai công thức tương đương logic khác gì với việc cả hai chỉ cùng thỏa được?",
       "What this model leaves out": "Mô hình này bỏ sót những gì",
       "When would a knowledge-base system need resolution rather than a truth-table intuition?": "Khi nào một hệ thống cơ sở tri thức cần độ phân giải thay vì trực giác bảng chân lý?",
       "Which products contribute?": "Sản phẩm nào đóng góp?",
@@ -4232,8 +4281,8 @@ document.addEventListener('DOMContentLoaded', () => {
       "▶ Prove by resolution": "► Chứng minh bằng độ phân giải",
       "▸ Show teacher notes (discussion prompts + curriculum)": "▸ Hiển thị ghi chú của giáo viên (lời nhắc thảo luận + chương trình giảng dạy)",
       "♿ Text and keyboard support": "♿ Hỗ trợ văn bản và bàn phím",
-      "✓ SAT (1 model out of 4)": "✓ SAT (1 trên 4 mẫu)",
-      "✓ SAT (1 model out of 4)PQTT": "✓ SAT (1 trên 4 mẫu)PQTT",
+      "✓ SAT (1 model out of 4)": "✓ SAT (1 mô hình trên 4)",
+      "✓ SAT (1 model out of 4)PQTT": "✓ SAT (1 mô hình trên 4)PQTT",
       "✨ Featured experiment": "✨ Thử nghiệm nổi bật",
       "⬇ Current settings (.json)": "⬇ Cài đặt hiện tại (.json)",
       "使用原生 KNN 挑战：先放置查询点，再选择恰好 k 个预测邻居和预测类别，然后锁定并揭示。": "使用原生 KNN 挑战:先放置查询点,再选择恰好 k个预测邻居和预测类别,然后锁定并揭示。",
@@ -4260,9 +4309,14 @@ document.addEventListener('DOMContentLoaded', () => {
       "🖨 Print packet": "🖨 In gói",
       "🧪 Student response packet": "🧪 Gói phản hồi của học sinh",
       "🧭 Visual explanation": "🧭 Giải thích trực quan",
-      "Modus ponens KB. In the query box, type <code>Q</code> and click \"Prove by resolution\". Does it succeed (empty clause derived)?": "Cơ sở tri thức modus ponens. Trong ô truy vấn, nhập <code>Q</code> rồi nhấp Chứng minh bằng phân giải. Có thành công không, tức là có suy ra mệnh đề rỗng không?"
+      "Modus ponens KB. In the query box, type <code>Q</code> and click \"Prove by resolution\". Does it succeed (empty clause derived)?": "Cơ sở tri thức modus ponens. Trong ô truy vấn, nhập <code>Q</code> rồi nhấp Chứng minh bằng phân giải. Có thành công không, tức là có suy ra mệnh đề rỗng không?",
+      "P → Q and P become two CNF clauses. SAT enumeration finds one model: {P=T, Q=T}. To prove Q, add its negation and follow successive resolution inferences until the empty clause is derived.": "P → Q và P được chuyển thành hai mệnh đề CNF. Liệt kê SAT tìm được một mô hình: {P=T, Q=T}. Để chứng minh Q, thêm phủ định của Q rồi theo dõi các bước suy luận phân giải cho đến khi suy ra mệnh đề rỗng."
     },
     "patterns": [
+      {
+        "source": "^✓ SAT \\((\\d+) models? out of (\\d+)\\)$",
+        "target": "✓ SAT ($1 mô hình trên $2)"
+      },
       {
         "source": "^Modus ponens KB\\\\. In the query box, type <code>Q</code> and click \"Prove by resolution\"\\\\. Does it succeed \\\\(empty clause derived\\\\)\\\\?$",
         "target": "Cơ sở tri thức modus ponens. Trong ô truy vấn, nhập <code>Q</code> rồi nhấp Chứng minh bằng phân giải. Có thành công không, tức là có suy ra mệnh đề rỗng không?",
@@ -4271,7 +4325,16 @@ document.addEventListener('DOMContentLoaded', () => {
     ]
   },
   "es": {
+    "teacher": {"How does": "¿En qué se diferencia", "differ from": "de"},
     "strings": {
+      "Proposition": "Proposición",
+      "Satisfiability (SAT)": "Satisfacibilidad (SAT)",
+      "Unsatisfiable (UNSAT)": "Insatisfacible (UNSAT)",
+      "DPLL algorithm": "Algoritmo DPLL",
+      "Unit propagation": "Propagación unitaria",
+      "Literal": "Literal",
+      "Clause": "Cláusula",
+      "Truth assignment": "Asignación de verdad",
       "CDCL backjump": "Salto atrás CDCL",
       "A deterministic conflict that learns (¬A ∨ ¬C) and backjumps from decision level 3 to level 1.": "Un conflicto determinista que aprende (¬A ∨ ¬C) y salta del nivel de decisión 3 al nivel 1.",
       "Trace mode:": "Modo de traza:",
@@ -4333,7 +4396,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "#windowMath": "#windowMath",
       "${index}": "${index}",
       ", or CNF, when it is an AND of clauses. For example,": ", o CNF, cuando es un AND de cláusulas.Por ejemplo,",
-      ". SAT is NP-complete, so no polynomial-time algorithm is known for every instance. Modern solvers are effective on many large structured problems because propagation, learned clauses, restarts, and branching heuristics avoid examining most assignments explicitly.": ". SAT is NP-complete, so no polynomial-time algorithm is known for every instance. Modern solvers are effective on many large structured problems because propagation, learned clauses, restarts, and branching heuristics avoid examining most assignments explicitly.",
+      ". SAT is NP-complete, so no polynomial-time algorithm is known for every instance. Modern solvers are effective on many large structured problems because propagation, learned clauses, restarts, and branching heuristics avoid examining most assignments explicitly.": ". SAT es NP-completo: no se conoce un algoritmo de tiempo polinómico para todos los casos. Los solvers modernos resuelven muchos problemas grandes con estructura porque la propagación, las cláusulas aprendidas, los reinicios y las heurísticas de ramificación evitan examinar explícitamente la mayoría de las asignaciones.",
       ".bento-main": ".bento-main",
       ".cell-analysis": ".cell-analysis",
       ".cell-maps": ".cell-maps",
@@ -4374,14 +4437,14 @@ document.addEventListener('DOMContentLoaded', () => {
       "0: UNSAT means no assignment satisfies every clause.": "0: UNSAT significa que ninguna asignación satisface todas las cláusulas.",
       "1. ↔ eliminated:": "1. ↔ eliminado:",
       "1: forcing P=T and Q=T leaves exactly one satisfying row.": "1: forzar P=T y Q=T deja exactamente una fila satisfactoria.",
-      "1: there is always at least one satisfying assignment.": "1: siempre hay al menos una tarea satisfactoria.",
+      "1: there is always at least one satisfying assignment.": "1: siempre hay al menos una asignación satisfactoria.",
       "2 variables → 4 truth-table rows to brute-force": "2 variables → 4 filas de la tabla de verdad para fuerza bruta",
       "2. Conjunctive Normal Form (step by step)": "2. Forma Normal Conjuntiva (paso a paso)",
       "3-coloring": "3 colores",
       "3-coloring a triangle (SAT)": "3-colorear un triángulo (SAT)",
       "3-coloring a triangle. SAT problem from graph theory.": "3-colorear un triángulo.Problema del SAT desde la teoría de grafos.",
       "3. Satisfiability: exhaustive reference check": "3. Satisfacción: verificación exhaustiva de referencias",
-      "3. ¬ pushed in (De Morgan):": "3. ¬ empujado hacia adentro (De Morgan):",
+      "3. ¬ pushed in (De Morgan):": "3. ¬ hacia dentro (De Morgan):",
       "3: the satisfying rows are the ones with an odd number of trues.": "3: las filas satisfactorias son las que tienen un número impar de verdaderos.",
       "4. Entailment by resolution": "4. Vinculación por resolución",
       "4. ∨ distributed over ∧:": "4. ∨ distribuido en ∧:",
@@ -4394,14 +4457,14 @@ document.addEventListener('DOMContentLoaded', () => {
       "[unit-propagation] · depth 0": "[propagación de unidad] · profundidad 0",
       "A biconditional becomes several CNF clauses": "Un bicondicional se convierte en varias cláusulas CNF",
       "A choice of true or false for every proposition variable.": "Una opción de verdadero o falso para cada variable de proposición.",
-      "A proposition variable or its negation, such as A or ¬A.": "Una variable de proposición o su negación, como A o ¬A.",
+      "A proposition variable or its negation, such as A or ¬A.": "Una variable proposicional o su negación, como A o ¬A.",
       "A statement that is either true or false.": "Una afirmación que es verdadera o falsa.",
       "A trio that pairwise differs but you try to assert all three true. UNSAT.": "Un trío que difiere por pares pero intentas afirmar que los tres son verdaderos.UNSAT.",
       "A worsening move can be accepted": "Se puede aceptar un movimiento que empeora",
       "Accept only an improving move": "Acepta solo un movimiento de mejora.",
       "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.": "Nota de accesibilidad: esta capa proporciona un texto equivalente para el estado del subprograma.No reemplaza una auditoría completa del lector de pantalla humano.",
-      "An AND of clauses, where each clause is an OR of literals.": "Un AND de cláusulas, donde cada cláusula es un OR de literales.",
-      "An OR of one or more literals.": "Un OR de uno o más literales.",
+      "An AND of clauses, where each clause is an OR of literals.": "Una conjunción (AND) de cláusulas, cada una formada por una disyunción (OR) de literales.",
+      "An OR of one or more literals.": "Una disyunción (OR) de uno o más literales.",
       "Approximate updated position of Centroid 1": "Posición actualizada aproximada del centroide 1",
       "aria-hidden": "aria-oculta",
       "aria-label": "etiqueta-aria",
@@ -4450,12 +4513,12 @@ document.addEventListener('DOMContentLoaded', () => {
       "Conjunctive normal form (CNF)": "Forma normal conjuntiva (CNF)",
       "Connect each valid assignment to one legal coloring of the triangle.": "Conecte cada asignación válida a un color legal del triángulo.",
       "Convert a knowledge base, inspect satisfiability, then explain why CNF and resolution reveal entailment.": "Convierta una base de conocimientos, inspeccione la satisfacibilidad y luego explique por qué CNF y la resolución revelan vinculación.",
-      "Convert the Wumpus rule. Which rewrite step creates the greatest increase in size?": "Convierte la regla Wumpus.¿Qué paso de reescritura crea el mayor aumento de tamaño?",
+      "Convert the Wumpus rule. Which rewrite step creates the greatest increase in size?": "Convierte la regla de Wumpus. ¿Qué paso de reescritura produce el mayor aumento de tamaño?",
       "Converting to CNF should preserve truth conditions, but it does not itself solve the formula.": "La conversión a CNF debería preservar las condiciones de verdad, pero no resuelve la fórmula por sí sola.",
       "Copy a link that reopens the current settings in another browser.": "Copie un enlace que vuelva a abrir la configuración actual en otro navegador.",
       "Copy an <iframe> snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.": "Copie un fragmento de <iframe> para incrustarlo en un LMS.Elimina el encabezado/ensayo para que solo se muestre el área interactiva.",
       "Correct. P→Q, P → forces P=T, Q=T. Exactly one of the 4 truth-table rows satisfies the KB.": "Correcto.P→Q, P → fuerza P=T, Q=T.Exactamente una de las 4 filas de la tabla de verdad satisface la base de conocimientos.",
-      "Correct. UNSAT means no assignment satisfies all clauses. SAT enumeration tries all 2³ = 8 rows and rejects every one.": "Correcto.UNSAT significa que ninguna asignación satisface todas las cláusulas.La enumeración SAT prueba las 2³ = 8 filas y las rechaza todas.",
+      "Correct. UNSAT means no assignment satisfies all clauses. SAT enumeration tries all 2³ = 8 rows and rejects every one.": "Correcto. UNSAT significa que ninguna asignación satisface todas las cláusulas. La enumeración SAT prueba las 2³ = 8 filas y las rechaza todas.",
       "De Morgan's law as a tautology: every row is a model.": "La ley de De Morgan como tautología: cada fila es un modelo.",
       "Direct distribution can make an equivalent CNF exponentially larger. Practical encodings often use a Tseitin transformation: introduce helper variables to produce a CNF that is linear in size and": "La distribución directa puede hacer que un CNF equivalente sea exponencialmente mayor.Las codificaciones prácticas suelen utilizar una transformación de Tseitin: introduce variables auxiliares para producir un CNF que sea lineal en tamaño y",
       "DPLL branches on variable choices and uses propagation to shrink the remaining search.": "DPLL se bifurca en opciones de variables y utiliza la propagación para reducir la búsqueda restante.",
@@ -4464,12 +4527,12 @@ document.addEventListener('DOMContentLoaded', () => {
       "Each pair must differ AND all three must be true. No assignment satisfies all clauses. SAT returns UNSAT: every row of the truth table fails.": "Cada par debe diferir Y los tres deben ser verdaderos.Ninguna cesión satisface todas las cláusulas.SAT devuelve UNSAT: cada fila de la tabla de verdad falla.",
       "Embed or download the current experiment": "Insertar o descargar el experimento actual",
       "Enter the required mechanism prediction before locking.": "Ingrese la predicción del mecanismo requerido antes del bloqueo.",
-      "every formula has one unique CNF; direct distribution is the only practical conversion; SAT solvers simply enumerate all assignments; first-order theorem proving is the same finite problem with different symbols.": "cada fórmula tiene un CNF único;la distribución directa es la única conversión práctica;Los solucionadores del SAT simplemente enumeran todas las tareas;La demostración del teorema de primer orden es el mismo problema finito con diferentes símbolos.",
+      "every formula has one unique CNF; direct distribution is the only practical conversion; SAT solvers simply enumerate all assignments; first-order theorem proving is the same finite problem with different symbols.": "Cada fórmula tiene una única CNF; la distribución directa es la única conversión práctica; los solucionadores SAT solo enumeran todas las asignaciones; demostrar teoremas de primer orden es el mismo problema finito con otros símbolos.",
       "Every SAT solver in the world wants Conjunctive Normal Form. Watch ↔ → ¬ get distributed away in five mechanical steps, then brute-force-enumerate every satisfying assignment.": "Todos los solucionadores de SAT del mundo quieren la forma normal conjuntiva.Observe cómo ↔ → ¬ se distribuyen en cinco pasos mecánicos y luego enumere con fuerza bruta cada tarea satisfactoria.",
       "Exhaustive enumeration of all 2": "Enumeración exhaustiva de los 2",
       "Expected comparison rule": "Regla de comparación esperada",
       "Explain how the premises eliminate any assignment where the conclusion is false.": "Explique cómo las premisas eliminan cualquier asignación donde la conclusión sea falsa.",
-      "Explain why a clause-based solver benefits from CNF even though users may write richer syntax.": "Explique por qué un solucionador basado en cláusulas se beneficia de CNF aunque los usuarios puedan escribir una sintaxis más rica.",
+      "Explain why a clause-based solver benefits from CNF even though users may write richer syntax.": "Explica por qué CNF ayuda a un solucionador basado en cláusulas aunque los usuarios escriban una sintaxis más rica.",
       "Explain why deriving a contradiction shows that the original query follows from the knowledge base.": "Explique por qué derivar una contradicción muestra que la consulta original se deriva de la base de conocimientos.",
       "Explain why the longer form is easier for a general solver to process.": "Explique por qué la forma más larga es más fácil de procesar para un solucionador general.",
       "For the prepared population, predict the true-positive and false-positive counts before the posterior probability is revealed.": "Para la población preparada, prediga los recuentos de verdaderos positivos y falsos positivos antes de que se revele la probabilidad posterior.",
@@ -4480,7 +4543,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "How can individually reasonable constraints become impossible together?": "¿Cómo pueden las restricciones individualmente razonables volverse imposibles juntas?",
       "How can proving that the opposite is impossible establish a conclusion?": "¿Cómo puede establecerse una conclusión al demostrar que lo contrario es imposible?",
       "Identify the exact set of requirements that cannot all be true at once.": "Identifique el conjunto exacto de requisitos que no pueden cumplirse todos a la vez.",
-      "If a clause has one possible literal left, that literal must be true.": "Si a una cláusula le queda un posible literal, ese literal debe ser verdadero.",
+      "If a clause has one possible literal left, that literal must be true.": "Si en una cláusula solo queda un literal que pueda ser verdadero, ese literal debe ser verdadero.",
       "Input: P -> Q P CNF stage: Stage 0 / 5 CNF caption: Stage 0 · Original the conjunction of all your sentences, before any rewriting SAT output: ✓ SAT (1 model out of 4)PQTT DPLL step: Step 1 / 3": "Entrada: P -> Q P Etapa CNF: Etapa 0 / 5 Leyenda CNF: Etapa 0 · Original la conjunción de todas tus oraciones, antes de cualquier reescritura Salida SAT: ✓ SAT (1 modelo de 4) Paso PQTT DPLL: Paso 1 / 3",
       "Input: P -> Q P Trace mode: DPLL branch trace CNF stage: Stage 0 / 5 CNF caption: Stage 0 · Original the conjunction of all your sentences, before any rewriting SAT output: ✓ SAT (1 model out of 4)PQTT Solver step: Step 1 / 3": "Entrada: P -> Q P Modo de traza: Traza de ramificación DPLL Etapa CNF: Etapa 0 / 5 Leyenda CNF: Etapa 0 · Original, la conjunción de todas tus oraciones antes de reescribir Salida SAT: ✓ SAT (1 modelo de 4)PQTT Paso del solucionador: Paso 1 / 3",
       "Input: P -> Q P CNF stage: Stage 0 / 5 SAT output: ✓ SAT (1 model out of 4)PQTT DPLL step: Step 1 / 3": "Entrada: P -> Q P Etapa CNF: Etapa 0 / 5 Salida SAT: ✓ SAT (1 modelo de 4)PQTT Paso DPLL: Paso 1 / 3",
@@ -4491,11 +4554,11 @@ document.addEventListener('DOMContentLoaded', () => {
       "knn-classifier": "clasificador-knn",
       "Literal, branch, or contradiction source": "Fuente literal, rama o contradicción",
       "Literal, clause, and CNF": "Literal, cláusula y CNF",
-      "Load an unsatisfiable example and identify the conflict that rules out each branch.": "Cargue un ejemplo insatisfactorio e identifique el conflicto que descarta cada rama.",
-      "Load modus ponens. Which clauses force": "Cargar modo ponens.¿Qué cláusulas obligan",
-      "Load the Conflicting XOR (UNSAT) example. How many satisfying assignments?": "Cargue el ejemplo de XOR en conflicto (UNSAT).¿Cuántas tareas satisfactorias?",
+      "Load an unsatisfiable example and identify the conflict that rules out each branch.": "Carga un ejemplo insatisfacible e identifica el conflicto que descarta cada rama.",
+      "Load modus ponens. Which clauses force": "Carga modus ponens. ¿Qué cláusulas obligan a que sea verdadera",
+      "Load the Conflicting XOR (UNSAT) example. How many satisfying assignments?": "Carga el ejemplo XOR en conflicto (UNSAT). ¿Cuántas asignaciones satisfactorias hay?",
       "Load the conflicting XOR constraint set and inspect why every truth-table row fails.": "Cargue el conjunto de restricciones XOR en conflicto e inspeccione por qué falla cada fila de la tabla de verdad.",
-      "Load the Modus ponens example and click Convert. How many satisfying assignments does the SAT enumeration find?": "Cargue el ejemplo de Modus ponens y haga clic en Convertir.¿Cuántas tareas satisfactorias encuentra la enumeración del SAT?",
+      "Load the Modus ponens example and click Convert. How many satisfying assignments does the SAT enumeration find?": "Carga el ejemplo Modus ponens y pulsa Convertir. ¿Cuántas asignaciones satisfactorias encuentra la enumeración SAT?",
       "Load the modus-ponens example, convert it to conjunctive normal form (CNF), and inspect the satisfying assignments.": "Cargue el ejemplo de modus-ponens, conviértalo a la forma normal conjuntiva (CNF) e inspeccione las asignaciones satisfactorias.",
       "Load the triangle three-coloring example and inspect the valid assignments.": "Cargue el ejemplo de tres colores del triángulo e inspeccione las asignaciones válidas.",
       "Load the Wumpus breeze rule and step through the rewrite from a biconditional to conjunctive normal form (CNF).": "Cargue la regla de brisa de Wumpus y recorra la reescritura desde una forma normal bicondicional a conjuntiva (CNF).",
@@ -4508,9 +4571,9 @@ document.addEventListener('DOMContentLoaded', () => {
       "Memory or tabu status changes the choice": "El estado de memoria o tabú cambia la elección",
       "Model relation: conditioning on the common effect Alarm makes Burglary and Earthquake dependent; this is explaining away.": "Relación del modelo: condicionamiento al efecto común La alarma hace dependiente el Robo y el Terremoto;esto es una explicación.",
       "Model relation: JohnCalls and MaryCalls are conditionally independent given Alarm.": "Relación del modelo: JohnCalls y MaryCalls son condicionalmente independientes dada la alarma.",
-      "Modus ponens (SAT, simple)": "Modus ponens (SAT, simple)",
+      "Modus ponens (SAT, simple)": "Modus ponens (SAT, sencillo)",
       "Modus ponens: a satisfiable formula": "Modus ponens: una fórmula satisfactible",
-      "Modus ponens: P→Q, P, conclude Q.": "Modus ponens: P→Q, P, concluye Q.",
+      "Modus ponens: P→Q, P, conclude Q.": "Modus ponens: P→Q, P, se concluye Q.",
       "Negate the query, add to the KB, run resolution refutation. Empty clause = KB entails the query.": "Negar la consulta, agregarla a la base de conocimiento, ejecutar la refutación de la resolución.Cláusula vacía = KB implica la consulta.",
       "neural-network": "red-neural",
       "Next frontier state or coordinate": "Próximo estado fronterizo o coordenada",
@@ -4519,7 +4582,6 @@ document.addEventListener('DOMContentLoaded', () => {
       "No: Q does not follow from the knowledge base.": "No: Q no se desprende de la base de conocimientos.",
       "No: resolution can only check satisfiability, not prove entailment.": "No: la resolución sólo puede comprobar la satisfacibilidad, no probar la vinculación.",
       "Not enough information yet": "Aún no hay suficiente información",
-      "P → Q and P. CNF is already two clauses. SAT enumeration finds 1 model: {P=T, Q=T}. Then prove Q by resolution: the empty clause appears in one step.": "P → Q y P. CNF ya son dos cláusulas.La enumeración SAT encuentra 1 modelo: {P=T, Q=T}.Luego prueba Q por resolución: la cláusula vacía aparece en un paso.",
       "Parse and convert to CNF, then show exhaustive enumeration and a separate DPLL pruning trace.": "Analiza y convierte a CNF, luego muestra una enumeración exhaustiva y un seguimiento de poda DPLL separado.",
       "Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.": "Elija un escenario, prediga lo que debería suceder, luego aplíquelo y compare el resultado con su predicción.",
       "Play / pause the rewrite": "Reproducir/pausar la reescritura",
@@ -4556,19 +4618,19 @@ document.addEventListener('DOMContentLoaded', () => {
       "Production SAT solvers use conflict-driven clause learning, watched literals, preprocessing, restarts, and carefully designed branching heuristics. First-order logic adds variables that range over objects and quantifiers; general first-order validity is undecidable, although theorem provers can establish many useful results. This applet stays with finite propositional formulas so the full assignment space can be inspected.": "Los solucionadores de SAT de producción utilizan aprendizaje de cláusulas basado en conflictos, literales observados, preprocesamiento, reinicios y heurísticas de ramificación cuidadosamente diseñadas.La lógica de primer orden agrega variables que abarcan objetos y cuantificadores;La validez general de primer orden es indecidible, aunque los demostradores de teoremas pueden establecer muchos resultados útiles.Este subprograma se queda con fórmulas proposicionales finitas para que se pueda inspeccionar el espacio de asignación completo.",
       "Propositional logic uses variables that are either true or false and connectives such as NOT, AND, OR, implication, and equivalence. The satisfiability problem, or SAT, asks whether at least one truth assignment makes an entire formula true. This applet shows how formulas are standardized and then searched.": "La lógica proposicional utiliza variables que son verdaderas o falsas y conectivos como NOT, AND, OR, implicación y equivalencia.El problema de satisfacibilidad, o SAT, pregunta si al menos una asignación de verdad hace que toda una fórmula sea verdadera.Este subprograma muestra cómo se estandarizan las fórmulas y luego se buscan.",
       "Propositional sentences (one per line)": "Oraciones proposicionales (una por línea)",
-      "Propositional syntax, logical equivalence, CNF, SAT, satisfiable versus unsatisfiable formulas, model counting, and the limits of brute force.": "Sintaxis proposicional, equivalencia lógica, CNF, SAT, fórmulas satisfacibles versus insatisfactorias, conteo de modelos y los límites de la fuerza bruta.",
+      "Propositional syntax, logical equivalence, CNF, SAT, satisfiable versus unsatisfiable formulas, model counting, and the limits of brute force.": "Sintaxis proposicional, equivalencia lógica, CNF, SAT, fórmulas satisfacibles e insatisfacibles, conteo de modelos y límites de la búsqueda exhaustiva.",
       "Prove by resolution refutation": "Probar mediante refutación de resolución",
       "q-learning-gridworld": "q-learning-gridworld",
       "Query α:": "Consulta α:",
       "read the result as a list of clauses and literals.": "lee el resultado como una lista de cláusulas y literales.",
       "Reduced motion and non-visual support": "Movimiento reducido y soporte no visual",
       "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.": "Las configuraciones de movimiento reducido se respetan siempre que sea posible.El estado actual también está disponible como texto, por lo que el resultado principal no depende sólo del color, la animación o la posición espacial.",
-      "Reset input to default 'modus ponens' example.": "Restablecer la entrada al ejemplo predeterminado de 'modus ponens'.",
+      "Reset input to default 'modus ponens' example.": "Restablece la entrada al ejemplo predeterminado de modus ponens.",
       "Resolution makes unsatisfiability visible by deriving conflict from clauses.": "La resolución visibiliza la insatisfacción al derivar conflicto de cláusulas.",
       "Resolution proves a query by contradiction": "La resolución prueba una consulta por contradicción",
       "Rewrite propositional logic into a standard clause form, test whether any assignment makes the formula true, and watch a solver remove impossible branches.": "Reescribe la lógica proposicional en una forma de cláusula estándar, prueba si alguna asignación hace que la fórmula sea verdadera y observa cómo un solucionador elimina ramas imposibles.",
       "rewrite so each transformation can be inspected. Production SAT pipelines often introduce auxiliary variables with a Tseitin-style encoding. That produces a compact CNF that is": "reescribe para que cada transformación pueda ser inspeccionada.Los canales de producción SAT a menudo introducen variables auxiliares con una codificación de estilo Tseitin.Eso produce un CNF compacto que es",
-      "Right. Negate Q (¬Q), add to KB, resolve with P→Q to get ¬P, then resolve ¬P with the fact P to get the empty clause. KB ⊨ Q is proved.": "Correcto.Negue Q (¬Q), agregue a KB, resuelva con P→Q para obtener ¬P, luego resuelva ¬P con el hecho P para obtener la cláusula vacía.KB ⊨ Q está demostrado.",
+      "Right. Negate Q (¬Q), add to KB, resolve with P→Q to get ¬P, then resolve ¬P with the fact P to get the empty clause. KB ⊨ Q is proved.": "Correcto. Niega Q (¬Q), añádelo a KB y resuelve con P→Q para obtener ¬P. Después resuelve ¬P con el hecho P para obtener la cláusula vacía. Queda demostrado KB ⊨ Q.",
       "Run conversion and at least one SAT or resolution check. Record the key CNF or DPLL result.": "Ejecute la conversión y al menos una verificación de resolución o SAT.Registre el resultado clave de CNF o DPLL.",
       "says that there is a breeze at cell (1,1) exactly when at least one adjacent cell contains a pit. A logical agent combines many rules of this kind and asks whether a proposed danger or safety claim follows from the knowledge base. SAT provides one computational route for answering those propositional queries.": "dice que hay brisa en la celda (1,1) exactamente cuando al menos una celda adyacente contiene un hoyo.Un agente lógico combina muchas reglas de este tipo y pregunta si una afirmación de peligro o seguridad propuesta se deriva de la base de conocimientos.SAT proporciona una ruta computacional para responder esas consultas proposicionales.",
       "Scenario 1: Modus ponens: a satisfiable formula": "Escenario 1: Modus ponens: una fórmula satisfactible",
@@ -4580,7 +4642,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Separate the representation step from the solving step: CNF rewrites the logic, SAT search tries assignments, and resolution explains contradiction through clauses.": "Separe el paso de representación del paso de resolución: CNF reescribe la lógica, la búsqueda SAT intenta asignaciones y la resolución explica la contradicción mediante cláusulas.",
       "Show all five stages at once": "Mostrar las cinco etapas a la vez",
       "Stage 0 · Original": "Etapa 0 · Original",
-      "Standard rewrite pipeline: eliminate ↔, eliminate →, push ¬ in (De Morgan), distribute ∨ over ∧.": "Tubería de reescritura estándar: eliminar ↔, eliminar →, insertar ¬ (De Morgan), distribuir ∨ sobre ∧.",
+      "Standard rewrite pipeline: eliminate ↔, eliminate →, push ¬ in (De Morgan), distribute ∨ over ∧.": "Reescritura estándar: elimina ↔, elimina →, lleva ¬ hacia dentro (De Morgan) y distribuye ∨ sobre ∧.",
       "Start featured experiment": "Iniciar experimento destacado",
       "Start with the featured experiment, then use the scenarios to test a prediction.": "Comience con el experimento presentado y luego utilice los escenarios para probar una predicción.",
       "State summary updated: Input: P -> Q P; CNF stage: Stage 0 / 5; SAT output: ✓ SAT (1 model out of 4)PQTT; DPLL step: Step 1 / 3": "Resumen de estado actualizado: Entrada: P -> Q P;Estadio CNF: Estadio 0/5;Salida SAT: ✓ SAT (1 modelo de 4)PQTT;Paso DPLL: Paso 1/3",
@@ -4633,12 +4695,12 @@ document.addEventListener('DOMContentLoaded', () => {
       "The Wumpus rule as a bridge": "La regla Wumpus como puente",
       "This applet deliberately shows a direct": "Este subprograma muestra deliberadamente una",
       "Three nodes, three colors, edges form a triangle. SAT enumeration finds the 6 valid colorings (3! permutations). This is graph coloring as propositional logic.": "Tres nodos, tres colores, las aristas forman un triángulo.La enumeración SAT encuentra los 6 colores válidos (¡3! permutaciones).Esta es la coloración de gráficos como lógica proposicional.",
-      "To prove KB ⊨ α, add ¬α to the knowledge base and apply the resolution rule until you derive the empty clause (contradiction) or stop. AIMA Ch 7.5.": "Para probar KB ⊨ α, agregue ¬α a la base de conocimiento y aplique la regla de resolución hasta derivar la cláusula vacía (contradicción) o detenerse.AIMA Capítulo 7.5.",
+      "To prove KB ⊨ α, add ¬α to the knowledge base and apply the resolution rule until you derive the empty clause (contradiction) or stop. AIMA Ch 7.5.": "Para demostrar KB ⊨ α, añade ¬α a la base de conocimiento y aplica resolución hasta obtener la cláusula vacía (contradicción) o detenerte. AIMA, sección 7.5.",
       "Toggle dark / light theme (saved across all playgrounds).": "Alternar tema oscuro/claro (guardado en todos los parques infantiles).",
       "Toggle dark or light theme": "Alternar tema oscuro o claro",
       "Transfer: change the closeness rule and predict the neighbors again.": "Transferir: cambia la regla de cercanía y vuelve a predecir los vecinos.",
-      "Try 'yes'. Q follows from {P→Q, P} by modus ponens, which resolution can derive: ¬Q + (¬P∨Q) → ¬P, then ¬P + P → empty clause.": "Pruebe \"sí\".Q se sigue de {P→Q, P} por modus ponens, cuya resolución puede derivar: ¬Q + (¬P∨Q) → ¬P, luego ¬P + P → cláusula vacía.",
-      "Try 0. UNSAT means literally no satisfying assignment exists: that's what makes it unsatisfiable.": "Pruebe 0. UNSAT significa literalmente que no existe ninguna asignación satisfactoria: eso es lo que la hace insatisfactoria.",
+      "Try 'yes'. Q follows from {P→Q, P} by modus ponens, which resolution can derive: ¬Q + (¬P∨Q) → ¬P, then ¬P + P → empty clause.": "Prueba «sí». Q se deduce de {P→Q, P} por modus ponens; la resolución también lo deriva: ¬Q + (¬P∨Q) → ¬P, luego ¬P + P → cláusula vacía.",
+      "Try 0. UNSAT means literally no satisfying assignment exists: that's what makes it unsatisfiable.": "Prueba 0. UNSAT significa que no existe ninguna asignación satisfactoria: por eso es insatisfacible.",
       "Try 1. The KB {P→Q, P} forces both P=T and Q=T: only one row in the truth table works.": "Prueba 1. El KB {P→Q, P} fuerza tanto P=T como Q=T: solo funciona una fila en la tabla de verdad.",
       "Unit clause forces P = T.": "La cláusula unitaria fuerza P = T.",
       "Use as a 2–3 minute predict → run → explain prompt.": "Úselo como mensaje de predicción → ejecución → explicación de 2 a 3 minutos.",
@@ -4646,13 +4708,13 @@ document.addEventListener('DOMContentLoaded', () => {
       "Use Enter or Space on buttons, and arrow keys on sliders or select controls.": "Utilice Intro o Espacio en los botones y las teclas de flecha en los controles deslizantes o seleccione controles.",
       "Use Tab and Shift+Tab to move through controls.": "Utilice Tab y Shift+Tab para moverse por los controles.",
       "Use the modus-ponens KB, query Q. The prover negates Q (adds ¬Q), resolves with P→Q and P, derives the empty clause. KB ⊨ Q is proved. Try changing the query to R (should fail).": "Utilice el modus-ponens KB, consulte Q. El probador niega Q (agrega ¬Q), resuelve con P→Q y P, deriva la cláusula vacía.KB ⊨ Q está demostrado.Intente cambiar la consulta a R (debería fallar).",
-      "Use the modus-ponens knowledge base, negate the query, and run resolution until the empty clause appears.": "Utilice la base de conocimientos modus-ponens, niegue la consulta y ejecute la resolución hasta que aparezca la cláusula vacía.",
+      "Use the modus-ponens knowledge base, negate the query, and run resolution until the empty clause appears.": "Usa la base de conocimiento de modus ponens, niega la consulta y ejecuta resolución hasta que aparezca la cláusula vacía.",
       "Use the native KNN challenge: place a query, select exactly k predicted neighbors and a class, then lock before reveal.": "Utilice el desafío KNN nativo: realice una consulta, seleccione exactamente k vecinos predichos y una clase, luego bloquee antes de revelar.",
       "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.": "Utilice esta capa cuando la visualización, el color, la animación o la interacción del puntero sean difíciles de inspeccionar.Proporciona una ruta de teclado y un resumen de texto del estado actual del subprograma.",
       "Variables: letters/words": "Variables: letras/palabras",
       "What did rewriting to CNF make easier for the solver to check?": "¿Qué hizo que la reescritura en CNF fuera más fácil de verificar para el solucionador?",
-      "What does one truth assignment represent?": "¿Qué representa una asignación de verdad?",
-      "What is the difference between two formulas being equivalent and merely both being satisfiable?": "¿Cuál es la diferencia entre dos fórmulas equivalentes y simplemente ambas satisfactorias?",
+      "What does one truth assignment represent?": "¿Qué representa una asignación de valores de verdad?",
+      "What is the difference between two formulas being equivalent and merely both being satisfiable?": "¿Qué diferencia hay entre dos fórmulas equivalentes y dos fórmulas que simplemente son ambas satisfacibles?",
       "What this model leaves out": "Lo que este modelo omite",
       "When would a knowledge-base system need resolution rather than a truth-table intuition?": "¿Cuándo un sistema de base de conocimiento necesitaría resolución en lugar de una intuición de tabla de verdad?",
       "Which products contribute?": "¿Qué productos contribuyen?",
@@ -4703,13 +4765,22 @@ document.addEventListener('DOMContentLoaded', () => {
       "🖨 Print packet": "🖨 Imprimir paquete",
       "🧪 Student response packet": "🧪 Paquete de respuesta para estudiantes",
       "🧭 Visual explanation": "🧭 Explicación visual",
-      "Modus ponens KB. In the query box, type <code>Q</code> and click \"Prove by resolution\". Does it succeed (empty clause derived)?": "Base de conocimiento de modus ponens. En el cuadro de consulta, escribe <code>Q</code> y pulsa Probar por resolución. ¿Tiene éxito, es decir, se deriva la cláusula vacía?"
+      "Modus ponens KB. In the query box, type <code>Q</code> and click \"Prove by resolution\". Does it succeed (empty clause derived)?": "Base de conocimiento de modus ponens. En el cuadro de consulta, escribe <code>Q</code> y pulsa Probar por resolución. ¿Tiene éxito, es decir, se deriva la cláusula vacía?",
+      "P → Q and P become two CNF clauses. SAT enumeration finds one model: {P=T, Q=T}. To prove Q, add its negation and follow successive resolution inferences until the empty clause is derived.": "P → Q y P se convierten en dos cláusulas CNF. La enumeración SAT encuentra un modelo: {P=T, Q=T}. Para demostrar Q, añade su negación y sigue las inferencias sucesivas de resolución hasta derivar la cláusula vacía."
     },
     "patterns": [
       {
         "source": "^Modus ponens KB\\\\. In the query box, type <code>Q</code> and click \"Prove by resolution\"\\\\. Does it succeed \\\\(empty clause derived\\\\)\\\\?$",
         "target": "Base de conocimiento de modus ponens. En el cuadro de consulta, escribe <code>Q</code> y pulsa Probar por resolución. ¿Tiene éxito, es decir, se deriva la cláusula vacía?",
         "flags": "g"
+      },
+      {
+        "source": "^✓ SAT \\((\\d+) model out of (\\d+)\\)$",
+        "target": "✓ SAT ($1 modelo de $2)"
+      },
+      {
+        "source": "^✓ SAT \\((\\d+) models out of (\\d+)\\)$",
+        "target": "✓ SAT ($1 modelos de $2)"
       }
     ]
   }
@@ -4717,7 +4788,7 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 </script>
-<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["cnf-sat"];if(!row)return;Object.assign(row.vi.strings,{"🧪 Quick Assign · QA-SAT-01 · 10–15 min": "🧪 Bài tập nhanh · QA-SAT-01 · 10–15 phút", "SAT, UNSAT, or entailed?": "SAT, UNSAT hay suy ra truy vấn?", "Convert a knowledge base, inspect DPLL or CDCL evidence, then explain what CNF, learned clauses, and backjumps establish.": "Chuyển một cơ sở tri thức, kiểm tra bằng chứng DPLL hoặc CDCL, rồi giải thích CNF, mệnh đề học được và bước nhảy lùi chứng minh điều gì.", "Before converting, do you expect the example to be satisfiable, unsatisfiable, or to entail the query? Why?": "Trước khi chuyển đổi, bạn dự đoán ví dụ này là SAT, UNSAT hay suy ra truy vấn? Vì sao?", "Run conversion and inspect a DPLL or CDCL trace. Record the key CNF result and any decision, propagation, conflict, learned clause, or backjump.": "Chạy phép chuyển đổi và xem một vết DPLL hoặc CDCL. Ghi lại kết quả CNF chính cùng mọi quyết định, lan truyền, xung đột, mệnh đề học được hoặc bước nhảy lùi.", "What did CNF make easier to check? If using CDCL, why is the learned clause valid and the backjump level safe?": "CNF giúp kiểm tra điều gì dễ hơn? Nếu dùng CDCL, vì sao mệnh đề học được hợp lệ và mức nhảy lùi an toàn?", "When would a knowledge-base system need resolution rather than a truth-table intuition?": "Khi nào một hệ cơ sở tri thức cần resolution thay vì chỉ dựa vào trực giác bảng chân trị?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"🧪 Quick Assign · QA-SAT-01 · 10–15 min": "🧪 Tarea rápida · QA-SAT-01 · 10–15 min", "SAT, UNSAT, or entailed?": "¿SAT, UNSAT o se deriva la consulta?", "Convert a knowledge base, inspect DPLL or CDCL evidence, then explain what CNF, learned clauses, and backjumps establish.": "Convierte una base de conocimiento, inspecciona evidencia DPLL o CDCL y explica qué establecen CNF, las cláusulas aprendidas y los saltos hacia atrás.", "Before converting, do you expect the example to be satisfiable, unsatisfiable, or to entail the query? Why?": "Antes de convertir, ¿esperas que el ejemplo sea SAT, UNSAT o que implique la consulta? ¿Por qué?", "Run conversion and inspect a DPLL or CDCL trace. Record the key CNF result and any decision, propagation, conflict, learned clause, or backjump.": "Ejecuta la conversión e inspecciona una traza DPLL o CDCL. Registra el resultado CNF clave y cualquier decisión, propagación, conflicto, cláusula aprendida o salto hacia atrás.", "What did CNF make easier to check? If using CDCL, why is the learned clause valid and the backjump level safe?": "¿Qué facilita comprobar CNF? Si usas CDCL, ¿por qué es válida la cláusula aprendida y seguro el nivel de salto?", "When would a knowledge-base system need resolution rather than a truth-table intuition?": "¿Cuándo necesitaría un sistema de conocimiento resolución en lugar de una intuición basada solo en tablas de verdad?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script>
+<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["cnf-sat"];if(!row)return;Object.assign(row.vi.strings,{"Level 1 · 10–15 min": "Cấp độ 1 · 10–15 phút", "🧪 Quick Assign · QA-SAT-01 · 10–15 min": "🧪 Bài tập nhanh · QA-SAT-01 · 10–15 phút", "SAT, UNSAT, or entailed?": "SAT, UNSAT hay suy ra truy vấn?", "Convert a knowledge base, inspect DPLL or CDCL evidence, then explain what CNF, learned clauses, and backjumps establish.": "Chuyển một cơ sở tri thức, kiểm tra bằng chứng DPLL hoặc CDCL, rồi giải thích CNF, mệnh đề học được và bước nhảy lùi chứng minh điều gì.", "Before converting, do you expect the example to be satisfiable, unsatisfiable, or to entail the query? Why?": "Trước khi chuyển đổi, bạn dự đoán ví dụ này là SAT, UNSAT hay suy ra truy vấn? Vì sao?", "Run conversion and inspect a DPLL or CDCL trace. Record the key CNF result and any decision, propagation, conflict, learned clause, or backjump.": "Chạy phép chuyển đổi và xem một vết DPLL hoặc CDCL. Ghi lại kết quả CNF chính cùng mọi quyết định, lan truyền, xung đột, mệnh đề học được hoặc bước nhảy lùi.", "What did CNF make easier to check? If using CDCL, why is the learned clause valid and the backjump level safe?": "CNF giúp kiểm tra điều gì dễ hơn? Nếu dùng CDCL, vì sao mệnh đề học được hợp lệ và mức nhảy lùi an toàn?", "When would a knowledge-base system need resolution rather than a truth-table intuition?": "Khi nào một hệ cơ sở tri thức cần resolution thay vì chỉ dựa vào trực giác bảng chân trị?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"Level 1 · 10–15 min": "Nivel 1 · 10–15 min", "🧪 Quick Assign · QA-SAT-01 · 10–15 min": "🧪 Tarea rápida · QA-SAT-01 · 10–15 min", "SAT, UNSAT, or entailed?": "¿SAT, UNSAT o se deriva la consulta?", "Convert a knowledge base, inspect DPLL or CDCL evidence, then explain what CNF, learned clauses, and backjumps establish.": "Convierte una base de conocimiento, inspecciona evidencia DPLL o CDCL y explica qué establecen CNF, las cláusulas aprendidas y los saltos hacia atrás.", "Before converting, do you expect the example to be satisfiable, unsatisfiable, or to entail the query? Why?": "Antes de convertir, ¿esperas que el ejemplo sea SAT, UNSAT o que implique la consulta? ¿Por qué?", "Run conversion and inspect a DPLL or CDCL trace. Record the key CNF result and any decision, propagation, conflict, learned clause, or backjump.": "Ejecuta la conversión e inspecciona una traza DPLL o CDCL. Registra el resultado CNF clave y cualquier decisión, propagación, conflicto, cláusula aprendida o salto hacia atrás.", "What did CNF make easier to check? If using CDCL, why is the learned clause valid and the backjump level safe?": "¿Qué facilita comprobar CNF? Si usas CDCL, ¿por qué es válida la cláusula aprendida y seguro el nivel de salto?", "When would a knowledge-base system need resolution rather than a truth-table intuition?": "¿Cuándo necesitaría un sistema de conocimiento resolución en lugar de una intuición basada solo en tablas de verdad?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script>
 (() => {
   'use strict';
   // v1.6.1: preserve canonical source text across VI/ES round trips, refresh native layers before overlay activation, and cancel superseded locale timers.
@@ -4729,6 +4800,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const rootData = window.__AI_PLAYGROUNDS_R4_LOCALES || {};
   rootData.common = rootData.common || {};
   rootData.common.vi = Object.assign({
+    "↺ Reset all": "↺ Đặt lại",
+    "↺ New world": "↺ Thế giới mới",
+    "Before you read": "Trước khi đọc",
+    "Misconceptions to test:": "Những hiểu lầm cần kiểm tra:",
+    "Core question:": "Câu hỏi trọng tâm:",
+    "Run and watch:": "Chạy và quan sát:",
+    "Predict first:": "Dự đoán trước:",
+    "Explain afterward:": "Giải thích sau:",
+    "Apply and compare": "Áp dụng và so sánh",
+    "Start with the featured experiment, then use the scenarios to test a prediction.": "Bắt đầu với thí nghiệm nổi bật, rồi dùng các tình huống để kiểm tra dự đoán.",
+    "Open the mechanism view and lesson sequence when you need to explain why the result changed.": "Mở phần mô tả cơ chế và trình tự bài học khi cần giải thích vì sao kết quả thay đổi.",
+    "Collect reasoning with the worksheet or the local student response packet.": "Ghi lại lập luận bằng phiếu học tập hoặc bộ câu trả lời của học sinh được lưu cục bộ.",
+    "Use the text-state description and keyboard guidance when the visual display is not enough.": "Dùng mô tả trạng thái bằng văn bản và hướng dẫn bàn phím khi hình ảnh hiển thị chưa đủ.",
+    "Applet learning modes": "Các chế độ học tập của applet",
+    "Copy this experiment": "Sao chép thí nghiệm này",
+    "Experiment link copied.": "Đã sao chép liên kết thí nghiệm.",
+    "Copy this experiment URL": "Sao chép URL của thí nghiệm này",
+    "Understand": "Tìm hiểu",
+    "Use in class": "Dùng trong lớp",
+    "Text and keyboard": "Văn bản và bàn phím",
+    "What this applet shows": "Điều applet này minh họa",
+
     "Jump to latest": "Về trạng thái mới nhất",
     "Jump to frame": "Đến khung",
     "Jump to iteration": "Đến lần lặp",
@@ -4766,6 +4859,28 @@ document.addEventListener('DOMContentLoaded', () => {
     'Wumpus World': 'Thế giới Wumpus'
   }, rootData.common.vi || {});
   rootData.common.es = Object.assign({
+    "↺ Reset all": "↺ Restablecer",
+    "↺ New world": "↺ Nuevo mundo",
+    "Before you read": "Antes de leer",
+    "Misconceptions to test:": "Ideas erróneas que comprobar:",
+    "Core question:": "Pregunta central:",
+    "Run and watch:": "Ejecuta y observa:",
+    "Predict first:": "Predice primero:",
+    "Explain afterward:": "Explica después:",
+    "Apply and compare": "Aplicar y comparar",
+    "Start with the featured experiment, then use the scenarios to test a prediction.": "Empieza con el experimento destacado y usa los escenarios para comprobar una predicción.",
+    "Open the mechanism view and lesson sequence when you need to explain why the result changed.": "Abre la vista del mecanismo y la secuencia de la lección para explicar por qué cambió el resultado.",
+    "Collect reasoning with the worksheet or the local student response packet.": "Recoge el razonamiento con la hoja de actividades o el cuaderno de respuestas del estudiante guardado localmente.",
+    "Use the text-state description and keyboard guidance when the visual display is not enough.": "Usa la descripción textual del estado y la guía del teclado cuando la visualización no sea suficiente.",
+    "Applet learning modes": "Modos de aprendizaje del applet",
+    "Copy this experiment": "Copiar este experimento",
+    "Experiment link copied.": "Enlace del experimento copiado.",
+    "Copy this experiment URL": "Copia la URL de este experimento",
+    "Understand": "Comprender",
+    "Use in class": "Usar en clase",
+    "Text and keyboard": "Texto y teclado",
+    "What this applet shows": "Lo que muestra este applet",
+
     "Jump to latest": "Ir al estado más reciente",
     "Jump to frame": "Ir al estado",
     "Jump to iteration": "Ir a la iteración",
@@ -4807,6 +4922,43 @@ document.addEventListener('DOMContentLoaded', () => {
   // R4 stays invisible until the applet-specific VI/ES catalog is complete.
   if (!data || data.ready !== true || !data.vi || !data.es) return;
 
+  // Scope navigation labels to the footer; Source in a mechanism is not source code.
+  const footerLabels = {"vi":{"footer-top":"↑ Lên đầu trang","footer-portfolio":"Hồ sơ","footer-source":"Mã nguồn","footer-issue":"Báo lỗi"},"es":{"footer-top":"↑ Volver arriba","footer-portfolio":"Portafolio","footer-source":"Código fuente","footer-issue":"Informar de un problema"}};
+  // Teacher headings and short rich-text fragments never enter substring lookup.
+  const teacherLabels = {vi: {'For teachers': 'Dành cho giáo viên', 'Curriculum:': 'Nội dung học:', 'Pre-exploration prompts:': 'Câu hỏi trước khi khám phá:', 'Post-exploration prompts:': 'Câu hỏi sau khi khám phá:'}, es: {'For teachers': 'Para docentes', 'Curriculum:': 'Contenidos:', 'Pre-exploration prompts:': 'Preguntas antes de explorar:', 'Post-exploration prompts:': 'Preguntas después de explorar:'}};
+  // Exact original-header titles only; never translate body or learner text in ZH.
+  const headerTitlesZh = {
+    "Copy an <iframe> snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.": "复制用于嵌入学习管理系统（LMS）的 <iframe> 代码。隐藏页头和说明，仅显示交互区。",
+    "Reset everything to defaults: empty grid, A*, default start and goal positions.": "恢复默认设置：空网格、A* 算法及默认起点和终点。",
+    "Reset everything to defaults: TSP, best-improvement, T₀=10, cooling=0.995.": "恢复默认设置：旅行商问题、最佳改进法、初始温度 T₀=10、降温系数 0.995。",
+    "Generate a new random world, clear the log, reset score.": "生成新的随机世界，清空日志并重置分数。",
+    "Reset input to default 'modus ponens' example.": "将输入恢复为默认的“肯定前件式”示例。",
+    "Reset to default disease scenario: prior=1%, sensitivity=99%, specificity=95%, population=10000.": "恢复默认疾病检测情景：患病率 1%、灵敏度 99%、特异度 95%、人数 10000。",
+    "Reset CPTs to AIMA defaults and clear all evidence.": "将条件概率表恢复为 AIMA 默认值，并清除所有观测证据。",
+    "Reset everything to defaults: two-moons dataset, k=5, both visualizations on.": "恢复默认设置：双月数据集、k=5，并开启两个可视化图层。",
+    "Reset everything: sin truth, n=20 points, σ=0.2 noise, degree 3, λ=0.": "恢复默认设置：真实函数为 sin、n=20 个点、噪声 σ=0.2、多项式次数为 3、λ=0。",
+    "Reset everything to default: two-moons dataset, [2-6-4-1] architecture, ReLU activation, LR=0.03.": "恢复默认设置：双月数据集、[2-6-4-1] 网络结构、ReLU 激活函数、学习率 0.03。",
+    "Reset everything to the default: Gaussian mixture dataset, k=3, random init.": "恢复默认设置：高斯混合数据集、k=3、随机初始化。",
+    "Reset to default: cross input, Sobel-X edge kernel, abs ON, ReLU OFF.": "恢复默认设置：十字形输入、Sobel-X 边缘检测核，开启绝对值变换，关闭 ReLU。",
+    "Clear Q-values; restore the default grid, learning rate, discount factor, exploration rate and step reward.": "清空 Q 值；将网格、学习率、折扣因子、探索率和每步奖励恢复为默认值。",
+    "Download the current grid + search trace as a PNG.": "将当前网格和搜索轨迹下载为 PNG 图片。",
+    "Download the current state visualization as a PNG.": "将当前状态的可视化下载为 PNG 图片。",
+    "Download the world view as a PNG.": "将世界视图下载为 PNG 图片。",
+    "Download the population dot-grid as a PNG.": "将人群点阵图下载为 PNG 图片。",
+    "Download the network diagram as a PNG.": "将网络图下载为 PNG 图片。",
+    "Download the current points + decision boundary as a PNG.": "将当前数据点和决策边界下载为 PNG 图片。",
+    "Download the fit canvas as a PNG.": "将拟合图下载为 PNG 图片。",
+    "Download the decision-boundary canvas as a PNG.": "将决策边界图下载为 PNG 图片。",
+    "Download the current visualization as a PNG image (for slides).": "将当前可视化下载为 PNG 图片（可用于幻灯片）。",
+    "Download the convolution output as a PNG.": "将卷积输出下载为 PNG 图片。",
+    "Download the current grid + Q-value heatmap as a PNG.": "将当前网格和 Q 值热力图下载为 PNG 图片。",
+    "Download grid dimensions and search results (path coordinates, visited-node count, frontier snapshot) as CSV.": "将网格尺寸和搜索结果（路径坐标、已访问节点数、搜索前沿快照）下载为 CSV。",
+    "Download per-iteration costs, algorithm, problem, iteration count and best cost as CSV.": "将每次迭代的代价、算法、问题、迭代次数和最佳代价下载为 CSV。",
+    "Download the current Bayes scenario (prior, sens, spec, population) and the resulting contingency table + posteriors as CSV.": "将当前贝叶斯情景（先验概率、灵敏度、特异度、人数）、列联表和后验概率下载为 CSV。",
+    "Download training + validation datasets and the per-degree MSE table as CSV.": "将训练集、验证集和各多项式次数的均方误差表下载为 CSV。",
+    "Download points + cluster assignments + centroid positions as CSV (two sections in one file).": "将数据点、所属簇和质心位置下载为 CSV（同一文件内分为两个部分）。",
+    "Download episode return history + the current Q-table snapshot as CSV.": "将各回合的回报历史和当前 Q 表快照下载为 CSV。"
+  };
   let current = 'en';
   let applying = false;
   let nativeLanguageClick = false;
@@ -4875,6 +5027,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function skipNode(node) {
     const el = node && (node.nodeType === 1 ? node : node.parentElement);
     if (!el) return true;
+    if (el.closest('.suite-guided-actual')) return false;
     return !!el.closest('script,style,noscript,template,code,pre,kbd,samp,.lang-switch,[data-r4-no-translate]');
   }
 
@@ -4893,7 +5046,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const live = node.nodeValue || '';
     if (!originalText.has(node)) originalText.set(node, live);
     const source = textSource(node);
-    const translated = translateString(source);
+    const footerKey = node.parentElement?.closest('footer [data-i18n]')?.dataset.i18n;
+    // Match formatted teacher prose only; retain source and outer whitespace.
+    const proseKey = node.parentElement?.closest('.for-teachers')
+      ? source.replace(/\s+/g, ' ').trim() : null;
+    const proseMap = proseKey === null ? null
+      : Object.assign({}, mapFor(current), data[current]?.teacher || {}, teacherLabels[current] || {});
+    const prose = proseMap && Object.prototype.hasOwnProperty.call(proseMap, proseKey)
+      ? source.replace(/\S(?:[\s\S]*\S)?/, () => proseMap[proseKey]) : null;
+    const translated = footerLabels[current]?.[footerKey] || prose || translateString(source);
     if (translated !== live) {
       lastAppliedText.set(node, translated);
       applying = true;
@@ -4902,15 +5063,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function translateAttributes(el) {
+  function translateAttributes(el, attributes = ['title', 'aria-label', 'placeholder']) {
     if (!el || el.nodeType !== 1 || skipNode(el)) return;
     const state = attrState(el);
-    for (const attr of ['title', 'aria-label', 'placeholder']) {
+    for (const attr of attributes) {
       if (!el.hasAttribute(attr)) continue;
       const live = el.getAttribute(attr) || '';
       if (!Object.prototype.hasOwnProperty.call(state, attr)) state[attr] = live;
       const source = Object.prototype.hasOwnProperty.call(state, attr) ? state[attr] : live;
-      const translated = translateString(source);
+      const zhTitle = current === 'zh' && attr === 'title' && el.closest('.header-actions')
+        && ['hardReset', 'embedLink', 'csvExport', 'exportPng'].includes(el.id)
+        ? headerTitlesZh[source] : null;
+      const translated = current === 'zh'
+        ? (typeof zhTitle === 'string' ? zhTitle : live) : translateString(source);
       if (translated !== live) {
         const applied = lastAppliedAttrs.get(el) || {};
         applied[attr] = translated;
@@ -4920,6 +5085,14 @@ document.addEventListener('DOMContentLoaded', () => {
         applying = false;
       }
     }
+  }
+
+  function refreshHeaderTitles() {
+    if (current !== 'en' && current !== 'zh') return;
+    document.querySelectorAll('.header-actions #hardReset,.header-actions #embedLink,.header-actions #csvExport,.header-actions #exportPng').forEach(el => {
+      const source = originalAttrs.get(el)?.title ?? el.getAttribute('title');
+      if (Object.prototype.hasOwnProperty.call(headerTitlesZh, source)) translateAttributes(el, ['title']);
+    });
   }
 
   function translateTree(root = document.body) {
@@ -5026,24 +5199,28 @@ document.addEventListener('DOMContentLoaded', () => {
     window.tr = wrapped;
   }
 
-  function patchClipboard() {
-    try {
-      const clipboard = navigator.clipboard;
-      if (!clipboard || typeof clipboard.writeText !== 'function' || clipboard.writeText.__r4Wrapped) return;
-      const base = clipboard.writeText.bind(clipboard);
-      const wrapped = text => base(current === 'vi' || current === 'es' ? translateString(String(text), current) : text);
-      wrapped.__r4Wrapped = true;
-      clipboard.writeText = wrapped;
-    } catch (_) {}
-  }
-
   function selectControl() {
     return document.querySelector('.r4-language-select');
   }
 
   function updateSelect(locale) {
+    const names = {
+      en: ['Language', 'Toggle dark or light theme'],
+      zh: ['语言', '切换深色或浅色主题'],
+      vi: ['Ngôn ngữ', 'Chuyển giao diện tối hoặc sáng'],
+      es: ['Idioma', 'Cambiar entre tema oscuro y claro']
+    }[locale];
     const select = selectControl();
-    if (select) select.value = locale;
+    if (select) {
+      select.value = locale;
+      select.setAttribute('aria-label', names[0]);
+    }
+    const theme = document.getElementById('themeToggle');
+    if (theme) {
+      theme.setAttribute('data-r4-no-translate', '1');
+      theme.setAttribute('aria-label', names[1]);
+      theme.setAttribute('title', names[1]);
+    }
   }
 
   function activateOverlay(locale) {
@@ -5053,7 +5230,7 @@ document.addEventListener('DOMContentLoaded', () => {
     current = locale;
     document.documentElement.lang = locale;
     wrapTr();
-    patchClipboard();
+    // Exporters localize their labels; never translate learner-authored clipboard data.
     applyMetadata(locale);
     translateTree(document.body);
     updateSelect(locale);
@@ -5075,6 +5252,7 @@ document.addEventListener('DOMContentLoaded', () => {
       clickNative(locale);
       document.documentElement.lang = locale === 'zh' ? 'zh' : 'en';
       refreshKnownLayers();
+      refreshHeaderTitles();
       if (locale === 'en') {
         const heading = document.querySelector('h1');
         if (heading && canonicalHeadingText) {
@@ -5123,10 +5301,10 @@ document.addEventListener('DOMContentLoaded', () => {
     for (const mutation of mutations) {
       if (mutation.type === 'characterData') {
         const live = mutation.target.nodeValue || '';
-        if (lastAppliedText.get(mutation.target) === live) {
-          lastAppliedText.delete(mutation.target);
-          continue;
-        }
+        // Several queued records can observe the same final translated value.
+        // Retain its marker until a genuinely different applet value arrives.
+        if (lastAppliedText.get(mutation.target) === live) continue;
+        lastAppliedText.delete(mutation.target);
         // Applet-authored dynamic state is always a new source value, including
         // while English or Chinese is active. This is what prevents a later locale
         // switch from restoring stale page-load state.
@@ -5136,15 +5314,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const attr = mutation.attributeName;
         const live = mutation.target.getAttribute(attr) || '';
         const applied = lastAppliedAttrs.get(mutation.target) || {};
-        if (applied[attr] === live) {
-          delete applied[attr];
-          lastAppliedAttrs.set(mutation.target, applied);
-          continue;
-        }
+        if (applied[attr] === live) continue;
+        delete applied[attr];
         const state = attrState(mutation.target);
         state[attr] = live;
-        if (current === 'vi' || current === 'es') translateAttributes(mutation.target);
+        // Do not overwrite a sibling attribute whose native write is still queued.
+        if (current === 'vi' || current === 'es' || current === 'zh' && attr === 'title') translateAttributes(mutation.target, [attr]);
       } else {
+        // The native original galleries have no Chinese confirmation entry.
+        // Localize only this generated button message, never learner text.
+        if (current === 'zh' && mutation.target.matches?.('.scenario-card button')
+            && mutation.target.textContent === '✓ Applied; compare the result') {
+          mutation.target.textContent = '✓ 已应用；请比较结果';
+        }
+        // Locale renderers replace the original gallery's cards, not its model.
+        // Carry the last applied marker by stable ID; never click/reapply a case.
+        if (mutation.target.id === 'scenarioGalleryCards' && !mutation.target.querySelector('.applied')) {
+          const previous = [...mutation.removedNodes].find(node => node.nodeType === 1 && node.matches('.scenario-card.applied'));
+          const index = previous?.dataset.scenarioIndex;
+          if (index !== undefined) [...mutation.target.children]
+            .find(node => node.dataset.scenarioIndex === index)?.classList.add('applied');
+        }
         mutation.addedNodes.forEach(node => {
           if (current === 'vi' || current === 'es') translateTree(node);
         });
@@ -5158,7 +5348,7 @@ document.addEventListener('DOMContentLoaded', () => {
     canonicalHeadingText = initialHeading ? initialHeading.textContent : '';
     installSelect();
     wrapTr();
-    patchClipboard();
+    // Exporters localize their labels; never translate learner-authored clipboard data.
     observer.observe(document.body, { subtree:true, childList:true, characterData:true, attributes:true, attributeFilter:['title','aria-label','placeholder'] });
     // Legacy language handlers in some applets rebuild or reset the experiment as
     // part of their EN/ZH switch. R4 invokes those buttons only as an internal
@@ -5178,6 +5368,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (nativeLanguageClick) return;
         const locale = normalizeLocale(button.dataset.lang);
         current = locale;
+        refreshHeaderTitles();
         updateSelect(locale);
         persist(locale);
       });
@@ -5198,7 +5389,7 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 </script>
-<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.5</div>
+<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.6</div>
 
 <script id="cnf-engagement-excellence-runtime">
 (()=>{'use strict';
@@ -5223,7 +5414,7 @@ function init(){if(!P()||!$('#dpllPlayer'))return setTimeout(init,0);install();w
 </script>
 
 <!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
-<script data-ai-playgrounds-analytics="v1.9.5">
+<script data-ai-playgrounds-analytics="v1.9.6">
 (function () {
   'use strict';
   var CANONICAL_HOST = 'lmdixon23.github.io';
@@ -5339,5 +5530,116 @@ function init(){if(!P()||!$('#dpllPlayer'))return setTimeout(init,0);install();w
   sendPage();
 })();
 </script>
+<script id="classroom-draft-runtime">
+(() => {
+  'use strict';
+  const root = document.querySelector('[data-quick-assign-id]');
+  if (!root) return;
+  const original = !!root.querySelector('[data-lab-answer]');
+  const fields = [...root.querySelectorAll('[data-lab-answer],[data-qa-answer]')];
+  const state = root.querySelector('[data-lab-state],[data-qa-modern-state]');
+  const status = root.querySelector('.lab-status');
+  const slug = window.APPLET_LEARNER_PROFILE?.slug;
+  const key = original ? 'ai-playgrounds-lab-' + slug : 'ai-playgrounds-quick-assign:' + root.dataset.quickAssignId;
+  const locale = () => document.documentElement.lang.toLowerCase().split('-')[0];
+  const COPY = {
+    en: {confirm:'Clear this lab’s saved answers and captured evidence? This cannot be undone.', failed:'Your draft could not be saved in this browser. Copy or print it before closing this page.', cleared:'Local answers and captured evidence cleared.', removeFailed:'The saved draft could not be cleared. Your answers are still here.', restoreFailed:'The saved draft could not be read. Copy or print your work before reloading; clear the draft only if you want to discard it.'},
+    zh: {confirm:'清除此实验已保存的答案和状态记录？此操作无法撤销。', failed:'无法在此浏览器中保存草稿。关闭页面前请复制或打印。', cleared:'已清除本地答案和状态记录。', removeFailed:'无法清除已保存的草稿。你的答案仍保留在这里。', restoreFailed:'无法读取已保存的草稿。重新加载前请复制或打印你的内容；只有确认要丢弃草稿时才清除它。'},
+    vi: {confirm:'Xóa câu trả lời đã lưu và bằng chứng đã chụp của bài này? Không thể hoàn tác.', failed:'Không thể lưu bản nháp trong trình duyệt này. Hãy sao chép hoặc in trước khi đóng trang.', cleared:'Đã xóa câu trả lời cục bộ và bằng chứng đã chụp.', removeFailed:'Không thể xóa bản nháp đã lưu. Câu trả lời của bạn vẫn còn ở đây.', restoreFailed:'Không thể đọc bản nháp đã lưu. Hãy sao chép hoặc in bài trước khi tải lại; chỉ xóa bản nháp nếu muốn bỏ nó.'},
+    es: {confirm:'¿Borrar las respuestas guardadas y la evidencia capturada de este laboratorio? No se puede deshacer.', failed:'No se pudo guardar el borrador en este navegador. Cópialo o imprímelo antes de cerrar esta página.', cleared:'Se borraron las respuestas locales y la evidencia capturada.', removeFailed:'No se pudo borrar el borrador guardado. Tus respuestas siguen aquí.', restoreFailed:'No se pudo leer el borrador guardado. Copia o imprime tu trabajo antes de recargar; bórralo solo si deseas descartarlo.'}
+  };
+  const copy = () => COPY[locale()] || COPY.en;
+  const message = name => { if (status) { status.textContent = copy()[name]; status.dataset.draftError = ['failed','removeFailed','restoreFailed'].includes(name) ? name : ''; } };
+  new MutationObserver(() => { if (status?.dataset.draftError) message(status.dataset.draftError); }).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+  const captured = () => !!state && !!state.textContent.trim() && (state.hasAttribute('data-r4-no-translate') || state.dataset.qaStateReady === '1');
+  function retainCapture(text, lang) {
+    if (!state) return;
+    state.textContent = text;
+    state.lang = ['en','zh','vi','es'].includes(lang) ? lang : 'en';
+    state.setAttribute('data-r4-no-translate','');
+    state.dataset.qaStateReady = '1';
+    for (const n of [13,14,15]) state.setAttribute('data-lab'+n+'-no-translate','');
+    for (const lang of ['en','zh','vi','es']) state.removeAttribute('data-ap-'+lang);
+  }
+  const fieldName = field => field.dataset.labAnswer || field.dataset.qaAnswer;
+  const dirty = new Set();
+  let captureDirty = false, unreadable = false;
+  function readDraft() {
+    const data = JSON.parse(localStorage.getItem(key) || '{}');
+    if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Invalid draft');
+    for (const field of fields) if (data[fieldName(field)] !== undefined && typeof data[fieldName(field)] !== 'string') throw new Error('Invalid answer');
+    if (data.__capture !== undefined && typeof data.__capture?.text !== 'string') throw new Error('Invalid capture');
+    unreadable = false;
+    return data;
+  }
+  function applyDraft(data) {
+    for (const field of fields) if (!dirty.has(fieldName(field))) field.value = data[fieldName(field)] || '';
+    if (!captureDirty) {
+      if (data.__capture) retainCapture(data.__capture.text, data.__capture.lang);
+      else if (captured()) retainCapture('', locale());
+    }
+  }
+  function save(field, refresh = false) {
+    if (field) dirty.add(fieldName(field));
+    captureDirty ||= refresh;
+    try {
+      // Merge only this tab's edits into the latest stored packet. A stale tab
+      // must not replace another tab's different answer or explicit capture.
+      const latest = readDraft();
+      const data = Object.fromEntries(fields.map(field => {
+        const name = fieldName(field);
+        return [name, dirty.has(name) ? field.value : latest[name] || ''];
+      }));
+      if (captureDirty && captured()) data.__capture = {text:state.textContent, lang:state.lang};
+      else if (!captureDirty && latest.__capture) data.__capture = latest.__capture;
+      localStorage.setItem(key, JSON.stringify(data));
+      dirty.clear(); captureDirty = false;
+      if (status?.dataset.draftError || Object.values(COPY).some(value => status?.textContent === value.cleared)) { status.textContent=''; delete status.dataset.draftError; }
+    } catch (_) { message('failed'); }
+  }
+  try { applyDraft(readDraft()); }
+  catch (_) { unreadable = true; message('restoreFailed'); }
+  window.addEventListener('storage', event => {
+    if (event.key !== key && event.key !== null) return;
+    try {
+      if (event.storageArea !== localStorage) return;
+      // Read the latest value, not a possibly superseded queued storage event.
+      applyDraft(readDraft());
+    } catch (_) { unreadable = true; message('restoreFailed'); }
+  });
+  // One owner saves the complete packet before legacy answer-only handlers run.
+  document.addEventListener('input', event => {
+    if (!fields.includes(event.target)) return;
+    event.stopImmediatePropagation();
+    save(event.target);
+  }, true);
+  document.addEventListener('click', event => {
+    const button = event.target.closest?.('[data-lab-action],[data-qa-action]');
+    if (!button || !root.contains(button)) return;
+    const action = button.dataset.labAction || button.dataset.qaAction;
+    if (action === 'refresh' || action === 'refresh-state') {
+      // Capture is synchronous in each native packet; persist its finished result.
+      queueMicrotask(() => save(null, true));
+      return;
+    }
+    if (action !== 'clear') return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (!fields.some(field => field.value) && !captured() && !unreadable) return;
+    if (!window.confirm(copy().confirm)) return;
+    try { localStorage.removeItem(key); }
+    catch (_) { message('removeFailed'); return; }
+    dirty.clear(); captureDirty = false; unreadable = false;
+    for (const field of fields) field.value = '';
+    if (state) {
+      // An empty capture is intentional; do not restore or recapture live results.
+      retainCapture('', locale());
+    }
+    message('cleared');
+    fields[0]?.focus();
+  }, true);
+})();
+</script>
+
 </body>
 </html>

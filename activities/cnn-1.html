@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="ai-playgrounds-version" content="1.9.5">
+<meta name="ai-playgrounds-version" content="1.9.6">
 <title>CNN-1 · Be the filter | AI Playgrounds</title>
 <meta name="description" content="Student activity for the AI Playgrounds Convolution Playground: calculate one convolution, inspect edges, learn a filter, and test pooling.">
 <link rel="canonical" href="https://lmdixon23.github.io/ai-playgrounds/activities/cnn-1.html">
@@ -11,6 +11,14 @@
 :root{color-scheme:light dark;--bg:#f8fafc;--card:#fff;--ink:#0f172a;--muted:#475569;--line:#cbd5e1;--accent:#0f766e;--soft:#ecfdf5;--good:#047857}
 @media(prefers-color-scheme:dark){:root{--bg:#020617;--card:#0f172a;--ink:#e5e7eb;--muted:#cbd5e1;--line:#334155;--accent:#5eead4;--soft:#042f2e;--good:#6ee7b7}}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}main{max-width:980px;margin:auto;padding:28px 20px 80px}a{color:var(--accent)}.toolbar{position:sticky;top:8px;z-index:20;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-bottom:14px}.button,button{min-height:44px;padding:9px 13px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}.primary{background:var(--accent);color:#fff;border-color:transparent}.hero,.section,.run,.rubric,.privacy{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin:16px 0}.hero{border-top:5px solid var(--accent)}.eyebrow{margin:0;color:var(--accent);font-size:.78rem;font-weight:850;letter-spacing:.09em;text-transform:uppercase}.hero h1{font-size:clamp(2rem,5vw,3.7rem);line-height:1;margin:.18em 0}.lead{font-size:1.08rem}.golden{border-left:5px solid var(--good);background:var(--soft);padding:12px 15px;border-radius:12px}.meta-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0}.meta-grid>div{border:1px solid var(--line);border-radius:12px;padding:10px}.controls,.rubric table{width:100%;border-collapse:collapse}.controls th,.controls td,.rubric th,.rubric td{border:1px solid var(--line);padding:9px;text-align:left;vertical-align:top}.controls th,.rubric th{background:var(--soft)}.run h3{margin-top:0;color:var(--accent)}.setup{background:var(--soft);padding:10px 12px;border-radius:10px}.prompt{margin:15px 0}.prompt label{display:block;font-weight:800;margin-bottom:6px}.prompt small{display:block;color:var(--muted);font-weight:400;margin-top:3px}textarea{width:100%;min-height:92px;resize:vertical;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:10px;font:inherit}.short{min-height:68px}.status{min-height:1.4em;color:var(--good);font-size:.9rem}.privacy{border-left:5px solid var(--accent)}.calc{display:grid;grid-template-columns:1fr 1fr;gap:16px}.matrix{border-collapse:collapse;margin:8px 0}.matrix td{border:1px solid var(--line);padding:8px 12px;text-align:center;font-family:ui-monospace,monospace;font-weight:700}:focus-visible{outline:3px solid var(--accent);outline-offset:3px}@media(max-width:680px){main{padding:18px 12px 58px}.hero,.section,.run,.rubric,.privacy{padding:16px}.meta-grid,.calc{grid-template-columns:1fr}.toolbar{position:static;justify-content:stretch}.toolbar>*{flex:1 1 auto;justify-content:center}.controls{display:block;overflow-x:auto}.hero h1{font-size:2.5rem}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}@media print{body{background:white;color:black;font-size:10.5pt}main{max-width:none;padding:0}.toolbar,.status,.privacy .screen-only{display:none!important}.hero,.section,.run,.rubric,.privacy{box-shadow:none;border-radius:0;break-inside:avoid;margin:8mm 0;padding:5mm}.run{break-inside:auto}.prompt{break-inside:avoid}textarea{min-height:28mm;background:white;color:black}.short{min-height:20mm}a{color:black;text-decoration:none}.meta-grid{grid-template-columns:repeat(3,1fr)}}
+.print-response{display:none}
+@media print{
+ :root{color-scheme:light;--bg:#fff;--card:#fff;--ink:#000;--muted:#333;--line:#aaa;--accent:#000;--soft:#fff;--good:#000}
+ .activity-print-ready [data-response]{display:none!important}
+ .activity-print-ready .print-response{display:block;white-space:pre-wrap;overflow-wrap:anywhere;min-height:28mm;border:1px solid #cbd5e1;padding:10px;color:black;background:white;orphans:3;widows:3}
+ .activity-print-ready .print-response.short{min-height:20mm}
+ .activity-print-ready .prompt label{break-after:avoid}
+}
 </style>
 <style>
 .ap-support-skip{position:fixed;top:-5rem;left:.75rem;z-index:1000;display:inline-flex;align-items:center;min-height:44px;padding:.65rem .9rem;border:2px solid #fff;border-radius:.625rem;background:#111827;color:#fff;font:700 1rem/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.3)}
@@ -94,7 +102,7 @@
 </section>
 <section class="section">
 <h2>Part C · Reflection and transfer</h2>
-<div class="prompt"><label for="c1">1. Traceability: Choose one prediction that was wrong. What did you predict, what happened, and what did it teach you about filters?</label><textarea id="c1" data-response></textarea></div>
+<div class="prompt"><label for="c1">1. Traceability: Choose one prediction. Did evidence support or challenge it? What happened, and what did you learn about filters?</label><textarea id="c1" data-response></textarea></div>
 <div class="prompt"><label for="c2">2. Counterfactual: What is the most important difference between selecting a hand-designed filter such as Sobel-X and learning a filter from data?</label><textarea id="c2" data-response></textarea></div>
 <div class="prompt"><label for="c3">3. Connect back and forward: Based on neural-network weight learning and this learned filter, predict how many learned filters in deeper layers could help recognize a complex object.</label><textarea id="c3" data-response></textarea></div>
 </section>
@@ -107,27 +115,51 @@
 <tr><td>Reflection</td><td>Reasoning from experimental evidence and connection to later CNN ideas.</td></tr>
 </tbody></table>
 </section>
-<section class="privacy"><h2>Local response storage</h2><p>Your typed responses are saved only in this browser using local storage so an accidental refresh does not erase your work. Nothing on this activity page submits answers to AI Playgrounds. <span class="screen-only">Use <strong>Clear responses</strong> to remove the saved copy from this browser.</span></p></section>
-<footer><p>AI Playgrounds · Activity CNN-1 · v1.5.1</p></footer>
+<section class="privacy"><h2>Local response storage</h2><p>Responses save locally when browser storage is available. If saving fails, use Print / PDF before closing or reloading this page. Nothing on this activity page submits answers to AI Playgrounds. <span class="screen-only">Use <strong>Clear responses</strong> to remove the saved copy from this browser.</span></p></section>
+<footer><p>AI Playgrounds · Activity CNN-1 · Introduced in v1.5.1 · Site v1.9.6</p></footer>
 </main>
 <script>
 (()=>{'use strict';
 const KEY='ai-playgrounds-activity-cnn-1-v1';
 const fields=[...document.querySelectorAll('[data-response]')];
 const status=document.getElementById('saveStatus');
-function setStatus(text){status.textContent=text;clearTimeout(setStatus.t);setStatus.t=setTimeout(()=>{status.textContent='Responses saved locally in this browser.'},1800)}
-function snapshot(){return Object.fromEntries(fields.map(f=>[f.id,f.value]))}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(snapshot()));setStatus('Saved locally.')}catch(_){status.textContent='Local save is unavailable in this browser.'}}
-function load(){try{const raw=localStorage.getItem(KEY);if(!raw)return;const data=JSON.parse(raw);fields.forEach(f=>{if(Object.prototype.hasOwnProperty.call(data,f.id))f.value=String(data[f.id]??'')});status.textContent='Restored responses saved in this browser.'}catch(_){status.textContent='Could not restore the locally saved response.'}}
+const dirty=new Set();
+function setStatus(text){status.textContent=text}
+function readDraft(){
+ const data=JSON.parse(localStorage.getItem(KEY)||'{}');
+ if(!data||typeof data!=='object'||Array.isArray(data))throw new Error('Invalid draft');
+ for(const f of fields)if(data[f.id]!==undefined&&typeof data[f.id]!=='string')throw new Error('Invalid answer');
+ return data;
+}
+function applyDraft(data){fields.forEach(f=>{if(!dirty.has(f.id))f.value=data[f.id]||''})}
+function save(event){
+ dirty.add(event.target.id);
+ try{const latest=readDraft();const data=Object.fromEntries(fields.map(f=>[f.id,dirty.has(f.id)?f.value:latest[f.id]||'']));localStorage.setItem(KEY,JSON.stringify(data));dirty.clear();setStatus('Saved locally.')}
+ catch(_){setStatus('Local save failed. Your answers are still on this page. Use Print / PDF before closing.')}
+}
+function load(){try{applyDraft(readDraft())}catch(_){setStatus('Could not read the saved draft. Use Print / PDF to keep your work; clear responses only to discard the saved draft.')}}
 fields.forEach(f=>f.addEventListener('input',save));
+window.addEventListener('storage',event=>{if(event.key===KEY||event.key===null)load()});
+function finishPrint(){document.documentElement.classList.remove('activity-print-ready');document.querySelectorAll('.print-response').forEach(node=>node.remove())}
+function preparePrint(){
+ finishPrint();
+ fields.forEach(field=>{const copy=document.createElement('div');copy.className='print-response'+(field.classList.contains('short')?' short':'');copy.textContent=field.value;field.after(copy)});
+ document.documentElement.classList.add('activity-print-ready');
+}
+window.addEventListener('beforeprint',preparePrint);
+window.addEventListener('afterprint',finishPrint);
 document.getElementById('printBtn').addEventListener('click',()=>window.print());
-document.getElementById('clearBtn').addEventListener('click',()=>{if(!confirm('Clear all CNN-1 responses saved in this browser?'))return;fields.forEach(f=>f.value='');try{localStorage.removeItem(KEY)}catch(_){}setStatus('Responses cleared.');fields[0]?.focus()});
+document.getElementById('clearBtn').addEventListener('click',()=>{
+ if(!confirm('Clear all CNN-1 responses saved in this browser?'))return;
+ try{localStorage.removeItem(KEY)}catch(_){setStatus('Could not clear the saved draft. Your answers are still here. Use Print / PDF to keep a copy.');return}
+ dirty.clear();fields.forEach(f=>f.value='');setStatus('Responses cleared.');fields[0]?.focus();
+});
 load();
 })();
 </script>
 
 <!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
-<script data-ai-playgrounds-analytics="v1.9.5">
+<script data-ai-playgrounds-analytics="v1.9.6">
 (function () {
   'use strict';
   var CANONICAL_HOST = 'lmdixon23.github.io';

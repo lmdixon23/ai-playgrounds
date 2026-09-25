@@ -2,9 +2,22 @@
 
 This is the reader-facing release index. The [website release history](https://lmdixon23.github.io/ai-playgrounds/release-notes.html) preserves the longer historical narrative. Published tags and download assets are version-specific and are not rewritten to match newer releases.
 
+## v1.9.6
+
+Corrects educational explanations and translated assignment prompts, aligns NN-1 with teacher guidance, improves enlarged-text layouts and dark teaching-text contrast, restores KNN mode-specific control visibility, and displays the current version in every lab.
+
+
+Aligned settings exports and keyboard recovery across the suite. Corrected Minimax prediction/reveal consistency, preserved independent classroom edits across tabs, and repaired Activity Pack save, clear and long-answer printing.
+
+Preserved complete classroom drafts and chosen captures, made deletion cancellable, and repaired custom experiment links across reloads. Corrected learning-result summaries, first-visit Monte Carlo and reinforcement-learning reset/replay behavior, and Bayesian preset inference. Activity footers now distinguish their introduction date from the site version.
+
+Aligned the student packet and teacher instructions: predict before acting, pause for evidence, accept supported or challenged predictions, and explain the mechanism. Preserved the one-page English/Chinese printable packet.
+
+Made the featured experiment handoff consistent across all fifteen labs: native controls come into view and receive keyboard focus. Space activates the featured button without triggering the lab-wide play shortcut. That handoff change preserves its scenario settings and learner answers; the separate mechanism and educational corrections are described above. See [current release notes](RELEASE_NOTES.md).
+
 ## v1.9.5
 
-Added missing Vietnamese and Spanish replay action labels across six labs, preserving mechanisms, history, and responsive controls. New native regressions check actual visible and accessible labels on website and independent offline entry forms. See [current release notes](RELEASE_NOTES.md).
+Added missing Vietnamese and Spanish replay action labels across six labs, preserving mechanisms, history, and responsive controls. New native regressions check actual visible and accessible labels on website and independent offline entry forms. See [published v1.9.5](https://github.com/lmdixon23/ai-playgrounds/releases/tag/v1.9.5).
 
 ## v1.9.4
 

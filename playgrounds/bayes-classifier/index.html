@@ -85,7 +85,8 @@
                    line-height: 1.6; }
   .formula-box b { color: var(--accent); }
 
-  .posterior-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  .essay h2, #tourName { overflow-wrap: anywhere; }
+  .posterior-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: 16px;
                      margin-bottom: 18px; font-family: -apple-system, system-ui, sans-serif; }
   .post-card { background: white; border: 2px solid var(--border); border-radius: 8px;
                 padding: 16px; text-align: center; }
@@ -507,6 +508,20 @@
 /* Learner-facing terminology, compact glossary, and consistent action hierarchy. */
 .header-actions{align-items:center}.header-more{position:relative}.header-more>summary{list-style:none;cursor:pointer;user-select:none}.header-more>summary::-webkit-details-marker{display:none}.header-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:50;min-width:220px;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 16px 35px rgba(15,23,42,.18);display:grid;gap:5px}.header-more-menu button{width:100%;text-align:left;justify-content:flex-start;white-space:normal}.key-terms-panel{padding:14px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}.key-terms-intro{margin:0 0 10px;color:var(--muted)}.key-terms-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.key-term{padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:color-mix(in srgb,var(--card) 97%,var(--accent))}.key-term dt{font-weight:800;color:var(--fg);margin:0 0 3px}.key-term dd{margin:0;color:var(--muted);font-size:.84rem;line-height:1.45}.essay-primer{margin:0 0 22px;padding:15px 17px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--card) 96%,var(--accent));border-radius:10px}.essay-primer h2{margin:0 0 6px!important;font-size:1.05rem!important}.essay-primer p{margin:0 0 10px!important}.essay-primer h3{margin:12px 0 7px;font-size:.92rem}.essay-primer-terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0}.essay-primer-terms>div{padding:8px 9px;border:1px solid var(--border);border-radius:8px;background:var(--card)}.essay-primer-terms dt{font-weight:800}.essay-primer-terms dd{margin:2px 0 0;color:var(--muted);font-size:.82rem;line-height:1.4}.scenario-card .scenario-meta{line-height:1.5}.scenario-card .scenario-meta strong{display:block;margin-bottom:2px}.header-actions>.header-png,.header-actions>.header-theme,.header-actions>.header-reset,.header-more>summary{min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px}
 @media(max-width:720px){.essay-primer-terms{grid-template-columns:1fr}.header-actions{width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}.header-actions>button,.header-actions>.header-more,.header-more>summary{width:100%;justify-content:center}.header-more-menu{right:auto;left:0;max-width:min(290px,90vw)}.key-terms-grid{grid-template-columns:1fr}}
+/* Accessible text keeps the lab hue without changing filled controls or plots. */
+body.dark-mode{--accent-text:color-mix(in srgb,var(--fg) 80%,var(--accent))}
+body.dark-mode :is(.page-header .back,.scenario-card h3,.classroom-lab .lab-field label,.essay h2,.essay h3,.essay h4,.visual-card h4,.visual-live strong,.signature-challenge-panel strong,footer a){color:var(--accent-text)}
+body.dark-mode footer a{color:var(--accent-text)!important}
+.essay h2,.key-terms-intro,.worksheet{overflow-wrap:anywhere}
+#tourName{min-width:0;overflow-wrap:anywhere}
+div:has(>#tourName),div:has(>#tourNext){flex-wrap:wrap}
+.slider-block,.mode-tabs,#modeGroup,#initGroup{flex-wrap:wrap;max-width:100%}
+select{min-width:0;max-width:100%}
+.scenario-card h3,.essay-primer-terms>div,p,.tldr,[data-i18n="seq-explain"]{min-width:0;overflow-wrap:anywhere}
+.header-actions>button{overflow-wrap:anywhere;white-space:normal}
+h1,h3,.method-tabs button,.stat-item,.key-term,.world-icon-key li>span:last-child{min-width:0;overflow-wrap:anywhere}
+.stats-strip,div:has(>#ngViewW){flex-wrap:wrap;max-width:100%}
+@media(max-width:360px){.visual-live{box-sizing:border-box;min-width:0;white-space:normal;flex-wrap:wrap}.visual-live>span{min-width:0;overflow-wrap:anywhere}}
 </style>
 <style id="learning-modes-style">
 /* Product information architecture and restrained visual hierarchy. */
@@ -516,7 +531,7 @@
 @media(max-width:820px){.learning-mode-head{align-items:flex-start;flex-direction:column}.learning-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-mode-panel{grid-template-columns:1fr}.learning-mode-panel>details{grid-column:1!important}.copy-experiment{width:100%}}
 </style>
 <link href="../../assets/localization-r4.css" rel="stylesheet"/>
-<meta name="ai-playgrounds-version" content="1.9.5">
+<meta name="ai-playgrounds-version" content="1.9.6">
 
 <style id="v14-version-provenance-style">
 .v14-version-provenance{max-width:1180px;margin:22px auto 10px;padding:12px 18px;border-top:1px solid var(--border,#dbe4ee);color:var(--muted,#64748b);font:12px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center}
@@ -815,27 +830,27 @@
 <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
 <span data-lab-en="🧪 Quick Assign · QA-BAYES-01 · 10–15 min" data-lab-zh="🧪 快速任务 · QA-BAYES-01 · 10–15 分钟">🧪 Quick Assign · QA-BAYES-01 · 10–15 min</span>
 </summary>
-<div class="lab-panel"><div class="quick-assign-meta" data-r4-no-translate="1" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong>QA-BAYES-01</strong> · Level 1 · 10–15 min<br><span>Base rates and false alarms</span></div>
-<p class="lab-intro" data-lab-en="Predict how a positive result changes belief, adjust the prior and test characteristics, then explain the base-rate effect." data-lab-zh="先预测阳性结果如何改变相信程度，再调整先验、灵敏度和特异度，然后解释基率效应。">Predict how a positive result changes belief, adjust the prior and test characteristics, then explain the base-rate effect.</p>
+<div class="lab-panel"><div class="quick-assign-meta" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong data-r4-no-translate="1">QA-BAYES-01</strong> · <span data-lab-en="Level 1 · 10–15 min" data-lab-zh="级别 1 · 10–15 分钟">Level 1 · 10–15 min</span><br><span data-lab-en="Base rates and false alarms" data-lab-zh="基础发生率与误报">Base rates and false alarms</span></div>
+<p class="lab-intro" data-lab-en="Change the base rate and test quality, then explain why a positive result does not automatically mean a high posterior probability." data-lab-zh="改变基础发生率和检测质量，解释为什么阳性结果不一定意味着很高的后验概率。">Change the base rate and test quality, then explain why a positive result does not automatically mean a high posterior probability.</p>
 <div class="lab-grid">
 <div class="lab-field">
 <label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
-<textarea data-lab-answer="predict" data-lab-en="Before moving sliders, will a positive test make disease more likely than healthy? Why?" data-lab-zh="移动滑块前，阳性测试会让“患病”比“健康”更可能吗？为什么？" id="lab-predict" placeholder="Before moving sliders, will a positive test make disease more likely than healthy? Why?"></textarea>
+<textarea data-lab-answer="predict" data-lab-en="Before running, do you expect a high or low posterior after a positive result? Which factor matters most?" data-lab-zh="运行前，你预计阳性结果对应的后验概率较高还是较低？哪个因素最重要？" id="lab-predict" placeholder="Before running, do you expect a high or low posterior after a positive result? Which factor matters most?"></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
-<textarea data-lab-answer="observe" data-lab-en="Change the prior, sensitivity, and specificity. Record one setting where a positive test still leaves low disease probability." data-lab-zh="改变先验、灵敏度和特异度。记录一个阳性测试后患病概率仍较低的设置。" id="lab-observe" placeholder="Change the prior, sensitivity, and specificity. Record one setting where a positive test still leaves low disease probability."></textarea>
+<textarea data-lab-answer="observe" data-lab-en="Run two cases with different base rates. Record the prior, true positives, false positives, and posterior." data-lab-zh="运行两组基础发生率不同的情况。记录先验概率、真阳性、假阳性和后验概率。" id="lab-observe" placeholder="Run two cases with different base rates. Record the prior, true positives, false positives, and posterior."></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
-<textarea data-lab-answer="explain" data-lab-en="Which mattered most in your example: prior, sensitivity, or specificity?" data-lab-zh="在你的例子中，先验、敏感度、特异度哪一个影响最大？" id="lab-explain" placeholder="Which mattered most in your example: prior, sensitivity, or specificity?"></textarea>
+<textarea data-lab-answer="explain" data-lab-en="Why can the same test produce different posteriors when the base rate changes?" data-lab-zh="为什么基础发生率改变时，同一种检测会产生不同的后验概率？" id="lab-explain" placeholder="Why can the same test produce different posteriors when the base rate changes?"></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
-<textarea data-lab-answer="transfer" data-lab-en="Give a non-medical case where the base rate changes how evidence should be interpreted." data-lab-zh="举一个非医学例子，说明基率如何改变对证据的解释。" id="lab-transfer" placeholder="Give a non-medical case where the base rate changes how evidence should be interpreted."></textarea>
+<textarea data-lab-answer="transfer" data-lab-en="In what real situation could ignoring the base rate produce too many false alarms?" data-lab-zh="在什么现实情境下，忽视基础发生率会产生过多误报？" id="lab-transfer" placeholder="In what real situation could ignoring the base rate produce too many false alarms?"></textarea>
 </div>
 </div>
-<div aria-live="polite" class="lab-state" data-lab-state="">State snapshot appears here.</div>
+<div aria-live="polite" class="lab-state" data-lab-state="" data-lab-en="State snapshot appears here." data-lab-zh="状态快照将显示在这里。">State snapshot appears here.</div>
 <div class="lab-actions">
 <button class="step-btn" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态" type="button">↻ Refresh state</button>
 <button class="step-btn" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包" type="button">📋 Copy packet</button>
@@ -1706,7 +1721,8 @@
         scenario.apply();
         card.classList.add('applied');
         btn.textContent = '✓ ' + scenarioGalleryText('sg-applied', 'Applied; compare the result');
-        setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
+        clearTimeout(btn._timer);
+        btn._timer = setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
       });
       card.appendChild(btn);
       root.appendChild(card);
@@ -1784,7 +1800,6 @@
   const LAB_CONFIG = {"slug": "bayes-classifier", "title": "Bayes lab packet", "zhTitle": "贝叶斯实验包", "fields": [{"label": "Prior", "selector": "#priorV", "kind": "text"}, {"label": "Sensitivity", "selector": "#sensV", "kind": "text"}, {"label": "Specificity", "selector": "#specV", "kind": "text"}, {"label": "Population", "selector": "#pop", "kind": "value"}, {"label": "Posterior after positive", "selector": "#posteriorPos", "kind": "text"}, {"label": "Posterior after negative", "selector": "#posteriorNeg", "kind": "text"}]};
   const root = document.querySelector('.classroom-lab');
   if (!root) return;
-  const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;
   const qs = (sel) => root.querySelector(sel);
   function currentLang() {
     const raw = String(document.documentElement.lang || 'en').toLowerCase();
@@ -1803,6 +1818,8 @@
   function applyLabLang() {
     const lang = currentLang();
     root.querySelectorAll('[data-lab-en]').forEach(el => {
+      // Captured evidence and an explicitly cleared snapshot are learner state.
+      if (el.matches('[data-lab-state]') && (el.hasAttribute('data-r4-no-translate') || el.dataset.qaStateReady === '1')) return;
       const value = textFor(el, lang);
       if (el.tagName === 'TEXTAREA') el.placeholder = value;
       else el.textContent = value;
@@ -1829,13 +1846,6 @@
     root.querySelectorAll('textarea[data-lab-answer]').forEach(area => data[area.getAttribute('data-lab-answer')] = area.value.trim());
     return data;
   }
-  function saveDraft() { try { localStorage.setItem(storageKey, JSON.stringify(answers())); } catch (_) {} }
-  function loadDraft() {
-    try {
-      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
-      root.querySelectorAll('textarea[data-lab-answer]').forEach(area => { const key = area.getAttribute('data-lab-answer'); if (saved[key]) area.value = saved[key]; });
-    } catch (_) {}
-  }
   function packet() {
     const lang = currentLang();
     const baseLabels = {title: LAB_CONFIG.title, state:'State snapshot', predict:'Predict', observe:'Observe', explain:'Explain', transfer:'Transfer'};
@@ -1848,7 +1858,7 @@
       '- Date: ' + new Date().toLocaleString(),
       '',
       '## ' + labels.state,
-      snapshot(),
+      qs('[data-lab-state]')?.textContent || '',
       '',
       '## ' + labels.predict,
       a.predict || '',
@@ -1864,26 +1874,26 @@
     ].join('\n');
   }
   function setStatus(en, zh) { const el = qs('.lab-status'); if (el) el.textContent = currentLang() === 'zh' ? zh : en; }
-  function refreshState() { const el = qs('[data-lab-state]'); if (el) el.textContent = snapshot(); }
+  function refreshState() { const el = qs('[data-lab-state]'); if (el) { el.setAttribute('data-r4-no-translate',''); el.lang = currentLang(); el.textContent = snapshot(); } }
   async function copyPacket(btn) {
     const text = packet();
     try { await navigator.clipboard.writeText(text); setStatus('Copied local lab packet.', '已复制本地实验包。'); }
-    catch (_) { window.prompt('Copy this lab packet:', text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
+    catch (_) { window.prompt(qs('[data-lab-action=copy]').textContent.trim(), text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
   }
 
   function markdownToPrintableHtml(markdown) {
     const escape = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
     const inline = value => escape(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     const lines = String(markdown).split(/\r?\n/);
-    let html = '', inList = false, inState = false;
+    let html = '', inList = false, inState = false, sectionIndex = 0;
     const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
     for (const raw of lines) {
       const line = raw.trimEnd();
       if (line.startsWith('# ')) { closeList(); html += '<h1>' + inline(line.slice(2)) + '</h1>'; inState=false; }
-      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = /state snapshot|状态记录/i.test(title); }
+      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = sectionIndex++ === 0; }
       else if (line.startsWith('- ')) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inline(line.slice(2)) + '</li>'; }
       else if (!line.trim()) { closeList(); }
-      else { closeList(); html += inState ? '<pre class="state">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
+      else { closeList(); html += inState ? '<pre class="state" lang="' + (qs('[data-lab-state]')?.lang || currentLang()) + '">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
     }
     closeList(); return html;
   }
@@ -1892,28 +1902,19 @@
     const w = window.open('', '_blank');
     if (!w) { setStatus('Popup blocked. Copy the packet instead.', '弹窗被拦截。请改用复制实验包。'); return; }
     const rendered = markdownToPrintableHtml(packet());
-    const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
+    const html = '<!doctype html><html lang="' + currentLang() + '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
     w.document.open();
     w.document.write(html);
     w.document.close();
     setStatus('Print page opened.', '打印页面已打开。');
   }
-  function clearDraft() {
-    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.value = '');
-    try { localStorage.removeItem(storageKey); } catch (_) {}
-    refreshState(); setStatus('Local draft cleared.', '本地草稿已清除。');
-  }
-  root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.addEventListener('input', saveDraft));
   root.querySelector('[data-lab-action="copy"]')?.addEventListener('click', copyPacket);
   root.querySelector('[data-lab-action="print"]')?.addEventListener('click', printPacket);
   root.querySelector('[data-lab-action="refresh"]')?.addEventListener('click', () => { refreshState(); setStatus('State refreshed.', '状态已更新。'); });
-  root.querySelector('[data-lab-action="clear"]')?.addEventListener('click', clearDraft);
   document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(applyLabLang, 0)));
   window.addEventListener('r4languagechange', () => setTimeout(applyLabLang, 0));
   
-  document.addEventListener('change', refreshState);
-  document.addEventListener('click', (event) => { if (!(event.target instanceof HTMLTextAreaElement)) setTimeout(refreshState, 0); }, true);
-  loadDraft(); applyLabLang(); refreshState();
+  applyLabLang();
 })();
 </script>
 <script>
@@ -2102,8 +2103,8 @@
   function stateData(){
     const values={};
     document.querySelectorAll('#main input,#main select,#main textarea').forEach(el=>{
-      if(!el.id||el.closest('.classroom-lab'))return;
-      if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;
+      if(!el.id||el.readOnly||el.closest('.classroom-lab,.worksheet,.suite-guided-shell,[data-quick-assign-id]')||['button','submit','reset','file','password','hidden'].includes(el.type))return;
+      if(el.type==='radio'&&!el.checked)return;
       values[el.id]=el.type==='checkbox'?el.checked:el.value;
     });
     return {applet:profile.en.title,slug:profile.slug,exported_at:new Date().toISOString(),values};
@@ -2113,17 +2114,18 @@
     const share=document.getElementById('shareLink'), embed=document.getElementById('embedLink'), reset=document.getElementById('hardReset');
     const csv=document.getElementById('csvExport'), png=document.getElementById('exportPng');
     const more=document.createElement('details'); more.className='header-more';
-    const summary=document.createElement('summary'); summary.className='header-png'; summary.setAttribute('aria-haspopup','menu'); more.appendChild(summary);
-    const menu=document.createElement('div'); menu.className='header-more-menu'; menu.setAttribute('role','menu'); more.appendChild(menu);
+    const summary=document.createElement('summary'); summary.className='header-png'; more.appendChild(summary);
+    const menu=document.createElement('div'); menu.className='header-more-menu'; more.appendChild(menu);
     if(embed){embed.textContent='📎 Embed in LMS';menu.appendChild(embed)}
     const jsonBtn=document.createElement('button');jsonBtn.type='button';jsonBtn.className='header-png';jsonBtn.dataset.exportState='';menu.appendChild(jsonBtn);
     if(csv){csv.textContent='📊 Data table (.csv)';menu.appendChild(csv)}
     if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
-    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
+    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false;summary.focus()});
     actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
     window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';if(share){share.textContent=zh?'🔗 分享':'🔗 Share';share.title=zh?'复制可在另一浏览器中重新打开当前设置的链接。':'Copy a link that reopens the current settings in another browser.';}summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
     window.refreshAppletToolbar();
     document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&more.open){e.preventDefault();more.open=false;summary.focus()}});
   }
   function terms(){
     const inner=document.querySelector('.interactive-inner'); if(!inner||inner.querySelector('.key-terms'))return;
@@ -2170,6 +2172,7 @@
     return 'explore';
   };
   const lang = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const routeLocale = () => ['en','zh','vi','es'].find(code => (document.documentElement.lang || 'en').toLowerCase().startsWith(code)) || 'en';
   const labels = {explore:['Explore','探索'],understand:['Understand','理解'],classroom:['Use in class','课堂使用'],access:['Text and keyboard','文本与键盘']};
   const intros = {
     explore:['Start with the featured experiment, then use the scenarios to test a prediction.','从精选实验开始，再使用情境检验预测。'],
@@ -2241,12 +2244,19 @@
     renderModeChrome();
     if(write){const u=new URL(location.href);u.searchParams.set('mode',mode);history.replaceState(null,'',u)}
   }
-  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
+  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(['ArrowRight','ArrowLeft','Home','End'].includes(e.key)){e.preventDefault();const n=e.key==='Home'?0:e.key==='End'?list.length-1:(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
 
+  // Share only native mechanism inputs, never responses or global preferences.
+  function shareable(el){
+    return !!el && !!el.id && inner.contains(el)
+      && el.matches('input,select,textarea') && !el.readOnly
+      && !['button','submit','reset','file','password','hidden'].includes(el.type)
+      && !el.closest('.classroom-lab,.worksheet,.suite-guided-shell,[data-quick-assign-id]');
+  }
   function statePayload(){
     const out={};
-    inner.querySelectorAll('select,input').forEach(el=>{
-      if(!el.id||el.closest('.classroom-lab')||['button','submit'].includes(el.type))return;
+    inner.querySelectorAll('select,input,textarea').forEach(el=>{
+      if(!shareable(el))return;
       if(el.type==='radio'){if(el.checked)out[el.id]=el.value;return}
       out[el.id]=el.type==='checkbox'?el.checked:el.value;
     });
@@ -2255,33 +2265,65 @@
   function encode(obj){return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))}
   function decode(s){try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch{return null}}
   function currentExperimentUrl(){
-    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',lang());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
+    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',routeLocale());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
   }
   window.__buildExperimentUrl=()=>currentExperimentUrl().href;
   const status=shell.querySelector('.experiment-status');
-  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(ui[lang()].copyPrompt,u.href)}};
+  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(shell.querySelector('[data-copy-experiment]').textContent.trim(),u.href)}};
 
-  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','')});
-  document.addEventListener('click',e=>{const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode','explore');u.searchParams.set('lang',lang());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
+  // Let Space activate this native button instead of a lab-wide play shortcut.
+  shell.addEventListener('keydown', event => {
+    if (event.key === ' ' && event.target.closest('[data-start-featured]')) event.stopPropagation();
+  });
+
+  // A learner-initiated handoff moves both the viewport and keyboard focus.
+  // Restoring a shared URL or changing locale must never steal focus.
+  function handoffToExperiment() {
+    const target = [...inner.querySelectorAll('select,input:not([type="hidden"]),textarea')]
+      .find(node => !node.closest('.learning-mode-shell,.suite-guided-shell')
+        && !node.disabled && node.getClientRects().length);
+    if (!target) return;
+    target.focus({preventScroll: true});
+    target.scrollIntoView({block: 'center',
+      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
+  }
+
+  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','');handoffToExperiment()});
+  document.addEventListener('click',e=>{if(restoring&&new URLSearchParams(location.search).has('state'))return;const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode',active);if(!restoring)u.searchParams.set('lang',routeLocale());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
 
   let urlSyncTimer=0;
   function scheduleUrlState(e){
     if(restoring)return;
-    const el=e.target;if(!el||!inner.contains(el)||el.closest('.classroom-lab')||!el.matches('input,select'))return;
+    const el=e.target;if(!shareable(el))return;
     clearTimeout(urlSyncTimer);urlSyncTimer=setTimeout(()=>{const u=currentExperimentUrl();history.replaceState(null,'',u)},80);
   }
   document.addEventListener('input',scheduleUrlState,true);document.addEventListener('change',scheduleUrlState,true);
 
   function applyState(obj){
-    if(!obj)return;
-    Object.entries(obj).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else if(el.type==='radio')el.checked=String(el.value)===String(value);else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});
+    if(!obj || typeof obj !== 'object' || Array.isArray(obj) || Object.keys(obj).length > 256)return;
+    Object.entries(obj).forEach(([id,value])=>{
+      const el=document.getElementById(id);if(!shareable(el))return;
+      if(el.type==='checkbox'){if(typeof value!=='boolean')return;el.checked=value}
+      else {
+        if(!['string','number'].includes(typeof value) || String(value).length>10000)return;
+        const text=String(value);
+        if(el.tagName==='SELECT' && ![...el.options].some(option=>option.value===text))return;
+        if(['number','range'].includes(el.type)){
+          if(!text.trim() || !Number.isFinite(Number(text)))return;
+          if(el.min!=='' && Number(text)<Number(el.min))return;
+          if(el.max!=='' && Number(text)>Number(el.max))return;
+        }
+        if(el.type==='radio'){if(el.value!==text)return;el.checked=true}
+        else el.value=text;
+      }
+      el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));
+    });
   }
   function restore(){
     const p=new URL(location.href).searchParams;restoring=true;
-    // Explicit scenario, then saved controls, override native CNF share state.
-    // Retain the established scenario-zero default unless a native formula exists.
-    const nativeFormula=window.APPLET_LEARNER_PROFILE?.slug==='cnf-sat'&&p.has('f');
-    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeFormula))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
+    // Native links precede explicit scenarios and saved controls.
+    const nativeState=slug==='cnf-sat'&&p.has('f')||slug==='knn-classifier'&&['k','ds','task','metric','weight','scale','target'].some(k=>p.has(k));
+    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeState))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
     applyState(decode(p.get('state')||''));
     if(p.get('featured')==='1')sig?.setAttribute('open','');
     restoring=false;
@@ -2297,14 +2339,14 @@
   }
   setMode(active,false);ensureExploreContent();
   setTimeout(()=>{refineCards();window.renderAppletKeyTerms?.();restore();renderModeChrome()},250);
-  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',lang());history.replaceState(null,'',u)},25)));
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',routeLocale());history.replaceState(null,'',u)},25)));
 })();
 </script>
 
 <script id="applet-translation-completion">
 (() => {
   const exact = {"Skip to applet controls":"跳到交互控件","▸ Show teacher notes (discussion prompts + curriculum)":"▸ 展开教师说明（讨论提示与课程联系）","▾ Hide teacher notes (discussion prompts + curriculum)":"▾ 收起教师说明（讨论提示与课程联系）","idle":"空闲","(empty)":"（空）","(no actions yet)":"（尚无动作）","exploring":"探索中","disease":"患病","healthy":"健康","test+":"检测阳性","test−":"检测阴性","test-":"检测阴性","Has disease (red)":"患病（红色）","Healthy (green)":"健康（绿色）","Yellow ring = test +":"黄色圆环 = 检测阳性","Blue ring = test −":"蓝色圆环 = 检测阴性","Of 10,000 people:":"在 10,000 人中：","100 have disease, 9,900 are healthy.":"100 人患病，9,900 人健康。"};
-  const rules = [["^True positives: ([0-9,]+)\\s+False positives: ([0-9,]+)$","真阳性：\\1　误报：\\2"],["^True negatives: ([0-9,]+)\\s+False negatives: ([0-9,]+)$","真阴性：\\1　漏报：\\2"],["^\\(joint ([0-9.]+%)\\)$","（联合概率 \\1）"]].map(([source,target])=>[new RegExp(source),target]);
+  const rules = [["^True positives: ([0-9,]+)\\s+False positives: ([0-9,]+)$","真阳性：$1　误报：$2"],["^True negatives: ([0-9,]+)\\s+False negatives: ([0-9,]+)$","真阴性：$1　漏报：$2"],["^\\(joint ([0-9.]+%)\\)$","（联合概率 $1）"]].map(([source,target])=>[new RegExp(source),target]);
   const currentLanguage=()=>((document.documentElement.lang||'en').startsWith('zh')?'zh':'en');
   const excluded=node=>node.parentElement && node.parentElement.closest('script,style,noscript,[data-essay-lang="en"]');
   const applyRule=text=>{
@@ -2349,11 +2391,11 @@
 <script defer src="../../assets/guided-challenges.js"></script>
 <!-- suite-guided-challenge-v2:end -->
 <script src="../../assets/locales/bayes-classifier-r4.js"></script>
-<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["bayes-classifier"];if(!row)return;Object.assign(row.vi.strings,{"🧪 Quick Assign · QA-BAYES-01 · 10–15 min": "🧪 Bài tập nhanh · QA-BAYES-01 · 10–15 phút", "Base rates and false alarms": "Tỷ lệ nền và báo động giả", "Predict how a positive result changes belief, adjust the prior and test characteristics, then explain the base-rate effect.": "Thay đổi tỷ lệ nền và chất lượng phép kiểm tra, rồi giải thích vì sao một kết quả dương tính không tự động có nghĩa xác suất hậu nghiệm cao.", "Before moving sliders, will a positive test make disease more likely than healthy? Why?": "Trước khi chạy, bạn dự đoán xác suất hậu nghiệm sau kết quả dương tính sẽ cao hay thấp? Yếu tố nào quan trọng nhất?", "Change the prior, sensitivity, and specificity. Record one setting where a positive test still leaves low disease probability.": "Chạy hai trường hợp với tỷ lệ nền khác nhau. Ghi lại prior, true positive, false positive và posterior.", "Which mattered most in your example: prior, sensitivity, or specificity?": "Vì sao cùng một phép kiểm tra có thể cho posterior khác nhau khi tỷ lệ nền thay đổi?", "Give a non-medical case where the base rate changes how evidence should be interpreted.": "Trong tình huống thực tế nào việc bỏ qua tỷ lệ nền có thể tạo ra quá nhiều báo động giả?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"🧪 Quick Assign · QA-BAYES-01 · 10–15 min": "🧪 Tarea rápida · QA-BAYES-01 · 10–15 min", "Base rates and false alarms": "Tasas base y falsas alarmas", "Predict how a positive result changes belief, adjust the prior and test characteristics, then explain the base-rate effect.": "Cambia la tasa base y la calidad de la prueba y explica por qué un resultado positivo no implica por sí solo una probabilidad posterior alta.", "Before moving sliders, will a positive test make disease more likely than healthy? Why?": "Antes de ejecutar, ¿esperas una probabilidad posterior alta o baja tras un positivo? ¿Qué factor será más importante?", "Change the prior, sensitivity, and specificity. Record one setting where a positive test still leaves low disease probability.": "Ejecuta dos casos con tasas base distintas. Registra el prior, verdaderos positivos, falsos positivos y posterior.", "Which mattered most in your example: prior, sensitivity, or specificity?": "¿Por qué la misma prueba puede producir posteriores diferentes cuando cambia la tasa base?", "Give a non-medical case where the base rate changes how evidence should be interpreted.": "¿En qué situación real ignorar la tasa base podría producir demasiadas falsas alarmas?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script src="../../assets/localization-r4.js"></script>
-<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.5</div>
+<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["bayes-classifier"];if(!row)return;Object.assign(row.vi.strings,{"Level 1 · 10–15 min": "Cấp độ 1 · 10–15 phút", "🧪 Quick Assign · QA-BAYES-01 · 10–15 min": "🧪 Bài tập nhanh · QA-BAYES-01 · 10–15 phút", "Base rates and false alarms": "Tỷ lệ nền và báo động giả", "Change the base rate and test quality, then explain why a positive result does not automatically mean a high posterior probability.": "Thay đổi tỷ lệ nền và chất lượng phép kiểm tra, rồi giải thích vì sao một kết quả dương tính không tự động có nghĩa xác suất hậu nghiệm cao.", "Before running, do you expect a high or low posterior after a positive result? Which factor matters most?": "Trước khi chạy, bạn dự đoán xác suất hậu nghiệm sau kết quả dương tính sẽ cao hay thấp? Yếu tố nào quan trọng nhất?", "Run two cases with different base rates. Record the prior, true positives, false positives, and posterior.": "Chạy hai trường hợp với tỷ lệ nền khác nhau. Ghi lại prior, true positive, false positive và posterior.", "Why can the same test produce different posteriors when the base rate changes?": "Vì sao cùng một phép kiểm tra có thể cho posterior khác nhau khi tỷ lệ nền thay đổi?", "In what real situation could ignoring the base rate produce too many false alarms?": "Trong tình huống thực tế nào việc bỏ qua tỷ lệ nền có thể tạo ra quá nhiều báo động giả?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"Level 1 · 10–15 min": "Nivel 1 · 10–15 min", "🧪 Quick Assign · QA-BAYES-01 · 10–15 min": "🧪 Tarea rápida · QA-BAYES-01 · 10–15 min", "Base rates and false alarms": "Tasas base y falsas alarmas", "Change the base rate and test quality, then explain why a positive result does not automatically mean a high posterior probability.": "Cambia la tasa base y la calidad de la prueba y explica por qué un resultado positivo no implica por sí solo una probabilidad posterior alta.", "Before running, do you expect a high or low posterior after a positive result? Which factor matters most?": "Antes de ejecutar, ¿esperas una probabilidad posterior alta o baja tras un positivo? ¿Qué factor será más importante?", "Run two cases with different base rates. Record the prior, true positives, false positives, and posterior.": "Ejecuta dos casos con tasas base distintas. Registra el prior, verdaderos positivos, falsos positivos y posterior.", "Why can the same test produce different posteriors when the base rate changes?": "¿Por qué la misma prueba puede producir posteriores diferentes cuando cambia la tasa base?", "In what real situation could ignoring the base rate produce too many false alarms?": "¿En qué situación real ignorar la tasa base podría producir demasiadas falsas alarmas?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script src="../../assets/localization-r4.js"></script>
+<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.6</div>
 
 <!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
-<script data-ai-playgrounds-analytics="v1.9.5">
+<script data-ai-playgrounds-analytics="v1.9.6">
 (function () {
   'use strict';
   var CANONICAL_HOST = 'lmdixon23.github.io';
@@ -2469,5 +2511,116 @@
   sendPage();
 })();
 </script>
+<script id="classroom-draft-runtime">
+(() => {
+  'use strict';
+  const root = document.querySelector('[data-quick-assign-id]');
+  if (!root) return;
+  const original = !!root.querySelector('[data-lab-answer]');
+  const fields = [...root.querySelectorAll('[data-lab-answer],[data-qa-answer]')];
+  const state = root.querySelector('[data-lab-state],[data-qa-modern-state]');
+  const status = root.querySelector('.lab-status');
+  const slug = window.APPLET_LEARNER_PROFILE?.slug;
+  const key = original ? 'ai-playgrounds-lab-' + slug : 'ai-playgrounds-quick-assign:' + root.dataset.quickAssignId;
+  const locale = () => document.documentElement.lang.toLowerCase().split('-')[0];
+  const COPY = {
+    en: {confirm:'Clear this lab’s saved answers and captured evidence? This cannot be undone.', failed:'Your draft could not be saved in this browser. Copy or print it before closing this page.', cleared:'Local answers and captured evidence cleared.', removeFailed:'The saved draft could not be cleared. Your answers are still here.', restoreFailed:'The saved draft could not be read. Copy or print your work before reloading; clear the draft only if you want to discard it.'},
+    zh: {confirm:'清除此实验已保存的答案和状态记录？此操作无法撤销。', failed:'无法在此浏览器中保存草稿。关闭页面前请复制或打印。', cleared:'已清除本地答案和状态记录。', removeFailed:'无法清除已保存的草稿。你的答案仍保留在这里。', restoreFailed:'无法读取已保存的草稿。重新加载前请复制或打印你的内容；只有确认要丢弃草稿时才清除它。'},
+    vi: {confirm:'Xóa câu trả lời đã lưu và bằng chứng đã chụp của bài này? Không thể hoàn tác.', failed:'Không thể lưu bản nháp trong trình duyệt này. Hãy sao chép hoặc in trước khi đóng trang.', cleared:'Đã xóa câu trả lời cục bộ và bằng chứng đã chụp.', removeFailed:'Không thể xóa bản nháp đã lưu. Câu trả lời của bạn vẫn còn ở đây.', restoreFailed:'Không thể đọc bản nháp đã lưu. Hãy sao chép hoặc in bài trước khi tải lại; chỉ xóa bản nháp nếu muốn bỏ nó.'},
+    es: {confirm:'¿Borrar las respuestas guardadas y la evidencia capturada de este laboratorio? No se puede deshacer.', failed:'No se pudo guardar el borrador en este navegador. Cópialo o imprímelo antes de cerrar esta página.', cleared:'Se borraron las respuestas locales y la evidencia capturada.', removeFailed:'No se pudo borrar el borrador guardado. Tus respuestas siguen aquí.', restoreFailed:'No se pudo leer el borrador guardado. Copia o imprime tu trabajo antes de recargar; bórralo solo si deseas descartarlo.'}
+  };
+  const copy = () => COPY[locale()] || COPY.en;
+  const message = name => { if (status) { status.textContent = copy()[name]; status.dataset.draftError = ['failed','removeFailed','restoreFailed'].includes(name) ? name : ''; } };
+  new MutationObserver(() => { if (status?.dataset.draftError) message(status.dataset.draftError); }).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+  const captured = () => !!state && !!state.textContent.trim() && (state.hasAttribute('data-r4-no-translate') || state.dataset.qaStateReady === '1');
+  function retainCapture(text, lang) {
+    if (!state) return;
+    state.textContent = text;
+    state.lang = ['en','zh','vi','es'].includes(lang) ? lang : 'en';
+    state.setAttribute('data-r4-no-translate','');
+    state.dataset.qaStateReady = '1';
+    for (const n of [13,14,15]) state.setAttribute('data-lab'+n+'-no-translate','');
+    for (const lang of ['en','zh','vi','es']) state.removeAttribute('data-ap-'+lang);
+  }
+  const fieldName = field => field.dataset.labAnswer || field.dataset.qaAnswer;
+  const dirty = new Set();
+  let captureDirty = false, unreadable = false;
+  function readDraft() {
+    const data = JSON.parse(localStorage.getItem(key) || '{}');
+    if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Invalid draft');
+    for (const field of fields) if (data[fieldName(field)] !== undefined && typeof data[fieldName(field)] !== 'string') throw new Error('Invalid answer');
+    if (data.__capture !== undefined && typeof data.__capture?.text !== 'string') throw new Error('Invalid capture');
+    unreadable = false;
+    return data;
+  }
+  function applyDraft(data) {
+    for (const field of fields) if (!dirty.has(fieldName(field))) field.value = data[fieldName(field)] || '';
+    if (!captureDirty) {
+      if (data.__capture) retainCapture(data.__capture.text, data.__capture.lang);
+      else if (captured()) retainCapture('', locale());
+    }
+  }
+  function save(field, refresh = false) {
+    if (field) dirty.add(fieldName(field));
+    captureDirty ||= refresh;
+    try {
+      // Merge only this tab's edits into the latest stored packet. A stale tab
+      // must not replace another tab's different answer or explicit capture.
+      const latest = readDraft();
+      const data = Object.fromEntries(fields.map(field => {
+        const name = fieldName(field);
+        return [name, dirty.has(name) ? field.value : latest[name] || ''];
+      }));
+      if (captureDirty && captured()) data.__capture = {text:state.textContent, lang:state.lang};
+      else if (!captureDirty && latest.__capture) data.__capture = latest.__capture;
+      localStorage.setItem(key, JSON.stringify(data));
+      dirty.clear(); captureDirty = false;
+      if (status?.dataset.draftError || Object.values(COPY).some(value => status?.textContent === value.cleared)) { status.textContent=''; delete status.dataset.draftError; }
+    } catch (_) { message('failed'); }
+  }
+  try { applyDraft(readDraft()); }
+  catch (_) { unreadable = true; message('restoreFailed'); }
+  window.addEventListener('storage', event => {
+    if (event.key !== key && event.key !== null) return;
+    try {
+      if (event.storageArea !== localStorage) return;
+      // Read the latest value, not a possibly superseded queued storage event.
+      applyDraft(readDraft());
+    } catch (_) { unreadable = true; message('restoreFailed'); }
+  });
+  // One owner saves the complete packet before legacy answer-only handlers run.
+  document.addEventListener('input', event => {
+    if (!fields.includes(event.target)) return;
+    event.stopImmediatePropagation();
+    save(event.target);
+  }, true);
+  document.addEventListener('click', event => {
+    const button = event.target.closest?.('[data-lab-action],[data-qa-action]');
+    if (!button || !root.contains(button)) return;
+    const action = button.dataset.labAction || button.dataset.qaAction;
+    if (action === 'refresh' || action === 'refresh-state') {
+      // Capture is synchronous in each native packet; persist its finished result.
+      queueMicrotask(() => save(null, true));
+      return;
+    }
+    if (action !== 'clear') return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (!fields.some(field => field.value) && !captured() && !unreadable) return;
+    if (!window.confirm(copy().confirm)) return;
+    try { localStorage.removeItem(key); }
+    catch (_) { message('removeFailed'); return; }
+    dirty.clear(); captureDirty = false; unreadable = false;
+    for (const field of fields) field.value = '';
+    if (state) {
+      // An empty capture is intentional; do not restore or recapture live results.
+      retainCapture('', locale());
+    }
+    message('cleared');
+    fields[0]?.focus();
+  }, true);
+})();
+</script>
+
 </body>
 </html>

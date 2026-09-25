@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-<!-- Standalone AI Playgrounds v1.9.5 export.
+<!-- Standalone AI Playgrounds v1.9.6 export.
 MIT License
 
 Copyright (c) 2026 Logan M. Dixon
@@ -49,7 +49,7 @@ SOFTWARE.
 .suite-back:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 55%,transparent);outline-offset:3px}
 </style>
 
-<meta name="ai-playgrounds-version" content="1.9.5">
+<meta name="ai-playgrounds-version" content="1.9.6">
 
 <style id="lab13-v14-experience-style">
 #lab13-locale-bar{align-items:center}
@@ -340,7 +340,7 @@ body.embed-mode .suite-guided-shell,body.embed-mode .learning-mode-shell,body.em
 <a class="ap-modern-skip" href="#ap-modern-interactive-start" data-ap-en="Skip to applet controls" data-ap-zh="跳到 applet 控件" data-ap-vi="Bỏ qua đến điều khiển applet" data-ap-es="Saltar a los controles del applet">Skip to applet controls</a>
 <header class="ap-standard-header page-header" data-ap-standard-shell="transformer-language-model">
   <div class="header-utility"><a class="back" href="https://lmdixon23.github.io/ai-playgrounds/index.html">← <span data-ap-chrome="back">AI Playgrounds</span></a><div class="header-prefs"><button class="header-theme" id="ap-standard-theme" type="button" data-ap-chrome="theme"><span class="ap-theme-icon" aria-hidden="true">◐</span></button><select id="ap-standard-language" class="r4-language-select" aria-label="Language"><option value="en">English</option><option value="zh">中文</option><option value="vi">Tiếng Việt</option><option value="es">Español</option></select></div></div>
-  <div class="header-main"><div class="header-title-wrap"><h1 id="ap-standard-title">Transformer Language Modeling</h1><p id="ap-standard-subtitle" class="ap-standard-subtitle">Change a token, mask, or temperature and watch the next-token probabilities move.</p></div><div class="header-actions"><button class="header-png" id="ap-modern-share" type="button" data-ap-en="Share" data-ap-zh="分享" data-ap-vi="Chia sẻ" data-ap-es="Compartir">🔗 <span>Share</span></button><details class="header-more" id="ap-modern-more"><summary class="header-png" data-ap-en="More" data-ap-zh="更多" data-ap-vi="Thêm" data-ap-es="Más" aria-haspopup="menu">More</summary><div class="header-more-menu" role="menu"><button class="header-png" id="ap-modern-embed" type="button" data-ap-en="Embed in LMS" data-ap-zh="嵌入到 LMS" data-ap-vi="Nhúng vào LMS" data-ap-es="Insertar en LMS">📎 <span>Embed in LMS</span></button><button class="header-png" id="ap-modern-settings-json" type="button" data-ap-en="Current settings (.json)" data-ap-zh="当前设置（.json）" data-ap-vi="Cài đặt hiện tại (.json)" data-ap-es="Configuración actual (.json)">⬇ <span>Current settings (.json)</span></button></div></details><button class="header-reset" id="ap-standard-reset" type="button" data-ap-chrome="reset">↺ Reset all</button></div></div>
+  <div class="header-main"><div class="header-title-wrap"><h1 id="ap-standard-title">Transformer Language Modeling</h1><p id="ap-standard-subtitle" class="ap-standard-subtitle">Change a token, mask, or temperature and watch the next-token probabilities move.</p></div><div class="header-actions"><button class="header-png" id="ap-modern-share" type="button" data-ap-en="Share" data-ap-zh="分享" data-ap-vi="Chia sẻ" data-ap-es="Compartir">🔗 <span>Share</span></button><details class="header-more" id="ap-modern-more"><summary class="header-png" data-ap-en="More" data-ap-zh="更多" data-ap-vi="Thêm" data-ap-es="Más">More</summary><div class="header-more-menu"><button class="header-png" id="ap-modern-embed" type="button" data-ap-en="Embed in LMS" data-ap-zh="嵌入到 LMS" data-ap-vi="Nhúng vào LMS" data-ap-es="Insertar en LMS">📎 <span>Embed in LMS</span></button><button class="header-png" id="ap-modern-settings-json" type="button" data-ap-en="Current settings (.json)" data-ap-zh="当前设置（.json）" data-ap-vi="Cài đặt hiện tại (.json)" data-ap-es="Configuración actual (.json)">⬇ <span>Current settings (.json)</span></button></div></details><button class="header-reset" id="ap-standard-reset" type="button" data-ap-chrome="reset">↺ Reset all</button></div></div>
 </header>
 <aside class="ap-modern-tldr" aria-labelledby="ap-modern-big-label">
 <strong id="ap-modern-big-label" data-ap-en="What this applet shows" data-ap-zh="这个工具展示什么" data-ap-vi="Điều applet này minh họa" data-ap-es="Lo que muestra este applet">What this applet shows</strong>
@@ -453,7 +453,7 @@ body.embed-mode .suite-guided-shell,body.embed-mode .learning-mode-shell,body.em
   <section class="card"><h2>Check your model of the model</h2><div class="misconceptions"><div class="myth"><strong>“A token is one word.”</strong><span>Not generally. This applet uses a deliberately simple source-locked toy tokenizer; unknown words map to &lt;UNK&gt; and a period is its own token.</span></div><div class="myth"><strong>“Attention tells us what the model understands.”</strong><span>No. Attention weights are numeric mixing coefficients, not a direct reading of understanding.</span></div><div class="myth"><strong>“The largest attention weight is the reason for the prediction.”</strong><span>No. Value vectors, residual paths, the feed-forward transform, and output weights also affect logits.</span></div><div class="myth"><strong>“The transformer searches the internet for the next word.”</strong><span>Not here. The applet makes no network request or retrieval call.</span></div><div class="myth"><strong>“The causal mask makes the model forget future words it already saw.”</strong><span>The mask is a structural constraint on which source positions a destination may use.</span></div><div class="myth"><strong>“Temperature changes the learned model weights.”</strong><span>No. Temperature rescales fixed logits before softmax.</span></div><div class="myth"><strong>“The most probable token is always selected.”</strong><span>A probability distribution and a generation selection rule are different.</span></div><div class="myth"><strong>“Position vectors are word meanings.”</strong><span>No. They contribute position-dependent information to this toy representation.</span></div><div class="myth"><strong>“The model stores complete answers and retrieves them.”</strong><span>This applet computes logits from numeric state. Retrieval is a separate mechanism.</span></div></div></section>
 
 <footer class="lab13-provenance" data-lab13-v14-provenance>
-  <span>AI Playgrounds</span> · <span>v1.9.5</span> ·
+  <span>AI Playgrounds</span> · <span>v1.9.6</span> ·
   <a href="https://github.com/lmdixon23/ai-playgrounds" data-lab13-source>Source</a> ·
   <a href="https://lmdixon23.github.io/ai-playgrounds/research-and-citation.html" data-lab13-citation>Citation</a>
 </footer>
@@ -746,8 +746,7 @@ init();
 })();
 </script>
 
-<!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
-<script data-ai-playgrounds-analytics="v1.9.5">
+<script data-ai-playgrounds-analytics="v1.9.6">
 (function () {
   'use strict';
   var CANONICAL_HOST = 'lmdixon23.github.io';
@@ -864,11 +863,12 @@ init();
 })();
 </script>
 <footer class="ap-standard-footer ap-modern-rich-footer" data-ap-standard-footer>
+<div class="ap-release-version">AI Playgrounds · v1.9.6</div>
 <div class="ap-modern-footer-primary"><a href="#top" data-ap-en="↑ Back to top" data-ap-zh="↑ 返回顶部" data-ap-vi="↑ Lên đầu trang" data-ap-es="↑ Volver arriba">↑ Back to top</a> · <span data-ap-en="Made for the Introduction to AI course at Haidian Kaiwen Academy." data-ap-zh="为北京海淀凯文学校的人工智能导论课程制作。" data-ap-vi="Được xây dựng cho khóa Introduction to AI tại Haidian Kaiwen Academy." data-ap-es="Creado para el curso Introduction to AI de Haidian Kaiwen Academy.">Made for the Introduction to AI course at Haidian Kaiwen Academy.</span></div>
-<div>© 2026 Logan M. Dixon · <a href="https://lmdixon23.github.io/" data-ap-en="Portfolio" data-ap-zh="作品集" data-ap-vi="Hồ sơ" data-ap-es="Portafolio">Portfolio</a> · <a href="https://lmdixon23.github.io/ai-playgrounds/index.html">AI Playgrounds</a> · <a href="https://lmdixon23.github.io/ai-playgrounds/curriculum.html">Curriculum</a> · <a href="https://lmdixon23.github.io/ai-playgrounds/teacher-pack.html">Teacher Pack</a> · <a href="https://github.com/lmdixon23/ai-playgrounds">Source</a> · MIT · <a href="https://lmdixon23.github.io/ai-playgrounds/research-and-citation.html">Citation</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-ap-en="Report an issue" data-ap-zh="报告问题" data-ap-vi="Báo lỗi" data-ap-es="Informar de un problema">Report an issue</a> · <a href="https://orcid.org/0009-0001-0592-462X">ORCID</a></div>
+<div>© 2026 Logan M. Dixon · <a href="https://lmdixon23.github.io/" data-ap-en="Portfolio" data-ap-zh="作品集" data-ap-vi="Hồ sơ" data-ap-es="Portafolio">Portfolio</a> · <a href="https://lmdixon23.github.io/ai-playgrounds/index.html">AI Playgrounds</a> · <a href="https://lmdixon23.github.io/ai-playgrounds/curriculum.html" data-ap-chrome="curriculum">Curriculum</a> · <a href="https://lmdixon23.github.io/ai-playgrounds/teacher-pack.html" data-ap-chrome="teacher">Teacher Pack</a> · <a href="https://github.com/lmdixon23/ai-playgrounds" data-ap-chrome="source">Source</a> · MIT · <a href="https://lmdixon23.github.io/ai-playgrounds/research-and-citation.html" data-ap-chrome="citation">Citation</a> · <a href="https://github.com/lmdixon23/ai-playgrounds/issues" data-ap-en="Report an issue" data-ap-zh="报告问题" data-ap-vi="Báo lỗi" data-ap-es="Informar de un problema">Report an issue</a> · <a href="https://orcid.org/0009-0001-0592-462X">ORCID</a></div>
 </footer>
 <script id="v161-standard-shell-runtime">
-(()=>{'use strict';const API="Lab13Localization",EVENT="lab13localechange",DATA={"title":"Transformer Language Modeling","title_zh":"Transformer 语言建模","title_vi":"Mô hình ngôn ngữ Transformer","title_es":"Modelado del lenguaje con Transformer","desc":"Change a token, mask, or temperature and watch the next-token probabilities move.","desc_zh":"改变一个词元、掩码或温度，观察下一词元概率怎样变化。","desc_vi":"Đổi token, mask hoặc temperature và quan sát xác suất token tiếp theo thay đổi.","desc_es":"Cambia un token, la máscara o la temperatura y observa moverse las probabilidades."},CHROME={"en":{"back":"AI Playgrounds","language":"Language","theme":"Theme","reset":"Reset","home":"Home","curriculum":"Curriculum","teacher":"Teacher Pack","source":"Source","citation":"Citation"},"zh":{"back":"AI Playgrounds","language":"语言","theme":"主题","reset":"重置","home":"首页","curriculum":"课程","teacher":"教师包","source":"源代码","citation":"引用"},"vi":{"back":"AI Playgrounds","language":"Ngôn ngữ","theme":"Giao diện","reset":"Đặt lại","home":"Trang chủ","curriculum":"Chương trình","teacher":"Teacher Pack","source":"Mã nguồn","citation":"Trích dẫn"},"es":{"back":"AI Playgrounds","language":"Idioma","theme":"Tema","reset":"Reiniciar","home":"Inicio","curriculum":"Currículo","teacher":"Teacher Pack","source":"Código fuente","citation":"Citación"}};const $=s=>document.querySelector(s);function norm(v){v=String(v||'').toLowerCase();if(v.startsWith('zh'))return'zh';if(v.startsWith('vi'))return'vi';if(v.startsWith('es'))return'es';return'en'}function api(){return window[API]||null}function locale(){const a=api();return norm((a&&((a.getLocale&&a.getLocale())||(a.locale&&a.locale())))||new URL(location.href).searchParams.get('lang')||'en')}function f(base,l){if(l==='en')return DATA[base]||'';return DATA[base+'_'+l]||DATA[base]||''}function sync(value){const l=norm(value||locale()),c=CHROME[l]||CHROME.en;$('#ap-standard-title').textContent=f('title',l);document.title=f('title',l)+' | AI Playgrounds';$('#ap-standard-subtitle').textContent=f('desc',l);const sel=$('#ap-standard-language-select');if(sel)sel.value=l;document.querySelectorAll('[data-ap-chrome]').forEach(el=>{const k=el.dataset.apChrome;if(c[k])el.textContent=c[k]})}let deferredWait=false;function wait(){const a=api();if(!a||typeof a.setLocale!=='function'){if(document.readyState==='loading'&&!deferredWait){deferredWait=true;document.addEventListener('DOMContentLoaded',wait,{once:true});return}console.error('Modern shell could not start because '+API+' is unavailable');return}const sel=$('#ap-standard-language-select');sync(locale());sel?.addEventListener('change',()=>{a.setLocale(sel.value);setTimeout(()=>sync(sel.value),0)});window.addEventListener(EVENT,e=>sync(e.detail&&e.detail.locale));const themeButton=$('#ap-standard-theme');function applySharedTheme(value){const dark=value==='dark';document.body.classList.toggle('ap-standard-dark',dark);if(themeButton){themeButton.textContent=dark?'☀️':'🌙';themeButton.setAttribute('aria-pressed',dark?'true':'false')}try{localStorage.setItem('theme',dark?'dark':'light')}catch(_){}}let sharedTheme='light';try{sharedTheme=localStorage.getItem('theme')||localStorage.getItem('ai-playgrounds-theme')||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(_){}applySharedTheme(sharedTheme);try{localStorage.removeItem('ai-playgrounds-theme')}catch(_){}themeButton?.addEventListener('click',()=>applySharedTheme(document.body.classList.contains('ap-standard-dark')?'light':'dark'));$('#ap-standard-reset')?.addEventListener('click',()=>location.reload())}wait();})();
+(()=>{'use strict';const API="Lab13Localization",EVENT="lab13localechange",DATA={"title":"Transformer Language Modeling","title_zh":"Transformer 语言建模","title_vi":"Mô hình ngôn ngữ Transformer","title_es":"Modelado del lenguaje con Transformer","desc":"Change a token, mask, or temperature and watch the next-token probabilities move.","desc_zh":"改变一个词元、掩码或温度，观察下一词元概率怎样变化。","desc_vi":"Đổi token, mask hoặc temperature và quan sát xác suất token tiếp theo thay đổi.","desc_es":"Cambia un token, la máscara o la temperatura y observa moverse las probabilidades."},CHROME={"en":{"back":"AI Playgrounds","language":"Language","theme":"Theme","reset":"Reset","home":"Home","curriculum":"Curriculum","teacher":"Teacher Pack","source":"Source","citation":"Citation"},"zh":{"back":"AI Playgrounds","language":"语言","theme":"主题","reset":"重置","home":"首页","curriculum":"课程","teacher":"教师包","source":"源代码","citation":"引用"},"vi":{"back":"AI Playgrounds","language":"Ngôn ngữ","theme":"Giao diện","reset":"Đặt lại","home":"Trang chủ","curriculum":"Chương trình","teacher":"Tài liệu giáo viên","source":"Mã nguồn","citation":"Trích dẫn"},"es":{"back":"AI Playgrounds","language":"Idioma","theme":"Tema","reset":"Reiniciar","home":"Inicio","curriculum":"Currículo","teacher":"Guía docente","source":"Código fuente","citation":"Citación"}};const $=s=>document.querySelector(s);function norm(v){v=String(v||'').toLowerCase();if(v.startsWith('zh'))return'zh';if(v.startsWith('vi'))return'vi';if(v.startsWith('es'))return'es';return'en'}function api(){return window[API]||null}function locale(){const a=api();return norm((a&&((a.getLocale&&a.getLocale())||(a.locale&&a.locale())))||new URL(location.href).searchParams.get('lang')||'en')}function f(base,l){if(l==='en')return DATA[base]||'';return DATA[base+'_'+l]||DATA[base]||''}function sync(value){const l=norm(value||locale()),c=CHROME[l]||CHROME.en;$('#ap-standard-title').textContent=f('title',l);document.title=f('title',l)+' | AI Playgrounds';$('#ap-standard-subtitle').textContent=f('desc',l);const sel=$('#ap-standard-language-select');if(sel)sel.value=l;document.querySelectorAll('[data-ap-chrome]').forEach(el=>{const k=el.dataset.apChrome;if(c[k])el.textContent=c[k]})}let deferredWait=false;function wait(){const a=api();if(!a||typeof a.setLocale!=='function'){if(document.readyState==='loading'&&!deferredWait){deferredWait=true;document.addEventListener('DOMContentLoaded',wait,{once:true});return}console.error('Modern shell could not start because '+API+' is unavailable');return}const sel=$('#ap-standard-language-select');sync(locale());sel?.addEventListener('change',()=>{a.setLocale(sel.value);setTimeout(()=>sync(sel.value),0)});window.addEventListener(EVENT,e=>sync(e.detail&&e.detail.locale));const themeButton=$('#ap-standard-theme');function applySharedTheme(value){const dark=value==='dark';document.body.classList.toggle('ap-standard-dark',dark);if(themeButton){themeButton.textContent=dark?'☀️':'🌙';themeButton.setAttribute('aria-pressed',dark?'true':'false')}try{localStorage.setItem('theme',dark?'dark':'light')}catch(_){}}let sharedTheme='light';try{sharedTheme=localStorage.getItem('theme')||localStorage.getItem('ai-playgrounds-theme')||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(_){}applySharedTheme(sharedTheme);try{localStorage.removeItem('ai-playgrounds-theme')}catch(_){}themeButton?.addEventListener('click',()=>applySharedTheme(document.body.classList.contains('ap-standard-dark')?'light':'dark'));$('#ap-standard-reset')?.addEventListener('click',()=>location.reload())}wait();})();
 </script>
 <script data-quick-assign-modern-runtime="1">
 (() => {
@@ -876,7 +876,6 @@ init();
   const id = "QA-TRANSFORMER-01";
   const root = document.querySelector('[data-quick-assign-id="' + id + '"]');
   if (!root) return;
-  const key = 'ai-playgrounds-quick-assign:' + id;
   const locale = () => {
     const value = String(document.documentElement.lang || 'en').toLowerCase();
     return value.startsWith('zh') ? 'zh' : value.startsWith('vi') ? 'vi' : value.startsWith('es') ? 'es' : 'en';
@@ -887,28 +886,6 @@ init();
       el.textContent = el.getAttribute('data-qa-' + language) || el.getAttribute('data-qa-en') || '';
     });
   }
-  function save() {
-    try {
-      const data = {};
-      root.querySelectorAll('[data-qa-answer]').forEach(el => data[el.dataset.qaAnswer] = el.value);
-      localStorage.setItem(key, JSON.stringify(data));
-    } catch (_error) {}
-  }
-  function load() {
-    try {
-      const data = JSON.parse(localStorage.getItem(key) || '{}');
-      root.querySelectorAll('[data-qa-answer]').forEach(el => {
-        if (Object.prototype.hasOwnProperty.call(data, el.dataset.qaAnswer)) el.value = data[el.dataset.qaAnswer];
-      });
-    } catch (_error) {}
-  }
-  root.addEventListener('input', event => {
-    if (event.target && event.target.matches('[data-qa-answer]')) save();
-  });
-  root.querySelector('[data-qa-action="clear"]')?.addEventListener('click', () => {
-    root.querySelectorAll('[data-qa-answer]').forEach(el => el.value = '');
-    try { localStorage.removeItem(key); } catch (_error) {}
-  });
   root.querySelector('[data-qa-action="print"]')?.addEventListener('click', () => window.print());
   root.querySelector('[data-qa-action="copy"]')?.addEventListener('click', async () => {
     const text = [...root.querySelectorAll('[data-qa-answer]')]
@@ -918,7 +895,6 @@ init();
   });
   window.addEventListener("lab13localechange", () => setTimeout(paint, 0));
   document.querySelector('#ap-standard-language-select')?.addEventListener('change', () => setTimeout(paint, 0));
-  load();
   paint();
 })();
 </script><script data-v17-quick-assign-direct-open="1">
@@ -971,7 +947,7 @@ language?.addEventListener('change',()=>localeApi()?.setLocale(language.value));
 function paintLanguage(){if(language){language.value=locale();language.setAttribute('aria-label',LANGUAGE_LABELS[locale()])}}
 new MutationObserver(paintLanguage).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
 paintLanguage();
-document.getElementById('ap-modern-settings-json')?.addEventListener('click',()=>{const values={};document.querySelectorAll('#ap-modern-interactive-start input,#ap-modern-interactive-start select,#ap-modern-interactive-start textarea').forEach(element=>{if(!element.id||element.closest('[data-quick-assign-id]'))return;if(element.type==='radio'&&!element.checked)return;values[element.id]=element.type==='checkbox'?element.checked:element.value});const data=JSON.stringify({applet:document.getElementById('ap-standard-title')?.textContent||document.title,slug:document.body.dataset.apModernParity||'',exported_at:new Date().toISOString(),values},null,2);const blob=new Blob([data],{type:'application/json'});const anchor=document.createElement('a');anchor.href=URL.createObjectURL(blob);anchor.download=(document.body.dataset.apModernParity||'ai-playground')+'-settings.json';anchor.click();setTimeout(()=>URL.revokeObjectURL(anchor.href),1000);document.getElementById('ap-modern-more')?.removeAttribute('open')});
+document.getElementById('ap-modern-settings-json')?.addEventListener('click',()=>{const values={};document.querySelectorAll('#ap-modern-interactive-start input,#ap-modern-interactive-start select,#ap-modern-interactive-start textarea').forEach(element=>{if(!element.id||element.readOnly||element.closest('[data-quick-assign-id],.suite-guided-shell,.challenge')||/language-select$/.test(element.id)||['button','submit','reset','file','password','hidden'].includes(element.type))return;if(element.type==='radio'&&!element.checked)return;values[element.id]=element.type==='checkbox'?element.checked:element.value});const data=JSON.stringify({applet:document.getElementById('ap-standard-title')?.textContent||document.title,slug:document.body.dataset.apModernParity||'',exported_at:new Date().toISOString(),values},null,2);const blob=new Blob([data],{type:'application/json'});const anchor=document.createElement('a');anchor.href=URL.createObjectURL(blob);anchor.download=(document.body.dataset.apModernParity||'ai-playground')+'-settings.json';anchor.click();setTimeout(()=>URL.revokeObjectURL(anchor.href),1000);document.getElementById('ap-modern-more')?.removeAttribute('open');document.querySelector('#ap-modern-more > summary')?.focus()});
 theme?.addEventListener('click',()=>setTimeout(paint,0));
 reset?.addEventListener('click',event=>{event.preventDefault();event.stopImmediatePropagation();const url=new URL(location.href);const lang=url.searchParams.get('lang');url.search='';url.hash='';if(lang&&LOCALES.includes(norm(lang)))url.searchParams.set('lang',norm(lang));location.replace(url.href)},true);
 new MutationObserver(paint).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
@@ -984,15 +960,15 @@ paint();
 
 <script id="v172-modern-packet-runtime">
 (()=>{'use strict';const COPY={"en":{"state":"State snapshot","empty":"State snapshot appears here.","refresh":"Refresh state","copy":"Copy packet","print":"Print packet","predict":"Predict","observe":"Observe","explain":"Explain","transfer":"Transfer","copied":"Copied local lab packet.","popup":"Popup blocked. Copy the packet instead."},"zh":{"state":"状态记录","empty":"状态记录会显示在这里。","refresh":"更新状态","copy":"复制实验包","print":"打印实验包","predict":"预测","observe":"观察","explain":"解释","transfer":"迁移","copied":"已复制本地实验包。","popup":"弹窗被拦截。请改用复制实验包。"},"vi":{"state":"Ảnh chụp trạng thái","empty":"Ảnh chụp trạng thái sẽ xuất hiện ở đây.","refresh":"Làm mới trạng thái","copy":"Sao chép gói bài","print":"In gói bài","predict":"Dự đoán","observe":"Quan sát","explain":"Giải thích","transfer":"Chuyển giao","copied":"Đã sao chép gói bài cục bộ.","popup":"Cửa sổ bật lên bị chặn. Hãy sao chép gói bài thay thế."},"es":{"state":"Captura del estado","empty":"La captura del estado aparecerá aquí.","refresh":"Actualizar estado","copy":"Copiar paquete","print":"Imprimir paquete","predict":"Predecir","observe":"Observar","explain":"Explicar","transfer":"Transferir","copied":"Paquete local copiado.","popup":"Ventana emergente bloqueada. Copia el paquete en su lugar."}};const root=document.querySelector('[data-quick-assign-id]');if(!root)return;const source=document.getElementById("stateText");const state=root.querySelector('[data-qa-modern-state]');const status=root.querySelector('[data-qa-modern-status]');const norm=v=>{v=String(v||'').toLowerCase();return v.startsWith('zh')?'zh':v.startsWith('vi')?'vi':v.startsWith('es')?'es':'en'};const locale=()=>norm(document.documentElement.lang);const labels=()=>COPY[locale()]||COPY.en;
-function refresh(){if(!state)return;const value=String(source?.value||source?.textContent||'').trim();state.textContent=value||labels().empty;state.dataset.qaStateReady='1'}
+function refresh(){if(!state)return;const value=String(source?.value||source?.textContent||'').trim();state.textContent=value||labels().empty;state.dataset.qaStateReady='1';state.lang=locale();for(const n of [13,14,15])state.setAttribute('data-lab'+n+'-no-translate','');for(const l of ['en','zh','vi','es'])state.removeAttribute('data-ap-'+l)}
 function answers(){const out={};root.querySelectorAll('[data-qa-answer]').forEach(el=>out[el.dataset.qaAnswer]=(el.value||'').trim());return out}
 function packet(){const l=labels(),a=answers();return['# '+(document.getElementById('ap-standard-title')?.textContent||document.title),'','## '+l.state,(state?.textContent||l.empty),'','## '+l.predict,a.predict||'','','## '+l.observe,a.observe||'','','## '+l.explain,a.explain||'','','## '+l.transfer,a.transfer||''].join('\n')}
 function setStatus(text){if(status)status.textContent=text}
-async function copyPacket(){const text=packet();try{await navigator.clipboard.writeText(text);setStatus(labels().copied)}catch(_e){window.prompt('Copy this lab packet:',text)}}
-function printable(markdown){const esc=v=>String(v).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));return String(markdown).split(/\r?\n/).map(line=>{if(line.startsWith('# '))return'<h1>'+esc(line.slice(2))+'</h1>';if(line.startsWith('## '))return'<h2>'+esc(line.slice(3))+'</h2>';if(!line.trim())return'';return'<p>'+esc(line)+'</p>'}).join('')}
-function printPacket(){const w=window.open('','_blank');if(!w){setStatus(labels().popup);return}const body=printable(packet());w.document.open();w.document.write('<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}h1{font-size:1.6rem}h2{font-size:1.05rem;margin-top:18px;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{white-space:pre-wrap}@media print{body{margin:0;max-width:none;padding:0}}</style></head><body>'+body+'</body></html>');w.document.close();setTimeout(()=>{try{w.focus();w.print()}catch(_e){}},250)}
+async function copyPacket(){const text=packet();try{await navigator.clipboard.writeText(text);setStatus(labels().copied)}catch(_e){window.prompt(labels().copy,text)}}
+function printable(markdown){let sectionIndex=0,inState=false;const esc=v=>String(v).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));return String(markdown).split(/\r?\n/).map(line=>{if(line.startsWith('# '))return'<h1>'+esc(line.slice(2))+'</h1>';if(line.startsWith('## ')){inState=sectionIndex++===0;return'<h2>'+esc(line.slice(3))+'</h2>'}if(!line.trim())return'';return'<p'+(inState?' lang="'+(state?.lang||locale())+'"':'')+'>'+esc(line)+'</p>'}).join('')}
+function printPacket(){const w=window.open('','_blank');if(!w){setStatus(labels().popup);return}const body=printable(packet());w.document.open();w.document.write('<!doctype html><html lang="'+locale()+'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}h1{font-size:1.6rem}h2{font-size:1.05rem;margin-top:18px;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{white-space:pre-wrap}@media print{body{margin:0;max-width:none;padding:0}}</style></head><body>'+body+'</body></html>');w.document.close();setTimeout(()=>{try{w.focus();w.print()}catch(_e){}},250)}
 root.addEventListener('click',event=>{const button=event.target?.closest?.('[data-qa-action]');if(!button)return;const action=button.dataset.qaAction;if(action==='refresh-state'||action==='copy'||action==='print'){event.preventDefault();event.stopImmediatePropagation();if(action==='refresh-state')refresh();if(action==='copy')copyPacket();if(action==='print')printPacket()}},true);
-new MutationObserver(()=>{if(state?.dataset.qaStateReady==='1')setTimeout(refresh,0)}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+new MutationObserver(()=>{if(state && state.dataset.qaStateReady!=='1')state.textContent=labels().empty}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
 })();</script>
 <script id="v172-modern-packet-label-runtime" data-v172-stable-lifecycle="true">
 (()=>{'use strict';
@@ -1034,16 +1010,142 @@ schedulePaint();syncAccessibleState();
 const norm=v=>{v=String(v||'').toLowerCase();return v.startsWith('zh')?'zh':v.startsWith('vi')?'vi':v.startsWith('es')?'es':'en'};
 const locale=()=>norm(document.documentElement.lang);const E=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 function list(items){return'<ul>'+items.map(x=>'<li>'+E(x)+'</li>').join('')+'</ul>'}
-function paint(){window.__apSuiteLayout?.beforeRender();const l=locale(),c=DATA.common[l]||DATA.common.en,d=DATA.copy[l]||DATA.copy.en,f=d.scenarios[DATA.featured];let cards='';d.scenarios.forEach((s,i)=>{cards+='<article class="scenario-card" data-modern-scenario-card="'+i+'"><h3>'+E(c.scenario)+' '+(i+1)+': '+E(s.title)+'</h3><p class="scenario-meta"><strong>'+E(c.core_question)+':</strong> '+E(s.question)+'</p><p class="scenario-meta"><strong>'+E(c.run_watch)+':</strong> '+E(s.run)+'</p><p class="scenario-meta"><strong>'+E(c.predict_first)+':</strong> '+E(s.predict)+'</p><p class="scenario-meta"><strong>'+E(c.explain_after)+':</strong> '+E(s.explain)+'</p><button type="button" data-modern-apply="'+i+'">'+E(c.apply)+'</button></article>'});let terms=d.terms.map(x=>'<div><dt>'+E(x[0])+'</dt><dd>'+E(x[1])+'</dd></div>').join('');let sections=d.sections.map(x=>'<section><h2>'+E(x[0])+'</h2>'+x[1].map(p=>'<p>'+E(p)+'</p>').join('')+'</section>').join('');const t=d.teacher;root.innerHTML='<details class="signature-challenge ap-modern-featured" open><summary>'+E(c.featured_summary)+'</summary><div class="ap-modern-featured-body"><strong>'+E(f.title)+'</strong><p><b>'+E(c.core_question)+':</b> '+E(f.question)+'</p><p><em><b>'+E(c.run_watch)+':</b> '+E(f.run)+'</em></p><div class="featured-actions"><button type="button" data-modern-apply="'+DATA.featured+'">'+E(c.start_featured)+'</button></div></div></details><details class="scenario-gallery" open><summary>'+E(c.scenarios_summary)+'</summary><div class="scenario-gallery-panel"><p class="scenario-gallery-intro">'+E(c.scenarios_intro)+'</p><div class="scenario-card-grid" id="ap-modern-scenario-cards">'+cards+'</div></div></details><div class="ap-modern-jump"><a class="jump-link" href="#essay">'+E(c.jump)+'</a></div><article class="essay ap-modern-essay" id="essay"><section class="essay-primer"><h2>'+E(c.before)+'</h2><p>'+E(d.primer)+'</p><h3>'+E(c.terms)+'</h3><dl class="essay-primer-terms">'+terms+'</dl></section>'+sections+'<section class="for-teachers"><h2>'+E(c.teachers)+'</h2><p><strong>'+E(c.curriculum)+':</strong> '+E(t.curriculum)+'</p><h3>'+E(c.pre)+'</h3>'+list(t.pre)+'<h3>'+E(c.post)+'</h3>'+list(t.post)+'<p><strong>'+E(c.misconceptions)+':</strong> '+E(t.misconceptions)+'</p></section><details id="ap-modern-a11y" class="accessibility-layer ap-modern-a11y-compact"><summary>'+E(c.a11y_summary)+'</summary><div class="ap-support-body"><h2 class="ap-modern-sr-only">'+E(c.a11y_title)+'</h2><p>'+E(c.a11y_intro)+'</p><p><a href="#stateText">'+E(c.state_link)+'</a></p><p>'+E(c.a11y_note)+'</p></div></details><p class="ap-modern-back-controls"><a href="#ap-modern-interactive-start">'+E(c.back_controls)+'</a></p></article>';const essay=root.querySelector('.ap-modern-essay');if(essay)essayRoot.replaceChildren(essay);window.__apSuiteLayout?.refresh()}
-function apply(index){index=Number(index);const settings=DATA.settings[index];if(!settings)return;for(const [id,value] of Object.entries(settings)){const control=document.getElementById(id);if(!control)continue;control.value=String(value);control.dispatchEvent(new Event('change',{bubbles:true}))}root.querySelectorAll('.scenario-card').forEach(x=>x.classList.toggle('applied',Number(x.dataset.modernScenarioCard)===index));const c=DATA.common[locale()]||DATA.common.en;const button=root.querySelector('.scenario-card[data-modern-scenario-card="'+index+'"] button');if(button){button.textContent='✓ '+c.applied;setTimeout(()=>{if(button.isConnected)button.textContent=c.apply},1800)}try{const u=new URL(location.href);u.searchParams.set('scenario',String(index));u.searchParams.set('mode','explore');u.searchParams.set('lang',locale());u.searchParams.delete('featured');history.replaceState(null,'',u)}catch(_e){}document.getElementById('ap-modern-interactive-start')?.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
-root.addEventListener('click',e=>{const button=e.target.closest('[data-modern-apply]');if(!button)return;apply(button.dataset.modernApply)});new MutationObserver(paint).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});window.addEventListener('lab13localechange',paint);window.addEventListener('lab14localechange',paint);window.addEventListener('lab15localechange',paint);paint();try{const p=new URL(location.href).searchParams,n=Number(p.get('scenario'));if(p.has('scenario')&&Number.isInteger(n)&&n>=0&&n<DATA.settings.length)setTimeout(()=>apply(n),0)}catch(_e){}
+let applied=-1;
+function paint(){window.__apSuiteLayout?.beforeRender();const l=locale(),c=DATA.common[l]||DATA.common.en,d=DATA.copy[l]||DATA.copy.en,f=d.scenarios[DATA.featured];let cards='';d.scenarios.forEach((s,i)=>{cards+='<article class="scenario-card'+(i===applied?' applied':'')+'" data-modern-scenario-card="'+i+'"><h3>'+E(c.scenario)+' '+(i+1)+': '+E(s.title)+'</h3><p class="scenario-meta"><strong>'+E(c.core_question)+':</strong> '+E(s.question)+'</p><p class="scenario-meta"><strong>'+E(c.run_watch)+':</strong> '+E(s.run)+'</p><p class="scenario-meta"><strong>'+E(c.predict_first)+':</strong> '+E(s.predict)+'</p><p class="scenario-meta"><strong>'+E(c.explain_after)+':</strong> '+E(s.explain)+'</p><button type="button" data-modern-apply="'+i+'">'+E(c.apply)+'</button></article>'});let terms=d.terms.map(x=>'<div><dt>'+E(x[0])+'</dt><dd>'+E(x[1])+'</dd></div>').join('');let sections=d.sections.map(x=>'<section><h2>'+E(x[0])+'</h2>'+x[1].map(p=>'<p>'+E(p)+'</p>').join('')+'</section>').join('');const t=d.teacher;root.innerHTML='<details class="signature-challenge ap-modern-featured" open><summary>'+E(c.featured_summary)+'</summary><div class="ap-modern-featured-body"><strong>'+E(f.title)+'</strong><p><b>'+E(c.core_question)+':</b> '+E(f.question)+'</p><p><em><b>'+E(c.run_watch)+':</b> '+E(f.run)+'</em></p><div class="featured-actions"><button type="button" data-modern-apply="'+DATA.featured+'">'+E(c.start_featured)+'</button></div></div></details><details class="scenario-gallery" open><summary>'+E(c.scenarios_summary)+'</summary><div class="scenario-gallery-panel"><p class="scenario-gallery-intro">'+E(c.scenarios_intro)+'</p><div class="scenario-card-grid" id="ap-modern-scenario-cards">'+cards+'</div></div></details><div class="ap-modern-jump"><a class="jump-link" href="#essay">'+E(c.jump)+'</a></div><article class="essay ap-modern-essay" id="essay"><section class="essay-primer"><h2>'+E(c.before)+'</h2><p>'+E(d.primer)+'</p><h3>'+E(c.terms)+'</h3><dl class="essay-primer-terms">'+terms+'</dl></section>'+sections+'<section class="for-teachers"><h2>'+E(c.teachers)+'</h2><p><strong>'+E(c.curriculum)+':</strong> '+E(t.curriculum)+'</p><h3>'+E(c.pre)+'</h3>'+list(t.pre)+'<h3>'+E(c.post)+'</h3>'+list(t.post)+'<p><strong>'+E(c.misconceptions)+':</strong> '+E(t.misconceptions)+'</p></section><details id="ap-modern-a11y" class="accessibility-layer ap-modern-a11y-compact"><summary>'+E(c.a11y_summary)+'</summary><div class="ap-support-body"><h2 class="ap-modern-sr-only">'+E(c.a11y_title)+'</h2><p>'+E(c.a11y_intro)+'</p><p><a href="#stateText">'+E(c.state_link)+'</a></p><p>'+E(c.a11y_note)+'</p></div></details><p class="ap-modern-back-controls"><a href="#ap-modern-interactive-start">'+E(c.back_controls)+'</a></p></article>';const essay=root.querySelector('.ap-modern-essay');if(essay)essayRoot.replaceChildren(essay);window.__apSuiteLayout?.refresh()}
+function apply(index){index=Number(index);const settings=DATA.settings[index];if(!settings)return;for(const [id,value] of Object.entries(settings)){const control=document.getElementById(id);if(!control)continue;control.value=String(value);control.dispatchEvent(new Event('change',{bubbles:true}))}applied=index;root.querySelectorAll('.scenario-card').forEach(x=>x.classList.toggle('applied',Number(x.dataset.modernScenarioCard)===index));const c=DATA.common[locale()]||DATA.common.en;const btn=root.querySelector('.scenario-card[data-modern-scenario-card="'+index+'"] button');if(btn){btn.textContent='✓ '+c.applied;clearTimeout(btn._timer);btn._timer=setTimeout(()=>{if(btn.isConnected)btn.textContent=c.apply},1800)}try{const u=new URL(location.href);u.searchParams.set('scenario',String(index));u.searchParams.set('mode','explore');u.searchParams.set('lang',locale());u.searchParams.delete('featured');history.replaceState(null,'',u)}catch(_e){}document.getElementById('ap-modern-interactive-start')?.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
+root.addEventListener('click',e=>{const button=e.target.closest('[data-modern-apply]');if(!button)return;apply(button.dataset.modernApply)});new MutationObserver(paint).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});for(const id of[13,14,15])window.addEventListener('lab'+id+'localechange',paint);paint();try{const p=new URL(location.href).searchParams,n=Number(p.get('scenario'));if(p.has('scenario')&&Number.isInteger(n)&&n>=0&&n<DATA.settings.length)setTimeout(()=>apply(n),0)}catch(_e){}
 })();</script>
+<script id="classroom-draft-runtime">
+(() => {
+  'use strict';
+  const root = document.querySelector('[data-quick-assign-id]');
+  if (!root) return;
+  const original = !!root.querySelector('[data-lab-answer]');
+  const fields = [...root.querySelectorAll('[data-lab-answer],[data-qa-answer]')];
+  const state = root.querySelector('[data-lab-state],[data-qa-modern-state]');
+  const status = root.querySelector('.lab-status');
+  const slug = window.APPLET_LEARNER_PROFILE?.slug;
+  const key = original ? 'ai-playgrounds-lab-' + slug : 'ai-playgrounds-quick-assign:' + root.dataset.quickAssignId;
+  const locale = () => document.documentElement.lang.toLowerCase().split('-')[0];
+  const COPY = {
+    en: {confirm:'Clear this lab’s saved answers and captured evidence? This cannot be undone.', failed:'Your draft could not be saved in this browser. Copy or print it before closing this page.', cleared:'Local answers and captured evidence cleared.', removeFailed:'The saved draft could not be cleared. Your answers are still here.', restoreFailed:'The saved draft could not be read. Copy or print your work before reloading; clear the draft only if you want to discard it.'},
+    zh: {confirm:'清除此实验已保存的答案和状态记录？此操作无法撤销。', failed:'无法在此浏览器中保存草稿。关闭页面前请复制或打印。', cleared:'已清除本地答案和状态记录。', removeFailed:'无法清除已保存的草稿。你的答案仍保留在这里。', restoreFailed:'无法读取已保存的草稿。重新加载前请复制或打印你的内容；只有确认要丢弃草稿时才清除它。'},
+    vi: {confirm:'Xóa câu trả lời đã lưu và bằng chứng đã chụp của bài này? Không thể hoàn tác.', failed:'Không thể lưu bản nháp trong trình duyệt này. Hãy sao chép hoặc in trước khi đóng trang.', cleared:'Đã xóa câu trả lời cục bộ và bằng chứng đã chụp.', removeFailed:'Không thể xóa bản nháp đã lưu. Câu trả lời của bạn vẫn còn ở đây.', restoreFailed:'Không thể đọc bản nháp đã lưu. Hãy sao chép hoặc in bài trước khi tải lại; chỉ xóa bản nháp nếu muốn bỏ nó.'},
+    es: {confirm:'¿Borrar las respuestas guardadas y la evidencia capturada de este laboratorio? No se puede deshacer.', failed:'No se pudo guardar el borrador en este navegador. Cópialo o imprímelo antes de cerrar esta página.', cleared:'Se borraron las respuestas locales y la evidencia capturada.', removeFailed:'No se pudo borrar el borrador guardado. Tus respuestas siguen aquí.', restoreFailed:'No se pudo leer el borrador guardado. Copia o imprime tu trabajo antes de recargar; bórralo solo si deseas descartarlo.'}
+  };
+  const copy = () => COPY[locale()] || COPY.en;
+  const message = name => { if (status) { status.textContent = copy()[name]; status.dataset.draftError = ['failed','removeFailed','restoreFailed'].includes(name) ? name : ''; } };
+  new MutationObserver(() => { if (status?.dataset.draftError) message(status.dataset.draftError); }).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+  const captured = () => !!state && !!state.textContent.trim() && (state.hasAttribute('data-r4-no-translate') || state.dataset.qaStateReady === '1');
+  function retainCapture(text, lang) {
+    if (!state) return;
+    state.textContent = text;
+    state.lang = ['en','zh','vi','es'].includes(lang) ? lang : 'en';
+    state.setAttribute('data-r4-no-translate','');
+    state.dataset.qaStateReady = '1';
+    for (const n of [13,14,15]) state.setAttribute('data-lab'+n+'-no-translate','');
+    for (const lang of ['en','zh','vi','es']) state.removeAttribute('data-ap-'+lang);
+  }
+  const fieldName = field => field.dataset.labAnswer || field.dataset.qaAnswer;
+  const dirty = new Set();
+  let captureDirty = false, unreadable = false;
+  function readDraft() {
+    const data = JSON.parse(localStorage.getItem(key) || '{}');
+    if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Invalid draft');
+    for (const field of fields) if (data[fieldName(field)] !== undefined && typeof data[fieldName(field)] !== 'string') throw new Error('Invalid answer');
+    if (data.__capture !== undefined && typeof data.__capture?.text !== 'string') throw new Error('Invalid capture');
+    unreadable = false;
+    return data;
+  }
+  function applyDraft(data) {
+    for (const field of fields) if (!dirty.has(fieldName(field))) field.value = data[fieldName(field)] || '';
+    if (!captureDirty) {
+      if (data.__capture) retainCapture(data.__capture.text, data.__capture.lang);
+      else if (captured()) retainCapture('', locale());
+    }
+  }
+  function save(field, refresh = false) {
+    if (field) dirty.add(fieldName(field));
+    captureDirty ||= refresh;
+    try {
+      // Merge only this tab's edits into the latest stored packet. A stale tab
+      // must not replace another tab's different answer or explicit capture.
+      const latest = readDraft();
+      const data = Object.fromEntries(fields.map(field => {
+        const name = fieldName(field);
+        return [name, dirty.has(name) ? field.value : latest[name] || ''];
+      }));
+      if (captureDirty && captured()) data.__capture = {text:state.textContent, lang:state.lang};
+      else if (!captureDirty && latest.__capture) data.__capture = latest.__capture;
+      localStorage.setItem(key, JSON.stringify(data));
+      dirty.clear(); captureDirty = false;
+      if (status?.dataset.draftError || Object.values(COPY).some(value => status?.textContent === value.cleared)) { status.textContent=''; delete status.dataset.draftError; }
+    } catch (_) { message('failed'); }
+  }
+  try { applyDraft(readDraft()); }
+  catch (_) { unreadable = true; message('restoreFailed'); }
+  window.addEventListener('storage', event => {
+    if (event.key !== key && event.key !== null) return;
+    try {
+      if (event.storageArea !== localStorage) return;
+      // Read the latest value, not a possibly superseded queued storage event.
+      applyDraft(readDraft());
+    } catch (_) { unreadable = true; message('restoreFailed'); }
+  });
+  // One owner saves the complete packet before legacy answer-only handlers run.
+  document.addEventListener('input', event => {
+    if (!fields.includes(event.target)) return;
+    event.stopImmediatePropagation();
+    save(event.target);
+  }, true);
+  document.addEventListener('click', event => {
+    const button = event.target.closest?.('[data-lab-action],[data-qa-action]');
+    if (!button || !root.contains(button)) return;
+    const action = button.dataset.labAction || button.dataset.qaAction;
+    if (action === 'refresh' || action === 'refresh-state') {
+      // Capture is synchronous in each native packet; persist its finished result.
+      queueMicrotask(() => save(null, true));
+      return;
+    }
+    if (action !== 'clear') return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (!fields.some(field => field.value) && !captured() && !unreadable) return;
+    if (!window.confirm(copy().confirm)) return;
+    try { localStorage.removeItem(key); }
+    catch (_) { message('removeFailed'); return; }
+    dirty.clear(); captureDirty = false; unreadable = false;
+    for (const field of fields) field.value = '';
+    if (state) {
+      // An empty capture is intentional; do not restore or recapture live results.
+      retainCapture('', locale());
+    }
+    message('cleared');
+    fields[0]?.focus();
+  }, true);
+})();
+</script>
+
 </body>
 </html>
 <style id="learner-interface-style">
 /* Learner-facing terminology, compact glossary, and consistent action hierarchy. */
 .header-actions{align-items:center}.header-more{position:relative}.header-more>summary{list-style:none;cursor:pointer;user-select:none}.header-more>summary::-webkit-details-marker{display:none}.header-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:50;min-width:220px;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 16px 35px rgba(15,23,42,.18);display:grid;gap:5px}.header-more-menu button{width:100%;text-align:left;justify-content:flex-start;white-space:normal}.key-terms-panel{padding:14px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}.key-terms-intro{margin:0 0 10px;color:var(--muted)}.key-terms-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.key-term{padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:color-mix(in srgb,var(--card) 97%,var(--accent))}.key-term dt{font-weight:800;color:var(--fg);margin:0 0 3px}.key-term dd{margin:0;color:var(--muted);font-size:.84rem;line-height:1.45}.essay-primer{margin:0 0 22px;padding:15px 17px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--card) 96%,var(--accent));border-radius:10px}.essay-primer h2{margin:0 0 6px!important;font-size:1.05rem!important}.essay-primer p{margin:0 0 10px!important}.essay-primer h3{margin:12px 0 7px;font-size:.92rem}.essay-primer-terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0}.essay-primer-terms>div{padding:8px 9px;border:1px solid var(--border);border-radius:8px;background:var(--card)}.essay-primer-terms dt{font-weight:800}.essay-primer-terms dd{margin:2px 0 0;color:var(--muted);font-size:.82rem;line-height:1.4}.scenario-card .scenario-meta{line-height:1.5}.scenario-card .scenario-meta strong{display:block;margin-bottom:2px}.header-actions>.header-png,.header-actions>.header-theme,.header-actions>.header-reset,.header-more>summary{min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px}
 @media(max-width:720px){.essay-primer-terms{grid-template-columns:1fr}.header-actions{width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}.header-actions>button,.header-actions>.header-more,.header-more>summary{width:100%;justify-content:center}.header-more-menu{right:auto;left:0;max-width:min(290px,90vw)}.key-terms-grid{grid-template-columns:1fr}}
+/* Accessible text keeps the lab hue without changing filled controls or plots. */
+body.dark-mode{--accent-text:color-mix(in srgb,var(--fg) 80%,var(--accent))}
+body.dark-mode :is(.page-header .back,.scenario-card h3,.classroom-lab .lab-field label,.essay h2,.essay h3,.essay h4,.visual-card h4,.visual-live strong,.signature-challenge-panel strong,footer a){color:var(--accent-text)}
+body.dark-mode footer a{color:var(--accent-text)!important}
+.essay h2,.key-terms-intro,.worksheet{overflow-wrap:anywhere}
+#tourName{min-width:0;overflow-wrap:anywhere}
+div:has(>#tourName),div:has(>#tourNext){flex-wrap:wrap}
+.slider-block,.mode-tabs,#modeGroup,#initGroup{flex-wrap:wrap;max-width:100%}
+select{min-width:0;max-width:100%}
+.scenario-card h3,.essay-primer-terms>div,p,.tldr,[data-i18n="seq-explain"]{min-width:0;overflow-wrap:anywhere}
+.header-actions>button{overflow-wrap:anywhere;white-space:normal}
+h1,h3,.method-tabs button,.stat-item,.key-term,.world-icon-key li>span:last-child{min-width:0;overflow-wrap:anywhere}
+.stats-strip,div:has(>#ngViewW){flex-wrap:wrap;max-width:100%}
+@media(max-width:360px){.visual-live{box-sizing:border-box;min-width:0;white-space:normal;flex-wrap:wrap}.visual-live>span{min-width:0;overflow-wrap:anywhere}}
 </style>
 <style id="learning-modes-style">
 /* Product information architecture and restrained visual hierarchy. */
@@ -1344,6 +1446,28 @@ root.addEventListener('click',e=>{const button=e.target.closest('[data-modern-ap
     setMode(active, false);
     setGuided(guided);
   }
+  // Let Space activate this native button instead of a lab-wide play shortcut.
+  learning.addEventListener('keydown', event => {
+    if (event.key === ' ' && event.target.closest('.featured-actions [data-modern-apply]')) event.stopPropagation();
+  });
+
+  // A learner-initiated handoff moves both the viewport and keyboard focus.
+  // Restoring a shared URL or changing locale must never steal focus.
+  function handoffToExperiment() {
+    const target = [...inner.querySelectorAll('select,input:not([type="hidden"]),textarea')]
+      .find(node => !node.closest('.learning-mode-shell,.suite-guided-shell')
+        && !node.disabled && node.getClientRects().length);
+    if (!target) return;
+    target.focus({preventScroll: true});
+    target.scrollIntoView({block: 'center',
+      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
+  }
+
+  // The native teaching renderer applies the scenario before this listener.
+  // Only its explicit featured action hands off; scenario restoration does not.
+  learning.addEventListener('click', event => {
+    if (event.target.closest('.featured-actions [data-modern-apply]')) handoffToExperiment();
+  });
   window.__apSuiteLayout = {beforeRender, refresh};
   refresh();
 })();

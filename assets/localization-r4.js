@@ -9,6 +9,28 @@
   const rootData = window.__AI_PLAYGROUNDS_R4_LOCALES || {};
   rootData.common = rootData.common || {};
   rootData.common.vi = Object.assign({
+    "↺ Reset all": "↺ Đặt lại",
+    "↺ New world": "↺ Thế giới mới",
+    "Before you read": "Trước khi đọc",
+    "Misconceptions to test:": "Những hiểu lầm cần kiểm tra:",
+    "Core question:": "Câu hỏi trọng tâm:",
+    "Run and watch:": "Chạy và quan sát:",
+    "Predict first:": "Dự đoán trước:",
+    "Explain afterward:": "Giải thích sau:",
+    "Apply and compare": "Áp dụng và so sánh",
+    "Start with the featured experiment, then use the scenarios to test a prediction.": "Bắt đầu với thí nghiệm nổi bật, rồi dùng các tình huống để kiểm tra dự đoán.",
+    "Open the mechanism view and lesson sequence when you need to explain why the result changed.": "Mở phần mô tả cơ chế và trình tự bài học khi cần giải thích vì sao kết quả thay đổi.",
+    "Collect reasoning with the worksheet or the local student response packet.": "Ghi lại lập luận bằng phiếu học tập hoặc bộ câu trả lời của học sinh được lưu cục bộ.",
+    "Use the text-state description and keyboard guidance when the visual display is not enough.": "Dùng mô tả trạng thái bằng văn bản và hướng dẫn bàn phím khi hình ảnh hiển thị chưa đủ.",
+    "Applet learning modes": "Các chế độ học tập của applet",
+    "Copy this experiment": "Sao chép thí nghiệm này",
+    "Experiment link copied.": "Đã sao chép liên kết thí nghiệm.",
+    "Copy this experiment URL": "Sao chép URL của thí nghiệm này",
+    "Understand": "Tìm hiểu",
+    "Use in class": "Dùng trong lớp",
+    "Text and keyboard": "Văn bản và bàn phím",
+    "What this applet shows": "Điều applet này minh họa",
+
     "Jump to latest": "Về trạng thái mới nhất",
     "Jump to frame": "Đến khung",
     "Jump to iteration": "Đến lần lặp",
@@ -46,6 +68,28 @@
     'Wumpus World': 'Thế giới Wumpus'
   }, rootData.common.vi || {});
   rootData.common.es = Object.assign({
+    "↺ Reset all": "↺ Restablecer",
+    "↺ New world": "↺ Nuevo mundo",
+    "Before you read": "Antes de leer",
+    "Misconceptions to test:": "Ideas erróneas que comprobar:",
+    "Core question:": "Pregunta central:",
+    "Run and watch:": "Ejecuta y observa:",
+    "Predict first:": "Predice primero:",
+    "Explain afterward:": "Explica después:",
+    "Apply and compare": "Aplicar y comparar",
+    "Start with the featured experiment, then use the scenarios to test a prediction.": "Empieza con el experimento destacado y usa los escenarios para comprobar una predicción.",
+    "Open the mechanism view and lesson sequence when you need to explain why the result changed.": "Abre la vista del mecanismo y la secuencia de la lección para explicar por qué cambió el resultado.",
+    "Collect reasoning with the worksheet or the local student response packet.": "Recoge el razonamiento con la hoja de actividades o el cuaderno de respuestas del estudiante guardado localmente.",
+    "Use the text-state description and keyboard guidance when the visual display is not enough.": "Usa la descripción textual del estado y la guía del teclado cuando la visualización no sea suficiente.",
+    "Applet learning modes": "Modos de aprendizaje del applet",
+    "Copy this experiment": "Copiar este experimento",
+    "Experiment link copied.": "Enlace del experimento copiado.",
+    "Copy this experiment URL": "Copia la URL de este experimento",
+    "Understand": "Comprender",
+    "Use in class": "Usar en clase",
+    "Text and keyboard": "Texto y teclado",
+    "What this applet shows": "Lo que muestra este applet",
+
     "Jump to latest": "Ir al estado más reciente",
     "Jump to frame": "Ir al estado",
     "Jump to iteration": "Ir a la iteración",
@@ -87,6 +131,43 @@
   // R4 stays invisible until the applet-specific VI/ES catalog is complete.
   if (!data || data.ready !== true || !data.vi || !data.es) return;
 
+  // Scope navigation labels to the footer; Source in a mechanism is not source code.
+  const footerLabels = {"vi":{"footer-top":"↑ Lên đầu trang","footer-portfolio":"Hồ sơ","footer-source":"Mã nguồn","footer-issue":"Báo lỗi"},"es":{"footer-top":"↑ Volver arriba","footer-portfolio":"Portafolio","footer-source":"Código fuente","footer-issue":"Informar de un problema"}};
+  // Teacher headings and short rich-text fragments never enter substring lookup.
+  const teacherLabels = {vi: {'For teachers': 'Dành cho giáo viên', 'Curriculum:': 'Nội dung học:', 'Pre-exploration prompts:': 'Câu hỏi trước khi khám phá:', 'Post-exploration prompts:': 'Câu hỏi sau khi khám phá:'}, es: {'For teachers': 'Para docentes', 'Curriculum:': 'Contenidos:', 'Pre-exploration prompts:': 'Preguntas antes de explorar:', 'Post-exploration prompts:': 'Preguntas después de explorar:'}};
+  // Exact original-header titles only; never translate body or learner text in ZH.
+  const headerTitlesZh = {
+    "Copy an <iframe> snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.": "复制用于嵌入学习管理系统（LMS）的 <iframe> 代码。隐藏页头和说明，仅显示交互区。",
+    "Reset everything to defaults: empty grid, A*, default start and goal positions.": "恢复默认设置：空网格、A* 算法及默认起点和终点。",
+    "Reset everything to defaults: TSP, best-improvement, T₀=10, cooling=0.995.": "恢复默认设置：旅行商问题、最佳改进法、初始温度 T₀=10、降温系数 0.995。",
+    "Generate a new random world, clear the log, reset score.": "生成新的随机世界，清空日志并重置分数。",
+    "Reset input to default 'modus ponens' example.": "将输入恢复为默认的“肯定前件式”示例。",
+    "Reset to default disease scenario: prior=1%, sensitivity=99%, specificity=95%, population=10000.": "恢复默认疾病检测情景：患病率 1%、灵敏度 99%、特异度 95%、人数 10000。",
+    "Reset CPTs to AIMA defaults and clear all evidence.": "将条件概率表恢复为 AIMA 默认值，并清除所有观测证据。",
+    "Reset everything to defaults: two-moons dataset, k=5, both visualizations on.": "恢复默认设置：双月数据集、k=5，并开启两个可视化图层。",
+    "Reset everything: sin truth, n=20 points, σ=0.2 noise, degree 3, λ=0.": "恢复默认设置：真实函数为 sin、n=20 个点、噪声 σ=0.2、多项式次数为 3、λ=0。",
+    "Reset everything to default: two-moons dataset, [2-6-4-1] architecture, ReLU activation, LR=0.03.": "恢复默认设置：双月数据集、[2-6-4-1] 网络结构、ReLU 激活函数、学习率 0.03。",
+    "Reset everything to the default: Gaussian mixture dataset, k=3, random init.": "恢复默认设置：高斯混合数据集、k=3、随机初始化。",
+    "Reset to default: cross input, Sobel-X edge kernel, abs ON, ReLU OFF.": "恢复默认设置：十字形输入、Sobel-X 边缘检测核，开启绝对值变换，关闭 ReLU。",
+    "Clear Q-values; restore the default grid, learning rate, discount factor, exploration rate and step reward.": "清空 Q 值；将网格、学习率、折扣因子、探索率和每步奖励恢复为默认值。",
+    "Download the current grid + search trace as a PNG.": "将当前网格和搜索轨迹下载为 PNG 图片。",
+    "Download the current state visualization as a PNG.": "将当前状态的可视化下载为 PNG 图片。",
+    "Download the world view as a PNG.": "将世界视图下载为 PNG 图片。",
+    "Download the population dot-grid as a PNG.": "将人群点阵图下载为 PNG 图片。",
+    "Download the network diagram as a PNG.": "将网络图下载为 PNG 图片。",
+    "Download the current points + decision boundary as a PNG.": "将当前数据点和决策边界下载为 PNG 图片。",
+    "Download the fit canvas as a PNG.": "将拟合图下载为 PNG 图片。",
+    "Download the decision-boundary canvas as a PNG.": "将决策边界图下载为 PNG 图片。",
+    "Download the current visualization as a PNG image (for slides).": "将当前可视化下载为 PNG 图片（可用于幻灯片）。",
+    "Download the convolution output as a PNG.": "将卷积输出下载为 PNG 图片。",
+    "Download the current grid + Q-value heatmap as a PNG.": "将当前网格和 Q 值热力图下载为 PNG 图片。",
+    "Download grid dimensions and search results (path coordinates, visited-node count, frontier snapshot) as CSV.": "将网格尺寸和搜索结果（路径坐标、已访问节点数、搜索前沿快照）下载为 CSV。",
+    "Download per-iteration costs, algorithm, problem, iteration count and best cost as CSV.": "将每次迭代的代价、算法、问题、迭代次数和最佳代价下载为 CSV。",
+    "Download the current Bayes scenario (prior, sens, spec, population) and the resulting contingency table + posteriors as CSV.": "将当前贝叶斯情景（先验概率、灵敏度、特异度、人数）、列联表和后验概率下载为 CSV。",
+    "Download training + validation datasets and the per-degree MSE table as CSV.": "将训练集、验证集和各多项式次数的均方误差表下载为 CSV。",
+    "Download points + cluster assignments + centroid positions as CSV (two sections in one file).": "将数据点、所属簇和质心位置下载为 CSV（同一文件内分为两个部分）。",
+    "Download episode return history + the current Q-table snapshot as CSV.": "将各回合的回报历史和当前 Q 表快照下载为 CSV。"
+  };
   let current = 'en';
   let applying = false;
   let nativeLanguageClick = false;
@@ -155,6 +236,7 @@
   function skipNode(node) {
     const el = node && (node.nodeType === 1 ? node : node.parentElement);
     if (!el) return true;
+    if (el.closest('.suite-guided-actual')) return false;
     return !!el.closest('script,style,noscript,template,code,pre,kbd,samp,.lang-switch,[data-r4-no-translate]');
   }
 
@@ -173,7 +255,15 @@
     const live = node.nodeValue || '';
     if (!originalText.has(node)) originalText.set(node, live);
     const source = textSource(node);
-    const translated = translateString(source);
+    const footerKey = node.parentElement?.closest('footer [data-i18n]')?.dataset.i18n;
+    // Match formatted teacher prose only; retain source and outer whitespace.
+    const proseKey = node.parentElement?.closest('.for-teachers')
+      ? source.replace(/\s+/g, ' ').trim() : null;
+    const proseMap = proseKey === null ? null
+      : Object.assign({}, mapFor(current), data[current]?.teacher || {}, teacherLabels[current] || {});
+    const prose = proseMap && Object.prototype.hasOwnProperty.call(proseMap, proseKey)
+      ? source.replace(/\S(?:[\s\S]*\S)?/, () => proseMap[proseKey]) : null;
+    const translated = footerLabels[current]?.[footerKey] || prose || translateString(source);
     if (translated !== live) {
       lastAppliedText.set(node, translated);
       applying = true;
@@ -182,15 +272,19 @@
     }
   }
 
-  function translateAttributes(el) {
+  function translateAttributes(el, attributes = ['title', 'aria-label', 'placeholder']) {
     if (!el || el.nodeType !== 1 || skipNode(el)) return;
     const state = attrState(el);
-    for (const attr of ['title', 'aria-label', 'placeholder']) {
+    for (const attr of attributes) {
       if (!el.hasAttribute(attr)) continue;
       const live = el.getAttribute(attr) || '';
       if (!Object.prototype.hasOwnProperty.call(state, attr)) state[attr] = live;
       const source = Object.prototype.hasOwnProperty.call(state, attr) ? state[attr] : live;
-      const translated = translateString(source);
+      const zhTitle = current === 'zh' && attr === 'title' && el.closest('.header-actions')
+        && ['hardReset', 'embedLink', 'csvExport', 'exportPng'].includes(el.id)
+        ? headerTitlesZh[source] : null;
+      const translated = current === 'zh'
+        ? (typeof zhTitle === 'string' ? zhTitle : live) : translateString(source);
       if (translated !== live) {
         const applied = lastAppliedAttrs.get(el) || {};
         applied[attr] = translated;
@@ -200,6 +294,14 @@
         applying = false;
       }
     }
+  }
+
+  function refreshHeaderTitles() {
+    if (current !== 'en' && current !== 'zh') return;
+    document.querySelectorAll('.header-actions #hardReset,.header-actions #embedLink,.header-actions #csvExport,.header-actions #exportPng').forEach(el => {
+      const source = originalAttrs.get(el)?.title ?? el.getAttribute('title');
+      if (Object.prototype.hasOwnProperty.call(headerTitlesZh, source)) translateAttributes(el, ['title']);
+    });
   }
 
   function translateTree(root = document.body) {
@@ -306,24 +408,28 @@
     window.tr = wrapped;
   }
 
-  function patchClipboard() {
-    try {
-      const clipboard = navigator.clipboard;
-      if (!clipboard || typeof clipboard.writeText !== 'function' || clipboard.writeText.__r4Wrapped) return;
-      const base = clipboard.writeText.bind(clipboard);
-      const wrapped = text => base(current === 'vi' || current === 'es' ? translateString(String(text), current) : text);
-      wrapped.__r4Wrapped = true;
-      clipboard.writeText = wrapped;
-    } catch (_) {}
-  }
-
   function selectControl() {
     return document.querySelector('.r4-language-select');
   }
 
   function updateSelect(locale) {
+    const names = {
+      en: ['Language', 'Toggle dark or light theme'],
+      zh: ['语言', '切换深色或浅色主题'],
+      vi: ['Ngôn ngữ', 'Chuyển giao diện tối hoặc sáng'],
+      es: ['Idioma', 'Cambiar entre tema oscuro y claro']
+    }[locale];
     const select = selectControl();
-    if (select) select.value = locale;
+    if (select) {
+      select.value = locale;
+      select.setAttribute('aria-label', names[0]);
+    }
+    const theme = document.getElementById('themeToggle');
+    if (theme) {
+      theme.setAttribute('data-r4-no-translate', '1');
+      theme.setAttribute('aria-label', names[1]);
+      theme.setAttribute('title', names[1]);
+    }
   }
 
   function activateOverlay(locale) {
@@ -333,7 +439,7 @@
     current = locale;
     document.documentElement.lang = locale;
     wrapTr();
-    patchClipboard();
+    // Exporters localize their labels; never translate learner-authored clipboard data.
     applyMetadata(locale);
     translateTree(document.body);
     updateSelect(locale);
@@ -355,6 +461,7 @@
       clickNative(locale);
       document.documentElement.lang = locale === 'zh' ? 'zh' : 'en';
       refreshKnownLayers();
+      refreshHeaderTitles();
       if (locale === 'en') {
         const heading = document.querySelector('h1');
         if (heading && canonicalHeadingText) {
@@ -403,10 +510,10 @@
     for (const mutation of mutations) {
       if (mutation.type === 'characterData') {
         const live = mutation.target.nodeValue || '';
-        if (lastAppliedText.get(mutation.target) === live) {
-          lastAppliedText.delete(mutation.target);
-          continue;
-        }
+        // Several queued records can observe the same final translated value.
+        // Retain its marker until a genuinely different applet value arrives.
+        if (lastAppliedText.get(mutation.target) === live) continue;
+        lastAppliedText.delete(mutation.target);
         // Applet-authored dynamic state is always a new source value, including
         // while English or Chinese is active. This is what prevents a later locale
         // switch from restoring stale page-load state.
@@ -416,15 +523,27 @@
         const attr = mutation.attributeName;
         const live = mutation.target.getAttribute(attr) || '';
         const applied = lastAppliedAttrs.get(mutation.target) || {};
-        if (applied[attr] === live) {
-          delete applied[attr];
-          lastAppliedAttrs.set(mutation.target, applied);
-          continue;
-        }
+        if (applied[attr] === live) continue;
+        delete applied[attr];
         const state = attrState(mutation.target);
         state[attr] = live;
-        if (current === 'vi' || current === 'es') translateAttributes(mutation.target);
+        // Do not overwrite a sibling attribute whose native write is still queued.
+        if (current === 'vi' || current === 'es' || current === 'zh' && attr === 'title') translateAttributes(mutation.target, [attr]);
       } else {
+        // The native original galleries have no Chinese confirmation entry.
+        // Localize only this generated button message, never learner text.
+        if (current === 'zh' && mutation.target.matches?.('.scenario-card button')
+            && mutation.target.textContent === '✓ Applied; compare the result') {
+          mutation.target.textContent = '✓ 已应用；请比较结果';
+        }
+        // Locale renderers replace the original gallery's cards, not its model.
+        // Carry the last applied marker by stable ID; never click/reapply a case.
+        if (mutation.target.id === 'scenarioGalleryCards' && !mutation.target.querySelector('.applied')) {
+          const previous = [...mutation.removedNodes].find(node => node.nodeType === 1 && node.matches('.scenario-card.applied'));
+          const index = previous?.dataset.scenarioIndex;
+          if (index !== undefined) [...mutation.target.children]
+            .find(node => node.dataset.scenarioIndex === index)?.classList.add('applied');
+        }
         mutation.addedNodes.forEach(node => {
           if (current === 'vi' || current === 'es') translateTree(node);
         });
@@ -438,7 +557,7 @@
     canonicalHeadingText = initialHeading ? initialHeading.textContent : '';
     installSelect();
     wrapTr();
-    patchClipboard();
+    // Exporters localize their labels; never translate learner-authored clipboard data.
     observer.observe(document.body, { subtree:true, childList:true, characterData:true, attributes:true, attributeFilter:['title','aria-label','placeholder'] });
     // Legacy language handlers in some applets rebuild or reset the experiment as
     // part of their EN/ZH switch. R4 invokes those buttons only as an internal
@@ -458,6 +577,7 @@
         if (nativeLanguageClick) return;
         const locale = normalizeLocale(button.dataset.lang);
         current = locale;
+        refreshHeaderTitles();
         updateSelect(locale);
         persist(locale);
       });

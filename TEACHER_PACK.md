@@ -44,8 +44,10 @@ The current pilot includes two public student-facing Activity Packs. Responses a
 
 | ID | Applet | Time | Core inquiry | Student link |
 |---|---|---:|---|---|
-| **NN-1** | Tiny Neural Network | 35-45 min | Make a network fail, then add the mechanism/capacity needed to succeed; connect loss and train/test behavior to what changed. | [Open NN-1](activities/nn-1.html) |
+| **NN-1** | Tiny Neural Network | 35-45 min | Make a network fail, then add the mechanism/capacity needed to succeed; connect loss and training/validation behavior to what changed. | [Open NN-1](activities/nn-1.html) |
 | **CNN-1** | Convolution Playground | 40-50 min | Compute one convolution by hand, connect it to the visual scan, then investigate directional edges, learned filters, and pooling. | [Open CNN-1](activities/cnn-1.html) |
+
+NN-1 and CNN-1 keep visible answers if local saving or clearing fails. Use their Print / PDF action to preserve full responses, including long answers, before closing the page.
 
 **Teacher-answer boundary:** public Activity Packs do not contain private answer keys or grading exemplars. Keep genuinely secret teacher solutions outside the deployed student site.
 
@@ -59,9 +61,12 @@ Reserved for future longer teacher packages. A Level 3 package may include prere
 2. For a 10-15 minute assignment, give students one stable Quick Assign ID.
 3. For a full inquiry lesson, use an Activity Pack when available.
 4. Require a prediction before the relevant reveal/run where the task supports it.
-5. Require one specific observation from applet state, not a generic impression.
-6. Require an explanation using course vocabulary and one transfer/counterfactual response.
-7. Students copy, print, or submit their work through the classroom's normal system.
+5. Pause after one run, step, or control change. Ask for a visible result or state value and whether it supports or challenges the prediction. A supported prediction is valid evidence too.
+6. Ask students to connect that evidence to the mechanism, using relevant course terms accurately, then answer one transfer/counterfactual question. Assess the reasoning rather than a vocabulary-word count.
+7. In the lab response packet, students select **Refresh state** after the result they cite. Copy and print retain that capture and the student's words; a language change does not rewrite either. Ask students to refresh deliberately when recording a new observation.
+8. Students copy, print, or submit their work through the classroom's normal system.
+
+Use the [printable student packet](student-lab.html) or [editable student template](STUDENT_LAB_PACKET_TEMPLATE.md) with the same predict → act → observe → explain → transfer sequence.
 
 ## Fast classroom routes
 
@@ -88,8 +93,8 @@ Use the applet as a structured inquiry lab or use a Level-2 Activity Pack.
 ### Homework route
 
 1. Students open the assigned stable Quick Assign link or Activity Pack.
-2. Students run the named mechanism task.
-3. Students complete Predict, Observe, Explain, and Transfer.
+2. Students record a prediction before the relevant run, reveal, or control change.
+3. Students run or manipulate the named task, pause to record evidence, then explain and transfer the idea.
 4. Students copy/print their local work if required.
 5. Students submit through the class LMS or other teacher-controlled system.
 
@@ -164,6 +169,8 @@ A complete response should include:
 | Developing | Completes the fields but mostly describes rather than explains |
 | Incomplete | Omits prediction, explanation, transfer, or applet evidence |
 
+For NN-1 and QA-NN-01, start with only the original x-y inputs: leave every engineered input feature unchecked. A curved boundary can otherwise come from the supplied features even with no hidden layer. Use the applet’s “Show validation loss/points” control when comparing training with repeatedly viewed validation data.
+
 ## Classroom privacy and data handling
 
 AI Playgrounds has no backend and no student account system. Built-in response packets and Activity Pack drafts stay in the local browser. Students decide whether to copy, print, or submit their own response through a separate classroom system. The site does not collect student names, IDs, grades, submissions, or rosters.
@@ -179,3 +186,7 @@ The applets include visible focus treatment, reduced-motion support, keyboard gu
 The suite is MIT licensed. Teachers may link, fork, embed, print, adapt, and remix the materials for classroom use. For single-file offline delivery, use the [standalone classroom downloads](https://lmdixon23.github.io/ai-playgrounds/downloads.html), not a website page that may need neighbouring assets. Extract the ZIP, then copy or rename any individual HTML. No build or installation is needed. Activity Packs are printable HTML pages with local-only response storage.
 
 Copying an HTML file does not copy saved answers. Copy, export, or print work before clearing browser data or changing devices. Human learner/educator usability studies and human screen-reader testing remain deferred; automated checks do not establish those outcomes.
+
+The local lab draft saves answers together with the captured evidence on this browser. Clear local draft asks before deleting both; cancel keeps them. If a storage warning appears, copy or print the packet before closing the page. Browser storage is not a backup or a submission to your teacher.
+
+Use one tab per lab when possible. If two tabs edit the same answer, the latest saved value wins. Keep a copied or printed packet outside browser storage.

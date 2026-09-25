@@ -505,6 +505,20 @@
 /* Learner-facing terminology, compact glossary, and consistent action hierarchy. */
 .header-actions{align-items:center}.header-more{position:relative}.header-more>summary{list-style:none;cursor:pointer;user-select:none}.header-more>summary::-webkit-details-marker{display:none}.header-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:50;min-width:220px;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 16px 35px rgba(15,23,42,.18);display:grid;gap:5px}.header-more-menu button{width:100%;text-align:left;justify-content:flex-start;white-space:normal}.key-terms-panel{padding:14px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}.key-terms-intro{margin:0 0 10px;color:var(--muted)}.key-terms-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.key-term{padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:color-mix(in srgb,var(--card) 97%,var(--accent))}.key-term dt{font-weight:800;color:var(--fg);margin:0 0 3px}.key-term dd{margin:0;color:var(--muted);font-size:.84rem;line-height:1.45}.essay-primer{margin:0 0 22px;padding:15px 17px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--card) 96%,var(--accent));border-radius:10px}.essay-primer h2{margin:0 0 6px!important;font-size:1.05rem!important}.essay-primer p{margin:0 0 10px!important}.essay-primer h3{margin:12px 0 7px;font-size:.92rem}.essay-primer-terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0}.essay-primer-terms>div{padding:8px 9px;border:1px solid var(--border);border-radius:8px;background:var(--card)}.essay-primer-terms dt{font-weight:800}.essay-primer-terms dd{margin:2px 0 0;color:var(--muted);font-size:.82rem;line-height:1.4}.scenario-card .scenario-meta{line-height:1.5}.scenario-card .scenario-meta strong{display:block;margin-bottom:2px}.header-actions>.header-png,.header-actions>.header-theme,.header-actions>.header-reset,.header-more>summary{min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px}
 @media(max-width:720px){.essay-primer-terms{grid-template-columns:1fr}.header-actions{width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}.header-actions>button,.header-actions>.header-more,.header-more>summary{width:100%;justify-content:center}.header-more-menu{right:auto;left:0;max-width:min(290px,90vw)}.key-terms-grid{grid-template-columns:1fr}}
+/* Accessible text keeps the lab hue without changing filled controls or plots. */
+body.dark-mode{--accent-text:color-mix(in srgb,var(--fg) 80%,var(--accent))}
+body.dark-mode :is(.page-header .back,.scenario-card h3,.classroom-lab .lab-field label,.essay h2,.essay h3,.essay h4,.visual-card h4,.visual-live strong,.signature-challenge-panel strong,footer a){color:var(--accent-text)}
+body.dark-mode footer a{color:var(--accent-text)!important}
+.essay h2,.key-terms-intro,.worksheet{overflow-wrap:anywhere}
+#tourName{min-width:0;overflow-wrap:anywhere}
+div:has(>#tourName),div:has(>#tourNext){flex-wrap:wrap}
+.slider-block,.mode-tabs,#modeGroup,#initGroup{flex-wrap:wrap;max-width:100%}
+select{min-width:0;max-width:100%}
+.scenario-card h3,.essay-primer-terms>div,p,.tldr,[data-i18n="seq-explain"]{min-width:0;overflow-wrap:anywhere}
+.header-actions>button{overflow-wrap:anywhere;white-space:normal}
+h1,h3,.method-tabs button,.stat-item,.key-term,.world-icon-key li>span:last-child{min-width:0;overflow-wrap:anywhere}
+.stats-strip,div:has(>#ngViewW){flex-wrap:wrap;max-width:100%}
+@media(max-width:360px){.visual-live{box-sizing:border-box;min-width:0;white-space:normal;flex-wrap:wrap}.visual-live>span{min-width:0;overflow-wrap:anywhere}}
 </style>
 <style id="learning-modes-style">
 /* Product information architecture and restrained visual hierarchy. */
@@ -514,7 +528,7 @@
 @media(max-width:820px){.learning-mode-head{align-items:flex-start;flex-direction:column}.learning-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-mode-panel{grid-template-columns:1fr}.learning-mode-panel>details{grid-column:1!important}.copy-experiment{width:100%}}
 </style>
 <link href="../../assets/localization-r4.css" rel="stylesheet"/>
-<meta name="ai-playgrounds-version" content="1.9.5">
+<meta name="ai-playgrounds-version" content="1.9.6">
 
 <style id="v14-version-provenance-style">
 .v14-version-provenance{max-width:1180px;margin:22px auto 10px;padding:12px 18px;border-top:1px solid var(--border,#dbe4ee);color:var(--muted,#64748b);font:12px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center}
@@ -542,7 +556,7 @@
 <button class="header-png" id="embedLink" title="Copy an &lt;iframe&gt; snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
 <button class="header-png" id="csvExport" title="Download episode return history + the current Q-table snapshot as CSV.">📊 CSV</button>
 <button class="header-png" id="exportPng" title="Download the current grid + Q-value heatmap as a PNG.">📷 PNG</button>
-<button class="header-reset" data-i18n="reset-all" id="hardReset" title="Reset everything: clear Q-values, reset grid to default, reset all sliders.">↺ Reset all</button>
+<button class="header-reset" data-i18n="reset-all" id="hardReset" title="Clear Q-values; restore the default grid, learning rate, discount factor, exploration rate and step reward.">↺ Reset all</button>
 </div>
 </div>
 </header>
@@ -870,27 +884,27 @@
 <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
 <span data-lab-en="🧪 Quick Assign · QA-QL-01 · 10–15 min" data-lab-zh="🧪 快速任务 · QA-QL-01 · 10–15 分钟">🧪 Quick Assign · QA-QL-01 · 10–15 min</span>
 </summary>
-<div class="lab-panel"><div class="quick-assign-meta" data-r4-no-translate="1" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong>QA-QL-01</strong> · Level 1 · 10–15 min<br><span>One Q-update</span></div>
-<p class="lab-intro" data-lab-en="Predict how exploration and discounting affect learning, train the agent, then explain how value propagates from reward." data-lab-zh="先预测探索和折扣如何影响学习，再训练智能体，然后解释价值如何从奖励传播。">Predict how exploration and discounting affect learning, train the agent, then explain how value propagates from reward.</p>
+<div class="lab-panel"><div class="quick-assign-meta" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong data-r4-no-translate="1">QA-QL-01</strong> · <span data-lab-en="Level 1 · 10–15 min" data-lab-zh="级别 1 · 10–15 分钟">Level 1 · 10–15 min</span><br><span data-lab-en="One Q-update" data-lab-zh="一次 Q 值更新">One Q-update</span></div>
+<p class="lab-intro" data-lab-en="Predict an action and Q-update direction, step the agent, then connect reward, next-state value, and learning rate to the change." data-lab-zh="预测一个动作及其 Q 更新方向，让智能体执行一步，再把奖励、后继状态价值和学习率与变化联系起来。">Predict an action and Q-update direction, step the agent, then connect reward, next-state value, and learning rate to the change.</p>
 <div class="lab-grid">
 <div class="lab-field">
 <label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
-<textarea data-lab-answer="predict" data-lab-en="What happens if epsilon is 0 before the goal has been discovered?" data-lab-zh="如果还没有发现目标时 ε 为 0，会发生什么？" id="lab-predict" placeholder="What happens if epsilon is 0 before the goal has been discovered?"></textarea>
+<textarea data-lab-answer="predict" data-lab-en="Before the next step, will the selected action Q-value increase or decrease? Why?" data-lab-zh="执行下一步之前，所选动作的 Q 值会增大还是减小？为什么？" id="lab-predict" placeholder="Before the next step, will the selected action Q-value increase or decrease? Why?"></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
-<textarea data-lab-answer="observe" data-lab-en="Train two settings. Record the visible Q-value pattern, reward pattern, or policy difference." data-lab-zh="训练两组设置。记录可见的 Q 值模式、奖励模式或策略差异。" id="lab-observe" placeholder="Train two settings. Record the visible Q-value pattern, reward pattern, or policy difference."></textarea>
+<textarea data-lab-answer="observe" data-lab-en="Record the state, action, reward, next-state estimate, and Q-value before and after the update." data-lab-zh="记录状态、动作、奖励、后继状态估计，以及更新前后的 Q 值。" id="lab-observe" placeholder="Record the state, action, reward, next-state estimate, and Q-value before and after the update."></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
-<textarea data-lab-answer="explain" data-lab-en="How did gamma, epsilon, or alpha change learning in your run?" data-lab-zh="在你的运行中，γ、ε 或 α 如何改变学习？" id="lab-explain" placeholder="How did gamma, epsilon, or alpha change learning in your run?"></textarea>
+<textarea data-lab-answer="explain" data-lab-en="How do the TD target and learning rate determine the direction and size of the Q-update?" data-lab-zh="时序差分目标和学习率如何决定 Q 更新的方向和幅度？" id="lab-explain" placeholder="How do the TD target and learning rate determine the direction and size of the Q-update?"></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
-<textarea data-lab-answer="transfer" data-lab-en="Give a task where exploration is necessary before exploitation becomes useful." data-lab-zh="举一个任务，说明先探索后利用为什么必要。" id="lab-transfer" placeholder="Give a task where exploration is necessary before exploitation becomes useful."></textarea>
+<textarea data-lab-answer="transfer" data-lab-en="How can exploration choose a different action from the greedy policy even after Q-values have been learned?" data-lab-zh="即使已经学到了 Q 值，探索仍会如何选择与贪心策略不同的动作？" id="lab-transfer" placeholder="How can exploration choose a different action from the greedy policy even after Q-values have been learned?"></textarea>
 </div>
 </div>
-<div aria-live="polite" class="lab-state" data-lab-state="">State snapshot appears here.</div>
+<div aria-live="polite" class="lab-state" data-lab-state="" data-lab-en="State snapshot appears here." data-lab-zh="状态快照将显示在这里。">State snapshot appears here.</div>
 <div class="lab-actions">
 <button class="step-btn" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态" type="button">↻ Refresh state</button>
 <button class="step-btn" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包" type="button">📋 Copy packet</button>
@@ -983,12 +997,7 @@
     discovery when initial tie-breaking and early experience favor an unhelpful route. Too much
     exploration can also prevent behavior from settling.
   </p>
-<p>
-    Setting <code>γ = 0</code> removes delayed value from the target, so only immediate rewards are
-    learned. A negative per-step reward makes shorter successful paths more valuable. With zero step
-    cost, multiple successful routes can have equal return, so the learned policy may be indifferent
-    among paths of different lengths.
-  </p>
+<p>Setting γ = 0 removes delayed value from the target, so only immediate rewards are learned. A negative step reward penalizes extra actions. Even with zero step reward, γ < 1 discounts a later positive terminal reward more strongly. Routes with the same terminal reward and zero step rewards have equal return when γ = 1, provided they terminate; zero step cost alone does not imply indifference to path length.</p>
 <h2>Risk and the cliff comparison</h2>
 <p>
     In a stochastic or persistently exploratory environment, SARSA can prefer a safer route because
@@ -1058,9 +1067,7 @@
 <p>
     在 epsilon-greedy 行为中，智能体以概率 <code>ε</code> 随机选择动作，否则选择当前贪心动作。在本工具的全零初始化和确定性平局处理下，<code>ε = 0</code> 可能让部分动作一直未被尝试，从而使发现过程不可靠；其他探索或平局处理机制可能表现不同。探索过多也会使行为难以稳定。
   </p>
-<p>
-    把 <code>γ = 0</code> 会从目标中移除延迟价值，因此只学习即时奖励。负的每步奖励会直接惩罚额外动作；同时，当 <code>γ&lt;1</code> 时，较晚收到的终点奖励也会被更强地折扣。因此即使步进奖励为 0，折扣本身仍可能让更早到达更有价值。
-  </p>
+<p>设 γ = 0 会从目标中移除延迟价值，因此只学习即时奖励。负的每步奖励会惩罚额外动作。即使每步奖励为零，γ < 1 仍会更强地折扣较晚收到的正终点奖励；折扣本身仍可能让更早到达更有价值。只有在 γ = 1、每步奖励为零且路线能够终止时，获得相同终点奖励的路线才具有相同回报；仅有零步进成本并不意味着对路径长度无差别。</p>
 <h2>风险与悬崖比较</h2>
 <p>
     在随机环境或持续探索环境中，SARSA 的目标包含行为策略实际可能采取的动作，因此可能偏好更安全路线。Q 学习评估贪心下一动作，可能偏好靠近危险的较短路线。这种差异在专门的悬崖行走比较中最清楚，并不保证每一种陷阱布局都会产生相同的两条路线。
@@ -1362,9 +1369,8 @@
     link.click();
   });
   document.addEventListener('keydown', e => {
-    if (e.code === 'Space' &&
-        e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' &&
-        e.target.tagName !== 'SELECT') {
+    if (e.code === 'Space' && !e.defaultPrevented &&
+        !e.target.closest('button, summary, a, input, textarea, select, [contenteditable], [role="button"], [role="tab"]')) {
       e.preventDefault();
       document.getElementById('runBtn').click();
     }
@@ -1388,6 +1394,25 @@
   let currentReturn = 0;
   let currentSteps = 0;
   let running = false;
+  let trainingGeneration = 0;
+  function paintTraining() {
+    const labels = {en:['▶ Train continuously','⏸ Pause'],zh:['▶ 持续训练','⏸ 暂停'],vi:['▶ Huấn luyện liên tục','⏸ Tạm dừng'],es:['▶ Entrenar continuamente','⏸ Pausa']};
+    $('runBtn').textContent = (labels[document.documentElement.lang.split('-')[0]] || labels.en)[running ? 1 : 0];
+    $('runBtn').setAttribute('aria-pressed', String(running));
+    $('stepBtn').disabled = replayMode || getStrategy().algo === 'mc';
+  }
+  function pauseTraining() {
+    running = false; trainingGeneration++;
+    document.title = document.title.replace(/^\(ep \d+\) /, '');
+    paintTraining();
+  }
+  function resetLearningState() {
+    pauseTraining();
+    Q = Array.from({length:ROWS},()=>Array.from({length:COLS},()=>[0,0,0,0]));
+    episodes=0; steps=0; returnLog=[]; currentReturn=0; currentSteps=0; lastUpdate=null;
+    qSnapshots=[]; liveQ=null; replayMode=false;
+    agent={...startCell}; updateReplaySlider(); $('replayResume').disabled=true;
+  }
 
   function initGrid() {
     grid = Array.from({length: ROWS}, () => Array(COLS).fill(EMPTY));
@@ -1398,8 +1423,7 @@
     grid[3][4] = WALL; grid[4][4] = WALL; grid[5][4] = WALL;
     agent = {r: 6, c: 1};
     startCell = {r: 6, c: 1};
-    episodes = 0; steps = 0; returnLog = [];
-    currentReturn = 0; currentSteps = 0;
+    resetLearningState();
   }
 
   document.querySelectorAll('#modeGroup button').forEach(b => {
@@ -1411,6 +1435,7 @@
   });
 
   cv.addEventListener('click', e => {
+    if (replayMode) return;
     const rect = cv.getBoundingClientRect();
     const c = Math.floor((e.clientX - rect.left) * (cv.width / rect.width) / CELL);
     const r = Math.floor((e.clientY - rect.top) * (cv.height / rect.height) / CELL);
@@ -1507,6 +1532,7 @@
     lastUpdate = { r, c, a, reward, nr, nc, done, alpha, gamma, oldQ, bootVal, bootLabel, newQ: Q[r][c][a] };
   }
   function stepOne() {
+    if (replayMode) return;
     const { algo } = getStrategy();
     // Correctness fix: SARSA update needs Q(s', a') where a' is the action the policy
     // would actually take next. Pre-select it so the bonus term isn't silently wrong.
@@ -1519,19 +1545,37 @@
   }
   // snapshot buffer for the replay scrubber. Cap matches returnLog.
   const SNAPSHOT_CAP = 100;
-  let qSnapshots = []; // each entry = deep-cloned Q at end of that episode
+  let qSnapshots = []; // complete, internally consistent episode-end states
   let liveQ = null;    // when replaying, holds the most recent live Q
   let replayMode = false;
   function cloneQ(q) { return q.map(row => row.map(cell => cell.slice())); }
 
+  const replaySettings=['algoSel','alpha','gamma','epsilon','temp','step','slip'];
+  function captureLearningState() {
+    return {q:cloneQ(Q),grid:grid.map(row=>row.slice()),start:{...startCell},agent:{...agent},episodes,steps,
+      returns:returnLog.slice(),currentReturn,currentSteps,update:lastUpdate?{...lastUpdate}:null,
+      settings:replaySettings.map(id=>$(id).value)};
+  }
+  function restoreLearningState(state) {
+    Q=cloneQ(state.q); grid=state.grid.map(row=>row.slice()); startCell={...state.start}; agent={...state.agent};
+    episodes=state.episodes; steps=state.steps; returnLog=state.returns.slice();
+    currentReturn=state.currentReturn; currentSteps=state.currentSteps; lastUpdate=state.update?{...state.update}:null;
+    replaySettings.forEach((id,i)=>$(id).value=state.settings[i]); updateAlgoUI();
+  }
+  function resumeLive() {
+    if(!replayMode || !liveQ)return;
+    restoreLearningState(liveQ); liveQ=null; replayMode=false;
+    $('replayResume').disabled=true; $('replayLabel').textContent='live';
+    $('replaySlider').value=qSnapshots.length-1; render();
+  }
   function endEpisode() {
     episodes++;
     returnLog.push(currentReturn);
     if (returnLog.length > 100) returnLog.shift();
-    qSnapshots.push(cloneQ(Q));
-    if (qSnapshots.length > SNAPSHOT_CAP) qSnapshots.shift();
     currentReturn = 0; currentSteps = 0;
     agent = {r: startCell.r, c: startCell.c};
+    qSnapshots.push(captureLearningState());
+    if (qSnapshots.length > SNAPSHOT_CAP) qSnapshots.shift();
     updateReplaySlider();
   }
   function updateReplaySlider() {
@@ -1548,12 +1592,28 @@
       $('replayLabel').textContent = 'live';
     }
   }
+  // Constant-step-size first-visit MC: use the return from the earliest occurrence.
+  function firstVisitMonteCarlo(q, trajectory, alpha, gamma) {
+    let G=0, last=null;
+    const targets=new Map();
+    for(let i=trajectory.length-1;i>=0;i--){
+      const t=trajectory[i]; G=t.reward+gamma*G;
+      targets.set(`${t.sR},${t.sC},${t.a}`,{...t,G});
+    }
+    for(const t of targets.values()){
+      const oldQ=q[t.sR][t.sC][t.a];
+      const newQ=oldQ+alpha*(t.G-oldQ); q[t.sR][t.sC][t.a]=newQ;
+      last={kind:'mc',r:t.sR,c:t.sC,a:t.a,oldQ,newQ,alpha,target:t.G};
+    }
+    return last;
+  }
   function runEpisode() {
+    if (replayMode) return;
     const { algo } = getStrategy();
     let safety = 1000;
 
     if (algo === 'mc') {
-      // Monte Carlo: collect trajectory, then first-visit update from the end.
+      // Collect the episode, then update each pair from its first occurrence.
       const traj = [];
       while (safety-- > 0) {
         const a = chooseAction(agent.r, agent.c);
@@ -1565,16 +1625,7 @@
       }
       const alpha = +$('alpha').value;
       const gamma = +$('gamma').value;
-      let G = 0;
-      const visited = new Set();
-      for (let i = traj.length - 1; i >= 0; i--) {
-        const t = traj[i];
-        G = t.reward + gamma * G;
-        const k = `${t.sR},${t.sC},${t.a}`;
-        if (visited.has(k)) continue;  // first-visit MC
-        visited.add(k);
-        Q[t.sR][t.sC][t.a] += alpha * (G - Q[t.sR][t.sC][t.a]);
-      }
+      lastUpdate = firstVisitMonteCarlo(Q, traj, alpha, gamma);
       endEpisode();
       return;
     }
@@ -1614,6 +1665,7 @@
     return `rgba(220, 38, 38, ${0.15 + (-t) * 0.5})`;
   }
   function render() {
+    paintTraining();
     ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e293b' : 'white'; ctx.fillRect(0, 0, cv.width, cv.height);
     const showQ = $('showQ').checked;
     const showPi = $('showPi').checked;
@@ -1661,7 +1713,7 @@
       const sCx = u.c * CELL + CELL / 2, sCy = u.r * CELL + CELL / 2;
       ctx.lineWidth = 3; ctx.strokeStyle = getCSS('--accent') || '#9333ea';
       ctx.strokeRect(u.c * CELL + 1.5, u.r * CELL + 1.5, CELL - 3, CELL - 3);
-      if (!u.done) {
+      if (!u.done && u.kind !== 'mc') {
         const nCx = u.nc * CELL + CELL / 2, nCy = u.nr * CELL + CELL / 2;
         ctx.setLineDash([4, 3]); ctx.lineWidth = 2; ctx.strokeStyle = '#0891b2';
         ctx.strokeRect(u.nc * CELL + 2, u.nr * CELL + 2, CELL - 4, CELL - 4);
@@ -1682,7 +1734,9 @@
       if (bo) {
         const acc = getCSS('--accent') || '#9333ea';
         const sub = n => n >= 0 ? '− ' + n.toFixed(2) : '+ ' + Math.abs(n).toFixed(2);
-        if (u.done) {
+        if (u.kind === 'mc') {
+          bo.textContent = `Q(s,a) ← Q + α·[ G − Q ]: ${u.oldQ.toFixed(2)} + ${u.alpha.toFixed(2)}·[ ${u.target.toFixed(2)} ${sub(u.oldQ)} ] = ${u.newQ.toFixed(2)}`;
+        } else if (u.done) {
           bo.innerHTML = `Q(s,a) ← Q + α·[ r − Q ]&nbsp;&nbsp;<span style="color:var(--muted)">(terminal: target = r)</span><br>` +
             `${u.oldQ.toFixed(2)} + ${u.alpha.toFixed(2)}·[ ${u.reward.toFixed(2)} ${sub(u.oldQ)} ] = <b style="color:${acc}">${u.newQ.toFixed(2)}</b>`;
         } else {
@@ -1691,6 +1745,8 @@
         }
       }
     }
+
+    if (!lastUpdate) $('bellmanOut').textContent = STRINGS[document.documentElement.lang === 'zh' ? 'zh' : 'en']['bellman-empty'];
 
     $('epV').textContent = episodes;
     if (!replayMode) { const tc = $('tpCount'); if (tc) tc.textContent = episodes > 0 ? `ep ${episodes}` : 'idle'; }
@@ -1701,7 +1757,7 @@
       const last = returnLog.slice(-20);
       const avg = last.reduce((a, b) => a + b, 0) / last.length;
       $('avgV').textContent = avg.toFixed(2);
-    }
+    } else $('avgV').textContent = '-';
     $('aV').textContent = (+$('alpha').value).toFixed(2);
     $('gV').textContent = (+$('gamma').value).toFixed(2);
     $('eV').textContent = (+$('epsilon').value).toFixed(2);
@@ -1787,56 +1843,33 @@
   // Replay scrubber wiring. Dragging the slider enters replay mode (training pauses
   // visually: Q is swapped for a historical snapshot). The Resume button restores live Q.
   $('replaySlider').addEventListener('input', () => {
-    const idx = parseInt($('replaySlider').value, 10);
-    if (qSnapshots.length === 0) return;
-    if (!replayMode) {
-      liveQ = cloneQ(Q);          // checkpoint the current live Q
-      replayMode = true;
-      $('replayResume').disabled = false;
-    }
-    if (idx === qSnapshots.length - 1) {
-      // Slid back to most-recent snapshot: treat as live unless we explicitly resumed.
-      $('replayLabel').textContent = `ep ${episodes - qSnapshots.length + 1 + idx}`;
-    } else {
-      $('replayLabel').textContent = `ep ${episodes - qSnapshots.length + 1 + idx}`;
-    }
-    { const tc = $('tpCount'); if (tc) tc.textContent = (idx === qSnapshots.length - 1) ? 'live' : `ep ${episodes - qSnapshots.length + 1 + idx}`; }
-    Q = cloneQ(qSnapshots[idx]);
+    const idx=Number($('replaySlider').value);
+    if(!Number.isInteger(idx) || !qSnapshots[idx])return;
+    pauseTraining();
+    if(!replayMode){liveQ=captureLearningState();replayMode=true;}
+    restoreLearningState(qSnapshots[idx]);
+    $('replayResume').disabled=false;
+    $('replayLabel').textContent=`ep ${episodes}`; $('tpCount').textContent=`ep ${episodes}`;
     render();
   });
-  $('replayResume').addEventListener('click', () => {
-    if (!replayMode || !liveQ) return;
-    Q = liveQ; liveQ = null; replayMode = false;
-    $('replayResume').disabled = true;
-    $('replayLabel').textContent = 'live';
-    { const tc = $('tpCount'); if (tc) tc.textContent = 'live'; }
-    $('replaySlider').value = qSnapshots.length - 1;
-    render();
-  });
+  $('replayResume').addEventListener('click', resumeLive);
+  for(const id of replaySettings)for(const event of ['input','change'])$(id).addEventListener(event,()=>{
+    if(!replayMode)return;
+    const value=$(id).value; resumeLive(); $(id).value=value; updateAlgoUI(); render();
+  },true);
   $('runBtn').addEventListener('click', async () => {
-    running = !running;
-    $('runBtn').textContent = running ? '⏸ Pause' : '▶ Train continuously';
-    document.getElementById('runBtn').setAttribute('aria-pressed', running ? 'true' : 'false');
+    if(running){pauseTraining();return;}
+    resumeLive(); running=true; const generation=++trainingGeneration; paintTraining();
     const baseTitle = document.title.replace(/^\(ep \d+\) /, '');
-    while (running) {
+    while (running && generation === trainingGeneration) {
       for (let i = 0; i < 5; i++) runEpisode();
       render();
       document.title = `(ep ${episodes}) ${baseTitle}`;
       await new Promise(r => setTimeout(r, Math.max(0, 160 - (+$('speedSlider').value) * 2)));
     }
-    document.title = baseTitle;
+    if(generation === trainingGeneration) document.title = baseTitle;
   });
-  $('resetQBtn').addEventListener('click', () => {
-    Q = Array.from({length: ROWS}, () =>
-      Array.from({length: COLS}, () => [0, 0, 0, 0]));
-    episodes = 0; steps = 0; returnLog = [];
-    lastUpdate = null;
-    qSnapshots = []; liveQ = null; replayMode = false;
-    updateReplaySlider();
-    $('replayResume').disabled = true;
-    agent = {r: startCell.r, c: startCell.c};
-    render();
-  });
+  $('resetQBtn').addEventListener('click', () => { resetLearningState(); render(); });
   $('hardReset').addEventListener('click', () => {
     $('alpha').value = 0.1; $('gamma').value = 0.9;
     $('epsilon').value = 0.2; $('step').value = -0.04;
@@ -2334,7 +2367,8 @@
         scenario.apply();
         card.classList.add('applied');
         btn.textContent = '✓ ' + scenarioGalleryText('sg-applied', 'Applied; compare the result');
-        setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
+        clearTimeout(btn._timer);
+        btn._timer = setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
       });
       card.appendChild(btn);
       root.appendChild(card);
@@ -2410,10 +2444,9 @@
 </footer>
 <script>
 (function() {
-  const LAB_CONFIG = {"slug": "q-learning-gridworld", "title": "Q-learning lab packet", "zhTitle": "Q 学习实验包", "fields": [{"label": "Algorithm", "selector": "#algoSel", "kind": "selected"}, {"label": "Alpha", "selector": "#alpha", "kind": "value"}, {"label": "Gamma", "selector": "#gamma", "kind": "value"}, {"label": "Epsilon", "selector": "#epsilon", "kind": "value"}, {"label": "Temperature", "selector": "#temp", "kind": "value"}, {"label": "Step reward", "selector": "#step", "kind": "value"}, {"label": "Slip", "selector": "#slip", "kind": "value"}, {"label": "FA episodes", "selector": "#faEpisodesV", "kind": "text"}, {"label": "Cliff Q stats", "selector": "#cwQstats", "kind": "text"}, {"label": "Cliff SARSA stats", "selector": "#cwSstats", "kind": "text"}]};
+  const LAB_CONFIG = {"slug": "q-learning-gridworld", "title": "Q-learning lab packet", "zhTitle": "Q 学习实验包", "fields": [{"label": "Algorithm", "selector": "#algoSel", "kind": "selected"}, {"label": "Alpha", "selector": "#alpha", "kind": "value"}, {"label": "Gamma", "selector": "#gamma", "kind": "value"}, {"label": "Epsilon", "selector": "#epsilon", "kind": "value"}, {"label": "Temperature", "selector": "#temp", "kind": "value"}, {"label": "Step reward", "selector": "#step", "kind": "value"}, {"label": "Slip", "selector": "#slip", "kind": "value"}, {"label": "FA episodes", "selector": "#faEpisodesV", "kind": "text"}, {"label": "Cliff Q stats", "selector": "#cwQstats", "kind": "text"}, {"label": "Cliff SARSA stats", "selector": "#cwSstats", "kind": "text"}, {"label": "Episodes", "zhLabel": "回合数", "selector": "#epV", "kind": "text"}, {"label": "Total steps", "zhLabel": "总步数", "selector": "#stV", "kind": "text"}, {"label": "Last return", "zhLabel": "最近回报", "selector": "#retV", "kind": "text"}, {"label": "Avg return (20)", "zhLabel": "最近 20 回合平均回报", "selector": "#avgV", "kind": "text"}, {"label": "Last update", "zhLabel": "最近一次更新", "selector": "#bellmanOut", "kind": "text"}]};
   const root = document.querySelector('.classroom-lab');
   if (!root) return;
-  const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;
   const qs = (sel) => root.querySelector(sel);
   function currentLang() {
     const raw = String(document.documentElement.lang || 'en').toLowerCase();
@@ -2432,6 +2465,8 @@
   function applyLabLang() {
     const lang = currentLang();
     root.querySelectorAll('[data-lab-en]').forEach(el => {
+      // Captured evidence and an explicitly cleared snapshot are learner state.
+      if (el.matches('[data-lab-state]') && (el.hasAttribute('data-r4-no-translate') || el.dataset.qaStateReady === '1')) return;
       const value = textFor(el, lang);
       if (el.tagName === 'TEXTAREA') el.placeholder = value;
       else el.textContent = value;
@@ -2446,7 +2481,7 @@
     else if (field.kind === 'text') value = el.textContent.trim();
     else value = el.value;
     value = (value || '').replace(/\s+/g, ' ').trim();
-    const label = ((currentLang() === 'vi' || currentLang() === 'es') && window.__r4Localization) ? window.__r4Localization.translateString(field.label, currentLang()) : field.label;
+    const label = currentLang() === 'zh' ? (field.zhLabel || field.label) : ((currentLang() === 'vi' || currentLang() === 'es') && window.__r4Localization) ? window.__r4Localization.translateString(field.label, currentLang()) : field.label;
     return value ? label + ': ' + value : null;
   }
   function snapshot() {
@@ -2457,13 +2492,6 @@
     const data = {};
     root.querySelectorAll('textarea[data-lab-answer]').forEach(area => data[area.getAttribute('data-lab-answer')] = area.value.trim());
     return data;
-  }
-  function saveDraft() { try { localStorage.setItem(storageKey, JSON.stringify(answers())); } catch (_) {} }
-  function loadDraft() {
-    try {
-      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
-      root.querySelectorAll('textarea[data-lab-answer]').forEach(area => { const key = area.getAttribute('data-lab-answer'); if (saved[key]) area.value = saved[key]; });
-    } catch (_) {}
   }
   function packet() {
     const lang = currentLang();
@@ -2477,7 +2505,7 @@
       '- Date: ' + new Date().toLocaleString(),
       '',
       '## ' + labels.state,
-      snapshot(),
+      qs('[data-lab-state]')?.textContent || '',
       '',
       '## ' + labels.predict,
       a.predict || '',
@@ -2493,26 +2521,26 @@
     ].join('\n');
   }
   function setStatus(en, zh) { const el = qs('.lab-status'); if (el) el.textContent = currentLang() === 'zh' ? zh : en; }
-  function refreshState() { const el = qs('[data-lab-state]'); if (el) el.textContent = snapshot(); }
+  function refreshState() { const el = qs('[data-lab-state]'); if (el) { el.setAttribute('data-r4-no-translate',''); el.lang = currentLang(); el.textContent = snapshot(); } }
   async function copyPacket(btn) {
     const text = packet();
     try { await navigator.clipboard.writeText(text); setStatus('Copied local lab packet.', '已复制本地实验包。'); }
-    catch (_) { window.prompt('Copy this lab packet:', text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
+    catch (_) { window.prompt(qs('[data-lab-action=copy]').textContent.trim(), text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
   }
 
   function markdownToPrintableHtml(markdown) {
     const escape = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
     const inline = value => escape(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     const lines = String(markdown).split(/\r?\n/);
-    let html = '', inList = false, inState = false;
+    let html = '', inList = false, inState = false, sectionIndex = 0;
     const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
     for (const raw of lines) {
       const line = raw.trimEnd();
       if (line.startsWith('# ')) { closeList(); html += '<h1>' + inline(line.slice(2)) + '</h1>'; inState=false; }
-      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = /state snapshot|状态记录/i.test(title); }
+      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = sectionIndex++ === 0; }
       else if (line.startsWith('- ')) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inline(line.slice(2)) + '</li>'; }
       else if (!line.trim()) { closeList(); }
-      else { closeList(); html += inState ? '<pre class="state">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
+      else { closeList(); html += inState ? '<pre class="state" lang="' + (qs('[data-lab-state]')?.lang || currentLang()) + '">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
     }
     closeList(); return html;
   }
@@ -2521,33 +2549,24 @@
     const w = window.open('', '_blank');
     if (!w) { setStatus('Popup blocked. Copy the packet instead.', '弹窗被拦截。请改用复制实验包。'); return; }
     const rendered = markdownToPrintableHtml(packet());
-    const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
+    const html = '<!doctype html><html lang="' + currentLang() + '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
     w.document.open();
     w.document.write(html);
     w.document.close();
     setStatus('Print page opened.', '打印页面已打开。');
   }
-  function clearDraft() {
-    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.value = '');
-    try { localStorage.removeItem(storageKey); } catch (_) {}
-    refreshState(); setStatus('Local draft cleared.', '本地草稿已清除。');
-  }
-  root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.addEventListener('input', saveDraft));
   root.querySelector('[data-lab-action="copy"]')?.addEventListener('click', copyPacket);
   root.querySelector('[data-lab-action="print"]')?.addEventListener('click', printPacket);
   root.querySelector('[data-lab-action="refresh"]')?.addEventListener('click', () => { refreshState(); setStatus('State refreshed.', '状态已更新。'); });
-  root.querySelector('[data-lab-action="clear"]')?.addEventListener('click', clearDraft);
   document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(applyLabLang, 0)));
   window.addEventListener('r4languagechange', () => setTimeout(applyLabLang, 0));
   
-  document.addEventListener('change', refreshState);
-  document.addEventListener('click', (event) => { if (!(event.target instanceof HTMLTextAreaElement)) setTimeout(refreshState, 0); }, true);
-  loadDraft(); applyLabLang(); refreshState();
+  applyLabLang();
 })();
 </script>
 <script>
 (function() {
-  const VISUAL_CONFIG = {"intro":"Q-learning turns trial-and-error into a table of action values. Watch reward, discounting, exploration, and updates shape which action looks best from each state.","zhIntro":"Q 学习把试错转化为动作价值表。观察奖励、折扣、探索和更新如何塑造每个状态下看起来最好的动作。","misread":"A greedy-looking policy may be premature if exploration is too low or learning has not stabilized.","zhMisread":"如果探索太低或学习尚未稳定，看起来贪心的策略可能还太早。","steps":[{"label":"Reward signal","zhLabel":"奖励信号","text":"Terminal reward, step cost, and slip define what experience teaches the agent.","zhText":"终点奖励、步进成本和滑移定义经验会教给智能体什么。","selector":"#step","kind":"value","liveLabel":"Step reward","zhLiveLabel":"步进奖励"},{"label":"Backup rule","zhLabel":"回传规则","text":"Alpha controls update size, while gamma controls how far future rewards matter.","zhText":"alpha 控制更新幅度，gamma 控制未来奖励的重要程度。","selector":"#gamma","kind":"value","liveLabel":"Gamma","zhLiveLabel":"Gamma"},{"label":"Exploration pressure","zhLabel":"探索压力","text":"Epsilon or temperature decides how often the agent tries actions that are not currently best.","zhText":"epsilon 或温度决定智能体多久尝试当前不是最优的动作。","selector":"#epsilon","kind":"value","liveLabel":"Epsilon","zhLiveLabel":"Epsilon"},{"label":"Policy evidence","zhLabel":"策略证据","text":"The visible arrows or Q statistics show which action the learned values currently favor.","zhText":"可见箭头或 Q 统计显示学习到的价值当前偏向哪个动作。","selector":"#cwQstats","kind":"text","liveLabel":"Q stats","zhLiveLabel":"Q 统计"}],"fields":[{"label":"Algorithm","zhLabel":"算法","selector":"#algoSel","kind":"selected"},{"label":"Alpha","zhLabel":"Alpha","selector":"#alpha","kind":"value"},{"label":"Gamma","zhLabel":"Gamma","selector":"#gamma","kind":"value"},{"label":"Epsilon","zhLabel":"Epsilon","selector":"#epsilon","kind":"value"},{"label":"Q stats","zhLabel":"Q 统计","selector":"#cwQstats","kind":"text"}]};
+  const VISUAL_CONFIG = {"intro": "Q-learning turns trial-and-error into a table of action values. Watch reward, discounting, exploration, and updates shape which action looks best from each state.", "zhIntro": "Q 学习把试错转化为动作价值表。观察奖励、折扣、探索和更新如何塑造每个状态下看起来最好的动作。", "misread": "A greedy-looking policy may be premature if exploration is too low or learning has not stabilized.", "zhMisread": "如果探索太低或学习尚未稳定，看起来贪心的策略可能还太早。", "steps": [{"label": "Reward signal", "zhLabel": "奖励信号", "text": "Terminal reward, step cost, and slip define what experience teaches the agent.", "zhText": "终点奖励、步进成本和滑移定义经验会教给智能体什么。", "selector": "#step", "kind": "value", "liveLabel": "Step reward", "zhLiveLabel": "步进奖励"}, {"label": "Backup rule", "zhLabel": "回传规则", "text": "Alpha controls update size, while gamma controls how far future rewards matter.", "zhText": "alpha 控制更新幅度，gamma 控制未来奖励的重要程度。", "selector": "#gamma", "kind": "value", "liveLabel": "Gamma", "zhLiveLabel": "Gamma"}, {"label": "Exploration pressure", "zhLabel": "探索压力", "text": "Epsilon or temperature decides how often the agent tries actions that are not currently best.", "zhText": "epsilon 或温度决定智能体多久尝试当前不是最优的动作。", "selector": "#epsilon", "kind": "value", "liveLabel": "Epsilon", "zhLiveLabel": "Epsilon"}, {"label": "Update evidence", "zhLabel": "更新证据", "text": "The last update shows how one action value changed. Episode returns summarize the rewards received; neither alone proves that the policy is optimal.", "zhText": "最近一次更新显示一个动作价值如何变化。回合回报概括实际获得的奖励；单凭其中任何一项，都不能证明策略最优。", "selector": "#bellmanOut", "kind": "text", "liveLabel": "Last update", "zhLiveLabel": "最近一次更新"}], "fields": [{"label": "Algorithm", "zhLabel": "算法", "selector": "#algoSel", "kind": "selected"}, {"label": "Alpha", "zhLabel": "Alpha", "selector": "#alpha", "kind": "value"}, {"label": "Gamma", "zhLabel": "Gamma", "selector": "#gamma", "kind": "value"}, {"label": "Epsilon", "zhLabel": "Epsilon", "selector": "#epsilon", "kind": "value"}, {"label": "Episodes", "zhLabel": "回合数", "selector": "#epV", "kind": "text"}, {"label": "Total steps", "zhLabel": "总步数", "selector": "#stV", "kind": "text"}, {"label": "Last return", "zhLabel": "最近回报", "selector": "#retV", "kind": "text"}, {"label": "Avg return (20)", "zhLabel": "最近 20 回合平均回报", "selector": "#avgV", "kind": "text"}, {"label": "Last update", "zhLabel": "最近一次更新", "selector": "#bellmanOut", "kind": "text"}]};
   const root = document.querySelector('.visual-explanation');
   if (!root) return;
   const flow = root.querySelector('[data-visual-flow]');
@@ -2608,7 +2627,7 @@
 
 <script>
 (function() {
-  const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "Algorithm", "zhLabel": "算法", "selector": "#algoSel", "kind": "selected"}, {"label": "Alpha", "zhLabel": "Alpha", "selector": "#alpha", "kind": "value"}, {"label": "Gamma", "zhLabel": "Gamma", "selector": "#gamma", "kind": "value"}, {"label": "Epsilon", "zhLabel": "Epsilon", "selector": "#epsilon", "kind": "value"}, {"label": "Q stats", "zhLabel": "Q 统计", "selector": "#cwQstats", "kind": "text"}]};
+  const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "Algorithm", "zhLabel": "算法", "selector": "#algoSel", "kind": "selected"}, {"label": "Alpha", "zhLabel": "Alpha", "selector": "#alpha", "kind": "value"}, {"label": "Gamma", "zhLabel": "Gamma", "selector": "#gamma", "kind": "value"}, {"label": "Epsilon", "zhLabel": "Epsilon", "selector": "#epsilon", "kind": "value"}, {"label": "Episodes", "zhLabel": "回合数", "selector": "#epV", "kind": "text"}, {"label": "Total steps", "zhLabel": "总步数", "selector": "#stV", "kind": "text"}, {"label": "Last return", "zhLabel": "最近回报", "selector": "#retV", "kind": "text"}, {"label": "Avg return (20)", "zhLabel": "最近 20 回合平均回报", "selector": "#avgV", "kind": "text"}, {"label": "Last update", "zhLabel": "最近一次更新", "selector": "#bellmanOut", "kind": "text"}]};
   const layer = document.querySelector('.accessibility-layer');
   if (!layer) return;
   const intro = layer.querySelector('[data-a11y-intro]');
@@ -2731,8 +2750,8 @@
   function stateData(){
     const values={};
     document.querySelectorAll('#main input,#main select,#main textarea').forEach(el=>{
-      if(!el.id||el.closest('.classroom-lab'))return;
-      if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;
+      if(!el.id||el.readOnly||el.closest('.classroom-lab,.worksheet,.suite-guided-shell,[data-quick-assign-id]')||['button','submit','reset','file','password','hidden'].includes(el.type))return;
+      if(el.type==='radio'&&!el.checked)return;
       values[el.id]=el.type==='checkbox'?el.checked:el.value;
     });
     return {applet:profile.en.title,slug:profile.slug,exported_at:new Date().toISOString(),values};
@@ -2742,17 +2761,18 @@
     const share=document.getElementById('shareLink'), embed=document.getElementById('embedLink'), reset=document.getElementById('hardReset');
     const csv=document.getElementById('csvExport'), png=document.getElementById('exportPng');
     const more=document.createElement('details'); more.className='header-more';
-    const summary=document.createElement('summary'); summary.className='header-png'; summary.setAttribute('aria-haspopup','menu'); more.appendChild(summary);
-    const menu=document.createElement('div'); menu.className='header-more-menu'; menu.setAttribute('role','menu'); more.appendChild(menu);
+    const summary=document.createElement('summary'); summary.className='header-png'; more.appendChild(summary);
+    const menu=document.createElement('div'); menu.className='header-more-menu'; more.appendChild(menu);
     if(embed){embed.textContent='📎 Embed in LMS';menu.appendChild(embed)}
     const jsonBtn=document.createElement('button');jsonBtn.type='button';jsonBtn.className='header-png';jsonBtn.dataset.exportState='';menu.appendChild(jsonBtn);
     if(csv){csv.textContent='📊 Data table (.csv)';menu.appendChild(csv)}
     if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
-    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
+    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false;summary.focus()});
     actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
     window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';if(share){share.textContent=zh?'🔗 分享':'🔗 Share';share.title=zh?'复制可在另一浏览器中重新打开当前设置的链接。':'Copy a link that reopens the current settings in another browser.';}summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
     window.refreshAppletToolbar();
     document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&more.open){e.preventDefault();more.open=false;summary.focus()}});
   }
   function terms(){
     const inner=document.querySelector('.interactive-inner'); if(!inner||inner.querySelector('.key-terms'))return;
@@ -2799,6 +2819,7 @@
     return 'explore';
   };
   const lang = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const routeLocale = () => ['en','zh','vi','es'].find(code => (document.documentElement.lang || 'en').toLowerCase().startsWith(code)) || 'en';
   const labels = {explore:['Explore','探索'],understand:['Understand','理解'],classroom:['Use in class','课堂使用'],access:['Text and keyboard','文本与键盘']};
   const intros = {
     explore:['Start with the featured experiment, then use the scenarios to test a prediction.','从精选实验开始，再使用情境检验预测。'],
@@ -2870,12 +2891,19 @@
     renderModeChrome();
     if(write){const u=new URL(location.href);u.searchParams.set('mode',mode);history.replaceState(null,'',u)}
   }
-  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
+  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(['ArrowRight','ArrowLeft','Home','End'].includes(e.key)){e.preventDefault();const n=e.key==='Home'?0:e.key==='End'?list.length-1:(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
 
+  // Share only native mechanism inputs, never responses or global preferences.
+  function shareable(el){
+    return !!el && !!el.id && inner.contains(el)
+      && el.matches('input,select,textarea') && !el.readOnly
+      && !['button','submit','reset','file','password','hidden'].includes(el.type)
+      && !el.closest('.classroom-lab,.worksheet,.suite-guided-shell,[data-quick-assign-id]');
+  }
   function statePayload(){
     const out={};
-    inner.querySelectorAll('select,input').forEach(el=>{
-      if(!el.id||el.closest('.classroom-lab')||['button','submit'].includes(el.type))return;
+    inner.querySelectorAll('select,input,textarea').forEach(el=>{
+      if(!shareable(el))return;
       if(el.type==='radio'){if(el.checked)out[el.id]=el.value;return}
       out[el.id]=el.type==='checkbox'?el.checked:el.value;
     });
@@ -2884,33 +2912,65 @@
   function encode(obj){return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))}
   function decode(s){try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch{return null}}
   function currentExperimentUrl(){
-    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',lang());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
+    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',routeLocale());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
   }
   window.__buildExperimentUrl=()=>currentExperimentUrl().href;
   const status=shell.querySelector('.experiment-status');
-  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(ui[lang()].copyPrompt,u.href)}};
+  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(shell.querySelector('[data-copy-experiment]').textContent.trim(),u.href)}};
 
-  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','')});
-  document.addEventListener('click',e=>{const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode','explore');u.searchParams.set('lang',lang());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
+  // Let Space activate this native button instead of a lab-wide play shortcut.
+  shell.addEventListener('keydown', event => {
+    if (event.key === ' ' && event.target.closest('[data-start-featured]')) event.stopPropagation();
+  });
+
+  // A learner-initiated handoff moves both the viewport and keyboard focus.
+  // Restoring a shared URL or changing locale must never steal focus.
+  function handoffToExperiment() {
+    const target = [...inner.querySelectorAll('select,input:not([type="hidden"]),textarea')]
+      .find(node => !node.closest('.learning-mode-shell,.suite-guided-shell')
+        && !node.disabled && node.getClientRects().length);
+    if (!target) return;
+    target.focus({preventScroll: true});
+    target.scrollIntoView({block: 'center',
+      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
+  }
+
+  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','');handoffToExperiment()});
+  document.addEventListener('click',e=>{if(restoring&&new URLSearchParams(location.search).has('state'))return;const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode',active);if(!restoring)u.searchParams.set('lang',routeLocale());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
 
   let urlSyncTimer=0;
   function scheduleUrlState(e){
     if(restoring)return;
-    const el=e.target;if(!el||!inner.contains(el)||el.closest('.classroom-lab')||!el.matches('input,select'))return;
+    const el=e.target;if(!shareable(el))return;
     clearTimeout(urlSyncTimer);urlSyncTimer=setTimeout(()=>{const u=currentExperimentUrl();history.replaceState(null,'',u)},80);
   }
   document.addEventListener('input',scheduleUrlState,true);document.addEventListener('change',scheduleUrlState,true);
 
   function applyState(obj){
-    if(!obj)return;
-    Object.entries(obj).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else if(el.type==='radio')el.checked=String(el.value)===String(value);else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});
+    if(!obj || typeof obj !== 'object' || Array.isArray(obj) || Object.keys(obj).length > 256)return;
+    Object.entries(obj).forEach(([id,value])=>{
+      const el=document.getElementById(id);if(!shareable(el))return;
+      if(el.type==='checkbox'){if(typeof value!=='boolean')return;el.checked=value}
+      else {
+        if(!['string','number'].includes(typeof value) || String(value).length>10000)return;
+        const text=String(value);
+        if(el.tagName==='SELECT' && ![...el.options].some(option=>option.value===text))return;
+        if(['number','range'].includes(el.type)){
+          if(!text.trim() || !Number.isFinite(Number(text)))return;
+          if(el.min!=='' && Number(text)<Number(el.min))return;
+          if(el.max!=='' && Number(text)>Number(el.max))return;
+        }
+        if(el.type==='radio'){if(el.value!==text)return;el.checked=true}
+        else el.value=text;
+      }
+      el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));
+    });
   }
   function restore(){
     const p=new URL(location.href).searchParams;restoring=true;
-    // Explicit scenario, then saved controls, override native CNF share state.
-    // Retain the established scenario-zero default unless a native formula exists.
-    const nativeFormula=window.APPLET_LEARNER_PROFILE?.slug==='cnf-sat'&&p.has('f');
-    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeFormula))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
+    // Native links precede explicit scenarios and saved controls.
+    const nativeState=slug==='cnf-sat'&&p.has('f')||slug==='knn-classifier'&&['k','ds','task','metric','weight','scale','target'].some(k=>p.has(k));
+    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeState))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
     applyState(decode(p.get('state')||''));
     if(p.get('featured')==='1')sig?.setAttribute('open','');
     restoring=false;
@@ -2926,7 +2986,7 @@
   }
   setMode(active,false);ensureExploreContent();
   setTimeout(()=>{refineCards();window.renderAppletKeyTerms?.();restore();renderModeChrome()},250);
-  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',lang());history.replaceState(null,'',u)},25)));
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',routeLocale());history.replaceState(null,'',u)},25)));
 })();
 </script>
 
@@ -2978,11 +3038,11 @@
 <script defer src="../../assets/guided-challenges.js"></script>
 <!-- suite-guided-challenge-v2:end -->
 <script src="../../assets/locales/q-learning-gridworld-r4.js"></script>
-<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["q-learning-gridworld"];if(!row)return;Object.assign(row.vi.strings,{"🧪 Quick Assign · QA-QL-01 · 10–15 min": "🧪 Bài tập nhanh · QA-QL-01 · 10–15 phút", "One Q-update": "Một lần cập nhật Q", "Predict how exploration and discounting affect learning, train the agent, then explain how value propagates from reward.": "Dự đoán hành động và hướng cập nhật Q, bước tác tử rồi nối reward, giá trị trạng thái kế tiếp và learning rate với thay đổi.", "What happens if epsilon is 0 before the goal has been discovered?": "Trước bước tiếp theo, bạn dự đoán Q-value của hành động được chọn sẽ tăng hay giảm? Vì sao?", "Train two settings. Record the visible Q-value pattern, reward pattern, or policy difference.": "Ghi lại trạng thái, hành động, reward, ước lượng trạng thái kế tiếp và Q-value trước/sau cập nhật.", "How did gamma, epsilon, or alpha change learning in your run?": "TD target và learning rate quyết định độ lớn/hướng cập nhật Q như thế nào?", "Give a task where exploration is necessary before exploitation becomes useful.": "Exploration có thể chọn hành động khác với policy tham lam như thế nào ngay cả khi Q-values đã hình thành?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"🧪 Quick Assign · QA-QL-01 · 10–15 min": "🧪 Tarea rápida · QA-QL-01 · 10–15 min", "One Q-update": "Una actualización Q", "Predict how exploration and discounting affect learning, train the agent, then explain how value propagates from reward.": "Predice la acción y la dirección de la actualización, avanza el agente y conecta recompensa, valor del siguiente estado y tasa de aprendizaje con el cambio.", "What happens if epsilon is 0 before the goal has been discovered?": "Antes del siguiente paso, ¿esperas que el Q-value de la acción elegida suba o baje? ¿Por qué?", "Train two settings. Record the visible Q-value pattern, reward pattern, or policy difference.": "Registra estado, acción, recompensa, estimación del siguiente estado y Q-value antes/después de la actualización.", "How did gamma, epsilon, or alpha change learning in your run?": "¿Cómo determinan el objetivo TD y la tasa de aprendizaje la dirección y magnitud de la actualización Q?", "Give a task where exploration is necessary before exploitation becomes useful.": "¿Cómo puede la exploración elegir una acción distinta de la política voraz incluso cuando ya existen Q-values aprendidos?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script src="../../assets/localization-r4.js"></script>
-<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.5</div>
+<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["q-learning-gridworld"];if(!row)return;Object.assign(row.vi.strings,{"Level 1 · 10–15 min": "Cấp độ 1 · 10–15 phút", "🧪 Quick Assign · QA-QL-01 · 10–15 min": "🧪 Bài tập nhanh · QA-QL-01 · 10–15 phút", "One Q-update": "Một lần cập nhật Q", "Predict an action and Q-update direction, step the agent, then connect reward, next-state value, and learning rate to the change.": "Dự đoán hành động và hướng cập nhật Q, bước tác tử rồi nối reward, giá trị trạng thái kế tiếp và learning rate với thay đổi.", "Before the next step, will the selected action Q-value increase or decrease? Why?": "Trước bước tiếp theo, bạn dự đoán Q-value của hành động được chọn sẽ tăng hay giảm? Vì sao?", "Record the state, action, reward, next-state estimate, and Q-value before and after the update.": "Ghi lại trạng thái, hành động, reward, ước lượng trạng thái kế tiếp và Q-value trước/sau cập nhật.", "How do the TD target and learning rate determine the direction and size of the Q-update?": "TD target và learning rate quyết định độ lớn/hướng cập nhật Q như thế nào?", "How can exploration choose a different action from the greedy policy even after Q-values have been learned?": "Exploration có thể chọn hành động khác với policy tham lam như thế nào ngay cả khi Q-values đã hình thành?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"Level 1 · 10–15 min": "Nivel 1 · 10–15 min", "🧪 Quick Assign · QA-QL-01 · 10–15 min": "🧪 Tarea rápida · QA-QL-01 · 10–15 min", "One Q-update": "Una actualización Q", "Predict an action and Q-update direction, step the agent, then connect reward, next-state value, and learning rate to the change.": "Predice la acción y la dirección de la actualización, avanza el agente y conecta recompensa, valor del siguiente estado y tasa de aprendizaje con el cambio.", "Before the next step, will the selected action Q-value increase or decrease? Why?": "Antes del siguiente paso, ¿esperas que el Q-value de la acción elegida suba o baje? ¿Por qué?", "Record the state, action, reward, next-state estimate, and Q-value before and after the update.": "Registra estado, acción, recompensa, estimación del siguiente estado y Q-value antes/después de la actualización.", "How do the TD target and learning rate determine the direction and size of the Q-update?": "¿Cómo determinan el objetivo TD y la tasa de aprendizaje la dirección y magnitud de la actualización Q?", "How can exploration choose a different action from the greedy policy even after Q-values have been learned?": "¿Cómo puede la exploración elegir una acción distinta de la política voraz incluso cuando ya existen Q-values aprendidos?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script src="../../assets/localization-r4.js"></script>
+<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.6</div>
 
 <!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
-<script data-ai-playgrounds-analytics="v1.9.5">
+<script data-ai-playgrounds-analytics="v1.9.6">
 (function () {
   'use strict';
   var CANONICAL_HOST = 'lmdixon23.github.io';
@@ -3098,5 +3158,117 @@
   sendPage();
 })();
 </script>
+<script data-classroom-result-locales="1">(()=>{const row=window.__AI_PLAYGROUNDS_R4_LOCALES?.["q-learning-gridworld"];if(!row)return;Object.assign(row.vi.strings,{"Total steps": "Tổng số bước", "Episodes": "Số lượt", "Last return": "Tổng thưởng lượt gần nhất", "Update evidence": "Bằng chứng cập nhật", "Avg return (20)": "Tổng thưởng trung bình (20 lượt)", "Last update": "Cập nhật gần nhất", "The last update shows how one action value changed. Episode returns summarize the rewards received; neither alone proves that the policy is optimal.": "Cập nhật gần nhất cho biết một giá trị hành động đã thay đổi thế nào. Tổng thưởng mỗi lượt tóm tắt phần thưởng nhận được; riêng từng thông tin không chứng minh chính sách là tối ưu."});Object.assign(row.es.strings,{"Total steps": "Pasos totales", "Episodes": "Episodios", "Last return": "Retorno del último episodio", "Update evidence": "Evidencia de la actualización", "Avg return (20)": "Retorno medio (20)", "Last update": "Última actualización", "The last update shows how one action value changed. Episode returns summarize the rewards received; neither alone proves that the policy is optimal.": "La última actualización muestra cómo cambió el valor de una acción. El retorno resume las recompensas de un episodio; ninguno de los dos demuestra por sí solo que la política sea óptima."});})();</script>
+<script id="classroom-draft-runtime">
+(() => {
+  'use strict';
+  const root = document.querySelector('[data-quick-assign-id]');
+  if (!root) return;
+  const original = !!root.querySelector('[data-lab-answer]');
+  const fields = [...root.querySelectorAll('[data-lab-answer],[data-qa-answer]')];
+  const state = root.querySelector('[data-lab-state],[data-qa-modern-state]');
+  const status = root.querySelector('.lab-status');
+  const slug = window.APPLET_LEARNER_PROFILE?.slug;
+  const key = original ? 'ai-playgrounds-lab-' + slug : 'ai-playgrounds-quick-assign:' + root.dataset.quickAssignId;
+  const locale = () => document.documentElement.lang.toLowerCase().split('-')[0];
+  const COPY = {
+    en: {confirm:'Clear this lab’s saved answers and captured evidence? This cannot be undone.', failed:'Your draft could not be saved in this browser. Copy or print it before closing this page.', cleared:'Local answers and captured evidence cleared.', removeFailed:'The saved draft could not be cleared. Your answers are still here.', restoreFailed:'The saved draft could not be read. Copy or print your work before reloading; clear the draft only if you want to discard it.'},
+    zh: {confirm:'清除此实验已保存的答案和状态记录？此操作无法撤销。', failed:'无法在此浏览器中保存草稿。关闭页面前请复制或打印。', cleared:'已清除本地答案和状态记录。', removeFailed:'无法清除已保存的草稿。你的答案仍保留在这里。', restoreFailed:'无法读取已保存的草稿。重新加载前请复制或打印你的内容；只有确认要丢弃草稿时才清除它。'},
+    vi: {confirm:'Xóa câu trả lời đã lưu và bằng chứng đã chụp của bài này? Không thể hoàn tác.', failed:'Không thể lưu bản nháp trong trình duyệt này. Hãy sao chép hoặc in trước khi đóng trang.', cleared:'Đã xóa câu trả lời cục bộ và bằng chứng đã chụp.', removeFailed:'Không thể xóa bản nháp đã lưu. Câu trả lời của bạn vẫn còn ở đây.', restoreFailed:'Không thể đọc bản nháp đã lưu. Hãy sao chép hoặc in bài trước khi tải lại; chỉ xóa bản nháp nếu muốn bỏ nó.'},
+    es: {confirm:'¿Borrar las respuestas guardadas y la evidencia capturada de este laboratorio? No se puede deshacer.', failed:'No se pudo guardar el borrador en este navegador. Cópialo o imprímelo antes de cerrar esta página.', cleared:'Se borraron las respuestas locales y la evidencia capturada.', removeFailed:'No se pudo borrar el borrador guardado. Tus respuestas siguen aquí.', restoreFailed:'No se pudo leer el borrador guardado. Copia o imprime tu trabajo antes de recargar; bórralo solo si deseas descartarlo.'}
+  };
+  const copy = () => COPY[locale()] || COPY.en;
+  const message = name => { if (status) { status.textContent = copy()[name]; status.dataset.draftError = ['failed','removeFailed','restoreFailed'].includes(name) ? name : ''; } };
+  new MutationObserver(() => { if (status?.dataset.draftError) message(status.dataset.draftError); }).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+  const captured = () => !!state && !!state.textContent.trim() && (state.hasAttribute('data-r4-no-translate') || state.dataset.qaStateReady === '1');
+  function retainCapture(text, lang) {
+    if (!state) return;
+    state.textContent = text;
+    state.lang = ['en','zh','vi','es'].includes(lang) ? lang : 'en';
+    state.setAttribute('data-r4-no-translate','');
+    state.dataset.qaStateReady = '1';
+    for (const n of [13,14,15]) state.setAttribute('data-lab'+n+'-no-translate','');
+    for (const lang of ['en','zh','vi','es']) state.removeAttribute('data-ap-'+lang);
+  }
+  const fieldName = field => field.dataset.labAnswer || field.dataset.qaAnswer;
+  const dirty = new Set();
+  let captureDirty = false, unreadable = false;
+  function readDraft() {
+    const data = JSON.parse(localStorage.getItem(key) || '{}');
+    if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Invalid draft');
+    for (const field of fields) if (data[fieldName(field)] !== undefined && typeof data[fieldName(field)] !== 'string') throw new Error('Invalid answer');
+    if (data.__capture !== undefined && typeof data.__capture?.text !== 'string') throw new Error('Invalid capture');
+    unreadable = false;
+    return data;
+  }
+  function applyDraft(data) {
+    for (const field of fields) if (!dirty.has(fieldName(field))) field.value = data[fieldName(field)] || '';
+    if (!captureDirty) {
+      if (data.__capture) retainCapture(data.__capture.text, data.__capture.lang);
+      else if (captured()) retainCapture('', locale());
+    }
+  }
+  function save(field, refresh = false) {
+    if (field) dirty.add(fieldName(field));
+    captureDirty ||= refresh;
+    try {
+      // Merge only this tab's edits into the latest stored packet. A stale tab
+      // must not replace another tab's different answer or explicit capture.
+      const latest = readDraft();
+      const data = Object.fromEntries(fields.map(field => {
+        const name = fieldName(field);
+        return [name, dirty.has(name) ? field.value : latest[name] || ''];
+      }));
+      if (captureDirty && captured()) data.__capture = {text:state.textContent, lang:state.lang};
+      else if (!captureDirty && latest.__capture) data.__capture = latest.__capture;
+      localStorage.setItem(key, JSON.stringify(data));
+      dirty.clear(); captureDirty = false;
+      if (status?.dataset.draftError || Object.values(COPY).some(value => status?.textContent === value.cleared)) { status.textContent=''; delete status.dataset.draftError; }
+    } catch (_) { message('failed'); }
+  }
+  try { applyDraft(readDraft()); }
+  catch (_) { unreadable = true; message('restoreFailed'); }
+  window.addEventListener('storage', event => {
+    if (event.key !== key && event.key !== null) return;
+    try {
+      if (event.storageArea !== localStorage) return;
+      // Read the latest value, not a possibly superseded queued storage event.
+      applyDraft(readDraft());
+    } catch (_) { unreadable = true; message('restoreFailed'); }
+  });
+  // One owner saves the complete packet before legacy answer-only handlers run.
+  document.addEventListener('input', event => {
+    if (!fields.includes(event.target)) return;
+    event.stopImmediatePropagation();
+    save(event.target);
+  }, true);
+  document.addEventListener('click', event => {
+    const button = event.target.closest?.('[data-lab-action],[data-qa-action]');
+    if (!button || !root.contains(button)) return;
+    const action = button.dataset.labAction || button.dataset.qaAction;
+    if (action === 'refresh' || action === 'refresh-state') {
+      // Capture is synchronous in each native packet; persist its finished result.
+      queueMicrotask(() => save(null, true));
+      return;
+    }
+    if (action !== 'clear') return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (!fields.some(field => field.value) && !captured() && !unreadable) return;
+    if (!window.confirm(copy().confirm)) return;
+    try { localStorage.removeItem(key); }
+    catch (_) { message('removeFailed'); return; }
+    dirty.clear(); captureDirty = false; unreadable = false;
+    for (const field of fields) field.value = '';
+    if (state) {
+      // An empty capture is intentional; do not restore or recapture live results.
+      retainCapture('', locale());
+    }
+    message('cleared');
+    fields[0]?.focus();
+  }, true);
+})();
+</script>
+
 </body>
 </html>

@@ -2,7 +2,7 @@
 
 <html lang="en">
 <head>
-<!-- Standalone AI Playgrounds v1.9.5 export.
+<!-- Standalone AI Playgrounds v1.9.6 export.
 MIT License
 
 Copyright (c) 2026 Logan M. Dixon
@@ -157,10 +157,11 @@ SOFTWARE.
   @media (pointer: coarse) {
     button, .step-btn, .tp-btn, select, summary { min-height: 44px; }
   }
+  label:has(> #raceAlgoA), label:has(> #raceAlgoB), #raceAlgoA, #raceAlgoB { min-width: 0; max-width: 100%; }
   /* Phones: reduce chrome and keep transport/table controls inside a 360px viewport. */
   @media (max-width: 480px) {
-    .page-header { padding-left: 16px; padding-right: 16px; }
-    .interactive { padding: 16px; }
+    .page-header { padding-left: 24px; padding-right: 24px; }
+    .interactive { padding: 16px 24px; }
     .control-row, .transport { gap: 8px; }
     .control-row select, .control-row .step-btn, .tp-btn { flex: 1 1 auto; }
     .tp-count { margin-left: 0; text-align: left; flex: 1 1 100%; }
@@ -537,6 +538,20 @@ SOFTWARE.
 /* Learner-facing terminology, compact glossary, and consistent action hierarchy. */
 .header-actions{align-items:center}.header-more{position:relative}.header-more>summary{list-style:none;cursor:pointer;user-select:none}.header-more>summary::-webkit-details-marker{display:none}.header-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:50;min-width:220px;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 16px 35px rgba(15,23,42,.18);display:grid;gap:5px}.header-more-menu button{width:100%;text-align:left;justify-content:flex-start;white-space:normal}.key-terms-panel{padding:14px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}.key-terms-intro{margin:0 0 10px;color:var(--muted)}.key-terms-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.key-term{padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:color-mix(in srgb,var(--card) 97%,var(--accent))}.key-term dt{font-weight:800;color:var(--fg);margin:0 0 3px}.key-term dd{margin:0;color:var(--muted);font-size:.84rem;line-height:1.45}.essay-primer{margin:0 0 22px;padding:15px 17px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--card) 96%,var(--accent));border-radius:10px}.essay-primer h2{margin:0 0 6px!important;font-size:1.05rem!important}.essay-primer p{margin:0 0 10px!important}.essay-primer h3{margin:12px 0 7px;font-size:.92rem}.essay-primer-terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0}.essay-primer-terms>div{padding:8px 9px;border:1px solid var(--border);border-radius:8px;background:var(--card)}.essay-primer-terms dt{font-weight:800}.essay-primer-terms dd{margin:2px 0 0;color:var(--muted);font-size:.82rem;line-height:1.4}.scenario-card .scenario-meta{line-height:1.5}.scenario-card .scenario-meta strong{display:block;margin-bottom:2px}.header-actions>.header-png,.header-actions>.header-theme,.header-actions>.header-reset,.header-more>summary{min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px}
 @media(max-width:720px){.essay-primer-terms{grid-template-columns:1fr}.header-actions{width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}.header-actions>button,.header-actions>.header-more,.header-more>summary{width:100%;justify-content:center}.header-more-menu{right:auto;left:0;max-width:min(290px,90vw)}.key-terms-grid{grid-template-columns:1fr}}
+/* Accessible text keeps the lab hue without changing filled controls or plots. */
+body.dark-mode{--accent-text:color-mix(in srgb,var(--fg) 80%,var(--accent))}
+body.dark-mode :is(.page-header .back,.scenario-card h3,.classroom-lab .lab-field label,.essay h2,.essay h3,.essay h4,.visual-card h4,.visual-live strong,.signature-challenge-panel strong,footer a){color:var(--accent-text)}
+body.dark-mode footer a{color:var(--accent-text)!important}
+.essay h2,.key-terms-intro,.worksheet{overflow-wrap:anywhere}
+#tourName{min-width:0;overflow-wrap:anywhere}
+div:has(>#tourName),div:has(>#tourNext){flex-wrap:wrap}
+.slider-block,.mode-tabs,#modeGroup,#initGroup{flex-wrap:wrap;max-width:100%}
+select{min-width:0;max-width:100%}
+.scenario-card h3,.essay-primer-terms>div,p,.tldr,[data-i18n="seq-explain"]{min-width:0;overflow-wrap:anywhere}
+.header-actions>button{overflow-wrap:anywhere;white-space:normal}
+h1,h3,.method-tabs button,.stat-item,.key-term,.world-icon-key li>span:last-child{min-width:0;overflow-wrap:anywhere}
+.stats-strip,div:has(>#ngViewW){flex-wrap:wrap;max-width:100%}
+@media(max-width:360px){.visual-live{box-sizing:border-box;min-width:0;white-space:normal;flex-wrap:wrap}.visual-live>span{min-width:0;overflow-wrap:anywhere}}
 </style>
 <style id="learning-modes-style">
 /* Product information architecture and restrained visual hierarchy. */
@@ -581,7 +596,7 @@ body.dark-mode .r4-language-select {
 }
 
 </style>
-<meta name="ai-playgrounds-version" content="1.9.5">
+<meta name="ai-playgrounds-version" content="1.9.6">
 
 <style id="v14-version-provenance-style">
 .v14-version-provenance{max-width:1180px;margin:22px auto 10px;padding:12px 18px;border-top:1px solid var(--border,#dbe4ee);color:var(--muted,#64748b);font:12px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center}
@@ -607,7 +622,7 @@ body.dark-mode .r4-language-select {
 <div class="header-actions">
 <button class="header-png" id="shareLink" title="Copy a URL that re-opens this algorithm choice in another browser.">🔗 Share</button>
 <button class="header-png" id="embedLink" title="Copy an &lt;iframe&gt; snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.">📎 Embed</button>
-<button class="header-png" id="csvExport" title="Download grid + search results (path coordinates, nodes visited, frontier snapshot) as CSV.">📊 CSV</button>
+<button class="header-png" id="csvExport" title="Download grid dimensions and search results (path coordinates, visited-node count, frontier snapshot) as CSV.">📊 CSV</button>
 <button class="header-png" id="exportPng" title="Download the current grid + search trace as a PNG.">📷 PNG</button>
 <button class="header-reset" data-i18n="reset-all" id="hardReset" title="Reset everything to defaults: empty grid, A*, default start and goal positions.">↺ Reset all</button>
 </div>
@@ -615,7 +630,7 @@ body.dark-mode .r4-language-select {
 </header>
 <aside class="tldr">
 <strong data-i18n="tldr-strong">The big idea</strong>
-<span data-i18n="tldr-body">A* finds the shortest path between two points while exploring far fewer squares than BFS, because it uses an estimate of remaining distance to focus the search.</span>
+<span data-i18n="tldr-body">A* uses a cost estimate to guide search. Manhattan, Euclidean or zero preserve least cost here; visited counts depend on the map.</span>
 </aside>
 <main class="interactive" id="main" role="main" tabindex="-1">
 <div class="interactive-inner">
@@ -635,8 +650,8 @@ body.dark-mode .r4-language-select {
 <option data-i18n="size-medium" value="medium">Medium (35 × 25)</option>
 <option data-i18n="size-large" value="large">Large (50 × 35)</option>
 </select>
-<label data-i18n="heur-label">A* heuristic:</label>
-<select data-i18n-title="heur-title" id="heurSel" title="Manhattan is admissible (never overestimates) on a 4-connected grid → A* finds shortest path. 1.5× Manhattan is inadmissible → A* gets faster but no longer guarantees optimality.">
+<label data-i18n="heur-label">A*/IDA* heuristic:</label>
+<select data-i18n-title="heur-title" id="heurSel" title="Manhattan, Euclidean and zero preserve least cost here for A* and IDA*. 1.5× Manhattan may reduce work but can lose optimality.">
 <option data-i18n="h-manhattan" selected="" value="manhattan">Manhattan (admissible)</option>
 <option data-i18n="h-euclidean" value="euclidean">Euclidean (admissible)</option>
 <option data-i18n="h-overestimate" value="manhattan15">1.5× Manhattan (INadmissible)</option>
@@ -651,17 +666,17 @@ body.dark-mode .r4-language-select {
 <!-- terrain paint mode. Click cycles through Wall / Road / Mud / Water. -->
 <div class="control-row">
 <label data-i18n="paint-label">Paint with:</label>
-<select data-i18n-title="paint-title" id="paintSel" title="Click on the canvas paints with the selected terrain. Costs: Road 1, Mud 3, Water 5, Wall impassable. BFS/DFS ignore costs; Dijkstra and A* use them.">
+<select data-i18n-title="paint-title" id="paintSel" title="Paint road (1), mud (3), water (5) or walls. Dijkstra, A* and IDA* use costs; BFS, DFS and bidirectional BFS ignore them.">
 <option data-i18n="p-wall" selected="" value="wall">🟪 Wall (impassable)</option>
 <option data-i18n="p-road" value="road">⬜ Road (cost 1)</option>
 <option data-i18n="p-mud" value="mud">🟫 Mud (cost 3)</option>
 <option data-i18n="p-water" value="water">🟦 Water (cost 5)</option>
 </select>
 <span data-i18n="paint-hint" style="color:var(--muted); font-size:0.8rem;">
-      Weighted terrain only affects Dijkstra &amp; A*. BFS/DFS treat all passable cells as cost 1.
+      Dijkstra, A* and IDA* use terrain costs. BFS, DFS and bidirectional BFS ignore them.
     </span>
 </div>
-<p class="hint" id="algoHelp">A* uses an estimate of remaining distance to focus the search.</p>
+<p class="hint" id="algoHelp" data-r4-no-translate="">A* combines cost so far with an estimate of remaining cost. An overestimating heuristic can lose the lowest-cost guarantee.</p>
 <!-- Unified transport bar (shared playback controls; Speed/Run/Step relocated here). -->
 <div aria-label="Playback controls" class="transport" id="transport" role="group">
 <button class="tp-btn" data-i18n-title="restart-title" id="restartBtn" title="Restart the search from the beginning (keeps walls, start, and goal).">↺</button>
@@ -681,12 +696,12 @@ body.dark-mode .r4-language-select {
 <span class="tp-count" data-i18n="tp-idle" id="tpCount">idle</span>
 </div>
 <canvas aria-label="Grid pathfinding visualization. Click to add walls, drag start or goal." height="500" id="grid" role="img" width="700"></canvas>
-<div class="stats-strip">
+<div class="stats-strip" data-r4-no-translate>
 <div class="stat-item"><div class="label" data-i18n="stat-visited">Nodes visited</div><div class="val" id="nVis">0</div></div>
-<div class="stat-item"><div class="label" data-i18n="stat-path">Path length</div><div class="val" id="nPath">-</div></div>
-<div class="stat-item"><div class="label" data-i18n="stat-status">Status</div><div class="val" id="status">idle</div></div>
+<div class="stat-item"><div class="label" data-i18n="stat-path">Path length</div><div class="val" id="nPath" data-r4-no-translate>-</div></div>
+<div class="stat-item"><div class="label" data-i18n="stat-status">Status</div><div class="val" id="status" data-r4-no-translate>idle</div></div>
 </div>
-<div class="legend-strip">
+<div class="legend-strip" data-r4-no-translate>
 <span><span class="sw" style="background:var(--start)"></span><span data-i18n="leg-start">Start</span></span>
 <span><span class="sw" style="background:var(--goal)"></span><span data-i18n="leg-goal">Goal</span></span>
 <span><span class="sw" style="background:var(--wall)"></span><span data-i18n="leg-wall">Wall</span></span>
@@ -867,7 +882,7 @@ body.dark-mode .r4-language-select {
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="1"/> <span data-i18n="ws1o1">Yes: BFS expands in rings by distance, so it reaches the goal by a shortest path on an unweighted grid.</span></label>
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws1" type="radio" value="2"/> <span data-i18n="ws1o2">Only when the maze has no walls: walls break BFS's guarantee.</span></label>
 </div>
-<button class="step-btn" data-i18n="ws-check" id="ws1btn">Check</button>
+<button class="step-btn" data-i18n="ws-check" id="ws1btn" data-r4-no-translate>Check</button>
 <span id="ws1fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
 </div>
 <div class="ws-q" id="ws2" style="margin-top:10px;">
@@ -877,17 +892,17 @@ body.dark-mode .r4-language-select {
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="1"/> <span data-i18n="ws2o1">The same length: any path-finder returns the same path on one maze.</span></label>
 <label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws2" type="radio" value="2"/> <span data-i18n="ws2o2">Often longer: DFS commits to one direction, so its first path is rarely shortest.</span></label>
 </div>
-<button class="step-btn" data-i18n="ws-check" id="ws2btn">Check</button>
+<button class="step-btn" data-i18n="ws-check" id="ws2btn" data-r4-no-translate>Check</button>
 <span id="ws2fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
 </div>
 <div class="ws-q" id="ws3" style="margin-top:10px;">
-<p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">A* with admissible Manhattan heuristic vs BFS on the same maze. Number of nodes visited by A* is:</span></p>
+<p style="margin:0 0 4px;"><strong>Q3.</strong> <span data-i18n="ws3q">On the same road-only maze, must Manhattan A* visit fewer nodes than BFS?</span></p>
 <div class="ws-opts" style="display:flex; flex-direction:column; gap:4px; margin:4px 0;">
-<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="0"/> <span data-i18n="ws3o0">Fewer: the heuristic steers A* toward the goal, so it wastes less exploration.</span></label>
-<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="1"/> <span data-i18n="ws3o1">More: computing the heuristic forces A* to examine extra nodes.</span></label>
-<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="2"/> <span data-i18n="ws3o2">The same: A* and BFS both visit every reachable cell.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="0"/> <span data-i18n="ws3o0">No. A* can save work, but both may visit the same number.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="1"/> <span data-i18n="ws3o1">Yes. A* always visits fewer nodes.</span></label>
+<label style="display:flex; gap:6px; align-items:flex-start; cursor:pointer;"><input name="ws3" type="radio" value="2"/> <span data-i18n="ws3o2">Yes. A* never explores away from the goal.</span></label>
 </div>
-<button class="step-btn" data-i18n="ws-check" id="ws3btn">Check</button>
+<button class="step-btn" data-i18n="ws-check" id="ws3btn" data-r4-no-translate>Check</button>
 <span id="ws3fb" style="margin-left:6px; font-family:ui-monospace,monospace; font-size:0.85rem;"></span>
 </div>
 </div>
@@ -897,7 +912,7 @@ body.dark-mode .r4-language-select {
 <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
 <span data-lab-en="🧪 Quick Assign · QA-SEARCH-01 · 10–15 min" data-lab-zh="🧪 快速任务 · QA-SEARCH-01 · 10–15 分钟">🧪 Quick Assign · QA-SEARCH-01 · 10–15 min</span>
 </summary>
-<div class="lab-panel"><div class="quick-assign-meta" data-r4-no-translate="1" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong>QA-SEARCH-01</strong> · Level 1 · 10–15 min<br><span>A* vs BFS: same goal, different work</span></div>
+<div class="lab-panel"><div class="quick-assign-meta" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong data-r4-no-translate="1">QA-SEARCH-01</strong> · <span data-lab-en="Level 1 · 10–15 min" data-lab-zh="级别 1 · 10–15 分钟">Level 1 · 10–15 min</span><br><span data-lab-en="A* vs BFS: same goal, different work" data-lab-zh="A* 与 BFS：目标相同，搜索工作量不同">A* vs BFS: same goal, different work</span></div>
 <p class="lab-intro" data-lab-en="Predict which search will do less work, run a comparison, then explain how the frontier and heuristic changed the result." data-lab-zh="先预测哪种搜索工作量更小，再运行比较，然后解释搜索前沿和启发式如何改变结果。">Predict which search will do less work, run a comparison, then explain how the frontier and heuristic changed the result.</p>
 <div class="lab-grid">
 <div class="lab-field">
@@ -917,7 +932,7 @@ body.dark-mode .r4-language-select {
 <textarea data-lab-answer="transfer" data-lab-en="When would BFS be safer than greedy best-first search or weighted A*?" data-lab-zh="什么时候 BFS 会比贪心最佳优先搜索或加权 A* 更安全？" id="lab-transfer" placeholder="When would BFS be safer than greedy best-first search or weighted A*?"></textarea>
 </div>
 </div>
-<div aria-live="polite" class="lab-state" data-lab-state="">State snapshot appears here.</div>
+<div aria-live="polite" class="lab-state" data-lab-state="" data-lab-en="State snapshot appears here." data-lab-zh="状态快照将显示在这里。">State snapshot appears here.</div>
 <div class="lab-actions">
 <button class="step-btn" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态" type="button">↻ Refresh state</button>
 <button class="step-btn" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包" type="button">📋 Copy packet</button>
@@ -1101,26 +1116,26 @@ body.dark-mode .r4-language-select {
       'tp-idle': 'idle',
       'return-live': 'Jump to latest',
       'race-summary': '🏁 Race two algorithms on the same maze',
-      'race-intro': 'Both algorithms search the maze you built above, one node-expansion per tick. Watch how many cells each opens before reaching the goal: that is why "A* explores fewer nodes than BFS" is a measured result, not a slogan.',
+      'race-intro': 'Both search the same map, one expansion per tick. Compare visited counts; A* need not visit fewer nodes.',
       'race-left': 'Left', 'race-right': 'Right', 'race-vs': 'vs',
       'race-btn': '▶ Race', 'race-reset': '↺ Reset', 'race-nodes': 'nodes',
       'clear-btn': 'Clear walls', 'reset-btn': 'Reset',
       'size-label': 'Grid size:',
       'size-small': 'Small (20 × 14)', 'size-medium': 'Medium (35 × 25)', 'size-large': 'Large (50 × 35)',
-      'heur-label': 'A* heuristic:',
+      'heur-label': 'A*/IDA* heuristic:',
       'h-manhattan': 'Manhattan (admissible)',
       'h-euclidean': 'Euclidean (admissible)',
       'h-overestimate': '1.5× Manhattan (INadmissible)',
       'h-zero': 'Zero (= Dijkstra)',
-      'heur-title': 'Manhattan is admissible (never overestimates) on a 4-connected grid → A* finds shortest path. 1.5× Manhattan is inadmissible → A* gets faster but no longer guarantees optimality.',
+      'heur-title': 'Manhattan, Euclidean and zero preserve least cost here for A* and IDA*. 1.5× Manhattan may reduce work but can lose optimality.',
       'opt-astar': 'A* (heuristic-guided)',
       'opt-bidi': 'Bidirectional BFS (search from both ends)',
       'opt-idastar': 'IDA* (iterative deepening A*)',
       'paint-label': 'Paint with:',
       'p-wall': '🟪 Wall (impassable)', 'p-road': '⬜ Road (cost 1)',
       'p-mud': '🟫 Mud (cost 3)', 'p-water': '🟦 Water (cost 5)',
-      'paint-title': 'Click on the canvas paints with the selected terrain. Costs: Road 1, Mud 3, Water 5, Wall impassable. BFS/DFS ignore costs; Dijkstra and A* use them.',
-      'paint-hint': 'Weighted terrain only affects Dijkstra & A*. BFS/DFS treat all passable cells as cost 1.',
+      'paint-title': 'Paint road (1), mud (3), water (5) or walls. Dijkstra, A* and IDA* use costs; BFS, DFS and bidirectional BFS ignore them.',
+      'paint-hint': 'Dijkstra, A* and IDA* use terrain costs. BFS, DFS and bidirectional BFS ignore them.',
       'leg-mud': 'Mud (3)', 'leg-water': 'Water (5)',
       'replay-label': '⏪ Replay',
       'frontier-summary': '📋 Open frontier (data structure contents)',
@@ -1128,7 +1143,7 @@ body.dark-mode .r4-language-select {
       'ft-h': 'h (heuristic)', 'ft-f': 'f = g + h', 'ft-note': 'Note',
       'ft-hint': "BFS/DFS don't use g/h/f: they pop by FIFO/LIFO order. Dijkstra uses g only. A* sorts by f.",
       'tldr-strong': 'The big idea',
-      'tldr-body': 'A* finds the shortest path between two points while exploring far fewer squares than BFS, because it uses an estimate of remaining distance to focus the search.',
+      'tldr-body': 'A* uses a cost estimate to guide search. Manhattan, Euclidean or zero preserve least cost here; visited counts depend on the map.',
       'opt-bfs': 'Breadth-first search (BFS)',
       'opt-dfs': 'Depth-first search (DFS)',
       'opt-astar': 'A* (Manhattan heuristic)',
@@ -1156,7 +1171,7 @@ body.dark-mode .r4-language-select {
       'ws-pick': 'Pick an answer first.',
       'ws1q': 'BFS on the demo maze. Is the path BFS finds always the shortest?',
       'ws2q': 'Same maze, DFS. Compared to BFS\'s path length, DFS finds a path that is:',
-      'ws3q': 'A* with admissible Manhattan heuristic vs BFS on the same maze. Number of nodes visited by A* is:',
+      'ws3q': 'On the same road-only maze, must Manhattan A* visit fewer nodes than BFS?',
       // --- MCQ: worksheet option labels (ws{n}o{i}) ---
       'ws1o0': 'No: BFS finds a path quickly, but not necessarily the shortest one.',
       'ws1o1': 'Yes: BFS expands in rings by distance, so it reaches the goal by a shortest path on an unweighted grid.',
@@ -1164,16 +1179,16 @@ body.dark-mode .r4-language-select {
       'ws2o0': 'Always shorter: diving deep reaches the goal by a more direct route.',
       'ws2o1': 'The same length: any path-finder returns the same path on one maze.',
       'ws2o2': 'Often longer: DFS commits to one direction, so its first path is rarely shortest.',
-      'ws3o0': 'Fewer: the heuristic steers A* toward the goal, so it wastes less exploration.',
-      'ws3o1': 'More: computing the heuristic forces A* to examine extra nodes.',
-      'ws3o2': 'The same: A* and BFS both visit every reachable cell.',
+      'ws3o0': 'No. A* can save work, but both may visit the same number.',
+      'ws3o1': 'Yes. A* always visits fewer nodes.',
+      'ws3o2': 'Yes. A* never explores away from the goal.',
       // lesson-tour scenarios (0-based index: tour{i}name / tour{i}desc) ---
       'tour0name': 'BFS vs A*: same maze, different work',
-      'tour0desc': 'Small grid, demo maze, BFS. Run once, record visited nodes, then switch to A* on the same maze. The paths stay optimal, but the frontier work changes dramatically.',
+      'tour0desc': 'Small grid, demo maze, BFS. Record visited nodes, then compare A* on the unchanged maze. Both return shortest paths here; measure any difference in work.',
       'tour1name': 'DFS trap: fast path is not best path',
       'tour1desc': "Small grid, maze layout, DFS. Run after BFS and compare path length. On this fixed grid and neighbor order, DFS can reach the goal after relatively few expansions while returning a longer route. That does not make DFS generally faster.",
-      'tour2name': 'A* focus: heuristic saves work without losing optimality',
-      'tour2desc': 'Small grid, demo maze, A* with Manhattan. Compare path length and visited nodes against BFS. The heuristic focuses work while preserving the shortest-path guarantee.',
+      'tour2name': 'A* with Manhattan: compare search work',
+      'tour2desc': 'Small grid, demo maze, A* with Manhattan. Compare path length and visited nodes with BFS. Both return shortest paths here; visited counts depend on the map.',
       'tour3name': 'Weighted A*: may focus more, no longer guaranteed',
       'tour3desc': 'Medium grid, A* with 1.5× Manhattan. The search may visit fewer cells, but overestimation removes the guarantee that the returned path has minimum cost.',
       'tour4name': 'Weighted terrain: BFS ignores cost, Dijkstra does not',
@@ -1183,8 +1198,8 @@ body.dark-mode .r4-language-select {
       'ws1no': "Try 'yes'. BFS expands by distance from start, so the first time it touches the goal, that's the shortest path on an unweighted graph.",
       'ws2ok': "Correct. DFS uses a stack (LIFO) and commits to one direction until it hits a dead end. The first path it finds is usually NOT shortest: DFS isn't designed for optimality, just for finding a path quickly.",
       'ws2no': "Try 'often longer'. DFS dives deep along one direction first; the first path it finds is rarely the shortest.",
-      'ws3ok': "Right. A* uses f = g + h to focus exploration toward the goal. With an admissible heuristic, it still finds the shortest path (like BFS) but visits far fewer 'wasted' nodes in the wrong direction.",
-      'ws3no': "Try 'fewer'. A*'s heuristic biases exploration toward the goal: same correctness as BFS, much less wasted work.",
+      'ws3ok': "Correct. f = g + h guides A*. Both find a shortest path on this road-only grid; a single corridor can give equal visited counts.",
+      'ws3no': "Try 'No'. A shortest-path guarantee does not guarantee fewer visited nodes.",
       // tooltip translations (via data-i18n-title)
       'algo-title': 'Choose which search algorithm to run. Each visits cells in a different order.',
       'size-title': 'Smaller grids fit on one screen and are easier to inspect step-by-step. Large grids show the algorithms\' asymptotic behavior.',
@@ -1208,26 +1223,26 @@ body.dark-mode .r4-language-select {
       'tp-idle': '空闲',
       'return-live': '跳到最新',
       'race-summary': '🏁 让两个算法在同一迷宫上赛跑',
-      'race-intro': '两个算法都在你上面搭好的迷宫里搜索,每帧各扩展一个节点。看看各自到达终点前打开了多少格子--这正是为什么"A* 比 BFS 探索更少节点"是可测量的结果,而不是口号。',
+      'race-intro': '两者搜索同一地图，每个时钟步各扩展一个节点。比较访问数量；A* 不一定访问更少节点。',
       'race-left': '左', 'race-right': '右', 'race-vs': '对',
       'race-btn': '▶ 开始赛跑', 'race-reset': '↺ 重置', 'race-nodes': '节点',
       'clear-btn': '清除墙壁', 'reset-btn': '重置',
       'size-label': '网格尺寸:',
       'size-small': '小 (20 × 14)', 'size-medium': '中 (35 × 25)', 'size-large': '大 (50 × 35)',
-      'heur-label': 'A* 启发式:',
+      'heur-label': 'A*/IDA* 启发式：',
       'h-manhattan': '曼哈顿(可行)',
       'h-euclidean': '欧几里得(可行)',
       'h-overestimate': '1.5× 曼哈顿(不可行)',
       'h-zero': '零(= 迪杰斯特拉)',
-      'heur-title': '曼哈顿在 4-连通网格上是可行启发式(永不高估)--A* 能找到最短路径。1.5× 曼哈顿是不可行的--A* 更快,但不再保证最优。',
+      'heur-title': '在本模型中，曼哈顿、欧几里得和零启发式保证 A* 和 IDA* 的最低代价。1.5 倍曼哈顿可能减少工作，但会失去最优保证。',
       'opt-astar': 'A*(启发式引导)',
       'opt-bidi': '双向 BFS(从两端搜索)',
       'opt-idastar': 'IDA*(迭代加深 A*)',
       'paint-label': '绘制:',
       'p-wall': '🟪 墙(不可通行)', 'p-road': '⬜ 道路(代价 1)',
       'p-mud': '🟫 泥地(代价 3)', 'p-water': '🟦 水域(代价 5)',
-      'paint-title': '点击画布以所选地形作画。代价:道路 1,泥地 3,水域 5,墙不可通行。BFS/DFS 忽略代价;Dijkstra 和 A* 使用代价。',
-      'paint-hint': '加权地形只影响 Dijkstra 和 A*。BFS/DFS 把所有可通行格子视作代价 1。',
+      'paint-title': '绘制道路（1）、泥地（3）、水域（5）或墙。Dijkstra、A* 和 IDA* 使用代价；BFS、DFS 和双向 BFS 忽略代价。',
+      'paint-hint': 'Dijkstra、A* 和 IDA* 使用地形代价。BFS、DFS 和双向 BFS 忽略地形代价。',
       'leg-mud': '泥地 (3)', 'leg-water': '水域 (5)',
       'replay-label': '⏪ 回放',
       'frontier-summary': '📋 开放边界(数据结构内容)',
@@ -1235,7 +1250,7 @@ body.dark-mode .r4-language-select {
       'ft-h': 'h(启发式)', 'ft-f': 'f = g + h', 'ft-note': '说明',
       'ft-hint': 'BFS/DFS 不使用 g/h/f--它们按 FIFO/LIFO 顺序弹出。Dijkstra 只用 g。A* 按 f 排序。',
       'tldr-strong': '核心思想',
-      'tldr-body': 'A* 能在两点之间找到最短路径,而探索的格子比广度优先少得多--因为它用剩余距离的估计来引导搜索。',
+      'tldr-body': 'A* 用代价估计引导搜索。在本模型中，曼哈顿、欧几里得或零启发式保证最低代价；访问数量取决于地图。',
       'opt-bfs': '广度优先搜索 (BFS)',
       'opt-dfs': '深度优先搜索 (DFS)',
       'opt-astar': 'A*(曼哈顿启发式)',
@@ -1263,7 +1278,7 @@ body.dark-mode .r4-language-select {
       'ws-pick': '请先选择一个答案。',
       'ws1q': 'BFS 在示例迷宫上运行。BFS 找到的路径总是最短的吗?',
       'ws2q': '同一迷宫,改用 DFS。与 BFS 的路径长度相比,DFS 找到的路径:',
-      'ws3q': '在同一迷宫上,使用可行(admissible)曼哈顿启发式的 A* 对比 BFS。A* 访问的节点数:',
+      'ws3q': '在同一个只有道路和墙的迷宫中，曼哈顿 A* 一定比 BFS 访问更少节点吗？',
       // --- MCQ: 练习题选项(ws{n}o{i})---
       'ws1o0': '不--BFS 能快速找到一条路径,但不一定是最短的。',
       'ws1o1': '是--BFS 按距离一圈圈向外扩展,所以在无权网格上它会沿最短路径到达终点。',
@@ -1271,16 +1286,16 @@ body.dark-mode .r4-language-select {
       'ws2o0': '总是更短--一头扎到底会沿更直接的路线到达终点。',
       'ws2o1': '长度相同--在同一个迷宫上任何寻路算法都返回相同的路径。',
       'ws2o2': '通常更长--DFS 锁定一个方向,所以它的第一条路很少是最短的。',
-      'ws3o0': '更少--启发式把 A* 引向终点,所以浪费的探索更少。',
-      'ws3o1': '更多--计算启发式迫使 A* 检查额外的节点。',
-      'ws3o2': '相同--A* 和 BFS 都会访问每一个可达的格子。',
+      'ws3o0': '不一定。A* 可以减少工作，但两者也可能访问相同数量的节点。',
+      'ws3o1': '是。A* 总是访问更少节点。',
+      'ws3o2': '是。A* 从不向远离目标的方向探索。',
       // 课程导览场景(0 起始索引:tour{i}name / tour{i}desc)---
       'tour0name': 'BFS 在小网格上:最短路径,但工作量大',
-      'tour0desc': '小网格,示例迷宫,BFS。点击"运行搜索"。BFS 以起点为中心一圈圈向外探索,直到碰到终点。它保证最短路径,但会访问很多节点。',
+      'tour0desc': '小网格、示例迷宫、BFS。记录访问数量，再在不变的迷宫上比较 A*。两者在这里都返回最短路径；测量工作量差异。',
       'tour1name': 'DFS 能找到一条路,但常常是糟糕的',
       'tour1desc': '同一网格,DFS。运行。在固定网格和邻居顺序下，DFS 可能在扩展较少节点后到达目标，却返回更长路线。这不表示 DFS 一般更快；它找到的是一条路，不一定是最短路。',
-      'tour2name': 'A* 配曼哈顿:聚焦搜索,且最优',
-      'tour2desc': '使用可行(admissible)曼哈顿启发式的 A*。访问的节点比 BFS 少得多,同时仍能找到最短路径。启发式把搜索朝终点方向裁剪。',
+      'tour2name': '曼哈顿 A*：比较搜索工作量',
+      'tour2desc': '小网格、示例迷宫、曼哈顿 A*。与 BFS 比较路径长度和访问节点数。两者在这里都返回最短路径；访问数量取决于地图。',
       'tour3name': '加权 A*：可能更聚焦，但不再保证最优',
       'tour3desc': '同样的 A*,但启发式 = 1.5× 曼哈顿(会高估)。它可能访问更少节点，但返回路径不再保证具有最低代价。最优性保证要求满足相应的启发式条件。',
       'tour4name': '迪杰斯特拉 = 零启发式的 A*',
@@ -1290,8 +1305,8 @@ body.dark-mode .r4-language-select {
       'ws1no': '试试"yes"。BFS 按到起点的距离扩展,所以它第一次碰到终点时,在无权图上那就是最短路径。',
       'ws2ok': '正确。DFS 使用栈(LIFO),会沿一个方向一直走到死路。它找到的第一条路通常不是最短的--DFS 的设计目标不是最优,而是快速找到一条路。',
       'ws2no': '试试"often longer"。DFS 先沿一个方向一头扎到底;它找到的第一条路很少是最短的。',
-      'ws3ok': '对。A* 用 f = g + h 把探索聚焦到终点方向。在启发式可行(admissible)时,它仍能找到最短路径(像 BFS 一样),但在错误方向上访问的"浪费"节点要少得多。',
-      'ws3no': '试试"fewer"。A* 的启发式让探索偏向终点--与 BFS 同样正确,却少了很多无用功。',
+      'ws3ok': '正确。f = g + h 引导 A*。在只有道路和墙的网格上，两者都找到最短路径；单一走廊中的访问数量可以相同。',
+      'ws3no': '试试“不一定”。保证最短路径不等于保证访问更少节点。',
       // tooltip translations
       'algo-title': '选择要运行的搜索算法。每种算法访问格子的顺序不同。',
       'size-title': '小网格能在一屏内显示完整,便于逐步检查。大网格更能展示算法的渐近行为。',
@@ -1390,9 +1405,8 @@ body.dark-mode .r4-language-select {
     link.click();
   });
   document.addEventListener('keydown', e => {
-    if (e.code === 'Space' &&
-        e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' &&
-        e.target.tagName !== 'SELECT') {
+    if (e.code === 'Space' && !e.defaultPrevented &&
+        !e.target.closest('button, summary, a, input, textarea, select, [contenteditable], [role="button"], [role="tab"]')) {
       e.preventDefault();
       document.getElementById('runBtn').click();
     }
@@ -1734,7 +1748,7 @@ body.dark-mode .r4-language-select {
     };
     let bound = h(start.r, start.c);
     // Use an iterative DFS stack so we can yield between expansions without recursion.
-    for (let iter = 0; iter < 50; iter++) {
+    for (let iter = 0; Number.isFinite(bound); iter++) {
       const stack = [{ r: start.r, c: start.c, g: 0, path: [[start.r, start.c]], seen: new Set([key(start.r, start.c)]) }];
       let nextBound = Infinity;
       let found = null;
@@ -1776,8 +1790,8 @@ body.dark-mode .r4-language-select {
     frontierData = { algo: '', entries: [] };
     history = [];
     document.getElementById('nVis').textContent = '0';
-    document.getElementById('nPath').textContent = '-';
-    document.getElementById('status').textContent = 'idle';
+    resultText('nPath','-');
+    resultText('status','idle');
     // Drop any paused step generator: its state is stale once we reset.
     if (typeof stepGen !== 'undefined') stepGen = null;
     paused = false;
@@ -1789,6 +1803,19 @@ body.dark-mode .r4-language-select {
     refreshRunBtn();
     renderFrontierTable();
   }
+  function resultText(id,value){
+    const el=document.getElementById(id);
+    if(value!==undefined)el.dataset.result=value;
+    const raw=el.dataset.result||el.textContent;
+    const copy=window.__AI_PLAYGROUNDS_R4_LOCALES?.['search-pathfinding']?.results?.[document.documentElement.lang]||{};
+    el.textContent=copy[raw]||raw.replace(/^(\d+) steps\s*·\s*cost (\d+)$/,copy.weighted||'$&');
+  }
+  window.addEventListener('r4languagechange',()=>{
+    resultText('status');resultText('nPath');
+    const lang=document.documentElement.lang;
+    const labels=window.__AI_PLAYGROUNDS_R4_LOCALES?.['search-pathfinding']?.labels?.[lang]||STRINGS[lang]||STRINGS.en;
+    document.querySelectorAll('.stats-strip [data-i18n],.legend-strip [data-i18n],[data-i18n=ws-check]').forEach(el=>el.textContent=labels[el.dataset.i18n]);
+  });
   // Snapshot the search state. Deep-clones the sets so history scrubbing doesn't alias live state.
   function snapshot() {
     history.push({
@@ -1852,21 +1879,18 @@ body.dark-mode .r4-language-select {
     return astar(false);
   }
   function finishSearch(result) {
+    document.getElementById('nVis').textContent = visited.size;
     if (result) {
       path = result;
-      // under weighted terrain, "Path length" is ambiguous: show both step count
-      // and total cost. Steps = edges traversed; cost = sum of cellCost(entered cell).
+      // Cost excludes the start cell; retain steps and weighted cost separately.
       const steps = result.length - 1;
-      let totalCost = 0;
-      for (let i = 1; i < result.length; i++) totalCost += cellCost(result[i][0], result[i][1]);
-      const usesCost = (frontierData.algo === 'astar' || frontierData.algo === 'dijkstra');
-      const showCost = usesCost && totalCost !== steps;
-      document.getElementById('nPath').textContent = showCost
+      const totalCost=result.slice(1).reduce((sum,[r,c])=>sum+cellCost(r,c),0);
+      resultText('nPath',['astar','dijkstra','idastar'].includes(frontierData.algo)&&totalCost!==steps
         ? `${steps} steps  ·  cost ${totalCost}`
-        : `${steps}`;
-      document.getElementById('status').textContent = 'found';
+        : `${steps}`);
+      resultText('status','found');
     } else {
-      document.getElementById('status').textContent = 'no path';
+      resultText('status','no path');
     }
     stepGen = null;
     draw();
@@ -1880,7 +1904,7 @@ body.dark-mode .r4-language-select {
     running = true;
     paused = false;
     refreshRunBtn();
-    document.getElementById('status').textContent = 'searching…';
+    resultText('status','searching…');
     let result = null; let step = 0;
     while (true) {
       if (paused) break;
@@ -1900,7 +1924,7 @@ body.dark-mode .r4-language-select {
     }
     running = false;
     if (paused) {
-      document.getElementById('status').textContent = 'paused';
+      resultText('status','paused');
       paused = false;
       draw();
       renderFrontierTable();
@@ -1928,7 +1952,7 @@ body.dark-mode .r4-language-select {
       finishSearch(value);
     } else {
       snapshot();
-      document.getElementById('status').textContent = 'paused (step mode)';
+      resultText('status','paused (step mode)');
       draw();
       renderFrontierTable();
     }
@@ -2156,15 +2180,49 @@ body.dark-mode .r4-language-select {
   });
 
   const HELP = {
-    bfs: 'BFS explores level by level: it finds the shortest path but checks many cells.',
-    dfs: 'DFS goes deep first. Fast to write, but it can find a long, weird path.',
-    astar: 'A* uses an estimate of remaining distance to focus the search.',
-    dijkstra: 'Dijkstra is A* with no heuristic. On a uniform grid, it behaves like BFS.',
-    bidi: 'Bidirectional BFS runs two BFS at once: from start AND from goal: and stops when they meet. Asymptotically halves the search depth.',
-    idastar: 'IDA* runs DFS with an f-cutoff that grows each iteration. Linear memory, still optimal. Watch the frontier "restart" between iterations.',
-  };
-  document.getElementById('algoSel').addEventListener('change', (e) => {
-    document.getElementById('algoHelp').textContent = HELP[e.target.value];
+  "en": {
+    "bfs": "BFS explores level by level and finds a path with the fewest steps. With unequal terrain costs, this need not be the cheapest path.",
+    "dfs": "DFS explores one branch deeply before backtracking. It does not guarantee the fewest steps or lowest cost.",
+    "astar": "A* combines cost so far with an estimate of remaining cost. An overestimating heuristic can lose the lowest-cost guarantee.",
+    "dijkstra": "Dijkstra expands the lowest cost so far, without a heuristic. With equal step costs, it finds the same minimum path length as BFS.",
+    "bidi": "Bidirectional BFS searches from both ends until the searches meet. It minimizes steps, not unequal terrain costs.",
+    "idastar": "IDA* repeats depth-first search with an increasing cost-plus-heuristic cutoff. Its lowest-cost guarantee requires a heuristic that never overestimates."
+  },
+  "zh": {
+    "bfs": "BFS 逐层搜索，找到步数最少的路径。地形代价不同时，这条路径未必总代价最低。",
+    "dfs": "DFS 沿一个分支深入，再回溯。它不保证步数最少或总代价最低。",
+    "astar": "A* 结合已走路径的代价与剩余代价的估计。高估剩余代价的启发式可能失去最低代价保证。",
+    "dijkstra": "Dijkstra 优先扩展当前累计代价最低的路径，不使用启发式。每步代价相同时，它与 BFS 得到相同的最短路径长度。",
+    "bidi": "双向 BFS 从起点和终点同时搜索，直到相遇。它最小化步数，不考虑不同地形的代价差异。",
+    "idastar": "IDA* 反复进行深度优先搜索，逐步提高路径代价与启发式之和的阈值。最低代价保证要求启发式从不高估剩余代价。"
+  },
+  "vi": {
+    "bfs": "BFS tìm kiếm theo từng lớp và tìm đường có ít bước nhất. Khi chi phí địa hình khác nhau, đường này chưa chắc có tổng chi phí thấp nhất.",
+    "dfs": "DFS đi sâu theo một nhánh rồi quay lui. Nó không bảo đảm ít bước nhất hoặc chi phí thấp nhất.",
+    "astar": "A* kết hợp chi phí đã đi với ước lượng chi phí còn lại. Heuristic đánh giá quá cao có thể làm mất bảo đảm chi phí thấp nhất.",
+    "dijkstra": "Dijkstra mở rộng đường có chi phí tích lũy thấp nhất, không dùng heuristic. Khi mọi bước có cùng chi phí, độ dài đường ngắn nhất giống BFS.",
+    "bidi": "BFS hai chiều tìm từ cả điểm đầu và điểm đích cho đến khi gặp nhau. Nó tối thiểu hóa số bước, không phải chi phí địa hình khác nhau.",
+    "idastar": "IDA* lặp lại tìm kiếm theo chiều sâu với ngưỡng chi phí cộng heuristic tăng dần. Bảo đảm chi phí thấp nhất đòi hỏi heuristic không bao giờ đánh giá quá cao."
+  },
+  "es": {
+    "bfs": "BFS explora por niveles y encuentra un camino con el menor número de pasos. Con costes de terreno distintos, puede no ser el camino de menor coste.",
+    "dfs": "DFS profundiza en una rama antes de retroceder. No garantiza el menor número de pasos ni el menor coste.",
+    "astar": "A* combina el coste acumulado con una estimación del coste restante. Una heurística que sobreestima puede perder la garantía de coste mínimo.",
+    "dijkstra": "Dijkstra expande el camino de menor coste acumulado, sin heurística. Con pasos de igual coste, obtiene la misma longitud mínima que BFS.",
+    "bidi": "BFS bidireccional busca desde el inicio y la meta hasta que ambas búsquedas se encuentran. Minimiza pasos, no costes de terreno distintos.",
+    "idastar": "IDA* repite búsquedas en profundidad con un umbral creciente de coste más heurística. La garantía de coste mínimo requiere una heurística que nunca sobreestime."
+  }
+};
+  function updateAlgoHelp() {
+    const locale = document.documentElement.lang.split("-")[0];
+    const hint = document.getElementById("algoHelp");
+    hint.lang = HELP[locale] ? locale : "en";
+    hint.textContent = (HELP[locale] || HELP.en)[document.getElementById("algoSel").value];
+  }
+  window.addEventListener("r4languagechange", updateAlgoHelp);
+  updateAlgoHelp();
+  document.getElementById('algoSel').addEventListener('change', () => {
+    updateAlgoHelp();
     // Algorithm changed: any paused step state is now wrong. Reset.
     clearSearch(); draw();
   });
@@ -2258,7 +2316,7 @@ body.dark-mode .r4-language-select {
     { name: 'DFS trap: fast path is not best path',
       description: "Small grid, maze layout, DFS. Compare with BFS path length; DFS often finds a path while missing the shortest route.",
       apply: () => { applySize('small'); loadMaze(); setAlgo('dfs'); } },
-    { name: 'A* focus: heuristic saves work without losing optimality',
+    { name: 'A* with Manhattan: compare search work',
       description: "Small grid, demo maze, A* with Manhattan. Compare path length and visited nodes against BFS.",
       apply: () => { applySize('small'); loadDemoMaze(); setAlgo('astar', 'manhattan'); } },
     { name: 'Weighted A*: may focus more, no longer guaranteed',
@@ -2337,7 +2395,8 @@ body.dark-mode .r4-language-select {
         scenario.apply();
         card.classList.add('applied');
         btn.textContent = '✓ ' + scenarioGalleryText('sg-applied', 'Applied; compare the result');
-        setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
+        clearTimeout(btn._timer);
+        btn._timer = setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
       });
       card.appendChild(btn);
       root.appendChild(card);
@@ -2362,8 +2421,8 @@ body.dark-mode .r4-language-select {
       ok:  ['ws2ok', "Correct. DFS uses a stack (LIFO) and commits to one direction until it hits a dead end. The first path it finds is usually NOT shortest: DFS isn't designed for optimality, just for finding a path quickly."],
       no:  ['ws2no', "Try 'often longer'. DFS dives deep along one direction first; the first path it finds is rarely the shortest."] },
     { correct: 0,
-      ok:  ['ws3ok', "Right. A* uses f = g + h to focus exploration toward the goal. With an admissible heuristic, it still finds the shortest path (like BFS) but visits far fewer 'wasted' nodes in the wrong direction."],
-      no:  ['ws3no', "Try 'fewer'. A*'s heuristic biases exploration toward the goal: same correctness as BFS, much less wasted work."] },
+      ok:  ['ws3ok', "Correct. f = g + h guides A*. Both find a shortest path on this road-only grid; a single corridor can give equal visited counts."],
+      no:  ['ws3no', "Try 'No'. A shortest-path guarantee does not guarantee fewer visited nodes."] },
   ];
   WORKSHEET.forEach((q, i) => {
     const n = i + 1;
@@ -2377,7 +2436,10 @@ body.dark-mode .r4-language-select {
       }
       const ok = Number(picked.value) === q.correct;
       const [key, en] = ok ? q.ok : q.no;
-      fb.textContent = (ok ? '✓ ' : '✗ ') + wsMsg(key, en);
+      const message = document.createElement('span');
+      message.dataset.i18n = key;
+      message.textContent = wsMsg(key, en);
+      fb.replaceChildren(ok ? '✓ ' : '✗ ', message);
       fb.style.color = ok ? '#16a34a' : '#dc2626';
     });
   });
@@ -2555,10 +2617,9 @@ body.dark-mode .r4-language-select {
 </footer>
 <script>
 (function() {
-  const LAB_CONFIG = {"slug": "search-pathfinding", "title": "Pathfinding lab packet", "zhTitle": "寻路实验包", "fields": [{"label": "Algorithm", "selector": "#algoSel", "kind": "selected"}, {"label": "Grid size", "selector": "#sizeSel", "kind": "selected"}, {"label": "Heuristic", "selector": "#heurSel", "kind": "selected"}, {"label": "Path length", "selector": "#nPath", "kind": "text"}, {"label": "Status", "selector": "#status", "kind": "text"}, {"label": "Frontier count", "selector": "#frontierCount", "kind": "text"}]};
+  const LAB_CONFIG = {"slug": "search-pathfinding", "title": "Pathfinding lab packet", "zhTitle": "寻路实验包", "fields": [{"label": "Algorithm", "selector": "#algoSel", "kind": "selected"}, {"label": "Grid size", "selector": "#sizeSel", "kind": "selected"}, {"label": "Heuristic", "selector": "#heurSel", "kind": "selected"}, {"label": "Path length", "selector": "#nPath", "kind": "text"}, {"label": "Status", "selector": "#status", "kind": "text"}, {"label": "Frontier count", "selector": "#frontierCount", "kind": "text"}, {"label": "Nodes visited", "zhLabel": "已访问节点数", "selector": "#nVis", "kind": "text"}]};
   const root = document.querySelector('.classroom-lab');
   if (!root) return;
-  const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;
   const qs = (sel) => root.querySelector(sel);
   function currentLang() {
     const raw = String(document.documentElement.lang || 'en').toLowerCase();
@@ -2577,6 +2638,8 @@ body.dark-mode .r4-language-select {
   function applyLabLang() {
     const lang = currentLang();
     root.querySelectorAll('[data-lab-en]').forEach(el => {
+      // Captured evidence and an explicitly cleared snapshot are learner state.
+      if (el.matches('[data-lab-state]') && (el.hasAttribute('data-r4-no-translate') || el.dataset.qaStateReady === '1')) return;
       const value = textFor(el, lang);
       if (el.tagName === 'TEXTAREA') el.placeholder = value;
       else el.textContent = value;
@@ -2591,7 +2654,7 @@ body.dark-mode .r4-language-select {
     else if (field.kind === 'text') value = el.textContent.trim();
     else value = el.value;
     value = (value || '').replace(/\s+/g, ' ').trim();
-    const label = ((currentLang() === 'vi' || currentLang() === 'es') && window.__r4Localization) ? window.__r4Localization.translateString(field.label, currentLang()) : field.label;
+    const label = currentLang() === 'zh' ? (field.zhLabel || field.label) : ((currentLang() === 'vi' || currentLang() === 'es') && window.__r4Localization) ? window.__r4Localization.translateString(field.label, currentLang()) : field.label;
     return value ? label + ': ' + value : null;
   }
   function snapshot() {
@@ -2602,13 +2665,6 @@ body.dark-mode .r4-language-select {
     const data = {};
     root.querySelectorAll('textarea[data-lab-answer]').forEach(area => data[area.getAttribute('data-lab-answer')] = area.value.trim());
     return data;
-  }
-  function saveDraft() { try { localStorage.setItem(storageKey, JSON.stringify(answers())); } catch (_) {} }
-  function loadDraft() {
-    try {
-      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
-      root.querySelectorAll('textarea[data-lab-answer]').forEach(area => { const key = area.getAttribute('data-lab-answer'); if (saved[key]) area.value = saved[key]; });
-    } catch (_) {}
   }
   function packet() {
     const lang = currentLang();
@@ -2622,7 +2678,7 @@ body.dark-mode .r4-language-select {
       '- Date: ' + new Date().toLocaleString(),
       '',
       '## ' + labels.state,
-      snapshot(),
+      qs('[data-lab-state]')?.textContent || '',
       '',
       '## ' + labels.predict,
       a.predict || '',
@@ -2638,26 +2694,26 @@ body.dark-mode .r4-language-select {
     ].join('\n');
   }
   function setStatus(en, zh) { const el = qs('.lab-status'); if (el) el.textContent = currentLang() === 'zh' ? zh : en; }
-  function refreshState() { const el = qs('[data-lab-state]'); if (el) el.textContent = snapshot(); }
+  function refreshState() { const el = qs('[data-lab-state]'); if (el) { el.setAttribute('data-r4-no-translate',''); el.lang = currentLang(); el.textContent = snapshot(); } }
   async function copyPacket(btn) {
     const text = packet();
     try { await navigator.clipboard.writeText(text); setStatus('Copied local lab packet.', '已复制本地实验包。'); }
-    catch (_) { window.prompt('Copy this lab packet:', text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
+    catch (_) { window.prompt(qs('[data-lab-action=copy]').textContent.trim(), text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
   }
 
   function markdownToPrintableHtml(markdown) {
     const escape = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
     const inline = value => escape(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     const lines = String(markdown).split(/\r?\n/);
-    let html = '', inList = false, inState = false;
+    let html = '', inList = false, inState = false, sectionIndex = 0;
     const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
     for (const raw of lines) {
       const line = raw.trimEnd();
       if (line.startsWith('# ')) { closeList(); html += '<h1>' + inline(line.slice(2)) + '</h1>'; inState=false; }
-      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = /state snapshot|状态记录/i.test(title); }
+      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = sectionIndex++ === 0; }
       else if (line.startsWith('- ')) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inline(line.slice(2)) + '</li>'; }
       else if (!line.trim()) { closeList(); }
-      else { closeList(); html += inState ? '<pre class="state">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
+      else { closeList(); html += inState ? '<pre class="state" lang="' + (qs('[data-lab-state]')?.lang || currentLang()) + '">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
     }
     closeList(); return html;
   }
@@ -2666,33 +2722,24 @@ body.dark-mode .r4-language-select {
     const w = window.open('', '_blank');
     if (!w) { setStatus('Popup blocked. Copy the packet instead.', '弹窗被拦截。请改用复制实验包。'); return; }
     const rendered = markdownToPrintableHtml(packet());
-    const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
+    const html = '<!doctype html><html lang="' + currentLang() + '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
     w.document.open();
     w.document.write(html);
     w.document.close();
     setStatus('Print page opened.', '打印页面已打开。');
   }
-  function clearDraft() {
-    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.value = '');
-    try { localStorage.removeItem(storageKey); } catch (_) {}
-    refreshState(); setStatus('Local draft cleared.', '本地草稿已清除。');
-  }
-  root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.addEventListener('input', saveDraft));
   root.querySelector('[data-lab-action="copy"]')?.addEventListener('click', copyPacket);
   root.querySelector('[data-lab-action="print"]')?.addEventListener('click', printPacket);
   root.querySelector('[data-lab-action="refresh"]')?.addEventListener('click', () => { refreshState(); setStatus('State refreshed.', '状态已更新。'); });
-  root.querySelector('[data-lab-action="clear"]')?.addEventListener('click', clearDraft);
   document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(applyLabLang, 0)));
   window.addEventListener('r4languagechange', () => setTimeout(applyLabLang, 0));
   
-  document.addEventListener('change', refreshState);
-  document.addEventListener('click', (event) => { if (!(event.target instanceof HTMLTextAreaElement)) setTimeout(refreshState, 0); }, true);
-  loadDraft(); applyLabLang(); refreshState();
+  applyLabLang();
 })();
 </script>
 <script>
 (function() {
-  const VISUAL_CONFIG = {"intro":"Follow the search as four linked parts: the map defines possible moves, the frontier stores candidates, the rule selects the next cell, and the path appears only after the goal is reached.","zhIntro":"把搜索看成四个相连部分：地图决定可走的移动，边界保存候选格子，规则选择下一个格子，只有到达目标后路径才会出现。","misread":"A larger explored area is not automatically smarter. It may mean the algorithm had less useful guidance.","zhMisread":"探索区域更大不一定更聪明。它也可能说明算法缺少有效引导。","steps":[{"label":"Map constraints","zhLabel":"地图约束","text":"Walls and terrain define which moves are possible and how costly they are.","zhText":"墙和地形决定哪些移动可行，以及移动成本是多少。","selector":"#sizeSel","kind":"selected","liveLabel":"Grid","zhLiveLabel":"网格"},{"label":"Frontier pressure","zhLabel":"边界压力","text":"The frontier is the set of next candidates. Its growth shows how much uncertainty the search still carries.","zhText":"边界是下一批候选格子。它的增长显示搜索仍然有多少不确定性。","selector":"#frontierCount","kind":"text","liveLabel":"Frontier","zhLiveLabel":"边界"},{"label":"Selection rule","zhLabel":"选择规则","text":"BFS, DFS, Dijkstra, and A* differ mainly in how they choose the next candidate.","zhText":"BFS、DFS、Dijkstra 和 A* 的主要差别在于如何选择下一个候选格子。","selector":"#algoSel","kind":"selected","liveLabel":"Rule","zhLiveLabel":"规则"},{"label":"Path evidence","zhLabel":"路径证据","text":"The final path is evidence of the selected route, but the visited cells reveal the search cost behind it.","zhText":"最终路径显示选出的路线，但访问过的格子显示背后的搜索成本。","selector":"#nPath","kind":"text","liveLabel":"Path","zhLiveLabel":"路径"}],"fields":[{"label":"Algorithm","zhLabel":"算法","selector":"#algoSel","kind":"selected"},{"label":"Heuristic","zhLabel":"启发式","selector":"#heurSel","kind":"selected"},{"label":"Status","zhLabel":"状态","selector":"#status","kind":"text"},{"label":"Path length","zhLabel":"路径长度","selector":"#nPath","kind":"text"},{"label":"Frontier count","zhLabel":"边界数量","selector":"#frontierCount","kind":"text"}]};
+  const VISUAL_CONFIG = {"intro": "Follow the search as four linked parts: the map defines possible moves, the frontier stores candidates, the rule selects the next cell, and the path appears only after the goal is reached.", "zhIntro": "把搜索看成四个相连部分：地图决定可走的移动，边界保存候选格子，规则选择下一个格子，只有到达目标后路径才会出现。", "misread": "A larger explored area is not automatically smarter. It may mean the algorithm had less useful guidance.", "zhMisread": "探索区域更大不一定更聪明。它也可能说明算法缺少有效引导。", "steps": [{"label": "Map constraints", "zhLabel": "地图约束", "text": "Walls and terrain define which moves are possible and how costly they are.", "zhText": "墙和地形决定哪些移动可行，以及移动成本是多少。", "selector": "#sizeSel", "kind": "selected", "liveLabel": "Grid", "zhLiveLabel": "网格"}, {"label": "Frontier pressure", "zhLabel": "边界压力", "text": "The frontier is the set of next candidates. Its growth shows how much uncertainty the search still carries.", "zhText": "边界是下一批候选格子。它的增长显示搜索仍然有多少不确定性。", "selector": "#frontierCount", "kind": "text", "liveLabel": "Frontier", "zhLiveLabel": "边界"}, {"label": "Selection rule", "zhLabel": "选择规则", "text": "BFS, DFS, Dijkstra, and A* differ mainly in how they choose the next candidate.", "zhText": "BFS、DFS、Dijkstra 和 A* 的主要差别在于如何选择下一个候选格子。", "selector": "#algoSel", "kind": "selected", "liveLabel": "Rule", "zhLiveLabel": "规则"}, {"label": "Path evidence", "zhLabel": "路径证据", "text": "The final path is evidence of the selected route, but the visited cells reveal the search cost behind it.", "zhText": "最终路径显示选出的路线，但访问过的格子显示背后的搜索成本。", "selector": "#nPath", "kind": "text", "liveLabel": "Path", "zhLiveLabel": "路径"}], "fields": [{"label": "Algorithm", "zhLabel": "算法", "selector": "#algoSel", "kind": "selected"}, {"label": "Heuristic", "zhLabel": "启发式", "selector": "#heurSel", "kind": "selected"}, {"label": "Status", "zhLabel": "状态", "selector": "#status", "kind": "text"}, {"label": "Path length", "zhLabel": "路径长度", "selector": "#nPath", "kind": "text"}, {"label": "Frontier count", "zhLabel": "边界数量", "selector": "#frontierCount", "kind": "text"}, {"label": "Nodes visited", "zhLabel": "已访问节点数", "selector": "#nVis", "kind": "text"}]};
   const root = document.querySelector('.visual-explanation');
   if (!root) return;
   const flow = root.querySelector('[data-visual-flow]');
@@ -2753,7 +2800,7 @@ body.dark-mode .r4-language-select {
 
 <script>
 (function() {
-  const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "Algorithm", "zhLabel": "算法", "selector": "#algoSel", "kind": "selected"}, {"label": "Heuristic", "zhLabel": "启发式", "selector": "#heurSel", "kind": "selected"}, {"label": "Status", "zhLabel": "状态", "selector": "#status", "kind": "text"}, {"label": "Path length", "zhLabel": "路径长度", "selector": "#nPath", "kind": "text"}, {"label": "Frontier count", "zhLabel": "边界数量", "selector": "#frontierCount", "kind": "text"}]};
+  const A11Y_CONFIG = {"copy": {"en": {"title": "Text and keyboard support", "intro": "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.", "keyboardTitle": "Keyboard path", "keyboard1": "Use Tab and Shift+Tab to move through controls.", "keyboard2": "Use Enter or Space on buttons, and arrow keys on sliders or select controls.", "keyboard3": "The visual region is focusable and described by the state summary below.", "stateTitle": "Text state summary", "motionTitle": "Reduced motion and non-visual support", "motionCopy": "Reduced-motion settings are honored where possible. The current state is also available as text, so the main result does not depend only on color, animation, or spatial position.", "note": "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.", "emptyLabel": "State", "emptyValue": "No readable state has been captured yet. Adjust a control or run the applet.", "livePrefix": "State summary updated: ", "visualLabel": "Interactive visualization"}, "zh": {"title": "无障碍和文本状态层", "intro": "当图形、颜色、动画或鼠标操作不容易观察时，可以使用这一层。这里提供键盘操作路径和当前状态的文本摘要。", "keyboardTitle": "键盘操作路径", "keyboard1": "使用 Tab 和 Shift+Tab 在控件之间移动。", "keyboard2": "在按钮上使用 Enter 或空格，在滑块或选择框上使用方向键。", "keyboard3": "可视化区域可以获得焦点，并由下面的状态摘要说明。", "stateTitle": "文本状态摘要", "motionTitle": "减少动画和非视觉支持", "motionCopy": "在可行的地方会尊重减少动画设置。当前状态也以文本形式呈现，因此主要结果不只依赖颜色、动画或空间位置。", "note": "无障碍说明：这一层为 applet 状态提供文本等价信息，但不能替代完整的人工屏幕阅读器审查。", "emptyLabel": "状态", "emptyValue": "尚未捕捉到可读状态。请调整控件或运行 applet。", "livePrefix": "状态摘要已更新：", "visualLabel": "交互式可视化"}}, "fields": [{"label": "Algorithm", "zhLabel": "算法", "selector": "#algoSel", "kind": "selected"}, {"label": "Heuristic", "zhLabel": "启发式", "selector": "#heurSel", "kind": "selected"}, {"label": "Status", "zhLabel": "状态", "selector": "#status", "kind": "text"}, {"label": "Path length", "zhLabel": "路径长度", "selector": "#nPath", "kind": "text"}, {"label": "Frontier count", "zhLabel": "边界数量", "selector": "#frontierCount", "kind": "text"}, {"label": "Nodes visited", "zhLabel": "已访问节点数", "selector": "#nVis", "kind": "text"}]};
   const layer = document.querySelector('.accessibility-layer');
   if (!layer) return;
   const intro = layer.querySelector('[data-a11y-intro]');
@@ -2876,8 +2923,8 @@ body.dark-mode .r4-language-select {
   function stateData(){
     const values={};
     document.querySelectorAll('#main input,#main select,#main textarea').forEach(el=>{
-      if(!el.id||el.closest('.classroom-lab'))return;
-      if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;
+      if(!el.id||el.readOnly||el.closest('.classroom-lab,.worksheet,.suite-guided-shell,[data-quick-assign-id]')||['button','submit','reset','file','password','hidden'].includes(el.type))return;
+      if(el.type==='radio'&&!el.checked)return;
       values[el.id]=el.type==='checkbox'?el.checked:el.value;
     });
     return {applet:profile.en.title,slug:profile.slug,exported_at:new Date().toISOString(),values};
@@ -2887,17 +2934,18 @@ body.dark-mode .r4-language-select {
     const share=document.getElementById('shareLink'), embed=document.getElementById('embedLink'), reset=document.getElementById('hardReset');
     const csv=document.getElementById('csvExport'), png=document.getElementById('exportPng');
     const more=document.createElement('details'); more.className='header-more';
-    const summary=document.createElement('summary'); summary.className='header-png'; summary.setAttribute('aria-haspopup','menu'); more.appendChild(summary);
-    const menu=document.createElement('div'); menu.className='header-more-menu'; menu.setAttribute('role','menu'); more.appendChild(menu);
+    const summary=document.createElement('summary'); summary.className='header-png'; more.appendChild(summary);
+    const menu=document.createElement('div'); menu.className='header-more-menu'; more.appendChild(menu);
     if(embed){embed.textContent='📎 Embed in LMS';menu.appendChild(embed)}
     const jsonBtn=document.createElement('button');jsonBtn.type='button';jsonBtn.className='header-png';jsonBtn.dataset.exportState='';menu.appendChild(jsonBtn);
     if(csv){csv.textContent='📊 Data table (.csv)';menu.appendChild(csv)}
     if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
-    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
+    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false;summary.focus()});
     actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
     window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';if(share){share.textContent=zh?'🔗 分享':'🔗 Share';share.title=zh?'复制可在另一浏览器中重新打开当前设置的链接。':'Copy a link that reopens the current settings in another browser.';}summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
     window.refreshAppletToolbar();
     document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&more.open){e.preventDefault();more.open=false;summary.focus()}});
   }
   function terms(){
     const inner=document.querySelector('.interactive-inner'); if(!inner||inner.querySelector('.key-terms'))return;
@@ -2944,6 +2992,7 @@ body.dark-mode .r4-language-select {
     return 'explore';
   };
   const lang = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const routeLocale = () => ['en','zh','vi','es'].find(code => (document.documentElement.lang || 'en').toLowerCase().startsWith(code)) || 'en';
   const labels = {explore:['Explore','探索'],understand:['Understand','理解'],classroom:['Use in class','课堂使用'],access:['Text and keyboard','文本与键盘']};
   const intros = {
     explore:['Start with the featured experiment, then use the scenarios to test a prediction.','从精选实验开始，再使用情境检验预测。'],
@@ -3015,12 +3064,19 @@ body.dark-mode .r4-language-select {
     renderModeChrome();
     if(write){const u=new URL(location.href);u.searchParams.set('mode',mode);history.replaceState(null,'',u)}
   }
-  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
+  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(['ArrowRight','ArrowLeft','Home','End'].includes(e.key)){e.preventDefault();const n=e.key==='Home'?0:e.key==='End'?list.length-1:(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
 
+  // Share only native mechanism inputs, never responses or global preferences.
+  function shareable(el){
+    return !!el && !!el.id && inner.contains(el)
+      && el.matches('input,select,textarea') && !el.readOnly
+      && !['button','submit','reset','file','password','hidden'].includes(el.type)
+      && !el.closest('.classroom-lab,.worksheet,.suite-guided-shell,[data-quick-assign-id]');
+  }
   function statePayload(){
     const out={};
-    inner.querySelectorAll('select,input').forEach(el=>{
-      if(!el.id||el.closest('.classroom-lab')||['button','submit'].includes(el.type))return;
+    inner.querySelectorAll('select,input,textarea').forEach(el=>{
+      if(!shareable(el))return;
       if(el.type==='radio'){if(el.checked)out[el.id]=el.value;return}
       out[el.id]=el.type==='checkbox'?el.checked:el.value;
     });
@@ -3029,33 +3085,65 @@ body.dark-mode .r4-language-select {
   function encode(obj){return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))}
   function decode(s){try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch{return null}}
   function currentExperimentUrl(){
-    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',lang());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
+    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',routeLocale());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
   }
   window.__buildExperimentUrl=()=>currentExperimentUrl().href;
   const status=shell.querySelector('.experiment-status');
-  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(ui[lang()].copyPrompt,u.href)}};
+  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(shell.querySelector('[data-copy-experiment]').textContent.trim(),u.href)}};
 
-  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','')});
-  document.addEventListener('click',e=>{const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode','explore');u.searchParams.set('lang',lang());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
+  // Let Space activate this native button instead of a lab-wide play shortcut.
+  shell.addEventListener('keydown', event => {
+    if (event.key === ' ' && event.target.closest('[data-start-featured]')) event.stopPropagation();
+  });
+
+  // A learner-initiated handoff moves both the viewport and keyboard focus.
+  // Restoring a shared URL or changing locale must never steal focus.
+  function handoffToExperiment() {
+    const target = [...inner.querySelectorAll('select,input:not([type="hidden"]),textarea')]
+      .find(node => !node.closest('.learning-mode-shell,.suite-guided-shell')
+        && !node.disabled && node.getClientRects().length);
+    if (!target) return;
+    target.focus({preventScroll: true});
+    target.scrollIntoView({block: 'center',
+      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
+  }
+
+  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','');handoffToExperiment()});
+  document.addEventListener('click',e=>{if(restoring&&new URLSearchParams(location.search).has('state'))return;const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode',active);if(!restoring)u.searchParams.set('lang',routeLocale());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
 
   let urlSyncTimer=0;
   function scheduleUrlState(e){
     if(restoring)return;
-    const el=e.target;if(!el||!inner.contains(el)||el.closest('.classroom-lab')||!el.matches('input,select'))return;
+    const el=e.target;if(!shareable(el))return;
     clearTimeout(urlSyncTimer);urlSyncTimer=setTimeout(()=>{const u=currentExperimentUrl();history.replaceState(null,'',u)},80);
   }
   document.addEventListener('input',scheduleUrlState,true);document.addEventListener('change',scheduleUrlState,true);
 
   function applyState(obj){
-    if(!obj)return;
-    Object.entries(obj).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else if(el.type==='radio')el.checked=String(el.value)===String(value);else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});
+    if(!obj || typeof obj !== 'object' || Array.isArray(obj) || Object.keys(obj).length > 256)return;
+    Object.entries(obj).forEach(([id,value])=>{
+      const el=document.getElementById(id);if(!shareable(el))return;
+      if(el.type==='checkbox'){if(typeof value!=='boolean')return;el.checked=value}
+      else {
+        if(!['string','number'].includes(typeof value) || String(value).length>10000)return;
+        const text=String(value);
+        if(el.tagName==='SELECT' && ![...el.options].some(option=>option.value===text))return;
+        if(['number','range'].includes(el.type)){
+          if(!text.trim() || !Number.isFinite(Number(text)))return;
+          if(el.min!=='' && Number(text)<Number(el.min))return;
+          if(el.max!=='' && Number(text)>Number(el.max))return;
+        }
+        if(el.type==='radio'){if(el.value!==text)return;el.checked=true}
+        else el.value=text;
+      }
+      el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));
+    });
   }
   function restore(){
     const p=new URL(location.href).searchParams;restoring=true;
-    // Explicit scenario, then saved controls, override native CNF share state.
-    // Retain the established scenario-zero default unless a native formula exists.
-    const nativeFormula=window.APPLET_LEARNER_PROFILE?.slug==='cnf-sat'&&p.has('f');
-    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeFormula))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
+    // Native links precede explicit scenarios and saved controls.
+    const nativeState=slug==='cnf-sat'&&p.has('f')||slug==='knn-classifier'&&['k','ds','task','metric','weight','scale','target'].some(k=>p.has(k));
+    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeState))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
     applyState(decode(p.get('state')||''));
     if(p.get('featured')==='1')sig?.setAttribute('open','');
     restoring=false;
@@ -3071,7 +3159,7 @@ body.dark-mode .r4-language-select {
   }
   setMode(active,false);ensureExploreContent();
   setTimeout(()=>{refineCards();window.renderAppletKeyTerms?.();restore();renderModeChrome()},250);
-  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',lang());history.replaceState(null,'',u)},25)));
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',routeLocale());history.replaceState(null,'',u)},25)));
 })();
 </script>
 
@@ -3898,6 +3986,15 @@ document.addEventListener('DOMContentLoaded', () => {
   window.__AI_PLAYGROUNDS_R4_LOCALES = window.__AI_PLAYGROUNDS_R4_LOCALES || {};
   window.__AI_PLAYGROUNDS_R4_LOCALES["search-pathfinding"] = {
   "ready": true,
+  "labels": {
+    "vi": {"ws-check":"Kiểm tra","stat-visited":"Nút đã thăm","stat-path":"Độ dài đường đi","stat-status":"Trạng thái","leg-start":"Bắt đầu","leg-goal":"Đích","leg-wall":"Tường","leg-mud":"Bùn (3)","leg-water":"Nước (5)","leg-visited":"Đã thăm","leg-frontier":"Biên tìm kiếm","leg-path":"Đường đi"},
+    "es": {"ws-check":"Comprobar","stat-visited":"Nodos visitados","stat-path":"Longitud de la ruta","stat-status":"Estado","leg-start":"Inicio","leg-goal":"Meta","leg-wall":"Muro","leg-mud":"Barro (3)","leg-water":"Agua (5)","leg-visited":"Visitado","leg-frontier":"Frontera","leg-path":"Ruta"}
+  },
+  "results": {
+    "zh": {"idle":"未开始","searching…":"搜索中…","paused":"已暂停","paused (step mode)":"已暂停（逐步模式）","found":"已找到路径","no path":"无可达路径","weighted":"$1 步 · 代价 $2"},
+    "vi": {"idle":"Chưa chạy","searching…":"Đang tìm…","paused":"Đã tạm dừng","paused (step mode)":"Đã tạm dừng (chế độ từng bước)","found":"Đã tìm thấy đường đi","no path":"Không có đường đi","weighted":"$1 bước · chi phí $2"},
+    "es": {"idle":"Sin iniciar","searching…":"Buscando…","paused":"En pausa","paused (step mode)":"En pausa (modo paso a paso)","found":"Ruta encontrada","no path":"No hay ruta","weighted":"$1 pasos · coste $2"}
+  },
   "review_required": true,
   "translation_method": "machine draft with source-locked human review pending",
   "meta": {
@@ -3916,6 +4013,13 @@ document.addEventListener('DOMContentLoaded', () => {
   },
   "vi": {
     "strings": {
+      "Explored set": "Tập đã duyệt",
+      "A* search": "Tìm kiếm A*",
+      "Heuristic": "Heuristic (hàm ước lượng)",
+      "Frontier": "Tập biên",
+      "Path cost": "Chi phí đường đi",
+      "Admissible heuristic": "Heuristic chấp nhận được",
+      "A*/IDA* heuristic:": "Heuristic A*/IDA*:",
       "#a11yStateSummary": "#a11yStateSummary",
       "#acceptV": "#acceptV",
       "#accV": "#accV",
@@ -3965,7 +4069,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "#windowMath": "#windowMath",
       "${index}": "${index}",
       ", A* reduces to Dijkstra's expansion rule.": ", A* rút gọn về quy tắc khai triển Dijkstra.",
-      ". It generalizes BFS to graphs with nonnegative, unequal edge costs.": ". It generalizes BFS to graphs with nonnegative, unequal edge costs.",
+      ". It generalizes BFS to graphs with nonnegative, unequal edge costs.": ". Thuật toán này tổng quát hóa BFS cho đồ thị có chi phí cạnh không âm và không bằng nhau.",
       ".bento-main": ".bento-main",
       ".cell-analysis": ".cell-analysis",
       ".cell-maps": ".cell-maps",
@@ -4012,10 +4116,10 @@ document.addEventListener('DOMContentLoaded', () => {
       "A remaining-cost estimate that never overestimates the true cheapest cost.": "Ước tính chi phí còn lại không bao giờ đánh giá quá cao chi phí thực sự rẻ nhất.",
       "A worsening move can be accepted": "Một động thái xấu đi có thể được chấp nhận",
       "A* (Manhattan heuristic)": "A* (kinh nghiệm Manhattan)",
-      "A* finds the shortest path between two points while exploring far fewer squares than BFS, because it uses an estimate of remaining distance to focus the search.": "A* tìm đường đi ngắn nhất giữa hai điểm trong khi khám phá ít ô vuông hơn nhiều so với BFS, vì nó sử dụng ước tính khoảng cách còn lại để tập trung tìm kiếm.",
-      "A* focus: heuristic saves work without losing optimality": "Trọng tâm A*: phương pháp phỏng đoán lưu công việc mà không làm mất đi tính tối ưu",
+      "A* uses a cost estimate to guide search. Manhattan, Euclidean or zero preserve least cost here; visited counts depend on the map.": "A* dùng ước tính chi phí để dẫn hướng. Manhattan, Euclid hoặc heuristic bằng không giữ chi phí tối ưu ở đây; số nút đã thăm tùy bản đồ.",
+      "A* with Manhattan: compare search work": "A* với Manhattan: so sánh công việc tìm kiếm",
       "A* with a safe Manhattan-distance estimate": "A* với ước tính khoảng cách an toàn ở Manhattan",
-      "A* with admissible Manhattan heuristic vs BFS on the same maze. Number of nodes visited by A* is:": "A* với phương pháp phỏng đoán Manhattan được chấp nhận và BFS trên cùng một mê cung.Số nút được A* truy cập là:",
+      "On the same road-only maze, must Manhattan A* visit fewer nodes than BFS?": "Trên cùng mê cung chỉ có đường và tường, A* Manhattan có nhất thiết thăm ít nút hơn BFS không?",
       "Accept only an improving move": "Chỉ chấp nhận một động thái cải thiện",
       "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.": "Ghi chú về khả năng truy cập: lớp này cung cấp văn bản tương đương với trạng thái applet.Nó không thay thế việc kiểm tra trình đọc màn hình đầy đủ của con người.",
       "Algorithm: Breadth-first search (BFS) Grid size: Small (20 × 14) Heuristic: Manhattan (admissible) Path length: - Status: idle": "Thuật toán: Tìm kiếm theo chiều rộng (BFS) Kích thước lưới: Nhỏ (20 × 14) Heuristic: Manhattan (có thể chấp nhận) Độ dài đường dẫn: - Trạng thái: nhàn rỗi",
@@ -4042,13 +4146,13 @@ document.addEventListener('DOMContentLoaded', () => {
       "BFS, DFS, Dijkstra, and A* differ mainly in how they choose the next candidate.": "BFS, DFS, Dijkstra và A* khác nhau chủ yếu ở cách họ chọn ứng cử viên tiếp theo.",
       "BFS/DFS don't use g/h/f: they pop by FIFO/LIFO order. Dijkstra uses g only. A* sorts by f.": "BFS/DFS không sử dụng g/h/f: chúng xuất hiện theo thứ tự FIFO/LIFO.Dijkstra chỉ sử dụng g.A* sắp xếp theo f.",
       "Bidirectional BFS (search from both ends)": "BFS hai chiều (tìm kiếm từ cả hai đầu)",
-      "Both algorithms search the maze you built above, one node-expansion per tick. Watch how many cells each opens before reaching the goal: that is why \"A* explores fewer nodes than BFS\" is a measured result, not a slogan.": "Cả hai thuật toán đều tìm kiếm mê cung mà bạn đã xây dựng ở trên, mở rộng một nút cho mỗi tích tắc.Xem mỗi ô mở bao nhiêu ô trước khi đạt được mục tiêu: đó là lý do tại sao \"A* khám phá ít nút hơn BFS\" là kết quả được đo lường chứ không phải là khẩu hiệu.",
+      "Both search the same map, one expansion per tick. Compare visited counts; A* need not visit fewer nodes.": "Cả hai tìm trên cùng bản đồ, mỗi nhịp mở rộng một nút. So sánh số nút đã thăm; A* không nhất thiết thăm ít hơn.",
       "Breadth-first and depth-first search": "Tìm kiếm theo chiều rộng và chiều sâu",
       "Breadth-first search (BFS)": "Tìm kiếm theo chiều rộng (BFS)",
       "Breadth-first search and A* on the same maze": "Tìm kiếm theo chiều rộng và A* trên cùng một mê cung",
       "Breadth-first search counts steps; Dijkstra counts cost": "Tìm kiếm theo chiều rộng sẽ đếm các bước;Dijkstra tính chi phí",
       "Build a case where DFS returns a longer route than BFS.": "Xây dựng trường hợp DFS trả về tuyến đường dài hơn BFS.",
-      "Build an open map and a detour maze. How does heuristic usefulness change the explored count?": "Xây dựng bản đồ mở và mê cung đường vòng.Tính hữu ích của heuristic thay đổi số lượng đã khám phá như thế nào?",
+      "Build an open map and a detour maze. How does heuristic usefulness change the explored count?": "Tạo một bản đồ trống và một mê cung buộc phải đi vòng. Mức hữu ích của heuristic làm thay đổi số trạng thái đã duyệt như thế nào?",
       "button,input,select,textarea": ",nhập,chọn,vùng văn bản Nút",
       "button[data-lang]": "[dữ liệu-lang]",
       "Centroid 1 更新后的大致位置": "Centroid 1 更新后的大致位置",
@@ -4070,7 +4174,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Classify a frontier square before the move": "Phân loại ô biên giới trước khi di chuyển",
       "Clear walls AND return start/goal to their default positions.": "Phá tường VÀ đưa điểm xuất phát/mục tiêu về vị trí mặc định.",
       "Click empty squares to draw walls. Drag the green start or red goal to move them.": "Bấm vào các ô vuông trống để vẽ tường.Kéo điểm bắt đầu màu xanh lá cây hoặc mục tiêu màu đỏ để di chuyển chúng.",
-      "Click on the canvas paints with the selected terrain. Costs: Road 1, Mud 3, Water 5, Wall impassable. BFS/DFS ignore costs; Dijkstra and A* use them.": "Click vào canvas vẽ địa hình đã chọn.Chi phí: Đường 1, Bùn 3, Nước 5, Tường không thể vượt qua.BFS/DFS bỏ qua chi phí;Dijkstra và A* sử dụng chúng.",
+      "Paint road (1), mud (3), water (5) or walls. Dijkstra, A* and IDA* use costs; BFS, DFS and bidirectional BFS ignore them.": "Vẽ đường (1), bùn (3), nước (5) hoặc tường. Dijkstra, A* và IDA* dùng chi phí; BFS, DFS và BFS hai chiều bỏ qua chi phí.",
       "cnf-sat": "cnf-sat",
       "Combines the cost already paid with an estimate of the cost still remaining.": "Kết hợp chi phí đã thanh toán với ước tính chi phí còn lại.",
       "Compare BFS and Dijkstra before and after adding unequal terrain costs.": "So sánh BFS và Dijkstra trước và sau khi thêm chi phí địa hình không bằng nhau.",
@@ -4084,10 +4188,10 @@ document.addEventListener('DOMContentLoaded', () => {
       "Correct. DFS uses a stack (LIFO) and commits to one direction until it hits a dead end. The first path it finds is usually NOT shortest: DFS isn't designed for optimality, just for finding a path quickly.": "Đúng.DFS sử dụng ngăn xếp (LIFO) và cam kết theo một hướng cho đến khi nó đi vào ngõ cụt.Đường dẫn đầu tiên nó tìm thấy thường KHÔNG ngắn nhất: DFS không được thiết kế để đạt được sự tối ưu, chỉ để tìm đường đi một cách nhanh chóng.",
       "Depth-first search (DFS)": "Tìm kiếm theo chiều sâu (DFS)",
       "Depth-first search can find the wrong kind of success": "Tìm kiếm theo chiều sâu có thể tìm thấy loại thành công sai",
-      "DFS is a shortest-path algorithm; finishing first in one animation proves an algorithm is generally faster; BFS minimizes weighted path cost; Dijkstra only works on weighted graphs; A* is always faster; any heuristic preserves optimality; BFS simply becomes Dijkstra rather than being a special uniform-cost case.": "DFS là thuật toán đường đi ngắn nhất;việc về đích đầu tiên trong một hoạt ảnh chứng tỏ thuật toán nhìn chung nhanh hơn;BFS giảm thiểu chi phí đường đi có trọng số;Dijkstra chỉ hoạt động trên đồ thị có trọng số;A* luôn nhanh hơn;mọi phương pháp phỏng đoán đều bảo toàn tính tối ưu;BFS đơn giản trở thành Dijkstra chứ không phải là một trường hợp chi phí thống nhất đặc biệt.",
+      "DFS is a shortest-path algorithm; finishing first in one animation proves an algorithm is generally faster; BFS minimizes weighted path cost; Dijkstra only works on weighted graphs; A* is always faster; any heuristic preserves optimality; BFS simply becomes Dijkstra rather than being a special uniform-cost case.": "DFS là thuật toán tìm đường đi ngắn nhất; kết thúc trước trong một hoạt ảnh chứng tỏ thuật toán nói chung nhanh hơn; BFS tối thiểu hóa chi phí đường đi có trọng số; Dijkstra chỉ hoạt động trên đồ thị có trọng số; A* luôn nhanh hơn; mọi heuristic đều bảo toàn tính tối ưu; BFS đơn giản trở thành Dijkstra chứ không phải là trường hợp đặc biệt với chi phí đồng nhất.",
       "DFS trap: fast path is not best path": "Bẫy DFS: đường dẫn nhanh không phải là đường dẫn tốt nhất",
       "Dijkstra's algorithm": "Thuật toán Dijkstra",
-      "Download grid + search results (path coordinates, nodes visited, frontier snapshot) as CSV.": "Tải xuống lưới + kết quả tìm kiếm (tọa độ đường dẫn, nút đã truy cập, ảnh chụp nhanh biên giới) dưới dạng CSV.",
+      "Download grid dimensions and search results (path coordinates, visited-node count, frontier snapshot) as CSV.": "Tải xuống kích thước lưới và kết quả tìm kiếm (tọa độ đường đi, số nút đã thăm, trạng thái tập biên) dưới dạng CSV.",
       "Download the current grid + search trace as a PNG.": "Tải xuống lưới hiện tại + dấu vết tìm kiếm dưới dạng PNG.",
       "Embed or download the current experiment": "Nhúng hoặc tải xuống thử nghiệm hiện tại",
       "Enter the required mechanism prediction before locking.": "Nhập dự đoán cơ chế cần thiết trước khi khóa.",
@@ -4096,10 +4200,10 @@ document.addEventListener('DOMContentLoaded', () => {
       "expands the state with the smallest known path cost": "mở rộng trạng thái với chi phí đường dẫn nhỏ nhất đã biết",
       "Expected comparison rule": "Quy tắc so sánh dự kiến",
       "Explain how following one branch deeply can reach the goal after relatively few expansions yet still produce a longer route. One trace is not a general runtime ranking.": "Giải thích cách đi sâu vào một nhánh có thể đạt được mục tiêu sau khi mở rộng tương đối ít nhưng vẫn tạo ra một lộ trình dài hơn.Một dấu vết không phải là thứ hạng chung trong thời gian chạy.",
-      "Explain why an overestimating heuristic can change the optimality conclusion.": "Giải thích tại sao việc đánh giá quá cao phương pháp phỏng đoán có thể thay đổi kết luận tối ưu.",
+      "Explain why an overestimating heuristic can change the optimality conclusion.": "Giải thích vì sao heuristic ước lượng quá cao có thể làm thay đổi kết luận về tính tối ưu.",
       "Explain why stronger heuristic weighting can remove the optimal-path guarantee without implying a general runtime speedup.": "Giải thích lý do tại sao trọng số phỏng đoán mạnh hơn có thể loại bỏ đảm bảo đường dẫn tối ưu mà không ngụ ý tăng tốc thời gian chạy chung.",
-      "Explores every location at the current number of edges from the start before moving farther away.": "Khám phá mọi vị trí ở số cạnh hiện tại ngay từ đầu trước khi di chuyển ra xa hơn.",
-      "Fewer: the heuristic steers A* toward the goal, so it wastes less exploration.": "Ít hơn: phương pháp phỏng đoán hướng A* về phía mục tiêu, do đó sẽ ít lãng phí việc khám phá hơn.",
+      "Explores every location at the current number of edges from the start before moving farther away.": "Duyệt hết các vị trí có cùng số cạnh tính từ điểm xuất phát trước khi đi xa hơn.",
+      "No. A* can save work, but both may visit the same number.": "Không. A* có thể giảm công việc, nhưng cả hai có thể thăm cùng số nút.",
       "Finds a least-cost path when different moves can have different costs.": "Tìm đường đi có chi phí thấp nhất khi các bước di chuyển khác nhau có thể có chi phí khác nhau.",
       "Follow the search as four linked parts: the map defines possible moves, the frontier stores candidates, the rule selects the next cell, and the path appears only after the goal is reached.": "Thực hiện tìm kiếm dưới dạng bốn phần được liên kết: bản đồ xác định các bước di chuyển có thể, biên giới lưu trữ các ứng cử viên, quy tắc chọn ô tiếp theo và đường dẫn chỉ xuất hiện sau khi đạt được mục tiêu.",
       "Follows one branch deeply before backtracking to try another branch.": "Theo dõi sâu một nhánh trước khi quay lại để thử nhánh khác.",
@@ -4125,19 +4229,19 @@ document.addEventListener('DOMContentLoaded', () => {
       "Locations that have been discovered but not yet explored.": "Các vị trí đã được phát hiện nhưng chưa được khám phá.",
       "Logan M. Dixon ·": "Logan M. Dixon ·",
       "Made for the Introduction to AI course at Haidian Kaiwen Academy.": "Được tạo cho khóa học Giới thiệu về AI tại Học viện Haidian Kaiwen.",
-      "Manhattan is admissible (never overestimates) on a 4-connected grid → A* finds shortest path. 1.5× Manhattan is inadmissible → A* gets faster but no longer guarantees optimality.": "Manhattan được chấp nhận (không bao giờ đánh giá quá cao) trên lưới 4 kết nối → A* tìm đường đi ngắn nhất.1,5× Manhattan không được chấp nhận → A* nhanh hơn nhưng không còn đảm bảo tính tối ưu.",
+      "Manhattan, Euclidean and zero preserve least cost here for A* and IDA*. 1.5× Manhattan may reduce work but can lose optimality.": "Trong mô hình này, Manhattan, Euclid và heuristic bằng không giữ bảo đảm chi phí thấp nhất cho A* và IDA*. 1,5× Manhattan có thể giảm công việc nhưng mất bảo đảm tối ưu.",
       "Mechanism revealed. Compare the locked prediction with the actual applet state.": "Cơ chế được tiết lộ.So sánh dự đoán bị khóa với trạng thái applet thực tế.",
       "Mechanism: activation or engineered feature": "Cơ chế: tính năng kích hoạt hoặc thiết kế",
       "Medium grid, A* with 1.5× Manhattan. The search may visit fewer cells, but overestimation removes the guarantee that the returned path has minimum cost.": "Lưới trung bình, A* với 1,5× Manhattan.Việc tìm kiếm có thể truy cập ít ô hơn nhưng việc đánh giá quá cao sẽ loại bỏ sự đảm bảo rằng đường dẫn trả về có chi phí tối thiểu.",
       "Memory or tabu status changes the choice": "Trạng thái bộ nhớ hoặc tabu thay đổi lựa chọn",
       "Model relation: conditioning on the common effect Alarm makes Burglary and Earthquake dependent; this is explaining away.": "Mối quan hệ mô hình: điều hòa theo hiệu ứng chung Báo động khiến cho Chống trộm và Động đất phụ thuộc;điều này đang giải thích đi.",
       "Model relation: JohnCalls and MaryCalls are conditionally independent given Alarm.": "Mối quan hệ mô hình: JohnCalls và MaryCalls độc lập có điều kiện với Cảnh báo.",
-      "More: computing the heuristic forces A* to examine extra nodes.": "Thêm: tính toán các lực lượng heuristic A* để kiểm tra các nút bổ sung.",
+      "Yes. A* always visits fewer nodes.": "Có. A* luôn thăm ít nút hơn.",
       "neural-network": "mạng thần kinh",
       "Next frontier state or coordinate": "Trạng thái hoặc tọa độ biên giới tiếp theo",
       "No improving move is accepted": "Không chấp nhận động thái cải thiện nào",
       "No: BFS finds a path quickly, but not necessarily the shortest one.": "Không: BFS tìm thấy đường dẫn nhanh chóng nhưng không nhất thiết phải là đường dẫn ngắn nhất.",
-      "Nodes that the algorithm has already removed from the frontier and processed.": "Các nút mà thuật toán đã xóa khỏi biên giới và được xử lý.",
+      "Nodes that the algorithm has already removed from the frontier and processed.": "Các nút đã được thuật toán lấy khỏi tập biên và xử lý.",
       "Not enough information yet": "Chưa đủ thông tin",
       "Often longer: DFS commits to one direction, so its first path is rarely shortest.": "Thường dài hơn: DFS cam kết đi theo một hướng, vì vậy đường đi đầu tiên của nó hiếm khi ngắn nhất.",
       "On this four-neighbor unit-cost grid, Manhattan distance is admissible because it never exceeds the shortest path length when walls can only force extra steps. It is also consistent, so standard graph-search A* returns an optimal path. A heuristic that overestimates can be faster in some cases but gives up the usual optimality guarantee.": "Trên lưới đơn giá bốn lân cận này, khoảng cách Manhattan được chấp nhận vì nó không bao giờ vượt quá độ dài đường đi ngắn nhất khi các bức tường chỉ có thể buộc các bước bổ sung.Nó cũng nhất quán, do đó tìm kiếm đồ thị tiêu chuẩn A* trả về một đường dẫn tối ưu.Một heuristic đánh giá quá cao có thể nhanh hơn trong một số trường hợp nhưng lại mang lại sự đảm bảo tối ưu thông thường.",
@@ -4180,7 +4284,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Remove all walls. Keeps start and goal where they are.": "Phá bỏ tất cả các bức tường.Giữ khởi đầu và mục tiêu ở vị trí hiện tại.",
       "Reset everything to defaults: empty grid, A*, default start and goal positions.": "Đặt lại mọi thứ về mặc định: lưới trống, A*, vị trí bắt đầu và mục tiêu mặc định.",
       "Restart the search from the beginning (keeps walls, start, and goal).": "Khởi động lại tìm kiếm từ đầu (giữ các bức tường, điểm xuất phát và mục tiêu).",
-      "Right. A* uses f = g + h to focus exploration toward the goal. With an admissible heuristic, it still finds the shortest path (like BFS) but visits far fewer 'wasted' nodes in the wrong direction.": "Đúng rồi.A* sử dụng f = g + h để tập trung khám phá hướng tới mục tiêu.Với một phương pháp phỏng đoán có thể chấp nhận được, nó vẫn tìm ra đường đi ngắn nhất (như BFS) nhưng truy cập sai hướng ít hơn nhiều các nút 'lãng phí'.",
+      "Correct. f = g + h guides A*. Both find a shortest path on this road-only grid; a single corridor can give equal visited counts.": "Đúng. f = g + h dẫn hướng A*. Cả hai tìm đường ngắn nhất trên lưới chỉ có đường và tường; trong một hành lang, số nút đã thăm có thể bằng nhau.",
       "Run A* with 1.5 times the Manhattan estimate and compare it with standard A*.": "Chạy A* với 1,5 lần ước tính của Manhattan và so sánh nó với A* tiêu chuẩn.",
       "Run A* with the Manhattan-distance heuristic, then compare its path and visited nodes with breadth-first search (BFS).": "Chạy A* với phương pháp phỏng đoán khoảng cách Manhattan, sau đó so sánh đường đi của nó và các nút đã truy cập bằng tìm kiếm theo chiều rộng (BFS).",
       "Run at least two algorithms. Record path length, visited nodes, and one visible frontier pattern.": "Chạy ít nhất hai thuật toán.Ghi lại độ dài đường dẫn, các nút đã truy cập và một mẫu biên giới hiển thị.",
@@ -4196,15 +4300,15 @@ document.addEventListener('DOMContentLoaded', () => {
       "Scrub through search history": "Duyệt qua lịch sử tìm kiếm",
       "Search algorithms differ in two questions: which location should be explored next, and what counts as a good path? Learn the names below before comparing the traces.": "Thuật toán tìm kiếm khác nhau ở hai câu hỏi: vị trí nào sẽ được khám phá tiếp theo và vị trí nào được coi là đường dẫn tốt?Tìm hiểu những cái tên dưới đây trước khi so sánh dấu vết.",
       "search-pathfinding": "tìm đường dẫn tìm kiếm",
-      "Small grid, demo maze, A* with Manhattan. Compare path length and visited nodes against BFS. The heuristic focuses work while preserving the shortest-path guarantee.": "Lưới nhỏ, mê cung demo, A* với Manhattan.So sánh độ dài đường dẫn và các nút đã truy cập với BFS.Phương pháp tập trung heuristic hoạt động trong khi vẫn bảo đảm đường đi ngắn nhất.",
-      "Small grid, demo maze, BFS. Run once, record visited nodes, then switch to A* on the same maze. The paths stay optimal, but the frontier work changes dramatically.": "Lưới nhỏ, mê cung demo, BFS.Chạy một lần, ghi lại các nút đã truy cập, sau đó chuyển sang A* trên cùng một mê cung.Các đường dẫn vẫn tối ưu, nhưng công việc biên giới thay đổi đáng kể.",
+      "Small grid, demo maze, A* with Manhattan. Compare path length and visited nodes with BFS. Both return shortest paths here; visited counts depend on the map.": "Lưới nhỏ, mê cung mẫu, A* với Manhattan. So sánh độ dài đường đi và số nút đã thăm với BFS. Cả hai tìm đường ngắn nhất ở đây; số nút đã thăm tùy bản đồ.",
+      "Small grid, demo maze, BFS. Record visited nodes, then compare A* on the unchanged maze. Both return shortest paths here; measure any difference in work.": "Lưới nhỏ, mê cung mẫu, BFS. Ghi số nút đã thăm rồi so sánh A* trên mê cung không đổi. Cả hai tìm đường ngắn nhất ở đây; đo chênh lệch công việc.",
       "Small grid, maze layout, DFS. Run after BFS and compare path length. On this fixed grid and neighbor order, DFS can reach the goal after relatively few expansions while returning a longer route. That does not make DFS generally faster.": "Lưới nhỏ, bố cục mê cung, DFS.Chạy sau BFS và so sánh độ dài đường dẫn.Trên lưới cố định và thứ tự lân cận này, DFS có thể đạt được mục tiêu sau khi mở rộng tương đối ít trong khi trả về một tuyến đường dài hơn.Điều đó không làm cho DFS nói chung nhanh hơn.",
       "Small grid, zero heuristic, mud paint selected. Add a mud corridor and compare BFS with Dijkstra. BFS counts steps; Dijkstra counts cost.": "Lưới nhỏ, không có phương pháp phỏng đoán, sơn bùn được chọn.Thêm hành lang bùn và so sánh BFS với Dijkstra.BFS đếm bước;Dijkstra tính chi phí.",
       "Smaller grids fit on one screen and are easier to inspect step-by-step. Large grids show the algorithms' asymptotic behavior.": "Các lưới nhỏ hơn vừa khít trên một màn hình và dễ dàng kiểm tra từng bước hơn.Các lưới lớn hiển thị hành vi tiệm cận của thuật toán.",
       "Start featured experiment": "Bắt đầu thử nghiệm nổi bật",
       "Start with the featured experiment, then use the scenarios to test a prediction.": "Bắt đầu với thử nghiệm nổi bật, sau đó sử dụng các tình huống để kiểm tra dự đoán.",
       "State summary updated: Algorithm: Breadth-first search (BFS); Heuristic: Manhattan (admissible); Status: idle; Path length: -": "Cập nhật tóm tắt trạng thái: Thuật toán: Tìm kiếm theo chiều rộng (BFS);Heuristic: Manhattan (có thể chấp nhận được);Trạng thái: nhàn rỗi;Độ dài đường dẫn: -",
-      "State-space graphs, frontier discipline, explored sets, path cost, completeness, optimality, admissible and consistent heuristics, and weighted edges.": "Đồ thị không gian trạng thái, kỷ luật biên giới, tập hợp đã khám phá, chi phí đường dẫn, tính đầy đủ, tính tối ưu, phương pháp phỏng đoán nhất quán và có thể chấp nhận cũng như các cạnh có trọng số.",
+      "State-space graphs, frontier discipline, explored sets, path cost, completeness, optimality, admissible and consistent heuristics, and weighted edges.": "Đồ thị không gian trạng thái, quy tắc chọn từ tập biên, tập đã duyệt, chi phí đường đi, tính đầy đủ, tính tối ưu, heuristic chấp nhận được và nhất quán, cùng các cạnh có trọng số.",
       "Step one expansion backward through the search.": "Bước mở rộng lùi lại một bước trong quá trình tìm kiếm.",
       "suite-guided-actions": "hành động được hướng dẫn theo bộ",
       "suite-guided-actual": "bộ-hướng dẫn-thực tế",
@@ -4249,13 +4353,13 @@ document.addEventListener('DOMContentLoaded', () => {
       "The prepared applet step is unavailable. Reset the challenge instead of revealing a fabricated result.": "Bước applet đã chuẩn bị không khả dụng.Đặt lại thử thách thay vì tiết lộ kết quả bịa đặt.",
       "The relevant result is hidden until you lock a prediction and reveal it.": "Kết quả liên quan bị ẩn cho đến khi bạn khóa dự đoán và hiển thị dự đoán đó.",
       "The same length: any path-finder returns the same path on one maze.": "Cùng độ dài: bất kỳ công cụ tìm đường nào cũng trả về cùng một đường dẫn trên một mê cung.",
-      "The same: A* and BFS both visit every reachable cell.": "Giống nhau: A* và BFS đều truy cập mọi ô có thể truy cập.",
+      "Yes. A* never explores away from the goal.": "Có. A* không bao giờ khám phá xa khỏi đích.",
       "The total cost accumulated along a route from start to goal.": "Tổng chi phí tích lũy dọc theo lộ trình từ điểm xuất phát đến mục tiêu.",
       "The visual region is focusable and described by the state summary below.": "Vùng trực quan có thể lấy tiêu điểm và được mô tả bằng phần tóm tắt trạng thái bên dưới.",
       "Toggle dark / light theme (saved across all playgrounds).": "Chuyển đổi chủ đề tối / sáng (được lưu trên tất cả các sân chơi).",
       "Toggle dark or light theme": "Chuyển đổi chủ đề tối hoặc sáng",
       "Transfer: change the closeness rule and predict the neighbors again.": "Chuyển: thay đổi quy tắc gần và dự đoán lại các hàng xóm.",
-      "Try 'fewer'. A*'s heuristic biases exploration toward the goal: same correctness as BFS, much less wasted work.": "Hãy thử 'ít hơn'.Khám phá các thành kiến ​​heuristic của A* hướng tới mục tiêu: độ chính xác tương tự như BFS, công việc ít lãng phí hơn nhiều.",
+      "Try 'No'. A shortest-path guarantee does not guarantee fewer visited nodes.": "Hãy chọn “Không”. Bảo đảm đường ngắn nhất không bảo đảm thăm ít nút hơn.",
       "Try 'often longer'. DFS dives deep along one direction first; the first path it finds is rarely the shortest.": "Hãy thử 'thường xuyên lâu hơn'.DFS đi sâu theo một hướng trước tiên;con đường đầu tiên nó tìm thấy hiếm khi là con đường ngắn nhất.",
       "Try 'yes'. BFS expands by distance from start, so the first time it touches the goal, that's the shortest path on an unweighted graph.": "Hãy thử 'có'.BFS mở rộng theo khoảng cách từ đầu, vì vậy lần đầu tiên nó chạm vào mục tiêu, đó là đường đi ngắn nhất trên biểu đồ không có trọng số.",
       "Use as a 2–3 minute predict → run → explain prompt.": "Sử dụng làm lời nhắc dự đoán trong 2 - 3 phút → chạy → giải thích lời nhắc.",
@@ -4269,7 +4373,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Walls and terrain define which moves are possible and how costly they are.": "Tường và địa hình xác định những bước di chuyển nào có thể thực hiện được và mức độ tốn kém của chúng.",
       "Weighted A* trades a guarantee for stronger focus": "Trọng số A* đổi lấy sự đảm bảo cho sự tập trung mạnh mẽ hơn",
       "Weighted A*: may focus more, no longer guaranteed": "Có trọng số A*: có thể tập trung hơn, không còn được đảm bảo",
-      "Weighted terrain only affects Dijkstra & A*. BFS/DFS treat all passable cells as cost 1.": "Địa hình có trọng số chỉ ảnh hưởng đến Dijkstra & A*.BFS/DFS coi tất cả các ô có thể vượt qua là giá 1.",
+      "Dijkstra, A* and IDA* use terrain costs. BFS, DFS and bidirectional BFS ignore them.": "Dijkstra, A* và IDA* dùng chi phí địa hình. BFS, DFS và BFS hai chiều bỏ qua chi phí này.",
       "Weighted terrain: BFS ignores cost, Dijkstra does not": "Địa hình có trọng số: BFS bỏ qua chi phí, Dijkstra thì không",
       "What changes when the estimate is allowed to overstate the remaining distance?": "Điều gì thay đổi khi ước tính được phép phóng đại khoảng cách còn lại?",
       "What did the heuristic change in the search process?": "Suy nghiệm đã thay đổi điều gì trong quá trình tìm kiếm?",
@@ -4280,7 +4384,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "When would BFS be safer than greedy best-first search or weighted A*?": "Khi nào thì BFS sẽ an toàn hơn tìm kiếm tốt nhất đầu tiên hoặc có trọng số A*?",
       "Which products contribute?": "Sản phẩm nào đóng góp?",
       "Which visible result should change most, and why? Commit to an answer before applying.": "Kết quả hiển thị nào sẽ thay đổi nhiều nhất và tại sao?Cam kết trả lời trước khi nộp đơn.",
-      "Why are a frontier and an explored set different?": "Tại sao tập hợp biên giới và tập hợp được khám phá lại khác nhau?",
+      "Why are a frontier and an explored set different?": "Vì sao tập biên và tập đã duyệt khác nhau?",
       "Why can two paths with the same number of steps have different total costs?": "Tại sao hai đường dẫn có cùng số bước lại có tổng chi phí khác nhau?",
       "Why is finding a path different from finding the shortest path?": "Tại sao việc tìm đường đi lại khác với việc tìm đường đi ngắn nhất?",
       "Why is it next?": "Tại sao lại là tiếp theo?",
@@ -4342,6 +4446,13 @@ document.addEventListener('DOMContentLoaded', () => {
   },
   "es": {
     "strings": {
+      "Explored set": "Conjunto explorado",
+      "A* search": "Búsqueda A*",
+      "Heuristic": "Heurística",
+      "Frontier": "Frontera",
+      "Path cost": "Coste del camino",
+      "Admissible heuristic": "Heurística admisible",
+      "A*/IDA* heuristic:": "Heurística A*/IDA*:",
       "#a11yStateSummary": "#a11yStateSummary",
       "#acceptV": "#acceptV",
       "#accV": "#accV",
@@ -4391,7 +4502,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "#windowMath": "#windowMath",
       "${index}": "${index}",
       ", A* reduces to Dijkstra's expansion rule.": ", A* se reduce a la regla de expansión de Dijkstra.",
-      ". It generalizes BFS to graphs with nonnegative, unequal edge costs.": ". It generalizes BFS to graphs with nonnegative, unequal edge costs.",
+      ". It generalizes BFS to graphs with nonnegative, unequal edge costs.": ". Generaliza BFS a grafos con costos de arista no negativos y desiguales.",
       ".bento-main": ".bento-main",
       ".cell-analysis": ".cell-analysis",
       ".cell-maps": ".cell-maps",
@@ -4438,10 +4549,10 @@ document.addEventListener('DOMContentLoaded', () => {
       "A remaining-cost estimate that never overestimates the true cheapest cost.": "Una estimación del costo restante que nunca sobreestima el costo real más barato.",
       "A worsening move can be accepted": "Se puede aceptar un movimiento que empeora",
       "A* (Manhattan heuristic)": "A* (heurística de Manhattan)",
-      "A* finds the shortest path between two points while exploring far fewer squares than BFS, because it uses an estimate of remaining distance to focus the search.": "A* encuentra el camino más corto entre dos puntos mientras explora muchos menos cuadrados que BFS, porque utiliza una estimación de la distancia restante para enfocar la búsqueda.",
-      "A* focus: heuristic saves work without losing optimality": "Enfoque A*: la heurística ahorra trabajo sin perder optimización",
+      "A* uses a cost estimate to guide search. Manhattan, Euclidean or zero preserve least cost here; visited counts depend on the map.": "A* usa una estimación de coste como guía. Manhattan, euclídea o cero preservan el coste mínimo aquí; los nodos visitados dependen del mapa.",
+      "A* with Manhattan: compare search work": "A* con Manhattan: compara el trabajo de búsqueda",
       "A* with a safe Manhattan-distance estimate": "A* con una estimación de distancia segura de Manhattan",
-      "A* with admissible Manhattan heuristic vs BFS on the same maze. Number of nodes visited by A* is:": "A* con heurística de Manhattan admisible frente a BFS en el mismo laberinto.El número de nodos visitados por A* es:",
+      "On the same road-only maze, must Manhattan A* visit fewer nodes than BFS?": "En el mismo laberinto solo con caminos y muros, ¿debe A* Manhattan visitar menos nodos que BFS?",
       "Accept only an improving move": "Acepta solo un movimiento de mejora.",
       "Accessibility note: this layer gives a text equivalent for the applet state. It does not replace a full human screen-reader audit.": "Nota de accesibilidad: esta capa proporciona un texto equivalente para el estado del subprograma.No reemplaza una auditoría completa del lector de pantalla humano.",
       "Algorithm: Breadth-first search (BFS) Grid size: Small (20 × 14) Heuristic: Manhattan (admissible) Path length: - Status: idle": "Algoritmo: Búsqueda en amplitud (BFS) Tamaño de cuadrícula: Pequeño (20 × 14) Heurística: Manhattan (admisible) Longitud de ruta: - Estado: inactivo",
@@ -4468,13 +4579,13 @@ document.addEventListener('DOMContentLoaded', () => {
       "BFS, DFS, Dijkstra, and A* differ mainly in how they choose the next candidate.": "BFS, DFS, Dijkstra y A* se diferencian principalmente en cómo eligen al siguiente candidato.",
       "BFS/DFS don't use g/h/f: they pop by FIFO/LIFO order. Dijkstra uses g only. A* sorts by f.": "BFS/DFS no usan g/h/f: aparecen por orden FIFO/LIFO.Dijkstra usa g solamente.A* ordena por f.",
       "Bidirectional BFS (search from both ends)": "BFS bidireccional (búsqueda desde ambos extremos)",
-      "Both algorithms search the maze you built above, one node-expansion per tick. Watch how many cells each opens before reaching the goal: that is why \"A* explores fewer nodes than BFS\" is a measured result, not a slogan.": "Ambos algoritmos buscan en el laberinto que construiste arriba, una expansión de nodo por tick.Observe cuántas celdas abre cada uno antes de alcanzar el objetivo: es por eso que \"A* explora menos nodos que BFS\" es un resultado medido, no un eslogan.",
+      "Both search the same map, one expansion per tick. Compare visited counts; A* need not visit fewer nodes.": "Ambos buscan en el mismo mapa, con una expansión por paso. Compara los nodos visitados; A* no tiene por qué visitar menos.",
       "Breadth-first and depth-first search": "Búsqueda en amplitud y en profundidad",
       "Breadth-first search (BFS)": "Búsqueda en amplitud (BFS)",
       "Breadth-first search and A* on the same maze": "Búsqueda en amplitud y A* en el mismo laberinto",
       "Breadth-first search counts steps; Dijkstra counts cost": "La búsqueda en amplitud cuenta los pasos;Dijkstra cuenta el coste",
       "Build a case where DFS returns a longer route than BFS.": "Cree un caso en el que DFS devuelva una ruta más larga que BFS.",
-      "Build an open map and a detour maze. How does heuristic usefulness change the explored count?": "Construye un mapa abierto y un laberinto de desvío.¿Cómo cambia la utilidad heurística el recuento explorado?",
+      "Build an open map and a detour maze. How does heuristic usefulness change the explored count?": "Construye un mapa abierto y un laberinto con desvíos. ¿Cómo cambia el número de estados explorados según la utilidad de la heurística?",
       "button,input,select,textarea": "botón,entrada,seleccionar,área de texto Botón",
       "button[data-lang]": "[idioma de datos]",
       "Centroid 1 更新后的大致位置": "Centroide 1 更新后的大致位置",
@@ -4496,7 +4607,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Classify a frontier square before the move": "Clasificar una casilla fronteriza antes del movimiento",
       "Clear walls AND return start/goal to their default positions.": "Despeja paredes Y regresa el inicio/meta a sus posiciones predeterminadas.",
       "Click empty squares to draw walls. Drag the green start or red goal to move them.": "Haga clic en cuadrados vacíos para dibujar paredes.Arrastra el inicio verde o la meta roja para moverlos.",
-      "Click on the canvas paints with the selected terrain. Costs: Road 1, Mud 3, Water 5, Wall impassable. BFS/DFS ignore costs; Dijkstra and A* use them.": "Haga clic en las pinturas del lienzo con el terreno seleccionado.Costos: Camino 1, Barro 3, Agua 5, Muro intransitable.BFS/DFS ignoran los costos;Dijkstra y A* los utilizan.",
+      "Paint road (1), mud (3), water (5) or walls. Dijkstra, A* and IDA* use costs; BFS, DFS and bidirectional BFS ignore them.": "Pinta caminos (1), barro (3), agua (5) o muros. Dijkstra, A* e IDA* usan costes; BFS, DFS y BFS bidireccional los ignoran.",
       "cnf-sat": "cnf-sáb",
       "Combines the cost already paid with an estimate of the cost still remaining.": "Combina el costo ya pagado con una estimación del costo aún restante.",
       "Compare BFS and Dijkstra before and after adding unequal terrain costs.": "Compare BFS y Dijkstra antes y después de agregar costos de terreno desiguales.",
@@ -4510,10 +4621,10 @@ document.addEventListener('DOMContentLoaded', () => {
       "Correct. DFS uses a stack (LIFO) and commits to one direction until it hits a dead end. The first path it finds is usually NOT shortest: DFS isn't designed for optimality, just for finding a path quickly.": "Correcto.DFS usa una pila (LIFO) y se compromete en una dirección hasta que llega a un callejón sin salida.El primer camino que encuentra generalmente NO es el más corto: DFS no está diseñado para ser óptimo, solo para encontrar un camino rápidamente.",
       "Depth-first search (DFS)": "Búsqueda en profundidad (DFS)",
       "Depth-first search can find the wrong kind of success": "La búsqueda en profundidad puede encontrar el tipo incorrecto de éxito",
-      "DFS is a shortest-path algorithm; finishing first in one animation proves an algorithm is generally faster; BFS minimizes weighted path cost; Dijkstra only works on weighted graphs; A* is always faster; any heuristic preserves optimality; BFS simply becomes Dijkstra rather than being a special uniform-cost case.": "DFS es un algoritmo de ruta más corta;terminar primero en una animación demuestra que un algoritmo es generalmente más rápido;BFS minimiza el costo de ruta ponderado;Dijkstra sólo funciona con gráficos ponderados;A* siempre es más rápido;cualquier heurística preserva la optimización;BFS simplemente se convierte en Dijkstra en lugar de ser un caso especial de costos uniformes.",
+      "DFS is a shortest-path algorithm; finishing first in one animation proves an algorithm is generally faster; BFS minimizes weighted path cost; Dijkstra only works on weighted graphs; A* is always faster; any heuristic preserves optimality; BFS simply becomes Dijkstra rather than being a special uniform-cost case.": "DFS encuentra siempre el camino más corto; terminar primero en una animación demuestra que un algoritmo es más rápido en general; BFS minimiza el coste ponderado del camino; Dijkstra solo funciona con grafos ponderados; A* siempre es más rápido; cualquier heurística conserva la optimalidad; BFS simplemente se convierte en Dijkstra, en lugar de ser un caso particular con costes uniformes.",
       "DFS trap: fast path is not best path": "Trampa DFS: la ruta rápida no es la mejor ruta",
       "Dijkstra's algorithm": "Algoritmo de Dijkstra",
-      "Download grid + search results (path coordinates, nodes visited, frontier snapshot) as CSV.": "Descargue la cuadrícula + los resultados de la búsqueda (coordenadas de ruta, nodos visitados, instantánea de la frontera) como CSV.",
+      "Download grid dimensions and search results (path coordinates, visited-node count, frontier snapshot) as CSV.": "Descarga las dimensiones de la cuadrícula y los resultados de búsqueda (coordenadas de la ruta, número de nodos visitados y estado de la frontera) como CSV.",
       "Download the current grid + search trace as a PNG.": "Descargue la cuadrícula actual + el seguimiento de búsqueda como PNG.",
       "Embed or download the current experiment": "Insertar o descargar el experimento actual",
       "Enter the required mechanism prediction before locking.": "Ingrese la predicción del mecanismo requerido antes del bloqueo.",
@@ -4522,10 +4633,10 @@ document.addEventListener('DOMContentLoaded', () => {
       "expands the state with the smallest known path cost": "expande el estado con el costo de ruta más pequeño conocido",
       "Expected comparison rule": "Regla de comparación esperada",
       "Explain how following one branch deeply can reach the goal after relatively few expansions yet still produce a longer route. One trace is not a general runtime ranking.": "Explique cómo seguir profundamente una rama puede alcanzar la meta después de relativamente pocas expansiones y aun así producir una ruta más larga.Un rastro no es una clasificación general en tiempo de ejecución.",
-      "Explain why an overestimating heuristic can change the optimality conclusion.": "Explique por qué una heurística de sobreestimación puede cambiar la conclusión de optimización.",
+      "Explain why an overestimating heuristic can change the optimality conclusion.": "Explica por qué una heurística que sobreestima puede cambiar la conclusión sobre la optimalidad.",
       "Explain why stronger heuristic weighting can remove the optimal-path guarantee without implying a general runtime speedup.": "Explique por qué una ponderación heurística más fuerte puede eliminar la garantía de ruta óptima sin implicar una aceleración general del tiempo de ejecución.",
-      "Explores every location at the current number of edges from the start before moving farther away.": "Explora cada ubicación en el número actual de bordes desde el principio antes de alejarse más.",
-      "Fewer: the heuristic steers A* toward the goal, so it wastes less exploration.": "Menos: la heurística dirige A* hacia la meta, por lo que desperdicia menos exploración.",
+      "Explores every location at the current number of edges from the start before moving farther away.": "Explora todas las posiciones a la distancia actual en número de aristas desde el inicio antes de avanzar más lejos.",
+      "No. A* can save work, but both may visit the same number.": "No. A* puede ahorrar trabajo, pero ambos pueden visitar la misma cantidad.",
       "Finds a least-cost path when different moves can have different costs.": "Encuentra una ruta de menor costo cuando diferentes movimientos pueden tener costos diferentes.",
       "Follow the search as four linked parts: the map defines possible moves, the frontier stores candidates, the rule selects the next cell, and the path appears only after the goal is reached.": "Siga la búsqueda en cuatro partes vinculadas: el mapa define posibles movimientos, la frontera almacena candidatos, la regla selecciona la siguiente celda y la ruta aparece solo después de alcanzar el objetivo.",
       "Follows one branch deeply before backtracking to try another branch.": "Sigue profundamente una rama antes de retroceder para probar otra rama.",
@@ -4551,19 +4662,19 @@ document.addEventListener('DOMContentLoaded', () => {
       "Locations that have been discovered but not yet explored.": "Ubicaciones que han sido descubiertas pero aún no exploradas.",
       "Logan M. Dixon ·": "Logan M. Dixon ·",
       "Made for the Introduction to AI course at Haidian Kaiwen Academy.": "Creado para el curso de Introducción a la IA en la Academia Haidian Kaiwen.",
-      "Manhattan is admissible (never overestimates) on a 4-connected grid → A* finds shortest path. 1.5× Manhattan is inadmissible → A* gets faster but no longer guarantees optimality.": "Manhattan es admisible (nunca sobreestima) en una red de 4 conexiones → A* encuentra el camino más corto.1,5× Manhattan es inadmisible → A* se vuelve más rápido pero ya no garantiza la optimización.",
+      "Manhattan, Euclidean and zero preserve least cost here for A* and IDA*. 1.5× Manhattan may reduce work but can lose optimality.": "Aquí, Manhattan, euclídea y cero preservan el coste mínimo con A* e IDA*. 1,5× Manhattan puede reducir trabajo, pero perder la garantía de optimalidad.",
       "Mechanism revealed. Compare the locked prediction with the actual applet state.": "Mecanismo revelado.Compare la predicción bloqueada con el estado real del subprograma.",
       "Mechanism: activation or engineered feature": "Mecanismo: activación o característica diseñada",
       "Medium grid, A* with 1.5× Manhattan. The search may visit fewer cells, but overestimation removes the guarantee that the returned path has minimum cost.": "Cuadrícula mediana, A* con 1,5× Manhattan.La búsqueda puede visitar menos celdas, pero la sobreestimación elimina la garantía de que el camino de regreso tenga un costo mínimo.",
       "Memory or tabu status changes the choice": "El estado de memoria o tabú cambia la elección",
       "Model relation: conditioning on the common effect Alarm makes Burglary and Earthquake dependent; this is explaining away.": "Relación del modelo: condicionamiento al efecto común La alarma hace dependiente el Robo y el Terremoto;esto es una explicación.",
       "Model relation: JohnCalls and MaryCalls are conditionally independent given Alarm.": "Relación del modelo: JohnCalls y MaryCalls son condicionalmente independientes dada la alarma.",
-      "More: computing the heuristic forces A* to examine extra nodes.": "Más: calcular las fuerzas heurísticas A* para examinar nodos adicionales.",
+      "Yes. A* always visits fewer nodes.": "Sí. A* siempre visita menos nodos.",
       "neural-network": "red-neural",
       "Next frontier state or coordinate": "Próximo estado fronterizo o coordenada",
       "No improving move is accepted": "No se acepta ningún movimiento de mejora",
       "No: BFS finds a path quickly, but not necessarily the shortest one.": "No: BFS encuentra un camino rápidamente, pero no necesariamente el más corto.",
-      "Nodes that the algorithm has already removed from the frontier and processed.": "Nodos que el algoritmo ya eliminó de la frontera y procesó.",
+      "Nodes that the algorithm has already removed from the frontier and processed.": "Nodos que el algoritmo ya ha retirado de la frontera y procesado.",
       "Not enough information yet": "Aún no hay suficiente información",
       "Often longer: DFS commits to one direction, so its first path is rarely shortest.": "A menudo más largo: DFS se compromete en una dirección, por lo que su primer camino rara vez es el más corto.",
       "On this four-neighbor unit-cost grid, Manhattan distance is admissible because it never exceeds the shortest path length when walls can only force extra steps. It is also consistent, so standard graph-search A* returns an optimal path. A heuristic that overestimates can be faster in some cases but gives up the usual optimality guarantee.": "En esta cuadrícula de costos unitarios de cuatro vecinos, la distancia de Manhattan es admisible porque nunca excede la longitud del camino más corto cuando las paredes solo pueden forzar pasos adicionales.También es consistente, por lo que la búsqueda de gráficos estándar A* devuelve una ruta óptima.Una heurística que sobreestima puede ser más rápida en algunos casos pero renuncia a la garantía de optimización habitual.",
@@ -4606,7 +4717,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Remove all walls. Keeps start and goal where they are.": "Retire todas las paredes.Mantiene la salida y la meta donde están.",
       "Reset everything to defaults: empty grid, A*, default start and goal positions.": "Restablece todo a los valores predeterminados: cuadrícula vacía, A*, posiciones predeterminadas de inicio y meta.",
       "Restart the search from the beginning (keeps walls, start, and goal).": "Reinicia la búsqueda desde el principio (mantiene muros, inicio y meta).",
-      "Right. A* uses f = g + h to focus exploration toward the goal. With an admissible heuristic, it still finds the shortest path (like BFS) but visits far fewer 'wasted' nodes in the wrong direction.": "Correcto.A* usa f = g + h para enfocar la exploración hacia la meta.Con una heurística admisible, todavía encuentra el camino más corto (como BFS) pero visita muchos menos nodos \"desperdiciados\" en la dirección equivocada.",
+      "Correct. f = g + h guides A*. Both find a shortest path on this road-only grid; a single corridor can give equal visited counts.": "Correcto. f = g + h guía A*. Ambos hallan una ruta de longitud mínima en esta cuadrícula de caminos y muros; en un solo pasillo pueden visitar la misma cantidad.",
       "Run A* with 1.5 times the Manhattan estimate and compare it with standard A*.": "Ejecute A* con 1,5 veces la estimación de Manhattan y compárelo con el estándar A*.",
       "Run A* with the Manhattan-distance heuristic, then compare its path and visited nodes with breadth-first search (BFS).": "Ejecute A* con la heurística de distancia de Manhattan, luego compare su ruta y los nodos visitados con búsqueda en amplitud (BFS).",
       "Run at least two algorithms. Record path length, visited nodes, and one visible frontier pattern.": "Ejecute al menos dos algoritmos.Registre la longitud de la ruta, los nodos visitados y un patrón de frontera visible.",
@@ -4622,15 +4733,15 @@ document.addEventListener('DOMContentLoaded', () => {
       "Scrub through search history": "Explorar el historial de búsqueda",
       "Search algorithms differ in two questions: which location should be explored next, and what counts as a good path? Learn the names below before comparing the traces.": "Los algoritmos de búsqueda se diferencian en dos preguntas: ¿qué ubicación se debe explorar a continuación y cuál se considera un buen camino?Conozca los nombres a continuación antes de comparar las huellas.",
       "search-pathfinding": "búsqueda-pathfinding",
-      "Small grid, demo maze, A* with Manhattan. Compare path length and visited nodes against BFS. The heuristic focuses work while preserving the shortest-path guarantee.": "Cuadrícula pequeña, laberinto de demostración, A* con Manhattan.Compare la longitud de la ruta y los nodos visitados con BFS.Los enfoques heurísticos funcionan preservando la garantía del camino más corto.",
-      "Small grid, demo maze, BFS. Run once, record visited nodes, then switch to A* on the same maze. The paths stay optimal, but the frontier work changes dramatically.": "Cuadrícula pequeña, laberinto de demostración, BFS.Ejecútelo una vez, registre los nodos visitados y luego cambie a A* en el mismo laberinto.Los caminos siguen siendo óptimos, pero el trabajo fronterizo cambia dramáticamente.",
+      "Small grid, demo maze, A* with Manhattan. Compare path length and visited nodes with BFS. Both return shortest paths here; visited counts depend on the map.": "Cuadrícula pequeña, laberinto de ejemplo, A* con Manhattan. Compara longitud y nodos visitados con BFS. Ambos hallan rutas de longitud mínima aquí; las visitas dependen del mapa.",
+      "Small grid, demo maze, BFS. Record visited nodes, then compare A* on the unchanged maze. Both return shortest paths here; measure any difference in work.": "Cuadrícula pequeña, laberinto de ejemplo, BFS. Registra los nodos visitados y compara A* sin cambiar el mapa. Ambos hallan rutas de longitud mínima aquí; mide la diferencia de trabajo.",
       "Small grid, maze layout, DFS. Run after BFS and compare path length. On this fixed grid and neighbor order, DFS can reach the goal after relatively few expansions while returning a longer route. That does not make DFS generally faster.": "Cuadrícula pequeña, diseño de laberinto, DFS.Ejecute después de BFS y compare la longitud de la ruta.En este orden de cuadrícula fija y vecinos, DFS puede alcanzar la meta después de relativamente pocas expansiones y al mismo tiempo regresar por una ruta más larga.Eso no hace que DFS sea generalmente más rápido.",
       "Small grid, zero heuristic, mud paint selected. Add a mud corridor and compare BFS with Dijkstra. BFS counts steps; Dijkstra counts cost.": "Cuadrícula pequeña, heurística cero, pintura de barro seleccionada.Agregue un corredor de barro y compare BFS con Dijkstra.BFS cuenta los pasos;Dijkstra cuenta los costos.",
       "Smaller grids fit on one screen and are easier to inspect step-by-step. Large grids show the algorithms' asymptotic behavior.": "Las rejillas más pequeñas caben en una pantalla y son más fáciles de inspeccionar paso a paso.Las cuadrículas grandes muestran el comportamiento asintótico de los algoritmos.",
       "Start featured experiment": "Iniciar experimento destacado",
       "Start with the featured experiment, then use the scenarios to test a prediction.": "Comience con el experimento presentado y luego utilice los escenarios para probar una predicción.",
       "State summary updated: Algorithm: Breadth-first search (BFS); Heuristic: Manhattan (admissible); Status: idle; Path length: -": "Resumen de estado actualizado: Algoritmo: búsqueda en amplitud (BFS);Heurística: Manhattan (admisible);Estado: inactivo;Longitud del camino: -",
-      "State-space graphs, frontier discipline, explored sets, path cost, completeness, optimality, admissible and consistent heuristics, and weighted edges.": "Gráficos de espacio de estados, disciplina de frontera, conjuntos explorados, costo de ruta, integridad, optimización, heurísticas admisibles y consistentes y aristas ponderadas.",
+      "State-space graphs, frontier discipline, explored sets, path cost, completeness, optimality, admissible and consistent heuristics, and weighted edges.": "Grafos del espacio de estados, reglas de selección de la frontera, conjuntos explorados, coste del camino, completitud, optimalidad, heurísticas admisibles y consistentes, y aristas ponderadas.",
       "Step one expansion backward through the search.": "Paso uno de expansión hacia atrás a través de la búsqueda.",
       "suite-guided-actions": "suite-acciones-guiadas",
       "suite-guided-actual": "suite-guiada-real",
@@ -4675,13 +4786,13 @@ document.addEventListener('DOMContentLoaded', () => {
       "The prepared applet step is unavailable. Reset the challenge instead of revealing a fabricated result.": "El paso del subprograma preparado no está disponible.Restablezca el desafío en lugar de revelar un resultado inventado.",
       "The relevant result is hidden until you lock a prediction and reveal it.": "El resultado relevante está oculto hasta que bloquea una predicción y la revela.",
       "The same length: any path-finder returns the same path on one maze.": "La misma longitud: cualquier buscador de caminos devuelve el mismo camino en un laberinto.",
-      "The same: A* and BFS both visit every reachable cell.": "Lo mismo: A* y BFS visitan todas las celdas accesibles.",
+      "Yes. A* never explores away from the goal.": "Sí. A* nunca explora alejándose de la meta.",
       "The total cost accumulated along a route from start to goal.": "El coste total acumulado a lo largo de una ruta desde el inicio hasta la meta.",
       "The visual region is focusable and described by the state summary below.": "La región visual se puede enfocar y se describe en el resumen de estado a continuación.",
       "Toggle dark / light theme (saved across all playgrounds).": "Alternar tema oscuro/claro (guardado en todos los parques infantiles).",
       "Toggle dark or light theme": "Alternar tema oscuro o claro",
       "Transfer: change the closeness rule and predict the neighbors again.": "Transferir: cambia la regla de cercanía y vuelve a predecir los vecinos.",
-      "Try 'fewer'. A*'s heuristic biases exploration toward the goal: same correctness as BFS, much less wasted work.": "Pruebe \"menos\".La heurística de A* predispone la exploración hacia el objetivo: la misma corrección que BFS, mucho menos trabajo desperdiciado.",
+      "Try 'No'. A shortest-path guarantee does not guarantee fewer visited nodes.": "Prueba «No». Garantizar una ruta de longitud mínima no garantiza visitar menos nodos.",
       "Try 'often longer'. DFS dives deep along one direction first; the first path it finds is rarely the shortest.": "Intente \"a menudo más\".DFS se sumerge profundamente en una dirección primero;el primer camino que encuentra rara vez es el más corto.",
       "Try 'yes'. BFS expands by distance from start, so the first time it touches the goal, that's the shortest path on an unweighted graph.": "Pruebe \"sí\".BFS se expande según la distancia desde el inicio, por lo que la primera vez que toca la meta, ese es el camino más corto en un gráfico no ponderado.",
       "Use as a 2–3 minute predict → run → explain prompt.": "Úselo como mensaje de predicción → ejecución → explicación de 2 a 3 minutos.",
@@ -4695,7 +4806,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Walls and terrain define which moves are possible and how costly they are.": "Los muros y el terreno definen qué movimientos son posibles y qué tan costosos son.",
       "Weighted A* trades a guarantee for stronger focus": "La ponderación A* ofrece una garantía por un mayor enfoque",
       "Weighted A*: may focus more, no longer guaranteed": "Ponderado A*: puede enfocarse más, ya no está garantizado",
-      "Weighted terrain only affects Dijkstra & A*. BFS/DFS treat all passable cells as cost 1.": "El terreno ponderado sólo afecta a Dijkstra y A*.BFS/DFS trata todas las celdas transitables como costo 1.",
+      "Dijkstra, A* and IDA* use terrain costs. BFS, DFS and bidirectional BFS ignore them.": "Dijkstra, A* e IDA* usan costes del terreno. BFS, DFS y BFS bidireccional los ignoran.",
       "Weighted terrain: BFS ignores cost, Dijkstra does not": "Terreno ponderado: BFS ignora el costo, Dijkstra no",
       "What changes when the estimate is allowed to overstate the remaining distance?": "¿Qué cambia cuando se permite que la estimación sobreestime la distancia restante?",
       "What did the heuristic change in the search process?": "¿Qué cambió la heurística en el proceso de búsqueda?",
@@ -4770,7 +4881,7 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 </script>
-<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["search-pathfinding"];if(!row)return;Object.assign(row.vi.strings,{"🧪 Quick Assign · QA-SEARCH-01 · 10–15 min": "🧪 Bài tập nhanh · QA-SEARCH-01 · 10–15 phút", "A* vs BFS: same goal, different work": "A* và BFS: cùng mục tiêu, khác lượng công việc", "Predict which search will do less work, run a comparison, then explain how the frontier and heuristic changed the result.": "Dự đoán thuật toán tìm kiếm nào sẽ làm ít việc hơn, chạy phép so sánh rồi giải thích cách frontier và heuristic làm thay đổi quá trình tìm kiếm.", "Before running, which algorithm will visit fewer cells on this maze, and why?": "Trước khi chạy, thuật toán nào sẽ thăm ít ô hơn trong mê cung này, và vì sao?", "Run at least two algorithms. Record path length, visited nodes, and one visible frontier pattern.": "Chạy ít nhất hai thuật toán. Ghi lại độ dài đường đi, số nút đã thăm và một mẫu frontier nhìn thấy được.", "What did the heuristic change in the search process?": "Heuristic đã thay đổi điều gì trong quá trình tìm kiếm?", "When would BFS be safer than greedy best-first search or weighted A*?": "Khi nào BFS sẽ an toàn hơn greedy best-first search hoặc weighted A*?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"🧪 Quick Assign · QA-SEARCH-01 · 10–15 min": "🧪 Tarea rápida · QA-SEARCH-01 · 10–15 min", "A* vs BFS: same goal, different work": "A* frente a BFS: mismo objetivo, distinto trabajo", "Predict which search will do less work, run a comparison, then explain how the frontier and heuristic changed the result.": "Predice qué búsqueda hará menos trabajo, ejecuta una comparación y explica cómo la frontera y la heurística cambiaron el proceso.", "Before running, which algorithm will visit fewer cells on this maze, and why?": "Antes de ejecutar, ¿qué algoritmo visitará menos celdas en este laberinto y por qué?", "Run at least two algorithms. Record path length, visited nodes, and one visible frontier pattern.": "Ejecuta al menos dos algoritmos. Registra la longitud de la ruta, los nodos visitados y un patrón visible de la frontera.", "What did the heuristic change in the search process?": "¿Qué cambió la heurística en el proceso de búsqueda?", "When would BFS be safer than greedy best-first search or weighted A*?": "¿Cuándo sería BFS una opción más segura que greedy best-first search o weighted A*?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script>
+<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["search-pathfinding"];if(!row)return;Object.assign(row.vi.strings,{"Level 1 · 10–15 min": "Cấp độ 1 · 10–15 phút", "🧪 Quick Assign · QA-SEARCH-01 · 10–15 min": "🧪 Bài tập nhanh · QA-SEARCH-01 · 10–15 phút", "A* vs BFS: same goal, different work": "A* và BFS: cùng mục tiêu, khác lượng công việc", "Predict which search will do less work, run a comparison, then explain how the frontier and heuristic changed the result.": "Dự đoán thuật toán tìm kiếm nào sẽ làm ít việc hơn, chạy phép so sánh rồi giải thích cách frontier và heuristic làm thay đổi quá trình tìm kiếm.", "Before running, which algorithm will visit fewer cells on this maze, and why?": "Trước khi chạy, thuật toán nào sẽ thăm ít ô hơn trong mê cung này, và vì sao?", "Run at least two algorithms. Record path length, visited nodes, and one visible frontier pattern.": "Chạy ít nhất hai thuật toán. Ghi lại độ dài đường đi, số nút đã thăm và một mẫu frontier nhìn thấy được.", "What did the heuristic change in the search process?": "Heuristic đã thay đổi điều gì trong quá trình tìm kiếm?", "When would BFS be safer than greedy best-first search or weighted A*?": "Khi nào BFS sẽ an toàn hơn greedy best-first search hoặc weighted A*?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"Level 1 · 10–15 min": "Nivel 1 · 10–15 min", "🧪 Quick Assign · QA-SEARCH-01 · 10–15 min": "🧪 Tarea rápida · QA-SEARCH-01 · 10–15 min", "A* vs BFS: same goal, different work": "A* frente a BFS: mismo objetivo, distinto trabajo", "Predict which search will do less work, run a comparison, then explain how the frontier and heuristic changed the result.": "Predice qué búsqueda hará menos trabajo, ejecuta una comparación y explica cómo la frontera y la heurística cambiaron el proceso.", "Before running, which algorithm will visit fewer cells on this maze, and why?": "Antes de ejecutar, ¿qué algoritmo visitará menos celdas en este laberinto y por qué?", "Run at least two algorithms. Record path length, visited nodes, and one visible frontier pattern.": "Ejecuta al menos dos algoritmos. Registra la longitud de la ruta, los nodos visitados y un patrón visible de la frontera.", "What did the heuristic change in the search process?": "¿Qué cambió la heurística en el proceso de búsqueda?", "When would BFS be safer than greedy best-first search or weighted A*?": "¿Cuándo sería BFS una opción más segura que greedy best-first search o weighted A*?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script>
 (() => {
   'use strict';
   // v1.6.1: preserve canonical source text across VI/ES round trips, refresh native layers before overlay activation, and cancel superseded locale timers.
@@ -4782,6 +4893,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const rootData = window.__AI_PLAYGROUNDS_R4_LOCALES || {};
   rootData.common = rootData.common || {};
   rootData.common.vi = Object.assign({
+    "↺ Reset all": "↺ Đặt lại",
+    "↺ New world": "↺ Thế giới mới",
+    "Before you read": "Trước khi đọc",
+    "Misconceptions to test:": "Những hiểu lầm cần kiểm tra:",
+    "Core question:": "Câu hỏi trọng tâm:",
+    "Run and watch:": "Chạy và quan sát:",
+    "Predict first:": "Dự đoán trước:",
+    "Explain afterward:": "Giải thích sau:",
+    "Apply and compare": "Áp dụng và so sánh",
+    "Start with the featured experiment, then use the scenarios to test a prediction.": "Bắt đầu với thí nghiệm nổi bật, rồi dùng các tình huống để kiểm tra dự đoán.",
+    "Open the mechanism view and lesson sequence when you need to explain why the result changed.": "Mở phần mô tả cơ chế và trình tự bài học khi cần giải thích vì sao kết quả thay đổi.",
+    "Collect reasoning with the worksheet or the local student response packet.": "Ghi lại lập luận bằng phiếu học tập hoặc bộ câu trả lời của học sinh được lưu cục bộ.",
+    "Use the text-state description and keyboard guidance when the visual display is not enough.": "Dùng mô tả trạng thái bằng văn bản và hướng dẫn bàn phím khi hình ảnh hiển thị chưa đủ.",
+    "Applet learning modes": "Các chế độ học tập của applet",
+    "Copy this experiment": "Sao chép thí nghiệm này",
+    "Experiment link copied.": "Đã sao chép liên kết thí nghiệm.",
+    "Copy this experiment URL": "Sao chép URL của thí nghiệm này",
+    "Understand": "Tìm hiểu",
+    "Use in class": "Dùng trong lớp",
+    "Text and keyboard": "Văn bản và bàn phím",
+    "What this applet shows": "Điều applet này minh họa",
+
     "Jump to latest": "Về trạng thái mới nhất",
     "Jump to frame": "Đến khung",
     "Jump to iteration": "Đến lần lặp",
@@ -4819,6 +4952,28 @@ document.addEventListener('DOMContentLoaded', () => {
     'Wumpus World': 'Thế giới Wumpus'
   }, rootData.common.vi || {});
   rootData.common.es = Object.assign({
+    "↺ Reset all": "↺ Restablecer",
+    "↺ New world": "↺ Nuevo mundo",
+    "Before you read": "Antes de leer",
+    "Misconceptions to test:": "Ideas erróneas que comprobar:",
+    "Core question:": "Pregunta central:",
+    "Run and watch:": "Ejecuta y observa:",
+    "Predict first:": "Predice primero:",
+    "Explain afterward:": "Explica después:",
+    "Apply and compare": "Aplicar y comparar",
+    "Start with the featured experiment, then use the scenarios to test a prediction.": "Empieza con el experimento destacado y usa los escenarios para comprobar una predicción.",
+    "Open the mechanism view and lesson sequence when you need to explain why the result changed.": "Abre la vista del mecanismo y la secuencia de la lección para explicar por qué cambió el resultado.",
+    "Collect reasoning with the worksheet or the local student response packet.": "Recoge el razonamiento con la hoja de actividades o el cuaderno de respuestas del estudiante guardado localmente.",
+    "Use the text-state description and keyboard guidance when the visual display is not enough.": "Usa la descripción textual del estado y la guía del teclado cuando la visualización no sea suficiente.",
+    "Applet learning modes": "Modos de aprendizaje del applet",
+    "Copy this experiment": "Copiar este experimento",
+    "Experiment link copied.": "Enlace del experimento copiado.",
+    "Copy this experiment URL": "Copia la URL de este experimento",
+    "Understand": "Comprender",
+    "Use in class": "Usar en clase",
+    "Text and keyboard": "Texto y teclado",
+    "What this applet shows": "Lo que muestra este applet",
+
     "Jump to latest": "Ir al estado más reciente",
     "Jump to frame": "Ir al estado",
     "Jump to iteration": "Ir a la iteración",
@@ -4860,6 +5015,43 @@ document.addEventListener('DOMContentLoaded', () => {
   // R4 stays invisible until the applet-specific VI/ES catalog is complete.
   if (!data || data.ready !== true || !data.vi || !data.es) return;
 
+  // Scope navigation labels to the footer; Source in a mechanism is not source code.
+  const footerLabels = {"vi":{"footer-top":"↑ Lên đầu trang","footer-portfolio":"Hồ sơ","footer-source":"Mã nguồn","footer-issue":"Báo lỗi"},"es":{"footer-top":"↑ Volver arriba","footer-portfolio":"Portafolio","footer-source":"Código fuente","footer-issue":"Informar de un problema"}};
+  // Teacher headings and short rich-text fragments never enter substring lookup.
+  const teacherLabels = {vi: {'For teachers': 'Dành cho giáo viên', 'Curriculum:': 'Nội dung học:', 'Pre-exploration prompts:': 'Câu hỏi trước khi khám phá:', 'Post-exploration prompts:': 'Câu hỏi sau khi khám phá:'}, es: {'For teachers': 'Para docentes', 'Curriculum:': 'Contenidos:', 'Pre-exploration prompts:': 'Preguntas antes de explorar:', 'Post-exploration prompts:': 'Preguntas después de explorar:'}};
+  // Exact original-header titles only; never translate body or learner text in ZH.
+  const headerTitlesZh = {
+    "Copy an <iframe> snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.": "复制用于嵌入学习管理系统（LMS）的 <iframe> 代码。隐藏页头和说明，仅显示交互区。",
+    "Reset everything to defaults: empty grid, A*, default start and goal positions.": "恢复默认设置：空网格、A* 算法及默认起点和终点。",
+    "Reset everything to defaults: TSP, best-improvement, T₀=10, cooling=0.995.": "恢复默认设置：旅行商问题、最佳改进法、初始温度 T₀=10、降温系数 0.995。",
+    "Generate a new random world, clear the log, reset score.": "生成新的随机世界，清空日志并重置分数。",
+    "Reset input to default 'modus ponens' example.": "将输入恢复为默认的“肯定前件式”示例。",
+    "Reset to default disease scenario: prior=1%, sensitivity=99%, specificity=95%, population=10000.": "恢复默认疾病检测情景：患病率 1%、灵敏度 99%、特异度 95%、人数 10000。",
+    "Reset CPTs to AIMA defaults and clear all evidence.": "将条件概率表恢复为 AIMA 默认值，并清除所有观测证据。",
+    "Reset everything to defaults: two-moons dataset, k=5, both visualizations on.": "恢复默认设置：双月数据集、k=5，并开启两个可视化图层。",
+    "Reset everything: sin truth, n=20 points, σ=0.2 noise, degree 3, λ=0.": "恢复默认设置：真实函数为 sin、n=20 个点、噪声 σ=0.2、多项式次数为 3、λ=0。",
+    "Reset everything to default: two-moons dataset, [2-6-4-1] architecture, ReLU activation, LR=0.03.": "恢复默认设置：双月数据集、[2-6-4-1] 网络结构、ReLU 激活函数、学习率 0.03。",
+    "Reset everything to the default: Gaussian mixture dataset, k=3, random init.": "恢复默认设置：高斯混合数据集、k=3、随机初始化。",
+    "Reset to default: cross input, Sobel-X edge kernel, abs ON, ReLU OFF.": "恢复默认设置：十字形输入、Sobel-X 边缘检测核，开启绝对值变换，关闭 ReLU。",
+    "Clear Q-values; restore the default grid, learning rate, discount factor, exploration rate and step reward.": "清空 Q 值；将网格、学习率、折扣因子、探索率和每步奖励恢复为默认值。",
+    "Download the current grid + search trace as a PNG.": "将当前网格和搜索轨迹下载为 PNG 图片。",
+    "Download the current state visualization as a PNG.": "将当前状态的可视化下载为 PNG 图片。",
+    "Download the world view as a PNG.": "将世界视图下载为 PNG 图片。",
+    "Download the population dot-grid as a PNG.": "将人群点阵图下载为 PNG 图片。",
+    "Download the network diagram as a PNG.": "将网络图下载为 PNG 图片。",
+    "Download the current points + decision boundary as a PNG.": "将当前数据点和决策边界下载为 PNG 图片。",
+    "Download the fit canvas as a PNG.": "将拟合图下载为 PNG 图片。",
+    "Download the decision-boundary canvas as a PNG.": "将决策边界图下载为 PNG 图片。",
+    "Download the current visualization as a PNG image (for slides).": "将当前可视化下载为 PNG 图片（可用于幻灯片）。",
+    "Download the convolution output as a PNG.": "将卷积输出下载为 PNG 图片。",
+    "Download the current grid + Q-value heatmap as a PNG.": "将当前网格和 Q 值热力图下载为 PNG 图片。",
+    "Download grid dimensions and search results (path coordinates, visited-node count, frontier snapshot) as CSV.": "将网格尺寸和搜索结果（路径坐标、已访问节点数、搜索前沿快照）下载为 CSV。",
+    "Download per-iteration costs, algorithm, problem, iteration count and best cost as CSV.": "将每次迭代的代价、算法、问题、迭代次数和最佳代价下载为 CSV。",
+    "Download the current Bayes scenario (prior, sens, spec, population) and the resulting contingency table + posteriors as CSV.": "将当前贝叶斯情景（先验概率、灵敏度、特异度、人数）、列联表和后验概率下载为 CSV。",
+    "Download training + validation datasets and the per-degree MSE table as CSV.": "将训练集、验证集和各多项式次数的均方误差表下载为 CSV。",
+    "Download points + cluster assignments + centroid positions as CSV (two sections in one file).": "将数据点、所属簇和质心位置下载为 CSV（同一文件内分为两个部分）。",
+    "Download episode return history + the current Q-table snapshot as CSV.": "将各回合的回报历史和当前 Q 表快照下载为 CSV。"
+  };
   let current = 'en';
   let applying = false;
   let nativeLanguageClick = false;
@@ -4928,6 +5120,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function skipNode(node) {
     const el = node && (node.nodeType === 1 ? node : node.parentElement);
     if (!el) return true;
+    if (el.closest('.suite-guided-actual')) return false;
     return !!el.closest('script,style,noscript,template,code,pre,kbd,samp,.lang-switch,[data-r4-no-translate]');
   }
 
@@ -4946,7 +5139,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const live = node.nodeValue || '';
     if (!originalText.has(node)) originalText.set(node, live);
     const source = textSource(node);
-    const translated = translateString(source);
+    const footerKey = node.parentElement?.closest('footer [data-i18n]')?.dataset.i18n;
+    // Match formatted teacher prose only; retain source and outer whitespace.
+    const proseKey = node.parentElement?.closest('.for-teachers')
+      ? source.replace(/\s+/g, ' ').trim() : null;
+    const proseMap = proseKey === null ? null
+      : Object.assign({}, mapFor(current), data[current]?.teacher || {}, teacherLabels[current] || {});
+    const prose = proseMap && Object.prototype.hasOwnProperty.call(proseMap, proseKey)
+      ? source.replace(/\S(?:[\s\S]*\S)?/, () => proseMap[proseKey]) : null;
+    const translated = footerLabels[current]?.[footerKey] || prose || translateString(source);
     if (translated !== live) {
       lastAppliedText.set(node, translated);
       applying = true;
@@ -4955,15 +5156,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function translateAttributes(el) {
+  function translateAttributes(el, attributes = ['title', 'aria-label', 'placeholder']) {
     if (!el || el.nodeType !== 1 || skipNode(el)) return;
     const state = attrState(el);
-    for (const attr of ['title', 'aria-label', 'placeholder']) {
+    for (const attr of attributes) {
       if (!el.hasAttribute(attr)) continue;
       const live = el.getAttribute(attr) || '';
       if (!Object.prototype.hasOwnProperty.call(state, attr)) state[attr] = live;
       const source = Object.prototype.hasOwnProperty.call(state, attr) ? state[attr] : live;
-      const translated = translateString(source);
+      const zhTitle = current === 'zh' && attr === 'title' && el.closest('.header-actions')
+        && ['hardReset', 'embedLink', 'csvExport', 'exportPng'].includes(el.id)
+        ? headerTitlesZh[source] : null;
+      const translated = current === 'zh'
+        ? (typeof zhTitle === 'string' ? zhTitle : live) : translateString(source);
       if (translated !== live) {
         const applied = lastAppliedAttrs.get(el) || {};
         applied[attr] = translated;
@@ -4973,6 +5178,14 @@ document.addEventListener('DOMContentLoaded', () => {
         applying = false;
       }
     }
+  }
+
+  function refreshHeaderTitles() {
+    if (current !== 'en' && current !== 'zh') return;
+    document.querySelectorAll('.header-actions #hardReset,.header-actions #embedLink,.header-actions #csvExport,.header-actions #exportPng').forEach(el => {
+      const source = originalAttrs.get(el)?.title ?? el.getAttribute('title');
+      if (Object.prototype.hasOwnProperty.call(headerTitlesZh, source)) translateAttributes(el, ['title']);
+    });
   }
 
   function translateTree(root = document.body) {
@@ -5079,24 +5292,28 @@ document.addEventListener('DOMContentLoaded', () => {
     window.tr = wrapped;
   }
 
-  function patchClipboard() {
-    try {
-      const clipboard = navigator.clipboard;
-      if (!clipboard || typeof clipboard.writeText !== 'function' || clipboard.writeText.__r4Wrapped) return;
-      const base = clipboard.writeText.bind(clipboard);
-      const wrapped = text => base(current === 'vi' || current === 'es' ? translateString(String(text), current) : text);
-      wrapped.__r4Wrapped = true;
-      clipboard.writeText = wrapped;
-    } catch (_) {}
-  }
-
   function selectControl() {
     return document.querySelector('.r4-language-select');
   }
 
   function updateSelect(locale) {
+    const names = {
+      en: ['Language', 'Toggle dark or light theme'],
+      zh: ['语言', '切换深色或浅色主题'],
+      vi: ['Ngôn ngữ', 'Chuyển giao diện tối hoặc sáng'],
+      es: ['Idioma', 'Cambiar entre tema oscuro y claro']
+    }[locale];
     const select = selectControl();
-    if (select) select.value = locale;
+    if (select) {
+      select.value = locale;
+      select.setAttribute('aria-label', names[0]);
+    }
+    const theme = document.getElementById('themeToggle');
+    if (theme) {
+      theme.setAttribute('data-r4-no-translate', '1');
+      theme.setAttribute('aria-label', names[1]);
+      theme.setAttribute('title', names[1]);
+    }
   }
 
   function activateOverlay(locale) {
@@ -5106,7 +5323,7 @@ document.addEventListener('DOMContentLoaded', () => {
     current = locale;
     document.documentElement.lang = locale;
     wrapTr();
-    patchClipboard();
+    // Exporters localize their labels; never translate learner-authored clipboard data.
     applyMetadata(locale);
     translateTree(document.body);
     updateSelect(locale);
@@ -5128,6 +5345,7 @@ document.addEventListener('DOMContentLoaded', () => {
       clickNative(locale);
       document.documentElement.lang = locale === 'zh' ? 'zh' : 'en';
       refreshKnownLayers();
+      refreshHeaderTitles();
       if (locale === 'en') {
         const heading = document.querySelector('h1');
         if (heading && canonicalHeadingText) {
@@ -5176,10 +5394,10 @@ document.addEventListener('DOMContentLoaded', () => {
     for (const mutation of mutations) {
       if (mutation.type === 'characterData') {
         const live = mutation.target.nodeValue || '';
-        if (lastAppliedText.get(mutation.target) === live) {
-          lastAppliedText.delete(mutation.target);
-          continue;
-        }
+        // Several queued records can observe the same final translated value.
+        // Retain its marker until a genuinely different applet value arrives.
+        if (lastAppliedText.get(mutation.target) === live) continue;
+        lastAppliedText.delete(mutation.target);
         // Applet-authored dynamic state is always a new source value, including
         // while English or Chinese is active. This is what prevents a later locale
         // switch from restoring stale page-load state.
@@ -5189,15 +5407,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const attr = mutation.attributeName;
         const live = mutation.target.getAttribute(attr) || '';
         const applied = lastAppliedAttrs.get(mutation.target) || {};
-        if (applied[attr] === live) {
-          delete applied[attr];
-          lastAppliedAttrs.set(mutation.target, applied);
-          continue;
-        }
+        if (applied[attr] === live) continue;
+        delete applied[attr];
         const state = attrState(mutation.target);
         state[attr] = live;
-        if (current === 'vi' || current === 'es') translateAttributes(mutation.target);
+        // Do not overwrite a sibling attribute whose native write is still queued.
+        if (current === 'vi' || current === 'es' || current === 'zh' && attr === 'title') translateAttributes(mutation.target, [attr]);
       } else {
+        // The native original galleries have no Chinese confirmation entry.
+        // Localize only this generated button message, never learner text.
+        if (current === 'zh' && mutation.target.matches?.('.scenario-card button')
+            && mutation.target.textContent === '✓ Applied; compare the result') {
+          mutation.target.textContent = '✓ 已应用；请比较结果';
+        }
+        // Locale renderers replace the original gallery's cards, not its model.
+        // Carry the last applied marker by stable ID; never click/reapply a case.
+        if (mutation.target.id === 'scenarioGalleryCards' && !mutation.target.querySelector('.applied')) {
+          const previous = [...mutation.removedNodes].find(node => node.nodeType === 1 && node.matches('.scenario-card.applied'));
+          const index = previous?.dataset.scenarioIndex;
+          if (index !== undefined) [...mutation.target.children]
+            .find(node => node.dataset.scenarioIndex === index)?.classList.add('applied');
+        }
         mutation.addedNodes.forEach(node => {
           if (current === 'vi' || current === 'es') translateTree(node);
         });
@@ -5211,7 +5441,7 @@ document.addEventListener('DOMContentLoaded', () => {
     canonicalHeadingText = initialHeading ? initialHeading.textContent : '';
     installSelect();
     wrapTr();
-    patchClipboard();
+    // Exporters localize their labels; never translate learner-authored clipboard data.
     observer.observe(document.body, { subtree:true, childList:true, characterData:true, attributes:true, attributeFilter:['title','aria-label','placeholder'] });
     // Legacy language handlers in some applets rebuild or reset the experiment as
     // part of their EN/ZH switch. R4 invokes those buttons only as an internal
@@ -5231,6 +5461,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (nativeLanguageClick) return;
         const locale = normalizeLocale(button.dataset.lang);
         current = locale;
+        refreshHeaderTitles();
         updateSelect(locale);
         persist(locale);
       });
@@ -5251,10 +5482,10 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 </script>
-<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.5</div>
+<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.6</div>
 
 <!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
-<script data-ai-playgrounds-analytics="v1.9.5">
+<script data-ai-playgrounds-analytics="v1.9.6">
 (function () {
   'use strict';
   var CANONICAL_HOST = 'lmdixon23.github.io';
@@ -5370,5 +5601,117 @@ document.addEventListener('DOMContentLoaded', () => {
   sendPage();
 })();
 </script>
+<script data-classroom-result-locales="1">(()=>{const row=window.__AI_PLAYGROUNDS_R4_LOCALES?.["search-pathfinding"];if(!row)return;Object.assign(row.vi.strings,{"Nodes visited": "Số nút đã thăm"});Object.assign(row.es.strings,{"Nodes visited": "Nodos visitados"});})();</script>
+<script id="classroom-draft-runtime">
+(() => {
+  'use strict';
+  const root = document.querySelector('[data-quick-assign-id]');
+  if (!root) return;
+  const original = !!root.querySelector('[data-lab-answer]');
+  const fields = [...root.querySelectorAll('[data-lab-answer],[data-qa-answer]')];
+  const state = root.querySelector('[data-lab-state],[data-qa-modern-state]');
+  const status = root.querySelector('.lab-status');
+  const slug = window.APPLET_LEARNER_PROFILE?.slug;
+  const key = original ? 'ai-playgrounds-lab-' + slug : 'ai-playgrounds-quick-assign:' + root.dataset.quickAssignId;
+  const locale = () => document.documentElement.lang.toLowerCase().split('-')[0];
+  const COPY = {
+    en: {confirm:'Clear this lab’s saved answers and captured evidence? This cannot be undone.', failed:'Your draft could not be saved in this browser. Copy or print it before closing this page.', cleared:'Local answers and captured evidence cleared.', removeFailed:'The saved draft could not be cleared. Your answers are still here.', restoreFailed:'The saved draft could not be read. Copy or print your work before reloading; clear the draft only if you want to discard it.'},
+    zh: {confirm:'清除此实验已保存的答案和状态记录？此操作无法撤销。', failed:'无法在此浏览器中保存草稿。关闭页面前请复制或打印。', cleared:'已清除本地答案和状态记录。', removeFailed:'无法清除已保存的草稿。你的答案仍保留在这里。', restoreFailed:'无法读取已保存的草稿。重新加载前请复制或打印你的内容；只有确认要丢弃草稿时才清除它。'},
+    vi: {confirm:'Xóa câu trả lời đã lưu và bằng chứng đã chụp của bài này? Không thể hoàn tác.', failed:'Không thể lưu bản nháp trong trình duyệt này. Hãy sao chép hoặc in trước khi đóng trang.', cleared:'Đã xóa câu trả lời cục bộ và bằng chứng đã chụp.', removeFailed:'Không thể xóa bản nháp đã lưu. Câu trả lời của bạn vẫn còn ở đây.', restoreFailed:'Không thể đọc bản nháp đã lưu. Hãy sao chép hoặc in bài trước khi tải lại; chỉ xóa bản nháp nếu muốn bỏ nó.'},
+    es: {confirm:'¿Borrar las respuestas guardadas y la evidencia capturada de este laboratorio? No se puede deshacer.', failed:'No se pudo guardar el borrador en este navegador. Cópialo o imprímelo antes de cerrar esta página.', cleared:'Se borraron las respuestas locales y la evidencia capturada.', removeFailed:'No se pudo borrar el borrador guardado. Tus respuestas siguen aquí.', restoreFailed:'No se pudo leer el borrador guardado. Copia o imprime tu trabajo antes de recargar; bórralo solo si deseas descartarlo.'}
+  };
+  const copy = () => COPY[locale()] || COPY.en;
+  const message = name => { if (status) { status.textContent = copy()[name]; status.dataset.draftError = ['failed','removeFailed','restoreFailed'].includes(name) ? name : ''; } };
+  new MutationObserver(() => { if (status?.dataset.draftError) message(status.dataset.draftError); }).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+  const captured = () => !!state && !!state.textContent.trim() && (state.hasAttribute('data-r4-no-translate') || state.dataset.qaStateReady === '1');
+  function retainCapture(text, lang) {
+    if (!state) return;
+    state.textContent = text;
+    state.lang = ['en','zh','vi','es'].includes(lang) ? lang : 'en';
+    state.setAttribute('data-r4-no-translate','');
+    state.dataset.qaStateReady = '1';
+    for (const n of [13,14,15]) state.setAttribute('data-lab'+n+'-no-translate','');
+    for (const lang of ['en','zh','vi','es']) state.removeAttribute('data-ap-'+lang);
+  }
+  const fieldName = field => field.dataset.labAnswer || field.dataset.qaAnswer;
+  const dirty = new Set();
+  let captureDirty = false, unreadable = false;
+  function readDraft() {
+    const data = JSON.parse(localStorage.getItem(key) || '{}');
+    if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Invalid draft');
+    for (const field of fields) if (data[fieldName(field)] !== undefined && typeof data[fieldName(field)] !== 'string') throw new Error('Invalid answer');
+    if (data.__capture !== undefined && typeof data.__capture?.text !== 'string') throw new Error('Invalid capture');
+    unreadable = false;
+    return data;
+  }
+  function applyDraft(data) {
+    for (const field of fields) if (!dirty.has(fieldName(field))) field.value = data[fieldName(field)] || '';
+    if (!captureDirty) {
+      if (data.__capture) retainCapture(data.__capture.text, data.__capture.lang);
+      else if (captured()) retainCapture('', locale());
+    }
+  }
+  function save(field, refresh = false) {
+    if (field) dirty.add(fieldName(field));
+    captureDirty ||= refresh;
+    try {
+      // Merge only this tab's edits into the latest stored packet. A stale tab
+      // must not replace another tab's different answer or explicit capture.
+      const latest = readDraft();
+      const data = Object.fromEntries(fields.map(field => {
+        const name = fieldName(field);
+        return [name, dirty.has(name) ? field.value : latest[name] || ''];
+      }));
+      if (captureDirty && captured()) data.__capture = {text:state.textContent, lang:state.lang};
+      else if (!captureDirty && latest.__capture) data.__capture = latest.__capture;
+      localStorage.setItem(key, JSON.stringify(data));
+      dirty.clear(); captureDirty = false;
+      if (status?.dataset.draftError || Object.values(COPY).some(value => status?.textContent === value.cleared)) { status.textContent=''; delete status.dataset.draftError; }
+    } catch (_) { message('failed'); }
+  }
+  try { applyDraft(readDraft()); }
+  catch (_) { unreadable = true; message('restoreFailed'); }
+  window.addEventListener('storage', event => {
+    if (event.key !== key && event.key !== null) return;
+    try {
+      if (event.storageArea !== localStorage) return;
+      // Read the latest value, not a possibly superseded queued storage event.
+      applyDraft(readDraft());
+    } catch (_) { unreadable = true; message('restoreFailed'); }
+  });
+  // One owner saves the complete packet before legacy answer-only handlers run.
+  document.addEventListener('input', event => {
+    if (!fields.includes(event.target)) return;
+    event.stopImmediatePropagation();
+    save(event.target);
+  }, true);
+  document.addEventListener('click', event => {
+    const button = event.target.closest?.('[data-lab-action],[data-qa-action]');
+    if (!button || !root.contains(button)) return;
+    const action = button.dataset.labAction || button.dataset.qaAction;
+    if (action === 'refresh' || action === 'refresh-state') {
+      // Capture is synchronous in each native packet; persist its finished result.
+      queueMicrotask(() => save(null, true));
+      return;
+    }
+    if (action !== 'clear') return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (!fields.some(field => field.value) && !captured() && !unreadable) return;
+    if (!window.confirm(copy().confirm)) return;
+    try { localStorage.removeItem(key); }
+    catch (_) { message('removeFailed'); return; }
+    dirty.clear(); captureDirty = false; unreadable = false;
+    for (const field of fields) field.value = '';
+    if (state) {
+      // An empty capture is intentional; do not restore or recapture live results.
+      retainCapture('', locale());
+    }
+    message('cleared');
+    fields[0]?.focus();
+  }, true);
+})();
+</script>
+
 </body>
 </html>

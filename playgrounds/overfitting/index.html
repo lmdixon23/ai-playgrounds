@@ -58,9 +58,10 @@
   @media (max-width: 860px) { .bento { grid-template-columns: 1fr; gap: 12px; } }
   /* Phones: slider fields (label + value + help text) need full width to stay legible. */
   @media (max-width: 480px) { .sliders-grid { grid-template-columns: 1fr; } }
-  .sliders-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px;
+  .sliders-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: 12px 24px;
                     margin-bottom: 16px; font-size: 0.88rem; }
-  .slider-field { display: flex; flex-direction: column; gap: 4px; }
+  #truthSel { max-width: 100%; min-width: 0; }
+  .slider-field { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
   .slider-field .row { display: flex; justify-content: space-between; }
   .slider-field .lbl { color: var(--muted); }
   .slider-field .val { color: var(--accent); font-weight: 700; font-family: monospace; }
@@ -80,7 +81,7 @@
   .canvas-card h3 { margin: 0 0 6px; font-size: 0.85rem; color: var(--accent);
                       text-transform: uppercase; letter-spacing: 0.05em; }
   canvas { display: block; width: 100%; height: 280px; background: white; border-radius: 4px; }
-  .err-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .err-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: 14px; }
   .err-card { background: var(--soft); border: 1px solid var(--border);
                 border-radius: 8px; padding: 14px; }
   .err-card .lbl { color: var(--muted); font-size: 0.75rem;
@@ -490,6 +491,20 @@
 /* Learner-facing terminology, compact glossary, and consistent action hierarchy. */
 .header-actions{align-items:center}.header-more{position:relative}.header-more>summary{list-style:none;cursor:pointer;user-select:none}.header-more>summary::-webkit-details-marker{display:none}.header-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:50;min-width:220px;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 16px 35px rgba(15,23,42,.18);display:grid;gap:5px}.header-more-menu button{width:100%;text-align:left;justify-content:flex-start;white-space:normal}.key-terms-panel{padding:14px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}.key-terms-intro{margin:0 0 10px;color:var(--muted)}.key-terms-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.key-term{padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:color-mix(in srgb,var(--card) 97%,var(--accent))}.key-term dt{font-weight:800;color:var(--fg);margin:0 0 3px}.key-term dd{margin:0;color:var(--muted);font-size:.84rem;line-height:1.45}.essay-primer{margin:0 0 22px;padding:15px 17px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--card) 96%,var(--accent));border-radius:10px}.essay-primer h2{margin:0 0 6px!important;font-size:1.05rem!important}.essay-primer p{margin:0 0 10px!important}.essay-primer h3{margin:12px 0 7px;font-size:.92rem}.essay-primer-terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0}.essay-primer-terms>div{padding:8px 9px;border:1px solid var(--border);border-radius:8px;background:var(--card)}.essay-primer-terms dt{font-weight:800}.essay-primer-terms dd{margin:2px 0 0;color:var(--muted);font-size:.82rem;line-height:1.4}.scenario-card .scenario-meta{line-height:1.5}.scenario-card .scenario-meta strong{display:block;margin-bottom:2px}.header-actions>.header-png,.header-actions>.header-theme,.header-actions>.header-reset,.header-more>summary{min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px}
 @media(max-width:720px){.essay-primer-terms{grid-template-columns:1fr}.header-actions{width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}.header-actions>button,.header-actions>.header-more,.header-more>summary{width:100%;justify-content:center}.header-more-menu{right:auto;left:0;max-width:min(290px,90vw)}.key-terms-grid{grid-template-columns:1fr}}
+/* Accessible text keeps the lab hue without changing filled controls or plots. */
+body.dark-mode{--accent-text:color-mix(in srgb,var(--fg) 80%,var(--accent))}
+body.dark-mode :is(.page-header .back,.scenario-card h3,.classroom-lab .lab-field label,.essay h2,.essay h3,.essay h4,.visual-card h4,.visual-live strong,.signature-challenge-panel strong,footer a){color:var(--accent-text)}
+body.dark-mode footer a{color:var(--accent-text)!important}
+.essay h2,.key-terms-intro,.worksheet{overflow-wrap:anywhere}
+#tourName{min-width:0;overflow-wrap:anywhere}
+div:has(>#tourName),div:has(>#tourNext){flex-wrap:wrap}
+.slider-block,.mode-tabs,#modeGroup,#initGroup{flex-wrap:wrap;max-width:100%}
+select{min-width:0;max-width:100%}
+.scenario-card h3,.essay-primer-terms>div,p,.tldr,[data-i18n="seq-explain"]{min-width:0;overflow-wrap:anywhere}
+.header-actions>button{overflow-wrap:anywhere;white-space:normal}
+h1,h3,.method-tabs button,.stat-item,.key-term,.world-icon-key li>span:last-child{min-width:0;overflow-wrap:anywhere}
+.stats-strip,div:has(>#ngViewW){flex-wrap:wrap;max-width:100%}
+@media(max-width:360px){.visual-live{box-sizing:border-box;min-width:0;white-space:normal;flex-wrap:wrap}.visual-live>span{min-width:0;overflow-wrap:anywhere}}
 </style>
 <style id="learning-modes-style">
 /* Product information architecture and restrained visual hierarchy. */
@@ -499,7 +514,7 @@
 @media(max-width:820px){.learning-mode-head{align-items:flex-start;flex-direction:column}.learning-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-mode-panel{grid-template-columns:1fr}.learning-mode-panel>details{grid-column:1!important}.copy-experiment{width:100%}}
 </style>
 <link href="../../assets/localization-r4.css" rel="stylesheet"/>
-<meta name="ai-playgrounds-version" content="1.9.5">
+<meta name="ai-playgrounds-version" content="1.9.6">
 
 <style id="v14-version-provenance-style">
 .v14-version-provenance{max-width:1180px;margin:22px auto 10px;padding:12px 18px;border-top:1px solid var(--border,#dbe4ee);color:var(--muted,#64748b);font:12px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center}
@@ -554,9 +569,9 @@
 <span class="lbl" data-i18n="lam-label">Reg. λ</span>
 <span class="val" id="lamV">0.000</span>
 </div>
-<input aria-label="Regularization strength (lambda)" data-i18n-title="lam-slider-title" id="lam" max="5" min="0" step="0.001" title="Regularization strength. With Ridge, adds λ‖w‖² to the loss; with Lasso, adds λ‖w‖₁. Set λ=0 to disable." type="range" value="0"/>
+<input aria-label="Regularization strength (lambda)" data-i18n-title="lam-slider-title" id="lam" max="5" min="0" step="0.001" title="Penalty strength (intercept excluded). Ridge and Lasso normalize loss differently; compare λ within one method. See the explanation." type="range" value="0"/>
 <div class="help">
-<select data-i18n-title="reg-title" id="regSel" style="padding:2px 4px; font:inherit; border:1px solid var(--border); border-radius:4px;" title="Ridge (L2): shrinks all weights smoothly. Lasso (L1): drives some weights exactly to zero: automatic feature selection. Toggle to compare.">
+<select data-i18n-title="reg-title" id="regSel" style="padding:2px 4px; font:inherit; border:1px solid var(--border); border-radius:4px;" title="Ridge (L2) shrinks non-intercept coefficients; Lasso (L1) can set them to zero. The intercept is unpenalized. Equal λ values do not give equal penalty strength across these implementations.">
 <option data-i18n="reg-ridge" selected="" value="ridge">Ridge (L2)</option>
 <option data-i18n="reg-lasso" value="lasso">Lasso (L1)</option>
 </select>
@@ -797,7 +812,7 @@
 <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
 <span data-lab-en="🧪 Quick Assign · QA-OVERFIT-01 · 10–15 min" data-lab-zh="🧪 快速任务 · QA-OVERFIT-01 · 10–15 分钟">🧪 Quick Assign · QA-OVERFIT-01 · 10–15 min</span>
 </summary>
-<div class="lab-panel"><div class="quick-assign-meta" data-r4-no-translate="1" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong>QA-OVERFIT-01</strong> · Level 1 · 10–15 min<br><span>Fit the training set, fail the future</span></div>
+<div class="lab-panel"><div class="quick-assign-meta" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong data-r4-no-translate="1">QA-OVERFIT-01</strong> · <span data-lab-en="Level 1 · 10–15 min" data-lab-zh="级别 1 · 10–15 分钟">Level 1 · 10–15 min</span><br><span data-lab-en="Fit the training set, fail the future" data-lab-zh="拟合训练集，却无法泛化">Fit the training set, fail the future</span></div>
 <p class="lab-intro" data-lab-en="Predict which model will fit training data best, compare train and validation error, then explain why generalization can fail." data-lab-zh="先预测哪个模型最能拟合训练数据，再比较训练误差和验证误差，然后解释泛化为什么会失败。">Predict which model will fit training data best, compare train and validation error, then explain why generalization can fail.</p>
 <div class="lab-grid">
 <div class="lab-field">
@@ -817,7 +832,7 @@
 <textarea data-lab-answer="transfer" data-lab-en="Name an ML task where a perfect training score could be misleading." data-lab-zh="举一个机器学习任务，说明完美训练分数为什么可能误导。" id="lab-transfer" placeholder="Name an ML task where a perfect training score could be misleading."></textarea>
 </div>
 </div>
-<div aria-live="polite" class="lab-state" data-lab-state="">State snapshot appears here.</div>
+<div aria-live="polite" class="lab-state" data-lab-state="" data-lab-en="State snapshot appears here." data-lab-zh="状态快照将显示在这里。">State snapshot appears here.</div>
 <div class="lab-actions">
 <button class="step-btn" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态" type="button">↻ Refresh state</button>
 <button class="step-btn" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包" type="button">📋 Copy packet</button>
@@ -864,8 +879,8 @@
 <section data-essay-lang="en">
 <p class="lede">
     A model can perform extremely well on the data used to fit it and still fail on new cases.
-    This applet separates those two questions by displaying training error and error on fresh
-    test points.
+    This applet separates those two questions by displaying training error and error on validation
+    points that you can inspect repeatedly.
   </p>
 <h2>Polynomial fitting as a laboratory</h2>
 <p>
@@ -897,20 +912,8 @@
     on the second question, using data that did not determine the fitted coefficients.
   </div>
 <h2>Ridge regression and the formula <code>λ‖w‖²</code></h2>
-<p>
-<strong>Ridge regression</strong> is polynomial or linear regression with an added penalty on
-    large coefficients. Let <code>w</code> be the vector of fitted coefficients. The expression
-    <code>‖w‖² = w₀² + w₁² + …</code> is their squared Euclidean length. The training objective becomes
-    <code>MSE + λ‖w‖²</code>. The nonnegative number <code>λ</code>, pronounced lambda, controls the
-    penalty strength: <code>λ = 0</code> gives the unregularized fit, while larger values push the
-    coefficients toward smaller magnitudes.
-  </p>
-<p>
-    Set a high degree and increase <code>λ</code>. The polynomial still has the same number of
-    coefficients, but their allowable influence is reduced. The curve often becomes smoother and
-    new-data error may improve. This is why parameter count alone does not determine effective model
-    capacity.
-  </p>
+<p>Ridge regression in this applet minimizes SSE + λ Σⱼ≥₁ wⱼ². SSE is the sum of squared residuals; w₀ is the unpenalized intercept. For n training points, this is equivalent to MSE + (λ/n) Σⱼ≥₁ wⱼ². At the same λ, increasing n weakens the penalty relative to the data.</p>
+<p>Lasso instead minimizes ½ MSE + λ Σⱼ≥₁ |wⱼ|, also without penalizing the intercept. The same λ is not an equal-strength comparison between these two objectives. Within one method, increase λ and inspect the coefficients, curve and validation error. The degree stays fixed, but effective flexibility can change.</p>
 <h2>What happens when noise is zero</h2>
 <p>
     Setting <code>σ = 0</code> removes the random vertical noise added to sampled points. It often
@@ -970,12 +973,8 @@
     训练误差回答模型对已知样本拟合得多紧密。泛化误差回答模型对来自相关总体的新样本预测得多好。模型选择应依据第二个问题，并使用没有参与确定拟合系数的数据。
   </div>
 <h2>岭回归与公式 <code>λ‖w‖²</code></h2>
-<p>
-<strong>岭回归</strong>是在多项式回归或线性回归的目标中加入大系数惩罚。令 <code>w</code> 表示全部拟合系数组成的向量。表达式 <code>‖w‖² = w₀² + w₁² + …</code> 是这些系数的平方欧几里得长度。训练目标变为 <code>MSE + λ‖w‖²</code>。非负数 <code>λ</code> 读作 lambda，用来控制惩罚强度：<code>λ = 0</code> 得到未正则化的拟合，更大的值会把系数推向更小的幅度。
-  </p>
-<p>
-    把多项式次数设得较高，再增大 <code>λ</code>。模型仍有相同数量的系数，但每个系数能够产生的影响受到限制。曲线通常会变得更平滑，新数据误差也可能改善。因此，参数数量本身并不能完全决定模型的有效容量。
-  </p>
+<p>本工具中的岭回归最小化 SSE + λ Σⱼ≥₁ wⱼ²。SSE 是残差平方和；截距 w₀ 不受惩罚。对于 n 个训练点，这等价于 MSE + (λ/n) Σⱼ≥₁ wⱼ²。因此，在 λ 不变时，增加 n 会减弱惩罚相对于数据项的影响。</p>
+<p>Lasso 则最小化 ½ MSE + λ Σⱼ≥₁ |wⱼ|，同样不惩罚截距。因此，相同的 λ 不代表这两个目标具有相同的正则化强度。在同一种方法内增大 λ，观察系数、曲线和验证误差。次数保持不变，但模型的有效灵活性可能改变。</p>
 <h2>噪声为零时会发生什么</h2>
 <p>
     把 <code>σ = 0</code> 会移除添加到样本点上的随机纵向噪声。这通常会缩小训练误差与验证误差之间的差距，但并不会从数学上使过拟合不可能发生。灵活的多项式仍可能在少量样本点之间表现很差；对于阶跃函数等不连续目标，多项式也可能在不连续点附近产生较差近似。噪声是过拟合的重要来源之一，并不是过拟合的完整定义。
@@ -1021,7 +1020,7 @@
       'lam-label': 'Reg. λ',
       'lam-help': 'Penalty on large weights. Tames high-degree wiggle.',
       'reg-ridge': 'Ridge (L2)', 'reg-lasso': 'Lasso (L1)',
-      'reg-title': 'Ridge (L2): shrinks all weights smoothly. Lasso (L1): drives some weights exactly to zero: automatic feature selection. Toggle to compare.',
+      'reg-title': 'Ridge (L2) shrinks non-intercept coefficients; Lasso (L1) can set them to zero. The intercept is unpenalized. Equal λ values do not give equal penalty strength across these implementations.',
       'n-label': 'Train points (n)',
       'n-help': 'More data can reduce variance at the same degree, but does not guarantee good generalization.',
       'sig-label': 'Noise σ',
@@ -1088,7 +1087,7 @@
       'ws3no': "Try 'down' for this sample. Penalizing large weights can suppress extreme high-order oscillation that contributes to the train-validation gap.",
       // tooltip translations for main sliders + selectors.
       'deg-slider-title': 'Model capacity. Higher degree = more wiggle room = easier to overfit.',
-      'lam-slider-title': 'Regularization strength. With Ridge, adds λ‖w‖² to the loss; with Lasso, adds λ‖w‖₁. Set λ=0 to disable.',
+      'lam-slider-title': 'Penalty strength (intercept excluded). Ridge and Lasso normalize loss differently; compare λ within one method. See the explanation.',
       'n-slider-title': 'Size of the training set. More data often constrains a flexible fit, but does not guarantee generalization.',
       'sig-slider-title': 'Standard deviation of Gaussian noise added to each training point. Setting σ=0 removes observation noise, but finite samples and model mismatch can still produce poor generalization.',
       'truth-sel-title': "The 'real' function the model is trying to recover from noisy samples.",
@@ -1110,7 +1109,7 @@
       'lam-label': '正则化 λ',
       'lam-help': '对大权重的惩罚。能驯服高次项的剧烈摆动。',
       'reg-ridge': '岭回归 (L2)', 'reg-lasso': '套索 (L1)',
-      'reg-title': '岭回归(L2):平滑地缩小所有权重。套索(L1):把部分权重精确推到零--自动特征选择。切换比较。',
+      'reg-title': '岭回归(L2)收缩截距以外的系数；套索(L1)可以把这些系数推到零。截距不受惩罚。这两种实现中，相同的 λ 不代表相同的惩罚强度。',
       'n-label': '训练点数 (n)',
       'n-help': '在相同次数下,更多数据常会约束灵活拟合并降低方差,但不保证泛化良好。',
       'sig-label': '噪声 σ',
@@ -1177,7 +1176,7 @@
       'ws3no': '试试"down"。λ 惩罚大权重,扼杀那些造成过拟合的高频摆动。',
       // 主要滑块和选择器的提示翻译。
       'deg-slider-title': '模型容量。次数越高,摆动空间越大,越容易过拟合。',
-      'lam-slider-title': '正则化强度。岭回归在损失中加入 λ‖w‖²;套索加入 λ‖w‖₁。设 λ=0 关闭正则化。',
+      'lam-slider-title': '惩罚强度（不惩罚截距）。Ridge 与 Lasso 的损失归一化不同；请在同一种方法内比较 λ。详见解释。',
       'n-slider-title': '训练集规模。更多数据通常会约束灵活拟合,但不能保证良好泛化。',
       'sig-slider-title': '每个训练点的高斯噪声标准差。σ=0 只移除了这里注入的随机噪声；有限样本、模型错配或反复调参仍可能产生较差泛化。',
       'truth-sel-title': '模型试图从带噪样本中恢复的"真实"函数。',
@@ -1270,9 +1269,8 @@
     link.click();
   });
   document.addEventListener('keydown', e => {
-    if (e.code === 'Space' &&
-        e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' &&
-        e.target.tagName !== 'SELECT') {
+    if (e.code === 'Space' && !e.defaultPrevented &&
+        !e.target.closest('button, summary, a, input, textarea, select, [contenteditable], [role="button"], [role="tab"]')) {
       e.preventDefault();
       document.getElementById('resampleBtn').click();
     }
@@ -1382,7 +1380,7 @@
         rho += colSq[j] * w[j];
         const wNew = (j === 0)
           ? rho / colSq[j]                       // intercept: unpenalized
-          : soft(rho, lambda * n) / colSq[j];    // λ scaled by n to match Ridge λ semantics
+          : soft(rho, lambda * n) / colSq[j];    // λ scaled by n for the mean-loss Lasso objective; Ridge uses summed loss
         const delta = wNew - w[j];
         if (delta !== 0) {
           for (let r = 0; r < n; r++) resid[r] -= X[r][j] * delta;
@@ -1718,7 +1716,8 @@
         scenario.apply();
         card.classList.add('applied');
         btn.textContent = '✓ ' + scenarioGalleryText('sg-applied', 'Applied; compare the result');
-        setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
+        clearTimeout(btn._timer);
+        btn._timer = setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
       });
       card.appendChild(btn);
       root.appendChild(card);
@@ -1979,7 +1978,6 @@
   const LAB_CONFIG = {"slug": "overfitting", "title": "Overfitting lab packet", "zhTitle": "过拟合实验包", "fields": [{"label": "Degree", "selector": "#degV", "kind": "text"}, {"label": "Regularization", "selector": "#regSel", "kind": "selected"}, {"label": "Lambda", "selector": "#lam", "kind": "value"}, {"label": "Sample size", "selector": "#n", "kind": "value"}, {"label": "Noise", "selector": "#sig", "kind": "value"}, {"label": "True function", "selector": "#truthSel", "kind": "selected"}, {"label": "Train MSE", "selector": "#trainMse", "kind": "text"}, {"label": "Validation MSE", "selector": "#testMse", "kind": "text"}]};
   const root = document.querySelector('.classroom-lab');
   if (!root) return;
-  const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;
   const qs = (sel) => root.querySelector(sel);
   function currentLang() {
     const raw = String(document.documentElement.lang || 'en').toLowerCase();
@@ -1998,6 +1996,8 @@
   function applyLabLang() {
     const lang = currentLang();
     root.querySelectorAll('[data-lab-en]').forEach(el => {
+      // Captured evidence and an explicitly cleared snapshot are learner state.
+      if (el.matches('[data-lab-state]') && (el.hasAttribute('data-r4-no-translate') || el.dataset.qaStateReady === '1')) return;
       const value = textFor(el, lang);
       if (el.tagName === 'TEXTAREA') el.placeholder = value;
       else el.textContent = value;
@@ -2024,13 +2024,6 @@
     root.querySelectorAll('textarea[data-lab-answer]').forEach(area => data[area.getAttribute('data-lab-answer')] = area.value.trim());
     return data;
   }
-  function saveDraft() { try { localStorage.setItem(storageKey, JSON.stringify(answers())); } catch (_) {} }
-  function loadDraft() {
-    try {
-      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
-      root.querySelectorAll('textarea[data-lab-answer]').forEach(area => { const key = area.getAttribute('data-lab-answer'); if (saved[key]) area.value = saved[key]; });
-    } catch (_) {}
-  }
   function packet() {
     const lang = currentLang();
     const baseLabels = {title: LAB_CONFIG.title, state:'State snapshot', predict:'Predict', observe:'Observe', explain:'Explain', transfer:'Transfer'};
@@ -2043,7 +2036,7 @@
       '- Date: ' + new Date().toLocaleString(),
       '',
       '## ' + labels.state,
-      snapshot(),
+      qs('[data-lab-state]')?.textContent || '',
       '',
       '## ' + labels.predict,
       a.predict || '',
@@ -2059,26 +2052,26 @@
     ].join('\n');
   }
   function setStatus(en, zh) { const el = qs('.lab-status'); if (el) el.textContent = currentLang() === 'zh' ? zh : en; }
-  function refreshState() { const el = qs('[data-lab-state]'); if (el) el.textContent = snapshot(); }
+  function refreshState() { const el = qs('[data-lab-state]'); if (el) { el.setAttribute('data-r4-no-translate',''); el.lang = currentLang(); el.textContent = snapshot(); } }
   async function copyPacket(btn) {
     const text = packet();
     try { await navigator.clipboard.writeText(text); setStatus('Copied local lab packet.', '已复制本地实验包。'); }
-    catch (_) { window.prompt('Copy this lab packet:', text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
+    catch (_) { window.prompt(qs('[data-lab-action=copy]').textContent.trim(), text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
   }
 
   function markdownToPrintableHtml(markdown) {
     const escape = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
     const inline = value => escape(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     const lines = String(markdown).split(/\r?\n/);
-    let html = '', inList = false, inState = false;
+    let html = '', inList = false, inState = false, sectionIndex = 0;
     const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
     for (const raw of lines) {
       const line = raw.trimEnd();
       if (line.startsWith('# ')) { closeList(); html += '<h1>' + inline(line.slice(2)) + '</h1>'; inState=false; }
-      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = /state snapshot|状态记录/i.test(title); }
+      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = sectionIndex++ === 0; }
       else if (line.startsWith('- ')) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inline(line.slice(2)) + '</li>'; }
       else if (!line.trim()) { closeList(); }
-      else { closeList(); html += inState ? '<pre class="state">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
+      else { closeList(); html += inState ? '<pre class="state" lang="' + (qs('[data-lab-state]')?.lang || currentLang()) + '">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
     }
     closeList(); return html;
   }
@@ -2087,28 +2080,19 @@
     const w = window.open('', '_blank');
     if (!w) { setStatus('Popup blocked. Copy the packet instead.', '弹窗被拦截。请改用复制实验包。'); return; }
     const rendered = markdownToPrintableHtml(packet());
-    const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
+    const html = '<!doctype html><html lang="' + currentLang() + '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
     w.document.open();
     w.document.write(html);
     w.document.close();
     setStatus('Print page opened.', '打印页面已打开。');
   }
-  function clearDraft() {
-    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.value = '');
-    try { localStorage.removeItem(storageKey); } catch (_) {}
-    refreshState(); setStatus('Local draft cleared.', '本地草稿已清除。');
-  }
-  root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.addEventListener('input', saveDraft));
   root.querySelector('[data-lab-action="copy"]')?.addEventListener('click', copyPacket);
   root.querySelector('[data-lab-action="print"]')?.addEventListener('click', printPacket);
   root.querySelector('[data-lab-action="refresh"]')?.addEventListener('click', () => { refreshState(); setStatus('State refreshed.', '状态已更新。'); });
-  root.querySelector('[data-lab-action="clear"]')?.addEventListener('click', clearDraft);
   document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(applyLabLang, 0)));
   window.addEventListener('r4languagechange', () => setTimeout(applyLabLang, 0));
   
-  document.addEventListener('change', refreshState);
-  document.addEventListener('click', (event) => { if (!(event.target instanceof HTMLTextAreaElement)) setTimeout(refreshState, 0); }, true);
-  loadDraft(); applyLabLang(); refreshState();
+  applyLabLang();
 })();
 </script>
 <script>
@@ -2297,8 +2281,8 @@
   function stateData(){
     const values={};
     document.querySelectorAll('#main input,#main select,#main textarea').forEach(el=>{
-      if(!el.id||el.closest('.classroom-lab'))return;
-      if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;
+      if(!el.id||el.readOnly||el.closest('.classroom-lab,.worksheet,.suite-guided-shell,[data-quick-assign-id]')||['button','submit','reset','file','password','hidden'].includes(el.type))return;
+      if(el.type==='radio'&&!el.checked)return;
       values[el.id]=el.type==='checkbox'?el.checked:el.value;
     });
     return {applet:profile.en.title,slug:profile.slug,exported_at:new Date().toISOString(),values};
@@ -2308,17 +2292,18 @@
     const share=document.getElementById('shareLink'), embed=document.getElementById('embedLink'), reset=document.getElementById('hardReset');
     const csv=document.getElementById('csvExport'), png=document.getElementById('exportPng');
     const more=document.createElement('details'); more.className='header-more';
-    const summary=document.createElement('summary'); summary.className='header-png'; summary.setAttribute('aria-haspopup','menu'); more.appendChild(summary);
-    const menu=document.createElement('div'); menu.className='header-more-menu'; menu.setAttribute('role','menu'); more.appendChild(menu);
+    const summary=document.createElement('summary'); summary.className='header-png'; more.appendChild(summary);
+    const menu=document.createElement('div'); menu.className='header-more-menu'; more.appendChild(menu);
     if(embed){embed.textContent='📎 Embed in LMS';menu.appendChild(embed)}
     const jsonBtn=document.createElement('button');jsonBtn.type='button';jsonBtn.className='header-png';jsonBtn.dataset.exportState='';menu.appendChild(jsonBtn);
     if(csv){csv.textContent='📊 Data table (.csv)';menu.appendChild(csv)}
     if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
-    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
+    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false;summary.focus()});
     actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
     window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';if(share){share.textContent=zh?'🔗 分享':'🔗 Share';share.title=zh?'复制可在另一浏览器中重新打开当前设置的链接。':'Copy a link that reopens the current settings in another browser.';}summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
     window.refreshAppletToolbar();
     document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&more.open){e.preventDefault();more.open=false;summary.focus()}});
   }
   function terms(){
     const inner=document.querySelector('.interactive-inner'); if(!inner||inner.querySelector('.key-terms'))return;
@@ -2365,6 +2350,7 @@
     return 'explore';
   };
   const lang = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const routeLocale = () => ['en','zh','vi','es'].find(code => (document.documentElement.lang || 'en').toLowerCase().startsWith(code)) || 'en';
   const labels = {explore:['Explore','探索'],understand:['Understand','理解'],classroom:['Use in class','课堂使用'],access:['Text and keyboard','文本与键盘']};
   const intros = {
     explore:['Start with the featured experiment, then use the scenarios to test a prediction.','从精选实验开始，再使用情境检验预测。'],
@@ -2436,12 +2422,19 @@
     renderModeChrome();
     if(write){const u=new URL(location.href);u.searchParams.set('mode',mode);history.replaceState(null,'',u)}
   }
-  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
+  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(['ArrowRight','ArrowLeft','Home','End'].includes(e.key)){e.preventDefault();const n=e.key==='Home'?0:e.key==='End'?list.length-1:(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
 
+  // Share only native mechanism inputs, never responses or global preferences.
+  function shareable(el){
+    return !!el && !!el.id && inner.contains(el)
+      && el.matches('input,select,textarea') && !el.readOnly
+      && !['button','submit','reset','file','password','hidden'].includes(el.type)
+      && !el.closest('.classroom-lab,.worksheet,.suite-guided-shell,[data-quick-assign-id]');
+  }
   function statePayload(){
     const out={};
-    inner.querySelectorAll('select,input').forEach(el=>{
-      if(!el.id||el.closest('.classroom-lab')||['button','submit'].includes(el.type))return;
+    inner.querySelectorAll('select,input,textarea').forEach(el=>{
+      if(!shareable(el))return;
       if(el.type==='radio'){if(el.checked)out[el.id]=el.value;return}
       out[el.id]=el.type==='checkbox'?el.checked:el.value;
     });
@@ -2450,33 +2443,65 @@
   function encode(obj){return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))}
   function decode(s){try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch{return null}}
   function currentExperimentUrl(){
-    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',lang());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
+    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',routeLocale());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
   }
   window.__buildExperimentUrl=()=>currentExperimentUrl().href;
   const status=shell.querySelector('.experiment-status');
-  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(ui[lang()].copyPrompt,u.href)}};
+  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(shell.querySelector('[data-copy-experiment]').textContent.trim(),u.href)}};
 
-  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','')});
-  document.addEventListener('click',e=>{const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode','explore');u.searchParams.set('lang',lang());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
+  // Let Space activate this native button instead of a lab-wide play shortcut.
+  shell.addEventListener('keydown', event => {
+    if (event.key === ' ' && event.target.closest('[data-start-featured]')) event.stopPropagation();
+  });
+
+  // A learner-initiated handoff moves both the viewport and keyboard focus.
+  // Restoring a shared URL or changing locale must never steal focus.
+  function handoffToExperiment() {
+    const target = [...inner.querySelectorAll('select,input:not([type="hidden"]),textarea')]
+      .find(node => !node.closest('.learning-mode-shell,.suite-guided-shell')
+        && !node.disabled && node.getClientRects().length);
+    if (!target) return;
+    target.focus({preventScroll: true});
+    target.scrollIntoView({block: 'center',
+      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
+  }
+
+  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','');handoffToExperiment()});
+  document.addEventListener('click',e=>{if(restoring&&new URLSearchParams(location.search).has('state'))return;const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode',active);if(!restoring)u.searchParams.set('lang',routeLocale());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
 
   let urlSyncTimer=0;
   function scheduleUrlState(e){
     if(restoring)return;
-    const el=e.target;if(!el||!inner.contains(el)||el.closest('.classroom-lab')||!el.matches('input,select'))return;
+    const el=e.target;if(!shareable(el))return;
     clearTimeout(urlSyncTimer);urlSyncTimer=setTimeout(()=>{const u=currentExperimentUrl();history.replaceState(null,'',u)},80);
   }
   document.addEventListener('input',scheduleUrlState,true);document.addEventListener('change',scheduleUrlState,true);
 
   function applyState(obj){
-    if(!obj)return;
-    Object.entries(obj).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else if(el.type==='radio')el.checked=String(el.value)===String(value);else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});
+    if(!obj || typeof obj !== 'object' || Array.isArray(obj) || Object.keys(obj).length > 256)return;
+    Object.entries(obj).forEach(([id,value])=>{
+      const el=document.getElementById(id);if(!shareable(el))return;
+      if(el.type==='checkbox'){if(typeof value!=='boolean')return;el.checked=value}
+      else {
+        if(!['string','number'].includes(typeof value) || String(value).length>10000)return;
+        const text=String(value);
+        if(el.tagName==='SELECT' && ![...el.options].some(option=>option.value===text))return;
+        if(['number','range'].includes(el.type)){
+          if(!text.trim() || !Number.isFinite(Number(text)))return;
+          if(el.min!=='' && Number(text)<Number(el.min))return;
+          if(el.max!=='' && Number(text)>Number(el.max))return;
+        }
+        if(el.type==='radio'){if(el.value!==text)return;el.checked=true}
+        else el.value=text;
+      }
+      el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));
+    });
   }
   function restore(){
     const p=new URL(location.href).searchParams;restoring=true;
-    // Explicit scenario, then saved controls, override native CNF share state.
-    // Retain the established scenario-zero default unless a native formula exists.
-    const nativeFormula=window.APPLET_LEARNER_PROFILE?.slug==='cnf-sat'&&p.has('f');
-    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeFormula))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
+    // Native links precede explicit scenarios and saved controls.
+    const nativeState=slug==='cnf-sat'&&p.has('f')||slug==='knn-classifier'&&['k','ds','task','metric','weight','scale','target'].some(k=>p.has(k));
+    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeState))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
     applyState(decode(p.get('state')||''));
     if(p.get('featured')==='1')sig?.setAttribute('open','');
     restoring=false;
@@ -2492,14 +2517,14 @@
   }
   setMode(active,false);ensureExploreContent();
   setTimeout(()=>{refineCards();window.renderAppletKeyTerms?.();restore();renderModeChrome()},250);
-  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',lang());history.replaceState(null,'',u)},25)));
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',routeLocale());history.replaceState(null,'',u)},25)));
 })();
 </script>
 
 <script id="applet-translation-completion">
 (() => {
   const exact = {"Skip to applet controls":"跳到交互控件","▸ Show teacher notes (discussion prompts + curriculum)":"▸ 展开教师说明（讨论提示与课程联系）","▾ Hide teacher notes (discussion prompts + curriculum)":"▾ 收起教师说明（讨论提示与课程联系）","idle":"空闲","(empty)":"（空）","(no actions yet)":"（尚无动作）","exploring":"探索中"};
-  const rules = [["^(\\([^)]+\\))\\s+residual=([-0-9.]+)$","\\1　残差=\\2"]].map(([source,target])=>[new RegExp(source),target]);
+  const rules = [["^(\\([^)]+\\))\\s+residual=([-0-9.]+)$","$1　残差=$2"]].map(([source,target])=>[new RegExp(source),target]);
   const currentLanguage=()=>((document.documentElement.lang||'en').startsWith('zh')?'zh':'en');
   const excluded=node=>node.parentElement && node.parentElement.closest('script,style,noscript,[data-essay-lang="en"]');
   const applyRule=text=>{
@@ -2544,11 +2569,11 @@
 <script defer src="../../assets/guided-challenges.js"></script>
 <!-- suite-guided-challenge-v2:end -->
 <script src="../../assets/locales/overfitting-r4.js"></script>
-<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["overfitting"];if(!row)return;Object.assign(row.vi.strings,{"🧪 Quick Assign · QA-OVERFIT-01 · 10–15 min": "🧪 Bài tập nhanh · QA-OVERFIT-01 · 10–15 phút", "Fit the training set, fail the future": "Khớp dữ liệu huấn luyện, thất bại trên dữ liệu mới", "Predict which model will fit training data best, compare train and validation error, then explain why generalization can fail.": "Tăng độ phức tạp mô hình, so sánh lỗi huấn luyện với lỗi kiểm tra và tìm điểm mà khớp tốt hơn không còn có nghĩa tổng quát hóa tốt hơn.", "Which degree will have the lowest training error? Which degree should generalize best?": "Khi độ phức tạp tăng, bạn dự đoán lỗi huấn luyện và lỗi kiểm tra sẽ thay đổi thế nào?", "Compare train and validation MSE for a low, medium, and high polynomial degree.": "Ghi lại ít nhất ba mức độ phức tạp cùng lỗi huấn luyện và kiểm tra tương ứng.", "Why can training MSE improve while validation MSE gets worse?": "Dấu hiệu nào cho thấy mô hình bắt đầu overfit thay vì chỉ cải thiện?", "Name an ML task where a perfect training score could be misleading.": "Nếu có nhiều dữ liệu huấn luyện hơn, bạn dự đoán điểm bắt đầu overfit sẽ thay đổi như thế nào?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"🧪 Quick Assign · QA-OVERFIT-01 · 10–15 min": "🧪 Tarea rápida · QA-OVERFIT-01 · 10–15 min", "Fit the training set, fail the future": "Ajusta el entrenamiento, falla en datos nuevos", "Predict which model will fit training data best, compare train and validation error, then explain why generalization can fail.": "Aumenta la complejidad, compara error de entrenamiento y prueba y encuentra cuándo un mejor ajuste deja de significar mejor generalización.", "Which degree will have the lowest training error? Which degree should generalize best?": "Al aumentar la complejidad, ¿cómo esperas que cambien los errores de entrenamiento y prueba?", "Compare train and validation MSE for a low, medium, and high polynomial degree.": "Registra al menos tres niveles de complejidad con sus errores de entrenamiento y prueba.", "Why can training MSE improve while validation MSE gets worse?": "¿Qué patrón muestra que el modelo empieza a sobreajustar en vez de simplemente mejorar?", "Name an ML task where a perfect training score could be misleading.": "Si hubiera más datos de entrenamiento, ¿cómo esperas que cambiara el punto en que comienza el sobreajuste?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script src="../../assets/localization-r4.js"></script>
-<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.5</div>
+<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["overfitting"];if(!row)return;Object.assign(row.vi.strings,{"Level 1 · 10–15 min": "Cấp độ 1 · 10–15 phút", "🧪 Quick Assign · QA-OVERFIT-01 · 10–15 min": "🧪 Bài tập nhanh · QA-OVERFIT-01 · 10–15 phút", "Fit the training set, fail the future": "Khớp dữ liệu huấn luyện, thất bại trên dữ liệu mới", "Predict which model will fit training data best, compare train and validation error, then explain why generalization can fail.": "Dự đoán mô hình nào khớp dữ liệu huấn luyện tốt nhất, so sánh lỗi huấn luyện và xác thực, rồi giải thích vì sao mô hình có thể không tổng quát hóa được.", "Which degree will have the lowest training error? Which degree should generalize best?": "Bậc nào sẽ có lỗi huấn luyện thấp nhất? Bậc nào có thể tổng quát hóa tốt nhất?", "Compare train and validation MSE for a low, medium, and high polynomial degree.": "So sánh MSE huấn luyện và xác thực ở ba bậc đa thức: thấp, trung bình và cao.", "Why can training MSE improve while validation MSE gets worse?": "Vì sao MSE huấn luyện có thể giảm trong khi MSE xác thực tăng?", "Name an ML task where a perfect training score could be misleading.": "Nêu một nhiệm vụ học máy mà điểm huấn luyện hoàn hảo có thể gây hiểu lầm.", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"Level 1 · 10–15 min": "Nivel 1 · 10–15 min", "🧪 Quick Assign · QA-OVERFIT-01 · 10–15 min": "🧪 Tarea rápida · QA-OVERFIT-01 · 10–15 min", "Fit the training set, fail the future": "Ajusta el entrenamiento, falla en datos nuevos", "Predict which model will fit training data best, compare train and validation error, then explain why generalization can fail.": "Predice qué modelo ajustará mejor los datos de entrenamiento, compara los errores de entrenamiento y validación y explica por qué puede fallar la generalización.", "Which degree will have the lowest training error? Which degree should generalize best?": "¿Qué grado tendrá el menor error de entrenamiento? ¿Qué grado debería generalizar mejor?", "Compare train and validation MSE for a low, medium, and high polynomial degree.": "Compara el MSE de entrenamiento y validación para grados polinómicos bajo, medio y alto.", "Why can training MSE improve while validation MSE gets worse?": "¿Por qué puede mejorar el MSE de entrenamiento mientras empeora el MSE de validación?", "Name an ML task where a perfect training score could be misleading.": "Nombra una tarea de aprendizaje automático en la que una puntuación de entrenamiento perfecta pueda ser engañosa.", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script src="../../assets/localization-r4.js"></script>
+<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.6</div>
 
 <!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
-<script data-ai-playgrounds-analytics="v1.9.5">
+<script data-ai-playgrounds-analytics="v1.9.6">
 (function () {
   'use strict';
   var CANONICAL_HOST = 'lmdixon23.github.io';
@@ -2664,5 +2689,116 @@
   sendPage();
 })();
 </script>
+<script id="classroom-draft-runtime">
+(() => {
+  'use strict';
+  const root = document.querySelector('[data-quick-assign-id]');
+  if (!root) return;
+  const original = !!root.querySelector('[data-lab-answer]');
+  const fields = [...root.querySelectorAll('[data-lab-answer],[data-qa-answer]')];
+  const state = root.querySelector('[data-lab-state],[data-qa-modern-state]');
+  const status = root.querySelector('.lab-status');
+  const slug = window.APPLET_LEARNER_PROFILE?.slug;
+  const key = original ? 'ai-playgrounds-lab-' + slug : 'ai-playgrounds-quick-assign:' + root.dataset.quickAssignId;
+  const locale = () => document.documentElement.lang.toLowerCase().split('-')[0];
+  const COPY = {
+    en: {confirm:'Clear this lab’s saved answers and captured evidence? This cannot be undone.', failed:'Your draft could not be saved in this browser. Copy or print it before closing this page.', cleared:'Local answers and captured evidence cleared.', removeFailed:'The saved draft could not be cleared. Your answers are still here.', restoreFailed:'The saved draft could not be read. Copy or print your work before reloading; clear the draft only if you want to discard it.'},
+    zh: {confirm:'清除此实验已保存的答案和状态记录？此操作无法撤销。', failed:'无法在此浏览器中保存草稿。关闭页面前请复制或打印。', cleared:'已清除本地答案和状态记录。', removeFailed:'无法清除已保存的草稿。你的答案仍保留在这里。', restoreFailed:'无法读取已保存的草稿。重新加载前请复制或打印你的内容；只有确认要丢弃草稿时才清除它。'},
+    vi: {confirm:'Xóa câu trả lời đã lưu và bằng chứng đã chụp của bài này? Không thể hoàn tác.', failed:'Không thể lưu bản nháp trong trình duyệt này. Hãy sao chép hoặc in trước khi đóng trang.', cleared:'Đã xóa câu trả lời cục bộ và bằng chứng đã chụp.', removeFailed:'Không thể xóa bản nháp đã lưu. Câu trả lời của bạn vẫn còn ở đây.', restoreFailed:'Không thể đọc bản nháp đã lưu. Hãy sao chép hoặc in bài trước khi tải lại; chỉ xóa bản nháp nếu muốn bỏ nó.'},
+    es: {confirm:'¿Borrar las respuestas guardadas y la evidencia capturada de este laboratorio? No se puede deshacer.', failed:'No se pudo guardar el borrador en este navegador. Cópialo o imprímelo antes de cerrar esta página.', cleared:'Se borraron las respuestas locales y la evidencia capturada.', removeFailed:'No se pudo borrar el borrador guardado. Tus respuestas siguen aquí.', restoreFailed:'No se pudo leer el borrador guardado. Copia o imprime tu trabajo antes de recargar; bórralo solo si deseas descartarlo.'}
+  };
+  const copy = () => COPY[locale()] || COPY.en;
+  const message = name => { if (status) { status.textContent = copy()[name]; status.dataset.draftError = ['failed','removeFailed','restoreFailed'].includes(name) ? name : ''; } };
+  new MutationObserver(() => { if (status?.dataset.draftError) message(status.dataset.draftError); }).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+  const captured = () => !!state && !!state.textContent.trim() && (state.hasAttribute('data-r4-no-translate') || state.dataset.qaStateReady === '1');
+  function retainCapture(text, lang) {
+    if (!state) return;
+    state.textContent = text;
+    state.lang = ['en','zh','vi','es'].includes(lang) ? lang : 'en';
+    state.setAttribute('data-r4-no-translate','');
+    state.dataset.qaStateReady = '1';
+    for (const n of [13,14,15]) state.setAttribute('data-lab'+n+'-no-translate','');
+    for (const lang of ['en','zh','vi','es']) state.removeAttribute('data-ap-'+lang);
+  }
+  const fieldName = field => field.dataset.labAnswer || field.dataset.qaAnswer;
+  const dirty = new Set();
+  let captureDirty = false, unreadable = false;
+  function readDraft() {
+    const data = JSON.parse(localStorage.getItem(key) || '{}');
+    if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Invalid draft');
+    for (const field of fields) if (data[fieldName(field)] !== undefined && typeof data[fieldName(field)] !== 'string') throw new Error('Invalid answer');
+    if (data.__capture !== undefined && typeof data.__capture?.text !== 'string') throw new Error('Invalid capture');
+    unreadable = false;
+    return data;
+  }
+  function applyDraft(data) {
+    for (const field of fields) if (!dirty.has(fieldName(field))) field.value = data[fieldName(field)] || '';
+    if (!captureDirty) {
+      if (data.__capture) retainCapture(data.__capture.text, data.__capture.lang);
+      else if (captured()) retainCapture('', locale());
+    }
+  }
+  function save(field, refresh = false) {
+    if (field) dirty.add(fieldName(field));
+    captureDirty ||= refresh;
+    try {
+      // Merge only this tab's edits into the latest stored packet. A stale tab
+      // must not replace another tab's different answer or explicit capture.
+      const latest = readDraft();
+      const data = Object.fromEntries(fields.map(field => {
+        const name = fieldName(field);
+        return [name, dirty.has(name) ? field.value : latest[name] || ''];
+      }));
+      if (captureDirty && captured()) data.__capture = {text:state.textContent, lang:state.lang};
+      else if (!captureDirty && latest.__capture) data.__capture = latest.__capture;
+      localStorage.setItem(key, JSON.stringify(data));
+      dirty.clear(); captureDirty = false;
+      if (status?.dataset.draftError || Object.values(COPY).some(value => status?.textContent === value.cleared)) { status.textContent=''; delete status.dataset.draftError; }
+    } catch (_) { message('failed'); }
+  }
+  try { applyDraft(readDraft()); }
+  catch (_) { unreadable = true; message('restoreFailed'); }
+  window.addEventListener('storage', event => {
+    if (event.key !== key && event.key !== null) return;
+    try {
+      if (event.storageArea !== localStorage) return;
+      // Read the latest value, not a possibly superseded queued storage event.
+      applyDraft(readDraft());
+    } catch (_) { unreadable = true; message('restoreFailed'); }
+  });
+  // One owner saves the complete packet before legacy answer-only handlers run.
+  document.addEventListener('input', event => {
+    if (!fields.includes(event.target)) return;
+    event.stopImmediatePropagation();
+    save(event.target);
+  }, true);
+  document.addEventListener('click', event => {
+    const button = event.target.closest?.('[data-lab-action],[data-qa-action]');
+    if (!button || !root.contains(button)) return;
+    const action = button.dataset.labAction || button.dataset.qaAction;
+    if (action === 'refresh' || action === 'refresh-state') {
+      // Capture is synchronous in each native packet; persist its finished result.
+      queueMicrotask(() => save(null, true));
+      return;
+    }
+    if (action !== 'clear') return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (!fields.some(field => field.value) && !captured() && !unreadable) return;
+    if (!window.confirm(copy().confirm)) return;
+    try { localStorage.removeItem(key); }
+    catch (_) { message('removeFailed'); return; }
+    dirty.clear(); captureDirty = false; unreadable = false;
+    for (const field of fields) field.value = '';
+    if (state) {
+      // An empty capture is intentional; do not restore or recapture live results.
+      retainCapture('', locale());
+    }
+    message('cleared');
+    fields[0]?.focus();
+  }, true);
+})();
+</script>
+
 </body>
 </html>

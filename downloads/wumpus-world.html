@@ -2,7 +2,7 @@
 
 <html lang="en">
 <head>
-<!-- Standalone AI Playgrounds v1.9.5 export.
+<!-- Standalone AI Playgrounds v1.9.6 export.
 MIT License
 
 Copyright (c) 2026 Logan M. Dixon
@@ -107,7 +107,7 @@ SOFTWARE.
   canvas { display: block; margin: 0 auto; background: white;
             border: 1px solid var(--border); border-radius: 4px; }
   #worldCv, #kbCv { width: 100%; max-width: 400px; height: auto; aspect-ratio: 400 / 400; }
-  .legend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 0.82rem;
+  .legend-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); overflow-wrap: anywhere; gap: 4px; font-size: 0.82rem;
                    max-width: 380px; margin: 0 auto 14px; }
   .legend-grid .sw { display: inline-block; width: 12px; height: 12px;
                       vertical-align: middle; margin-right: 4px; border-radius: 3px;
@@ -552,6 +552,20 @@ SOFTWARE.
 /* Learner-facing terminology, compact glossary, and consistent action hierarchy. */
 .header-actions{align-items:center}.header-more{position:relative}.header-more>summary{list-style:none;cursor:pointer;user-select:none}.header-more>summary::-webkit-details-marker{display:none}.header-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:50;min-width:220px;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 16px 35px rgba(15,23,42,.18);display:grid;gap:5px}.header-more-menu button{width:100%;text-align:left;justify-content:flex-start;white-space:normal}.key-terms-panel{padding:14px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}.key-terms-intro{margin:0 0 10px;color:var(--muted)}.key-terms-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.key-term{padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:color-mix(in srgb,var(--card) 97%,var(--accent))}.key-term dt{font-weight:800;color:var(--fg);margin:0 0 3px}.key-term dd{margin:0;color:var(--muted);font-size:.84rem;line-height:1.45}.essay-primer{margin:0 0 22px;padding:15px 17px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--card) 96%,var(--accent));border-radius:10px}.essay-primer h2{margin:0 0 6px!important;font-size:1.05rem!important}.essay-primer p{margin:0 0 10px!important}.essay-primer h3{margin:12px 0 7px;font-size:.92rem}.essay-primer-terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0}.essay-primer-terms>div{padding:8px 9px;border:1px solid var(--border);border-radius:8px;background:var(--card)}.essay-primer-terms dt{font-weight:800}.essay-primer-terms dd{margin:2px 0 0;color:var(--muted);font-size:.82rem;line-height:1.4}.scenario-card .scenario-meta{line-height:1.5}.scenario-card .scenario-meta strong{display:block;margin-bottom:2px}.header-actions>.header-png,.header-actions>.header-theme,.header-actions>.header-reset,.header-more>summary{min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px}
 @media(max-width:720px){.essay-primer-terms{grid-template-columns:1fr}.header-actions{width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}.header-actions>button,.header-actions>.header-more,.header-more>summary{width:100%;justify-content:center}.header-more-menu{right:auto;left:0;max-width:min(290px,90vw)}.key-terms-grid{grid-template-columns:1fr}}
+/* Accessible text keeps the lab hue without changing filled controls or plots. */
+body.dark-mode{--accent-text:color-mix(in srgb,var(--fg) 80%,var(--accent))}
+body.dark-mode :is(.page-header .back,.scenario-card h3,.classroom-lab .lab-field label,.essay h2,.essay h3,.essay h4,.visual-card h4,.visual-live strong,.signature-challenge-panel strong,footer a){color:var(--accent-text)}
+body.dark-mode footer a{color:var(--accent-text)!important}
+.essay h2,.key-terms-intro,.worksheet{overflow-wrap:anywhere}
+#tourName{min-width:0;overflow-wrap:anywhere}
+div:has(>#tourName),div:has(>#tourNext){flex-wrap:wrap}
+.slider-block,.mode-tabs,#modeGroup,#initGroup{flex-wrap:wrap;max-width:100%}
+select{min-width:0;max-width:100%}
+.scenario-card h3,.essay-primer-terms>div,p,.tldr,[data-i18n="seq-explain"]{min-width:0;overflow-wrap:anywhere}
+.header-actions>button{overflow-wrap:anywhere;white-space:normal}
+h1,h3,.method-tabs button,.stat-item,.key-term,.world-icon-key li>span:last-child{min-width:0;overflow-wrap:anywhere}
+.stats-strip,div:has(>#ngViewW){flex-wrap:wrap;max-width:100%}
+@media(max-width:360px){.visual-live{box-sizing:border-box;min-width:0;white-space:normal;flex-wrap:wrap}.visual-live>span{min-width:0;overflow-wrap:anywhere}}
 </style>
 <style id="learning-modes-style">
 /* Product information architecture and restrained visual hierarchy. */
@@ -596,7 +610,7 @@ body.dark-mode .r4-language-select {
 }
 
 </style>
-<meta name="ai-playgrounds-version" content="1.9.5">
+<meta name="ai-playgrounds-version" content="1.9.6">
 
 <style id="v14-version-provenance-style">
 .v14-version-provenance{max-width:1180px;margin:22px auto 10px;padding:12px 18px;border-top:1px solid var(--border,#dbe4ee);color:var(--muted,#64748b);font:12px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center}
@@ -878,7 +892,7 @@ body.dark-mode .r4-language-select {
 <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
 <span data-lab-en="🧪 Quick Assign · QA-WUMPUS-01 · 10–15 min" data-lab-zh="🧪 快速任务 · QA-WUMPUS-01 · 10–15 分钟">🧪 Quick Assign · QA-WUMPUS-01 · 10–15 min</span>
 </summary>
-<div class="lab-panel"><div class="quick-assign-meta" data-r4-no-translate="1" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong>QA-WUMPUS-01</strong> · Level 1 · 10–15 min<br><span>Safe, risky, or unknown?</span></div>
+<div class="lab-panel"><div class="quick-assign-meta" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong data-r4-no-translate="1">QA-WUMPUS-01</strong> · <span data-lab-en="Level 1 · 10–15 min" data-lab-zh="级别 1 · 10–15 分钟">Level 1 · 10–15 min</span><br><span data-lab-en="Safe, risky, or unknown?" data-lab-zh="安全、有风险，还是未知？">Safe, risky, or unknown?</span></div>
 <p class="lab-intro" data-lab-en="Run an agent strategy, inspect the world and knowledge map, then explain how percepts support safe action." data-lab-zh="运行智能体策略、检查世界图和知识图，然后解释感知如何支持安全行动。">Run an agent strategy, inspect the world and knowledge map, then explain how percepts support safe action.</p>
 <div class="lab-grid">
 <div class="lab-field">
@@ -898,7 +912,7 @@ body.dark-mode .r4-language-select {
 <textarea data-lab-answer="transfer" data-lab-en="Where else would an AI agent need to act under partial information?" data-lab-zh="还有哪些情境中 AI 智能体需要在部分信息下行动？" id="lab-transfer" placeholder="Where else would an AI agent need to act under partial information?"></textarea>
 </div>
 </div>
-<div aria-live="polite" class="lab-state" data-lab-state="">State snapshot appears here.</div>
+<div aria-live="polite" class="lab-state" data-lab-state="" data-lab-en="State snapshot appears here." data-lab-zh="状态快照将显示在这里。">State snapshot appears here.</div>
 <div class="lab-actions">
 <button class="step-btn" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态" type="button">↻ Refresh state</button>
 <button class="step-btn" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包" type="button">📋 Copy packet</button>
@@ -1344,9 +1358,8 @@ body.dark-mode .r4-language-select {
     link.click();
   });
   document.addEventListener('keydown', e => {
-    if (e.code === 'Space' &&
-        e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' &&
-        e.target.tagName !== 'SELECT') {
+    if (e.code === 'Space' && !e.defaultPrevented &&
+        !e.target.closest('button, summary, a, input, textarea, select, [contenteditable], [role="button"], [role="tab"]')) {
       e.preventDefault();
       document.getElementById('stepBtn').click();
     }
@@ -2454,7 +2467,8 @@ body.dark-mode .r4-language-select {
         scenario.apply();
         card.classList.add('applied');
         btn.textContent = '✓ ' + scenarioGalleryText('sg-applied', 'Applied; compare the result');
-        setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
+        clearTimeout(btn._timer);
+        btn._timer = setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
       });
       card.appendChild(btn);
       root.appendChild(card);
@@ -2528,7 +2542,6 @@ body.dark-mode .r4-language-select {
   const LAB_CONFIG = {"slug": "wumpus-world", "title": "Wumpus World lab packet", "zhTitle": "Wumpus 世界实验包", "fields": [{"label": "Strategy", "selector": "#strategySel", "kind": "selected"}, {"label": "Reveal hidden world", "selector": "#revealChk", "kind": "checked"}, {"label": "Score", "selector": "#scoreV", "kind": "text"}, {"label": "Step", "selector": "#stepV", "kind": "text"}, {"label": "Carrying gold", "selector": "#goldV", "kind": "text"}, {"label": "Arrows", "selector": "#arrowsV", "kind": "text"}, {"label": "Status", "selector": "#statV", "kind": "text"}, {"label": "Reasoning", "selector": "#whyPanel", "kind": "text"}]};
   const root = document.querySelector('.classroom-lab');
   if (!root) return;
-  const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;
   const qs = (sel) => root.querySelector(sel);
   function currentLang() {
     const raw = String(document.documentElement.lang || 'en').toLowerCase();
@@ -2547,6 +2560,8 @@ body.dark-mode .r4-language-select {
   function applyLabLang() {
     const lang = currentLang();
     root.querySelectorAll('[data-lab-en]').forEach(el => {
+      // Captured evidence and an explicitly cleared snapshot are learner state.
+      if (el.matches('[data-lab-state]') && (el.hasAttribute('data-r4-no-translate') || el.dataset.qaStateReady === '1')) return;
       const value = textFor(el, lang);
       if (el.tagName === 'TEXTAREA') el.placeholder = value;
       else el.textContent = value;
@@ -2573,13 +2588,6 @@ body.dark-mode .r4-language-select {
     root.querySelectorAll('textarea[data-lab-answer]').forEach(area => data[area.getAttribute('data-lab-answer')] = area.value.trim());
     return data;
   }
-  function saveDraft() { try { localStorage.setItem(storageKey, JSON.stringify(answers())); } catch (_) {} }
-  function loadDraft() {
-    try {
-      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
-      root.querySelectorAll('textarea[data-lab-answer]').forEach(area => { const key = area.getAttribute('data-lab-answer'); if (saved[key]) area.value = saved[key]; });
-    } catch (_) {}
-  }
   function packet() {
     const lang = currentLang();
     const baseLabels = {title: LAB_CONFIG.title, state:'State snapshot', predict:'Predict', observe:'Observe', explain:'Explain', transfer:'Transfer'};
@@ -2592,7 +2600,7 @@ body.dark-mode .r4-language-select {
       '- Date: ' + new Date().toLocaleString(),
       '',
       '## ' + labels.state,
-      snapshot(),
+      qs('[data-lab-state]')?.textContent || '',
       '',
       '## ' + labels.predict,
       a.predict || '',
@@ -2608,26 +2616,26 @@ body.dark-mode .r4-language-select {
     ].join('\n');
   }
   function setStatus(en, zh) { const el = qs('.lab-status'); if (el) el.textContent = currentLang() === 'zh' ? zh : en; }
-  function refreshState() { const el = qs('[data-lab-state]'); if (el) el.textContent = snapshot(); }
+  function refreshState() { const el = qs('[data-lab-state]'); if (el) { el.setAttribute('data-r4-no-translate',''); el.lang = currentLang(); el.textContent = snapshot(); } }
   async function copyPacket() {
     const text = packet();
     try { await navigator.clipboard.writeText(text); setStatus('Copied local lab packet.', '已复制本地实验包。'); }
-    catch (_) { window.prompt('Copy this lab packet:', text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
+    catch (_) { window.prompt(qs('[data-lab-action=copy]').textContent.trim(), text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
   }
 
   function markdownToPrintableHtml(markdown) {
     const escape = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
     const inline = value => escape(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     const lines = String(markdown).split(/\r?\n/);
-    let html = '', inList = false, inState = false;
+    let html = '', inList = false, inState = false, sectionIndex = 0;
     const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
     for (const raw of lines) {
       const line = raw.trimEnd();
       if (line.startsWith('# ')) { closeList(); html += '<h1>' + inline(line.slice(2)) + '</h1>'; inState=false; }
-      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = /state snapshot|状态记录/i.test(title); }
+      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = sectionIndex++ === 0; }
       else if (line.startsWith('- ')) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inline(line.slice(2)) + '</li>'; }
       else if (!line.trim()) { closeList(); }
-      else { closeList(); html += inState ? '<pre class="state">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
+      else { closeList(); html += inState ? '<pre class="state" lang="' + (qs('[data-lab-state]')?.lang || currentLang()) + '">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
     }
     closeList(); return html;
   }
@@ -2636,28 +2644,19 @@ body.dark-mode .r4-language-select {
     const w = window.open('', '_blank');
     if (!w) { setStatus('Popup blocked. Copy the packet instead.', '弹窗被拦截。请改用复制实验包。'); return; }
     const rendered = markdownToPrintableHtml(packet());
-    const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
+    const html = '<!doctype html><html lang="' + currentLang() + '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
     w.document.open();
     w.document.write(html);
     w.document.close();
     setStatus('Print page opened.', '打印页面已打开。');
   }
-  function clearDraft() {
-    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.value = '');
-    try { localStorage.removeItem(storageKey); } catch (_) {}
-    refreshState(); setStatus('Local draft cleared.', '本地草稿已清除。');
-  }
-  root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.addEventListener('input', saveDraft));
   root.querySelector('[data-lab-action="copy"]')?.addEventListener('click', copyPacket);
   root.querySelector('[data-lab-action="print"]')?.addEventListener('click', printPacket);
   root.querySelector('[data-lab-action="refresh"]')?.addEventListener('click', () => { refreshState(); setStatus('State refreshed.', '状态已更新。'); });
-  root.querySelector('[data-lab-action="clear"]')?.addEventListener('click', clearDraft);
   document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(applyLabLang, 0)));
   window.addEventListener('r4languagechange', () => setTimeout(applyLabLang, 0));
   
-  document.addEventListener('change', refreshState);
-  document.addEventListener('click', (event) => { if (!(event.target instanceof HTMLTextAreaElement)) setTimeout(refreshState, 0); }, true);
-  loadDraft(); applyLabLang(); refreshState();
+  applyLabLang();
 })();
 </script>
 <script>
@@ -2846,8 +2845,8 @@ body.dark-mode .r4-language-select {
   function stateData(){
     const values={};
     document.querySelectorAll('#main input,#main select,#main textarea').forEach(el=>{
-      if(!el.id||el.closest('.classroom-lab'))return;
-      if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;
+      if(!el.id||el.readOnly||el.closest('.classroom-lab,.worksheet,.suite-guided-shell,[data-quick-assign-id]')||['button','submit','reset','file','password','hidden'].includes(el.type))return;
+      if(el.type==='radio'&&!el.checked)return;
       values[el.id]=el.type==='checkbox'?el.checked:el.value;
     });
     return {applet:profile.en.title,slug:profile.slug,exported_at:new Date().toISOString(),values};
@@ -2857,17 +2856,18 @@ body.dark-mode .r4-language-select {
     const share=document.getElementById('shareLink'), embed=document.getElementById('embedLink'), reset=document.getElementById('hardReset');
     const csv=document.getElementById('csvExport'), png=document.getElementById('exportPng');
     const more=document.createElement('details'); more.className='header-more';
-    const summary=document.createElement('summary'); summary.className='header-png'; summary.setAttribute('aria-haspopup','menu'); more.appendChild(summary);
-    const menu=document.createElement('div'); menu.className='header-more-menu'; menu.setAttribute('role','menu'); more.appendChild(menu);
+    const summary=document.createElement('summary'); summary.className='header-png'; more.appendChild(summary);
+    const menu=document.createElement('div'); menu.className='header-more-menu'; more.appendChild(menu);
     if(embed){embed.textContent='📎 Embed in LMS';menu.appendChild(embed)}
     const jsonBtn=document.createElement('button');jsonBtn.type='button';jsonBtn.className='header-png';jsonBtn.dataset.exportState='';menu.appendChild(jsonBtn);
     if(csv){csv.textContent='📊 Data table (.csv)';menu.appendChild(csv)}
     if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
-    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
+    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false;summary.focus()});
     actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
     window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';if(share){share.textContent=zh?'🔗 分享':'🔗 Share';share.title=zh?'复制可在另一浏览器中重新打开当前设置的链接。':'Copy a link that reopens the current settings in another browser.';}summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
     window.refreshAppletToolbar();
     document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&more.open){e.preventDefault();more.open=false;summary.focus()}});
   }
   function terms(){
     const inner=document.querySelector('.interactive-inner'); if(!inner||inner.querySelector('.key-terms'))return;
@@ -2914,6 +2914,7 @@ body.dark-mode .r4-language-select {
     return 'explore';
   };
   const lang = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const routeLocale = () => ['en','zh','vi','es'].find(code => (document.documentElement.lang || 'en').toLowerCase().startsWith(code)) || 'en';
   const labels = {explore:['Explore','探索'],understand:['Understand','理解'],classroom:['Use in class','课堂使用'],access:['Text and keyboard','文本与键盘']};
   const intros = {
     explore:['Start with the featured experiment, then use the scenarios to test a prediction.','从精选实验开始，再使用情境检验预测。'],
@@ -2985,12 +2986,19 @@ body.dark-mode .r4-language-select {
     renderModeChrome();
     if(write){const u=new URL(location.href);u.searchParams.set('mode',mode);history.replaceState(null,'',u)}
   }
-  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
+  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(['ArrowRight','ArrowLeft','Home','End'].includes(e.key)){e.preventDefault();const n=e.key==='Home'?0:e.key==='End'?list.length-1:(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
 
+  // Share only native mechanism inputs, never responses or global preferences.
+  function shareable(el){
+    return !!el && !!el.id && inner.contains(el)
+      && el.matches('input,select,textarea') && !el.readOnly
+      && !['button','submit','reset','file','password','hidden'].includes(el.type)
+      && !el.closest('.classroom-lab,.worksheet,.suite-guided-shell,[data-quick-assign-id]');
+  }
   function statePayload(){
     const out={};
-    inner.querySelectorAll('select,input').forEach(el=>{
-      if(!el.id||el.closest('.classroom-lab')||['button','submit'].includes(el.type))return;
+    inner.querySelectorAll('select,input,textarea').forEach(el=>{
+      if(!shareable(el))return;
       if(el.type==='radio'){if(el.checked)out[el.id]=el.value;return}
       out[el.id]=el.type==='checkbox'?el.checked:el.value;
     });
@@ -2999,33 +3007,65 @@ body.dark-mode .r4-language-select {
   function encode(obj){return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))}
   function decode(s){try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch{return null}}
   function currentExperimentUrl(){
-    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',lang());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
+    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',routeLocale());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
   }
   window.__buildExperimentUrl=()=>currentExperimentUrl().href;
   const status=shell.querySelector('.experiment-status');
-  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(ui[lang()].copyPrompt,u.href)}};
+  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(shell.querySelector('[data-copy-experiment]').textContent.trim(),u.href)}};
 
-  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','')});
-  document.addEventListener('click',e=>{const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode','explore');u.searchParams.set('lang',lang());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
+  // Let Space activate this native button instead of a lab-wide play shortcut.
+  shell.addEventListener('keydown', event => {
+    if (event.key === ' ' && event.target.closest('[data-start-featured]')) event.stopPropagation();
+  });
+
+  // A learner-initiated handoff moves both the viewport and keyboard focus.
+  // Restoring a shared URL or changing locale must never steal focus.
+  function handoffToExperiment() {
+    const target = [...inner.querySelectorAll('select,input:not([type="hidden"]),textarea')]
+      .find(node => !node.closest('.learning-mode-shell,.suite-guided-shell')
+        && !node.disabled && node.getClientRects().length);
+    if (!target) return;
+    target.focus({preventScroll: true});
+    target.scrollIntoView({block: 'center',
+      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
+  }
+
+  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','');handoffToExperiment()});
+  document.addEventListener('click',e=>{if(restoring&&new URLSearchParams(location.search).has('state'))return;const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode',active);if(!restoring)u.searchParams.set('lang',routeLocale());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
 
   let urlSyncTimer=0;
   function scheduleUrlState(e){
     if(restoring)return;
-    const el=e.target;if(!el||!inner.contains(el)||el.closest('.classroom-lab')||!el.matches('input,select'))return;
+    const el=e.target;if(!shareable(el))return;
     clearTimeout(urlSyncTimer);urlSyncTimer=setTimeout(()=>{const u=currentExperimentUrl();history.replaceState(null,'',u)},80);
   }
   document.addEventListener('input',scheduleUrlState,true);document.addEventListener('change',scheduleUrlState,true);
 
   function applyState(obj){
-    if(!obj)return;
-    Object.entries(obj).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else if(el.type==='radio')el.checked=String(el.value)===String(value);else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});
+    if(!obj || typeof obj !== 'object' || Array.isArray(obj) || Object.keys(obj).length > 256)return;
+    Object.entries(obj).forEach(([id,value])=>{
+      const el=document.getElementById(id);if(!shareable(el))return;
+      if(el.type==='checkbox'){if(typeof value!=='boolean')return;el.checked=value}
+      else {
+        if(!['string','number'].includes(typeof value) || String(value).length>10000)return;
+        const text=String(value);
+        if(el.tagName==='SELECT' && ![...el.options].some(option=>option.value===text))return;
+        if(['number','range'].includes(el.type)){
+          if(!text.trim() || !Number.isFinite(Number(text)))return;
+          if(el.min!=='' && Number(text)<Number(el.min))return;
+          if(el.max!=='' && Number(text)>Number(el.max))return;
+        }
+        if(el.type==='radio'){if(el.value!==text)return;el.checked=true}
+        else el.value=text;
+      }
+      el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));
+    });
   }
   function restore(){
     const p=new URL(location.href).searchParams;restoring=true;
-    // Explicit scenario, then saved controls, override native CNF share state.
-    // Retain the established scenario-zero default unless a native formula exists.
-    const nativeFormula=window.APPLET_LEARNER_PROFILE?.slug==='cnf-sat'&&p.has('f');
-    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeFormula))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
+    // Native links precede explicit scenarios and saved controls.
+    const nativeState=slug==='cnf-sat'&&p.has('f')||slug==='knn-classifier'&&['k','ds','task','metric','weight','scale','target'].some(k=>p.has(k));
+    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeState))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
     applyState(decode(p.get('state')||''));
     if(p.get('featured')==='1')sig?.setAttribute('open','');
     restoring=false;
@@ -3041,14 +3081,14 @@ body.dark-mode .r4-language-select {
   }
   setMode(active,false);ensureExploreContent();
   setTimeout(()=>{refineCards();window.renderAppletKeyTerms?.();restore();renderModeChrome()},250);
-  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',lang());history.replaceState(null,'',u)},25)));
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',routeLocale());history.replaceState(null,'',u)},25)));
 })();
 </script>
 
 <script id="applet-translation-completion">
 (() => {
   const exact = {"Skip to applet controls":"跳到交互控件","▸ Show teacher notes (discussion prompts + curriculum)":"▸ 展开教师说明（讨论提示与课程联系）","▾ Hide teacher notes (discussion prompts + curriculum)":"▾ 收起教师说明（讨论提示与课程联系）","idle":"空闲","(empty)":"（空）","(no actions yet)":"（尚无动作）","exploring":"探索中"};
-  const rules = [["^New world\\. Agent at \\(([0-9]+),([0-9]+)\\) facing right\\.$","新世界。智能体位于（\\1,\\2），面向右。"],["^New world\\. Agent at \\(([0-9]+),([0-9]+)\\) facing left\\.$","新世界。智能体位于（\\1,\\2），面向左。"],["^New world\\. Agent at \\(([0-9]+),([0-9]+)\\) facing up\\.$","新世界。智能体位于（\\1,\\2），面向上。"],["^New world\\. Agent at \\(([0-9]+),([0-9]+)\\) facing down\\.$","新世界。智能体位于（\\1,\\2），面向下。"],["^\\(([0-9]+),([0-9]+)\\): -no breeze, -no stench$","（\\1,\\2）：无微风，无臭味"],["^\\(([0-9]+),([0-9]+)\\): breeze, -no stench$","（\\1,\\2）：有微风，无臭味"],["^\\(([0-9]+),([0-9]+)\\): -no breeze, stench$","（\\1,\\2）：无微风，有臭味"],["^\\(([0-9]+),([0-9]+)\\): breeze, stench$","（\\1,\\2）：有微风，有臭味"]].map(([source,target])=>[new RegExp(source),target]);
+  const rules = [["^New world\\. Agent at \\(([0-9]+),([0-9]+)\\) facing right\\.$","新世界。智能体位于（$1,$2），面向右。"],["^New world\\. Agent at \\(([0-9]+),([0-9]+)\\) facing left\\.$","新世界。智能体位于（$1,$2），面向左。"],["^New world\\. Agent at \\(([0-9]+),([0-9]+)\\) facing up\\.$","新世界。智能体位于（$1,$2），面向上。"],["^New world\\. Agent at \\(([0-9]+),([0-9]+)\\) facing down\\.$","新世界。智能体位于（$1,$2），面向下。"],["^\\(([0-9]+),([0-9]+)\\): -no breeze, -no stench$","（$1,$2）：无微风，无臭味"],["^\\(([0-9]+),([0-9]+)\\): breeze, -no stench$","（$1,$2）：有微风，无臭味"],["^\\(([0-9]+),([0-9]+)\\): -no breeze, stench$","（$1,$2）：无微风，有臭味"],["^\\(([0-9]+),([0-9]+)\\): breeze, stench$","（$1,$2）：有微风，有臭味"]].map(([source,target])=>[new RegExp(source),target]);
   const currentLanguage=()=>((document.documentElement.lang||'en').startsWith('zh')?'zh':'en');
   const excluded=node=>node.parentElement && node.parentElement.closest('script,style,noscript,[data-essay-lang="en"]');
   const applyRule=text=>{
@@ -3886,6 +3926,14 @@ document.addEventListener('DOMContentLoaded', () => {
   },
   "vi": {
     "strings": {
+      "Percept": "Thông tin cảm nhận",
+      "Knowledge base (KB)": "Cơ sở tri thức (KB)",
+      "Entailment": "Hệ quả logic",
+      "Safe": "An toàn",
+      "Unknown": "Chưa biết",
+      "Logical agent": "Tác tử logic",
+      "Possible world": "Thế giới khả dĩ",
+      "Inference rule": "Quy tắc suy diễn",
       "\"Pure logic\" strategy. Generate several new worlds and let the agent run. Does the pure-logic agent ALWAYS retrieve the gold?": "Chiến lược \"logic thuần túy\".Tạo ra một số thế giới mới và để tác nhân chạy.Tác nhân logic thuần túy LUÔN LUÔN lấy lại vàng?",
       "#a11yStateSummary": "#a11yStateSummary",
       "#acceptV": "#acceptV",
@@ -4013,7 +4061,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Breeze, stench, glitter, bump, and scream are local evidence, not direct global knowledge.": "Gió, mùi hôi thối, lấp lánh, va chạm và la hét là bằng chứng địa phương, không phải kiến thức trực tiếp toàn cầu.",
       "button,input,select,textarea": ",nhập,chọn,vùng văn bản Nút",
       "button[data-lang]": "[dữ liệu-lang]",
-      "Can a square be safe in reality while the agent cannot prove it safe?": "Một hình vuông có thể an toàn trên thực tế trong khi đại lý không thể chứng minh nó an toàn?",
+      "Can a square be safe in reality while the agent cannot prove it safe?": "Một ô có thể thực sự an toàn dù tác tử chưa chứng minh được điều đó không?",
       "Centroid 1 更新后的大致位置": "Centroid 1 更新后的大致位置",
       "Challenge inactive. Prepare a challenge when you are ready.": "Thử thách không hoạt động.Chuẩn bị một thử thách khi bạn đã sẵn sàng.",
       "Change the closeness rule and predict the neighbors again.": "Thay đổi quy tắc gần và dự đoán lại các hàng xóm.",
@@ -4032,7 +4080,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Classify a frontier square before the move": "Phân loại ô biên giới trước khi di chuyển",
       "Click any cell on the knowledge map to see the inference chain.": "Bấm vào ô bất kỳ trên bản đồ kiến ​​thức để xem chuỗi suy luận.",
       "cnf-sat": "cnf-sat",
-      "Compare hybrid and probabilistic risk choices. Which rule ranks or selects uncertainty?": "So sánh các lựa chọn rủi ro kết hợp và xác suất.Quy tắc nào xếp hạng hoặc lựa chọn sự không chắc chắn?",
+      "Compare hybrid and probabilistic risk choices. Which rule ranks or selects uncertainty?": "So sánh lựa chọn rủi ro của chế độ kết hợp và chế độ xác suất. Quy tắc nào xếp hạng hoặc chọn hành động khi chưa chắc chắn?",
       "Comparison recorded. Explain any discrepancy before trying the transfer case.": "Đã ghi lại so sánh.Giải thích bất kỳ sự khác biệt nào trước khi thử trường hợp chuyển nhượng.",
       "Conditionally independent": "Độc lập có điều kiện",
       "Copy a link that reopens the current settings in another browser.": "Sao chép liên kết mở lại cài đặt hiện tại trong trình duyệt khác.",
@@ -4052,7 +4100,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Explain the difference between lacking a proof of safety and proving danger.": "Giải thích sự khác biệt giữa việc thiếu bằng chứng về an toàn và chứng minh được mối nguy hiểm.",
       "Explain what extra assumption or risk rule allows the hybrid agent to continue.": "Giải thích giả định bổ sung hoặc quy tắc rủi ro nào cho phép tác nhân kết hợp tiếp tục.",
       "Explain why absence of knowledge is not evidence of absence.": "Giải thích tại sao việc thiếu kiến ​​thức không phải là bằng chứng của sự vắng mặt.",
-      "Find a conclusion the local rules miss. What combination of constraints would a complete solver need?": "Tìm một kết luận mà các quy tắc địa phương bỏ lỡ.Một bộ giải hoàn chỉnh cần có sự kết hợp của các ràng buộc nào?",
+      "Find a conclusion the local rules miss. What combination of constraints would a complete solver need?": "Tìm một kết luận mà các quy tắc cục bộ bỏ sót. Một bộ giải đầy đủ cần kết hợp những ràng buộc nào?",
       "Follow a logical agent as it turns breezes and stenches into beliefs about nearby danger. Distinguish what is true, what is proven, and what remains unknown.": "Đi theo một tác nhân logic khi nó biến những làn gió và mùi hôi thối thành niềm tin về mối nguy hiểm gần đó.Phân biệt điều gì là đúng, điều gì đã được chứng minh và điều gì vẫn chưa được biết.",
       "For the prepared population, predict the true-positive and false-positive counts before the posterior probability is revealed.": "Đối với nhóm dân số đã chuẩn bị, hãy dự đoán số lượng dương tính thật và dương tính giả trước khi xác suất sau được tiết lộ.",
       "Full Wumpus agents can represent orientation, forward motion, turning, shooting, bumps, screams, action costs, and utility-sensitive planning. A probabilistic agent needs a prior over hazard layouts and a decision rule that balances survival probability against reward. This applet uses a simplified independent per-cell pit prior for its frontier calculation; changing that prior would change the estimates. This applet separates those layers so learners can see where deduction ends and additional risk assumptions begin.": "Tác nhân Wumpus đầy đủ có thể đại diện cho định hướng, chuyển động về phía trước, rẽ, bắn, va chạm, la hét, chi phí hành động và lập kế hoạch nhạy cảm với tiện ích.Tác nhân xác suất cần có bố cục vượt qua nguy hiểm trước và quy tắc quyết định cân bằng xác suất sống sót với phần thưởng.Applet này sử dụng một hố trên mỗi ô độc lập được đơn giản hóa trước để tính toán biên giới của nó;thay đổi điều đó trước đó sẽ thay đổi ước tính.Applet này tách các lớp đó để người học có thể biết nơi kết thúc quá trình khấu trừ và bắt đầu các giả định rủi ro bổ sung.",
@@ -4088,8 +4136,8 @@ document.addEventListener('DOMContentLoaded', () => {
       "No proof yet: the agent hasn't gathered enough percepts to decide. (Unknown ≠ safe.)": "Chưa có bằng chứng: đại lý chưa thu thập đủ nhận thức để quyết định.(Không xác định ≠ an toàn.)",
       "No: in many worlds the gold is only reachable through cells it can't prove safe, so it climbs out empty-handed.": "Không: ở nhiều thế giới, vàng chỉ có thể tiếp cận được thông qua các tế bào, nó không được chứng minh là an toàn nên nó leo ra tay trắng.",
       "Not enough information yet": "Chưa đủ thông tin",
-      "One complete assignment of hazards and facts that is consistent with the current knowledge.": "Một bài tập đầy đủ về các mối nguy hiểm và sự kiện phù hợp với kiến ​​thức hiện tại.",
-      "Percepts, knowledge bases, entailment, possible worlds, sound inference, unknown versus false, logical agents, probability under uncertainty, and action selection.": "Nhận thức, cơ sở kiến thức, sự kế thừa, các thế giới có thể xảy ra, suy luận hợp lý, không xác định so với sai, tác nhân logic, xác suất trong điều kiện không chắc chắn và lựa chọn hành động.",
+      "One complete assignment of hazards and facts that is consistent with the current knowledge.": "Một cấu hình đầy đủ của các mối nguy hiểm và sự kiện, nhất quán với tri thức hiện tại.",
+      "Percepts, knowledge bases, entailment, possible worlds, sound inference, unknown versus false, logical agents, probability under uncertainty, and action selection.": "Thông tin cảm nhận, cơ sở tri thức, hệ quả logic, các thế giới khả dĩ, suy diễn đúng đắn, phân biệt chưa biết với sai, tác tử logic, xác suất khi chưa chắc chắn và lựa chọn hành động.",
       "Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.": "Chọn một kịch bản, dự đoán điều gì sẽ xảy ra, sau đó áp dụng kịch bản đó và so sánh kết quả với dự đoán của bạn.",
       "Post-exploration prompts:": "Lời nhắc sau khám phá:",
       "Pre-exploration prompts:": "Lời nhắc trước khi khám phá:",
@@ -4133,13 +4181,13 @@ document.addEventListener('DOMContentLoaded', () => {
       "Restart the agent on the same world (keeps the layout).": "Khởi động lại tác nhân trên cùng một thế giới (giữ nguyên bố cục).",
       "Reveal hidden world (teacher view)": "Tiết lộ thế giới ẩn giấu (góc nhìn của giáo viên)",
       "Reveal the world and compare truth with belief": "Tiết lộ thế giới và so sánh sự thật với niềm tin",
-      "Reveal the world and identify one true fact that the agent cannot yet derive.": "Tiết lộ thế giới và xác định một sự thật có thật mà tác nhân chưa thể rút ra được.",
+      "Reveal the world and identify one true fact that the agent cannot yet derive.": "Hiện toàn bộ thế giới và chỉ ra một sự kiện đúng mà tác tử chưa suy ra được.",
       "Reveal what's actually in every cell. Off by default so students see only what the agent knows.": "Tiết lộ những gì thực sự có trong mỗi tế bào.Tắt theo mặc định để học viên chỉ nhìn thấy những gì nhân viên biết.",
       "Reveal world + read the reasoning log": "Khám phá thế giới + đọc nhật ký lý luận",
       "Revealing the hidden world is useful for checking reasoning, but the agent normally acts from percepts and beliefs, not hidden truth.": "Tiết lộ thế giới ẩn giấu rất hữu ích cho việc kiểm tra lý luận, nhưng tác nhân thường hành động dựa trên nhận thức và niềm tin chứ không phải sự thật bị che giấu.",
       "Run an agent strategy, inspect the world and knowledge map, then explain how percepts support safe action.": "Chạy chiến lược đại lý, kiểm tra thế giới và bản đồ kiến ​​thức, sau đó giải thích cách nhận thức hỗ trợ hành động an toàn.",
       "Run one action by the agent.": "Thực hiện một hành động bởi tác nhân.",
-      "Run pure logic until it stops. Does stopping establish that every frontier cell is dangerous?": "Chạy logic thuần túy cho đến khi dừng lại.Việc dừng lại có chứng tỏ rằng mọi tế bào biên giới đều nguy hiểm không?",
+      "Run pure logic until it stops. Does stopping establish that every frontier cell is dangerous?": "Chạy chế độ logic thuần túy đến khi dừng. Việc dừng có chứng minh rằng mọi ô ở biên đều nguy hiểm không?",
       "Same: the scoring rules don't change, so the spread of scores is identical.": "Tương tự: quy tắc tính điểm không thay đổi nên mức độ phân tán điểm là như nhau.",
       "Scenario 1: Pure logic moves only into proven-safe squares": "Kịch bản 1: Logic thuần túy chỉ di chuyển vào các ô vuông đã được chứng minh là an toàn",
       "Scenario 2: The hybrid agent can shoot, gamble, or leave": "Kịch bản 2: Đặc vụ lai có thể bắn, đánh bạc hoặc rời đi",
@@ -4194,11 +4242,11 @@ document.addEventListener('DOMContentLoaded', () => {
       "Switch to the hybrid strategy and compare its actions with pure logic on the same type of world.": "Chuyển sang chiến lược kết hợp và so sánh hành động của nó với logic thuần túy trên cùng một loại thế giới.",
       "Terms used in this explanation": "Các thuật ngữ được sử dụng trong phần giải thích này",
       "Text and keyboard support": "Hỗ trợ văn bản và bàn phím",
-      "The agent cannot see the hidden world. It must update a knowledge base from percepts and act only on what the evidence supports.": "Đặc vụ không thể nhìn thấy thế giới ẩn giấu.Nó phải cập nhật nền tảng kiến ​​thức từ các nhận thức và chỉ hành động dựa trên những gì được chứng minh bằng chứng.",
+      "The agent cannot see the hidden world. It must update a knowledge base from percepts and act only on what the evidence supports.": "Tác tử không nhìn thấy thế giới bị che giấu. Nó phải cập nhật cơ sở tri thức từ thông tin cảm nhận và chỉ hành động dựa trên điều được bằng chứng hỗ trợ.",
       "The agent converts percepts into possible pit, Wumpus, safe, or unknown squares.": "Tác nhân chuyển đổi các nhận thức thành các ô có thể có, Wumpus, an toàn hoặc không xác định.",
-      "The agent has ruled out both a pit and the Wumpus in that square.": "Đặc vụ đã loại trừ cả hố và Wumpus ở ô vuông đó.",
-      "The agent lacks enough evidence to prove the square safe or dangerous.": "Đặc vụ thiếu đủ bằng chứng để chứng minh quảng trường an toàn hay nguy hiểm.",
-      "the agent sees the board; unknown means dangerous; missing knowledge means false; pure logic deliberately gambles; a probability estimate proves safety.": "đại lý nhìn thấy bảng;chưa biết có nghĩa là nguy hiểm;thiếu kiến ​​thức là sai;logic thuần túy cố tình đánh bạc;một ước tính xác suất chứng minh sự an toàn.",
+      "The agent has ruled out both a pit and the Wumpus in that square.": "Tác tử đã loại trừ khả năng có hố và Wumpus trong ô đó.",
+      "The agent lacks enough evidence to prove the square safe or dangerous.": "Tác tử chưa có đủ bằng chứng để chứng minh ô đó an toàn hay nguy hiểm.",
+      "the agent sees the board; unknown means dangerous; missing knowledge means false; pure logic deliberately gambles; a probability estimate proves safety.": "Tác tử nhìn thấy toàn bộ bảng; chưa biết đồng nghĩa với nguy hiểm; thiếu tri thức đồng nghĩa với sai; chiến lược logic thuần túy cố ý đánh cược; một ước lượng xác suất chứng minh được sự an toàn.",
       "The AIMA-inspired probabilistic strategy estimates pit risk over frontier cells under this applet's stated prior assumptions and chooses the lowest estimated risk. The hybrid uses a simpler heuristic fallback; neither rule proves the selected cell safe.": "Chiến lược xác suất lấy cảm hứng từ AIMA ước tính rủi ro tiềm ẩn đối với các ô biên giới theo các giả định trước đó đã nêu của applet này và chọn rủi ro ước tính thấp nhất.Sự kết hợp sử dụng phương pháp dự phòng heuristic đơn giản hơn;không có quy tắc nào chứng minh ô được chọn là an toàn.",
       "The hybrid agent can shoot, gamble, or leave": "Đặc vụ lai có thể bắn, đánh bạc hoặc rời đi",
       "The initial points and centroids are visible. Before the first assignment/update cycle is revealed, predict which cluster Point 1 will join and approximately where Centroid 1 will be after the update.": "Các điểm ban đầu và tâm được hiển thị.Trước khi chu kỳ phân công/cập nhật đầu tiên được tiết lộ, hãy dự đoán cụm nào Điểm 1 sẽ tham gia và vị trí gần đúng của Centroid 1 sau khi cập nhật.",
@@ -4229,9 +4277,9 @@ document.addEventListener('DOMContentLoaded', () => {
       "Use the reasoning log to identify exactly which percept or rule is missing.": "Sử dụng nhật ký lý luận để xác định chính xác nhận thức hoặc quy tắc nào bị thiếu.",
       "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.": "Sử dụng lớp này khi khó kiểm tra hiển thị hình ảnh, màu sắc, hoạt ảnh hoặc tương tác con trỏ.Nó cung cấp đường dẫn bàn phím và bản tóm tắt văn bản về trạng thái applet hiện tại.",
       "uses logical conclusions first, then may shoot, leave, or take a heuristic risk when no safe frontier remains.": "trước tiên sử dụng các kết luận hợp lý, sau đó có thể bắn, bỏ chạy hoặc chấp nhận rủi ro theo kinh nghiệm khi không còn biên giới an toàn.",
-      "What additional assumption is needed to choose among several unknown squares?": "Cần giả định bổ sung gì để chọn trong số nhiều ô vuông chưa biết?",
+      "What additional assumption is needed to choose among several unknown squares?": "Cần giả định bổ sung nào để chọn giữa các ô chưa biết có an toàn hay không?",
       "What can a cautious agent do when the evidence does not prove a safe next move?": "Một đặc vụ thận trọng có thể làm gì khi bằng chứng không chứng minh được bước đi tiếp theo an toàn?",
-      "What does one breeze establish, and what does it leave unresolved?": "Một cơn gió tạo nên điều gì và để lại điều gì chưa được giải quyết?",
+      "What does one breeze establish, and what does it leave unresolved?": "Cảm nhận một luồng gió cho phép kết luận điều gì, và còn điều gì chưa xác định?",
       "What evidence is required before a square can be labeled safe?": "Cần có bằng chứng gì trước khi có thể dán nhãn hình vuông là an toàn?",
       "What is the per-step score penalty in the AIMA-style scoring (just the magnitude, no sign)?": "Hình phạt điểm cho mỗi bước trong cách tính điểm kiểu AIMA là gì (chỉ độ lớn, không có dấu)?",
       "What the agent has inferred from percepts so far.": "Những gì tác nhân đã suy ra từ nhận thức cho đến nay.",
@@ -4307,6 +4355,14 @@ document.addEventListener('DOMContentLoaded', () => {
   },
   "es": {
     "strings": {
+      "Percept": "Percepción",
+      "Knowledge base (KB)": "Base de conocimiento (KB)",
+      "Entailment": "Consecuencia lógica",
+      "Safe": "Segura",
+      "Unknown": "Desconocida",
+      "Logical agent": "Agente lógico",
+      "Possible world": "Mundo posible",
+      "Inference rule": "Regla de inferencia",
       "\"Pure logic\" strategy. Generate several new worlds and let the agent run. Does the pure-logic agent ALWAYS retrieve the gold?": "Estrategia de \"lógica pura\".Genera varios mundos nuevos y deja correr al agente.¿El agente de lógica pura SIEMPRE recupera el oro?",
       "#a11yStateSummary": "#a11yStateSummary",
       "#acceptV": "#acceptV",
@@ -4434,7 +4490,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Breeze, stench, glitter, bump, and scream are local evidence, not direct global knowledge.": "La brisa, el hedor, el brillo, los golpes y los gritos son evidencia local, no conocimiento global directo.",
       "button,input,select,textarea": "botón,entrada,seleccionar,área de texto Botón",
       "button[data-lang]": "[idioma de datos]",
-      "Can a square be safe in reality while the agent cannot prove it safe?": "¿Puede un cuadrado ser seguro en realidad mientras el agente no puede demostrar que sea seguro?",
+      "Can a square be safe in reality while the agent cannot prove it safe?": "¿Puede una casilla ser segura en realidad aunque el agente no pueda demostrarlo?",
       "Centroid 1 更新后的大致位置": "Centroide 1 更新后的大致位置",
       "Challenge inactive. Prepare a challenge when you are ready.": "Desafío inactivo.Prepara un desafío cuando estés listo.",
       "Change the closeness rule and predict the neighbors again.": "Cambia la regla de cercanía y vuelve a predecir los vecinos.",
@@ -4453,7 +4509,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Classify a frontier square before the move": "Clasificar una casilla fronteriza antes del movimiento",
       "Click any cell on the knowledge map to see the inference chain.": "Haga clic en cualquier celda del mapa de conocimiento para ver la cadena de inferencia.",
       "cnf-sat": "cnf-sáb",
-      "Compare hybrid and probabilistic risk choices. Which rule ranks or selects uncertainty?": "Compare opciones de riesgo híbrido y probabilístico.¿Qué regla clasifica o selecciona la incertidumbre?",
+      "Compare hybrid and probabilistic risk choices. Which rule ranks or selects uncertainty?": "Compara las decisiones de riesgo de los modos híbrido y probabilístico. ¿Qué regla ordena o selecciona acciones bajo incertidumbre?",
       "Comparison recorded. Explain any discrepancy before trying the transfer case.": "Comparación registrada.Explique cualquier discrepancia antes de intentar el caso de transferencia.",
       "Conditionally independent": "Condicionalmente independiente",
       "Copy a link that reopens the current settings in another browser.": "Copie un enlace que vuelva a abrir la configuración actual en otro navegador.",
@@ -4473,7 +4529,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Explain the difference between lacking a proof of safety and proving danger.": "Explique la diferencia entre falta de prueba de seguridad y prueba de peligro.",
       "Explain what extra assumption or risk rule allows the hybrid agent to continue.": "Explique qué suposición adicional o regla de riesgo permite que el agente híbrido continúe.",
       "Explain why absence of knowledge is not evidence of absence.": "Explique por qué la ausencia de conocimiento no es evidencia de ausencia.",
-      "Find a conclusion the local rules miss. What combination of constraints would a complete solver need?": "Encuentre una conclusión que las reglas locales pasan por alto.¿Qué combinación de restricciones necesitaría un solucionador completo?",
+      "Find a conclusion the local rules miss. What combination of constraints would a complete solver need?": "Encuentra una conclusión que las reglas locales no deduzcan. ¿Qué combinación de restricciones necesitaría un solucionador completo?",
       "Follow a logical agent as it turns breezes and stenches into beliefs about nearby danger. Distinguish what is true, what is proven, and what remains unknown.": "Sigue a un agente lógico que convierte la brisa y el hedor en creencias sobre peligros cercanos.Distinguir lo que es verdad, lo que está probado y lo que aún se desconoce.",
       "For the prepared population, predict the true-positive and false-positive counts before the posterior probability is revealed.": "Para la población preparada, prediga los recuentos de verdaderos positivos y falsos positivos antes de que se revele la probabilidad posterior.",
       "Full Wumpus agents can represent orientation, forward motion, turning, shooting, bumps, screams, action costs, and utility-sensitive planning. A probabilistic agent needs a prior over hazard layouts and a decision rule that balances survival probability against reward. This applet uses a simplified independent per-cell pit prior for its frontier calculation; changing that prior would change the estimates. This applet separates those layers so learners can see where deduction ends and additional risk assumptions begin.": "Los agentes Wumpus completos pueden representar orientación, movimiento hacia adelante, giros, disparos, golpes, gritos, costos de acción y planificación sensible a la utilidad.Un agente probabilístico necesita una configuración previa de los peligros y una regla de decisión que equilibre la probabilidad de supervivencia con la recompensa.Este subprograma utiliza un pozo independiente simplificado por celda antes para el cálculo de su frontera;cambiar eso antes cambiaría las estimaciones.Este subprograma separa esas capas para que los alumnos puedan ver dónde termina la deducción y comienzan las suposiciones de riesgo adicionales.",
@@ -4509,8 +4565,8 @@ document.addEventListener('DOMContentLoaded', () => {
       "No proof yet: the agent hasn't gathered enough percepts to decide. (Unknown ≠ safe.)": "Aún no hay pruebas: el agente no ha reunido suficientes percepciones para decidir.(Desconocido ≠ seguro).",
       "No: in many worlds the gold is only reachable through cells it can't prove safe, so it climbs out empty-handed.": "No: en muchos mundos sólo se puede acceder al oro a través de celdas que no pueden resultar seguras, por lo que sale con las manos vacías.",
       "Not enough information yet": "Aún no hay suficiente información",
-      "One complete assignment of hazards and facts that is consistent with the current knowledge.": "Una asignación completa de peligros y hechos que sea consistente con el conocimiento actual.",
-      "Percepts, knowledge bases, entailment, possible worlds, sound inference, unknown versus false, logical agents, probability under uncertainty, and action selection.": "Perceptos, bases de conocimiento, vinculación, mundos posibles, inferencia sólida, agentes lógicos desconocidos versus falsos, probabilidad bajo incertidumbre y selección de acciones.",
+      "One complete assignment of hazards and facts that is consistent with the current knowledge.": "Una asignación completa de peligros y hechos compatible con el conocimiento actual.",
+      "Percepts, knowledge bases, entailment, possible worlds, sound inference, unknown versus false, logical agents, probability under uncertainty, and action selection.": "Percepciones, bases de conocimiento, consecuencia lógica, mundos posibles, inferencia correcta, distinción entre desconocido y falso, agentes lógicos, probabilidad bajo incertidumbre y selección de acciones.",
       "Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.": "Elija un escenario, prediga lo que debería suceder, luego aplíquelo y compare el resultado con su predicción.",
       "Post-exploration prompts:": "Indicaciones posteriores a la exploración:",
       "Pre-exploration prompts:": "Avisos previos a la exploración:",
@@ -4554,13 +4610,13 @@ document.addEventListener('DOMContentLoaded', () => {
       "Restart the agent on the same world (keeps the layout).": "Reinicia el agente en el mismo mundo (mantiene el diseño).",
       "Reveal hidden world (teacher view)": "Revelar mundo oculto (vista del profesor)",
       "Reveal the world and compare truth with belief": "Revelar el mundo y comparar la verdad con la creencia.",
-      "Reveal the world and identify one true fact that the agent cannot yet derive.": "Revele el mundo e identifique un hecho verdadero que el agente aún no puede derivar.",
+      "Reveal the world and identify one true fact that the agent cannot yet derive.": "Revela el mundo e identifica un hecho verdadero que el agente aún no puede deducir.",
       "Reveal what's actually in every cell. Off by default so students see only what the agent knows.": "Revela lo que realmente hay en cada celda.Está desactivado de forma predeterminada para que los estudiantes vean solo lo que sabe el agente.",
       "Reveal world + read the reasoning log": "Revelar mundo + leer el registro de razonamiento",
       "Revealing the hidden world is useful for checking reasoning, but the agent normally acts from percepts and beliefs, not hidden truth.": "Revelar el mundo oculto es útil para comprobar el razonamiento, pero el agente normalmente actúa a partir de percepciones y creencias, no de verdades ocultas.",
       "Run an agent strategy, inspect the world and knowledge map, then explain how percepts support safe action.": "Ejecute una estrategia de agente, inspeccione el mundo y el mapa de conocimiento, luego explique cómo las percepciones respaldan la acción segura.",
       "Run one action by the agent.": "Ejecutar una acción por parte del agente.",
-      "Run pure logic until it stops. Does stopping establish that every frontier cell is dangerous?": "Ejecute lógica pura hasta que se detenga.¿La detención establece que cada célula fronteriza es peligrosa?",
+      "Run pure logic until it stops. Does stopping establish that every frontier cell is dangerous?": "Ejecuta la lógica pura hasta que se detenga. ¿Detenerse demuestra que todas las casillas de la frontera son peligrosas?",
       "Same: the scoring rules don't change, so the spread of scores is identical.": "Igual: las reglas de puntuación no cambian, por lo que la distribución de las puntuaciones es idéntica.",
       "Scenario 1: Pure logic moves only into proven-safe squares": "Escenario 1: La lógica pura se mueve sólo hacia cuadrados que han demostrado ser seguros",
       "Scenario 2: The hybrid agent can shoot, gamble, or leave": "Escenario 2: El agente híbrido puede disparar, apostar o irse",
@@ -4615,11 +4671,11 @@ document.addEventListener('DOMContentLoaded', () => {
       "Switch to the hybrid strategy and compare its actions with pure logic on the same type of world.": "Cambia a la estrategia híbrida y compara sus acciones con lógica pura en el mismo tipo de mundo.",
       "Terms used in this explanation": "Términos utilizados en esta explicación",
       "Text and keyboard support": "Soporte de texto y teclado",
-      "The agent cannot see the hidden world. It must update a knowledge base from percepts and act only on what the evidence supports.": "El agente no puede ver el mundo oculto.Debe actualizar una base de conocimientos a partir de percepciones y actuar sólo sobre lo que respalda la evidencia.",
+      "The agent cannot see the hidden world. It must update a knowledge base from percepts and act only on what the evidence supports.": "El agente no puede ver el mundo oculto. Debe actualizar una base de conocimiento a partir de sus percepciones y actuar solo según lo que respalde la evidencia.",
       "The agent converts percepts into possible pit, Wumpus, safe, or unknown squares.": "El agente convierte las percepciones en posibles casillas de pozo, Wumpus, seguras o desconocidas.",
-      "The agent has ruled out both a pit and the Wumpus in that square.": "El agente ha descartado tanto un foso como los Wumpus en esa plaza.",
-      "The agent lacks enough evidence to prove the square safe or dangerous.": "El agente carece de pruebas suficientes para demostrar que la plaza es segura o peligrosa.",
-      "the agent sees the board; unknown means dangerous; missing knowledge means false; pure logic deliberately gambles; a probability estimate proves safety.": "el agente ve el tablero;desconocido significa peligroso;conocimiento faltante significa falso;la lógica pura apuesta deliberadamente;una estimación de probabilidad demuestra la seguridad.",
+      "The agent has ruled out both a pit and the Wumpus in that square.": "El agente ha descartado que haya un pozo o un Wumpus en esa casilla.",
+      "The agent lacks enough evidence to prove the square safe or dangerous.": "El agente no tiene pruebas suficientes para demostrar que la casilla sea segura o peligrosa.",
+      "the agent sees the board; unknown means dangerous; missing knowledge means false; pure logic deliberately gambles; a probability estimate proves safety.": "El agente ve todo el tablero; desconocido significa peligroso; la ausencia de conocimiento significa falsedad; la lógica pura apuesta deliberadamente; una estimación probabilística demuestra que una casilla es segura.",
       "The AIMA-inspired probabilistic strategy estimates pit risk over frontier cells under this applet's stated prior assumptions and chooses the lowest estimated risk. The hybrid uses a simpler heuristic fallback; neither rule proves the selected cell safe.": "La estrategia probabilística inspirada en AIMA estima el riesgo de pozo sobre las celdas fronterizas según los supuestos anteriores establecidos en este subprograma y elige el riesgo estimado más bajo.El híbrido utiliza un recurso heurístico más simple;ninguna regla demuestra que la celda seleccionada sea segura.",
       "The hybrid agent can shoot, gamble, or leave": "El agente híbrido puede disparar, apostar o marcharse.",
       "The initial points and centroids are visible. Before the first assignment/update cycle is revealed, predict which cluster Point 1 will join and approximately where Centroid 1 will be after the update.": "Los puntos iniciales y los centroides son visibles.Antes de que se revele el primer ciclo de asignación/actualización, prediga a qué grupo se unirá el Punto 1 y aproximadamente dónde estará el Centroide 1 después de la actualización.",
@@ -4650,9 +4706,9 @@ document.addEventListener('DOMContentLoaded', () => {
       "Use the reasoning log to identify exactly which percept or rule is missing.": "Utilice el registro de razonamiento para identificar exactamente qué percepto o regla falta.",
       "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.": "Utilice esta capa cuando la visualización, el color, la animación o la interacción del puntero sean difíciles de inspeccionar.Proporciona una ruta de teclado y un resumen de texto del estado actual del subprograma.",
       "uses logical conclusions first, then may shoot, leave, or take a heuristic risk when no safe frontier remains.": "utiliza conclusiones lógicas primero, luego puede disparar, irse o asumir un riesgo heurístico cuando no queda ninguna frontera segura.",
-      "What additional assumption is needed to choose among several unknown squares?": "¿Qué suposición adicional se necesita para elegir entre varios cuadrados desconocidos?",
+      "What additional assumption is needed to choose among several unknown squares?": "¿Qué supuesto adicional hace falta para elegir entre varias casillas cuya seguridad se desconoce?",
       "What can a cautious agent do when the evidence does not prove a safe next move?": "¿Qué puede hacer un agente cauteloso cuando la evidencia no demuestra que el siguiente paso sea seguro?",
-      "What does one breeze establish, and what does it leave unresolved?": "¿Qué establece una brisa y qué deja sin resolver?",
+      "What does one breeze establish, and what does it leave unresolved?": "¿Qué permite concluir una brisa y qué deja sin resolver?",
       "What evidence is required before a square can be labeled safe?": "¿Qué evidencia se requiere antes de que un cuadrado pueda ser etiquetado como seguro?",
       "What is the per-step score penalty in the AIMA-style scoring (just the magnitude, no sign)?": "¿Cuál es la penalización de puntuación por paso en la puntuación estilo AIMA (solo la magnitud, sin signo)?",
       "What the agent has inferred from percepts so far.": "Lo que el agente ha inferido de las percepciones hasta el momento.",
@@ -4755,7 +4811,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 })();
 </script>
-<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["wumpus-world"];if(!row)return;Object.assign(row.vi.strings,{"🧪 Quick Assign · QA-WUMPUS-01 · 10–15 min": "🧪 Bài tập nhanh · QA-WUMPUS-01 · 10–15 phút", "Safe, risky, or unknown?": "An toàn, rủi ro hay chưa biết?", "Run an agent strategy, inspect the world and knowledge map, then explain how percepts support safe action.": "Chạy một chiến lược tác tử, kiểm tra thế giới và bản đồ tri thức rồi giải thích cách percept hỗ trợ hành động an toàn.", "Before stepping, which square or action should be safe, risky, or unknown? Why?": "Trước khi bước tiếp, ô hoặc hành động nào nên được xem là an toàn, rủi ro hay chưa biết? Vì sao?", "Step the agent. Record score, step count, status, and one inference from the knowledge map.": "Bước tác tử. Ghi lại điểm, số bước, trạng thái và một suy luận từ bản đồ tri thức.", "How did the percepts justify the agent's next action or avoid a dangerous square?": "Các percept biện minh cho hành động tiếp theo hoặc giúp tác tử tránh một ô nguy hiểm như thế nào?", "Where else would an AI agent need to act under partial information?": "Ở đâu khác một tác tử AI phải hành động khi chỉ có thông tin một phần?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"🧪 Quick Assign · QA-WUMPUS-01 · 10–15 min": "🧪 Tarea rápida · QA-WUMPUS-01 · 10–15 min", "Safe, risky, or unknown?": "¿Seguro, arriesgado o desconocido?", "Run an agent strategy, inspect the world and knowledge map, then explain how percepts support safe action.": "Ejecuta una estrategia del agente, inspecciona el mundo y el mapa de conocimiento y explica cómo las percepciones justifican una acción segura.", "Before stepping, which square or action should be safe, risky, or unknown? Why?": "Antes de avanzar, ¿qué casilla o acción debería ser segura, arriesgada o desconocida? ¿Por qué?", "Step the agent. Record score, step count, status, and one inference from the knowledge map.": "Avanza el agente. Registra la puntuación, el número de pasos, el estado y una inferencia del mapa de conocimiento.", "How did the percepts justify the agent's next action or avoid a dangerous square?": "¿Cómo justificaron las percepciones la siguiente acción del agente o evitaron una casilla peligrosa?", "Where else would an AI agent need to act under partial information?": "¿En qué otros contextos tendría que actuar un agente de IA con información parcial?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script>
+<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["wumpus-world"];if(!row)return;Object.assign(row.vi.strings,{"Level 1 · 10–15 min": "Cấp độ 1 · 10–15 phút", "🧪 Quick Assign · QA-WUMPUS-01 · 10–15 min": "🧪 Bài tập nhanh · QA-WUMPUS-01 · 10–15 phút", "Safe, risky, or unknown?": "An toàn, rủi ro hay chưa biết?", "Run an agent strategy, inspect the world and knowledge map, then explain how percepts support safe action.": "Chạy một chiến lược tác tử, kiểm tra thế giới và bản đồ tri thức rồi giải thích cách percept hỗ trợ hành động an toàn.", "Before stepping, which square or action should be safe, risky, or unknown? Why?": "Trước khi bước tiếp, ô hoặc hành động nào nên được xem là an toàn, rủi ro hay chưa biết? Vì sao?", "Step the agent. Record score, step count, status, and one inference from the knowledge map.": "Bước tác tử. Ghi lại điểm, số bước, trạng thái và một suy luận từ bản đồ tri thức.", "How did the percepts justify the agent's next action or avoid a dangerous square?": "Các percept biện minh cho hành động tiếp theo hoặc giúp tác tử tránh một ô nguy hiểm như thế nào?", "Where else would an AI agent need to act under partial information?": "Ở đâu khác một tác tử AI phải hành động khi chỉ có thông tin một phần?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"Level 1 · 10–15 min": "Nivel 1 · 10–15 min", "🧪 Quick Assign · QA-WUMPUS-01 · 10–15 min": "🧪 Tarea rápida · QA-WUMPUS-01 · 10–15 min", "Safe, risky, or unknown?": "¿Seguro, arriesgado o desconocido?", "Run an agent strategy, inspect the world and knowledge map, then explain how percepts support safe action.": "Ejecuta una estrategia del agente, inspecciona el mundo y el mapa de conocimiento y explica cómo las percepciones justifican una acción segura.", "Before stepping, which square or action should be safe, risky, or unknown? Why?": "Antes de avanzar, ¿qué casilla o acción debería ser segura, arriesgada o desconocida? ¿Por qué?", "Step the agent. Record score, step count, status, and one inference from the knowledge map.": "Avanza el agente. Registra la puntuación, el número de pasos, el estado y una inferencia del mapa de conocimiento.", "How did the percepts justify the agent's next action or avoid a dangerous square?": "¿Cómo justificaron las percepciones la siguiente acción del agente o evitaron una casilla peligrosa?", "Where else would an AI agent need to act under partial information?": "¿En qué otros contextos tendría que actuar un agente de IA con información parcial?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script>
 (() => {
   'use strict';
   // v1.6.1: preserve canonical source text across VI/ES round trips, refresh native layers before overlay activation, and cancel superseded locale timers.
@@ -4767,6 +4823,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const rootData = window.__AI_PLAYGROUNDS_R4_LOCALES || {};
   rootData.common = rootData.common || {};
   rootData.common.vi = Object.assign({
+    "↺ Reset all": "↺ Đặt lại",
+    "↺ New world": "↺ Thế giới mới",
+    "Before you read": "Trước khi đọc",
+    "Misconceptions to test:": "Những hiểu lầm cần kiểm tra:",
+    "Core question:": "Câu hỏi trọng tâm:",
+    "Run and watch:": "Chạy và quan sát:",
+    "Predict first:": "Dự đoán trước:",
+    "Explain afterward:": "Giải thích sau:",
+    "Apply and compare": "Áp dụng và so sánh",
+    "Start with the featured experiment, then use the scenarios to test a prediction.": "Bắt đầu với thí nghiệm nổi bật, rồi dùng các tình huống để kiểm tra dự đoán.",
+    "Open the mechanism view and lesson sequence when you need to explain why the result changed.": "Mở phần mô tả cơ chế và trình tự bài học khi cần giải thích vì sao kết quả thay đổi.",
+    "Collect reasoning with the worksheet or the local student response packet.": "Ghi lại lập luận bằng phiếu học tập hoặc bộ câu trả lời của học sinh được lưu cục bộ.",
+    "Use the text-state description and keyboard guidance when the visual display is not enough.": "Dùng mô tả trạng thái bằng văn bản và hướng dẫn bàn phím khi hình ảnh hiển thị chưa đủ.",
+    "Applet learning modes": "Các chế độ học tập của applet",
+    "Copy this experiment": "Sao chép thí nghiệm này",
+    "Experiment link copied.": "Đã sao chép liên kết thí nghiệm.",
+    "Copy this experiment URL": "Sao chép URL của thí nghiệm này",
+    "Understand": "Tìm hiểu",
+    "Use in class": "Dùng trong lớp",
+    "Text and keyboard": "Văn bản và bàn phím",
+    "What this applet shows": "Điều applet này minh họa",
+
     "Jump to latest": "Về trạng thái mới nhất",
     "Jump to frame": "Đến khung",
     "Jump to iteration": "Đến lần lặp",
@@ -4804,6 +4882,28 @@ document.addEventListener('DOMContentLoaded', () => {
     'Wumpus World': 'Thế giới Wumpus'
   }, rootData.common.vi || {});
   rootData.common.es = Object.assign({
+    "↺ Reset all": "↺ Restablecer",
+    "↺ New world": "↺ Nuevo mundo",
+    "Before you read": "Antes de leer",
+    "Misconceptions to test:": "Ideas erróneas que comprobar:",
+    "Core question:": "Pregunta central:",
+    "Run and watch:": "Ejecuta y observa:",
+    "Predict first:": "Predice primero:",
+    "Explain afterward:": "Explica después:",
+    "Apply and compare": "Aplicar y comparar",
+    "Start with the featured experiment, then use the scenarios to test a prediction.": "Empieza con el experimento destacado y usa los escenarios para comprobar una predicción.",
+    "Open the mechanism view and lesson sequence when you need to explain why the result changed.": "Abre la vista del mecanismo y la secuencia de la lección para explicar por qué cambió el resultado.",
+    "Collect reasoning with the worksheet or the local student response packet.": "Recoge el razonamiento con la hoja de actividades o el cuaderno de respuestas del estudiante guardado localmente.",
+    "Use the text-state description and keyboard guidance when the visual display is not enough.": "Usa la descripción textual del estado y la guía del teclado cuando la visualización no sea suficiente.",
+    "Applet learning modes": "Modos de aprendizaje del applet",
+    "Copy this experiment": "Copiar este experimento",
+    "Experiment link copied.": "Enlace del experimento copiado.",
+    "Copy this experiment URL": "Copia la URL de este experimento",
+    "Understand": "Comprender",
+    "Use in class": "Usar en clase",
+    "Text and keyboard": "Texto y teclado",
+    "What this applet shows": "Lo que muestra este applet",
+
     "Jump to latest": "Ir al estado más reciente",
     "Jump to frame": "Ir al estado",
     "Jump to iteration": "Ir a la iteración",
@@ -4845,6 +4945,43 @@ document.addEventListener('DOMContentLoaded', () => {
   // R4 stays invisible until the applet-specific VI/ES catalog is complete.
   if (!data || data.ready !== true || !data.vi || !data.es) return;
 
+  // Scope navigation labels to the footer; Source in a mechanism is not source code.
+  const footerLabels = {"vi":{"footer-top":"↑ Lên đầu trang","footer-portfolio":"Hồ sơ","footer-source":"Mã nguồn","footer-issue":"Báo lỗi"},"es":{"footer-top":"↑ Volver arriba","footer-portfolio":"Portafolio","footer-source":"Código fuente","footer-issue":"Informar de un problema"}};
+  // Teacher headings and short rich-text fragments never enter substring lookup.
+  const teacherLabels = {vi: {'For teachers': 'Dành cho giáo viên', 'Curriculum:': 'Nội dung học:', 'Pre-exploration prompts:': 'Câu hỏi trước khi khám phá:', 'Post-exploration prompts:': 'Câu hỏi sau khi khám phá:'}, es: {'For teachers': 'Para docentes', 'Curriculum:': 'Contenidos:', 'Pre-exploration prompts:': 'Preguntas antes de explorar:', 'Post-exploration prompts:': 'Preguntas después de explorar:'}};
+  // Exact original-header titles only; never translate body or learner text in ZH.
+  const headerTitlesZh = {
+    "Copy an <iframe> snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.": "复制用于嵌入学习管理系统（LMS）的 <iframe> 代码。隐藏页头和说明，仅显示交互区。",
+    "Reset everything to defaults: empty grid, A*, default start and goal positions.": "恢复默认设置：空网格、A* 算法及默认起点和终点。",
+    "Reset everything to defaults: TSP, best-improvement, T₀=10, cooling=0.995.": "恢复默认设置：旅行商问题、最佳改进法、初始温度 T₀=10、降温系数 0.995。",
+    "Generate a new random world, clear the log, reset score.": "生成新的随机世界，清空日志并重置分数。",
+    "Reset input to default 'modus ponens' example.": "将输入恢复为默认的“肯定前件式”示例。",
+    "Reset to default disease scenario: prior=1%, sensitivity=99%, specificity=95%, population=10000.": "恢复默认疾病检测情景：患病率 1%、灵敏度 99%、特异度 95%、人数 10000。",
+    "Reset CPTs to AIMA defaults and clear all evidence.": "将条件概率表恢复为 AIMA 默认值，并清除所有观测证据。",
+    "Reset everything to defaults: two-moons dataset, k=5, both visualizations on.": "恢复默认设置：双月数据集、k=5，并开启两个可视化图层。",
+    "Reset everything: sin truth, n=20 points, σ=0.2 noise, degree 3, λ=0.": "恢复默认设置：真实函数为 sin、n=20 个点、噪声 σ=0.2、多项式次数为 3、λ=0。",
+    "Reset everything to default: two-moons dataset, [2-6-4-1] architecture, ReLU activation, LR=0.03.": "恢复默认设置：双月数据集、[2-6-4-1] 网络结构、ReLU 激活函数、学习率 0.03。",
+    "Reset everything to the default: Gaussian mixture dataset, k=3, random init.": "恢复默认设置：高斯混合数据集、k=3、随机初始化。",
+    "Reset to default: cross input, Sobel-X edge kernel, abs ON, ReLU OFF.": "恢复默认设置：十字形输入、Sobel-X 边缘检测核，开启绝对值变换，关闭 ReLU。",
+    "Clear Q-values; restore the default grid, learning rate, discount factor, exploration rate and step reward.": "清空 Q 值；将网格、学习率、折扣因子、探索率和每步奖励恢复为默认值。",
+    "Download the current grid + search trace as a PNG.": "将当前网格和搜索轨迹下载为 PNG 图片。",
+    "Download the current state visualization as a PNG.": "将当前状态的可视化下载为 PNG 图片。",
+    "Download the world view as a PNG.": "将世界视图下载为 PNG 图片。",
+    "Download the population dot-grid as a PNG.": "将人群点阵图下载为 PNG 图片。",
+    "Download the network diagram as a PNG.": "将网络图下载为 PNG 图片。",
+    "Download the current points + decision boundary as a PNG.": "将当前数据点和决策边界下载为 PNG 图片。",
+    "Download the fit canvas as a PNG.": "将拟合图下载为 PNG 图片。",
+    "Download the decision-boundary canvas as a PNG.": "将决策边界图下载为 PNG 图片。",
+    "Download the current visualization as a PNG image (for slides).": "将当前可视化下载为 PNG 图片（可用于幻灯片）。",
+    "Download the convolution output as a PNG.": "将卷积输出下载为 PNG 图片。",
+    "Download the current grid + Q-value heatmap as a PNG.": "将当前网格和 Q 值热力图下载为 PNG 图片。",
+    "Download grid dimensions and search results (path coordinates, visited-node count, frontier snapshot) as CSV.": "将网格尺寸和搜索结果（路径坐标、已访问节点数、搜索前沿快照）下载为 CSV。",
+    "Download per-iteration costs, algorithm, problem, iteration count and best cost as CSV.": "将每次迭代的代价、算法、问题、迭代次数和最佳代价下载为 CSV。",
+    "Download the current Bayes scenario (prior, sens, spec, population) and the resulting contingency table + posteriors as CSV.": "将当前贝叶斯情景（先验概率、灵敏度、特异度、人数）、列联表和后验概率下载为 CSV。",
+    "Download training + validation datasets and the per-degree MSE table as CSV.": "将训练集、验证集和各多项式次数的均方误差表下载为 CSV。",
+    "Download points + cluster assignments + centroid positions as CSV (two sections in one file).": "将数据点、所属簇和质心位置下载为 CSV（同一文件内分为两个部分）。",
+    "Download episode return history + the current Q-table snapshot as CSV.": "将各回合的回报历史和当前 Q 表快照下载为 CSV。"
+  };
   let current = 'en';
   let applying = false;
   let nativeLanguageClick = false;
@@ -4913,6 +5050,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function skipNode(node) {
     const el = node && (node.nodeType === 1 ? node : node.parentElement);
     if (!el) return true;
+    if (el.closest('.suite-guided-actual')) return false;
     return !!el.closest('script,style,noscript,template,code,pre,kbd,samp,.lang-switch,[data-r4-no-translate]');
   }
 
@@ -4931,7 +5069,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const live = node.nodeValue || '';
     if (!originalText.has(node)) originalText.set(node, live);
     const source = textSource(node);
-    const translated = translateString(source);
+    const footerKey = node.parentElement?.closest('footer [data-i18n]')?.dataset.i18n;
+    // Match formatted teacher prose only; retain source and outer whitespace.
+    const proseKey = node.parentElement?.closest('.for-teachers')
+      ? source.replace(/\s+/g, ' ').trim() : null;
+    const proseMap = proseKey === null ? null
+      : Object.assign({}, mapFor(current), data[current]?.teacher || {}, teacherLabels[current] || {});
+    const prose = proseMap && Object.prototype.hasOwnProperty.call(proseMap, proseKey)
+      ? source.replace(/\S(?:[\s\S]*\S)?/, () => proseMap[proseKey]) : null;
+    const translated = footerLabels[current]?.[footerKey] || prose || translateString(source);
     if (translated !== live) {
       lastAppliedText.set(node, translated);
       applying = true;
@@ -4940,15 +5086,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function translateAttributes(el) {
+  function translateAttributes(el, attributes = ['title', 'aria-label', 'placeholder']) {
     if (!el || el.nodeType !== 1 || skipNode(el)) return;
     const state = attrState(el);
-    for (const attr of ['title', 'aria-label', 'placeholder']) {
+    for (const attr of attributes) {
       if (!el.hasAttribute(attr)) continue;
       const live = el.getAttribute(attr) || '';
       if (!Object.prototype.hasOwnProperty.call(state, attr)) state[attr] = live;
       const source = Object.prototype.hasOwnProperty.call(state, attr) ? state[attr] : live;
-      const translated = translateString(source);
+      const zhTitle = current === 'zh' && attr === 'title' && el.closest('.header-actions')
+        && ['hardReset', 'embedLink', 'csvExport', 'exportPng'].includes(el.id)
+        ? headerTitlesZh[source] : null;
+      const translated = current === 'zh'
+        ? (typeof zhTitle === 'string' ? zhTitle : live) : translateString(source);
       if (translated !== live) {
         const applied = lastAppliedAttrs.get(el) || {};
         applied[attr] = translated;
@@ -4958,6 +5108,14 @@ document.addEventListener('DOMContentLoaded', () => {
         applying = false;
       }
     }
+  }
+
+  function refreshHeaderTitles() {
+    if (current !== 'en' && current !== 'zh') return;
+    document.querySelectorAll('.header-actions #hardReset,.header-actions #embedLink,.header-actions #csvExport,.header-actions #exportPng').forEach(el => {
+      const source = originalAttrs.get(el)?.title ?? el.getAttribute('title');
+      if (Object.prototype.hasOwnProperty.call(headerTitlesZh, source)) translateAttributes(el, ['title']);
+    });
   }
 
   function translateTree(root = document.body) {
@@ -5064,24 +5222,28 @@ document.addEventListener('DOMContentLoaded', () => {
     window.tr = wrapped;
   }
 
-  function patchClipboard() {
-    try {
-      const clipboard = navigator.clipboard;
-      if (!clipboard || typeof clipboard.writeText !== 'function' || clipboard.writeText.__r4Wrapped) return;
-      const base = clipboard.writeText.bind(clipboard);
-      const wrapped = text => base(current === 'vi' || current === 'es' ? translateString(String(text), current) : text);
-      wrapped.__r4Wrapped = true;
-      clipboard.writeText = wrapped;
-    } catch (_) {}
-  }
-
   function selectControl() {
     return document.querySelector('.r4-language-select');
   }
 
   function updateSelect(locale) {
+    const names = {
+      en: ['Language', 'Toggle dark or light theme'],
+      zh: ['语言', '切换深色或浅色主题'],
+      vi: ['Ngôn ngữ', 'Chuyển giao diện tối hoặc sáng'],
+      es: ['Idioma', 'Cambiar entre tema oscuro y claro']
+    }[locale];
     const select = selectControl();
-    if (select) select.value = locale;
+    if (select) {
+      select.value = locale;
+      select.setAttribute('aria-label', names[0]);
+    }
+    const theme = document.getElementById('themeToggle');
+    if (theme) {
+      theme.setAttribute('data-r4-no-translate', '1');
+      theme.setAttribute('aria-label', names[1]);
+      theme.setAttribute('title', names[1]);
+    }
   }
 
   function activateOverlay(locale) {
@@ -5091,7 +5253,7 @@ document.addEventListener('DOMContentLoaded', () => {
     current = locale;
     document.documentElement.lang = locale;
     wrapTr();
-    patchClipboard();
+    // Exporters localize their labels; never translate learner-authored clipboard data.
     applyMetadata(locale);
     translateTree(document.body);
     updateSelect(locale);
@@ -5113,6 +5275,7 @@ document.addEventListener('DOMContentLoaded', () => {
       clickNative(locale);
       document.documentElement.lang = locale === 'zh' ? 'zh' : 'en';
       refreshKnownLayers();
+      refreshHeaderTitles();
       if (locale === 'en') {
         const heading = document.querySelector('h1');
         if (heading && canonicalHeadingText) {
@@ -5161,10 +5324,10 @@ document.addEventListener('DOMContentLoaded', () => {
     for (const mutation of mutations) {
       if (mutation.type === 'characterData') {
         const live = mutation.target.nodeValue || '';
-        if (lastAppliedText.get(mutation.target) === live) {
-          lastAppliedText.delete(mutation.target);
-          continue;
-        }
+        // Several queued records can observe the same final translated value.
+        // Retain its marker until a genuinely different applet value arrives.
+        if (lastAppliedText.get(mutation.target) === live) continue;
+        lastAppliedText.delete(mutation.target);
         // Applet-authored dynamic state is always a new source value, including
         // while English or Chinese is active. This is what prevents a later locale
         // switch from restoring stale page-load state.
@@ -5174,15 +5337,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const attr = mutation.attributeName;
         const live = mutation.target.getAttribute(attr) || '';
         const applied = lastAppliedAttrs.get(mutation.target) || {};
-        if (applied[attr] === live) {
-          delete applied[attr];
-          lastAppliedAttrs.set(mutation.target, applied);
-          continue;
-        }
+        if (applied[attr] === live) continue;
+        delete applied[attr];
         const state = attrState(mutation.target);
         state[attr] = live;
-        if (current === 'vi' || current === 'es') translateAttributes(mutation.target);
+        // Do not overwrite a sibling attribute whose native write is still queued.
+        if (current === 'vi' || current === 'es' || current === 'zh' && attr === 'title') translateAttributes(mutation.target, [attr]);
       } else {
+        // The native original galleries have no Chinese confirmation entry.
+        // Localize only this generated button message, never learner text.
+        if (current === 'zh' && mutation.target.matches?.('.scenario-card button')
+            && mutation.target.textContent === '✓ Applied; compare the result') {
+          mutation.target.textContent = '✓ 已应用；请比较结果';
+        }
+        // Locale renderers replace the original gallery's cards, not its model.
+        // Carry the last applied marker by stable ID; never click/reapply a case.
+        if (mutation.target.id === 'scenarioGalleryCards' && !mutation.target.querySelector('.applied')) {
+          const previous = [...mutation.removedNodes].find(node => node.nodeType === 1 && node.matches('.scenario-card.applied'));
+          const index = previous?.dataset.scenarioIndex;
+          if (index !== undefined) [...mutation.target.children]
+            .find(node => node.dataset.scenarioIndex === index)?.classList.add('applied');
+        }
         mutation.addedNodes.forEach(node => {
           if (current === 'vi' || current === 'es') translateTree(node);
         });
@@ -5196,7 +5371,7 @@ document.addEventListener('DOMContentLoaded', () => {
     canonicalHeadingText = initialHeading ? initialHeading.textContent : '';
     installSelect();
     wrapTr();
-    patchClipboard();
+    // Exporters localize their labels; never translate learner-authored clipboard data.
     observer.observe(document.body, { subtree:true, childList:true, characterData:true, attributes:true, attributeFilter:['title','aria-label','placeholder'] });
     // Legacy language handlers in some applets rebuild or reset the experiment as
     // part of their EN/ZH switch. R4 invokes those buttons only as an internal
@@ -5216,6 +5391,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (nativeLanguageClick) return;
         const locale = normalizeLocale(button.dataset.lang);
         current = locale;
+        refreshHeaderTitles();
         updateSelect(locale);
         persist(locale);
       });
@@ -5236,10 +5412,10 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 </script>
-<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.5</div>
+<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.6</div>
 
 <!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
-<script data-ai-playgrounds-analytics="v1.9.5">
+<script data-ai-playgrounds-analytics="v1.9.6">
 (function () {
   'use strict';
   var CANONICAL_HOST = 'lmdixon23.github.io';
@@ -5355,5 +5531,116 @@ document.addEventListener('DOMContentLoaded', () => {
   sendPage();
 })();
 </script>
+<script id="classroom-draft-runtime">
+(() => {
+  'use strict';
+  const root = document.querySelector('[data-quick-assign-id]');
+  if (!root) return;
+  const original = !!root.querySelector('[data-lab-answer]');
+  const fields = [...root.querySelectorAll('[data-lab-answer],[data-qa-answer]')];
+  const state = root.querySelector('[data-lab-state],[data-qa-modern-state]');
+  const status = root.querySelector('.lab-status');
+  const slug = window.APPLET_LEARNER_PROFILE?.slug;
+  const key = original ? 'ai-playgrounds-lab-' + slug : 'ai-playgrounds-quick-assign:' + root.dataset.quickAssignId;
+  const locale = () => document.documentElement.lang.toLowerCase().split('-')[0];
+  const COPY = {
+    en: {confirm:'Clear this lab’s saved answers and captured evidence? This cannot be undone.', failed:'Your draft could not be saved in this browser. Copy or print it before closing this page.', cleared:'Local answers and captured evidence cleared.', removeFailed:'The saved draft could not be cleared. Your answers are still here.', restoreFailed:'The saved draft could not be read. Copy or print your work before reloading; clear the draft only if you want to discard it.'},
+    zh: {confirm:'清除此实验已保存的答案和状态记录？此操作无法撤销。', failed:'无法在此浏览器中保存草稿。关闭页面前请复制或打印。', cleared:'已清除本地答案和状态记录。', removeFailed:'无法清除已保存的草稿。你的答案仍保留在这里。', restoreFailed:'无法读取已保存的草稿。重新加载前请复制或打印你的内容；只有确认要丢弃草稿时才清除它。'},
+    vi: {confirm:'Xóa câu trả lời đã lưu và bằng chứng đã chụp của bài này? Không thể hoàn tác.', failed:'Không thể lưu bản nháp trong trình duyệt này. Hãy sao chép hoặc in trước khi đóng trang.', cleared:'Đã xóa câu trả lời cục bộ và bằng chứng đã chụp.', removeFailed:'Không thể xóa bản nháp đã lưu. Câu trả lời của bạn vẫn còn ở đây.', restoreFailed:'Không thể đọc bản nháp đã lưu. Hãy sao chép hoặc in bài trước khi tải lại; chỉ xóa bản nháp nếu muốn bỏ nó.'},
+    es: {confirm:'¿Borrar las respuestas guardadas y la evidencia capturada de este laboratorio? No se puede deshacer.', failed:'No se pudo guardar el borrador en este navegador. Cópialo o imprímelo antes de cerrar esta página.', cleared:'Se borraron las respuestas locales y la evidencia capturada.', removeFailed:'No se pudo borrar el borrador guardado. Tus respuestas siguen aquí.', restoreFailed:'No se pudo leer el borrador guardado. Copia o imprime tu trabajo antes de recargar; bórralo solo si deseas descartarlo.'}
+  };
+  const copy = () => COPY[locale()] || COPY.en;
+  const message = name => { if (status) { status.textContent = copy()[name]; status.dataset.draftError = ['failed','removeFailed','restoreFailed'].includes(name) ? name : ''; } };
+  new MutationObserver(() => { if (status?.dataset.draftError) message(status.dataset.draftError); }).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+  const captured = () => !!state && !!state.textContent.trim() && (state.hasAttribute('data-r4-no-translate') || state.dataset.qaStateReady === '1');
+  function retainCapture(text, lang) {
+    if (!state) return;
+    state.textContent = text;
+    state.lang = ['en','zh','vi','es'].includes(lang) ? lang : 'en';
+    state.setAttribute('data-r4-no-translate','');
+    state.dataset.qaStateReady = '1';
+    for (const n of [13,14,15]) state.setAttribute('data-lab'+n+'-no-translate','');
+    for (const lang of ['en','zh','vi','es']) state.removeAttribute('data-ap-'+lang);
+  }
+  const fieldName = field => field.dataset.labAnswer || field.dataset.qaAnswer;
+  const dirty = new Set();
+  let captureDirty = false, unreadable = false;
+  function readDraft() {
+    const data = JSON.parse(localStorage.getItem(key) || '{}');
+    if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Invalid draft');
+    for (const field of fields) if (data[fieldName(field)] !== undefined && typeof data[fieldName(field)] !== 'string') throw new Error('Invalid answer');
+    if (data.__capture !== undefined && typeof data.__capture?.text !== 'string') throw new Error('Invalid capture');
+    unreadable = false;
+    return data;
+  }
+  function applyDraft(data) {
+    for (const field of fields) if (!dirty.has(fieldName(field))) field.value = data[fieldName(field)] || '';
+    if (!captureDirty) {
+      if (data.__capture) retainCapture(data.__capture.text, data.__capture.lang);
+      else if (captured()) retainCapture('', locale());
+    }
+  }
+  function save(field, refresh = false) {
+    if (field) dirty.add(fieldName(field));
+    captureDirty ||= refresh;
+    try {
+      // Merge only this tab's edits into the latest stored packet. A stale tab
+      // must not replace another tab's different answer or explicit capture.
+      const latest = readDraft();
+      const data = Object.fromEntries(fields.map(field => {
+        const name = fieldName(field);
+        return [name, dirty.has(name) ? field.value : latest[name] || ''];
+      }));
+      if (captureDirty && captured()) data.__capture = {text:state.textContent, lang:state.lang};
+      else if (!captureDirty && latest.__capture) data.__capture = latest.__capture;
+      localStorage.setItem(key, JSON.stringify(data));
+      dirty.clear(); captureDirty = false;
+      if (status?.dataset.draftError || Object.values(COPY).some(value => status?.textContent === value.cleared)) { status.textContent=''; delete status.dataset.draftError; }
+    } catch (_) { message('failed'); }
+  }
+  try { applyDraft(readDraft()); }
+  catch (_) { unreadable = true; message('restoreFailed'); }
+  window.addEventListener('storage', event => {
+    if (event.key !== key && event.key !== null) return;
+    try {
+      if (event.storageArea !== localStorage) return;
+      // Read the latest value, not a possibly superseded queued storage event.
+      applyDraft(readDraft());
+    } catch (_) { unreadable = true; message('restoreFailed'); }
+  });
+  // One owner saves the complete packet before legacy answer-only handlers run.
+  document.addEventListener('input', event => {
+    if (!fields.includes(event.target)) return;
+    event.stopImmediatePropagation();
+    save(event.target);
+  }, true);
+  document.addEventListener('click', event => {
+    const button = event.target.closest?.('[data-lab-action],[data-qa-action]');
+    if (!button || !root.contains(button)) return;
+    const action = button.dataset.labAction || button.dataset.qaAction;
+    if (action === 'refresh' || action === 'refresh-state') {
+      // Capture is synchronous in each native packet; persist its finished result.
+      queueMicrotask(() => save(null, true));
+      return;
+    }
+    if (action !== 'clear') return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (!fields.some(field => field.value) && !captured() && !unreadable) return;
+    if (!window.confirm(copy().confirm)) return;
+    try { localStorage.removeItem(key); }
+    catch (_) { message('removeFailed'); return; }
+    dirty.clear(); captureDirty = false; unreadable = false;
+    for (const field of fields) field.value = '';
+    if (state) {
+      // An empty capture is intentional; do not restore or recapture live results.
+      retainCapture('', locale());
+    }
+    message('cleared');
+    fields[0]?.focus();
+  }, true);
+})();
+</script>
+
 </body>
 </html>

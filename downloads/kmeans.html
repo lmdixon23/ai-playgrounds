@@ -2,7 +2,7 @@
 
 <html lang="en">
 <head>
-<!-- Standalone AI Playgrounds v1.9.5 export.
+<!-- Standalone AI Playgrounds v1.9.6 export.
 MIT License
 
 Copyright (c) 2026 Logan M. Dixon
@@ -633,6 +633,20 @@ SOFTWARE.
 /* Learner-facing terminology, compact glossary, and consistent action hierarchy. */
 .header-actions{align-items:center}.header-more{position:relative}.header-more>summary{list-style:none;cursor:pointer;user-select:none}.header-more>summary::-webkit-details-marker{display:none}.header-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:50;min-width:220px;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 16px 35px rgba(15,23,42,.18);display:grid;gap:5px}.header-more-menu button{width:100%;text-align:left;justify-content:flex-start;white-space:normal}.key-terms-panel{padding:14px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}.key-terms-intro{margin:0 0 10px;color:var(--muted)}.key-terms-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.key-term{padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:color-mix(in srgb,var(--card) 97%,var(--accent))}.key-term dt{font-weight:800;color:var(--fg);margin:0 0 3px}.key-term dd{margin:0;color:var(--muted);font-size:.84rem;line-height:1.45}.essay-primer{margin:0 0 22px;padding:15px 17px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--card) 96%,var(--accent));border-radius:10px}.essay-primer h2{margin:0 0 6px!important;font-size:1.05rem!important}.essay-primer p{margin:0 0 10px!important}.essay-primer h3{margin:12px 0 7px;font-size:.92rem}.essay-primer-terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0}.essay-primer-terms>div{padding:8px 9px;border:1px solid var(--border);border-radius:8px;background:var(--card)}.essay-primer-terms dt{font-weight:800}.essay-primer-terms dd{margin:2px 0 0;color:var(--muted);font-size:.82rem;line-height:1.4}.scenario-card .scenario-meta{line-height:1.5}.scenario-card .scenario-meta strong{display:block;margin-bottom:2px}.header-actions>.header-png,.header-actions>.header-theme,.header-actions>.header-reset,.header-more>summary{min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px}
 @media(max-width:720px){.essay-primer-terms{grid-template-columns:1fr}.header-actions{width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}.header-actions>button,.header-actions>.header-more,.header-more>summary{width:100%;justify-content:center}.header-more-menu{right:auto;left:0;max-width:min(290px,90vw)}.key-terms-grid{grid-template-columns:1fr}}
+/* Accessible text keeps the lab hue without changing filled controls or plots. */
+body.dark-mode{--accent-text:color-mix(in srgb,var(--fg) 80%,var(--accent))}
+body.dark-mode :is(.page-header .back,.scenario-card h3,.classroom-lab .lab-field label,.essay h2,.essay h3,.essay h4,.visual-card h4,.visual-live strong,.signature-challenge-panel strong,footer a){color:var(--accent-text)}
+body.dark-mode footer a{color:var(--accent-text)!important}
+.essay h2,.key-terms-intro,.worksheet{overflow-wrap:anywhere}
+#tourName{min-width:0;overflow-wrap:anywhere}
+div:has(>#tourName),div:has(>#tourNext){flex-wrap:wrap}
+.slider-block,.mode-tabs,#modeGroup,#initGroup{flex-wrap:wrap;max-width:100%}
+select{min-width:0;max-width:100%}
+.scenario-card h3,.essay-primer-terms>div,p,.tldr,[data-i18n="seq-explain"]{min-width:0;overflow-wrap:anywhere}
+.header-actions>button{overflow-wrap:anywhere;white-space:normal}
+h1,h3,.method-tabs button,.stat-item,.key-term,.world-icon-key li>span:last-child{min-width:0;overflow-wrap:anywhere}
+.stats-strip,div:has(>#ngViewW){flex-wrap:wrap;max-width:100%}
+@media(max-width:360px){.visual-live{box-sizing:border-box;min-width:0;white-space:normal;flex-wrap:wrap}.visual-live>span{min-width:0;overflow-wrap:anywhere}}
 </style>
 <style id="learning-modes-style">
 /* Product information architecture and restrained visual hierarchy. */
@@ -677,7 +691,7 @@ body.dark-mode .r4-language-select {
 }
 
 </style>
-<meta name="ai-playgrounds-version" content="1.9.5">
+<meta name="ai-playgrounds-version" content="1.9.6">
 
 <style id="v14-version-provenance-style">
 .v14-version-provenance{max-width:1180px;margin:22px auto 10px;padding:12px 18px;border-top:1px solid var(--border,#dbe4ee);color:var(--muted,#64748b);font:12px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center}
@@ -886,7 +900,7 @@ body.dark-mode .r4-language-select {
 <p class="scenario-meta"><strong>Core question: </strong> Why can lower inertia alone not select the most defensible candidate number of clusters for this purpose?</p>
 <p class="scenario-meta"><strong>Run and watch: </strong> Run the same data with k equal to two, three, and four, then compare silhouette scores.</p>
 <p class="scenario-meta"><strong>Predict first: </strong> Predict which k will balance within-cluster closeness and between-cluster separation.</p>
-<p class="scenario-meta"><strong>Explain afterward: </strong> Explain why inertia always falls as more centers are added, while silhouette can reveal over-splitting.</p>
+<p class="scenario-meta"><strong>Explain afterward: </strong> Explain why the best achievable inertia cannot increase with more centers, why individual runs can differ, and how silhouette can reveal over-splitting.</p>
 <button class="step-btn" type="button">Apply and compare</button>
 </article>
 </div>
@@ -984,27 +998,27 @@ body.dark-mode .r4-language-select {
 <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
 <span data-lab-en="🧪 Quick Assign · QA-KMEANS-01 · 10–15 min" data-lab-zh="🧪 快速任务 · QA-KMEANS-01 · 10–15 分钟">🧪 Quick Assign · QA-KMEANS-01 · 10–15 min</span>
 </summary>
-<div class="lab-panel"><div class="quick-assign-meta" data-r4-no-translate="1" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong>QA-KMEANS-01</strong> · Level 1 · 10–15 min<br><span>Assign, move, repeat</span></div>
-<p class="lab-intro" data-lab-en="Run assignment and centroid updates, then explain how k, initialization, inertia, and silhouette shape the clustering result." data-lab-zh="运行分配与质心更新，然后解释 k、初始化、惯性和轮廓系数如何影响聚类结果。">Run assignment and centroid updates, then explain how k, initialization, inertia, and silhouette shape the clustering result.</p>
+<div class="lab-panel"><div class="quick-assign-meta" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong data-r4-no-translate="1">QA-KMEANS-01</strong> · <span data-lab-en="Level 1 · 10–15 min" data-lab-zh="级别 1 · 10–15 分钟">Level 1 · 10–15 min</span><br><span data-lab-en="Assign, move, repeat" data-lab-zh="分配、移动、重复">Assign, move, repeat</span></div>
+<p class="lab-intro" data-lab-en="Predict one assignment and centroid update, then explain the alternating k-means cycle." data-lab-zh="预测一次分配和质心更新，再解释 k-means 的交替循环。">Predict one assignment and centroid update, then explain the alternating k-means cycle.</p>
 <div class="lab-grid">
 <div class="lab-field">
 <label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
-<textarea data-lab-answer="predict" data-lab-en="Before running, what k and initialization do you expect to fit the dataset best? Why?" data-lab-zh="运行前，你预计哪个 k 和初始化最适合这个数据集？为什么？" id="lab-predict" placeholder="Before running, what k and initialization do you expect to fit the dataset best? Why?"></textarea>
+<textarea data-lab-answer="predict" data-lab-en="With the current centroids, which cluster will the selected point join, and why?" data-lab-zh="根据当前质心，选定的数据点会被分配到哪个簇？为什么？" id="lab-predict" placeholder="With the current centroids, which cluster will the selected point join, and why?"></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
-<textarea data-lab-answer="observe" data-lab-en="Run several steps. Record k, phase, inertia, and whether the cluster centers moved much." data-lab-zh="运行几个步骤。记录 k、阶段、惯性，以及聚类中心是否明显移动。" id="lab-observe" placeholder="Run several steps. Record k, phase, inertia, and whether the cluster centers moved much."></textarea>
+<textarea data-lab-answer="observe" data-lab-en="Record one assignment and the centroid before and after its update." data-lab-zh="记录一次分配，以及更新前后的质心。" id="lab-observe" placeholder="Record one assignment and the centroid before and after its update."></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
-<textarea data-lab-answer="explain" data-lab-en="How did alternating assignment and centroid update reduce the clustering error?" data-lab-zh="交替进行分配和质心更新如何降低聚类误差？" id="lab-explain" placeholder="How did alternating assignment and centroid update reduce the clustering error?"></textarea>
+<textarea data-lab-answer="explain" data-lab-en="How do point assignment and centroid update depend on one another?" data-lab-zh="数据点分配和质心更新如何相互依赖？" id="lab-explain" placeholder="How do point assignment and centroid update depend on one another?"></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
-<textarea data-lab-answer="transfer" data-lab-en="When could k-means give a misleading clustering result even if inertia decreases?" data-lab-zh="即使惯性下降，什么时候 K 均值仍可能给出误导性的聚类结果？" id="lab-transfer" placeholder="When could k-means give a misleading clustering result even if inertia decreases?"></textarea>
+<textarea data-lab-answer="transfer" data-lab-en="Why can two different initializations end with different clusterings?" data-lab-zh="为什么两种不同的初始化可能产生不同的最终聚类？" id="lab-transfer" placeholder="Why can two different initializations end with different clusterings?"></textarea>
 </div>
 </div>
-<div aria-live="polite" class="lab-state" data-lab-state="">State snapshot appears here.</div>
+<div aria-live="polite" class="lab-state" data-lab-state="" data-lab-en="State snapshot appears here." data-lab-zh="状态快照将显示在这里。">State snapshot appears here.</div>
 <div class="lab-actions">
 <button class="step-btn" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态" type="button">↻ Refresh state</button>
 <button class="step-btn" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包" type="button">📋 Copy packet</button>
@@ -1095,12 +1109,7 @@ body.dark-mode .r4-language-select {
     Squared Euclidean distance favors compact, roughly convex groups of comparable scale. Curved, nested, highly
     unequal, or density-defined clusters can be split in ways that look unnatural. The smiley data makes that mismatch visible.
   </p>
-<p>
-    There is no universally correct automatic value of <code>k</code>. Inertia always weakly decreases as more
-    centers are added, so it cannot select <code>k</code> by itself. Elbow plots, silhouette scores, stability checks,
-    external validation, and domain constraints provide different evidence, and they can disagree because
-    clustering objectives do not define one uniquely true grouping.
-  </p>
+<p>There is no universally correct automatic k. The best achievable inertia cannot increase when another center is allowed, so inertia alone cannot select k. Separately initialized Lloyd runs can reach different local optima and need not show that monotonic pattern. Compare repeated starts, silhouette, stability and the purpose of the clustering; these sources of evidence can disagree.</p>
 <h2>What this model leaves out</h2>
 <p>
     This applet uses Euclidean distance, equal-weight points, and Lloyd updates. Alternatives include k-medoids
@@ -1167,9 +1176,7 @@ body.dark-mode .r4-language-select {
 <p>
     平方欧几里得距离偏好紧密、近似凸且尺度相近的群组。弯曲、嵌套、大小差异很大或由密度定义的簇，可能被切分成视觉上不自然的结果。笑脸数据让这种不匹配直接可见。
   </p>
-<p>
-    不存在适用于所有问题的自动正确 <code>k</code>。增加中心后，惯性总是不增，因此不能单独用惯性选择 <code>k</code>。肘部图、轮廓系数、稳定性检验、外部验证和领域约束提供不同证据，而且它们可能不一致，因为聚类目标并不会定义唯一真实的分组。
-  </p>
+<p>不存在普遍正确的自动 k。允许增加一个中心时，能够达到的最小惯性不会增大，因此不能只靠惯性选择 k。分别初始化的 Lloyd 运行可能达到不同局部最优，观测结果不一定单调。应结合重复初始化、轮廓系数、稳定性和聚类用途；这些证据可能并不一致。</p>
 <h2>这个模型省略了什么</h2>
 <p>
     本工具使用欧几里得距离、等权重点和 Lloyd 更新。其他方法包括对离群点更稳健的 K 中心点、提供概率软分配的高斯混合模型、模糊 C 均值、谱聚类，以及处理密度形状和噪声点的 DBSCAN 或 HDBSCAN。生产库还可使用三角不等式界、向量化计算和多次初始化加速相同目标。
@@ -1555,9 +1562,8 @@ body.dark-mode .r4-language-select {
 
   // Spacebar = "Run to convergence" (the primary action).
   document.addEventListener('keydown', e => {
-    if (e.code === 'Space' &&
-        e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' &&
-        e.target.tagName !== 'SELECT') {
+    if (e.code === 'Space' && !e.defaultPrevented &&
+        !e.target.closest('button, summary, a, input, textarea, select, [contenteditable], [role="button"], [role="tab"]')) {
       e.preventDefault();
       document.getElementById('runBtn').click();
     }
@@ -1627,7 +1633,8 @@ body.dark-mode .r4-language-select {
       placeBtn.disabled = true;
       placeBtn.style.opacity = '0.5';
     } else {
-      placeBtn.textContent = STRINGS[document.documentElement.lang || 'en']['place-btn'];
+      const placeLocale = document.documentElement.lang === 'zh' ? 'zh' : 'en';
+      placeBtn.textContent = STRINGS[placeLocale]['place-btn'];
       placeBtn.disabled = false;
       placeBtn.style.opacity = '';
     }
@@ -2563,7 +2570,8 @@ body.dark-mode .r4-language-select {
         scenario.apply();
         card.classList.add('applied');
         btn.textContent = '✓ ' + scenarioGalleryText('sg-applied', 'Applied; compare the result');
-        setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
+        clearTimeout(btn._timer);
+        btn._timer = setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
       });
       card.appendChild(btn);
       root.appendChild(card);
@@ -2657,7 +2665,6 @@ body.dark-mode .r4-language-select {
   const LAB_CONFIG = {"slug": "kmeans", "title": "K-means lab packet", "zhTitle": "K 均值实验包", "fields": [{"label": "k", "selector": "#kInput", "kind": "value"}, {"label": "Phase", "selector": "#phaseInd", "kind": "text"}, {"label": "Iteration", "selector": "#iterV", "kind": "text"}, {"label": "Inertia", "selector": "#inertiaV", "kind": "text"}, {"label": "Inertia change", "selector": "#inertiaDelta", "kind": "text"}, {"label": "Silhouette", "selector": "#silhOverall", "kind": "text"}, {"label": "GMM stats", "selector": "#gmmStats", "kind": "text"}]};
   const root = document.querySelector('.classroom-lab');
   if (!root) return;
-  const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;
   const qs = (sel) => root.querySelector(sel);
   function currentLang() {
     const raw = String(document.documentElement.lang || 'en').toLowerCase();
@@ -2676,6 +2683,8 @@ body.dark-mode .r4-language-select {
   function applyLabLang() {
     const lang = currentLang();
     root.querySelectorAll('[data-lab-en]').forEach(el => {
+      // Captured evidence and an explicitly cleared snapshot are learner state.
+      if (el.matches('[data-lab-state]') && (el.hasAttribute('data-r4-no-translate') || el.dataset.qaStateReady === '1')) return;
       const value = textFor(el, lang);
       if (el.tagName === 'TEXTAREA') el.placeholder = value;
       else el.textContent = value;
@@ -2702,13 +2711,6 @@ body.dark-mode .r4-language-select {
     root.querySelectorAll('textarea[data-lab-answer]').forEach(area => data[area.getAttribute('data-lab-answer')] = area.value.trim());
     return data;
   }
-  function saveDraft() { try { localStorage.setItem(storageKey, JSON.stringify(answers())); } catch (_) {} }
-  function loadDraft() {
-    try {
-      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
-      root.querySelectorAll('textarea[data-lab-answer]').forEach(area => { const key = area.getAttribute('data-lab-answer'); if (saved[key]) area.value = saved[key]; });
-    } catch (_) {}
-  }
   function packet() {
     const lang = currentLang();
     const baseLabels = {title: LAB_CONFIG.title, state:'State snapshot', predict:'Predict', observe:'Observe', explain:'Explain', transfer:'Transfer'};
@@ -2721,7 +2723,7 @@ body.dark-mode .r4-language-select {
       '- Date: ' + new Date().toLocaleString(),
       '',
       '## ' + labels.state,
-      snapshot(),
+      qs('[data-lab-state]')?.textContent || '',
       '',
       '## ' + labels.predict,
       a.predict || '',
@@ -2737,26 +2739,26 @@ body.dark-mode .r4-language-select {
     ].join('\n');
   }
   function setStatus(en, zh) { const el = qs('.lab-status'); if (el) el.textContent = currentLang() === 'zh' ? zh : en; }
-  function refreshState() { const el = qs('[data-lab-state]'); if (el) el.textContent = snapshot(); }
+  function refreshState() { const el = qs('[data-lab-state]'); if (el) { el.setAttribute('data-r4-no-translate',''); el.lang = currentLang(); el.textContent = snapshot(); } }
   async function copyPacket() {
     const text = packet();
     try { await navigator.clipboard.writeText(text); setStatus('Copied local lab packet.', '已复制本地实验包。'); }
-    catch (_) { window.prompt('Copy this lab packet:', text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
+    catch (_) { window.prompt(qs('[data-lab-action=copy]').textContent.trim(), text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
   }
 
   function markdownToPrintableHtml(markdown) {
     const escape = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
     const inline = value => escape(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     const lines = String(markdown).split(/\r?\n/);
-    let html = '', inList = false, inState = false;
+    let html = '', inList = false, inState = false, sectionIndex = 0;
     const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
     for (const raw of lines) {
       const line = raw.trimEnd();
       if (line.startsWith('# ')) { closeList(); html += '<h1>' + inline(line.slice(2)) + '</h1>'; inState=false; }
-      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = /state snapshot|状态记录/i.test(title); }
+      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = sectionIndex++ === 0; }
       else if (line.startsWith('- ')) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inline(line.slice(2)) + '</li>'; }
       else if (!line.trim()) { closeList(); }
-      else { closeList(); html += inState ? '<pre class="state">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
+      else { closeList(); html += inState ? '<pre class="state" lang="' + (qs('[data-lab-state]')?.lang || currentLang()) + '">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
     }
     closeList(); return html;
   }
@@ -2765,28 +2767,19 @@ body.dark-mode .r4-language-select {
     const w = window.open('', '_blank');
     if (!w) { setStatus('Popup blocked. Copy the packet instead.', '弹窗被拦截。请改用复制实验包。'); return; }
     const rendered = markdownToPrintableHtml(packet());
-    const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
+    const html = '<!doctype html><html lang="' + currentLang() + '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
     w.document.open();
     w.document.write(html);
     w.document.close();
     setStatus('Print page opened.', '打印页面已打开。');
   }
-  function clearDraft() {
-    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.value = '');
-    try { localStorage.removeItem(storageKey); } catch (_) {}
-    refreshState(); setStatus('Local draft cleared.', '本地草稿已清除。');
-  }
-  root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.addEventListener('input', saveDraft));
   root.querySelector('[data-lab-action="copy"]')?.addEventListener('click', copyPacket);
   root.querySelector('[data-lab-action="print"]')?.addEventListener('click', printPacket);
   root.querySelector('[data-lab-action="refresh"]')?.addEventListener('click', () => { refreshState(); setStatus('State refreshed.', '状态已更新。'); });
-  root.querySelector('[data-lab-action="clear"]')?.addEventListener('click', clearDraft);
   document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(applyLabLang, 0)));
   window.addEventListener('r4languagechange', () => setTimeout(applyLabLang, 0));
   
-  document.addEventListener('change', refreshState);
-  document.addEventListener('click', (event) => { if (!(event.target instanceof HTMLTextAreaElement)) setTimeout(refreshState, 0); }, true);
-  loadDraft(); applyLabLang(); refreshState();
+  applyLabLang();
 })();
 </script>
 <script>
@@ -2953,7 +2946,7 @@ body.dark-mode .r4-language-select {
 </script>
 <script id="learner-content-system">
 (() => {
-  const profile = {"slug":"kmeans","en":{"title":"K-Means Clustering","big":"Choose the number of clusters, assign each point to its nearest center, and move the centers. Repeat until assignments stop changing.","primer":"K-means alternates between two simple steps. The difficulty comes from choosing k, choosing starting centers, and deciding whether compact, roughly convex regions under squared Euclidean distance fit the data.","terms":[{"term":"k","definition":"The number of clusters the algorithm is required to create."},{"term":"Centroid","definition":"The mean location of all points currently assigned to one cluster."},{"term":"Assignment step","definition":"Assign every point to the nearest centroid."},{"term":"Update step","definition":"Move each centroid to the mean of its assigned points."},{"term":"Inertia or within-cluster sum of squares (SSE)","definition":"The total squared distance from points to their assigned centroids."},{"term":"Silhouette score","definition":"A measure comparing how close a point is to its own cluster versus other clusters."},{"term":"Initialization","definition":"The method used to choose the starting centroid positions."},{"term":"Convergence","definition":"The point at which assignments and centroid positions stop changing."},{"term":"k-means++","definition":"An initialization method that spreads starting centroids apart using distance-weighted sampling."}],"scenarios":[{"title":"Three compact groups with k equal to three","question":"What does the algorithm look like when its assumptions match the data?","run":"Use three well-separated point groups with k set to three and run assignment and update steps.","predict":"Predict how many iterations will be needed before the centers stop moving.","explain":"Explain why compact, round groups are an easy case for k-means."},{"title":"Poor starting centers can trap the result","question":"Why can the same data produce different final clusters?","run":"Place all starting centroids in one corner, run the algorithm, then compare with spread-out initialization.","predict":"Predict whether the centers will always recover the visually obvious groups.","explain":"Explain how initialization changes the path of later assignment and update steps."},{"title":"A curved smile does not match compact, roughly convex regions under squared Euclidean distance","question":"What happens when the shape of the data violates the model’s assumptions?","run":"Use the smiley-face data with k set to three and inspect how the curved mouth is split.","predict":"Predict which parts of the shape will be grouped unnaturally.","explain":"Explain why distance to a centroid favors compact, roughly round regions."},{"title":"K-means++ spreads the starting centers","question":"How does a smarter initialization reduce repeated poor runs?","run":"Use six packed circles, compare random initialization with k-means++, and repeat both several times.","predict":"Predict which method will more often place a center in every visible group.","explain":"Explain why spreading initial centers improves coverage without guaranteeing perfection."},{"title":"Use silhouette score to compare k values","question":"Why can lower inertia alone not select the most defensible candidate number of clusters for this purpose?","run":"Run the same data with k equal to two, three, and four, then compare silhouette scores.","predict":"Predict which k will balance within-cluster closeness and between-cluster separation.","explain":"Explain why inertia always falls as more centers are added, while silhouette can reveal over-splitting."}]},"zh":{"title":"K 均值聚类","big":"选择聚类数量，把每个点分配给最近中心，再移动中心。重复这些步骤，直到分配不再变化。","primer":"K 均值在两个简单步骤之间交替。困难在于选择 k、选择起始中心，以及判断圆形聚类是否适合数据。","terms":[{"term":"k","definition":"算法必须创建的聚类数量。"},{"term":"质心","definition":"当前分配到一个聚类的所有点的平均位置。"},{"term":"分配步骤","definition":"把每个点分配给最近质心。"},{"term":"更新步骤","definition":"把每个质心移动到其所属点的平均位置。"},{"term":"惯性或簇内平方和（SSE）","definition":"所有点到其所属质心的平方距离总和。"},{"term":"轮廓系数","definition":"比较一个点接近自身聚类与其他聚类程度的指标。"},{"term":"初始化","definition":"选择初始质心位置的方法。"},{"term":"收敛","definition":"簇分配和质心位置不再变化的状态。"},{"term":"k-means++","definition":"一种按距离加权抽样、使初始质心彼此分散的初始化方法。"}],"scenarios":[{"title":"三个紧密群组与 k=3","question":"当算法假设与数据匹配时，会是什么样？","run":"使用三个分离良好的点群，把 k 设为 3，并运行分配和更新步骤。","predict":"预测质心停止移动前需要多少次迭代。","explain":"解释为什么紧密、近似圆形的群组是 K 均值的简单情况。"},{"title":"较差起始中心会限制结果","question":"为什么同一数据可能产生不同最终聚类？","run":"把所有起始质心放在一个角落，运行算法，再与分散初始化比较。","predict":"预测质心是否总能恢复视觉上明显的群组。","explain":"解释初始化如何改变之后的分配和更新路径。"},{"title":"弯曲笑脸不符合圆形聚类","question":"数据形状违反模型假设时会怎样？","run":"使用笑脸数据并把 k 设为 3，观察弯曲嘴巴如何被切分。","predict":"预测哪些部分会被不自然地分组。","explain":"解释到质心的距离为什么偏好紧密、近似圆形的区域。"},{"title":"K-means++ 分散起始中心","question":"更聪明的初始化如何减少差结果？","run":"使用六个紧密圆群，比较随机初始化与 K-means++，并多次重复。","predict":"预测哪种方法更常在每个可见群组中放置一个中心。","explain":"解释分散起始中心为什么能改善覆盖，却不能保证完美。"},{"title":"用轮廓系数比较 k","question":"为什么只降低惯性不能选择最佳聚类数？","run":"在同一数据上运行 k=2、3、4，并比较轮廓系数。","predict":"预测哪个 k 能平衡簇内接近与簇间分离。","explain":"解释为什么增加中心总会降低惯性，而轮廓系数能显示过度切分。"}]}};
+  const profile = {"slug":"kmeans","en":{"title":"K-Means Clustering","big":"Choose the number of clusters, assign each point to its nearest center, and move the centers. Repeat until assignments stop changing.","primer":"K-means alternates between two simple steps. The difficulty comes from choosing k, choosing starting centers, and deciding whether compact, roughly convex regions under squared Euclidean distance fit the data.","terms":[{"term":"k","definition":"The number of clusters the algorithm is required to create."},{"term":"Centroid","definition":"The mean location of all points currently assigned to one cluster."},{"term":"Assignment step","definition":"Assign every point to the nearest centroid."},{"term":"Update step","definition":"Move each centroid to the mean of its assigned points."},{"term":"Inertia or within-cluster sum of squares (SSE)","definition":"The total squared distance from points to their assigned centroids."},{"term":"Silhouette score","definition":"A measure comparing how close a point is to its own cluster versus other clusters."},{"term":"Initialization","definition":"The method used to choose the starting centroid positions."},{"term":"Convergence","definition":"The point at which assignments and centroid positions stop changing."},{"term":"k-means++","definition":"An initialization method that spreads starting centroids apart using distance-weighted sampling."}],"scenarios":[{"title":"Three compact groups with k equal to three","question":"What does the algorithm look like when its assumptions match the data?","run":"Use three well-separated point groups with k set to three and run assignment and update steps.","predict":"Predict how many iterations will be needed before the centers stop moving.","explain":"Explain why compact, round groups are an easy case for k-means."},{"title":"Poor starting centers can trap the result","question":"Why can the same data produce different final clusters?","run":"Place all starting centroids in one corner, run the algorithm, then compare with spread-out initialization.","predict":"Predict whether the centers will always recover the visually obvious groups.","explain":"Explain how initialization changes the path of later assignment and update steps."},{"title":"A curved smile does not match compact, roughly convex regions under squared Euclidean distance","question":"What happens when the shape of the data violates the model’s assumptions?","run":"Use the smiley-face data with k set to three and inspect how the curved mouth is split.","predict":"Predict which parts of the shape will be grouped unnaturally.","explain":"Explain why distance to a centroid favors compact, roughly round regions."},{"title":"K-means++ spreads the starting centers","question":"How does a smarter initialization reduce repeated poor runs?","run":"Use six packed circles, compare random initialization with k-means++, and repeat both several times.","predict":"Predict which method will more often place a center in every visible group.","explain":"Explain why spreading initial centers improves coverage without guaranteeing perfection."},{"title":"Use silhouette score to compare k values","question":"Why can lower inertia alone not select the most defensible candidate number of clusters for this purpose?","run":"Run the same data with k equal to two, three, and four, then compare silhouette scores.","predict":"Predict which k will balance within-cluster closeness and between-cluster separation.","explain":"Explain why the best achievable inertia cannot increase with more centers, why individual runs can differ, and how silhouette can reveal over-splitting."}]},"zh":{"title":"K 均值聚类","big":"选择聚类数量，把每个点分配给最近中心，再移动中心。重复这些步骤，直到分配不再变化。","primer":"K 均值在两个简单步骤之间交替。困难在于选择 k、选择起始中心，以及判断圆形聚类是否适合数据。","terms":[{"term":"k","definition":"算法必须创建的聚类数量。"},{"term":"质心","definition":"当前分配到一个聚类的所有点的平均位置。"},{"term":"分配步骤","definition":"把每个点分配给最近质心。"},{"term":"更新步骤","definition":"把每个质心移动到其所属点的平均位置。"},{"term":"惯性或簇内平方和（SSE）","definition":"所有点到其所属质心的平方距离总和。"},{"term":"轮廓系数","definition":"比较一个点接近自身聚类与其他聚类程度的指标。"},{"term":"初始化","definition":"选择初始质心位置的方法。"},{"term":"收敛","definition":"簇分配和质心位置不再变化的状态。"},{"term":"k-means++","definition":"一种按距离加权抽样、使初始质心彼此分散的初始化方法。"}],"scenarios":[{"title":"三个紧密群组与 k=3","question":"当算法假设与数据匹配时，会是什么样？","run":"使用三个分离良好的点群，把 k 设为 3，并运行分配和更新步骤。","predict":"预测质心停止移动前需要多少次迭代。","explain":"解释为什么紧密、近似圆形的群组是 K 均值的简单情况。"},{"title":"较差起始中心会限制结果","question":"为什么同一数据可能产生不同最终聚类？","run":"把所有起始质心放在一个角落，运行算法，再与分散初始化比较。","predict":"预测质心是否总能恢复视觉上明显的群组。","explain":"解释初始化如何改变之后的分配和更新路径。"},{"title":"弯曲笑脸不符合圆形聚类","question":"数据形状违反模型假设时会怎样？","run":"使用笑脸数据并把 k 设为 3，观察弯曲嘴巴如何被切分。","predict":"预测哪些部分会被不自然地分组。","explain":"解释到质心的距离为什么偏好紧密、近似圆形的区域。"},{"title":"K-means++ 分散起始中心","question":"更聪明的初始化如何减少差结果？","run":"使用六个紧密圆群，比较随机初始化与 K-means++，并多次重复。","predict":"预测哪种方法更常在每个可见群组中放置一个中心。","explain":"解释分散起始中心为什么能改善覆盖，却不能保证完美。"},{"title":"用轮廓系数比较 k","question":"为什么只降低惯性不能选择最佳聚类数？","run":"在同一数据上运行 k=2、3、4，并比较轮廓系数。","predict":"预测哪个 k 能平衡簇内接近与簇间分离。","explain":"解释为什么增加中心不会提高能够达到的最小惯性、为什么单次运行可能不同，以及轮廓系数如何提示过度切分。"}]}};
   window.APPLET_LEARNER_PROFILE = profile;
   const currentLocale = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
   const copy = () => currentLocale() === 'zh' ? profile.zh : profile.en;
@@ -2975,8 +2968,8 @@ body.dark-mode .r4-language-select {
   function stateData(){
     const values={};
     document.querySelectorAll('#main input,#main select,#main textarea').forEach(el=>{
-      if(!el.id||el.closest('.classroom-lab'))return;
-      if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;
+      if(!el.id||el.readOnly||el.closest('.classroom-lab,.worksheet,.suite-guided-shell,[data-quick-assign-id]')||['button','submit','reset','file','password','hidden'].includes(el.type))return;
+      if(el.type==='radio'&&!el.checked)return;
       values[el.id]=el.type==='checkbox'?el.checked:el.value;
     });
     return {applet:profile.en.title,slug:profile.slug,exported_at:new Date().toISOString(),values};
@@ -2986,17 +2979,18 @@ body.dark-mode .r4-language-select {
     const share=document.getElementById('shareLink'), embed=document.getElementById('embedLink'), reset=document.getElementById('hardReset');
     const csv=document.getElementById('csvExport'), png=document.getElementById('exportPng');
     const more=document.createElement('details'); more.className='header-more';
-    const summary=document.createElement('summary'); summary.className='header-png'; summary.setAttribute('aria-haspopup','menu'); more.appendChild(summary);
-    const menu=document.createElement('div'); menu.className='header-more-menu'; menu.setAttribute('role','menu'); more.appendChild(menu);
+    const summary=document.createElement('summary'); summary.className='header-png'; more.appendChild(summary);
+    const menu=document.createElement('div'); menu.className='header-more-menu'; more.appendChild(menu);
     if(embed){embed.textContent='📎 Embed in LMS';menu.appendChild(embed)}
     const jsonBtn=document.createElement('button');jsonBtn.type='button';jsonBtn.className='header-png';jsonBtn.dataset.exportState='';menu.appendChild(jsonBtn);
     if(csv){csv.textContent='📊 Data table (.csv)';menu.appendChild(csv)}
     if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
-    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
+    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false;summary.focus()});
     actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
     window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';if(share){share.textContent=zh?'🔗 分享':'🔗 Share';share.title=zh?'复制可在另一浏览器中重新打开当前设置的链接。':'Copy a link that reopens the current settings in another browser.';}summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
     window.refreshAppletToolbar();
     document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&more.open){e.preventDefault();more.open=false;summary.focus()}});
   }
   function terms(){
     const inner=document.querySelector('.interactive-inner'); if(!inner||inner.querySelector('.key-terms'))return;
@@ -3043,6 +3037,7 @@ body.dark-mode .r4-language-select {
     return 'explore';
   };
   const lang = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const routeLocale = () => ['en','zh','vi','es'].find(code => (document.documentElement.lang || 'en').toLowerCase().startsWith(code)) || 'en';
   const labels = {explore:['Explore','探索'],understand:['Understand','理解'],classroom:['Use in class','课堂使用'],access:['Text and keyboard','文本与键盘']};
   const intros = {
     explore:['Start with the featured experiment, then use the scenarios to test a prediction.','从精选实验开始，再使用情境检验预测。'],
@@ -3114,12 +3109,19 @@ body.dark-mode .r4-language-select {
     renderModeChrome();
     if(write){const u=new URL(location.href);u.searchParams.set('mode',mode);history.replaceState(null,'',u)}
   }
-  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
+  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(['ArrowRight','ArrowLeft','Home','End'].includes(e.key)){e.preventDefault();const n=e.key==='Home'?0:e.key==='End'?list.length-1:(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
 
+  // Share only native mechanism inputs, never responses or global preferences.
+  function shareable(el){
+    return !!el && !!el.id && inner.contains(el)
+      && el.matches('input,select,textarea') && !el.readOnly
+      && !['button','submit','reset','file','password','hidden'].includes(el.type)
+      && !el.closest('.classroom-lab,.worksheet,.suite-guided-shell,[data-quick-assign-id]');
+  }
   function statePayload(){
     const out={};
-    inner.querySelectorAll('select,input').forEach(el=>{
-      if(!el.id||el.closest('.classroom-lab')||['button','submit'].includes(el.type))return;
+    inner.querySelectorAll('select,input,textarea').forEach(el=>{
+      if(!shareable(el))return;
       if(el.type==='radio'){if(el.checked)out[el.id]=el.value;return}
       out[el.id]=el.type==='checkbox'?el.checked:el.value;
     });
@@ -3128,33 +3130,65 @@ body.dark-mode .r4-language-select {
   function encode(obj){return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))}
   function decode(s){try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch{return null}}
   function currentExperimentUrl(){
-    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',lang());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
+    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',routeLocale());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
   }
   window.__buildExperimentUrl=()=>currentExperimentUrl().href;
   const status=shell.querySelector('.experiment-status');
-  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(ui[lang()].copyPrompt,u.href)}};
+  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(shell.querySelector('[data-copy-experiment]').textContent.trim(),u.href)}};
 
-  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','')});
-  document.addEventListener('click',e=>{const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode','explore');u.searchParams.set('lang',lang());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
+  // Let Space activate this native button instead of a lab-wide play shortcut.
+  shell.addEventListener('keydown', event => {
+    if (event.key === ' ' && event.target.closest('[data-start-featured]')) event.stopPropagation();
+  });
+
+  // A learner-initiated handoff moves both the viewport and keyboard focus.
+  // Restoring a shared URL or changing locale must never steal focus.
+  function handoffToExperiment() {
+    const target = [...inner.querySelectorAll('select,input:not([type="hidden"]),textarea')]
+      .find(node => !node.closest('.learning-mode-shell,.suite-guided-shell')
+        && !node.disabled && node.getClientRects().length);
+    if (!target) return;
+    target.focus({preventScroll: true});
+    target.scrollIntoView({block: 'center',
+      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
+  }
+
+  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','');handoffToExperiment()});
+  document.addEventListener('click',e=>{if(restoring&&new URLSearchParams(location.search).has('state'))return;const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode',active);if(!restoring)u.searchParams.set('lang',routeLocale());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
 
   let urlSyncTimer=0;
   function scheduleUrlState(e){
     if(restoring)return;
-    const el=e.target;if(!el||!inner.contains(el)||el.closest('.classroom-lab')||!el.matches('input,select'))return;
+    const el=e.target;if(!shareable(el))return;
     clearTimeout(urlSyncTimer);urlSyncTimer=setTimeout(()=>{const u=currentExperimentUrl();history.replaceState(null,'',u)},80);
   }
   document.addEventListener('input',scheduleUrlState,true);document.addEventListener('change',scheduleUrlState,true);
 
   function applyState(obj){
-    if(!obj)return;
-    Object.entries(obj).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else if(el.type==='radio')el.checked=String(el.value)===String(value);else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});
+    if(!obj || typeof obj !== 'object' || Array.isArray(obj) || Object.keys(obj).length > 256)return;
+    Object.entries(obj).forEach(([id,value])=>{
+      const el=document.getElementById(id);if(!shareable(el))return;
+      if(el.type==='checkbox'){if(typeof value!=='boolean')return;el.checked=value}
+      else {
+        if(!['string','number'].includes(typeof value) || String(value).length>10000)return;
+        const text=String(value);
+        if(el.tagName==='SELECT' && ![...el.options].some(option=>option.value===text))return;
+        if(['number','range'].includes(el.type)){
+          if(!text.trim() || !Number.isFinite(Number(text)))return;
+          if(el.min!=='' && Number(text)<Number(el.min))return;
+          if(el.max!=='' && Number(text)>Number(el.max))return;
+        }
+        if(el.type==='radio'){if(el.value!==text)return;el.checked=true}
+        else el.value=text;
+      }
+      el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));
+    });
   }
   function restore(){
     const p=new URL(location.href).searchParams;restoring=true;
-    // Explicit scenario, then saved controls, override native CNF share state.
-    // Retain the established scenario-zero default unless a native formula exists.
-    const nativeFormula=window.APPLET_LEARNER_PROFILE?.slug==='cnf-sat'&&p.has('f');
-    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeFormula))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
+    // Native links precede explicit scenarios and saved controls.
+    const nativeState=slug==='cnf-sat'&&p.has('f')||slug==='knn-classifier'&&['k','ds','task','metric','weight','scale','target'].some(k=>p.has(k));
+    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeState))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
     applyState(decode(p.get('state')||''));
     if(p.get('featured')==='1')sig?.setAttribute('open','');
     restoring=false;
@@ -3170,14 +3204,14 @@ body.dark-mode .r4-language-select {
   }
   setMode(active,false);ensureExploreContent();
   setTimeout(()=>{refineCards();window.renderAppletKeyTerms?.();restore();renderModeChrome()},250);
-  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',lang());history.replaceState(null,'',u)},25)));
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',routeLocale());history.replaceState(null,'',u)},25)));
 })();
 </script>
 
 <script id="applet-translation-completion">
 (() => {
   const exact = {"Skip to applet controls":"跳到交互控件","▸ Show teacher notes (discussion prompts + curriculum)":"▸ 展开教师说明（讨论提示与课程联系）","▾ Hide teacher notes (discussion prompts + curriculum)":"▾ 收起教师说明（讨论提示与课程联系）","idle":"空闲","(empty)":"（空）","(no actions yet)":"（尚无动作）","exploring":"探索中","How to pick the initial centroids?":"如何选择初始质心？","I'll choose":"由我选择","Click the canvas yourself":"自行点击画布","Randomly":"随机选择","Pick k random points":"随机选择 k 个点","Farthest point":"最远点","Spread centroids apart":"让质心彼此分散","Probabilistic farthest":"概率式最远点","Clear GMM":"清除 GMM","Visualizing K-Means Clustering":"K 均值聚类可视化"};
-  const rules = [["^Point ([0-9]+): unassigned$","点 \\1：未分配"]].map(([source,target])=>[new RegExp(source),target]);
+  const rules = [["^Point ([0-9]+): unassigned$","点 $1：未分配"]].map(([source,target])=>[new RegExp(source),target]);
   const currentLanguage=()=>((document.documentElement.lang||'en').startsWith('zh')?'zh':'en');
   const excluded=node=>node.parentElement && node.parentElement.closest('script,style,noscript,[data-essay-lang="en"]');
   const applyRule=text=>{
@@ -4006,7 +4040,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     "vi": {
       "title": "K-Means Clustering | AI Playgrounds",
-      "description": "Chọn số cụm, gán từng điểm cho tâm gần nhất của nó và di chuyển các tâm.Lặp lại cho đến khi bài tập ngừng thay đổi."
+      "description": "Chọn số cụm, gán mỗi điểm vào tâm gần nhất rồi cập nhật các tâm. Lặp lại cho đến khi việc gán điểm vào các cụm không còn thay đổi."
     },
     "es": {
       "title": "K-Means Clustering | AI Playgrounds",
@@ -4014,6 +4048,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   },
   "vi": {
+    "teacher": {"What does the number": "Giá trị", ". Why does changing": ". Vì sao thay đổi"},
     "strings": {
       "\"I'll Choose\" init: click the corner four times to place centroids there. K-means now has to escape the bad start. Often it doesn't: multiple runs from different inits is standard practice.": "Bắt đầu \"Tôi sẽ chọn\": nhấp vào góc bốn lần để đặt trọng tâm vào đó.K-means bây giờ phải thoát khỏi sự khởi đầu tồi tệ.Thường thì không: nhiều lần chạy từ các inits khác nhau là thông lệ tiêu chuẩn.",
       "#a11yStateSummary": "#a11yStateSummary",
@@ -4067,9 +4102,9 @@ document.addEventListener('DOMContentLoaded', () => {
       "(place centroids first, then click \"One EM step\")": "(đặt trọng tâm trước, sau đó nhấp vào \"Một bước EM\")",
       "(range: −1 bad … 0 overlapping … 1 well-separated)": "(phạm vi: −1 xấu … 0 chồng chéo … 1 phân tách rõ ràng)",
       ", initializing the centers, and matching the model to the shape of the data are not.": ", việc khởi tạo các trung tâm và khớp mô hình với hình dạng của dữ liệu thì không.",
-      ". Inertia always weakly decreases as more centers are added, so it cannot select": ". Inertia always weakly decreases as more centers are added, so it cannot select",
-      ". The explanation and classroom sequence are adapted for this suite.": ". The explanation and classroom sequence are adapted for this suite.",
-      ". Why do the measures behave differently?": ". Why do the measures behave differently?",
+      ". Inertia always weakly decreases as more centers are added, so it cannot select": ". Quán tính tối ưu không tăng khi cho phép thêm tâm, nên chỉ nó không thể chọn",
+      ". The explanation and classroom sequence are adapted for this suite.": ". Phần giải thích và trình tự hoạt động trên lớp được điều chỉnh cho bộ công cụ này.",
+      ". Why do the measures behave differently?": ". Vì sao hai thước đo thay đổi khác nhau?",
       ".bento-main": ".bento-main",
       ".cell-analysis": ".cell-analysis",
       ".cell-maps": ".cell-maps",
@@ -4156,7 +4191,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Changed case: use k-means++ initialization on packed groups and predict Point 1 and Centroid 1 again.": "Trường hợp đã thay đổi: sử dụng khởi tạo k-means++ trên các nhóm được đóng gói và dự đoán lại Điểm 1 và Centroid 1.",
       "Changed case: with the calls observed, add Earthquake=true; predict how P(Burglary) changes and whether Burglary and Earthquake are independent when conditioning on Alarm.": "Trường hợp đã thay đổi: với các cuộc gọi được quan sát, hãy thêm Earthquake=true;dự đoán P(Trộm) thay đổi như thế nào và liệu Vụ trộm và Động đất có độc lập hay không khi bật Báo động.",
       "Choose one frontier square and predict whether the current evidence makes it proven safe, a possible hazard, or unresolved before the agent takes its next step.": "Chọn một ô biên giới và dự đoán liệu bằng chứng hiện tại có chứng minh được nó là an toàn, có thể là mối nguy hiểm hay chưa được giải quyết hay không trước khi tác nhân thực hiện bước tiếp theo.",
-      "Choose the number of clusters, assign each point to its nearest center, and move the centers. Repeat until assignments stop changing.": "Chọn số cụm, gán từng điểm cho tâm gần nhất của nó và di chuyển các tâm.Lặp lại cho đến khi bài tập ngừng thay đổi.",
+      "Choose the number of clusters, assign each point to its nearest center, and move the centers. Repeat until assignments stop changing.": "Chọn số cụm, gán mỗi điểm vào tâm gần nhất rồi cập nhật các tâm. Lặp lại cho đến khi việc gán điểm vào các cụm không còn thay đổi.",
       "chooses later centers randomly with probability proportional to squared distance from the nearest selected center. It usually improves starting coverage while retaining randomness.": "chọn ngẫu nhiên các trung tâm sau với xác suất tỷ lệ thuận với bình phương khoảng cách từ trung tâm được chọn gần nhất.Nó thường cải thiện phạm vi bắt đầu trong khi vẫn giữ được tính ngẫu nhiên.",
       "Classify a frontier square before the move": "Phân loại ô biên giới trước khi di chuyển",
       "Clear centroids and cluster assignments. Keeps the current dataset.": "Xóa các phép gán trọng tâm và cụm.Giữ tập dữ liệu hiện tại.",
@@ -4164,8 +4199,8 @@ document.addEventListener('DOMContentLoaded', () => {
       "Click the canvas yourself": "Hãy tự mình nhấp vào khung vẽ",
       "Clustering searches for structure without class labels. K-means partitions points into a user-selected number": "Phân cụm tìm kiếm cấu trúc không có nhãn lớp.Phân vùng K-means trỏ vào số do người dùng chọn",
       "cnf-sat": "cnf-sat",
-      "Compare inertia and silhouette while increasing": "So sánh quán tính và hình bóng khi tăng",
-      "Compare random and k-means++ starts on packed circles over several runs.": "So sánh ngẫu nhiên và k-means++ bắt đầu trên các vòng tròn được đóng gói qua nhiều lần chạy.",
+      "Compare inertia and silhouette while increasing": "So sánh inertia và điểm silhouette khi tăng",
+      "Compare random and k-means++ starts on packed circles over several runs.": "So sánh khởi tạo ngẫu nhiên và k-means++ trên dữ liệu các vòng tròn sát nhau qua nhiều lần chạy.",
       "Comparison recorded. Explain any discrepancy before trying the transfer case.": "Đã ghi lại so sánh.Giải thích bất kỳ sự khác biệt nào trước khi thử trường hợp chuyển nhượng.",
       "Conditionally independent": "Độc lập có điều kiện",
       "Convergence means the local update rule has stopped changing the solution. It does not mean the selected clustering is globally best, stable across starts, or meaningful for the application.": "Hội tụ có nghĩa là quy tắc cập nhật cục bộ đã ngừng thay đổi giải pháp.Điều đó không có nghĩa là phân cụm được chọn là tốt nhất trên toàn cầu, ổn định trong suốt quá trình khởi động hoặc có ý nghĩa đối với ứng dụng.",
@@ -4185,7 +4220,6 @@ document.addEventListener('DOMContentLoaded', () => {
       "Explain how initialization changes the path of later assignment and update steps.": "Giải thích cách khởi tạo thay đổi đường dẫn của các bước gán và cập nhật sau này.",
       "Explain why compact, round groups are an easy case for k-means.": "​​Giải thích tại sao các nhóm tròn, nhỏ gọn lại là trường hợp dễ dàng cho k-mean.",
       "Explain why distance to a centroid favors compact, roughly round regions.": "Giải thích tại sao khoảng cách đến tâm lại ưu tiên các vùng nhỏ gọn, gần tròn.",
-      "Explain why inertia always falls as more centers are added, while silhouette can reveal over-splitting.": "Giải thích tại sao quán tính luôn giảm khi thêm nhiều tâm vào, trong khi hình bóng có thể bộc lộ sự phân tách quá mức.",
       "Explain why spreading initial centers improves coverage without guaranteeing perfection.": "Giải thích tại sao việc trải rộng các trung tâm ban đầu lại cải thiện phạm vi phủ sóng mà không đảm bảo sự hoàn hảo.",
       "exposes how a deliberately poor start can redirect later assignments.": "cho thấy sự khởi đầu tồi tệ có chủ ý có thể chuyển hướng các nhiệm vụ sau này như thế nào.",
       "For the prepared population, predict the true-positive and false-positive counts before the posterior probability is revealed.": "Đối với nhóm dân số đã chuẩn bị, hãy dự đoán số lượng dương tính thật và dương tính giả trước khi xác suất sau được tiết lộ.",
@@ -4211,7 +4245,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "K-Means Clustering": "Phân cụm K-Means",
       "K-means clustering visualization. Click to add data points or place centroids.": "K-nghĩa là trực quan hóa phân cụm.Bấm vào để thêm điểm dữ liệu hoặc đặt trọng tâm.",
       "K-means clusters points by repeatedly moving each centroid to the mean of the points assigned to it. It works on round blobs and fails on weird shapes.": "K-mean tập hợp các điểm bằng cách di chuyển liên tục từng trọng tâm đến giá trị trung bình của các điểm được gán cho nó.Nó hoạt động trên các đốm màu tròn và không thành công trên các hình dạng kỳ lạ.",
-      "k-means discovers the correct number of clusters; convergence establishes global optimality; lower inertia always identifies a better model; k-means++ guarantees the final optimum.": "k-có nghĩa là phát hiện đúng số cụm;sự hội tụ thiết lập sự tối ưu toàn cầu;quán tính thấp hơn luôn xác định một mô hình tốt hơn;k-means++ đảm bảo mức tối ưu cuối cùng.",
+      "k-means discovers the correct number of clusters; convergence establishes global optimality; lower inertia always identifies a better model; k-means++ guarantees the final optimum.": "K-means tự tìm ra số cụm đúng; hội tụ chứng minh được tối ưu toàn cục; inertia thấp hơn luôn xác định mô hình tốt hơn; k-means++ bảo đảm nghiệm tối ưu cuối cùng.",
       "k-means++": "k-nghĩa++",
       "k-means++ seeds centers using probabilities proportional to D(x)². This is closely related to the scikit-learn default initialization; scikit-learn uses a greedy multi-trial variant of k-means++.": "trung tâm hạt giống k-means++ sử dụng xác suất tỷ lệ với D(x)².Điều này liên quan chặt chẽ đến việc khởi tạo mặc định scikit-learn;scikit-learn sử dụng biến thể đa thử nghiệm tham lam của k-means++.",
       "K-means++ spreads the starting centers": "K-means++ trải rộng các trung tâm bắt đầu",
@@ -4242,7 +4276,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "No improving move is accepted": "Không chấp nhận động thái cải thiện nào",
       "No: the smile is a curved arc, and k-means can only carve out round, straight-edged regions.": "Không: nụ cười là một hình cung cong và k-mean chỉ có thể khắc những vùng tròn, có cạnh thẳng.",
       "Not enough information yet": "Chưa đủ thông tin",
-      "not repair the shape assumption?": "không sửa được giả định về hình dạng?",
+      "not repair the shape assumption?": "không khắc phục được giả định về hình dạng?",
       "Now choose an initialization strategy and click \"Place centroids\".": "Bây giờ hãy chọn chiến lược khởi tạo và nhấp vào \"Đặt trọng tâm\".",
       "Number of clusters to fit. K-means requires k in advance; diagnostics such as silhouette, stability, external information, and domain goals can inform the choice but do not uniquely determine it.": "Số cụm phù hợp.K-means yêu cầu k trước;các chẩn đoán như hình dáng, độ ổn định, thông tin bên ngoài và mục tiêu miền có thể đưa ra lựa chọn nhưng không xác định duy nhất nó.",
       "Objective and convergence": "Khách quan và hội tụ",
@@ -4251,7 +4285,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.": "Chọn một kịch bản, dự đoán điều gì sẽ xảy ra, sau đó áp dụng kịch bản đó và so sánh kết quả với dự đoán của bạn.",
       "Pick centroids spread far apart from each other. This can improve coverage over random initialization on some datasets; compare runs rather than assuming it is always better.": "Chọn các trọng tâm cách xa nhau.Điều này có thể cải thiện phạm vi bao phủ khi khởi tạo ngẫu nhiên trên một số tập dữ liệu;so sánh các lần chạy thay vì cho rằng nó luôn tốt hơn.",
       "Pick k random data points as initial centroids. Simple but often poor.": "Chọn k điểm dữ liệu ngẫu nhiên làm trọng tâm ban đầu.Đơn giản nhưng thường nghèo nàn.",
-      "Place all centers in one corner. Which later step can recover, and where can the path remain trapped?": "Đặt tất cả tâm vào một góc.Bước nào sau đó có thể phục hồi và con đường có thể bị mắc kẹt ở đâu?",
+      "Place all centers in one corner. Which later step can recover, and where can the path remain trapped?": "Đặt mọi tâm cụm vào một góc. Bước nào sau đó có thể khắc phục, và quá trình có thể vẫn bị kẹt ở đâu?",
       "Place all starting centroids in one corner, run the algorithm, then compare with spread-out initialization.": "Đặt tất cả các trọng tâm ban đầu vào một góc, chạy thuật toán, sau đó so sánh với khởi tạo dàn trải.",
       "Place k centroids using the chosen initialization strategy.": "Đặt k centroid bằng chiến lược khởi tạo đã chọn.",
       "Poor starting centers can trap the result": "Trung tâm xuất phát kém có thể cản trở kết quả",
@@ -4291,12 +4325,12 @@ document.addEventListener('DOMContentLoaded', () => {
       "repeatedly chooses the point farthest from its nearest existing center; it spreads coverage but can favor outliers.": "liên tục chọn điểm xa nhất so với tâm hiện tại gần nhất của nó;nó lan truyền phạm vi phủ sóng nhưng có thể ủng hộ các ngoại lệ.",
       "Repeating the algorithm from several starts and keeping the lowest-inertia result reduces, but does not remove, sensitivity to local optima. K-means++ is available in this applet so its variability can be compared directly with uniform random initialization.": "Việc lặp lại thuật toán từ nhiều lần khởi động và giữ kết quả có quán tính thấp nhất sẽ làm giảm, nhưng không loại bỏ, độ nhạy đối với tối ưu cục bộ.K-means++ có sẵn trong applet này nên tính biến thiên của nó có thể được so sánh trực tiếp với khởi tạo ngẫu nhiên thống nhất.",
       "replace each centroid with the arithmetic mean of the points assigned to it.": "thay thế mỗi trọng tâm bằng giá trị trung bình số học của các điểm được gán cho nó.",
-      "require the algorithm to produce?": "yêu cầu thuật toán để tạo ra?",
+      "require the algorithm to produce?": "yêu cầu thuật toán tạo ra điều gì?",
       "Reset everything to the default: Gaussian mixture dataset, k=3, random init.": "Đặt lại mọi thứ về mặc định: Tập dữ liệu hỗn hợp Gaussian, k=3, init ngẫu nhiên.",
       "Run assignment and centroid updates, then explain how k, initialization, inertia, and silhouette shape the clustering result.": "Chạy cập nhật bài tập và trọng tâm, sau đó giải thích cách k, khởi tạo, quán tính và hình bóng định hình kết quả phân cụm.",
       "Run several steps. Record k, phase, inertia, and whether the cluster centers moved much.": "Chạy vài bước.Ghi lại k, pha, quán tính và xem tâm cụm có chuyển động nhiều không.",
       "Run the same data with k equal to two, three, and four, then compare silhouette scores.": "Chạy cùng một dữ liệu với k bằng hai, ba và bốn, sau đó so sánh điểm số hình bóng.",
-      "Run the smiley data with several values of": "Chạy dữ liệu mặt cười với một số giá trị của",
+      "Run the smiley data with several values of": "Chạy dữ liệu mặt cười với nhiều giá trị của",
       "Same Gaussians dataset. Try k=2, k=3, k=4 and check the silhouette score after each. Compare the scores as evidence for this sample, then check stability and domain meaning. A higher score is not proof of a universally correct k, and fixed thresholds are context-dependent.": "Tập dữ liệu Gaussians tương tự.Hãy thử k=2, k=3, k=4 và kiểm tra điểm bóng sau mỗi lần.So sánh điểm số làm bằng chứng cho mẫu này, sau đó kiểm tra tính ổn định và ý nghĩa miền.Điểm cao hơn không phải là bằng chứng về k chính xác trên toàn cầu và các ngưỡng cố định phụ thuộc vào ngữ cảnh.",
       "Scenario 1: Three compact groups with k equal to three": "Kịch bản 1: Ba nhóm nhỏ gọn có k bằng ba",
       "Scenario 2: Poor starting centers can trap the result": "Kịch bản 2: Trung tâm xuất phát kém có thể cản trở kết quả",
@@ -4375,7 +4409,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Transfer: change the closeness rule and predict the neighbors again.": "Chuyển: thay đổi quy tắc gần và dự đoán lại các hàng xóm.",
       "Try k=3. For this generated sample, try k=3 and compare the observed score with k=2 and k=4. Treat the result as evidence for these data, not a universal truth about k.": "Hãy thử k=3.Đối với mẫu được tạo này, hãy thử k=3 và so sánh điểm quan sát được với k=2 và k=4.Hãy coi kết quả là bằng chứng cho những dữ liệu này chứ không phải là sự thật phổ quát về k.",
       "Uniform random points. Tests how k-means behaves with no real cluster structure.": "Điểm ngẫu nhiên thống nhất.Kiểm tra cách hoạt động của k-mean khi không có cấu trúc cụm thực.",
-      "Unsupervised learning, centroids, assignment and update steps, inertia, convergence, initialization, silhouette score, and model-data mismatch.": "Học không giám sát, trọng tâm, các bước gán và cập nhật, quán tính, hội tụ, khởi tạo, điểm hình bóng và dữ liệu mô hình không khớp.",
+      "Unsupervised learning, centroids, assignment and update steps, inertia, convergence, initialization, silhouette score, and model-data mismatch.": "Học không giám sát, tâm cụm, bước gán điểm và cập nhật tâm, tổng bình phương khoảng cách trong cụm (inertia), hội tụ, khởi tạo, điểm silhouette và sự không phù hợp giữa mô hình với dữ liệu.",
       "Up: extra centroids split real clusters and add distance.": "Lên: các trọng tâm bổ sung sẽ chia các cụm thực và thêm khoảng cách.",
       "Use as a 2–3 minute predict → run → explain prompt.": "Sử dụng làm lời nhắc dự đoán trong 2 - 3 phút → chạy → giải thích lời nhắc.",
       "Use Enter or Space on buttons, and arrow keys on sliders or select controls.": "Sử dụng Enter hoặc Space trên các nút và phím mũi tên trên thanh trượt hoặc điều khiển chọn.",
@@ -4391,7 +4425,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Visualizing K-Means Clustering": "Trực quan hóa phân cụm K-Means",
       "What does the algorithm look like when its assumptions match the data?": "Thuật toán trông như thế nào khi các giả định của nó khớp với dữ liệu?",
       "What happens when the shape of the data violates the model’s assumptions?": "Điều gì xảy ra khi hình dạng của dữ liệu vi phạm các giả định của mô hình?",
-      "What information is missing when training examples have no class labels?": "Thông tin nào bị thiếu khi các ví dụ đào tạo không có nhãn lớp?",
+      "What information is missing when training examples have no class labels?": "Thiếu thông tin gì khi các mẫu huấn luyện không có nhãn lớp?",
       "What this model leaves out": "Mô hình này bỏ sót những gì",
       "When could k-means give a misleading clustering result even if inertia decreases?": "Khi nào phương tiện k có thể đưa ra kết quả phân cụm sai ngay cả khi quán tính giảm?",
       "Which products contribute?": "Sản phẩm nào đóng góp?",
@@ -4399,7 +4433,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Why can lower inertia alone not select the most defensible candidate number of clusters for this purpose?": "Tại sao chỉ riêng quán tính thấp hơn không thể chọn số cụm ứng cử viên có khả năng phòng thủ cao nhất cho mục đích này?",
       "Why can the same data produce different final clusters?": "Tại sao cùng một dữ liệu có thể tạo ra các cụm cuối cùng khác nhau?",
       "Why is it next?": "Tại sao lại là tiếp theo?",
-      "Why might two reasonable clusterings exist for the same points?": "Tại sao có thể tồn tại hai cụm hợp lý cho cùng một điểm?",
+      "Why might two reasonable clusterings exist for the same points?": "Vì sao cùng một tập điểm có thể có hai cách phân cụm hợp lý?",
       "With JohnCalls=true and MaryCalls=true, predict whether P(Alarm) increases and whether JohnCalls and MaryCalls are conditionally independent given Alarm. The evidence settings stay visible; the posterior and mechanism explanation stay hidden until reveal.": "Với JohnCalls=true và MaryCalls=true, hãy dự đoán liệu P(Alarm) có tăng hay không và liệu JohnCalls và MaryCalls có độc lập có điều kiện với Alarm hay không.Cài đặt bằng chứng vẫn hiển thị;phần giải thích về cơ chế và hậu nghiệm được giấu kín cho đến khi được tiết lộ.",
       "wumpus-world": "thế giới wumpus",
       "Yes: it finds the two eyes, and the curved smile becomes one banana-shaped cluster.": "Đúng: nó tìm thấy hai mắt, và nụ cười cong thành một cụm hình quả chuối.",
@@ -4446,11 +4480,14 @@ document.addEventListener('DOMContentLoaded', () => {
       "🖨 Print packet": "🖨 In gói",
       "🖼 Image (.png)": "🖼 Hình ảnh (.png)",
       "🧪 Student response packet": "🧪 Gói phản hồi của học sinh",
-      "🧭 Visual explanation": "🧭 Giải thích trực quan"
+      "🧭 Visual explanation": "🧭 Giải thích trực quan",
+      "There is no universally correct automatic k. The best achievable inertia cannot increase when another center is allowed, so inertia alone cannot select k. Separately initialized Lloyd runs can reach different local optima and need not show that monotonic pattern. Compare repeated starts, silhouette, stability and the purpose of the clustering; these sources of evidence can disagree.": "Không có giá trị k tự động đúng cho mọi bài toán. Quán tính nhỏ nhất có thể đạt được không tăng khi cho phép thêm một tâm, nên chỉ quán tính không đủ để chọn k. Các lần chạy Lloyd khởi tạo riêng có thể đạt các cực tiểu cục bộ khác nhau và không nhất thiết cho kết quả đơn điệu. Hãy so sánh nhiều lần khởi tạo, điểm silhouette, độ ổn định và mục đích phân cụm; các bằng chứng này có thể không thống nhất.",
+      "Explain why the best achievable inertia cannot increase with more centers, why individual runs can differ, and how silhouette can reveal over-splitting.": "Giải thích vì sao quán tính nhỏ nhất có thể đạt được không tăng khi thêm tâm, vì sao từng lần chạy có thể khác nhau và cách silhouette gợi ý việc chia cụm quá mức."
     },
     "patterns": []
   },
   "es": {
+    "teacher": {"What does the number": "¿Qué exige el número", ". Why does changing": ". ¿Por qué cambiar"},
     "strings": {
       "\"I'll Choose\" init: click the corner four times to place centroids there. K-means now has to escape the bad start. Often it doesn't: multiple runs from different inits is standard practice.": "Inicio \"Elegiré\": haga clic en la esquina cuatro veces para colocar los centroides allí.K-means ahora tiene que escapar del mal comienzo.A menudo no es así: múltiples ejecuciones desde diferentes inicios es una práctica estándar.",
       "#a11yStateSummary": "#a11yStateSummary",
@@ -4504,9 +4541,9 @@ document.addEventListener('DOMContentLoaded', () => {
       "(place centroids first, then click \"One EM step\")": "(coloque primero los centroides, luego haga clic en \"Un paso EM\")",
       "(range: −1 bad … 0 overlapping … 1 well-separated)": "(rango: −1 malo… 0 superpuesto… 1 bien separado)",
       ", initializing the centers, and matching the model to the shape of the data are not.": ", inicializar los centros y hacer coincidir el modelo con la forma de los datos no lo son.",
-      ". Inertia always weakly decreases as more centers are added, so it cannot select": ". Inertia always weakly decreases as more centers are added, so it cannot select",
-      ". The explanation and classroom sequence are adapted for this suite.": ". The explanation and classroom sequence are adapted for this suite.",
-      ". Why do the measures behave differently?": ". Why do the measures behave differently?",
+      ". Inertia always weakly decreases as more centers are added, so it cannot select": ". La inercia óptima no aumenta al permitir más centros, por lo que por sí sola no puede elegir",
+      ". The explanation and classroom sequence are adapted for this suite.": ". La explicación y la secuencia de clase se adaptaron para esta colección.",
+      ". Why do the measures behave differently?": ". ¿Por qué se comportan de forma distinta estas medidas?",
       ".bento-main": ".bento-main",
       ".cell-analysis": ".cell-analysis",
       ".cell-maps": ".cell-maps",
@@ -4601,8 +4638,8 @@ document.addEventListener('DOMContentLoaded', () => {
       "Click the canvas yourself": "Haga clic en el lienzo usted mismo",
       "Clustering searches for structure without class labels. K-means partitions points into a user-selected number": "La agrupación busca estructuras sin etiquetas de clase.K-means particiona puntos en un número seleccionado por el usuario",
       "cnf-sat": "cnf-sáb",
-      "Compare inertia and silhouette while increasing": "Compara la inercia y la silueta mientras aumentas",
-      "Compare random and k-means++ starts on packed circles over several runs.": "Compara inicios aleatorios y k-means++ en círculos empaquetados en varias ejecuciones.",
+      "Compare inertia and silhouette while increasing": "Compara la inercia y el índice silhouette al aumentar",
+      "Compare random and k-means++ starts on packed circles over several runs.": "Compara la inicialización aleatoria y k-means++ en los círculos agrupados durante varias ejecuciones.",
       "Comparison recorded. Explain any discrepancy before trying the transfer case.": "Comparación registrada.Explique cualquier discrepancia antes de intentar el caso de transferencia.",
       "Conditionally independent": "Condicionalmente independiente",
       "Convergence means the local update rule has stopped changing the solution. It does not mean the selected clustering is globally best, stable across starts, or meaningful for the application.": "Convergencia significa que la regla de actualización local ha dejado de cambiar la solución.No significa que la agrupación en clústeres seleccionada sea globalmente mejor, estable en todos los inicios o significativa para la aplicación.",
@@ -4622,7 +4659,6 @@ document.addEventListener('DOMContentLoaded', () => {
       "Explain how initialization changes the path of later assignment and update steps.": "Explique cómo la inicialización cambia la ruta de los pasos posteriores de asignación y actualización.",
       "Explain why compact, round groups are an easy case for k-means.": "​​Explique por qué los grupos compactos y redondos son un caso fácil para k-medias.",
       "Explain why distance to a centroid favors compact, roughly round regions.": "Explique por qué la distancia a un centroide favorece regiones compactas y aproximadamente redondas.",
-      "Explain why inertia always falls as more centers are added, while silhouette can reveal over-splitting.": "Explique por qué la inercia siempre cae a medida que se agregan más centros, mientras que la silueta puede revelar una división excesiva.",
       "Explain why spreading initial centers improves coverage without guaranteeing perfection.": "Explique por qué difundir los centros iniciales mejora la cobertura sin garantizar la perfección.",
       "exposes how a deliberately poor start can redirect later assignments.": "expone cómo un comienzo deliberadamente pobre puede redirigir tareas posteriores.",
       "For the prepared population, predict the true-positive and false-positive counts before the posterior probability is revealed.": "Para la población preparada, prediga los recuentos de verdaderos positivos y falsos positivos antes de que se revele la probabilidad posterior.",
@@ -4648,7 +4684,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "K-Means Clustering": "Agrupación de K-medias",
       "K-means clustering visualization. Click to add data points or place centroids.": "K-significa visualización de agrupamiento.Haga clic para agregar puntos de datos o colocar centroides.",
       "K-means clusters points by repeatedly moving each centroid to the mean of the points assigned to it. It works on round blobs and fails on weird shapes.": "K-means agrupa puntos moviendo repetidamente cada centroide a la media de los puntos que se le asignaron.Funciona con manchas redondas y falla con formas extrañas.",
-      "k-means discovers the correct number of clusters; convergence establishes global optimality; lower inertia always identifies a better model; k-means++ guarantees the final optimum.": "k-means descubre el número correcto de clústeres;la convergencia establece la optimización global;una inercia más baja siempre identifica un modelo mejor;k-means++ garantiza el óptimo final.",
+      "k-means discovers the correct number of clusters; convergence establishes global optimality; lower inertia always identifies a better model; k-means++ guarantees the final optimum.": "K-means descubre el número correcto de grupos; la convergencia demuestra la optimalidad global; una inercia menor siempre identifica un modelo mejor; k-means++ garantiza el óptimo final.",
       "k-means++": "k-medias++",
       "k-means++ seeds centers using probabilities proportional to D(x)². This is closely related to the scikit-learn default initialization; scikit-learn uses a greedy multi-trial variant of k-means++.": "k-means++ centros de semillas usando probabilidades proporcionales a D(x)².Esto está estrechamente relacionado con la inicialización predeterminada de scikit-learn;scikit-learn utiliza una variante codiciosa de múltiples pruebas de k-means++.",
       "K-means++ spreads the starting centers": "K-means++ extiende los centros iniciales",
@@ -4679,7 +4715,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "No improving move is accepted": "No se acepta ningún movimiento de mejora",
       "No: the smile is a curved arc, and k-means can only carve out round, straight-edged regions.": "No: la sonrisa es un arco curvo y k-means solo puede tallar regiones redondas y de bordes rectos.",
       "Not enough information yet": "Aún no hay suficiente información",
-      "not repair the shape assumption?": "no repara la suposición de forma?",
+      "not repair the shape assumption?": "no corrige el supuesto sobre la forma?",
       "Now choose an initialization strategy and click \"Place centroids\".": "Ahora elija una estrategia de inicialización y haga clic en \"Colocar centroides\".",
       "Number of clusters to fit. K-means requires k in advance; diagnostics such as silhouette, stability, external information, and domain goals can inform the choice but do not uniquely determine it.": "Número de grupos que caben.K-means requiere k por adelantado;diagnósticos como silueta, estabilidad, información externa y objetivos de dominio pueden informar la elección, pero no la determinan de forma única.",
       "Objective and convergence": "Objetivo y convergencia",
@@ -4688,7 +4724,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Pick a scenario, predict what should happen, then apply it and compare the result with your prediction.": "Elija un escenario, prediga lo que debería suceder, luego aplíquelo y compare el resultado con su predicción.",
       "Pick centroids spread far apart from each other. This can improve coverage over random initialization on some datasets; compare runs rather than assuming it is always better.": "Elija centroides muy separados entre sí.Esto puede mejorar la cobertura respecto de la inicialización aleatoria en algunos conjuntos de datos;compare ejecuciones en lugar de asumir que siempre es mejor.",
       "Pick k random data points as initial centroids. Simple but often poor.": "Elija k puntos de datos aleatorios como centroides iniciales.Sencillo pero a menudo pobre.",
-      "Place all centers in one corner. Which later step can recover, and where can the path remain trapped?": "Coloque todos los centros en una esquina.¿Qué paso posterior puede recuperarse y dónde puede quedar atrapado el camino?",
+      "Place all centers in one corner. Which later step can recover, and where can the path remain trapped?": "Coloca todos los centroides en una esquina. ¿Qué paso posterior permite recuperarse y dónde puede quedar atrapado el proceso?",
       "Place all starting centroids in one corner, run the algorithm, then compare with spread-out initialization.": "Coloque todos los centroides iniciales en una esquina, ejecute el algoritmo y luego compárelo con la inicialización extendida.",
       "Place k centroids using the chosen initialization strategy.": "Coloque k centroides usando la estrategia de inicialización elegida.",
       "Poor starting centers can trap the result": "Los malos centros iniciales pueden atrapar el resultado",
@@ -4728,12 +4764,12 @@ document.addEventListener('DOMContentLoaded', () => {
       "repeatedly chooses the point farthest from its nearest existing center; it spreads coverage but can favor outliers.": "elige repetidamente el punto más alejado de su centro existente más cercano;extiende la cobertura pero puede favorecer a los valores atípicos.",
       "Repeating the algorithm from several starts and keeping the lowest-inertia result reduces, but does not remove, sensitivity to local optima. K-means++ is available in this applet so its variability can be compared directly with uniform random initialization.": "Repetir el algoritmo desde varios inicios y mantener el resultado de menor inercia reduce, pero no elimina, la sensibilidad a los óptimos locales.K-means++ está disponible en este subprograma, por lo que su variabilidad se puede comparar directamente con una inicialización aleatoria uniforme.",
       "replace each centroid with the arithmetic mean of the points assigned to it.": "reemplaza cada centroide con la media aritmética de los puntos que se le asignan.",
-      "require the algorithm to produce?": "requiere que el algoritmo se produzca?",
+      "require the algorithm to produce?": "que produzca el algoritmo?",
       "Reset everything to the default: Gaussian mixture dataset, k=3, random init.": "Restablece todo a los valores predeterminados: conjunto de datos de mezcla gaussiana, k=3, inicio aleatorio.",
       "Run assignment and centroid updates, then explain how k, initialization, inertia, and silhouette shape the clustering result.": "Ejecute actualizaciones de asignación y centroide, luego explique cómo k, la inicialización, la inercia y la silueta dan forma al resultado de la agrupación.",
       "Run several steps. Record k, phase, inertia, and whether the cluster centers moved much.": "Ejecute varios pasos.Registre k, fase, inercia y si los centros del cúmulo se movieron mucho.",
       "Run the same data with k equal to two, three, and four, then compare silhouette scores.": "Ejecute los mismos datos con k igual a dos, tres y cuatro, luego compare las puntuaciones de las siluetas.",
-      "Run the smiley data with several values of": "Ejecute los datos del emoticón con varios valores de",
+      "Run the smiley data with several values of": "Ejecuta los datos de la cara sonriente con varios valores de",
       "Same Gaussians dataset. Try k=2, k=3, k=4 and check the silhouette score after each. Compare the scores as evidence for this sample, then check stability and domain meaning. A higher score is not proof of a universally correct k, and fixed thresholds are context-dependent.": "Mismo conjunto de datos gaussianos.Pruebe k=2, k=3, k=4 y verifique la puntuación de la silueta después de cada uno.Compare las puntuaciones como evidencia para esta muestra, luego verifique la estabilidad y el significado del dominio.Una puntuación más alta no es prueba de una k universalmente correcta, y los umbrales fijos dependen del contexto.",
       "Scenario 1: Three compact groups with k equal to three": "Escenario 1: Tres grupos compactos con k igual a tres",
       "Scenario 2: Poor starting centers can trap the result": "Escenario 2: Los malos centros iniciales pueden atrapar el resultado",
@@ -4812,7 +4848,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Transfer: change the closeness rule and predict the neighbors again.": "Transferir: cambia la regla de cercanía y vuelve a predecir los vecinos.",
       "Try k=3. For this generated sample, try k=3 and compare the observed score with k=2 and k=4. Treat the result as evidence for these data, not a universal truth about k.": "Pruebe k=3.Para esta muestra generada, pruebe k=3 y compare la puntuación observada con k=2 y k=4.Trate el resultado como evidencia de estos datos, no como una verdad universal sobre k.",
       "Uniform random points. Tests how k-means behaves with no real cluster structure.": "Puntos aleatorios uniformes.Prueba cómo se comporta k-means sin una estructura de clúster real.",
-      "Unsupervised learning, centroids, assignment and update steps, inertia, convergence, initialization, silhouette score, and model-data mismatch.": "Aprendizaje no supervisado, centroides, pasos de asignación y actualización, inercia, convergencia, inicialización, puntuación de silueta y discrepancia entre los datos del modelo.",
+      "Unsupervised learning, centroids, assignment and update steps, inertia, convergence, initialization, silhouette score, and model-data mismatch.": "Aprendizaje no supervisado, centroides, pasos de asignación y actualización, inercia, convergencia, inicialización, puntuación silhouette y desajuste entre el modelo y los datos.",
       "Up: extra centroids split real clusters and add distance.": "Arriba: los centroides adicionales dividen los grupos reales y agregan distancia.",
       "Use as a 2–3 minute predict → run → explain prompt.": "Úselo como mensaje de predicción → ejecución → explicación de 2 a 3 minutos.",
       "Use Enter or Space on buttons, and arrow keys on sliders or select controls.": "Utilice Intro o Espacio en los botones y las teclas de flecha en los controles deslizantes o seleccione controles.",
@@ -4828,7 +4864,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Visualizing K-Means Clustering": "Visualización de agrupaciones de K-medias",
       "What does the algorithm look like when its assumptions match the data?": "¿Cómo se ve el algoritmo cuando sus suposiciones coinciden con los datos?",
       "What happens when the shape of the data violates the model’s assumptions?": "¿Qué sucede cuando la forma de los datos viola los supuestos del modelo?",
-      "What information is missing when training examples have no class labels?": "¿Qué información falta cuando los ejemplos de capacitación no tienen etiquetas de clase?",
+      "What information is missing when training examples have no class labels?": "¿Qué información falta cuando los ejemplos de entrenamiento no tienen etiquetas de clase?",
       "What this model leaves out": "Lo que este modelo omite",
       "When could k-means give a misleading clustering result even if inertia decreases?": "¿Cuándo podrían k-means dar un resultado de agrupamiento engañoso incluso si la inercia disminuye?",
       "Which products contribute?": "¿Qué productos contribuyen?",
@@ -4836,7 +4872,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Why can lower inertia alone not select the most defensible candidate number of clusters for this purpose?": "¿Por qué la baja inercia por sí sola no puede seleccionar el número de clústeres candidatos más defendible para este propósito?",
       "Why can the same data produce different final clusters?": "¿Por qué los mismos datos pueden producir diferentes grupos finales?",
       "Why is it next?": "¿Por qué es el siguiente?",
-      "Why might two reasonable clusterings exist for the same points?": "¿Por qué podrían existir dos agrupaciones razonables para los mismos puntos?",
+      "Why might two reasonable clusterings exist for the same points?": "¿Por qué pueden existir dos agrupaciones razonables para los mismos puntos?",
       "With JohnCalls=true and MaryCalls=true, predict whether P(Alarm) increases and whether JohnCalls and MaryCalls are conditionally independent given Alarm. The evidence settings stay visible; the posterior and mechanism explanation stay hidden until reveal.": "Con JohnCalls=true y MaryCalls=true, prediga si P(Alarm) aumenta y si JohnCalls y MaryCalls son condicionalmente independientes dada la alarma.Los entornos de evidencia permanecen visibles;la explicación posterior y el mecanismo permanecen ocultos hasta que se revelan.",
       "wumpus-world": "mundo-wumpus",
       "Yes: it finds the two eyes, and the curved smile becomes one banana-shaped cluster.": "Sí: encuentra los dos ojos, y la sonrisa curva se convierte en un racimo en forma de plátano.",
@@ -4883,7 +4919,9 @@ document.addEventListener('DOMContentLoaded', () => {
       "🖨 Print packet": "🖨 Imprimir paquete",
       "🖼 Image (.png)": "🖼 Imagen (.png)",
       "🧪 Student response packet": "🧪 Paquete de respuesta para estudiantes",
-      "🧭 Visual explanation": "🧭 Explicación visual"
+      "🧭 Visual explanation": "🧭 Explicación visual",
+      "There is no universally correct automatic k. The best achievable inertia cannot increase when another center is allowed, so inertia alone cannot select k. Separately initialized Lloyd runs can reach different local optima and need not show that monotonic pattern. Compare repeated starts, silhouette, stability and the purpose of the clustering; these sources of evidence can disagree.": "No existe un k automático correcto para todos los problemas. La menor inercia alcanzable no aumenta al permitir otro centro, por lo que la inercia sola no basta para elegir k. Las ejecuciones de Lloyd con inicializaciones distintas pueden alcanzar óptimos locales diferentes y no mostrar ese patrón monótono. Compara varios inicios, silhouette, estabilidad y el propósito de la agrupación; esas evidencias pueden discrepar.",
+      "Explain why the best achievable inertia cannot increase with more centers, why individual runs can differ, and how silhouette can reveal over-splitting.": "Explica por qué la menor inercia alcanzable no aumenta con más centros, por qué las ejecuciones individuales pueden diferir y cómo silhouette puede revelar una división excesiva."
     },
     "patterns": []
   }
@@ -4891,7 +4929,7 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 </script>
-<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["kmeans"];if(!row)return;Object.assign(row.vi.strings,{"🧪 Quick Assign · QA-KMEANS-01 · 10–15 min": "🧪 Bài tập nhanh · QA-KMEANS-01 · 10–15 phút", "Assign, move, repeat": "Gán điểm, di chuyển tâm, lặp lại", "Run assignment and centroid updates, then explain how k, initialization, inertia, and silhouette shape the clustering result.": "Dự đoán một bước gán cụm và cập nhật centroid, rồi giải thích chu kỳ xen kẽ của k-means.", "Before running, what k and initialization do you expect to fit the dataset best? Why?": "Với các centroid hiện tại, điểm được chọn sẽ được gán vào cụm nào và vì sao?", "Run several steps. Record k, phase, inertia, and whether the cluster centers moved much.": "Ghi lại một phép gán, centroid trước cập nhật và centroid sau cập nhật.", "How did alternating assignment and centroid update reduce the clustering error?": "Hai bước gán điểm và cập nhật centroid phụ thuộc lẫn nhau như thế nào?", "When could k-means give a misleading clustering result even if inertia decreases?": "Tại sao hai cách khởi tạo centroid khác nhau có thể dẫn đến kết quả cuối cùng khác nhau?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"🧪 Quick Assign · QA-KMEANS-01 · 10–15 min": "🧪 Tarea rápida · QA-KMEANS-01 · 10–15 min", "Assign, move, repeat": "Asigna, mueve, repite", "Run assignment and centroid updates, then explain how k, initialization, inertia, and silhouette shape the clustering result.": "Predice una asignación y una actualización de centroide y explica el ciclo alternante de k-means.", "Before running, what k and initialization do you expect to fit the dataset best? Why?": "Con los centroides actuales, ¿a qué grupo se asignará el punto elegido y por qué?", "Run several steps. Record k, phase, inertia, and whether the cluster centers moved much.": "Registra una asignación, el centroide antes de actualizar y el centroide después.", "How did alternating assignment and centroid update reduce the clustering error?": "¿Cómo dependen entre sí los pasos de asignar puntos y actualizar centroides?", "When could k-means give a misleading clustering result even if inertia decreases?": "¿Por qué dos inicializaciones distintas pueden terminar en agrupamientos diferentes?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script>
+<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["kmeans"];if(!row)return;Object.assign(row.vi.strings,{"Level 1 · 10–15 min": "Cấp độ 1 · 10–15 phút", "🧪 Quick Assign · QA-KMEANS-01 · 10–15 min": "🧪 Bài tập nhanh · QA-KMEANS-01 · 10–15 phút", "Assign, move, repeat": "Gán điểm, di chuyển tâm, lặp lại", "Predict one assignment and centroid update, then explain the alternating k-means cycle.": "Dự đoán một bước gán cụm và cập nhật centroid, rồi giải thích chu kỳ xen kẽ của k-means.", "With the current centroids, which cluster will the selected point join, and why?": "Với các centroid hiện tại, điểm được chọn sẽ được gán vào cụm nào và vì sao?", "Record one assignment and the centroid before and after its update.": "Ghi lại một phép gán, centroid trước cập nhật và centroid sau cập nhật.", "How do point assignment and centroid update depend on one another?": "Hai bước gán điểm và cập nhật centroid phụ thuộc lẫn nhau như thế nào?", "Why can two different initializations end with different clusterings?": "Tại sao hai cách khởi tạo centroid khác nhau có thể dẫn đến kết quả cuối cùng khác nhau?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"Level 1 · 10–15 min": "Nivel 1 · 10–15 min", "🧪 Quick Assign · QA-KMEANS-01 · 10–15 min": "🧪 Tarea rápida · QA-KMEANS-01 · 10–15 min", "Assign, move, repeat": "Asigna, mueve, repite", "Predict one assignment and centroid update, then explain the alternating k-means cycle.": "Predice una asignación y una actualización de centroide y explica el ciclo alternante de k-means.", "With the current centroids, which cluster will the selected point join, and why?": "Con los centroides actuales, ¿a qué grupo se asignará el punto elegido y por qué?", "Record one assignment and the centroid before and after its update.": "Registra una asignación, el centroide antes de actualizar y el centroide después.", "How do point assignment and centroid update depend on one another?": "¿Cómo dependen entre sí los pasos de asignar puntos y actualizar centroides?", "Why can two different initializations end with different clusterings?": "¿Por qué dos inicializaciones distintas pueden terminar en agrupamientos diferentes?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script>
 (() => {
   'use strict';
   // v1.6.1: preserve canonical source text across VI/ES round trips, refresh native layers before overlay activation, and cancel superseded locale timers.
@@ -4903,6 +4941,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const rootData = window.__AI_PLAYGROUNDS_R4_LOCALES || {};
   rootData.common = rootData.common || {};
   rootData.common.vi = Object.assign({
+    "↺ Reset all": "↺ Đặt lại",
+    "↺ New world": "↺ Thế giới mới",
+    "Before you read": "Trước khi đọc",
+    "Misconceptions to test:": "Những hiểu lầm cần kiểm tra:",
+    "Core question:": "Câu hỏi trọng tâm:",
+    "Run and watch:": "Chạy và quan sát:",
+    "Predict first:": "Dự đoán trước:",
+    "Explain afterward:": "Giải thích sau:",
+    "Apply and compare": "Áp dụng và so sánh",
+    "Start with the featured experiment, then use the scenarios to test a prediction.": "Bắt đầu với thí nghiệm nổi bật, rồi dùng các tình huống để kiểm tra dự đoán.",
+    "Open the mechanism view and lesson sequence when you need to explain why the result changed.": "Mở phần mô tả cơ chế và trình tự bài học khi cần giải thích vì sao kết quả thay đổi.",
+    "Collect reasoning with the worksheet or the local student response packet.": "Ghi lại lập luận bằng phiếu học tập hoặc bộ câu trả lời của học sinh được lưu cục bộ.",
+    "Use the text-state description and keyboard guidance when the visual display is not enough.": "Dùng mô tả trạng thái bằng văn bản và hướng dẫn bàn phím khi hình ảnh hiển thị chưa đủ.",
+    "Applet learning modes": "Các chế độ học tập của applet",
+    "Copy this experiment": "Sao chép thí nghiệm này",
+    "Experiment link copied.": "Đã sao chép liên kết thí nghiệm.",
+    "Copy this experiment URL": "Sao chép URL của thí nghiệm này",
+    "Understand": "Tìm hiểu",
+    "Use in class": "Dùng trong lớp",
+    "Text and keyboard": "Văn bản và bàn phím",
+    "What this applet shows": "Điều applet này minh họa",
+
     "Jump to latest": "Về trạng thái mới nhất",
     "Jump to frame": "Đến khung",
     "Jump to iteration": "Đến lần lặp",
@@ -4940,6 +5000,28 @@ document.addEventListener('DOMContentLoaded', () => {
     'Wumpus World': 'Thế giới Wumpus'
   }, rootData.common.vi || {});
   rootData.common.es = Object.assign({
+    "↺ Reset all": "↺ Restablecer",
+    "↺ New world": "↺ Nuevo mundo",
+    "Before you read": "Antes de leer",
+    "Misconceptions to test:": "Ideas erróneas que comprobar:",
+    "Core question:": "Pregunta central:",
+    "Run and watch:": "Ejecuta y observa:",
+    "Predict first:": "Predice primero:",
+    "Explain afterward:": "Explica después:",
+    "Apply and compare": "Aplicar y comparar",
+    "Start with the featured experiment, then use the scenarios to test a prediction.": "Empieza con el experimento destacado y usa los escenarios para comprobar una predicción.",
+    "Open the mechanism view and lesson sequence when you need to explain why the result changed.": "Abre la vista del mecanismo y la secuencia de la lección para explicar por qué cambió el resultado.",
+    "Collect reasoning with the worksheet or the local student response packet.": "Recoge el razonamiento con la hoja de actividades o el cuaderno de respuestas del estudiante guardado localmente.",
+    "Use the text-state description and keyboard guidance when the visual display is not enough.": "Usa la descripción textual del estado y la guía del teclado cuando la visualización no sea suficiente.",
+    "Applet learning modes": "Modos de aprendizaje del applet",
+    "Copy this experiment": "Copiar este experimento",
+    "Experiment link copied.": "Enlace del experimento copiado.",
+    "Copy this experiment URL": "Copia la URL de este experimento",
+    "Understand": "Comprender",
+    "Use in class": "Usar en clase",
+    "Text and keyboard": "Texto y teclado",
+    "What this applet shows": "Lo que muestra este applet",
+
     "Jump to latest": "Ir al estado más reciente",
     "Jump to frame": "Ir al estado",
     "Jump to iteration": "Ir a la iteración",
@@ -4981,6 +5063,43 @@ document.addEventListener('DOMContentLoaded', () => {
   // R4 stays invisible until the applet-specific VI/ES catalog is complete.
   if (!data || data.ready !== true || !data.vi || !data.es) return;
 
+  // Scope navigation labels to the footer; Source in a mechanism is not source code.
+  const footerLabels = {"vi":{"footer-top":"↑ Lên đầu trang","footer-portfolio":"Hồ sơ","footer-source":"Mã nguồn","footer-issue":"Báo lỗi"},"es":{"footer-top":"↑ Volver arriba","footer-portfolio":"Portafolio","footer-source":"Código fuente","footer-issue":"Informar de un problema"}};
+  // Teacher headings and short rich-text fragments never enter substring lookup.
+  const teacherLabels = {vi: {'For teachers': 'Dành cho giáo viên', 'Curriculum:': 'Nội dung học:', 'Pre-exploration prompts:': 'Câu hỏi trước khi khám phá:', 'Post-exploration prompts:': 'Câu hỏi sau khi khám phá:'}, es: {'For teachers': 'Para docentes', 'Curriculum:': 'Contenidos:', 'Pre-exploration prompts:': 'Preguntas antes de explorar:', 'Post-exploration prompts:': 'Preguntas después de explorar:'}};
+  // Exact original-header titles only; never translate body or learner text in ZH.
+  const headerTitlesZh = {
+    "Copy an <iframe> snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.": "复制用于嵌入学习管理系统（LMS）的 <iframe> 代码。隐藏页头和说明，仅显示交互区。",
+    "Reset everything to defaults: empty grid, A*, default start and goal positions.": "恢复默认设置：空网格、A* 算法及默认起点和终点。",
+    "Reset everything to defaults: TSP, best-improvement, T₀=10, cooling=0.995.": "恢复默认设置：旅行商问题、最佳改进法、初始温度 T₀=10、降温系数 0.995。",
+    "Generate a new random world, clear the log, reset score.": "生成新的随机世界，清空日志并重置分数。",
+    "Reset input to default 'modus ponens' example.": "将输入恢复为默认的“肯定前件式”示例。",
+    "Reset to default disease scenario: prior=1%, sensitivity=99%, specificity=95%, population=10000.": "恢复默认疾病检测情景：患病率 1%、灵敏度 99%、特异度 95%、人数 10000。",
+    "Reset CPTs to AIMA defaults and clear all evidence.": "将条件概率表恢复为 AIMA 默认值，并清除所有观测证据。",
+    "Reset everything to defaults: two-moons dataset, k=5, both visualizations on.": "恢复默认设置：双月数据集、k=5，并开启两个可视化图层。",
+    "Reset everything: sin truth, n=20 points, σ=0.2 noise, degree 3, λ=0.": "恢复默认设置：真实函数为 sin、n=20 个点、噪声 σ=0.2、多项式次数为 3、λ=0。",
+    "Reset everything to default: two-moons dataset, [2-6-4-1] architecture, ReLU activation, LR=0.03.": "恢复默认设置：双月数据集、[2-6-4-1] 网络结构、ReLU 激活函数、学习率 0.03。",
+    "Reset everything to the default: Gaussian mixture dataset, k=3, random init.": "恢复默认设置：高斯混合数据集、k=3、随机初始化。",
+    "Reset to default: cross input, Sobel-X edge kernel, abs ON, ReLU OFF.": "恢复默认设置：十字形输入、Sobel-X 边缘检测核，开启绝对值变换，关闭 ReLU。",
+    "Clear Q-values; restore the default grid, learning rate, discount factor, exploration rate and step reward.": "清空 Q 值；将网格、学习率、折扣因子、探索率和每步奖励恢复为默认值。",
+    "Download the current grid + search trace as a PNG.": "将当前网格和搜索轨迹下载为 PNG 图片。",
+    "Download the current state visualization as a PNG.": "将当前状态的可视化下载为 PNG 图片。",
+    "Download the world view as a PNG.": "将世界视图下载为 PNG 图片。",
+    "Download the population dot-grid as a PNG.": "将人群点阵图下载为 PNG 图片。",
+    "Download the network diagram as a PNG.": "将网络图下载为 PNG 图片。",
+    "Download the current points + decision boundary as a PNG.": "将当前数据点和决策边界下载为 PNG 图片。",
+    "Download the fit canvas as a PNG.": "将拟合图下载为 PNG 图片。",
+    "Download the decision-boundary canvas as a PNG.": "将决策边界图下载为 PNG 图片。",
+    "Download the current visualization as a PNG image (for slides).": "将当前可视化下载为 PNG 图片（可用于幻灯片）。",
+    "Download the convolution output as a PNG.": "将卷积输出下载为 PNG 图片。",
+    "Download the current grid + Q-value heatmap as a PNG.": "将当前网格和 Q 值热力图下载为 PNG 图片。",
+    "Download grid dimensions and search results (path coordinates, visited-node count, frontier snapshot) as CSV.": "将网格尺寸和搜索结果（路径坐标、已访问节点数、搜索前沿快照）下载为 CSV。",
+    "Download per-iteration costs, algorithm, problem, iteration count and best cost as CSV.": "将每次迭代的代价、算法、问题、迭代次数和最佳代价下载为 CSV。",
+    "Download the current Bayes scenario (prior, sens, spec, population) and the resulting contingency table + posteriors as CSV.": "将当前贝叶斯情景（先验概率、灵敏度、特异度、人数）、列联表和后验概率下载为 CSV。",
+    "Download training + validation datasets and the per-degree MSE table as CSV.": "将训练集、验证集和各多项式次数的均方误差表下载为 CSV。",
+    "Download points + cluster assignments + centroid positions as CSV (two sections in one file).": "将数据点、所属簇和质心位置下载为 CSV（同一文件内分为两个部分）。",
+    "Download episode return history + the current Q-table snapshot as CSV.": "将各回合的回报历史和当前 Q 表快照下载为 CSV。"
+  };
   let current = 'en';
   let applying = false;
   let nativeLanguageClick = false;
@@ -5049,6 +5168,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function skipNode(node) {
     const el = node && (node.nodeType === 1 ? node : node.parentElement);
     if (!el) return true;
+    if (el.closest('.suite-guided-actual')) return false;
     return !!el.closest('script,style,noscript,template,code,pre,kbd,samp,.lang-switch,[data-r4-no-translate]');
   }
 
@@ -5067,7 +5187,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const live = node.nodeValue || '';
     if (!originalText.has(node)) originalText.set(node, live);
     const source = textSource(node);
-    const translated = translateString(source);
+    const footerKey = node.parentElement?.closest('footer [data-i18n]')?.dataset.i18n;
+    // Match formatted teacher prose only; retain source and outer whitespace.
+    const proseKey = node.parentElement?.closest('.for-teachers')
+      ? source.replace(/\s+/g, ' ').trim() : null;
+    const proseMap = proseKey === null ? null
+      : Object.assign({}, mapFor(current), data[current]?.teacher || {}, teacherLabels[current] || {});
+    const prose = proseMap && Object.prototype.hasOwnProperty.call(proseMap, proseKey)
+      ? source.replace(/\S(?:[\s\S]*\S)?/, () => proseMap[proseKey]) : null;
+    const translated = footerLabels[current]?.[footerKey] || prose || translateString(source);
     if (translated !== live) {
       lastAppliedText.set(node, translated);
       applying = true;
@@ -5076,15 +5204,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function translateAttributes(el) {
+  function translateAttributes(el, attributes = ['title', 'aria-label', 'placeholder']) {
     if (!el || el.nodeType !== 1 || skipNode(el)) return;
     const state = attrState(el);
-    for (const attr of ['title', 'aria-label', 'placeholder']) {
+    for (const attr of attributes) {
       if (!el.hasAttribute(attr)) continue;
       const live = el.getAttribute(attr) || '';
       if (!Object.prototype.hasOwnProperty.call(state, attr)) state[attr] = live;
       const source = Object.prototype.hasOwnProperty.call(state, attr) ? state[attr] : live;
-      const translated = translateString(source);
+      const zhTitle = current === 'zh' && attr === 'title' && el.closest('.header-actions')
+        && ['hardReset', 'embedLink', 'csvExport', 'exportPng'].includes(el.id)
+        ? headerTitlesZh[source] : null;
+      const translated = current === 'zh'
+        ? (typeof zhTitle === 'string' ? zhTitle : live) : translateString(source);
       if (translated !== live) {
         const applied = lastAppliedAttrs.get(el) || {};
         applied[attr] = translated;
@@ -5094,6 +5226,14 @@ document.addEventListener('DOMContentLoaded', () => {
         applying = false;
       }
     }
+  }
+
+  function refreshHeaderTitles() {
+    if (current !== 'en' && current !== 'zh') return;
+    document.querySelectorAll('.header-actions #hardReset,.header-actions #embedLink,.header-actions #csvExport,.header-actions #exportPng').forEach(el => {
+      const source = originalAttrs.get(el)?.title ?? el.getAttribute('title');
+      if (Object.prototype.hasOwnProperty.call(headerTitlesZh, source)) translateAttributes(el, ['title']);
+    });
   }
 
   function translateTree(root = document.body) {
@@ -5200,24 +5340,28 @@ document.addEventListener('DOMContentLoaded', () => {
     window.tr = wrapped;
   }
 
-  function patchClipboard() {
-    try {
-      const clipboard = navigator.clipboard;
-      if (!clipboard || typeof clipboard.writeText !== 'function' || clipboard.writeText.__r4Wrapped) return;
-      const base = clipboard.writeText.bind(clipboard);
-      const wrapped = text => base(current === 'vi' || current === 'es' ? translateString(String(text), current) : text);
-      wrapped.__r4Wrapped = true;
-      clipboard.writeText = wrapped;
-    } catch (_) {}
-  }
-
   function selectControl() {
     return document.querySelector('.r4-language-select');
   }
 
   function updateSelect(locale) {
+    const names = {
+      en: ['Language', 'Toggle dark or light theme'],
+      zh: ['语言', '切换深色或浅色主题'],
+      vi: ['Ngôn ngữ', 'Chuyển giao diện tối hoặc sáng'],
+      es: ['Idioma', 'Cambiar entre tema oscuro y claro']
+    }[locale];
     const select = selectControl();
-    if (select) select.value = locale;
+    if (select) {
+      select.value = locale;
+      select.setAttribute('aria-label', names[0]);
+    }
+    const theme = document.getElementById('themeToggle');
+    if (theme) {
+      theme.setAttribute('data-r4-no-translate', '1');
+      theme.setAttribute('aria-label', names[1]);
+      theme.setAttribute('title', names[1]);
+    }
   }
 
   function activateOverlay(locale) {
@@ -5227,7 +5371,7 @@ document.addEventListener('DOMContentLoaded', () => {
     current = locale;
     document.documentElement.lang = locale;
     wrapTr();
-    patchClipboard();
+    // Exporters localize their labels; never translate learner-authored clipboard data.
     applyMetadata(locale);
     translateTree(document.body);
     updateSelect(locale);
@@ -5249,6 +5393,7 @@ document.addEventListener('DOMContentLoaded', () => {
       clickNative(locale);
       document.documentElement.lang = locale === 'zh' ? 'zh' : 'en';
       refreshKnownLayers();
+      refreshHeaderTitles();
       if (locale === 'en') {
         const heading = document.querySelector('h1');
         if (heading && canonicalHeadingText) {
@@ -5297,10 +5442,10 @@ document.addEventListener('DOMContentLoaded', () => {
     for (const mutation of mutations) {
       if (mutation.type === 'characterData') {
         const live = mutation.target.nodeValue || '';
-        if (lastAppliedText.get(mutation.target) === live) {
-          lastAppliedText.delete(mutation.target);
-          continue;
-        }
+        // Several queued records can observe the same final translated value.
+        // Retain its marker until a genuinely different applet value arrives.
+        if (lastAppliedText.get(mutation.target) === live) continue;
+        lastAppliedText.delete(mutation.target);
         // Applet-authored dynamic state is always a new source value, including
         // while English or Chinese is active. This is what prevents a later locale
         // switch from restoring stale page-load state.
@@ -5310,15 +5455,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const attr = mutation.attributeName;
         const live = mutation.target.getAttribute(attr) || '';
         const applied = lastAppliedAttrs.get(mutation.target) || {};
-        if (applied[attr] === live) {
-          delete applied[attr];
-          lastAppliedAttrs.set(mutation.target, applied);
-          continue;
-        }
+        if (applied[attr] === live) continue;
+        delete applied[attr];
         const state = attrState(mutation.target);
         state[attr] = live;
-        if (current === 'vi' || current === 'es') translateAttributes(mutation.target);
+        // Do not overwrite a sibling attribute whose native write is still queued.
+        if (current === 'vi' || current === 'es' || current === 'zh' && attr === 'title') translateAttributes(mutation.target, [attr]);
       } else {
+        // The native original galleries have no Chinese confirmation entry.
+        // Localize only this generated button message, never learner text.
+        if (current === 'zh' && mutation.target.matches?.('.scenario-card button')
+            && mutation.target.textContent === '✓ Applied; compare the result') {
+          mutation.target.textContent = '✓ 已应用；请比较结果';
+        }
+        // Locale renderers replace the original gallery's cards, not its model.
+        // Carry the last applied marker by stable ID; never click/reapply a case.
+        if (mutation.target.id === 'scenarioGalleryCards' && !mutation.target.querySelector('.applied')) {
+          const previous = [...mutation.removedNodes].find(node => node.nodeType === 1 && node.matches('.scenario-card.applied'));
+          const index = previous?.dataset.scenarioIndex;
+          if (index !== undefined) [...mutation.target.children]
+            .find(node => node.dataset.scenarioIndex === index)?.classList.add('applied');
+        }
         mutation.addedNodes.forEach(node => {
           if (current === 'vi' || current === 'es') translateTree(node);
         });
@@ -5332,7 +5489,7 @@ document.addEventListener('DOMContentLoaded', () => {
     canonicalHeadingText = initialHeading ? initialHeading.textContent : '';
     installSelect();
     wrapTr();
-    patchClipboard();
+    // Exporters localize their labels; never translate learner-authored clipboard data.
     observer.observe(document.body, { subtree:true, childList:true, characterData:true, attributes:true, attributeFilter:['title','aria-label','placeholder'] });
     // Legacy language handlers in some applets rebuild or reset the experiment as
     // part of their EN/ZH switch. R4 invokes those buttons only as an internal
@@ -5352,6 +5509,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (nativeLanguageClick) return;
         const locale = normalizeLocale(button.dataset.lang);
         current = locale;
+        refreshHeaderTitles();
         updateSelect(locale);
         persist(locale);
       });
@@ -5372,10 +5530,10 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 </script>
-<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.5</div>
+<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.6</div>
 
 <!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
-<script data-ai-playgrounds-analytics="v1.9.5">
+<script data-ai-playgrounds-analytics="v1.9.6">
 (function () {
   'use strict';
   var CANONICAL_HOST = 'lmdixon23.github.io';
@@ -5491,5 +5649,116 @@ document.addEventListener('DOMContentLoaded', () => {
   sendPage();
 })();
 </script>
+<script id="classroom-draft-runtime">
+(() => {
+  'use strict';
+  const root = document.querySelector('[data-quick-assign-id]');
+  if (!root) return;
+  const original = !!root.querySelector('[data-lab-answer]');
+  const fields = [...root.querySelectorAll('[data-lab-answer],[data-qa-answer]')];
+  const state = root.querySelector('[data-lab-state],[data-qa-modern-state]');
+  const status = root.querySelector('.lab-status');
+  const slug = window.APPLET_LEARNER_PROFILE?.slug;
+  const key = original ? 'ai-playgrounds-lab-' + slug : 'ai-playgrounds-quick-assign:' + root.dataset.quickAssignId;
+  const locale = () => document.documentElement.lang.toLowerCase().split('-')[0];
+  const COPY = {
+    en: {confirm:'Clear this lab’s saved answers and captured evidence? This cannot be undone.', failed:'Your draft could not be saved in this browser. Copy or print it before closing this page.', cleared:'Local answers and captured evidence cleared.', removeFailed:'The saved draft could not be cleared. Your answers are still here.', restoreFailed:'The saved draft could not be read. Copy or print your work before reloading; clear the draft only if you want to discard it.'},
+    zh: {confirm:'清除此实验已保存的答案和状态记录？此操作无法撤销。', failed:'无法在此浏览器中保存草稿。关闭页面前请复制或打印。', cleared:'已清除本地答案和状态记录。', removeFailed:'无法清除已保存的草稿。你的答案仍保留在这里。', restoreFailed:'无法读取已保存的草稿。重新加载前请复制或打印你的内容；只有确认要丢弃草稿时才清除它。'},
+    vi: {confirm:'Xóa câu trả lời đã lưu và bằng chứng đã chụp của bài này? Không thể hoàn tác.', failed:'Không thể lưu bản nháp trong trình duyệt này. Hãy sao chép hoặc in trước khi đóng trang.', cleared:'Đã xóa câu trả lời cục bộ và bằng chứng đã chụp.', removeFailed:'Không thể xóa bản nháp đã lưu. Câu trả lời của bạn vẫn còn ở đây.', restoreFailed:'Không thể đọc bản nháp đã lưu. Hãy sao chép hoặc in bài trước khi tải lại; chỉ xóa bản nháp nếu muốn bỏ nó.'},
+    es: {confirm:'¿Borrar las respuestas guardadas y la evidencia capturada de este laboratorio? No se puede deshacer.', failed:'No se pudo guardar el borrador en este navegador. Cópialo o imprímelo antes de cerrar esta página.', cleared:'Se borraron las respuestas locales y la evidencia capturada.', removeFailed:'No se pudo borrar el borrador guardado. Tus respuestas siguen aquí.', restoreFailed:'No se pudo leer el borrador guardado. Copia o imprime tu trabajo antes de recargar; bórralo solo si deseas descartarlo.'}
+  };
+  const copy = () => COPY[locale()] || COPY.en;
+  const message = name => { if (status) { status.textContent = copy()[name]; status.dataset.draftError = ['failed','removeFailed','restoreFailed'].includes(name) ? name : ''; } };
+  new MutationObserver(() => { if (status?.dataset.draftError) message(status.dataset.draftError); }).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+  const captured = () => !!state && !!state.textContent.trim() && (state.hasAttribute('data-r4-no-translate') || state.dataset.qaStateReady === '1');
+  function retainCapture(text, lang) {
+    if (!state) return;
+    state.textContent = text;
+    state.lang = ['en','zh','vi','es'].includes(lang) ? lang : 'en';
+    state.setAttribute('data-r4-no-translate','');
+    state.dataset.qaStateReady = '1';
+    for (const n of [13,14,15]) state.setAttribute('data-lab'+n+'-no-translate','');
+    for (const lang of ['en','zh','vi','es']) state.removeAttribute('data-ap-'+lang);
+  }
+  const fieldName = field => field.dataset.labAnswer || field.dataset.qaAnswer;
+  const dirty = new Set();
+  let captureDirty = false, unreadable = false;
+  function readDraft() {
+    const data = JSON.parse(localStorage.getItem(key) || '{}');
+    if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Invalid draft');
+    for (const field of fields) if (data[fieldName(field)] !== undefined && typeof data[fieldName(field)] !== 'string') throw new Error('Invalid answer');
+    if (data.__capture !== undefined && typeof data.__capture?.text !== 'string') throw new Error('Invalid capture');
+    unreadable = false;
+    return data;
+  }
+  function applyDraft(data) {
+    for (const field of fields) if (!dirty.has(fieldName(field))) field.value = data[fieldName(field)] || '';
+    if (!captureDirty) {
+      if (data.__capture) retainCapture(data.__capture.text, data.__capture.lang);
+      else if (captured()) retainCapture('', locale());
+    }
+  }
+  function save(field, refresh = false) {
+    if (field) dirty.add(fieldName(field));
+    captureDirty ||= refresh;
+    try {
+      // Merge only this tab's edits into the latest stored packet. A stale tab
+      // must not replace another tab's different answer or explicit capture.
+      const latest = readDraft();
+      const data = Object.fromEntries(fields.map(field => {
+        const name = fieldName(field);
+        return [name, dirty.has(name) ? field.value : latest[name] || ''];
+      }));
+      if (captureDirty && captured()) data.__capture = {text:state.textContent, lang:state.lang};
+      else if (!captureDirty && latest.__capture) data.__capture = latest.__capture;
+      localStorage.setItem(key, JSON.stringify(data));
+      dirty.clear(); captureDirty = false;
+      if (status?.dataset.draftError || Object.values(COPY).some(value => status?.textContent === value.cleared)) { status.textContent=''; delete status.dataset.draftError; }
+    } catch (_) { message('failed'); }
+  }
+  try { applyDraft(readDraft()); }
+  catch (_) { unreadable = true; message('restoreFailed'); }
+  window.addEventListener('storage', event => {
+    if (event.key !== key && event.key !== null) return;
+    try {
+      if (event.storageArea !== localStorage) return;
+      // Read the latest value, not a possibly superseded queued storage event.
+      applyDraft(readDraft());
+    } catch (_) { unreadable = true; message('restoreFailed'); }
+  });
+  // One owner saves the complete packet before legacy answer-only handlers run.
+  document.addEventListener('input', event => {
+    if (!fields.includes(event.target)) return;
+    event.stopImmediatePropagation();
+    save(event.target);
+  }, true);
+  document.addEventListener('click', event => {
+    const button = event.target.closest?.('[data-lab-action],[data-qa-action]');
+    if (!button || !root.contains(button)) return;
+    const action = button.dataset.labAction || button.dataset.qaAction;
+    if (action === 'refresh' || action === 'refresh-state') {
+      // Capture is synchronous in each native packet; persist its finished result.
+      queueMicrotask(() => save(null, true));
+      return;
+    }
+    if (action !== 'clear') return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (!fields.some(field => field.value) && !captured() && !unreadable) return;
+    if (!window.confirm(copy().confirm)) return;
+    try { localStorage.removeItem(key); }
+    catch (_) { message('removeFailed'); return; }
+    dirty.clear(); captureDirty = false; unreadable = false;
+    for (const field of fields) field.value = '';
+    if (state) {
+      // An empty capture is intentional; do not restore or recapture live results.
+      retainCapture('', locale());
+    }
+    message('cleared');
+    fields[0]?.focus();
+  }, true);
+})();
+</script>
+
 </body>
 </html>

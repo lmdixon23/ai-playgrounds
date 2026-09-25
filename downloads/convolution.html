@@ -2,7 +2,7 @@
 
 <html lang="en">
 <head>
-<!-- Standalone AI Playgrounds v1.9.5 export.
+<!-- Standalone AI Playgrounds v1.9.6 export.
 MIT License
 
 Copyright (c) 2026 Logan M. Dixon
@@ -87,7 +87,9 @@ SOFTWARE.
   .control-row .step-btn { padding: 7px 14px; background: white; color: var(--fg);
                             border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
                             font: inherit; font-size: 0.85rem; }
-  .canvas-pair { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px;
+  #layerSel, #kernelSel, #convPad { max-width: 100%; min-width: 0; }
+  #strideControls { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px; max-width: 100%; }
+  .canvas-pair { display: grid; grid-template-columns: minmax(0,1fr) minmax(160px,220px) minmax(0,1fr); gap: 14px;
                    align-items: start; margin-bottom: 14px; }
   .canvas-card { background: white; border: 1px solid var(--border);
                    border-radius: 8px; padding: 10px; text-align: center; }
@@ -238,6 +240,8 @@ SOFTWARE.
   .hi-cell { display: inline-block; width: 38px; padding: 4px 2px; text-align: center;
         border: 1px solid var(--border); background: white; color: var(--fg); }
   body.dark-mode .hi-cell { background: var(--card); }
+  .wi-grid { display:grid; max-width:28rem; gap:2px; margin:4px 0 8px; }
+  .wi-grid .hi-cell { width:auto; min-width:0; overflow-wrap:anywhere; background:var(--card); }
   .hi-show-sum { padding: 4px 12px; background: var(--accent); color: #fff; border: none;
         border-radius: 6px; cursor: pointer; font: inherit; font-size: 0.8rem; }
   /* learner-vs-target panel (learn mode only). */
@@ -601,6 +605,20 @@ SOFTWARE.
 /* Learner-facing terminology, compact glossary, and consistent action hierarchy. */
 .header-actions{align-items:center}.header-more{position:relative}.header-more>summary{list-style:none;cursor:pointer;user-select:none}.header-more>summary::-webkit-details-marker{display:none}.header-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:50;min-width:220px;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 16px 35px rgba(15,23,42,.18);display:grid;gap:5px}.header-more-menu button{width:100%;text-align:left;justify-content:flex-start;white-space:normal}.key-terms-panel{padding:14px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}.key-terms-intro{margin:0 0 10px;color:var(--muted)}.key-terms-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.key-term{padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:color-mix(in srgb,var(--card) 97%,var(--accent))}.key-term dt{font-weight:800;color:var(--fg);margin:0 0 3px}.key-term dd{margin:0;color:var(--muted);font-size:.84rem;line-height:1.45}.essay-primer{margin:0 0 22px;padding:15px 17px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--card) 96%,var(--accent));border-radius:10px}.essay-primer h2{margin:0 0 6px!important;font-size:1.05rem!important}.essay-primer p{margin:0 0 10px!important}.essay-primer h3{margin:12px 0 7px;font-size:.92rem}.essay-primer-terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0}.essay-primer-terms>div{padding:8px 9px;border:1px solid var(--border);border-radius:8px;background:var(--card)}.essay-primer-terms dt{font-weight:800}.essay-primer-terms dd{margin:2px 0 0;color:var(--muted);font-size:.82rem;line-height:1.4}.scenario-card .scenario-meta{line-height:1.5}.scenario-card .scenario-meta strong{display:block;margin-bottom:2px}.header-actions>.header-png,.header-actions>.header-theme,.header-actions>.header-reset,.header-more>summary{min-height:38px;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px}
 @media(max-width:720px){.essay-primer-terms{grid-template-columns:1fr}.header-actions{width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}.header-actions>button,.header-actions>.header-more,.header-more>summary{width:100%;justify-content:center}.header-more-menu{right:auto;left:0;max-width:min(290px,90vw)}.key-terms-grid{grid-template-columns:1fr}}
+/* Accessible text keeps the lab hue without changing filled controls or plots. */
+body.dark-mode{--accent-text:color-mix(in srgb,var(--fg) 80%,var(--accent))}
+body.dark-mode :is(.page-header .back,.scenario-card h3,.classroom-lab .lab-field label,.essay h2,.essay h3,.essay h4,.visual-card h4,.visual-live strong,.signature-challenge-panel strong,footer a){color:var(--accent-text)}
+body.dark-mode footer a{color:var(--accent-text)!important}
+.essay h2,.key-terms-intro,.worksheet{overflow-wrap:anywhere}
+#tourName{min-width:0;overflow-wrap:anywhere}
+div:has(>#tourName),div:has(>#tourNext){flex-wrap:wrap}
+.slider-block,.mode-tabs,#modeGroup,#initGroup{flex-wrap:wrap;max-width:100%}
+select{min-width:0;max-width:100%}
+.scenario-card h3,.essay-primer-terms>div,p,.tldr,[data-i18n="seq-explain"]{min-width:0;overflow-wrap:anywhere}
+.header-actions>button{overflow-wrap:anywhere;white-space:normal}
+h1,h3,.method-tabs button,.stat-item,.key-term,.world-icon-key li>span:last-child{min-width:0;overflow-wrap:anywhere}
+.stats-strip,div:has(>#ngViewW){flex-wrap:wrap;max-width:100%}
+@media(max-width:360px){.visual-live{box-sizing:border-box;min-width:0;white-space:normal;flex-wrap:wrap}.visual-live>span{min-width:0;overflow-wrap:anywhere}}
 </style>
 <style id="learning-modes-style">
 /* Product information architecture and restrained visual hierarchy. */
@@ -645,7 +663,7 @@ body.dark-mode .r4-language-select {
 }
 
 </style>
-<meta name="ai-playgrounds-version" content="1.9.5">
+<meta name="ai-playgrounds-version" content="1.9.6">
 
 <style id="v14-version-provenance-style">
 .v14-version-provenance{max-width:1180px;margin:22px auto 10px;padding:12px 18px;border-top:1px solid var(--border,#dbe4ee);color:var(--muted,#64748b);font:12px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center}
@@ -851,7 +869,7 @@ body.dark-mode .r4-language-select {
 <p data-i18n="output-hint" style="color:var(--muted); font-size:0.78rem; margin-top:4px; font-style:italic;">
         One feature-map response.
       </p>
-<p class="cv-caption" data-i18n="cap-output" id="outputCap">Each pixel = the kernel multiplied + summed over its 3×3 input neighbourhood. Grayscale = magnitude (abs on).</p>
+<p class="cv-caption" data-i18n="cap-output" id="outputCap">Inspect the final operation for an output cell. Colors are scaled across the map.</p>
 </div>
 </div>
 <p class="cv-caption" data-i18n="cap-kernel" id="kernelCap" style="text-align:center;">The 3×3 weights slid over every position. Use Tab and the arrow keys to move between cells.</p>
@@ -897,21 +915,20 @@ body.dark-mode .r4-language-select {
 </span>
 </div>
 <!-- hover inspector output -->
-<div aria-live="polite" class="hover-inspect" id="hoverInspect">
+<div aria-live="polite" class="hover-inspect" id="hoverInspect" data-r4-no-translate>
 <span data-i18n="hi-empty" style="color:var(--muted); font-style:italic;">Hover an output cell to inspect it. (Single-conv mode.)</span>
 </div>
 <!-- mode-aware output-size readout -->
 <div aria-live="polite" class="size-readout" id="sizeReadout"></div>
 </div>
 </details>
-<!-- sliding-window inspector. Click any output cell to see the 3×3 input
-       window + dot-product math that produced it. -->
+<!-- Final-stage inspector; reads the same buffers as the output renderer. -->
 <div id="windowInspector" style="margin-top:12px; padding:12px 16px; background:var(--soft); border:1px solid var(--border); border-radius:8px;">
 <h3 data-i18n="window-h3" style="margin:0 0 8px; font-size:0.95rem; color:var(--accent);">🔍 Sliding-window inspector</h3>
-<p data-i18n="window-hint" style="margin:0 0 8px; color:var(--muted); font-size:0.82rem;">
-      Click any cell on the output canvas to see the 3×3 input window centered on it, the kernel, and the dot-product math that produced that pixel.
+<p data-i18n="window-hint" id="windowHint" style="margin:0 0 8px; color:var(--muted); font-size:0.82rem;">
+      Click an output cell, or focus the output and use arrow keys; Enter/Space inspects it.
     </p>
-<div id="windowMath" style="font-family:ui-monospace,monospace; font-size:0.85rem; line-height:1.6; color:var(--fg);">
+<div id="windowMath" aria-live="polite" data-r4-no-translate style="font-family:ui-monospace,monospace; font-size:0.85rem; line-height:1.6; color:var(--fg);">
 <span data-i18n="window-empty" style="color:var(--muted); font-style:italic;">(click on the output canvas to inspect a cell)</span>
 </div>
 </div>
@@ -1098,27 +1115,27 @@ body.dark-mode .r4-language-select {
 <summary style="cursor:pointer; padding:8px 12px; background:var(--soft); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,system-ui,sans-serif; font-size:0.88rem; color:var(--accent); font-weight:600;">
 <span data-lab-en="🧪 Quick Assign · QA-CNN-01 · 10–15 min" data-lab-zh="🧪 快速任务 · QA-CNN-01 · 10–15 分钟">🧪 Quick Assign · QA-CNN-01 · 10–15 min</span>
 </summary>
-<div class="lab-panel"><div class="quick-assign-meta" data-r4-no-translate="1" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong>QA-CNN-01</strong> · Level 1 · 10–15 min<br><span>One convolution cell</span></div>
-<p class="lab-intro" data-lab-en="Choose a filter, inspect the sliding-window calculation, then explain what feature the kernel makes visible." data-lab-zh="选择一个滤波器、检查滑动窗口计算，然后解释卷积核让什么特征变得可见。">Choose a filter, inspect the sliding-window calculation, then explain what feature the kernel makes visible.</p>
+<div class="lab-panel"><div class="quick-assign-meta" style="margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;"><strong data-r4-no-translate="1">QA-CNN-01</strong> · <span data-lab-en="Level 1 · 10–15 min" data-lab-zh="级别 1 · 10–15 分钟">Level 1 · 10–15 min</span><br><span data-lab-en="One convolution cell" data-lab-zh="一个卷积输出单元">One convolution cell</span></div>
+<p class="lab-intro" data-lab-en="Choose an image patch and kernel, predict one output-cell multiply-and-sum, then check the feature-map value." data-lab-zh="选择图像局部区域和卷积核，预测一个输出单元的乘积求和，再检查特征图数值。">Choose an image patch and kernel, predict one output-cell multiply-and-sum, then check the feature-map value.</p>
 <div class="lab-grid">
 <div class="lab-field">
 <label for="lab-predict"><span data-lab-en="Predict" data-lab-zh="预测">Predict</span></label>
-<textarea data-lab-answer="predict" data-lab-en="Before running the filter, what image feature should this kernel emphasize?" data-lab-zh="运行滤波器前，这个卷积核应该突出图像中的什么特征？" id="lab-predict" placeholder="Before running the filter, what image feature should this kernel emphasize?"></textarea>
+<textarea data-lab-answer="predict" data-lab-en="Before revealing it, will this output-cell value be positive, negative, or near zero? Explain using the patch and kernel." data-lab-zh="揭示结果前，这个输出单元的数值会是正数、负数还是接近零？用图像区域和卷积核解释。" id="lab-predict" placeholder="Before revealing it, will this output-cell value be positive, negative, or near zero? Explain using the patch and kernel."></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-observe"><span data-lab-en="Observe" data-lab-zh="观察">Observe</span></label>
-<textarea data-lab-answer="observe" data-lab-en="Run the filter or scan a window. Record the kernel, mode, and one visible output change." data-lab-zh="运行滤波器或扫描窗口。记录卷积核、模式和一个可见输出变化。" id="lab-observe" placeholder="Run the filter or scan a window. Record the kernel, mode, and one visible output change."></textarea>
+<textarea data-lab-answer="observe" data-lab-en="Record the patch, kernel, important products, and output sum at one position." data-lab-zh="记录一个位置的图像区域、卷积核、关键乘积和输出总和。" id="lab-observe" placeholder="Record the patch, kernel, important products, and output sum at one position."></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-explain"><span data-lab-en="Explain" data-lab-zh="解释">Explain</span></label>
-<textarea data-lab-answer="explain" data-lab-en="How did multiplying local pixels by kernel weights create the result?" data-lab-zh="局部像素乘以卷积核权重如何产生这个结果？" id="lab-explain" placeholder="How did multiplying local pixels by kernel weights create the result?"></textarea>
+<textarea data-lab-answer="explain" data-lab-en="Why is the same kernel applied repeatedly at different positions in the image?" data-lab-zh="为什么要在图像的不同位置重复应用同一个卷积核？" id="lab-explain" placeholder="Why is the same kernel applied repeatedly at different positions in the image?"></textarea>
 </div>
 <div class="lab-field">
 <label for="lab-transfer"><span data-lab-en="Transfer" data-lab-zh="迁移">Transfer</span></label>
-<textarea data-lab-answer="transfer" data-lab-en="Where would this kind of filter appear in a computer vision pipeline?" data-lab-zh="这种滤波器会出现在计算机视觉流程的哪个位置？" id="lab-transfer" placeholder="Where would this kind of filter appear in a computer vision pipeline?"></textarea>
+<textarea data-lab-answer="transfer" data-lab-en="How would a kernel detecting edges in another direction change the response to the same patch?" data-lab-zh="如果卷积核改为检测另一个方向的边缘，对同一个图像区域的响应会如何变化？" id="lab-transfer" placeholder="How would a kernel detecting edges in another direction change the response to the same patch?"></textarea>
 </div>
 </div>
-<div aria-live="polite" class="lab-state" data-lab-state="">State snapshot appears here.</div>
+<div aria-live="polite" class="lab-state" data-lab-state="" data-lab-en="State snapshot appears here." data-lab-zh="状态快照将显示在这里。">State snapshot appears here.</div>
 <div class="lab-actions">
 <button class="step-btn" data-lab-action="refresh" data-lab-en="↻ Refresh state" data-lab-zh="↻ 更新状态" type="button">↻ Refresh state</button>
 <button class="step-btn" data-lab-action="copy" data-lab-en="📋 Copy packet" data-lab-zh="📋 复制实验包" type="button">📋 Copy packet</button>
@@ -1336,7 +1353,7 @@ body.dark-mode .r4-language-select {
       'input-h3': 'Input', 'input-hint': 'Click and drag to draw.',
       'output-h3': 'Output (after convolution)', 'output-hint': 'One feature-map response.',
       'window-h3': '🔍 Sliding-window inspector',
-      'window-hint': 'Click any cell on the output canvas to see the 3×3 input window centered on it, the kernel, and the dot-product math that produced that pixel.',
+      'window-hint': 'Click an output cell, or focus the output and use arrow keys; Enter/Space inspects it.',
       'window-empty': '(click on the output canvas to inspect a cell)',
       'rgb-summary': '🎨 Multi-channel demo (RGB → 1 output)',
       'rgb-preset': 'RGB image:',
@@ -1418,7 +1435,13 @@ body.dark-mode .r4-language-select {
       // NEW: canvas captions (a11y / "what you're looking at").
       'cap-input': 'The 32×32 image you feed in. Dark pixels = 1, white = 0.',
       'cap-kernel': 'The 3×3 weights slid over every position. Use Tab and the arrow keys to move between cells.',
-      'cap-output': 'Each pixel = the kernel multiplied + summed over its 3×3 input neighbourhood. Grayscale = magnitude (abs on).',
+      'cap-output': 'Inspect the final operation for an output cell. Colors are scaled across the map.',
+      'wi-conv': 'Original input window',
+      'wi-conv-conv': 'First-layer output window × second kernel (no intermediate activation)',
+      'wi-conv-pool': 'First-layer window after enabled abs/ReLU → max pooling',
+      'wi-cell': 'Output (row, column)', 'wi-start': 'Window start (edge-clamped when outside)',
+      'wi-raw': 'Stored output', 'wi-value': 'Value used for color',
+      'wi-round': 'Numbers rounded; ≈ refers to the stored float result.',
       // NEW: Inspect & scan disclosure.
       'is-summary': '🛰️ Inspect & scan (hover math · sliding window · output size)',
       'is-intro': 'Hover any Output cell to see its 3×3 receptive field and the nine products (the sum stays hidden until you click). Or run the sliding window across the image. These tools work in single-conv mode.',
@@ -1430,7 +1453,7 @@ body.dark-mode .r4-language-select {
       'scan-reset-title': 'Reset the scan to the top-left and redraw the full static output.',
       // NEW: hover inspector.
       'hi-empty': 'Hover an output cell to inspect it. (Single-conv mode.)',
-      'hi-input': 'input patch', 'hi-kernel': 'kernel', 'hi-products': 'products',
+      'hi-input': 'input patch', 'hi-kernel': 'Kernel for this cell', 'hi-products': 'Products for this cell',
       'hi-show-sum': 'Show sum', 'hi-sum-hidden': '(click the cell or "Show sum" to reveal Σ)',
       'hi-sum-label': 'Σ =',
       'hi-interior-only': 'Hover an interior output cell (a full 3×3 fits there) to inspect exact math.',
@@ -1478,7 +1501,7 @@ body.dark-mode .r4-language-select {
       'input-h3': '输入', 'input-hint': '点击并拖动可绘制。',
       'output-h3': '输出(卷积之后)', 'output-hint': '这是一个特征图响应，而不是卷积网络“看见”的全部内容。',
       'window-h3': '🔍 滑动窗口检查器',
-      'window-hint': '点击输出画布上的任意格子,查看以它为中心的 3×3 输入窗口、卷积核,以及生成该像素的点积运算。',
+      'window-hint': '点击输出格，或聚焦输出画布后用方向键选择；按回车或空格查看。',
       'window-empty': '(点击输出画布查看某个格子)',
       'rgb-summary': '🎨 多通道演示(RGB → 单输出)',
       'rgb-preset': 'RGB 图像:',
@@ -1560,7 +1583,13 @@ body.dark-mode .r4-language-select {
       // 新增:画布说明(无障碍 / "你正在看什么")。
       'cap-input': '你输入的 32×32 图像。深色像素 = 1,白色 = 0。',
       'cap-kernel': '在每个位置滑过的 3×3 权重。用 Tab 和方向键在格子间移动。',
-      'cap-output': '每个像素 = 卷积核在其 3×3 输入邻域上做乘加。灰度 = 大小(已取绝对值)。',
+      'cap-output': '查看输出格的最后一步运算。颜色按整张特征图的数值缩放。',
+      'wi-conv': '原始输入窗口',
+      'wi-conv-conv': '第一层输出窗口 × 第二个卷积核（中间不加激活）',
+      'wi-conv-pool': '第一层窗口经过已启用的绝对值/ReLU → 最大池化',
+      'wi-cell': '输出（行，列）', 'wi-start': '窗口起点（越界时复制边缘）',
+      'wi-raw': '存储的输出', 'wi-value': '用于着色的数值',
+      'wi-round': '数字已舍入；≈ 表示存储的浮点结果。',
       // 新增:检查与扫描折叠面板。
       'is-summary': '🛰️ 检查与扫描(悬停算式 · 滑动窗口 · 输出尺寸)',
       'is-intro': '把鼠标悬停在任意输出格子上,查看其 3×3 感受野和九个乘积(求和会先隐藏,点击后才显示)。或让滑动窗口扫过整张图。这些工具在单层卷积模式下可用。',
@@ -1770,7 +1799,7 @@ body.dark-mode .r4-language-select {
   // stride + padding configurable. stride=1 (default), s=2 halves
   // the output. padding: 'same' (edge-clamp, default; output = ⌈n/s⌉),
   // 'valid' (no padding; only positions where the full 3×3 window fits;
-  // output = ⌊(n−2)/s⌋ + 1).
+  // output = ⌊(n−3)/s⌋ + 1).
   function convolveBuf(input, K, n, stride, padding) {
     stride = stride || 1;
     padding = padding || 'same';
@@ -1923,6 +1952,8 @@ body.dark-mode .r4-language-select {
     ctx.drawImage(tmp, 0, 0, ctx.canvas.width, ctx.canvas.height);
   }
 
+  // Presentation references only: never run a second forward model for inspection.
+  var outputView, selectedCell, inspectorReady;
   function renderAll() {
     const inImg = new Float32Array(pixels.length);
     for (let i = 0; i < pixels.length; i++) inImg[i] = 1 - pixels[i];
@@ -1935,7 +1966,7 @@ body.dark-mode .r4-language-select {
     const mode = $('layerSel').value;
     let out, outDim;
     if (mode === 'conv-pool') {
-      // Conv → ReLU(implicit if reluChk) → max-pool p×p.
+      // Conv → enabled abs → enabled ReLU → max-pool p×p.
       // Stride/padding ignored here (we keep stride=1/same to preserve the
       // simple N → N/p pooling math).
       let mid = convolveBuf(pixels, K, N, 1, 'same');
@@ -1952,6 +1983,7 @@ body.dark-mode .r4-language-select {
       const poolSize = $('poolSize') ? +$('poolSize').value : 2;
       out = maxPool2x2(mid, N, poolSize);
       outDim = Math.floor(N / poolSize);
+      outputView = {mode, source:mid, p:poolSize};
       // pool branch already applied abs/relu into `mid`; pass takeAbs=false but
       // forward the abs checkbox as the `signed` gate so the diverging palette
       // engages only when abs is OFF (default abs ON ⇒ grayscale, unchanged).
@@ -1963,13 +1995,18 @@ body.dark-mode .r4-language-select {
       const K2 = readSecondKernel();
       out = convolveBuf(mid, K2, N, 1, 'same');
       outDim = N;
+      outputView = {mode, source:mid, kernel:K2, s:1, pad:'same'};
       renderPanel(outCtx, out, $('absChk').checked, $('reluChk').checked, outDim, true);
     } else {
       // Single conv: stride + padding apply. outDim derived from buffer length.
       out = convolve(K);
       outDim = Math.round(Math.sqrt(out.length));
+      outputView = {mode, source:pixels, kernel:K, ...singleConvGeom()};
       renderPanel(outCtx, out, $('absChk').checked, $('reluChk').checked, outDim, true);
     }
+    Object.assign(outputView, {out, outDim, abs:$('absChk').checked, relu:$('reluChk').checked});
+    renderSelectedCell();
+    if (inspectorReady) { sumRevealed = false; renderHover(); }
     // mode-aware output-size readout (small, only visible inside Inspect&scan).
     try { updateSizeReadout(); } catch (_) {}
     // keep the hover/scan overlays consistent with the freshly drawn output.
@@ -2363,63 +2400,55 @@ body.dark-mode .r4-language-select {
     paintSignedChannel(document.getElementById('rgbBoutCv').getContext('2d'), Bout, true);
     paintSignedChannel(document.getElementById('rgbSumCv').getContext('2d'), Sum, true);
   }
-  // sliding-window click-to-inspect on output canvas.
-  // Map click → output cell → corresponding 3×3 input window + dot-product math.
+  function it(key) {
+    const text = t(key);
+    return window.__r4Localization?.translateString(text) || text;
+  }
+  function inspectionHTML(cell, reveal) {
+    const v = outputView, {oy, ox} = cell, pooling = v.mode === 'conv-pool';
+    const size = pooling ? v.p : 3;
+    const y = pooling ? oy * size : oy * v.s + (v.pad === 'same' ? -1 : 0);
+    const x = pooling ? ox * size : ox * v.s + (v.pad === 'same' ? -1 : 0);
+    const values = [];
+    for (let dy=0; dy<size; dy++) for (let dx=0; dx<size; dx++)
+      values.push(v.source[Math.max(0, Math.min(N-1, y+dy))*N + Math.max(0, Math.min(N-1, x+dx))]);
+    const fmt = n => String(+n.toPrecision(7));
+    const grid = (label, values) => `<div>${label}<span class="wi-grid" style="grid-template-columns:repeat(${size},minmax(0,1fr))">${values.map(n => `<span class="hi-cell">${fmt(n)}</span>`).join('')}</span></div>`;
+    let html = `<div>${it('wi-cell')}: (${oy}, ${ox}) · ${v.outDim}×${v.outDim}</div>`
+      + `<div>${it('wi-start')}: (${y}, ${x})</div>` + grid(it('wi-'+v.mode), values);
+    if (!pooling) html += grid(it('hi-kernel'), v.kernel) + grid(it('hi-products'), values.map((n,i) => n*v.kernel[i]));
+    if (!reveal) return html + `<button class="hi-show-sum" id="hiShowSum">${it('hi-show-sum')}</button> ${it('hi-sum-hidden')}`;
+    const raw = v.out[oy*v.outDim+ox];
+    let value = raw;
+    if (!pooling && v.abs) value = Math.abs(value);
+    if (!pooling && v.relu) value = Math.max(0, value);
+    return html + `<div>${pooling ? 'max' : 'Σ'} ≈ ${it('wi-raw')}: <b data-inspection-raw>${fmt(raw)}</b></div>`
+      + `<div>abs: ${v.abs ? '✓' : '—'} · ReLU: ${v.relu ? '✓' : '—'}</div>`
+      + `<div>${it('wi-value')}: <b data-inspection-value>${fmt(value)}</b></div><div>${it('wi-round')}</div>`;
+  }
+  function renderSelectedCell() {
+    if (!selectedCell || !outputView) { $('windowMath').textContent = it('window-empty'); return; }
+    selectedCell.oy = Math.min(selectedCell.oy, outputView.outDim-1);
+    selectedCell.ox = Math.min(selectedCell.ox, outputView.outDim-1);
+    $('windowMath').innerHTML = inspectionHTML(selectedCell, true);
+  }
   outCv.style.cursor = 'crosshair';
+  outCv.tabIndex = 0;
+  outCv.setAttribute('aria-describedby', 'windowHint windowMath');
   outCv.addEventListener('click', e => {
-    const rect = outCv.getBoundingClientRect();
-    // Convert click coords to output-cell coords. In conv mode, output is N×N. In pool/stack
-    // mode the output dim differs: for simplicity we always inspect against the input
-    // sliding window (the lesson works either way for the FIRST conv layer).
-    const cx = (e.clientX - rect.left) * (outCv.width / rect.width);
-    const cy = (e.clientY - rect.top)  * (outCv.height / rect.height);
-    const outRow = Math.floor(cy / SCALE);
-    const outCol = Math.floor(cx / SCALE);
-    // Map output cell back to input center (single-conv with same-size output via edge-clamp).
-    // For conv-pool mode output is N/p; rescale. p now configurable.
-    const layer = $('layerSel').value;
-    const poolP = ($('poolSize') ? +$('poolSize').value : 2);
-    const dim = (layer === 'conv-pool') ? Math.floor(N / poolP) : N;
-    const scaleBack = N / dim;
-    const ir = Math.min(N - 1, Math.max(0, Math.floor(outRow * scaleBack + scaleBack / 2)));
-    const ic = Math.min(N - 1, Math.max(0, Math.floor(outCol * scaleBack + scaleBack / 2)));
-    const K = readKernel();
-    let html = `<div>Output cell at <b>(${outRow}, ${outCol})</b> ← input window centered at <b>(${ir}, ${ic})</b>:</div>`;
-    // Build 3×3 input window with edge-clamp.
-    const win = [];
-    for (let dr = -1; dr <= 1; dr++) {
-      const row = [];
-      for (let dc = -1; dc <= 1; dc++) {
-        const r = Math.max(0, Math.min(N - 1, ir + dr));
-        const c = Math.max(0, Math.min(N - 1, ic + dc));
-        row.push(pixels[r * N + c]);
-      }
-      win.push(row);
-    }
-    // Render: input window grid | × | kernel grid | = | terms summed
-    const fmt = v => v.toFixed(2);
-    const cellStyle = 'display:inline-block; width:36px; padding:4px 2px; text-align:center; border:1px solid var(--border); background:white; color:var(--fg);';
-    const gridStyle = 'display:inline-grid; grid-template-columns:repeat(3, 1fr); gap:2px; vertical-align:middle; margin:0 6px;';
-    html += '<div style="margin-top:8px;">';
-    html += '<span style="color:var(--muted); font-size:0.78rem;">input window</span>';
-    html += `<span style="${gridStyle}">`;
-    for (const row of win) for (const v of row) html += `<span style="${cellStyle}">${fmt(v)}</span>`;
-    html += '</span> × <span style="color:var(--muted); font-size:0.78rem;">kernel</span>';
-    html += `<span style="${gridStyle}">`;
-    for (const v of K) html += `<span style="${cellStyle}">${fmt(v)}</span>`;
-    html += '</span></div>';
-    // Sum.
-    let sum = 0;
-    const terms = [];
-    for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) {
-      const v = win[i][j];
-      const k = K[i * 3 + j];
-      const t = v * k;
-      sum += t;
-      if (Math.abs(t) > 1e-9) terms.push(`${fmt(v)}×${fmt(k)}`);
-    }
-    html += `<div style="margin-top:6px;">Σ = ${terms.length ? terms.join(' + ') : '0'} = <b style="color:var(--accent);">${fmt(sum)}</b></div>`;
-    $('windowMath').innerHTML = html;
+    if (scanIndex >= 0) { stopScan(); scanIndex = -1; renderAll(); }
+    const cell = outputCellFromEvent(e, outputView.outDim);
+    if (cell) { selectedCell = cell; renderSelectedCell(); }
+  });
+  outCv.addEventListener('keydown', e => {
+    if (e.ctrlKey || e.metaKey || e.altKey || !['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Enter',' '].includes(e.key)) return;
+    e.preventDefault();
+    if (scanIndex >= 0) { stopScan(); scanIndex = -1; renderAll(); }
+    selectedCell = selectedCell || {oy:0, ox:0};
+    const delta = {ArrowUp:[-1,0], ArrowDown:[1,0], ArrowLeft:[0,-1], ArrowRight:[0,1]}[e.key] || [0,0];
+    selectedCell.oy = Math.max(0, selectedCell.oy+delta[0]);
+    selectedCell.ox = Math.max(0, selectedCell.ox+delta[1]);
+    renderSelectedCell();
   });
 
   // RGB preset selector triggers a re-render of the multi-channel demo.
@@ -2530,7 +2559,8 @@ body.dark-mode .r4-language-select {
         scenario.apply();
         card.classList.add('applied');
         btn.textContent = '✓ ' + scenarioGalleryText('sg-applied', 'Applied; compare the result');
-        setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
+        clearTimeout(btn._timer);
+        btn._timer = setTimeout(() => { btn.textContent = scenarioGalleryText('sg-apply', 'Apply and compare'); }, 1800);
       });
       card.appendChild(btn);
       root.appendChild(card);
@@ -2683,6 +2713,7 @@ body.dark-mode .r4-language-select {
   const outputCellHl = $('outputCellHl');
   let hoverCell = null;          // {oy, ox} currently hovered
   let sumRevealed = false;       // gated sum is withheld until click / "Show sum"
+  inspectorReady = true;
 
   function clearHoverHighlights() {
     hideHl(inputPatchHl); hideHl(outputCellHl);
@@ -2695,21 +2726,17 @@ body.dark-mode .r4-language-select {
     return { oy, ox };
   }
   function renderHover() {
-    if (!$('inspectScan') || !$('inspectScan').open) return;  // only when opted-in
+    if (!$('inspectScan') || !$('inspectScan').open) { clearHoverHighlights(); return; }
     const geom = singleConvGeom();
-    if (!geom) {                       // not single-conv → tools inactive, math undefined
-      clearHoverHighlights();
-      hoverEl.innerHTML = `<span style="color:var(--muted); font-style:italic;">${t('hi-empty')}</span>`;
-      return;
-    }
+    if (!geom || (hoverCell && (hoverCell.oy >= geom.outDim || hoverCell.ox >= geom.outDim)))
+      { hoverCell = null; sumRevealed = false; }
     if (!hoverCell) {
       clearHoverHighlights();
-      hoverEl.innerHTML = `<span style="color:var(--muted); font-style:italic;">${t('hi-empty')}</span>`;
+      hoverEl.textContent = it('hi-empty');
       return;
     }
     const { oy, ox } = hoverCell;
     const w = windowForOutputCell(geom, oy, ox);
-    const K = readKernel();
     // overlays: output cell (blue) + source 3×3 patch on input (orange).
     placeHl(outputCellHl, outCv, geom.outDim, ox, oy, 1, 1);
     // patch bounds from actual indices used (covers clamp at edges sensibly).
@@ -2719,45 +2746,8 @@ body.dark-mode .r4-language-select {
       if (c < minC) minC = c; if (c > maxC) maxC = c;
     }
     placeHl(inputPatchHl, inputCv, N, minC, minR, (maxC - minC + 1), (maxR - minR + 1));
-    // numbers + products. Sum is WITHHELD until sumRevealed.
-    const fmt = v => (Math.abs(v) < 1e-9 ? '0' : (+v.toFixed(2)).toString());
-    const cell = 'class="hi-cell"';
-    let html = '';
-    html += `<div style="margin-bottom:4px; color:var(--muted); font-size:0.78rem;">`
-          + `out (${oy}, ${ox}) ← input centered (${w.center[0]}, ${w.center[1]})`
-          + (w.interior ? '' : ` · ${geom.pad === 'same' ? 'edge-clamped' : ''}`) + `</div>`;
-    html += `<div><span style="color:var(--muted); font-size:0.78rem;">${t('hi-input')}</span>`;
-    html += `<span class="hi-grid">`;
-    for (const wr of w.win) for (const v of wr) html += `<span ${cell}>${fmt(v)}</span>`;
-    html += `</span> × <span style="color:var(--muted); font-size:0.78rem;">${t('hi-kernel')}</span>`;
-    html += `<span class="hi-grid">`;
-    for (const v of K) html += `<span ${cell}>${fmt(v)}</span>`;
-    html += `</span></div>`;
-    // products grid (nine), aligned row-major like the windows.
-    html += `<div style="margin-top:6px;"><span style="color:var(--muted); font-size:0.78rem;">${t('hi-products')}</span>`;
-    html += `<span class="hi-grid">`;
-    let sum = 0;
-    for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) {
-      const p = w.win[i][j] * K[i * 3 + j];
-      sum += p;
-      html += `<span ${cell}>${fmt(p)}</span>`;
-    }
-    html += `</span></div>`;
-    // CORRECTNESS GUARANTEE: cross-check the reconstructed sum against the actual
-    // applet output buffer for this exact cell (same convolveBuf path).
-    const real = convolve(K);
-    const realV = real[oy * geom.outDim + ox];
-    const matches = Math.abs(sum - realV) < 1e-6;
-    if (sumRevealed) {
-      html += `<div style="margin-top:6px;">${t('hi-sum-label')} `
-            + `<b style="color:var(--accent);">${fmt(sum)}</b>`
-            + (matches ? '' : ` <span style="color:#dc2626;">(mismatch!)</span>`) + `</div>`;
-    } else {
-      html += `<div style="margin-top:6px;">`
-            + `<button class="hi-show-sum" id="hiShowSum">${t('hi-show-sum')}</button> `
-            + `<span style="color:var(--muted); font-size:0.78rem;">${t('hi-sum-hidden')}</span></div>`;
-    }
-    hoverEl.innerHTML = html;
+    // Same final-stage arithmetic; retain the opt-in prediction/reveal gate.
+    hoverEl.innerHTML = inspectionHTML(hoverCell, sumRevealed);
     const sb = $('hiShowSum');
     if (sb) sb.addEventListener('click', () => { sumRevealed = true; renderHover(); });
   }
@@ -2776,11 +2766,10 @@ body.dark-mode .r4-language-select {
   outCv.addEventListener('mouseleave', () => {
     if (!$('inspectScan') || !$('inspectScan').open) return;
     if (scanRunning) return;          // keep scan overlays while animating
-    hoverCell = null; clearHoverHighlights();
-    if ($('inspectScan').open) renderHover();
+    // Keep the readout reachable when moving to its Show sum button.
+    clearHoverHighlights();
   });
-  // clicking the output cell reveals the sum (in addition to the existing
-  // always-on inspector below, which is unchanged).
+  // Pointer and keyboard inspection share the final-stage readout above.
   outCv.addEventListener('click', () => {
     if (!$('inspectScan') || !$('inspectScan').open) return;
     if (!singleConvGeom() || !hoverCell) return;
@@ -2823,6 +2812,7 @@ body.dark-mode .r4-language-select {
     // position label
     const oy = Math.floor(scanIndex / outDim), ox = scanIndex % outDim;
     if ($('scanPos')) $('scanPos').textContent = (scanIndex < 0) ? '-' : `(${oy}, ${ox})`;
+    selectedCell = scanIndex < 0 ? null : {oy, ox}; renderSelectedCell();
     // live hover panel mirrors the current scan cell (sum revealed during scan).
     if ($('inspectScan') && $('inspectScan').open && scanIndex >= 0) {
       hoverCell = { oy, ox }; sumRevealed = true; renderHover();
@@ -2904,7 +2894,7 @@ body.dark-mode .r4-language-select {
       html = `<div><b>${t('sz-out')}:</b> ${N}×${N} <span class="formula">(conv, same, s=1)</span></div>`
            + `<div>${t('sz-pool-note').replace(/\{p\}/g, p).replace(/\{m\}/g, m)} `
            + `<b>⇒ ${m}×${m}</b> (${m * m} ${t('sz-positions')})</div>`
-           + `<div class="formula">${t('sz-rule')} · p=0, k=3, s=1 ⇒ 32; pool ⇒ floor(N/p)</div>`;
+           + `<div class="formula">${t('sz-rule')} · padding=1, k=3, s=1 ⇒ 32; pool ⇒ floor(N/${p})</div>`;
     } else if (mode === 'conv-conv') {
       html = `<div><b>${t('sz-out')}:</b> ${N}×${N} <span class="formula">(two stacked convs, same, s=1)</span></div>`
            + `<div>${N * N} ${t('sz-positions')}</div>`
@@ -3013,6 +3003,7 @@ body.dark-mode .r4-language-select {
     }));
 
   // initial paint of the (hidden-until-opened) readout/panels.
+  window.addEventListener('r4languagechange', () => { renderSelectedCell(); renderHover(); });
   try { updateSizeReadout(); } catch (_) {}
   try { renderLearnVsTarget(); } catch (_) {}
 
@@ -3081,7 +3072,6 @@ body.dark-mode .r4-language-select {
   const LAB_CONFIG = {"slug": "convolution", "title": "Convolution lab packet", "zhTitle": "卷积实验包", "fields": [{"label": "Layer mode", "selector": "#layerSel", "kind": "selected"}, {"label": "Image preset", "selector": "#presetSel", "kind": "selected"}, {"label": "Kernel", "selector": "#kernelSel", "kind": "selected"}, {"label": "Stride", "selector": "#convStride", "kind": "value"}, {"label": "Padding", "selector": "#convPad", "kind": "value"}, {"label": "Learn target", "selector": "#learnTargetSel", "kind": "selected"}, {"label": "Learning loss", "selector": "#learnLoss", "kind": "text"}, {"label": "Scan position", "selector": "#scanPos", "kind": "text"}, {"label": "Window math", "selector": "#windowMath", "kind": "text"}]};
   const root = document.querySelector('.classroom-lab');
   if (!root) return;
-  const storageKey = 'ai-playgrounds-lab-' + LAB_CONFIG.slug;
   const qs = (sel) => root.querySelector(sel);
   function currentLang() {
     const raw = String(document.documentElement.lang || 'en').toLowerCase();
@@ -3100,6 +3090,8 @@ body.dark-mode .r4-language-select {
   function applyLabLang() {
     const lang = currentLang();
     root.querySelectorAll('[data-lab-en]').forEach(el => {
+      // Captured evidence and an explicitly cleared snapshot are learner state.
+      if (el.matches('[data-lab-state]') && (el.hasAttribute('data-r4-no-translate') || el.dataset.qaStateReady === '1')) return;
       const value = textFor(el, lang);
       if (el.tagName === 'TEXTAREA') el.placeholder = value;
       else el.textContent = value;
@@ -3126,13 +3118,6 @@ body.dark-mode .r4-language-select {
     root.querySelectorAll('textarea[data-lab-answer]').forEach(area => data[area.getAttribute('data-lab-answer')] = area.value.trim());
     return data;
   }
-  function saveDraft() { try { localStorage.setItem(storageKey, JSON.stringify(answers())); } catch (_) {} }
-  function loadDraft() {
-    try {
-      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
-      root.querySelectorAll('textarea[data-lab-answer]').forEach(area => { const key = area.getAttribute('data-lab-answer'); if (saved[key]) area.value = saved[key]; });
-    } catch (_) {}
-  }
   function packet() {
     const lang = currentLang();
     const baseLabels = {title: LAB_CONFIG.title, state:'State snapshot', predict:'Predict', observe:'Observe', explain:'Explain', transfer:'Transfer'};
@@ -3145,7 +3130,7 @@ body.dark-mode .r4-language-select {
       '- Date: ' + new Date().toLocaleString(),
       '',
       '## ' + labels.state,
-      snapshot(),
+      qs('[data-lab-state]')?.textContent || '',
       '',
       '## ' + labels.predict,
       a.predict || '',
@@ -3161,26 +3146,26 @@ body.dark-mode .r4-language-select {
     ].join('\n');
   }
   function setStatus(en, zh) { const el = qs('.lab-status'); if (el) el.textContent = currentLang() === 'zh' ? zh : en; }
-  function refreshState() { const el = qs('[data-lab-state]'); if (el) el.textContent = snapshot(); }
+  function refreshState() { const el = qs('[data-lab-state]'); if (el) { el.setAttribute('data-r4-no-translate',''); el.lang = currentLang(); el.textContent = snapshot(); } }
   async function copyPacket() {
     const text = packet();
     try { await navigator.clipboard.writeText(text); setStatus('Copied local lab packet.', '已复制本地实验包。'); }
-    catch (_) { window.prompt('Copy this lab packet:', text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
+    catch (_) { window.prompt(qs('[data-lab-action=copy]').textContent.trim(), text); setStatus('Use the prompt box to copy the packet.', '请使用弹出框复制实验包。'); }
   }
 
   function markdownToPrintableHtml(markdown) {
     const escape = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
     const inline = value => escape(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     const lines = String(markdown).split(/\r?\n/);
-    let html = '', inList = false, inState = false;
+    let html = '', inList = false, inState = false, sectionIndex = 0;
     const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
     for (const raw of lines) {
       const line = raw.trimEnd();
       if (line.startsWith('# ')) { closeList(); html += '<h1>' + inline(line.slice(2)) + '</h1>'; inState=false; }
-      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = /state snapshot|状态记录/i.test(title); }
+      else if (line.startsWith('## ')) { closeList(); const title=line.slice(3); html += '<h2>' + inline(title) + '</h2>'; inState = sectionIndex++ === 0; }
       else if (line.startsWith('- ')) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inline(line.slice(2)) + '</li>'; }
       else if (!line.trim()) { closeList(); }
-      else { closeList(); html += inState ? '<pre class="state">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
+      else { closeList(); html += inState ? '<pre class="state" lang="' + (qs('[data-lab-state]')?.lang || currentLang()) + '">' + escape(line) + '</pre>' : '<p>' + inline(line) + '</p>'; }
     }
     closeList(); return html;
   }
@@ -3189,28 +3174,19 @@ body.dark-mode .r4-language-select {
     const w = window.open('', '_blank');
     if (!w) { setStatus('Popup blocked. Copy the packet instead.', '弹窗被拦截。请改用复制实验包。'); return; }
     const rendered = markdownToPrintableHtml(packet());
-    const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
+    const html = '<!doctype html><html lang="' + currentLang() + '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Lab packet</title><style>@page{size:A4;margin:14mm}body{font-family:system-ui,sans-serif;max-width:820px;margin:28px auto;line-height:1.45;padding:0 18px;color:#111827}button{font:inherit;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer}main{border:1px solid #dbe4ee;border-radius:14px;padding:22px;background:linear-gradient(180deg,#f8fbff,#fff)}h1{font-size:1.65rem;margin:0 0 12px;color:#0f5f8f}h2{font-size:1.02rem;margin:18px 0 6px;color:#0369a1;border-bottom:1px solid #dbe4ee;padding-bottom:4px}p{margin:5px 0;white-space:pre-wrap}ul{margin:6px 0 12px;padding-left:20px}.state{white-space:pre-wrap;background:#f1f5f9;border:1px solid #dbe4ee;border-radius:8px;padding:10px;font:0.84rem ui-monospace,monospace}@media print{button{display:none}body{margin:0;max-width:none;padding:0}main{border:0;border-radius:0;padding:0;background:#fff}h2{break-after:avoid}}</style></head><body><button onclick="window.print()">Print packet</button><main>' + rendered + '</main><script>setTimeout(function(){try{window.focus();window.print();}catch(e){}},350);<\/script></body></html>';
     w.document.open();
     w.document.write(html);
     w.document.close();
     setStatus('Print page opened.', '打印页面已打开。');
   }
-  function clearDraft() {
-    root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.value = '');
-    try { localStorage.removeItem(storageKey); } catch (_) {}
-    refreshState(); setStatus('Local draft cleared.', '本地草稿已清除。');
-  }
-  root.querySelectorAll('textarea[data-lab-answer]').forEach(area => area.addEventListener('input', saveDraft));
   root.querySelector('[data-lab-action="copy"]')?.addEventListener('click', copyPacket);
   root.querySelector('[data-lab-action="print"]')?.addEventListener('click', printPacket);
   root.querySelector('[data-lab-action="refresh"]')?.addEventListener('click', () => { refreshState(); setStatus('State refreshed.', '状态已更新。'); });
-  root.querySelector('[data-lab-action="clear"]')?.addEventListener('click', clearDraft);
   document.querySelectorAll('.lang-switch button').forEach(button => button.addEventListener('click', () => setTimeout(applyLabLang, 0)));
   window.addEventListener('r4languagechange', () => setTimeout(applyLabLang, 0));
   
-  document.addEventListener('change', refreshState);
-  document.addEventListener('click', (event) => { if (!(event.target instanceof HTMLTextAreaElement)) setTimeout(refreshState, 0); }, true);
-  loadDraft(); applyLabLang(); refreshState();
+  applyLabLang();
 })();
 </script>
 <script>
@@ -3399,8 +3375,8 @@ body.dark-mode .r4-language-select {
   function stateData(){
     const values={};
     document.querySelectorAll('#main input,#main select,#main textarea').forEach(el=>{
-      if(!el.id||el.closest('.classroom-lab'))return;
-      if((el.type==='checkbox'||el.type==='radio')&&!el.checked)return;
+      if(!el.id||el.readOnly||el.closest('.classroom-lab,.worksheet,.suite-guided-shell,[data-quick-assign-id]')||['button','submit','reset','file','password','hidden'].includes(el.type))return;
+      if(el.type==='radio'&&!el.checked)return;
       values[el.id]=el.type==='checkbox'?el.checked:el.value;
     });
     return {applet:profile.en.title,slug:profile.slug,exported_at:new Date().toISOString(),values};
@@ -3410,17 +3386,18 @@ body.dark-mode .r4-language-select {
     const share=document.getElementById('shareLink'), embed=document.getElementById('embedLink'), reset=document.getElementById('hardReset');
     const csv=document.getElementById('csvExport'), png=document.getElementById('exportPng');
     const more=document.createElement('details'); more.className='header-more';
-    const summary=document.createElement('summary'); summary.className='header-png'; summary.setAttribute('aria-haspopup','menu'); more.appendChild(summary);
-    const menu=document.createElement('div'); menu.className='header-more-menu'; menu.setAttribute('role','menu'); more.appendChild(menu);
+    const summary=document.createElement('summary'); summary.className='header-png'; more.appendChild(summary);
+    const menu=document.createElement('div'); menu.className='header-more-menu'; more.appendChild(menu);
     if(embed){embed.textContent='📎 Embed in LMS';menu.appendChild(embed)}
     const jsonBtn=document.createElement('button');jsonBtn.type='button';jsonBtn.className='header-png';jsonBtn.dataset.exportState='';menu.appendChild(jsonBtn);
     if(csv){csv.textContent='📊 Data table (.csv)';menu.appendChild(csv)}
     if(png){png.textContent='🖼 Image (.png)';menu.appendChild(png)}
-    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false});
+    jsonBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(stateData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=profile.slug+'-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);more.open=false;summary.focus()});
     actions.innerHTML=''; if(share)actions.appendChild(share); actions.appendChild(more); if(reset)actions.appendChild(reset); actions.dataset.standardized='1';
     window.refreshAppletToolbar=()=>{const zh=currentLocale()==='zh';if(share){share.textContent=zh?'🔗 分享':'🔗 Share';share.title=zh?'复制可在另一浏览器中重新打开当前设置的链接。':'Copy a link that reopens the current settings in another browser.';}summary.textContent=zh?'••• 更多':'••• More';summary.title=zh?'嵌入或下载当前实验':'Embed or download the current experiment';jsonBtn.textContent=zh?'⬇ 当前设置（.json）':'⬇ Current settings (.json)';if(embed)embed.textContent=zh?'📎 嵌入到 LMS':'📎 Embed in LMS';if(csv)csv.textContent=zh?'📊 数据表（.csv）':'📊 Data table (.csv)';if(png)png.textContent=zh?'🖼 图像（.png）':'🖼 Image (.png)'};
     window.refreshAppletToolbar();
     document.addEventListener('click',e=>{if(more.open&&!more.contains(e.target))more.open=false});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&more.open){e.preventDefault();more.open=false;summary.focus()}});
   }
   function terms(){
     const inner=document.querySelector('.interactive-inner'); if(!inner||inner.querySelector('.key-terms'))return;
@@ -3467,6 +3444,7 @@ body.dark-mode .r4-language-select {
     return 'explore';
   };
   const lang = () => (document.documentElement.lang || 'en').startsWith('zh') ? 'zh' : 'en';
+  const routeLocale = () => ['en','zh','vi','es'].find(code => (document.documentElement.lang || 'en').toLowerCase().startsWith(code)) || 'en';
   const labels = {explore:['Explore','探索'],understand:['Understand','理解'],classroom:['Use in class','课堂使用'],access:['Text and keyboard','文本与键盘']};
   const intros = {
     explore:['Start with the featured experiment, then use the scenarios to test a prediction.','从精选实验开始，再使用情境检验预测。'],
@@ -3538,12 +3516,19 @@ body.dark-mode .r4-language-select {
     renderModeChrome();
     if(write){const u=new URL(location.href);u.searchParams.set('mode',mode);history.replaceState(null,'',u)}
   }
-  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
+  shell.querySelectorAll('.learning-mode-tab').forEach(b=>{b.onclick=()=>setMode(b.dataset.mode);b.onkeydown=e=>{const list=[...shell.querySelectorAll('.learning-mode-tab')],i=list.indexOf(b);if(['ArrowRight','ArrowLeft','Home','End'].includes(e.key)){e.preventDefault();const n=e.key==='Home'?0:e.key==='End'?list.length-1:(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;list[n].focus();setMode(list[n].dataset.mode)}}});
 
+  // Share only native mechanism inputs, never responses or global preferences.
+  function shareable(el){
+    return !!el && !!el.id && inner.contains(el)
+      && el.matches('input,select,textarea') && !el.readOnly
+      && !['button','submit','reset','file','password','hidden'].includes(el.type)
+      && !el.closest('.classroom-lab,.worksheet,.suite-guided-shell,[data-quick-assign-id]');
+  }
   function statePayload(){
     const out={};
-    inner.querySelectorAll('select,input').forEach(el=>{
-      if(!el.id||el.closest('.classroom-lab')||['button','submit'].includes(el.type))return;
+    inner.querySelectorAll('select,input,textarea').forEach(el=>{
+      if(!shareable(el))return;
       if(el.type==='radio'){if(el.checked)out[el.id]=el.value;return}
       out[el.id]=el.type==='checkbox'?el.checked:el.value;
     });
@@ -3552,33 +3537,65 @@ body.dark-mode .r4-language-select {
   function encode(obj){return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))}
   function decode(s){try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch{return null}}
   function currentExperimentUrl(){
-    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',lang());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
+    const u=new URL(location.href);u.searchParams.set('mode',active);u.searchParams.set('lang',routeLocale());u.searchParams.delete('scenario');u.searchParams.delete('featured');u.searchParams.set('state',encode(statePayload()));return u;
   }
   window.__buildExperimentUrl=()=>currentExperimentUrl().href;
   const status=shell.querySelector('.experiment-status');
-  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(ui[lang()].copyPrompt,u.href)}};
+  shell.querySelector('[data-copy-experiment]').onclick=async()=>{const u=currentExperimentUrl();history.replaceState(null,'',u);try{await navigator.clipboard.writeText(u.href);status.textContent=ui[lang()].copied}catch{prompt(shell.querySelector('[data-copy-experiment]').textContent.trim(),u.href)}};
 
-  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','')});
-  document.addEventListener('click',e=>{const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode','explore');u.searchParams.set('lang',lang());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
+  // Let Space activate this native button instead of a lab-wide play shortcut.
+  shell.addEventListener('keydown', event => {
+    if (event.key === ' ' && event.target.closest('[data-start-featured]')) event.stopPropagation();
+  });
+
+  // A learner-initiated handoff moves both the viewport and keyboard focus.
+  // Restoring a shared URL or changing locale must never steal focus.
+  function handoffToExperiment() {
+    const target = [...inner.querySelectorAll('select,input:not([type="hidden"]),textarea')]
+      .find(node => !node.closest('.learning-mode-shell,.suite-guided-shell')
+        && !node.disabled && node.getClientRects().length);
+    if (!target) return;
+    target.focus({preventScroll: true});
+    target.scrollIntoView({block: 'center',
+      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
+  }
+
+  shell.querySelector('[data-start-featured]')?.addEventListener('click',()=>{setMode('explore');const card=panels.explore.querySelector(`.scenario-card[data-scenario-index="${featuredIndex[slug]??0}"] button`);card?.click();panels.explore.querySelector('.scenario-gallery')?.setAttribute('open','');handoffToExperiment()});
+  document.addEventListener('click',e=>{if(restoring&&new URLSearchParams(location.search).has('state'))return;const btn=e.target.closest('.scenario-card button');if(!btn)return;const card=btn.closest('.scenario-card');const u=new URL(location.href);u.searchParams.set('scenario',card.dataset.scenarioIndex);u.searchParams.set('mode',active);if(!restoring)u.searchParams.set('lang',routeLocale());u.searchParams.delete('state');u.searchParams.delete('featured');history.replaceState(null,'',u)});
 
   let urlSyncTimer=0;
   function scheduleUrlState(e){
     if(restoring)return;
-    const el=e.target;if(!el||!inner.contains(el)||el.closest('.classroom-lab')||!el.matches('input,select'))return;
+    const el=e.target;if(!shareable(el))return;
     clearTimeout(urlSyncTimer);urlSyncTimer=setTimeout(()=>{const u=currentExperimentUrl();history.replaceState(null,'',u)},80);
   }
   document.addEventListener('input',scheduleUrlState,true);document.addEventListener('change',scheduleUrlState,true);
 
   function applyState(obj){
-    if(!obj)return;
-    Object.entries(obj).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!value;else if(el.type==='radio')el.checked=String(el.value)===String(value);else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});
+    if(!obj || typeof obj !== 'object' || Array.isArray(obj) || Object.keys(obj).length > 256)return;
+    Object.entries(obj).forEach(([id,value])=>{
+      const el=document.getElementById(id);if(!shareable(el))return;
+      if(el.type==='checkbox'){if(typeof value!=='boolean')return;el.checked=value}
+      else {
+        if(!['string','number'].includes(typeof value) || String(value).length>10000)return;
+        const text=String(value);
+        if(el.tagName==='SELECT' && ![...el.options].some(option=>option.value===text))return;
+        if(['number','range'].includes(el.type)){
+          if(!text.trim() || !Number.isFinite(Number(text)))return;
+          if(el.min!=='' && Number(text)<Number(el.min))return;
+          if(el.max!=='' && Number(text)>Number(el.max))return;
+        }
+        if(el.type==='radio'){if(el.value!==text)return;el.checked=true}
+        else el.value=text;
+      }
+      el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));
+    });
   }
   function restore(){
     const p=new URL(location.href).searchParams;restoring=true;
-    // Explicit scenario, then saved controls, override native CNF share state.
-    // Retain the established scenario-zero default unless a native formula exists.
-    const nativeFormula=window.APPLET_LEARNER_PROFILE?.slug==='cnf-sat'&&p.has('f');
-    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeFormula))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
+    // Native links precede explicit scenarios and saved controls.
+    const nativeState=slug==='cnf-sat'&&p.has('f')||slug==='knn-classifier'&&['k','ds','task','metric','weight','scale','target'].some(k=>p.has(k));
+    const n=Number(p.get('scenario'));if(Number.isInteger(n)&&(p.has('scenario')||!nativeState))panels.explore.querySelector(`.scenario-card[data-scenario-index="${n}"] button`)?.click();
     applyState(decode(p.get('state')||''));
     if(p.get('featured')==='1')sig?.setAttribute('open','');
     restoring=false;
@@ -3594,7 +3611,7 @@ body.dark-mode .r4-language-select {
   }
   setMode(active,false);ensureExploreContent();
   setTimeout(()=>{refineCards();window.renderAppletKeyTerms?.();restore();renderModeChrome()},250);
-  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',lang());history.replaceState(null,'',u)},25)));
+  document.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{setMode(active,false);refineCards();window.refreshLearnerContent?.();renderModeChrome();const u=new URL(location.href);u.searchParams.set('lang',routeLocale());history.replaceState(null,'',u)},25)));
 })();
 </script>
 
@@ -4439,6 +4456,20 @@ document.addEventListener('DOMContentLoaded', () => {
   },
   "vi": {
     "strings": {
+      "Click an output cell, or focus the output and use arrow keys; Enter/Space inspects it.": "Nhấp vào ô đầu ra, hoặc đưa tiêu điểm đến đầu ra rồi dùng phím mũi tên; nhấn Enter/phím cách để xem.",
+      "Inspect the final operation for an output cell. Colors are scaled across the map.": "Xem phép tính cuối cùng cho một ô đầu ra. Màu sắc được chuẩn hóa trên toàn bộ bản đồ.",
+      "Original input window": "Cửa sổ đầu vào gốc",
+      "Kernel for this cell": "Bộ lọc cho ô này",
+      "Products for this cell": "Các tích cho ô này",
+      "Show sum": "Hiện tổng",
+      "(click the cell or \"Show sum\" to reveal Σ)": "(nhấp vào ô hoặc Hiện tổng để xem Σ)",
+      "First-layer output window × second kernel (no intermediate activation)": "Cửa sổ đầu ra lớp thứ nhất × bộ lọc thứ hai (không có hàm kích hoạt ở giữa)",
+      "First-layer window after enabled abs/ReLU → max pooling": "Cửa sổ lớp thứ nhất sau abs/ReLU đã bật → gộp cực đại",
+      "Output (row, column)": "Đầu ra (hàng, cột)",
+      "Window start (edge-clamped when outside)": "Đầu cửa sổ (lặp giá trị biên khi vượt ngoài)",
+      "Stored output": "Đầu ra được lưu",
+      "Value used for color": "Giá trị dùng để tô màu",
+      "Numbers rounded; ≈ refers to the stored float result.": "Các số đã làm tròn; ≈ chỉ kết quả dấu phẩy động được lưu.",
       "#a11yStateSummary": "#a11yStateSummary",
       "#acceptV": "#acceptV",
       "#accV": "#accV",
@@ -4490,7 +4521,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "(click on the output canvas to inspect a cell)": "(nhấp vào khung vẽ đầu ra để kiểm tra một ô)",
       "(click the cell or \"Show sum\" to reveal Σ)": "(nhấp vào ô hoặc \"Hiển thị tổng\" để hiển thị Σ)",
       "(same (edge-clamp), s=1)": "(tương tự (kẹp cạnh), s=1)",
-      "(then max-pool {p}×{p} → {m}×{m})": "(sau đó nhóm tối đa {p}×{p} → {m}×{m})",
+      "(then max-pool {p}×{p} → {m}×{m})": "(sau đó gộp cực đại {p}×{p} → {m}×{m})",
       ".bento-main": ".bento-main",
       ".cell-analysis": ".cell-analysis",
       ".cell-maps": ".cell-maps",
@@ -4527,7 +4558,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ".suite-guided-transfer": ".suite-guided-transfer",
       ".suite-guided-transfer-prompt": ".suite-guided-transfer-prompt",
       ".suite-guided-transfer-wrap": ".suite-guided-transfer-wrap",
-      "2nd 3×3 kernel (after first conv)": "kernel 3×3 thứ 2 (sau lần chuyển đổi đầu tiên)",
+      "2nd 3×3 kernel (after first conv)": "kernel 3×3 thứ 2 (sau lần tích chập đầu tiên)",
       "32 by 32 input image. Click and drag to draw.": "Hình ảnh đầu vào 32 x 32.Nhấp và kéo để vẽ.",
       "3×3: stacking kernels doesn't change how far each output pixel can see.": "3×3: việc xếp chồng các hạt nhân không thay đổi khoảng cách mà mỗi pixel đầu ra có thể nhìn thấy.",
       "5×5: each 3×3 layer adds one cell on every side, so two layers reach 5×5.": "5×5: mỗi lớp 3×3 thêm một ô ở mỗi bên, như vậy hai lớp đạt kích thước 5×5.",
@@ -4594,16 +4625,16 @@ document.addEventListener('DOMContentLoaded', () => {
       "Click any cell on the output canvas to see the 3×3 input window centered on it, the kernel, and the dot-product math that produced that pixel.": "Nhấp vào bất kỳ ô nào trên khung vẽ đầu ra để xem cửa sổ đầu vào 3×3 được căn giữa vào ô đó, hạt nhân và phép toán tích chấm tạo ra pixel đó.",
       "Clip negative values to zero: the ReLU non-linearity used in CNNs.": "Cắt các giá trị âm về 0: tính phi tuyến tính ReLU được sử dụng trong CNN.",
       "cnf-sat": "cnf-sat",
-      "CNN-style convolution in this applet is cross-correlation: it converts a local patch of pixels into one output value without flipping the kernel. Learn the names of the filter, output, and movement settings before stacking layers.": "Tích chập kiểu CNN trong applet này có mối tương quan chéo: nó chuyển đổi một mảng pixel cục bộ thành một giá trị đầu ra mà không cần lật kernel.Tìm hiểu tên của cài đặt bộ lọc, đầu ra và chuyển động trước khi xếp chồng các lớp.",
-      "Compare convolution followed by pooling with two stacked convolutions. Which quantities change?": "So sánh tích chập theo sau là gộp với hai tích chập xếp chồng lên nhau.Đại lượng nào thay đổi?",
+      "CNN-style convolution in this applet is cross-correlation: it converts a local patch of pixels into one output value without flipping the kernel. Learn the names of the filter, output, and movement settings before stacking layers.": "Tích chập kiểu CNN trong applet này có mối tương quan chéo: nó tích chập một mảng pixel cục bộ thành một giá trị đầu ra mà không cần lật kernel.Tìm hiểu tên của cài đặt bộ lọc, đầu ra và chuyển động trước khi xếp chồng các lớp.",
+      "Compare convolution followed by pooling with two stacked convolutions. Which quantities change?": "So sánh tích chập rồi gộp với hai lớp tích chập nối tiếp. Những đại lượng nào thay đổi?",
       "Comparison recorded. Explain any discrepancy before trying the transfer case.": "Đã ghi lại so sánh.Giải thích bất kỳ sự khác biệt nào trước khi thử trường hợp chuyển nhượng.",
       "Conditionally independent": "Độc lập có điều kiện",
       "Connect the left-to-right brightness change to the vertical edge orientation.": "Kết nối thay đổi độ sáng từ trái sang phải theo hướng cạnh dọc.",
-      "Conv + max-pool (downsamples)": "Chuyển đổi + nhóm tối đa (mẫu giảm)",
-      "Conv → conv (stacks two kernels)": "Chuyển đổi → chuyển đổi (xếp chồng hai hạt nhân)",
-      "Conv → max-pool downsamples": "Chuyển đổi → mẫu giảm nhóm tối đa",
+      "Conv + max-pool (downsamples)": "Tích chập + gộp cực đại (mẫu giảm)",
+      "Conv → conv (stacks two kernels)": "Tích chập → tích chập (xếp chồng hai hạt nhân)",
+      "Conv → max-pool downsamples": "Tích chập → mẫu giảm gộp cực đại",
       "Convolution plus 2×2 max pooling:": "Tích chập cộng với tổng hợp tối đa 2×2:",
-      "Convolution stride: how far the 3×3 window moves between samples. Stride 2 halves the output dimension.": "Bước chuyển đổi tích chập: cửa sổ 3×3 di chuyển bao xa giữa các mẫu.Stride 2 giảm một nửa kích thước đầu ra.",
+      "Convolution stride: how far the 3×3 window moves between samples. Stride 2 halves the output dimension.": "Bước tích chập tích chập: cửa sổ 3×3 di chuyển bao xa giữa các mẫu.Stride 2 giảm một nửa kích thước đầu ra.",
       "Convolutional neural network (CNN)": "Mạng nơ ron tích chập (CNN)",
       "Copy a link that reopens the current settings in another browser.": "Sao chép liên kết mở lại cài đặt hiện tại trong trình duyệt khác.",
       "Copy an <iframe> snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.": "Sao chép đoạn mã <iframe> để nhúng vào LMS.Loại bỏ tiêu đề/bài luận để chỉ hiển thị khu vực tương tác.",
@@ -4616,7 +4647,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Cross image, Sobel-X kernel. Which part of the cross lights up brightest?": "Hình ảnh chéo, hạt nhân Sobel-X.Phần nào của thánh giá sáng lên nhất?",
       "Cross image, Sobel-X. Output lights up where pixels change horizontally: i.e., on the vertical bar of the cross. This is what 'edge detection' literally means.": "Hình ảnh chéo, Sobel-X.Đầu ra sáng lên ở nơi các pixel thay đổi theo chiều ngang: tức là trên thanh dọc của hình chữ thập.Đây chính là ý nghĩa của 'phát hiện cạnh'.",
       "cross-correlation": "tương quan chéo",
-      "Cross-correlation as multiply-and-sum, kernels, feature maps, edge direction, activation functions, pooling, receptive fields, and learned filters.": "Tương quan chéo dưới dạng nhân và tổng, hạt nhân, bản đồ đặc trưng, hướng cạnh, hàm kích hoạt, gộp, trường tiếp nhận và bộ lọc đã học.",
+      "Cross-correlation as multiply-and-sum, kernels, feature maps, edge direction, activation functions, pooling, receptive fields, and learned filters.": "Tương quan chéo bằng phép nhân rồi cộng, bộ lọc, bản đồ đặc trưng, hướng biên ảnh, hàm kích hoạt, gộp, vùng tiếp nhận và bộ lọc được học.",
       "Default = Sobel-Y. Stacks with kernel 1 above to give a 5×5 effective receptive field.": "Mặc định = Sobel-Y.Xếp chồng với kernel 1 ở trên để tạo ra trường tiếp nhận hiệu quả 5 × 5.",
       "Difference (learner − target)": "Sự khác biệt (người học − mục tiêu)",
       "Download the convolution output as a PNG.": "Tải xuống kết quả tích chập dưới dạng PNG.",
@@ -4637,8 +4668,8 @@ document.addEventListener('DOMContentLoaded', () => {
       "From one kernel to many channels": "Từ một kernel tới nhiều kênh",
       "hill-climbing": "leo đồi",
       "Hover an interior output cell (a full 3×3 fits there) to inspect exact math.": "Di chuột qua ô đầu ra bên trong (có kích thước 3×3 đầy đủ ở đó) để kiểm tra phép toán chính xác.",
-      "Hover an output cell to inspect it. (Single-conv mode.)": "Di chuột vào ô đầu ra để kiểm tra.(Chế độ chuyển đổi đơn.)",
-      "Hover any Output cell to see its 3×3 receptive field and the nine products (the sum stays hidden until you click). Or run the sliding window across the image. These tools work in single-conv mode.": "Di chuột qua bất kỳ ô Đầu ra nào để xem trường tiếp nhận 3×3 của nó và chín sản phẩm (tổng vẫn được ẩn cho đến khi bạn nhấp vào).Hoặc chạy cửa sổ trượt ngang ảnh.Những công cụ này hoạt động ở chế độ chuyển đổi đơn.",
+      "Hover an output cell to inspect it. (Single-conv mode.)": "Di chuột vào ô đầu ra để kiểm tra.(Chế độ tích chập đơn.)",
+      "Hover any Output cell to see its 3×3 receptive field and the nine products (the sum stays hidden until you click). Or run the sliding window across the image. These tools work in single-conv mode.": "Di chuột qua bất kỳ ô Đầu ra nào để xem trường tiếp nhận 3×3 của nó và chín tích (tổng vẫn được ẩn cho đến khi bạn nhấp vào).Hoặc chạy cửa sổ trượt ngang ảnh.Những công cụ này hoạt động ở chế độ tích chập đơn.",
       "How could nine numbers detect a local brightness change?": "Làm thế nào chín số có thể phát hiện sự thay đổi độ sáng cục bộ?",
       "How did multiplying local pixels by kernel weights create the result?": "Việc nhân pixel cục bộ với trọng số hạt nhân tạo ra kết quả như thế nào?",
       "How does rotating a filter change the feature it detects?": "Việc xoay bộ lọc sẽ thay đổi tính năng mà nó phát hiện như thế nào?",
@@ -4746,8 +4777,8 @@ document.addEventListener('DOMContentLoaded', () => {
       "Scenario 5: Stacked convolutions create a larger theoretical receptive field": "Kịch bản 5: Các tích chập xếp chồng lên nhau tạo ra trường tiếp thu lý thuyết lớn hơn",
       "search-pathfinding": "tìm đường dẫn tìm kiếm",
       "Show the absolute value of the convolution output. Useful for edge filters that produce both positive and negative numbers.": "Hiển thị giá trị tuyệt đối của đầu ra tích chập.Hữu ích cho các bộ lọc cạnh tạo ra cả số dương và số âm.",
-      "Single conv (one kernel)": "Chuyển đổi đơn (một hạt nhân)",
-      "Single conv = current (one 3×3 kernel). Conv + max-pool = adds p×p pooling. Conv → conv = stacks two 3×3 kernels (receptive field becomes 5×5).": "Chuyển đổi đơn = hiện tại (một hạt nhân 3×3).Chuyển đổi + nhóm tối đa = thêm tổng hợp p × p.Conv → conv = xếp chồng hai hạt nhân 3×3 (trường tiếp nhận trở thành 5×5).",
+      "Single conv (one kernel)": "Tích chập đơn (một hạt nhân)",
+      "Single conv = current (one 3×3 kernel). Conv + max-pool = adds p×p pooling. Conv → conv = stacks two 3×3 kernels (receptive field becomes 5×5).": "Tích chập đơn = hiện tại (một hạt nhân 3×3).Tích chập + gộp cực đại = thêm tổng hợp p × p.Conv → conv = xếp chồng hai hạt nhân 3×3 (trường tiếp nhận trở thành 5×5).",
       "Small kernels are common because stacking them expands the receptive field while inserting nonlinear transformations between layers. Two 3×3 kernels use 18 spatial weights versus 25 for one 5×5 kernel per input-output channel pair, before biases and channel counts are considered. VGG popularized this design, although modern architectures also use 1×1, 5×5, 7×7, dilated, and larger depthwise kernels when useful.": "Các hạt nhân nhỏ rất phổ biến vì việc xếp chồng chúng sẽ mở rộng trường tiếp nhận trong khi chèn các phép biến đổi phi tuyến giữa các lớp.Hai hạt nhân 3×3 sử dụng 18 trọng số không gian so với 25 cho một hạt nhân 5×5 trên mỗi cặp kênh đầu vào-đầu ra, trước khi xem xét độ lệch và số lượng kênh.VGG đã phổ biến thiết kế này, mặc dù các kiến ​​trúc hiện đại cũng sử dụng các hạt nhân theo chiều sâu 1×1, 5×5, 7×7, giãn nở và lớn hơn khi hữu ích.",
       "Sobel-X (vertical edges)": "Sobel-X (cạnh dọc)",
       "Sobel-X finds vertical edges": "Sobel-X tìm các cạnh dọc",
@@ -4755,10 +4786,10 @@ document.addEventListener('DOMContentLoaded', () => {
       "Sobel-Y finds horizontal edges": "Sobel-Y tìm các cạnh ngang",
       "Stack two three-by-three convolutions and inspect the effective receptive field.": "Xếp chồng hai vòng xoắn ba nhân ba và kiểm tra trường tiếp nhận hiệu quả.",
       "Stacked convolutions create a larger theoretical receptive field": "Các tích chập xếp chồng lên nhau tạo ra trường tiếp thu lý thuyết lớn hơn",
-      "Stacked convs grow receptive field": "Chuyển đổi xếp chồng phát triển trường tiếp nhận",
+      "Stacked convs grow receptive field": "Tích chập xếp chồng phát triển trường tiếp nhận",
       "Start featured experiment": "Bắt đầu thử nghiệm nổi bật",
       "Start with the featured experiment, then use the scenarios to test a prediction.": "Bắt đầu với thử nghiệm nổi bật, sau đó sử dụng các tình huống để kiểm tra dự đoán.",
-      "State summary updated: Layer mode: Single conv (one kernel); Kernel: Identity; Stride: 1; Padding: same; Window math: (click on the output canvas to inspect a cell)": "Đã cập nhật tóm tắt trạng thái: Chế độ lớp: Chuyển đổi đơn (một hạt nhân);Hạt nhân: Danh tính;Sải bước: 1;Phần đệm: giống nhau;Toán học cửa sổ: (nhấp vào khung vẽ đầu ra để kiểm tra một ô)",
+      "State summary updated: Layer mode: Single conv (one kernel); Kernel: Identity; Stride: 1; Padding: same; Window math: (click on the output canvas to inspect a cell)": "Đã cập nhật tóm tắt trạng thái: Chế độ lớp: Tích chập đơn (một hạt nhân);Hạt nhân: Danh tính;Sải bước: 1;Phần đệm: giống nhau;Toán học cửa sổ: (nhấp vào khung vẽ đầu ra để kiểm tra một ô)",
       "such layers gives a theoretical receptive-field width of": "các lớp như vậy mang lại độ rộng trường tiếp nhận theo lý thuyết là",
       "suite-guided-actions": "hành động được hướng dẫn theo bộ",
       "suite-guided-actual": "bộ-hướng dẫn-thực tế",
@@ -4794,10 +4825,10 @@ document.addEventListener('DOMContentLoaded', () => {
       "suite-guided-transfer-prompt": "lời nhắc chuyển hướng dẫn của bộ",
       "suite-guided-transfer-wrap": "bộ-hướng dẫn-chuyển-quấn",
       "Switch to \"Conv → conv\" mode (two stacked 3×3 kernels). The effective receptive field becomes:": "Chuyển sang chế độ \"Conv → conv\" (hai hạt nhân 3×3 xếp chồng lên nhau).Trường tiếp nhận hiệu quả trở thành:",
-      "Switch to 'Conv + max-pool'. Output is now 16×16 (downsampled). Pooling keeps the numerically largest activation in each 2×2 block. This can reduce sensitivity to small local shifts, but pooling is not the only source of translation robustness.": "Chuyển sang 'Chuyển đổi + nhóm tối đa'.Đầu ra bây giờ là 16×16 (được lấy mẫu xuống).Việc gộp chung giữ số lượng kích hoạt lớn nhất trong mỗi khối 2×2.Điều này có thể làm giảm độ nhạy đối với những dịch chuyển cục bộ nhỏ, nhưng việc gộp chung không phải là nguồn duy nhất đảm bảo độ bền của dịch thuật.",
-      "Switch to 'Conv → conv'. Two 3×3 kernels stacked = a 5×5 effective receptive field. Try the default (Sobel-X then Sobel-Y): this can produce a response associated with changes in both directions; interpreting it as a corner detector requires additional context and nonlinear processing. Real CNNs stack dozens of layers.": "Chuyển sang 'Chuyển đổi → chuyển đổi'.Hai hạt nhân 3×3 xếp chồng lên nhau = trường tiếp nhận hiệu quả 5×5.Hãy thử mặc định (Sobel-X rồi Sobel-Y): điều này có thể tạo ra phản hồi liên quan đến những thay đổi theo cả hai hướng;giải thích nó như một máy dò góc đòi hỏi phải có thêm ngữ cảnh và xử lý phi tuyến.CNN thực sự xếp chồng lên nhau hàng chục lớp.",
+      "Switch to 'Conv + max-pool'. Output is now 16×16 (downsampled). Pooling keeps the numerically largest activation in each 2×2 block. This can reduce sensitivity to small local shifts, but pooling is not the only source of translation robustness.": "Chuyển sang 'Tích chập + gộp cực đại'.Đầu ra bây giờ là 16×16 (được lấy mẫu xuống).Việc gộp chung giữ giá trị kích hoạt lớn nhất trong mỗi khối 2×2.Điều này có thể làm giảm độ nhạy đối với những dịch chuyển cục bộ nhỏ, nhưng việc gộp chung không phải là nguồn duy nhất đảm bảo khả năng ổn định khi ảnh dịch chuyển.",
+      "Switch to 'Conv → conv'. Two 3×3 kernels stacked = a 5×5 effective receptive field. Try the default (Sobel-X then Sobel-Y): this can produce a response associated with changes in both directions; interpreting it as a corner detector requires additional context and nonlinear processing. Real CNNs stack dozens of layers.": "Chuyển sang 'Tích chập → tích chập'.Hai hạt nhân 3×3 xếp chồng lên nhau = trường tiếp nhận hiệu quả 5×5.Hãy thử mặc định (Sobel-X rồi Sobel-Y): điều này có thể tạo ra phản hồi liên quan đến những thay đổi theo cả hai hướng;giải thích nó như một máy dò góc đòi hỏi phải có thêm ngữ cảnh và xử lý phi tuyến.CNN thực sự xếp chồng lên nhau hàng chục lớp.",
       "Switch to convolution followed by two-by-two max pooling and compare output dimensions.": "Chuyển sang tích chập theo sau là gộp tối đa hai nhân hai và so sánh kích thước đầu ra.",
-      "Taking an absolute value discards response direction and keeps magnitude, so both light-to-dark and dark-to-light transitions appear bright. ReLU instead replaces negative values with zero. Many CNN blocks use an activation after a convolution, but architectures vary. One learned channel may preserve a response orientation while another channel learns a complementary filter; no single ReLU channel should be assumed to preserve all information.": "Việc lấy một giá trị tuyệt đối sẽ loại bỏ hướng phản hồi và giữ nguyên độ lớn, do đó cả quá trình chuyển đổi từ sáng sang tối và từ tối sang sáng đều có vẻ sáng.Thay vào đó, ReLU thay thế các giá trị âm bằng 0.Nhiều khối CNN sử dụng kích hoạt sau khi tích chập, nhưng kiến ​​trúc khác nhau.Một kênh đã học có thể duy trì hướng phản hồi trong khi kênh khác học bộ lọc bổ sung;không có kênh ReLU đơn lẻ nào được coi là lưu giữ tất cả thông tin.",
+      "Taking an absolute value discards response direction and keeps magnitude, so both light-to-dark and dark-to-light transitions appear bright. ReLU instead replaces negative values with zero. Many CNN blocks use an activation after a convolution, but architectures vary. One learned channel may preserve a response orientation while another channel learns a complementary filter; no single ReLU channel should be assumed to preserve all information.": "Việc lấy một giá trị tuyệt đối sẽ loại bỏ hướng phản hồi và giữ nguyên độ lớn, do đó cả quá trình tích chập từ sáng sang tối và từ tối sang sáng đều có vẻ sáng.Thay vào đó, ReLU thay thế các giá trị âm bằng 0.Nhiều khối CNN sử dụng kích hoạt sau khi tích chập, nhưng kiến ​​trúc khác nhau.Một kênh đã học có thể duy trì hướng phản hồi trong khi kênh khác học bộ lọc bổ sung;không có kênh ReLU đơn lẻ nào được coi là lưu giữ tất cả thông tin.",
       "Terms used in this explanation": "Các thuật ngữ được sử dụng trong phần giải thích này",
       "Text and keyboard support": "Hỗ trợ văn bản và bàn phím",
       "The 32×32 image you feed in. Dark pixels = 1, white = 0.": "Hình ảnh 32×32 mà bạn cung cấp. Pixel tối = 1, trắng = 0.",
@@ -4810,7 +4841,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "The initial points and centroids are visible. Before the first assignment/update cycle is revealed, predict which cluster Point 1 will join and approximately where Centroid 1 will be after the update.": "Các điểm ban đầu và tâm được hiển thị.Trước khi chu kỳ phân công/cập nhật đầu tiên được tiết lộ, hãy dự đoán cụm nào Điểm 1 sẽ tham gia và vị trí gần đúng của Centroid 1 sau khi cập nhật.",
       "The input image and kernel stay visible. Before the output is revealed, predict the value of the center output cell and list the input-by-kernel products that contribute to its multiply-and-sum.": "Hình ảnh đầu vào và hạt nhân vẫn hiển thị.Trước khi đầu ra được tiết lộ, hãy dự đoán giá trị của ô đầu ra ở giữa và liệt kê các sản phẩm đầu vào theo hạt nhân góp phần vào phép nhân và tổng của nó.",
       "The kernel decides which local pattern should be amplified or suppressed.": "Hạt nhân quyết định mẫu cục bộ nào sẽ được khuếch đại hoặc triệt tiêu.",
-      "the operation already recognizes objects; Sobel-X detects horizontal edges because of its name; every convolution must be followed by ReLU; modern networks use only 3×3 kernels.": "thao tác đã nhận dạng được đối tượng;Sobel-X phát hiện các cạnh ngang vì tên của nó;mọi tích chập phải được theo sau bởi ReLU;mạng hiện đại chỉ sử dụng hạt nhân 3 × 3.",
+      "the operation already recognizes objects; Sobel-X detects horizontal edges because of its name; every convolution must be followed by ReLU; modern networks use only 3×3 kernels.": "Phép toán này đã nhận dạng được vật thể; Sobel-X phát hiện biên ngang vì tên của nó; mọi phép tích chập đều phải được theo sau bởi ReLU; mạng hiện đại chỉ dùng bộ lọc 3×3.",
       "The outputs match but the numbers don't: this image doesn't pin down all nine weights; the filter only has to match what it sees.": "Kết quả đầu ra khớp nhưng các con số thì không: hình ảnh này không xác định được tất cả chín trọng số;bộ lọc chỉ phải khớp với những gì nó nhìn thấy.",
       "The prepared applet step is unavailable. Reset the challenge instead of revealing a fabricated result.": "Bước applet đã chuẩn bị không khả dụng.Đặt lại thử thách thay vì tiết lộ kết quả bịa đặt.",
       "The region of the input that can affect one output value.": "Vùng đầu vào có thể ảnh hưởng đến một giá trị đầu ra.",
@@ -4834,14 +4865,14 @@ document.addEventListener('DOMContentLoaded', () => {
       "Try 'same as input'. Identity kernel preserves the center pixel and zeros out the rest of the neighborhood: output = input.": "Hãy thử 'giống như đầu vào'.Hạt nhân nhận dạng bảo toàn pixel trung tâm và loại bỏ phần còn lại của vùng lân cận: đầu ra = đầu vào.",
       "Try 'they converge toward Sobel-X' or 'they learn the edge detector'. Gradient descent computes how each of the 9 weights should change to reduce the loss, then updates them: step by step the random kernel becomes the target.": "Hãy thử 'họ hội tụ về phía Sobel-X' hoặc 'họ học máy dò cạnh'.Giảm dần độ dốc tính toán cách mỗi trọng số trong số 9 trọng số sẽ thay đổi để giảm tổn thất, sau đó cập nhật chúng: từng bước hạt nhân ngẫu nhiên trở thành mục tiêu.",
       "Try 'vertical bar'. Sobel-X kernel = [[-1,0,1],[-2,0,2],[-1,0,1]] computes ∂I/∂x: large where pixels change horizontally, which is at vertical edges.": "Hãy thử 'thanh dọc'.Sobel-X kernel = [[-1,0,1],[-2,0,2],[-1,0,1]] tính ∂I/∂x: lớn trong đó các pixel thay đổi theo chiều ngang, tức là ở các cạnh dọc.",
-      "Try 5×5. Each 3×3 conv adds 2 to the receptive field width (1 on each side). Stacking two 3×3s sees 5×5.": "Hãy thử 5×5.Mỗi chuyển đổi 3×3 cộng thêm 2 vào chiều rộng trường tiếp nhận (1 ở mỗi bên).Xếp chồng 2 số 3×3 sẽ ra 5×5.",
+      "Try 5×5. Each 3×3 conv adds 2 to the receptive field width (1 on each side). Stacking two 3×3s sees 5×5.": "Hãy thử 5×5.Mỗi tích chập 3×3 cộng thêm 2 vào chiều rộng trường tiếp nhận (1 ở mỗi bên).Xếp chồng 2 số 3×3 sẽ ra 5×5.",
       "Turn on gradient descent: start from a random 3×3 kernel and learn it to match a target filter's output: the same way a neural network learns its weights.": "Bật giảm độ dốc: bắt đầu từ hạt nhân 3×3 ngẫu nhiên và tìm hiểu nó để khớp với đầu ra của bộ lọc mục tiêu: giống như cách mạng nơ-ron tìm hiểu trọng số của nó.",
       "Turn on 🎯 Learn the filter, set the target to Sobel-X, and click Train. Starting from a random kernel, what happens to the 9 numbers as the loss falls?": "Bật 🎯 Tìm hiểu bộ lọc, đặt mục tiêu thành Sobel-X và nhấp vào Huấn luyện.Bắt đầu từ một hạt nhân ngẫu nhiên, điều gì xảy ra với 9 số khi số thua giảm xuống?",
       "Two stacked 3×3 convolutions:": "Hai kết cấu 3×3 xếp chồng lên nhau:",
       "Use as a 2–3 minute predict → run → explain prompt.": "Sử dụng làm lời nhắc dự đoán trong 2 - 3 phút → chạy → giải thích lời nhắc.",
       "Use Enter or Space on buttons, and arrow keys on sliders or select controls.": "Sử dụng Enter hoặc Space trên các nút và phím mũi tên trên thanh trượt hoặc điều khiển chọn.",
       "Use Tab and Shift+Tab to move through controls.": "Sử dụng Tab và Shift+Tab để di chuyển qua các điều khiển.",
-      "Use the learner-versus-target view. Why can one example fail to determine a unique kernel?": "Sử dụng chế độ xem giữa người học và mục tiêu.Tại sao một ví dụ có thể không xác định được hạt nhân duy nhất?",
+      "Use the learner-versus-target view. Why can one example fail to determine a unique kernel?": "Dùng chế độ so sánh mô hình đang học với mục tiêu. Vì sao một ví dụ có thể chưa đủ để xác định duy nhất một kernel?",
       "Use the native KNN challenge: place a query, select exactly k predicted neighbors and a class, then lock before reveal.": "Sử dụng thử thách KNN gốc: đặt truy vấn, chọn chính xác k hàng xóm được dự đoán và một lớp, sau đó khóa trước khi hiển thị.",
       "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.": "Sử dụng lớp này khi khó kiểm tra hiển thị hình ảnh, màu sắc, hoạt ảnh hoặc tương tác con trỏ.Nó cung cấp đường dẫn bàn phím và bản tóm tắt văn bản về trạng thái applet hiện tại.",
       "Watch convolution as local evidence aggregation: a small window slides over the image, multiplies by a kernel, sums the result, and builds a new feature map.": "Xem tích chập dưới dạng tổng hợp bằng chứng cục bộ: một cửa sổ nhỏ trượt trên hình ảnh, nhân với một hạt nhân, tính tổng kết quả và xây dựng bản đồ tính năng mới.",
@@ -4857,7 +4888,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Why does measuring horizontal brightness change reveal vertical boundaries?": "Tại sao việc đo sự thay đổi độ sáng theo chiều ngang lại cho thấy ranh giới theo chiều dọc?",
       "Why is it next?": "Tại sao lại là tiếp theo?",
       "Why might one filter respond to vertical edges and another to horizontal edges?": "Tại sao một bộ lọc có thể phản ứng với các cạnh dọc và một bộ lọc khác có thể phản hồi các cạnh ngang?",
-      "Window size p of the max-pool operation (stride = p, non-overlapping). Larger p downsamples more aggressively: p=2 → 16×16, p=4 → 8×8, p=8 → 4×4.": "Kích thước cửa sổ p của thao tác nhóm tối đa (sải bước = p, không chồng chéo).P lớn hơn giảm mẫu mạnh mẽ hơn: p=2 → 16×16, p=4 → 8×8, p=8 → 4×4.",
+      "Window size p of the max-pool operation (stride = p, non-overlapping). Larger p downsamples more aggressively: p=2 → 16×16, p=4 → 8×8, p=8 → 4×4.": "Kích thước cửa sổ p của thao tác gộp cực đại (sải bước = p, không chồng chéo).P lớn hơn giảm mẫu mạnh mẽ hơn: p=2 → 16×16, p=4 → 8×8, p=8 → 4×4.",
       "With JohnCalls=true and MaryCalls=true, predict whether P(Alarm) increases and whether JohnCalls and MaryCalls are conditionally independent given Alarm. The evidence settings stay visible; the posterior and mechanism explanation stay hidden until reveal.": "Với JohnCalls=true và MaryCalls=true, hãy dự đoán liệu P(Alarm) có tăng hay không và liệu JohnCalls và MaryCalls có độc lập có điều kiện với Alarm hay không.Cài đặt bằng chứng vẫn hiển thị;phần giải thích về cơ chế và hậu nghiệm được giấu kín cho đến khi được tiết lộ.",
       "with stride one and suitable padding, each final output depends on a 5×5 region of the original input. Stacking": "với sải bước một và phần đệm phù hợp, mỗi đầu ra cuối cùng phụ thuộc vào vùng 5×5 của đầu vào ban đầu.xếp chồng",
       "wumpus-world": "thế giới wumpus",
@@ -4914,6 +4945,20 @@ document.addEventListener('DOMContentLoaded', () => {
   },
   "es": {
     "strings": {
+      "Click an output cell, or focus the output and use arrow keys; Enter/Space inspects it.": "Haz clic en una celda de salida, o enfoca la salida y usa las flechas; Intro/Espacio permite inspeccionarla.",
+      "Inspect the final operation for an output cell. Colors are scaled across the map.": "Inspecciona la operación final de una celda de salida. Los colores se escalan en todo el mapa.",
+      "Original input window": "Ventana de entrada original",
+      "Kernel for this cell": "Núcleo para esta celda",
+      "Products for this cell": "Productos para esta celda",
+      "Show sum": "Mostrar suma",
+      "(click the cell or \"Show sum\" to reveal Σ)": "(haz clic en la celda o en Mostrar suma para revelar Σ)",
+      "First-layer output window × second kernel (no intermediate activation)": "Ventana de salida de la primera capa × segundo núcleo (sin activación intermedia)",
+      "First-layer window after enabled abs/ReLU → max pooling": "Ventana de la primera capa tras abs/ReLU habilitados → agrupación máxima",
+      "Output (row, column)": "Salida (fila, columna)",
+      "Window start (edge-clamped when outside)": "Inicio de ventana (repite el borde si sale del mapa)",
+      "Stored output": "Salida almacenada",
+      "Value used for color": "Valor usado para el color",
+      "Numbers rounded; ≈ refers to the stored float result.": "Números redondeados; ≈ indica el resultado de coma flotante almacenado.",
       "#a11yStateSummary": "#a11yStateSummary",
       "#acceptV": "#acceptV",
       "#accV": "#accV",
@@ -4965,7 +5010,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "(click on the output canvas to inspect a cell)": "(haga clic en el lienzo de salida para inspeccionar una celda)",
       "(click the cell or \"Show sum\" to reveal Σ)": "(haga clic en la celda o \"Mostrar suma\" para revelar Σ)",
       "(same (edge-clamp), s=1)": "(igual (abrazadera de borde), s=1)",
-      "(then max-pool {p}×{p} → {m}×{m})": "(luego grupo máximo {p}×{p} → {m}×{m})",
+      "(then max-pool {p}×{p} → {m}×{m})": "(luego pooling máximo {p}×{p} → {m}×{m})",
       ".bento-main": ".bento-main",
       ".cell-analysis": ".cell-analysis",
       ".cell-maps": ".cell-maps",
@@ -5070,13 +5115,13 @@ document.addEventListener('DOMContentLoaded', () => {
       "Clip negative values to zero: the ReLU non-linearity used in CNNs.": "Recortar valores negativos a cero: la no linealidad ReLU utilizada en CNN.",
       "cnf-sat": "cnf-sáb",
       "CNN-style convolution in this applet is cross-correlation: it converts a local patch of pixels into one output value without flipping the kernel. Learn the names of the filter, output, and movement settings before stacking layers.": "La convolución estilo CNN en este subprograma es correlación cruzada: convierte un parche local de píxeles en un valor de salida sin invertir el núcleo.Conozca los nombres de las configuraciones de filtro, salida y movimiento antes de apilar capas.",
-      "Compare convolution followed by pooling with two stacked convolutions. Which quantities change?": "Compara la convolución seguida de la agrupación con dos convoluciones apiladas.¿Qué cantidades cambian?",
+      "Compare convolution followed by pooling with two stacked convolutions. Which quantities change?": "Compara una convolución seguida de pooling con dos convoluciones consecutivas. ¿Qué cantidades cambian?",
       "Comparison recorded. Explain any discrepancy before trying the transfer case.": "Comparación registrada.Explique cualquier discrepancia antes de intentar el caso de transferencia.",
       "Conditionally independent": "Condicionalmente independiente",
       "Connect the left-to-right brightness change to the vertical edge orientation.": "Conecte el cambio de brillo de izquierda a derecha a la orientación del borde vertical.",
-      "Conv + max-pool (downsamples)": "Conv + grupo máximo (reducción de resolución)",
+      "Conv + max-pool (downsamples)": "Conv + pooling máximo (reducción de resolución)",
       "Conv → conv (stacks two kernels)": "Conv → conv (apila dos núcleos)",
-      "Conv → max-pool downsamples": "Conv → reducción de resolución del grupo máximo",
+      "Conv → max-pool downsamples": "Conv → reducción de resolución del pooling máximo",
       "Convolution plus 2×2 max pooling:": "Convolución más agrupación máxima de 2×2:",
       "Convolution stride: how far the 3×3 window moves between samples. Stride 2 halves the output dimension.": "Paso de convolución: qué tan lejos se mueve la ventana 3×3 entre muestras.Stride 2 reduce a la mitad la dimensión de salida.",
       "Convolutional neural network (CNN)": "Red neuronal convolucional (CNN)",
@@ -5091,7 +5136,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Cross image, Sobel-X kernel. Which part of the cross lights up brightest?": "Imagen cruzada, kernel Sobel-X.¿Qué parte de la cruz se ilumina más?",
       "Cross image, Sobel-X. Output lights up where pixels change horizontally: i.e., on the vertical bar of the cross. This is what 'edge detection' literally means.": "Imagen cruzada, Sobel-X.La salida se ilumina donde los píxeles cambian horizontalmente: es decir, en la barra vertical de la cruz.Esto es lo que significa literalmente \"detección de bordes\".",
       "cross-correlation": "correlación cruzada",
-      "Cross-correlation as multiply-and-sum, kernels, feature maps, edge direction, activation functions, pooling, receptive fields, and learned filters.": "Correlación cruzada como multiplicación y suma, núcleos, mapas de características, dirección de borde, funciones de activación, agrupación, campos receptivos y filtros aprendidos.",
+      "Cross-correlation as multiply-and-sum, kernels, feature maps, edge direction, activation functions, pooling, receptive fields, and learned filters.": "Correlación cruzada mediante multiplicación y suma, núcleos, mapas de características, orientación de bordes, funciones de activación, agrupación, campos receptivos y filtros aprendidos.",
       "Default = Sobel-Y. Stacks with kernel 1 above to give a 5×5 effective receptive field.": "Predeterminado = Sobel-Y.Se acumula con el núcleo 1 anterior para proporcionar un campo receptivo efectivo de 5×5.",
       "Difference (learner − target)": "Diferencia (alumno - objetivo)",
       "Download the convolution output as a PNG.": "Descargue la salida de convolución como PNG.",
@@ -5184,7 +5229,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Predict the next frontier move": "Predecir el próximo movimiento fronterizo",
       "Predict the next move outcome": "Predecir el resultado del próximo movimiento",
       "Predict the representational change": "Predecir el cambio representacional",
-      "Predict train versus validation movement": "Predecir tren versus movimiento de validación",
+      "Predict train versus validation movement": "Predecir entrenamiento versus movimiento de validación",
       "Predict which bar of the cross will now produce the strongest response.": "Predice qué barra de la cruz producirá ahora la respuesta más fuerte.",
       "Predict which kernel cell must carry the full weight.": "Predice qué célula del núcleo debe soportar todo el peso.",
       "Predict which part of the cross will produce the strongest response.": "Predice qué parte de la cruz producirá la respuesta más fuerte.",
@@ -5269,7 +5314,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "suite-guided-transfer-prompt": "mensaje-de-transferencia-guiada-de-suite",
       "suite-guided-transfer-wrap": "envoltura-de-transferencia-guiada-de-suite",
       "Switch to \"Conv → conv\" mode (two stacked 3×3 kernels). The effective receptive field becomes:": "Cambie al modo \"Conv → conv\" (dos núcleos apilados de 3 × 3).El campo receptivo efectivo se convierte en:",
-      "Switch to 'Conv + max-pool'. Output is now 16×16 (downsampled). Pooling keeps the numerically largest activation in each 2×2 block. This can reduce sensitivity to small local shifts, but pooling is not the only source of translation robustness.": "Cambie a 'Conv + grupo máximo'.La salida ahora es 16×16 (reducido).La agrupación mantiene la activación numéricamente más grande en cada bloque de 2×2.Esto puede reducir la sensibilidad a pequeños cambios locales, pero la agrupación no es la única fuente de solidez de la traducción.",
+      "Switch to 'Conv + max-pool'. Output is now 16×16 (downsampled). Pooling keeps the numerically largest activation in each 2×2 block. This can reduce sensitivity to small local shifts, but pooling is not the only source of translation robustness.": "Cambie a 'Conv + pooling máximo'.La salida ahora es 16×16 (reducido).La agrupación mantiene la activación numéricamente más grande en cada bloque de 2×2.Esto puede reducir la sensibilidad a pequeños cambios locales, pero la agrupación no es la única fuente de robustez ante traslaciones de la imagen.",
       "Switch to 'Conv → conv'. Two 3×3 kernels stacked = a 5×5 effective receptive field. Try the default (Sobel-X then Sobel-Y): this can produce a response associated with changes in both directions; interpreting it as a corner detector requires additional context and nonlinear processing. Real CNNs stack dozens of layers.": "Cambie a 'Conv → conv'.Dos granos de 3×3 apilados = un campo receptivo efectivo de 5×5.Pruebe el valor predeterminado (Sobel-X y luego Sobel-Y): esto puede producir una respuesta asociada con cambios en ambas direcciones;interpretarlo como un detector de esquinas requiere contexto adicional y procesamiento no lineal.Las CNN reales apilan docenas de capas.",
       "Switch to convolution followed by two-by-two max pooling and compare output dimensions.": "Cambie a convolución seguida de una agrupación máxima de dos por dos y compare las dimensiones de salida.",
       "Taking an absolute value discards response direction and keeps magnitude, so both light-to-dark and dark-to-light transitions appear bright. ReLU instead replaces negative values with zero. Many CNN blocks use an activation after a convolution, but architectures vary. One learned channel may preserve a response orientation while another channel learns a complementary filter; no single ReLU channel should be assumed to preserve all information.": "Al tomar un valor absoluto se descarta la dirección de la respuesta y se mantiene la magnitud, por lo que tanto las transiciones de claro a oscuro como de oscuro a claro aparecen brillantes.En cambio, ReLU reemplaza los valores negativos con cero.Muchos bloques de CNN utilizan una activación después de una convolución, pero las arquitecturas varían.Un canal aprendido puede conservar una orientación de respuesta mientras que otro canal aprende un filtro complementario;No se debe asumir que ningún canal ReLU preserva toda la información.",
@@ -5285,7 +5330,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "The initial points and centroids are visible. Before the first assignment/update cycle is revealed, predict which cluster Point 1 will join and approximately where Centroid 1 will be after the update.": "Los puntos iniciales y los centroides son visibles.Antes de que se revele el primer ciclo de asignación/actualización, prediga a qué grupo se unirá el Punto 1 y aproximadamente dónde estará el Centroide 1 después de la actualización.",
       "The input image and kernel stay visible. Before the output is revealed, predict the value of the center output cell and list the input-by-kernel products that contribute to its multiply-and-sum.": "La imagen de entrada y el kernel permanecen visibles.Antes de que se revele el resultado, prediga el valor de la celda de salida central y enumere los productos de entrada por núcleo que contribuyen a su multiplicación y suma.",
       "The kernel decides which local pattern should be amplified or suppressed.": "El núcleo decide qué patrón local debe amplificarse o suprimirse.",
-      "the operation already recognizes objects; Sobel-X detects horizontal edges because of its name; every convolution must be followed by ReLU; modern networks use only 3×3 kernels.": "la operación ya reconoce objetos;Sobel-X detecta bordes horizontales debido a su nombre;cada convolución debe ir seguida de ReLU;Las redes modernas utilizan sólo núcleos de 3×3.",
+      "the operation already recognizes objects; Sobel-X detects horizontal edges because of its name; every convolution must be followed by ReLU; modern networks use only 3×3 kernels.": "La operación ya reconoce objetos; Sobel-X detecta bordes horizontales por su nombre; toda convolución debe ir seguida de ReLU; las redes modernas solo usan núcleos de 3×3.",
       "The outputs match but the numbers don't: this image doesn't pin down all nine weights; the filter only has to match what it sees.": "Los resultados coinciden pero los números no: esta imagen no precisa los nueve pesos;el filtro sólo tiene que coincidir con lo que ve.",
       "The prepared applet step is unavailable. Reset the challenge instead of revealing a fabricated result.": "El paso del subprograma preparado no está disponible.Restablezca el desafío en lugar de revelar un resultado inventado.",
       "The region of the input that can affect one output value.": "La región de la entrada que puede afectar un valor de salida.",
@@ -5316,7 +5361,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Use as a 2–3 minute predict → run → explain prompt.": "Úselo como mensaje de predicción → ejecución → explicación de 2 a 3 minutos.",
       "Use Enter or Space on buttons, and arrow keys on sliders or select controls.": "Utilice Intro o Espacio en los botones y las teclas de flecha en los controles deslizantes o seleccione controles.",
       "Use Tab and Shift+Tab to move through controls.": "Utilice Tab y Shift+Tab para moverse por los controles.",
-      "Use the learner-versus-target view. Why can one example fail to determine a unique kernel?": "Utilice la vista alumno versus objetivo.¿Por qué un ejemplo no puede determinar un núcleo único?",
+      "Use the learner-versus-target view. Why can one example fail to determine a unique kernel?": "Usa la vista que compara el modelo que aprende con el objetivo. ¿Por qué un solo ejemplo puede no bastar para determinar un kernel único?",
       "Use the native KNN challenge: place a query, select exactly k predicted neighbors and a class, then lock before reveal.": "Utilice el desafío KNN nativo: realice una consulta, seleccione exactamente k vecinos predichos y una clase, luego bloquee antes de revelar.",
       "Use this layer when the visual display, color, animation, or pointer interaction is hard to inspect. It gives a keyboard path and a text summary of the current applet state.": "Utilice esta capa cuando la visualización, el color, la animación o la interacción del puntero sean difíciles de inspeccionar.Proporciona una ruta de teclado y un resumen de texto del estado actual del subprograma.",
       "Watch convolution as local evidence aggregation: a small window slides over the image, multiplies by a kernel, sums the result, and builds a new feature map.": "Observe la convolución como agregación de evidencia local: una pequeña ventana se desliza sobre la imagen, la multiplica por un núcleo, suma el resultado y crea un nuevo mapa de características.",
@@ -5332,7 +5377,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "Why does measuring horizontal brightness change reveal vertical boundaries?": "¿Por qué la medición del cambio de brillo horizontal revela límites verticales?",
       "Why is it next?": "¿Por qué es el siguiente?",
       "Why might one filter respond to vertical edges and another to horizontal edges?": "¿Por qué un filtro podría responder a los bordes verticales y otro a los bordes horizontales?",
-      "Window size p of the max-pool operation (stride = p, non-overlapping). Larger p downsamples more aggressively: p=2 → 16×16, p=4 → 8×8, p=8 → 4×4.": "Tamaño de ventana p de la operación de grupo máximo (zancada = p, no superpuesta).Las p más grandes reducen la resolución de forma más agresiva: p=2 → 16×16, p=4 → 8×8, p=8 → 4×4.",
+      "Window size p of the max-pool operation (stride = p, non-overlapping). Larger p downsamples more aggressively: p=2 → 16×16, p=4 → 8×8, p=8 → 4×4.": "Tamaño de ventana p de la operación de pooling máximo (zancada = p, no superpuesta).Las p más grandes reducen la resolución de forma más agresiva: p=2 → 16×16, p=4 → 8×8, p=8 → 4×4.",
       "With JohnCalls=true and MaryCalls=true, predict whether P(Alarm) increases and whether JohnCalls and MaryCalls are conditionally independent given Alarm. The evidence settings stay visible; the posterior and mechanism explanation stay hidden until reveal.": "Con JohnCalls=true y MaryCalls=true, prediga si P(Alarm) aumenta y si JohnCalls y MaryCalls son condicionalmente independientes dada la alarma.Los entornos de evidencia permanecen visibles;la explicación posterior y el mecanismo permanecen ocultos hasta que se revelan.",
       "with stride one and suitable padding, each final output depends on a 5×5 region of the original input. Stacking": "con zancada uno y un relleno adecuado, cada salida final depende de una región de 5×5 de la entrada original.apilamiento",
       "wumpus-world": "mundo-wumpus",
@@ -5347,7 +5392,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "⏸ Pause scan": "⏸ Pausar escaneo",
       "▶ Apply this scenario": "▶ Aplicar este escenario",
       "▶ Play scan": "▶ Reproducir escaneo",
-      "▶ Train": "▶ Tren",
+      "▶ Train": "▶ Entrenar",
       "▸ Show teacher notes (discussion prompts + curriculum)": "▸ Mostrar notas del profesor (indicaciones de discusión + plan de estudios)",
       "♿ Text and keyboard support": "♿ Soporte de texto y teclado",
       "⚖️ Learner vs. target weights": "⚖️ Pesos del alumno frente al peso objetivo",
@@ -5391,7 +5436,7 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 </script>
-<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["convolution"];if(!row)return;Object.assign(row.vi.strings,{"🧪 Quick Assign · QA-CNN-01 · 10–15 min": "🧪 Bài tập nhanh · QA-CNN-01 · 10–15 phút", "One convolution cell": "Một ô tích chập", "Choose a filter, inspect the sliding-window calculation, then explain what feature the kernel makes visible.": "Chọn một vùng ảnh và kernel, dự đoán phép nhân-và-cộng cho một ô đầu ra rồi kiểm tra giá trị feature map.", "Before running the filter, what image feature should this kernel emphasize?": "Trước khi tiết lộ, giá trị ô đầu ra này sẽ dương, âm hay gần 0? Giải thích từ patch và kernel.", "Run the filter or scan a window. Record the kernel, mode, and one visible output change.": "Ghi lại patch, kernel, các tích quan trọng và tổng đầu ra cho một vị trí.", "How did multiplying local pixels by kernel weights create the result?": "Vì sao cùng một kernel được áp dụng lặp lại ở các vị trí khác nhau của ảnh?", "Where would this kind of filter appear in a computer vision pipeline?": "Một kernel phát hiện cạnh theo hướng khác sẽ thay đổi phản hồi với cùng patch như thế nào?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"🧪 Quick Assign · QA-CNN-01 · 10–15 min": "🧪 Tarea rápida · QA-CNN-01 · 10–15 min", "One convolution cell": "Una celda de convolución", "Choose a filter, inspect the sliding-window calculation, then explain what feature the kernel makes visible.": "Elige un parche y un kernel, predice la multiplicación-y-suma de una celda y comprueba el valor del mapa de características.", "Before running the filter, what image feature should this kernel emphasize?": "Antes de revelar, ¿será el valor de esta celda positivo, negativo o cercano a 0? Razona con el parche y el kernel.", "Run the filter or scan a window. Record the kernel, mode, and one visible output change.": "Registra el parche, el kernel, los productos importantes y la suma de salida para una posición.", "How did multiplying local pixels by kernel weights create the result?": "¿Por qué se aplica el mismo kernel repetidamente en distintas posiciones de la imagen?", "Where would this kind of filter appear in a computer vision pipeline?": "¿Cómo cambiaría la respuesta del mismo parche con un kernel que detectara bordes en otra dirección?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script>
+<script data-quick-assign-locales="1">(function(){var root=window.__AI_PLAYGROUNDS_R4_LOCALES=window.__AI_PLAYGROUNDS_R4_LOCALES||{};var row=root["convolution"];if(!row)return;Object.assign(row.vi.strings,{"Level 1 · 10–15 min": "Cấp độ 1 · 10–15 phút", "🧪 Quick Assign · QA-CNN-01 · 10–15 min": "🧪 Bài tập nhanh · QA-CNN-01 · 10–15 phút", "One convolution cell": "Một ô tích chập", "Choose an image patch and kernel, predict one output-cell multiply-and-sum, then check the feature-map value.": "Chọn một vùng ảnh và kernel, dự đoán phép nhân-và-cộng cho một ô đầu ra rồi kiểm tra giá trị feature map.", "Before revealing it, will this output-cell value be positive, negative, or near zero? Explain using the patch and kernel.": "Trước khi tiết lộ, giá trị ô đầu ra này sẽ dương, âm hay gần 0? Giải thích từ patch và kernel.", "Record the patch, kernel, important products, and output sum at one position.": "Ghi lại patch, kernel, các tích quan trọng và tổng đầu ra cho một vị trí.", "Why is the same kernel applied repeatedly at different positions in the image?": "Vì sao cùng một kernel được áp dụng lặp lại ở các vị trí khác nhau của ảnh?", "How would a kernel detecting edges in another direction change the response to the same patch?": "Một kernel phát hiện cạnh theo hướng khác sẽ thay đổi phản hồi với cùng patch như thế nào?", "State snapshot": "Ảnh chụp trạng thái", "Predict": "Dự đoán", "Observe": "Quan sát", "Explain": "Giải thích", "Transfer": "Vận dụng", "State snapshot appears here.": "Ảnh chụp trạng thái xuất hiện ở đây.", "↻ Refresh state": "↻ Cập nhật trạng thái", "📋 Copy packet": "📋 Sao chép bài làm", "🖨 Print packet": "🖨 In bài làm", "Clear local draft": "Xóa bản nháp cục bộ"});Object.assign(row.es.strings,{"Level 1 · 10–15 min": "Nivel 1 · 10–15 min", "🧪 Quick Assign · QA-CNN-01 · 10–15 min": "🧪 Tarea rápida · QA-CNN-01 · 10–15 min", "One convolution cell": "Una celda de convolución", "Choose an image patch and kernel, predict one output-cell multiply-and-sum, then check the feature-map value.": "Elige un parche y un kernel, predice la multiplicación-y-suma de una celda y comprueba el valor del mapa de características.", "Before revealing it, will this output-cell value be positive, negative, or near zero? Explain using the patch and kernel.": "Antes de revelar, ¿será el valor de esta celda positivo, negativo o cercano a 0? Razona con el parche y el kernel.", "Record the patch, kernel, important products, and output sum at one position.": "Registra el parche, el kernel, los productos importantes y la suma de salida para una posición.", "Why is the same kernel applied repeatedly at different positions in the image?": "¿Por qué se aplica el mismo kernel repetidamente en distintas posiciones de la imagen?", "How would a kernel detecting edges in another direction change the response to the same patch?": "¿Cómo cambiaría la respuesta del mismo parche con un kernel que detectara bordes en otra dirección?", "State snapshot": "Instantánea del estado", "Predict": "Predice", "Observe": "Observa", "Explain": "Explica", "Transfer": "Transfiere", "State snapshot appears here.": "La instantánea del estado aparece aquí.", "↻ Refresh state": "↻ Actualizar estado", "📋 Copy packet": "📋 Copiar respuestas", "🖨 Print packet": "🖨 Imprimir respuestas", "Clear local draft": "Borrar borrador local"});})();</script><script>
 (() => {
   'use strict';
   // v1.6.1: preserve canonical source text across VI/ES round trips, refresh native layers before overlay activation, and cancel superseded locale timers.
@@ -5403,6 +5448,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const rootData = window.__AI_PLAYGROUNDS_R4_LOCALES || {};
   rootData.common = rootData.common || {};
   rootData.common.vi = Object.assign({
+    "↺ Reset all": "↺ Đặt lại",
+    "↺ New world": "↺ Thế giới mới",
+    "Before you read": "Trước khi đọc",
+    "Misconceptions to test:": "Những hiểu lầm cần kiểm tra:",
+    "Core question:": "Câu hỏi trọng tâm:",
+    "Run and watch:": "Chạy và quan sát:",
+    "Predict first:": "Dự đoán trước:",
+    "Explain afterward:": "Giải thích sau:",
+    "Apply and compare": "Áp dụng và so sánh",
+    "Start with the featured experiment, then use the scenarios to test a prediction.": "Bắt đầu với thí nghiệm nổi bật, rồi dùng các tình huống để kiểm tra dự đoán.",
+    "Open the mechanism view and lesson sequence when you need to explain why the result changed.": "Mở phần mô tả cơ chế và trình tự bài học khi cần giải thích vì sao kết quả thay đổi.",
+    "Collect reasoning with the worksheet or the local student response packet.": "Ghi lại lập luận bằng phiếu học tập hoặc bộ câu trả lời của học sinh được lưu cục bộ.",
+    "Use the text-state description and keyboard guidance when the visual display is not enough.": "Dùng mô tả trạng thái bằng văn bản và hướng dẫn bàn phím khi hình ảnh hiển thị chưa đủ.",
+    "Applet learning modes": "Các chế độ học tập của applet",
+    "Copy this experiment": "Sao chép thí nghiệm này",
+    "Experiment link copied.": "Đã sao chép liên kết thí nghiệm.",
+    "Copy this experiment URL": "Sao chép URL của thí nghiệm này",
+    "Understand": "Tìm hiểu",
+    "Use in class": "Dùng trong lớp",
+    "Text and keyboard": "Văn bản và bàn phím",
+    "What this applet shows": "Điều applet này minh họa",
+
     "Jump to latest": "Về trạng thái mới nhất",
     "Jump to frame": "Đến khung",
     "Jump to iteration": "Đến lần lặp",
@@ -5440,6 +5507,28 @@ document.addEventListener('DOMContentLoaded', () => {
     'Wumpus World': 'Thế giới Wumpus'
   }, rootData.common.vi || {});
   rootData.common.es = Object.assign({
+    "↺ Reset all": "↺ Restablecer",
+    "↺ New world": "↺ Nuevo mundo",
+    "Before you read": "Antes de leer",
+    "Misconceptions to test:": "Ideas erróneas que comprobar:",
+    "Core question:": "Pregunta central:",
+    "Run and watch:": "Ejecuta y observa:",
+    "Predict first:": "Predice primero:",
+    "Explain afterward:": "Explica después:",
+    "Apply and compare": "Aplicar y comparar",
+    "Start with the featured experiment, then use the scenarios to test a prediction.": "Empieza con el experimento destacado y usa los escenarios para comprobar una predicción.",
+    "Open the mechanism view and lesson sequence when you need to explain why the result changed.": "Abre la vista del mecanismo y la secuencia de la lección para explicar por qué cambió el resultado.",
+    "Collect reasoning with the worksheet or the local student response packet.": "Recoge el razonamiento con la hoja de actividades o el cuaderno de respuestas del estudiante guardado localmente.",
+    "Use the text-state description and keyboard guidance when the visual display is not enough.": "Usa la descripción textual del estado y la guía del teclado cuando la visualización no sea suficiente.",
+    "Applet learning modes": "Modos de aprendizaje del applet",
+    "Copy this experiment": "Copiar este experimento",
+    "Experiment link copied.": "Enlace del experimento copiado.",
+    "Copy this experiment URL": "Copia la URL de este experimento",
+    "Understand": "Comprender",
+    "Use in class": "Usar en clase",
+    "Text and keyboard": "Texto y teclado",
+    "What this applet shows": "Lo que muestra este applet",
+
     "Jump to latest": "Ir al estado más reciente",
     "Jump to frame": "Ir al estado",
     "Jump to iteration": "Ir a la iteración",
@@ -5481,6 +5570,43 @@ document.addEventListener('DOMContentLoaded', () => {
   // R4 stays invisible until the applet-specific VI/ES catalog is complete.
   if (!data || data.ready !== true || !data.vi || !data.es) return;
 
+  // Scope navigation labels to the footer; Source in a mechanism is not source code.
+  const footerLabels = {"vi":{"footer-top":"↑ Lên đầu trang","footer-portfolio":"Hồ sơ","footer-source":"Mã nguồn","footer-issue":"Báo lỗi"},"es":{"footer-top":"↑ Volver arriba","footer-portfolio":"Portafolio","footer-source":"Código fuente","footer-issue":"Informar de un problema"}};
+  // Teacher headings and short rich-text fragments never enter substring lookup.
+  const teacherLabels = {vi: {'For teachers': 'Dành cho giáo viên', 'Curriculum:': 'Nội dung học:', 'Pre-exploration prompts:': 'Câu hỏi trước khi khám phá:', 'Post-exploration prompts:': 'Câu hỏi sau khi khám phá:'}, es: {'For teachers': 'Para docentes', 'Curriculum:': 'Contenidos:', 'Pre-exploration prompts:': 'Preguntas antes de explorar:', 'Post-exploration prompts:': 'Preguntas después de explorar:'}};
+  // Exact original-header titles only; never translate body or learner text in ZH.
+  const headerTitlesZh = {
+    "Copy an <iframe> snippet for embedding in an LMS. Strips header/essay so only the interactive area shows.": "复制用于嵌入学习管理系统（LMS）的 <iframe> 代码。隐藏页头和说明，仅显示交互区。",
+    "Reset everything to defaults: empty grid, A*, default start and goal positions.": "恢复默认设置：空网格、A* 算法及默认起点和终点。",
+    "Reset everything to defaults: TSP, best-improvement, T₀=10, cooling=0.995.": "恢复默认设置：旅行商问题、最佳改进法、初始温度 T₀=10、降温系数 0.995。",
+    "Generate a new random world, clear the log, reset score.": "生成新的随机世界，清空日志并重置分数。",
+    "Reset input to default 'modus ponens' example.": "将输入恢复为默认的“肯定前件式”示例。",
+    "Reset to default disease scenario: prior=1%, sensitivity=99%, specificity=95%, population=10000.": "恢复默认疾病检测情景：患病率 1%、灵敏度 99%、特异度 95%、人数 10000。",
+    "Reset CPTs to AIMA defaults and clear all evidence.": "将条件概率表恢复为 AIMA 默认值，并清除所有观测证据。",
+    "Reset everything to defaults: two-moons dataset, k=5, both visualizations on.": "恢复默认设置：双月数据集、k=5，并开启两个可视化图层。",
+    "Reset everything: sin truth, n=20 points, σ=0.2 noise, degree 3, λ=0.": "恢复默认设置：真实函数为 sin、n=20 个点、噪声 σ=0.2、多项式次数为 3、λ=0。",
+    "Reset everything to default: two-moons dataset, [2-6-4-1] architecture, ReLU activation, LR=0.03.": "恢复默认设置：双月数据集、[2-6-4-1] 网络结构、ReLU 激活函数、学习率 0.03。",
+    "Reset everything to the default: Gaussian mixture dataset, k=3, random init.": "恢复默认设置：高斯混合数据集、k=3、随机初始化。",
+    "Reset to default: cross input, Sobel-X edge kernel, abs ON, ReLU OFF.": "恢复默认设置：十字形输入、Sobel-X 边缘检测核，开启绝对值变换，关闭 ReLU。",
+    "Clear Q-values; restore the default grid, learning rate, discount factor, exploration rate and step reward.": "清空 Q 值；将网格、学习率、折扣因子、探索率和每步奖励恢复为默认值。",
+    "Download the current grid + search trace as a PNG.": "将当前网格和搜索轨迹下载为 PNG 图片。",
+    "Download the current state visualization as a PNG.": "将当前状态的可视化下载为 PNG 图片。",
+    "Download the world view as a PNG.": "将世界视图下载为 PNG 图片。",
+    "Download the population dot-grid as a PNG.": "将人群点阵图下载为 PNG 图片。",
+    "Download the network diagram as a PNG.": "将网络图下载为 PNG 图片。",
+    "Download the current points + decision boundary as a PNG.": "将当前数据点和决策边界下载为 PNG 图片。",
+    "Download the fit canvas as a PNG.": "将拟合图下载为 PNG 图片。",
+    "Download the decision-boundary canvas as a PNG.": "将决策边界图下载为 PNG 图片。",
+    "Download the current visualization as a PNG image (for slides).": "将当前可视化下载为 PNG 图片（可用于幻灯片）。",
+    "Download the convolution output as a PNG.": "将卷积输出下载为 PNG 图片。",
+    "Download the current grid + Q-value heatmap as a PNG.": "将当前网格和 Q 值热力图下载为 PNG 图片。",
+    "Download grid dimensions and search results (path coordinates, visited-node count, frontier snapshot) as CSV.": "将网格尺寸和搜索结果（路径坐标、已访问节点数、搜索前沿快照）下载为 CSV。",
+    "Download per-iteration costs, algorithm, problem, iteration count and best cost as CSV.": "将每次迭代的代价、算法、问题、迭代次数和最佳代价下载为 CSV。",
+    "Download the current Bayes scenario (prior, sens, spec, population) and the resulting contingency table + posteriors as CSV.": "将当前贝叶斯情景（先验概率、灵敏度、特异度、人数）、列联表和后验概率下载为 CSV。",
+    "Download training + validation datasets and the per-degree MSE table as CSV.": "将训练集、验证集和各多项式次数的均方误差表下载为 CSV。",
+    "Download points + cluster assignments + centroid positions as CSV (two sections in one file).": "将数据点、所属簇和质心位置下载为 CSV（同一文件内分为两个部分）。",
+    "Download episode return history + the current Q-table snapshot as CSV.": "将各回合的回报历史和当前 Q 表快照下载为 CSV。"
+  };
   let current = 'en';
   let applying = false;
   let nativeLanguageClick = false;
@@ -5549,6 +5675,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function skipNode(node) {
     const el = node && (node.nodeType === 1 ? node : node.parentElement);
     if (!el) return true;
+    if (el.closest('.suite-guided-actual')) return false;
     return !!el.closest('script,style,noscript,template,code,pre,kbd,samp,.lang-switch,[data-r4-no-translate]');
   }
 
@@ -5567,7 +5694,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const live = node.nodeValue || '';
     if (!originalText.has(node)) originalText.set(node, live);
     const source = textSource(node);
-    const translated = translateString(source);
+    const footerKey = node.parentElement?.closest('footer [data-i18n]')?.dataset.i18n;
+    // Match formatted teacher prose only; retain source and outer whitespace.
+    const proseKey = node.parentElement?.closest('.for-teachers')
+      ? source.replace(/\s+/g, ' ').trim() : null;
+    const proseMap = proseKey === null ? null
+      : Object.assign({}, mapFor(current), data[current]?.teacher || {}, teacherLabels[current] || {});
+    const prose = proseMap && Object.prototype.hasOwnProperty.call(proseMap, proseKey)
+      ? source.replace(/\S(?:[\s\S]*\S)?/, () => proseMap[proseKey]) : null;
+    const translated = footerLabels[current]?.[footerKey] || prose || translateString(source);
     if (translated !== live) {
       lastAppliedText.set(node, translated);
       applying = true;
@@ -5576,15 +5711,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function translateAttributes(el) {
+  function translateAttributes(el, attributes = ['title', 'aria-label', 'placeholder']) {
     if (!el || el.nodeType !== 1 || skipNode(el)) return;
     const state = attrState(el);
-    for (const attr of ['title', 'aria-label', 'placeholder']) {
+    for (const attr of attributes) {
       if (!el.hasAttribute(attr)) continue;
       const live = el.getAttribute(attr) || '';
       if (!Object.prototype.hasOwnProperty.call(state, attr)) state[attr] = live;
       const source = Object.prototype.hasOwnProperty.call(state, attr) ? state[attr] : live;
-      const translated = translateString(source);
+      const zhTitle = current === 'zh' && attr === 'title' && el.closest('.header-actions')
+        && ['hardReset', 'embedLink', 'csvExport', 'exportPng'].includes(el.id)
+        ? headerTitlesZh[source] : null;
+      const translated = current === 'zh'
+        ? (typeof zhTitle === 'string' ? zhTitle : live) : translateString(source);
       if (translated !== live) {
         const applied = lastAppliedAttrs.get(el) || {};
         applied[attr] = translated;
@@ -5594,6 +5733,14 @@ document.addEventListener('DOMContentLoaded', () => {
         applying = false;
       }
     }
+  }
+
+  function refreshHeaderTitles() {
+    if (current !== 'en' && current !== 'zh') return;
+    document.querySelectorAll('.header-actions #hardReset,.header-actions #embedLink,.header-actions #csvExport,.header-actions #exportPng').forEach(el => {
+      const source = originalAttrs.get(el)?.title ?? el.getAttribute('title');
+      if (Object.prototype.hasOwnProperty.call(headerTitlesZh, source)) translateAttributes(el, ['title']);
+    });
   }
 
   function translateTree(root = document.body) {
@@ -5700,24 +5847,28 @@ document.addEventListener('DOMContentLoaded', () => {
     window.tr = wrapped;
   }
 
-  function patchClipboard() {
-    try {
-      const clipboard = navigator.clipboard;
-      if (!clipboard || typeof clipboard.writeText !== 'function' || clipboard.writeText.__r4Wrapped) return;
-      const base = clipboard.writeText.bind(clipboard);
-      const wrapped = text => base(current === 'vi' || current === 'es' ? translateString(String(text), current) : text);
-      wrapped.__r4Wrapped = true;
-      clipboard.writeText = wrapped;
-    } catch (_) {}
-  }
-
   function selectControl() {
     return document.querySelector('.r4-language-select');
   }
 
   function updateSelect(locale) {
+    const names = {
+      en: ['Language', 'Toggle dark or light theme'],
+      zh: ['语言', '切换深色或浅色主题'],
+      vi: ['Ngôn ngữ', 'Chuyển giao diện tối hoặc sáng'],
+      es: ['Idioma', 'Cambiar entre tema oscuro y claro']
+    }[locale];
     const select = selectControl();
-    if (select) select.value = locale;
+    if (select) {
+      select.value = locale;
+      select.setAttribute('aria-label', names[0]);
+    }
+    const theme = document.getElementById('themeToggle');
+    if (theme) {
+      theme.setAttribute('data-r4-no-translate', '1');
+      theme.setAttribute('aria-label', names[1]);
+      theme.setAttribute('title', names[1]);
+    }
   }
 
   function activateOverlay(locale) {
@@ -5727,7 +5878,7 @@ document.addEventListener('DOMContentLoaded', () => {
     current = locale;
     document.documentElement.lang = locale;
     wrapTr();
-    patchClipboard();
+    // Exporters localize their labels; never translate learner-authored clipboard data.
     applyMetadata(locale);
     translateTree(document.body);
     updateSelect(locale);
@@ -5749,6 +5900,7 @@ document.addEventListener('DOMContentLoaded', () => {
       clickNative(locale);
       document.documentElement.lang = locale === 'zh' ? 'zh' : 'en';
       refreshKnownLayers();
+      refreshHeaderTitles();
       if (locale === 'en') {
         const heading = document.querySelector('h1');
         if (heading && canonicalHeadingText) {
@@ -5797,10 +5949,10 @@ document.addEventListener('DOMContentLoaded', () => {
     for (const mutation of mutations) {
       if (mutation.type === 'characterData') {
         const live = mutation.target.nodeValue || '';
-        if (lastAppliedText.get(mutation.target) === live) {
-          lastAppliedText.delete(mutation.target);
-          continue;
-        }
+        // Several queued records can observe the same final translated value.
+        // Retain its marker until a genuinely different applet value arrives.
+        if (lastAppliedText.get(mutation.target) === live) continue;
+        lastAppliedText.delete(mutation.target);
         // Applet-authored dynamic state is always a new source value, including
         // while English or Chinese is active. This is what prevents a later locale
         // switch from restoring stale page-load state.
@@ -5810,15 +5962,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const attr = mutation.attributeName;
         const live = mutation.target.getAttribute(attr) || '';
         const applied = lastAppliedAttrs.get(mutation.target) || {};
-        if (applied[attr] === live) {
-          delete applied[attr];
-          lastAppliedAttrs.set(mutation.target, applied);
-          continue;
-        }
+        if (applied[attr] === live) continue;
+        delete applied[attr];
         const state = attrState(mutation.target);
         state[attr] = live;
-        if (current === 'vi' || current === 'es') translateAttributes(mutation.target);
+        // Do not overwrite a sibling attribute whose native write is still queued.
+        if (current === 'vi' || current === 'es' || current === 'zh' && attr === 'title') translateAttributes(mutation.target, [attr]);
       } else {
+        // The native original galleries have no Chinese confirmation entry.
+        // Localize only this generated button message, never learner text.
+        if (current === 'zh' && mutation.target.matches?.('.scenario-card button')
+            && mutation.target.textContent === '✓ Applied; compare the result') {
+          mutation.target.textContent = '✓ 已应用；请比较结果';
+        }
+        // Locale renderers replace the original gallery's cards, not its model.
+        // Carry the last applied marker by stable ID; never click/reapply a case.
+        if (mutation.target.id === 'scenarioGalleryCards' && !mutation.target.querySelector('.applied')) {
+          const previous = [...mutation.removedNodes].find(node => node.nodeType === 1 && node.matches('.scenario-card.applied'));
+          const index = previous?.dataset.scenarioIndex;
+          if (index !== undefined) [...mutation.target.children]
+            .find(node => node.dataset.scenarioIndex === index)?.classList.add('applied');
+        }
         mutation.addedNodes.forEach(node => {
           if (current === 'vi' || current === 'es') translateTree(node);
         });
@@ -5832,7 +5996,7 @@ document.addEventListener('DOMContentLoaded', () => {
     canonicalHeadingText = initialHeading ? initialHeading.textContent : '';
     installSelect();
     wrapTr();
-    patchClipboard();
+    // Exporters localize their labels; never translate learner-authored clipboard data.
     observer.observe(document.body, { subtree:true, childList:true, characterData:true, attributes:true, attributeFilter:['title','aria-label','placeholder'] });
     // Legacy language handlers in some applets rebuild or reset the experiment as
     // part of their EN/ZH switch. R4 invokes those buttons only as an internal
@@ -5852,6 +6016,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (nativeLanguageClick) return;
         const locale = normalizeLocale(button.dataset.lang);
         current = locale;
+        refreshHeaderTitles();
         updateSelect(locale);
         persist(locale);
       });
@@ -5872,10 +6037,10 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 </script>
-<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.5</div>
+<div class="v14-version-provenance" data-v14-version-provenance="true" role="contentinfo">AI Playgrounds · v1.9.6</div>
 
 <!-- AI Playgrounds aggregate analytics: canonical host only; no cookies; no third-party script; DNT/GPC and opt-out respected. -->
-<script data-ai-playgrounds-analytics="v1.9.5">
+<script data-ai-playgrounds-analytics="v1.9.6">
 (function () {
   'use strict';
   var CANONICAL_HOST = 'lmdixon23.github.io';
@@ -5991,5 +6156,116 @@ document.addEventListener('DOMContentLoaded', () => {
   sendPage();
 })();
 </script>
+<script id="classroom-draft-runtime">
+(() => {
+  'use strict';
+  const root = document.querySelector('[data-quick-assign-id]');
+  if (!root) return;
+  const original = !!root.querySelector('[data-lab-answer]');
+  const fields = [...root.querySelectorAll('[data-lab-answer],[data-qa-answer]')];
+  const state = root.querySelector('[data-lab-state],[data-qa-modern-state]');
+  const status = root.querySelector('.lab-status');
+  const slug = window.APPLET_LEARNER_PROFILE?.slug;
+  const key = original ? 'ai-playgrounds-lab-' + slug : 'ai-playgrounds-quick-assign:' + root.dataset.quickAssignId;
+  const locale = () => document.documentElement.lang.toLowerCase().split('-')[0];
+  const COPY = {
+    en: {confirm:'Clear this lab’s saved answers and captured evidence? This cannot be undone.', failed:'Your draft could not be saved in this browser. Copy or print it before closing this page.', cleared:'Local answers and captured evidence cleared.', removeFailed:'The saved draft could not be cleared. Your answers are still here.', restoreFailed:'The saved draft could not be read. Copy or print your work before reloading; clear the draft only if you want to discard it.'},
+    zh: {confirm:'清除此实验已保存的答案和状态记录？此操作无法撤销。', failed:'无法在此浏览器中保存草稿。关闭页面前请复制或打印。', cleared:'已清除本地答案和状态记录。', removeFailed:'无法清除已保存的草稿。你的答案仍保留在这里。', restoreFailed:'无法读取已保存的草稿。重新加载前请复制或打印你的内容；只有确认要丢弃草稿时才清除它。'},
+    vi: {confirm:'Xóa câu trả lời đã lưu và bằng chứng đã chụp của bài này? Không thể hoàn tác.', failed:'Không thể lưu bản nháp trong trình duyệt này. Hãy sao chép hoặc in trước khi đóng trang.', cleared:'Đã xóa câu trả lời cục bộ và bằng chứng đã chụp.', removeFailed:'Không thể xóa bản nháp đã lưu. Câu trả lời của bạn vẫn còn ở đây.', restoreFailed:'Không thể đọc bản nháp đã lưu. Hãy sao chép hoặc in bài trước khi tải lại; chỉ xóa bản nháp nếu muốn bỏ nó.'},
+    es: {confirm:'¿Borrar las respuestas guardadas y la evidencia capturada de este laboratorio? No se puede deshacer.', failed:'No se pudo guardar el borrador en este navegador. Cópialo o imprímelo antes de cerrar esta página.', cleared:'Se borraron las respuestas locales y la evidencia capturada.', removeFailed:'No se pudo borrar el borrador guardado. Tus respuestas siguen aquí.', restoreFailed:'No se pudo leer el borrador guardado. Copia o imprime tu trabajo antes de recargar; bórralo solo si deseas descartarlo.'}
+  };
+  const copy = () => COPY[locale()] || COPY.en;
+  const message = name => { if (status) { status.textContent = copy()[name]; status.dataset.draftError = ['failed','removeFailed','restoreFailed'].includes(name) ? name : ''; } };
+  new MutationObserver(() => { if (status?.dataset.draftError) message(status.dataset.draftError); }).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+  const captured = () => !!state && !!state.textContent.trim() && (state.hasAttribute('data-r4-no-translate') || state.dataset.qaStateReady === '1');
+  function retainCapture(text, lang) {
+    if (!state) return;
+    state.textContent = text;
+    state.lang = ['en','zh','vi','es'].includes(lang) ? lang : 'en';
+    state.setAttribute('data-r4-no-translate','');
+    state.dataset.qaStateReady = '1';
+    for (const n of [13,14,15]) state.setAttribute('data-lab'+n+'-no-translate','');
+    for (const lang of ['en','zh','vi','es']) state.removeAttribute('data-ap-'+lang);
+  }
+  const fieldName = field => field.dataset.labAnswer || field.dataset.qaAnswer;
+  const dirty = new Set();
+  let captureDirty = false, unreadable = false;
+  function readDraft() {
+    const data = JSON.parse(localStorage.getItem(key) || '{}');
+    if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Invalid draft');
+    for (const field of fields) if (data[fieldName(field)] !== undefined && typeof data[fieldName(field)] !== 'string') throw new Error('Invalid answer');
+    if (data.__capture !== undefined && typeof data.__capture?.text !== 'string') throw new Error('Invalid capture');
+    unreadable = false;
+    return data;
+  }
+  function applyDraft(data) {
+    for (const field of fields) if (!dirty.has(fieldName(field))) field.value = data[fieldName(field)] || '';
+    if (!captureDirty) {
+      if (data.__capture) retainCapture(data.__capture.text, data.__capture.lang);
+      else if (captured()) retainCapture('', locale());
+    }
+  }
+  function save(field, refresh = false) {
+    if (field) dirty.add(fieldName(field));
+    captureDirty ||= refresh;
+    try {
+      // Merge only this tab's edits into the latest stored packet. A stale tab
+      // must not replace another tab's different answer or explicit capture.
+      const latest = readDraft();
+      const data = Object.fromEntries(fields.map(field => {
+        const name = fieldName(field);
+        return [name, dirty.has(name) ? field.value : latest[name] || ''];
+      }));
+      if (captureDirty && captured()) data.__capture = {text:state.textContent, lang:state.lang};
+      else if (!captureDirty && latest.__capture) data.__capture = latest.__capture;
+      localStorage.setItem(key, JSON.stringify(data));
+      dirty.clear(); captureDirty = false;
+      if (status?.dataset.draftError || Object.values(COPY).some(value => status?.textContent === value.cleared)) { status.textContent=''; delete status.dataset.draftError; }
+    } catch (_) { message('failed'); }
+  }
+  try { applyDraft(readDraft()); }
+  catch (_) { unreadable = true; message('restoreFailed'); }
+  window.addEventListener('storage', event => {
+    if (event.key !== key && event.key !== null) return;
+    try {
+      if (event.storageArea !== localStorage) return;
+      // Read the latest value, not a possibly superseded queued storage event.
+      applyDraft(readDraft());
+    } catch (_) { unreadable = true; message('restoreFailed'); }
+  });
+  // One owner saves the complete packet before legacy answer-only handlers run.
+  document.addEventListener('input', event => {
+    if (!fields.includes(event.target)) return;
+    event.stopImmediatePropagation();
+    save(event.target);
+  }, true);
+  document.addEventListener('click', event => {
+    const button = event.target.closest?.('[data-lab-action],[data-qa-action]');
+    if (!button || !root.contains(button)) return;
+    const action = button.dataset.labAction || button.dataset.qaAction;
+    if (action === 'refresh' || action === 'refresh-state') {
+      // Capture is synchronous in each native packet; persist its finished result.
+      queueMicrotask(() => save(null, true));
+      return;
+    }
+    if (action !== 'clear') return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (!fields.some(field => field.value) && !captured() && !unreadable) return;
+    if (!window.confirm(copy().confirm)) return;
+    try { localStorage.removeItem(key); }
+    catch (_) { message('removeFailed'); return; }
+    dirty.clear(); captureDirty = false; unreadable = false;
+    for (const field of fields) field.value = '';
+    if (state) {
+      // An empty capture is intentional; do not restore or recapture live results.
+      retainCapture('', locale());
+    }
+    message('cleared');
+    fields[0]?.focus();
+  }, true);
+})();
+</script>
+
 </body>
 </html>
